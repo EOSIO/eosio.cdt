@@ -1,0 +1,15 @@
+include(ExternalProject)
+find_package(Git REQUIRED)
+
+ExternalProject_Add(
+  EosioClang
+  GIT_REPOSITORY "git@github.com:eosio/llvm"
+  GIT_SUBMODULES ""
+  
+  UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+  PATCH_COMMAND  ""
+
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/llvm"
+  TEST_COMMAND   ""
+  INSTALL_COMMAND ""
+)
