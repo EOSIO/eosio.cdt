@@ -9,7 +9,7 @@ endif()
 include(ClangExternalProject.txt)
 set(WASM_SDK_BUILD true)
 
-install(FILES ${CMAKE_SOURCE_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
+configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_INSTALL_PREFIX}/eosio.imports)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
 include(EosioWasmToolchain)

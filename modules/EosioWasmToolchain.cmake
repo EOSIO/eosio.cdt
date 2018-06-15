@@ -22,7 +22,7 @@ set(CMAKE_C_FLAGS " ${STD_FLAGS} -O3")
 set(CMAKE_CXX_FLAGS " -std=c++14 -O3 -fno-rtti -fno-exceptions ${STD_FLAGS}")
 
 set(WASM_LINKER "${WASM_ROOT}/bin/wasm-ld")
-set(WASM_IMPORTS "${TMP_ROOT}/eosio.imports")
+set(WASM_IMPORTS "${WASM_ROOT}/eosio.imports")
 
 set(CMAKE_C_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
