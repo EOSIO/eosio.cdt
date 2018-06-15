@@ -1,5 +1,6 @@
 include(ExternalProject)
 find_package(Git REQUIRED)
+include(GNUInstallDirs)
 
 ExternalProject_Add(
   EosioClang
@@ -8,8 +9,9 @@ ExternalProject_Add(
   
   UPDATE_COMMAND ${GIT_EXECUTABLE} pull
   PATCH_COMMAND  ""
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/llvm"
   TEST_COMMAND   ""
-  INSTALL_COMMAND ""
 )
+#INSTALL_COMMAND ""

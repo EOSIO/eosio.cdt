@@ -6,3 +6,6 @@
 	path = libraries/libc++/libcxx
 	url = git@github.com:eosio/libcxx
 	branch = eosiosdk
+[submodule "libraries/pfr"]
+	path = libraries/pfr
+	url = git@github.com:eosio/magic_get
