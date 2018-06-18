@@ -1,0 +1,2972 @@
+;;; TOOL: run-interp
+;;; ARGS*: --enable-threads --enable-saturating-float-to-int --enable-sign-extension --enable-simd
+;;; ARGS1: --trace --host-print
+
+(module
+  (import "host" "print" (func $print (param i32)))
+
+  (type $empty (func))
+  (func $empty)
+  (memory 1 1 shared)
+  (table anyfunc (elem $empty $empty))
+  (global $g (mut i32) (i32.const 0))
+
+  (; 0x00 ;) (func (export "unreachable") unreachable)
+  (; 0x01 ;) ;; nop       -- not generated in interpreter
+  (; 0x02 ;) ;; block     -- not generated in interpreter
+  (; 0x03 ;) ;; loop      -- not generated in interpreter
+  (; 0x04 ;) ;; if        -- not generated in interpreter
+  (; 0x05 ;) ;; else      -- not generated in interpreter
+  (; 0x06 ;) ;; try       -- not implemented
+  (; 0x07 ;) ;; catch     -- not implemented
+  (; 0x08 ;) ;; throw     -- not implemented
+  (; 0x09 ;) ;; rethrow   -- not implemented
+  (; 0x0a ;) ;; catch_all -- not implemented
+  (; 0x0b ;) ;; end       -- not generated in interpreter
+  (; 0x0c ;) (func (export "br") br 0)
+  (; 0x0d ;) ;; 0x0d br_if  ;; not generated in interpreter
+  (; 0x0e ;) (func (export "br_table") i32.const 1 br_table 0)
+  (; 0x0f ;) (func (export "return") return)
+  (; 0x10 ;) (func (export "call") call $empty)
+  (; 0x11 ;) (func (export "call_indirect") i32.const 1 call_indirect (type $empty))
+  (; 0x1a ;) (func (export "drop") i32.const 1 drop)
+  (; 0x1b ;) (func (export "select") i32.const 1 i32.const 2 i32.const 3 select drop)
+  (; 0x20 ;) (func (export "get_local") (local i32) get_local 0 drop)
+  (; 0x21 ;) (func (export "set_local") (local i32) i32.const 1 set_local 0)
+  (; 0x22 ;) (func (export "tee_local") (local i32) i32.const 1 tee_local 0 drop)
+  (; 0x23 ;) (func (export "get_global") get_global 0 drop)
+  (; 0x24 ;) (func (export "set_global") i32.const 1 set_global 0)
+  (; 0x28 ;) (func (export "i32.load") i32.const 1 i32.load offset=2 drop)
+  (; 0x29 ;) (func (export "i64.load") i32.const 1 i64.load offset=2 drop)
+  (; 0x2a ;) (func (export "f32.load") i32.const 1 f32.load offset=2 drop)
+  (; 0x2b ;) (func (export "f64.load") i32.const 1 f64.load offset=2 drop)
+  (; 0x2c ;) (func (export "i32.load8_s") i32.const 1 i32.load8_s offset=2 drop)
+  (; 0x2d ;) (func (export "i32.load8_u") i32.const 1 i32.load8_u offset=2 drop)
+  (; 0x2e ;) (func (export "i32.load16_s") i32.const 1 i32.load16_s offset=2 drop)
+  (; 0x2f ;) (func (export "i32.load16_u") i32.const 1 i32.load16_u offset=2 drop)
+  (; 0x30 ;) (func (export "i64.load8_s") i32.const 1 i64.load8_s offset=2 drop)
+  (; 0x31 ;) (func (export "i64.load8_u") i32.const 1 i64.load8_u offset=2 drop)
+  (; 0x32 ;) (func (export "i64.load16_s") i32.const 1 i64.load16_s offset=2 drop)
+  (; 0x33 ;) (func (export "i64.load16_u") i32.const 1 i64.load16_u offset=2 drop)
+  (; 0x34 ;) (func (export "i64.load32_s") i32.const 1 i64.load32_s offset=2 drop)
+  (; 0x35 ;) (func (export "i64.load32_u") i32.const 1 i64.load32_u offset=2 drop)
+  (; 0x36 ;) (func (export "i32.store") i32.const 1 i32.const 2 i32.store offset=2)
+  (; 0x37 ;) (func (export "i64.store") i32.const 1 i64.const 2 i64.store offset=2)
+  (; 0x38 ;) (func (export "f32.store") i32.const 1 f32.const 2 f32.store offset=2)
+  (; 0x39 ;) (func (export "f64.store") i32.const 1 f64.const 2 f64.store offset=2)
+  (; 0x3a ;) (func (export "i32.store8") i32.const 1 i32.const 2 i32.store8 offset=2)
+  (; 0x3b ;) (func (export "i32.store16") i32.const 1 i32.const 2 i32.store16 offset=2)
+  (; 0x3c ;) (func (export "i64.store8") i32.const 1 i64.const 2 i64.store8 offset=2)
+  (; 0x3d ;) (func (export "i64.store16") i32.const 1 i64.const 2 i64.store16 offset=2)
+  (; 0x3e ;) (func (export "i64.store32") i32.const 1 i64.const 2 i64.store32 offset=2)
+  (; 0x3f ;) (func (export "current_memory") current_memory drop)
+  (; 0x40 ;) (func (export "grow_memory") i32.const 1 grow_memory drop)
+  (; 0x41 ;) (func (export "i32.const") i32.const 1 drop)
+  (; 0x42 ;) (func (export "i64.const") i64.const 1 drop)
+  (; 0x43 ;) (func (export "f32.const") f32.const 1 drop)
+  (; 0x44 ;) (func (export "f64.const") f64.const 1 drop)
+  (; 0x45 ;) (func (export "i32.eqz") i32.const 1 i32.eqz drop)
+  (; 0x46 ;) (func (export "i32.eq") i32.const 1 i32.const 2 i32.eq drop)
+  (; 0x47 ;) (func (export "i32.ne") i32.const 1 i32.const 2 i32.ne drop)
+  (; 0x48 ;) (func (export "i32.lt_s") i32.const 1 i32.const 2 i32.lt_s drop)
+  (; 0x49 ;) (func (export "i32.lt_u") i32.const 1 i32.const 2 i32.lt_u drop)
+  (; 0x4a ;) (func (export "i32.gt_s") i32.const 1 i32.const 2 i32.gt_s drop)
+  (; 0x4b ;) (func (export "i32.gt_u") i32.const 1 i32.const 2 i32.gt_u drop)
+  (; 0x4c ;) (func (export "i32.le_s") i32.const 1 i32.const 2 i32.le_s drop)
+  (; 0x4d ;) (func (export "i32.le_u") i32.const 1 i32.const 2 i32.le_u drop)
+  (; 0x4e ;) (func (export "i32.ge_s") i32.const 1 i32.const 2 i32.ge_s drop)
+  (; 0x4f ;) (func (export "i32.ge_u") i32.const 1 i32.const 2 i32.ge_u drop)
+  (; 0x50 ;) (func (export "i64.eqz") i64.const 1 i64.eqz drop)
+  (; 0x51 ;) (func (export "i64.eq") i64.const 1 i64.const 2 i64.eq drop)
+  (; 0x52 ;) (func (export "i64.ne") i64.const 1 i64.const 2 i64.ne drop)
+  (; 0x53 ;) (func (export "i64.lt_s") i64.const 1 i64.const 2 i64.lt_s drop)
+  (; 0x54 ;) (func (export "i64.lt_u") i64.const 1 i64.const 2 i64.lt_u drop)
+  (; 0x55 ;) (func (export "i64.gt_s") i64.const 1 i64.const 2 i64.gt_s drop)
+  (; 0x56 ;) (func (export "i64.gt_u") i64.const 1 i64.const 2 i64.gt_u drop)
+  (; 0x57 ;) (func (export "i64.le_s") i64.const 1 i64.const 2 i64.le_s drop)
+  (; 0x58 ;) (func (export "i64.le_u") i64.const 1 i64.const 2 i64.le_u drop)
+  (; 0x59 ;) (func (export "i64.ge_s") i64.const 1 i64.const 2 i64.ge_s drop)
+  (; 0x5a ;) (func (export "i64.ge_u") i64.const 1 i64.const 2 i64.ge_u drop)
+  (; 0x5b ;) (func (export "f32.eq") f32.const 1 f32.const 2 f32.eq drop)
+  (; 0x5c ;) (func (export "f32.ne") f32.const 1 f32.const 2 f32.ne drop)
+  (; 0x5d ;) (func (export "f32.lt") f32.const 1 f32.const 2 f32.lt drop)
+  (; 0x5e ;) (func (export "f32.gt") f32.const 1 f32.const 2 f32.gt drop)
+  (; 0x5f ;) (func (export "f32.le") f32.const 1 f32.const 2 f32.le drop)
+  (; 0x60 ;) (func (export "f32.ge") f32.const 1 f32.const 2 f32.ge drop)
+  (; 0x61 ;) (func (export "f64.eq") f64.const 1 f64.const 2 f64.eq drop)
+  (; 0x62 ;) (func (export "f64.ne") f64.const 1 f64.const 2 f64.ne drop)
+  (; 0x63 ;) (func (export "f64.lt") f64.const 1 f64.const 2 f64.lt drop)
+  (; 0x64 ;) (func (export "f64.gt") f64.const 1 f64.const 2 f64.gt drop)
+  (; 0x65 ;) (func (export "f64.le") f64.const 1 f64.const 2 f64.le drop)
+  (; 0x66 ;) (func (export "f64.ge") f64.const 1 f64.const 2 f64.ge drop)
+  (; 0x67 ;) (func (export "i32.clz") i32.const 1 i32.clz drop)
+  (; 0x68 ;) (func (export "i32.ctz") i32.const 1 i32.ctz drop)
+  (; 0x69 ;) (func (export "i32.popcnt") i32.const 1 i32.popcnt drop)
+  (; 0x6a ;) (func (export "i32.add") i32.const 1 i32.const 2 i32.add drop)
+  (; 0x6b ;) (func (export "i32.sub") i32.const 1 i32.const 2 i32.sub drop)
+  (; 0x6c ;) (func (export "i32.mul") i32.const 1 i32.const 2 i32.mul drop)
+  (; 0x6d ;) (func (export "i32.div_s") i32.const 1 i32.const 2 i32.div_s drop)
+  (; 0x6e ;) (func (export "i32.div_u") i32.const 1 i32.const 2 i32.div_u drop)
+  (; 0x6f ;) (func (export "i32.rem_s") i32.const 1 i32.const 2 i32.rem_s drop)
+  (; 0x70 ;) (func (export "i32.rem_u") i32.const 1 i32.const 2 i32.rem_u drop)
+  (; 0x71 ;) (func (export "i32.and") i32.const 1 i32.const 2 i32.and drop)
+  (; 0x72 ;) (func (export "i32.or") i32.const 1 i32.const 2 i32.or drop)
+  (; 0x73 ;) (func (export "i32.xor") i32.const 1 i32.const 2 i32.xor drop)
+  (; 0x74 ;) (func (export "i32.shl") i32.const 1 i32.const 2 i32.shl drop)
+  (; 0x75 ;) (func (export "i32.shr_s") i32.const 1 i32.const 2 i32.shr_s drop)
+  (; 0x76 ;) (func (export "i32.shr_u") i32.const 1 i32.const 2 i32.shr_u drop)
+  (; 0x77 ;) (func (export "i32.rotl") i32.const 1 i32.const 2 i32.rotl drop)
+  (; 0x78 ;) (func (export "i32.rotr") i32.const 1 i32.const 2 i32.rotr drop)
+  (; 0x79 ;) (func (export "i64.clz") i64.const 1 i64.clz drop)
+  (; 0x7a ;) (func (export "i64.ctz") i64.const 1 i64.ctz drop)
+  (; 0x7b ;) (func (export "i64.popcnt") i64.const 1 i64.popcnt drop)
+  (; 0x7c ;) (func (export "i64.add") i64.const 1 i64.const 2 i64.add drop)
+  (; 0x7d ;) (func (export "i64.sub") i64.const 1 i64.const 2 i64.sub drop)
+  (; 0x7e ;) (func (export "i64.mul") i64.const 1 i64.const 2 i64.mul drop)
+  (; 0x7f ;) (func (export "i64.div_s") i64.const 1 i64.const 2 i64.div_s drop)
+  (; 0x80 ;) (func (export "i64.div_u") i64.const 1 i64.const 2 i64.div_u drop)
+  (; 0x81 ;) (func (export "i64.rem_s") i64.const 1 i64.const 2 i64.rem_s drop)
+  (; 0x82 ;) (func (export "i64.rem_u") i64.const 1 i64.const 2 i64.rem_u drop)
+  (; 0x83 ;) (func (export "i64.and") i64.const 1 i64.const 2 i64.and drop)
+  (; 0x84 ;) (func (export "i64.or") i64.const 1 i64.const 2 i64.or drop)
+  (; 0x85 ;) (func (export "i64.xor") i64.const 1 i64.const 2 i64.xor drop)
+  (; 0x86 ;) (func (export "i64.shl") i64.const 1 i64.const 2 i64.shl drop)
+  (; 0x87 ;) (func (export "i64.shr_s") i64.const 1 i64.const 2 i64.shr_s drop)
+  (; 0x88 ;) (func (export "i64.shr_u") i64.const 1 i64.const 2 i64.shr_u drop)
+  (; 0x89 ;) (func (export "i64.rotl") i64.const 1 i64.const 2 i64.rotl drop)
+  (; 0x8a ;) (func (export "i64.rotr") i64.const 1 i64.const 2 i64.rotr drop)
+  (; 0x8b ;) (func (export "f32.abs") f32.const 1 f32.abs drop)
+  (; 0x8c ;) (func (export "f32.neg") f32.const 1 f32.neg drop)
+  (; 0x8d ;) (func (export "f32.ceil") f32.const 1 f32.ceil drop)
+  (; 0x8e ;) (func (export "f32.floor") f32.const 1 f32.floor drop)
+  (; 0x8f ;) (func (export "f32.trunc") f32.const 1 f32.trunc drop)
+  (; 0x90 ;) (func (export "f32.nearest") f32.const 1 f32.nearest drop)
+  (; 0x91 ;) (func (export "f32.sqrt") f32.const 1 f32.sqrt drop)
+  (; 0x92 ;) (func (export "f32.add") f32.const 1 f32.const 2 f32.add drop)
+  (; 0x93 ;) (func (export "f32.sub") f32.const 1 f32.const 2 f32.sub drop)
+  (; 0x94 ;) (func (export "f32.mul") f32.const 1 f32.const 2 f32.mul drop)
+  (; 0x95 ;) (func (export "f32.div") f32.const 1 f32.const 2 f32.div drop)
+  (; 0x96 ;) (func (export "f32.min") f32.const 1 f32.const 2 f32.min drop)
+  (; 0x97 ;) (func (export "f32.max") f32.const 1 f32.const 2 f32.max drop)
+  (; 0x98 ;) (func (export "f32.copysign") f32.const 1 f32.const 2 f32.copysign drop)
+  (; 0x99 ;) (func (export "f64.abs") f64.const 1 f64.abs drop)
+  (; 0x9a ;) (func (export "f64.neg") f64.const 1 f64.neg drop)
+  (; 0x9b ;) (func (export "f64.ceil") f64.const 1 f64.ceil drop)
+  (; 0x9c ;) (func (export "f64.floor") f64.const 1 f64.floor drop)
+  (; 0x9d ;) (func (export "f64.trunc") f64.const 1 f64.trunc drop)
+  (; 0x9e ;) (func (export "f64.nearest") f64.const 1 f64.nearest drop)
+  (; 0x9f ;) (func (export "f64.sqrt") f64.const 1 f64.sqrt drop)
+  (; 0xa0 ;) (func (export "f64.add") f64.const 1 f64.const 2 f64.add drop)
+  (; 0xa1 ;) (func (export "f64.sub") f64.const 1 f64.const 2 f64.sub drop)
+  (; 0xa2 ;) (func (export "f64.mul") f64.const 1 f64.const 2 f64.mul drop)
+  (; 0xa3 ;) (func (export "f64.div") f64.const 1 f64.const 2 f64.div drop)
+  (; 0xa4 ;) (func (export "f64.min") f64.const 1 f64.const 2 f64.min drop)
+  (; 0xa5 ;) (func (export "f64.max") f64.const 1 f64.const 2 f64.max drop)
+  (; 0xa6 ;) (func (export "f64.copysign") f64.const 1 f64.const 2 f64.copysign drop)
+  (; 0xa7 ;) (func (export "i32.wrap/i64") i64.const 1 i32.wrap/i64 drop)
+  (; 0xa8 ;) (func (export "i32.trunc_s/f32") f32.const 1 i32.trunc_s/f32 drop)
+  (; 0xa9 ;) (func (export "i32.trunc_u/f32") f32.const 1 i32.trunc_u/f32 drop)
+  (; 0xaa ;) (func (export "i32.trunc_s/f64") f64.const 1 i32.trunc_s/f64 drop)
+  (; 0xab ;) (func (export "i32.trunc_u/f64") f64.const 1 i32.trunc_u/f64 drop)
+  (; 0xac ;) (func (export "i64.extend_s/i32") i32.const 1 i64.extend_s/i32 drop)
+  (; 0xad ;) (func (export "i64.extend_u/i32") i32.const 1 i64.extend_u/i32 drop)
+  (; 0xae ;) (func (export "i64.trunc_s/f32") f32.const 1 i64.trunc_s/f32 drop)
+  (; 0xaf ;) (func (export "i64.trunc_u/f32") f32.const 1 i64.trunc_u/f32 drop)
+  (; 0xb0 ;) (func (export "i64.trunc_s/f64") f64.const 1 i64.trunc_s/f64 drop)
+  (; 0xb1 ;) (func (export "i64.trunc_u/f64") f64.const 1 i64.trunc_u/f64 drop)
+  (; 0xb2 ;) (func (export "f32.convert_s/i32") i32.const 1 f32.convert_s/i32 drop)
+  (; 0xb3 ;) (func (export "f32.convert_u/i32") i32.const 1 f32.convert_u/i32 drop)
+  (; 0xb4 ;) (func (export "f32.convert_s/i64") i64.const 1 f32.convert_s/i64 drop)
+  (; 0xb5 ;) (func (export "f32.convert_u/i64") i64.const 1 f32.convert_u/i64 drop)
+  (; 0xb6 ;) (func (export "f32.demote/f64") f64.const 1 f32.demote/f64 drop)
+  (; 0xb7 ;) (func (export "f64.convert_s/i32") i32.const 1 f64.convert_s/i32 drop)
+  (; 0xb8 ;) (func (export "f64.convert_u/i32") i32.const 1 f64.convert_u/i32 drop)
+  (; 0xb9 ;) (func (export "f64.convert_s/i64") i64.const 1 f64.convert_s/i64 drop)
+  (; 0xba ;) (func (export "f64.convert_u/i64") i64.const 1 f64.convert_u/i64 drop)
+  (; 0xbb ;) (func (export "f64.promote/f32") f32.const 1 f64.promote/f32 drop)
+  (; 0xbc ;) (func (export "i32.reinterpret/f32") i32.const 1 f32.reinterpret/i32 drop)
+  (; 0xbd ;) (func (export "f32.reinterpret/i32") f32.const 1 i32.reinterpret/f32 drop)
+  (; 0xbe ;) (func (export "i64.reinterpret/f64") i64.const 1 f64.reinterpret/i64 drop)
+  (; 0xbf ;) (func (export "f64.reinterpret/i64") f64.const 1 i64.reinterpret/f64 drop)
+
+  ;; --enable-sign-extension
+  (; 0xc0 ;) (func (export "i32.extend8_s") i32.const 1 i32.extend8_s drop)
+  (; 0xc1 ;) (func (export "i32.extend16_s") i32.const 1 i32.extend16_s drop)
+  (; 0xc2 ;) (func (export "i64.extend8_s") i64.const 1 i64.extend8_s drop)
+  (; 0xc3 ;) (func (export "i64.extend16_s") i64.const 1 i64.extend16_s drop)
+  (; 0xc4 ;) (func (export "i64.extend32_s") i64.const 1 i64.extend32_s drop)
+
+  ;; Interpreter opcodes
+  (; 0xe0 ;) (func (export "alloca") (local i32))
+  (; 0xe1 ;) (func (export "br_unless") i32.const 1 br_if 0)
+  (; 0xe2 ;) (func (export "call_host") i32.const 1 call $print)
+  (; 0xe3 ;) ;; data  -- never executed
+  (; 0xe4 ;) (func (export "drop_keep") block (result i32) i32.const 1 i32.const 2 br 0 end drop)
+
+  ;; --enable-saturating-float-to-int
+  (; 0xfc 0x00 ;) (func (export "i32.trunc_s:sat/f32") f32.const 1 i32.trunc_s:sat/f32 drop)
+  (; 0xfc 0x01 ;) (func (export "i32.trunc_u:sat/f32") f32.const 1 i32.trunc_u:sat/f32 drop)
+  (; 0xfc 0x02 ;) (func (export "i32.trunc_s:sat/f64") f64.const 1 i32.trunc_s:sat/f64 drop)
+  (; 0xfc 0x03 ;) (func (export "i32.trunc_u:sat/f64") f64.const 1 i32.trunc_u:sat/f64 drop)
+  (; 0xfc 0x04 ;) (func (export "i64.trunc_s:sat/f32") f32.const 1 i64.trunc_s:sat/f32 drop)
+  (; 0xfc 0x05 ;) (func (export "i64.trunc_u:sat/f32") f32.const 1 i64.trunc_u:sat/f32 drop)
+  (; 0xfc 0x06 ;) (func (export "i64.trunc_s:sat/f64") f64.const 1 i64.trunc_s:sat/f64 drop)
+  (; 0xfc 0x07 ;) (func (export "i64.trunc_u:sat/f64") f64.const 1 i64.trunc_u:sat/f64 drop)
+
+  ;; --enable-simd
+  (; 0xfd 0x00 ;) (func (export "v128.const") v128.const i32 1 1 1 1 drop)
+  (; 0xfd 0x01 ;) (func (export "v128.load") i32.const 1 v128.load offset=3 drop)
+  (; 0xfd 0x02 ;) (func (export "v128.store") i32.const 1 v128.const i32 1 1 1 1 v128.store offset=3)
+  (; 0xfd 0x03 ;) (func (export "i8x16.splat") i32.const 1 i8x16.splat drop)
+  (; 0xfd 0x04 ;) (func (export "i16x8.splat") i32.const 1 i16x8.splat drop)
+  (; 0xfd 0x05 ;) (func (export "i32x4.splat") i32.const 1 i32x4.splat drop)
+  (; 0xfd 0x06 ;) (func (export "i64x2.splat") i64.const 1 i64x2.splat drop)
+  (; 0xfd 0x07 ;) (func (export "f32x4.splat") f32.const 1 f32x4.splat drop)
+  (; 0xfd 0x08 ;) (func (export "f64x2.splat") f64.const 1 f64x2.splat drop)
+  (; 0xfd 0x09 ;) (func (export "i8x16.extract_lane_s") v128.const i32 1 1 1 1 i8x16.extract_lane_s 15 drop)
+  (; 0xfd 0x0a ;) (func (export "i8x16.extract_lane_u") v128.const i32 1 1 1 1 i8x16.extract_lane_u 15 drop)
+  (; 0xfd 0x0b ;) (func (export "i16x8.extract_lane_s") v128.const i32 1 1 1 1 i16x8.extract_lane_s 7 drop)
+  (; 0xfd 0x0c ;) (func (export "i16x8.extract_lane_u") v128.const i32 1 1 1 1 i16x8.extract_lane_u 7 drop)
+  (; 0xfd 0x0d ;) (func (export "i32x4.extract_lane") v128.const i32 1 1 1 1 i32x4.extract_lane 3 drop)
+  (; 0xfd 0x0e ;) (func (export "i64x2.extract_lane") v128.const i32 1 1 1 1 i64x2.extract_lane 1 drop)
+  (; 0xfd 0x0f ;) (func (export "f32x4.extract_lane") v128.const i32 1 1 1 1 f32x4.extract_lane 3 drop)
+  (; 0xfd 0x10 ;) (func (export "f64x2.extract_lane") v128.const i32 1 1 1 1 f64x2.extract_lane 1 drop)
+  (; 0xfd 0x11 ;) (func (export "i8x16.replace_lane") v128.const i32 1 1 1 1 i32.const 0 i8x16.replace_lane 15 drop)
+  (; 0xfd 0x12 ;) (func (export "i16x8.replace_lane") v128.const i32 1 1 1 1 i32.const 0 i16x8.replace_lane 7 drop)
+  (; 0xfd 0x13 ;) (func (export "i32x4.replace_lane") v128.const i32 1 1 1 1 i32.const 0 i32x4.replace_lane 3 drop)
+  (; 0xfd 0x14 ;) (func (export "i64x2.replace_lane") v128.const i32 1 1 1 1 i64.const 0 i64x2.replace_lane 1 drop)
+  (; 0xfd 0x15 ;) (func (export "f32x4.replace_lane") v128.const i32 1 1 1 1 f32.const 0 f32x4.replace_lane 3 drop)
+  (; 0xfd 0x16 ;) (func (export "f64x2.replace_lane") v128.const i32 1 1 1 1 f64.const 0 f64x2.replace_lane 1 drop)
+  (; 0xfd 0x17 ;) (func (export "v8x16.shuffle") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 v8x16.shuffle 1 1 1 1 drop)
+  (; 0xfd 0x18 ;) (func (export "i8x16.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.add drop)
+  (; 0xfd 0x19 ;) (func (export "i16x8.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.add drop)
+  (; 0xfd 0x1a ;) (func (export "i32x4.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.add drop)
+  (; 0xfd 0x1b ;) (func (export "i64x2.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i64x2.add drop)
+  (; 0xfd 0x1c ;) (func (export "i8x16.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.sub drop)
+  (; 0xfd 0x1d ;) (func (export "i16x8.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.sub drop)
+  (; 0xfd 0x1e ;) (func (export "i32x4.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.sub drop)
+  (; 0xfd 0x1f ;) (func (export "i64x2.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i64x2.sub drop)
+  (; 0xfd 0x20 ;) (func (export "i8x16.mul") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.mul drop)
+  (; 0xfd 0x21 ;) (func (export "i16x8.mul") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.mul drop)
+  (; 0xfd 0x22 ;) (func (export "i32x4.mul") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.mul drop)
+  (; 0xfd 0x23 ;) (func (export "i8x16.neg") v128.const i32 1 1 1 1 i8x16.neg drop)
+  (; 0xfd 0x24 ;) (func (export "i16x8.neg") v128.const i32 1 1 1 1 i16x8.neg drop)
+  (; 0xfd 0x25 ;) (func (export "i32x4.neg") v128.const i32 1 1 1 1 i32x4.neg drop)
+  (; 0xfd 0x26 ;) (func (export "i64x2.neg") v128.const i32 1 1 1 1 i64x2.neg drop)
+  (; 0xfd 0x27 ;) (func (export "i8x16.add_saturate_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.add_saturate_s drop)
+  (; 0xfd 0x28 ;) (func (export "i8x16.add_saturate_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.add_saturate_u drop)
+  (; 0xfd 0x29 ;) (func (export "i16x8.add_saturate_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.add_saturate_s drop)
+  (; 0xfd 0x2a ;) (func (export "i16x8.add_saturate_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.add_saturate_u drop)
+  (; 0xfd 0x2b ;) (func (export "i8x16.sub_saturate_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.sub_saturate_s drop)
+  (; 0xfd 0x2c ;) (func (export "i8x16.sub_saturate_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.sub_saturate_u drop)
+  (; 0xfd 0x2d ;) (func (export "i16x8.sub_saturate_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.sub_saturate_s drop)
+  (; 0xfd 0x2e ;) (func (export "i16x8.sub_saturate_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.sub_saturate_u drop)
+  (; 0xfd 0x2f ;) (func (export "i8x16.shl") v128.const i32 1 1 1 1 i32.const 0 i8x16.shl drop)
+  (; 0xfd 0x30 ;) (func (export "i16x8.shl") v128.const i32 1 1 1 1 i32.const 0 i16x8.shl drop)
+  (; 0xfd 0x31 ;) (func (export "i32x4.shl") v128.const i32 1 1 1 1 i32.const 0 i32x4.shl drop)
+  (; 0xfd 0x32 ;) (func (export "i64x2.shl") v128.const i32 1 1 1 1 i32.const 0 i64x2.shl drop)
+  (; 0xfd 0x33 ;) (func (export "i8x16.shr_s") v128.const i32 1 1 1 1 i32.const 0 i8x16.shr_s drop)
+  (; 0xfd 0x34 ;) (func (export "i8x16.shr_u") v128.const i32 1 1 1 1 i32.const 0 i8x16.shr_u drop)
+  (; 0xfd 0x35 ;) (func (export "i16x8.shr_s") v128.const i32 1 1 1 1 i32.const 0 i16x8.shr_s drop)
+  (; 0xfd 0x36 ;) (func (export "i16x8.shr_u") v128.const i32 1 1 1 1 i32.const 0 i16x8.shr_u drop)
+  (; 0xfd 0x37 ;) (func (export "i32x4.shr_s") v128.const i32 1 1 1 1 i32.const 0 i32x4.shr_s drop)
+  (; 0xfd 0x38 ;) (func (export "i32x4.shr_u") v128.const i32 1 1 1 1 i32.const 0 i32x4.shr_u drop)
+  (; 0xfd 0x39 ;) (func (export "i64x2.shr_s") v128.const i32 1 1 1 1 i32.const 0 i64x2.shr_s drop)
+  (; 0xfd 0x3a ;) (func (export "i64x2.shr_u") v128.const i32 1 1 1 1 i32.const 0 i64x2.shr_u drop)
+  (; 0xfd 0x3b ;) (func (export "v128.and") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 v128.and drop)
+  (; 0xfd 0x3c ;) (func (export "v128.or") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 v128.or drop)
+  (; 0xfd 0x3d ;) (func (export "v128.xor") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 v128.xor drop)
+  (; 0xfd 0x3e ;) (func (export "v128.not") v128.const i32 1 1 1 1 v128.not drop)
+  (; 0xfd 0x3f ;) (func (export "v128.bitselect") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 v128.const i32 3 3 3 3 v128.bitselect drop)
+  (; 0xfd 0x40 ;) (func (export "i8x16.any_true") v128.const i32 1 1 1 1 i8x16.any_true drop)
+  (; 0xfd 0x41 ;) (func (export "i16x8.any_true") v128.const i32 1 1 1 1 i16x8.any_true drop)
+  (; 0xfd 0x42 ;) (func (export "i32x4.any_true") v128.const i32 1 1 1 1 i32x4.any_true drop)
+  (; 0xfd 0x43 ;) (func (export "i64x2.any_true") v128.const i32 1 1 1 1 i64x2.any_true drop)
+  (; 0xfd 0x44 ;) (func (export "i8x16.all_true") v128.const i32 1 1 1 1 i8x16.all_true drop)
+  (; 0xfd 0x45 ;) (func (export "i16x8.all_true") v128.const i32 1 1 1 1 i16x8.all_true drop)
+  (; 0xfd 0x46 ;) (func (export "i32x4.all_true") v128.const i32 1 1 1 1 i32x4.all_true drop)
+  (; 0xfd 0x47 ;) (func (export "i64x2.all_true") v128.const i32 1 1 1 1 i64x2.all_true drop)
+  (; 0xfd 0x48 ;) (func (export "i8x16.eq") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.eq drop)
+  (; 0xfd 0x49 ;) (func (export "i16x8.eq") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.eq drop)
+  (; 0xfd 0x4a ;) (func (export "i32x4.eq") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.eq drop)
+  (; 0xfd 0x4b ;) (func (export "f32x4.eq") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.eq drop)
+  (; 0xfd 0x4c ;) (func (export "f64x2.eq") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.eq drop)
+  (; 0xfd 0x4d ;) (func (export "i8x16.ne") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.ne drop)
+  (; 0xfd 0x4e ;) (func (export "i16x8.ne") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.ne drop)
+  (; 0xfd 0x4f ;) (func (export "i32x4.ne") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.ne drop)
+  (; 0xfd 0x50 ;) (func (export "f32x4.ne") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.ne drop)
+  (; 0xfd 0x51 ;) (func (export "f64x2.ne") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.ne drop)
+  (; 0xfd 0x52 ;) (func (export "i8x16.lt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.lt_s drop)
+  (; 0xfd 0x53 ;) (func (export "i8x16.lt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.lt_u drop)
+  (; 0xfd 0x54 ;) (func (export "i16x8.lt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.lt_s drop)
+  (; 0xfd 0x55 ;) (func (export "i16x8.lt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.lt_u drop)
+  (; 0xfd 0x56 ;) (func (export "i32x4.lt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.lt_s drop)
+  (; 0xfd 0x57 ;) (func (export "i32x4.lt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.lt_u drop)
+  (; 0xfd 0x58 ;) (func (export "f32x4.lt") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.lt drop)
+  (; 0xfd 0x59 ;) (func (export "f64x2.lt") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.lt drop)
+  (; 0xfd 0x5a ;) (func (export "i8x16.le_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.le_s drop)
+  (; 0xfd 0x5b ;) (func (export "i8x16.le_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.le_u drop)
+  (; 0xfd 0x5c ;) (func (export "i16x8.le_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.le_s drop)
+  (; 0xfd 0x5d ;) (func (export "i16x8.le_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.le_u drop)
+  (; 0xfd 0x5e ;) (func (export "i32x4.le_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.le_s drop)
+  (; 0xfd 0x5f ;) (func (export "i32x4.le_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.le_u drop)
+  (; 0xfd 0x60 ;) (func (export "f32x4.le") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.le drop)
+  (; 0xfd 0x61 ;) (func (export "f64x2.le") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.le drop)
+  (; 0xfd 0x62 ;) (func (export "i8x16.gt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.gt_s drop)
+  (; 0xfd 0x63 ;) (func (export "i8x16.gt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.gt_u drop)
+  (; 0xfd 0x64 ;) (func (export "i16x8.gt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.gt_s drop)
+  (; 0xfd 0x65 ;) (func (export "i16x8.gt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.gt_u drop)
+  (; 0xfd 0x66 ;) (func (export "i32x4.gt_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.gt_s drop)
+  (; 0xfd 0x67 ;) (func (export "i32x4.gt_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.gt_u drop)
+  (; 0xfd 0x68 ;) (func (export "f32x4.gt") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.gt drop)
+  (; 0xfd 0x69 ;) (func (export "f64x2.gt") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.gt drop)
+  (; 0xfd 0x6a ;) (func (export "i8x16.ge_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.ge_s drop)
+  (; 0xfd 0x6b ;) (func (export "i8x16.ge_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i8x16.ge_u drop)
+  (; 0xfd 0x6c ;) (func (export "i16x8.ge_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.ge_s drop)
+  (; 0xfd 0x6d ;) (func (export "i16x8.ge_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i16x8.ge_u drop)
+  (; 0xfd 0x6e ;) (func (export "i32x4.ge_s") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.ge_s drop)
+  (; 0xfd 0x6f ;) (func (export "i32x4.ge_u") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 i32x4.ge_u drop)
+  (; 0xfd 0x70 ;) (func (export "f32x4.ge") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.ge drop)
+  (; 0xfd 0x71 ;) (func (export "f64x2.ge") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.ge drop)
+  (; 0xfd 0x72 ;) (func (export "f32x4.neg") v128.const i32 1 1 1 1 f32x4.neg drop)
+  (; 0xfd 0x73 ;) (func (export "f64x2.neg") v128.const i32 1 1 1 1 f64x2.neg drop)
+  (; 0xfd 0x74 ;) (func (export "f32x4.abs") v128.const i32 1 1 1 1 f32x4.abs drop)
+  (; 0xfd 0x75 ;) (func (export "f64x2.abs") v128.const i32 1 1 1 1 f64x2.abs drop)
+  (; 0xfd 0x76 ;) (func (export "f32x4.min") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.min drop)
+  (; 0xfd 0x77 ;) (func (export "f64x2.min") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.min drop)
+  (; 0xfd 0x78 ;) (func (export "f32x4.max") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.max drop)
+  (; 0xfd 0x79 ;) (func (export "f64x2.max") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.max drop)
+  (; 0xfd 0x7a ;) (func (export "f32x4.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.add drop)
+  (; 0xfd 0x7b ;) (func (export "f64x2.add") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.add drop)
+  (; 0xfd 0x7c ;) (func (export "f32x4.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.sub drop)
+  (; 0xfd 0x7d ;) (func (export "f64x2.sub") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.sub drop)
+  (; 0xfd 0x7e ;) (func (export "f32x4.div") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.div drop)
+  (; 0xfd 0x7f ;) (func (export "f64x2.div") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.div drop)
+  (; 0xfd 0x80 ;) (func (export "f32x4.mul") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f32x4.mul drop)
+  (; 0xfd 0x81 ;) (func (export "f64x2.mul") v128.const i32 1 1 1 1 v128.const i32 2 2 2 2 f64x2.mul drop)
+  (; 0xfd 0x82 ;) (func (export "f32x4.sqrt") v128.const i32 1 1 1 1 f32x4.sqrt drop)
+  (; 0xfd 0x83 ;) (func (export "f64x2.sqrt") v128.const i32 1 1 1 1 f64x2.sqrt drop)
+  (; 0xfd 0x84 ;) (func (export "f32x4.convert_s/i32x4") v128.const i32 1 1 1 1 f32x4.convert_s/i32x4 drop)
+  (; 0xfd 0x85 ;) (func (export "f32x4.convert_u/i32x4") v128.const i32 1 1 1 1 f32x4.convert_u/i32x4 drop)
+  (; 0xfd 0x86 ;) (func (export "f64x2.convert_s/i64x2") v128.const i32 1 1 1 1 f64x2.convert_s/i64x2 drop)
+  (; 0xfd 0x87 ;) (func (export "f64x2.convert_u/i64x2") v128.const i32 1 1 1 1 f64x2.convert_u/i64x2 drop)
+  (; 0xfd 0x88 ;) (func (export "i32x4.trunc_s/f32x4:sat") v128.const i32 1 1 1 1 i32x4.trunc_s/f32x4:sat drop)
+  (; 0xfd 0x89 ;) (func (export "i32x4.trunc_u/f32x4:sat") v128.const i32 1 1 1 1 i32x4.trunc_u/f32x4:sat drop)
+  (; 0xfd 0x8a ;) (func (export "i64x2.trunc_s/f64x2:sat") v128.const i32 1 1 1 1 i64x2.trunc_s/f64x2:sat drop)
+  (; 0xfd 0x8b ;) (func (export "i64x2.trunc_u/f64x2:sat") v128.const i32 1 1 1 1 i64x2.trunc_u/f64x2:sat drop)
+
+  ;; --enable-threads
+  (; 0xfe 0x00 ;) (func (export "atomic.wake") i32.const 1 i32.const 2 atomic.wake offset=3 drop)
+  (; 0xfe 0x01 ;) (func (export "i32.atomic.wait") i32.const 1 i32.const 2 i64.const 3 i32.atomic.wait offset=3 drop)
+  (; 0xfe 0x02 ;) (func (export "i64.atomic.wait") i32.const 1 i64.const 2 i64.const 3 i64.atomic.wait offset=3 drop)
+  (; 0xfe 0x10 ;) (func (export "i32.atomic.load") i32.const 1 i32.atomic.load offset=3 drop)
+  (; 0xfe 0x11 ;) (func (export "i64.atomic.load") i32.const 1 i64.atomic.load offset=7 drop)
+  (; 0xfe 0x12 ;) (func (export "i32.atomic.load8_u") i32.const 1 i32.atomic.load8_u offset=3 drop)
+  (; 0xfe 0x13 ;) (func (export "i32.atomic.load16_u") i32.const 1 i32.atomic.load16_u offset=3 drop)
+  (; 0xfe 0x14 ;) (func (export "i64.atomic.load8_u") i32.const 1 i64.atomic.load8_u offset=3 drop)
+  (; 0xfe 0x15 ;) (func (export "i64.atomic.load16_u") i32.const 1 i64.atomic.load16_u offset=3 drop)
+  (; 0xfe 0x16 ;) (func (export "i64.atomic.load32_u") i32.const 1 i64.atomic.load32_u offset=3 drop)
+  (; 0xfe 0x17 ;) (func (export "i32.atomic.store") i32.const 1 i32.const 2 i32.atomic.store offset=3)
+  (; 0xfe 0x18 ;) (func (export "i64.atomic.store") i32.const 1 i64.const 2 i64.atomic.store offset=7)
+  (; 0xfe 0x19 ;) (func (export "i32.atomic.store8") i32.const 1 i32.const 2 i32.atomic.store8 offset=3)
+  (; 0xfe 0x1a ;) (func (export "i32.atomic.store16") i32.const 1 i32.const 2 i32.atomic.store16 offset=3)
+  (; 0xfe 0x1b ;) (func (export "i64.atomic.store8") i32.const 1 i64.const 2 i64.atomic.store8 offset=3)
+  (; 0xfe 0x1c ;) (func (export "i64.atomic.store16") i32.const 1 i64.const 2 i64.atomic.store16 offset=3)
+  (; 0xfe 0x1d ;) (func (export "i64.atomic.store32") i32.const 1 i64.const 2 i64.atomic.store32 offset=3)
+  (; 0xfe 0x1e ;) (func (export "i32.atomic.rmw.add") i32.const 1 i32.const 2 i32.atomic.rmw.add offset=3 drop)
+  (; 0xfe 0x1f ;) (func (export "i64.atomic.rmw.add") i32.const 1 i64.const 2 i64.atomic.rmw.add offset=7 drop)
+  (; 0xfe 0x20 ;) (func (export "i32.atomic.rmw8_u.add") i32.const 1 i32.const 2 i32.atomic.rmw8_u.add offset=3 drop)
+  (; 0xfe 0x21 ;) (func (export "i32.atomic.rmw16_u.add") i32.const 1 i32.const 2 i32.atomic.rmw16_u.add offset=3 drop)
+  (; 0xfe 0x22 ;) (func (export "i64.atomic.rmw8_u.add") i32.const 1 i64.const 2 i64.atomic.rmw8_u.add offset=3 drop)
+  (; 0xfe 0x23 ;) (func (export "i64.atomic.rmw16_u.add") i32.const 1 i64.const 2 i64.atomic.rmw16_u.add offset=3 drop)
+  (; 0xfe 0x24 ;) (func (export "i64.atomic.rmw32_u.add") i32.const 1 i64.const 2 i64.atomic.rmw32_u.add offset=3 drop)
+  (; 0xfe 0x25 ;) (func (export "i32.atomic.rmw.sub") i32.const 1 i32.const 2 i32.atomic.rmw.sub offset=3 drop)
+  (; 0xfe 0x26 ;) (func (export "i64.atomic.rmw.sub") i32.const 1 i64.const 2 i64.atomic.rmw.sub offset=7 drop)
+  (; 0xfe 0x27 ;) (func (export "i32.atomic.rmw8_u.sub") i32.const 1 i32.const 2 i32.atomic.rmw8_u.sub offset=3 drop)
+  (; 0xfe 0x28 ;) (func (export "i32.atomic.rmw16_u.sub") i32.const 1 i32.const 2 i32.atomic.rmw16_u.sub offset=3 drop)
+  (; 0xfe 0x29 ;) (func (export "i64.atomic.rmw8_u.sub") i32.const 1 i64.const 2 i64.atomic.rmw8_u.sub offset=3 drop)
+  (; 0xfe 0x2a ;) (func (export "i64.atomic.rmw16_u.sub") i32.const 1 i64.const 2 i64.atomic.rmw16_u.sub offset=3 drop)
+  (; 0xfe 0x2b ;) (func (export "i64.atomic.rmw32_u.sub") i32.const 1 i64.const 2 i64.atomic.rmw32_u.sub offset=3 drop)
+  (; 0xfe 0x2c ;) (func (export "i32.atomic.rmw.and") i32.const 1 i32.const 2 i32.atomic.rmw.and offset=3 drop)
+  (; 0xfe 0x2d ;) (func (export "i64.atomic.rmw.and") i32.const 1 i64.const 2 i64.atomic.rmw.and offset=7 drop)
+  (; 0xfe 0x2e ;) (func (export "i32.atomic.rmw8_u.and") i32.const 1 i32.const 2 i32.atomic.rmw8_u.and offset=3 drop)
+  (; 0xfe 0x2f ;) (func (export "i32.atomic.rmw16_u.and") i32.const 1 i32.const 2 i32.atomic.rmw16_u.and offset=3 drop)
+  (; 0xfe 0x30 ;) (func (export "i64.atomic.rmw8_u.and") i32.const 1 i64.const 2 i64.atomic.rmw8_u.and offset=3 drop)
+  (; 0xfe 0x31 ;) (func (export "i64.atomic.rmw16_u.and") i32.const 1 i64.const 2 i64.atomic.rmw16_u.and offset=3 drop)
+  (; 0xfe 0x32 ;) (func (export "i64.atomic.rmw32_u.and") i32.const 1 i64.const 2 i64.atomic.rmw32_u.and offset=3 drop)
+  (; 0xfe 0x33 ;) (func (export "i32.atomic.rmw.or") i32.const 1 i32.const 2 i32.atomic.rmw.or offset=3 drop)
+  (; 0xfe 0x34 ;) (func (export "i64.atomic.rmw.or") i32.const 1 i64.const 2 i64.atomic.rmw.or offset=7 drop)
+  (; 0xfe 0x35 ;) (func (export "i32.atomic.rmw8_u.or") i32.const 1 i32.const 2 i32.atomic.rmw8_u.or offset=3 drop)
+  (; 0xfe 0x36 ;) (func (export "i32.atomic.rmw16_u.or") i32.const 1 i32.const 2 i32.atomic.rmw16_u.or offset=3 drop)
+  (; 0xfe 0x37 ;) (func (export "i64.atomic.rmw8_u.or") i32.const 1 i64.const 2 i64.atomic.rmw8_u.or offset=3 drop)
+  (; 0xfe 0x38 ;) (func (export "i64.atomic.rmw16_u.or") i32.const 1 i64.const 2 i64.atomic.rmw16_u.or offset=3 drop)
+  (; 0xfe 0x39 ;) (func (export "i64.atomic.rmw32_u.or") i32.const 1 i64.const 2 i64.atomic.rmw32_u.or offset=3 drop)
+  (; 0xfe 0x3a ;) (func (export "i32.atomic.rmw.xor") i32.const 1 i32.const 2 i32.atomic.rmw.xor offset=3 drop)
+  (; 0xfe 0x3b ;) (func (export "i64.atomic.rmw.xor") i32.const 1 i64.const 2 i64.atomic.rmw.xor offset=7 drop)
+  (; 0xfe 0x3c ;) (func (export "i32.atomic.rmw8_u.xor") i32.const 1 i32.const 2 i32.atomic.rmw8_u.xor offset=3 drop)
+  (; 0xfe 0x3d ;) (func (export "i32.atomic.rmw16_u.xor") i32.const 1 i32.const 2 i32.atomic.rmw16_u.xor offset=3 drop)
+  (; 0xfe 0x3e ;) (func (export "i64.atomic.rmw8_u.xor") i32.const 1 i64.const 2 i64.atomic.rmw8_u.xor offset=3 drop)
+  (; 0xfe 0x3f ;) (func (export "i64.atomic.rmw16_u.xor") i32.const 1 i64.const 2 i64.atomic.rmw16_u.xor offset=3 drop)
+  (; 0xfe 0x40 ;) (func (export "i64.atomic.rmw32_u.xor") i32.const 1 i64.const 2 i64.atomic.rmw32_u.xor offset=3 drop)
+  (; 0xfe 0x41 ;) (func (export "i32.atomic.rmw.xchg") i32.const 1 i32.const 2 i32.atomic.rmw.xchg offset=3 drop)
+  (; 0xfe 0x42 ;) (func (export "i64.atomic.rmw.xchg") i32.const 1 i64.const 2 i64.atomic.rmw.xchg offset=7 drop)
+  (; 0xfe 0x43 ;) (func (export "i32.atomic.rmw8_u.xchg") i32.const 1 i32.const 2 i32.atomic.rmw8_u.xchg offset=3 drop)
+  (; 0xfe 0x44 ;) (func (export "i32.atomic.rmw16_u.xchg") i32.const 1 i32.const 2 i32.atomic.rmw16_u.xchg offset=3 drop)
+  (; 0xfe 0x45 ;) (func (export "i64.atomic.rmw8_u.xchg") i32.const 1 i64.const 2 i64.atomic.rmw8_u.xchg offset=3 drop)
+  (; 0xfe 0x46 ;) (func (export "i64.atomic.rmw16_u.xchg") i32.const 1 i64.const 2 i64.atomic.rmw16_u.xchg offset=3 drop)
+  (; 0xfe 0x47 ;) (func (export "i64.atomic.rmw32_u.xchg") i32.const 1 i64.const 2 i64.atomic.rmw32_u.xchg offset=3 drop)
+
+  (; 0xfe 0x48 ;) (func (export "i32.atomic.rmw.cmpxchg") i32.const 1 i32.const 2 i32.const 3 i32.atomic.rmw.cmpxchg offset=3 drop)
+  (; 0xfe 0x49 ;) (func (export "i64.atomic.rmw.cmpxchg") i32.const 1 i64.const 2 i64.const 3 i64.atomic.rmw.cmpxchg offset=7 drop)
+  (; 0xfe 0x4a ;) (func (export "i32.atomic.rmw8_u.cmpxchg") i32.const 1 i32.const 2 i32.const 3 i32.atomic.rmw8_u.cmpxchg offset=3 drop)
+  (; 0xfe 0x4b ;) (func (export "i32.atomic.rmw16_u.cmpxchg") i32.const 1 i32.const 2 i32.const 3 i32.atomic.rmw16_u.cmpxchg offset=3 drop)
+  (; 0xfe 0x4c ;) (func (export "i64.atomic.rmw8_u.cmpxchg") i32.const 1 i64.const 2 i64.const 3 i64.atomic.rmw8_u.cmpxchg offset=3 drop)
+  (; 0xfe 0x4d ;) (func (export "i64.atomic.rmw16_u.cmpxchg") i32.const 1 i64.const 2 i64.const 3 i64.atomic.rmw16_u.cmpxchg offset=3 drop)
+  (; 0xfe 0x4e ;) (func (export "i64.atomic.rmw32_u.cmpxchg") i32.const 1 i64.const 2 i64.const 3 i64.atomic.rmw32_u.cmpxchg offset=3 drop)
+)
+(;; STDOUT ;;;
+>>> running export "unreachable":
+#0.    1: V:0  | unreachable
+unreachable() => error: unreachable executed
+>>> running export "br":
+#0.    3: V:0  | br @8
+#0.    8: V:0  | return
+br() =>
+>>> running export "br_table":
+#0.    9: V:0  | i32.const $1
+#0.   14: V:1  | br_table 1, $#0, table:$28
+#0.   40: V:0  | return
+br_table() =>
+>>> running export "return":
+#0.   41: V:0  | return
+return() =>
+>>> running export "call":
+#0.   43: V:0  | call @0
+#1.    0: V:0  | return
+#0.   48: V:0  | return
+call() =>
+>>> running export "call_indirect":
+#0.   49: V:0  | i32.const $1
+#0.   54: V:1  | call_indirect $0, 1
+#1.    0: V:0  | return
+#0.   63: V:0  | return
+call_indirect() =>
+>>> running export "drop":
+#0.   64: V:0  | i32.const $1
+#0.   69: V:1  | drop
+#0.   70: V:0  | return
+drop() =>
+>>> running export "select":
+#0.   71: V:0  | i32.const $1
+#0.   76: V:1  | i32.const $2
+#0.   81: V:2  | i32.const $3
+#0.   86: V:3  | select 1, %[-2], %[-1]
+#0.   87: V:1  | drop
+#0.   88: V:0  | return
+select() =>
+>>> running export "get_local":
+#0.   89: V:0  | alloca $1
+#0.   94: V:1  | get_local $1
+#0.   99: V:2  | drop
+#0.  100: V:1  | drop
+#0.  101: V:0  | return
+get_local() =>
+>>> running export "set_local":
+#0.  102: V:0  | alloca $1
+#0.  107: V:1  | i32.const $1
+#0.  112: V:2  | set_local $1, 1
+#0.  117: V:1  | drop
+#0.  118: V:0  | return
+set_local() =>
+>>> running export "tee_local":
+#0.  119: V:0  | alloca $1
+#0.  124: V:1  | i32.const $1
+#0.  129: V:2  | tee_local $2, 1
+#0.  134: V:2  | drop
+#0.  135: V:1  | drop
+#0.  136: V:0  | return
+tee_local() =>
+>>> running export "get_global":
+#0.  137: V:0  | get_global $0
+#0.  142: V:1  | drop
+#0.  143: V:0  | return
+get_global() =>
+>>> running export "set_global":
+#0.  144: V:0  | i32.const $1
+#0.  149: V:1  | set_global $0, 1
+#0.  154: V:0  | return
+set_global() =>
+>>> running export "i32.load":
+#0.  155: V:0  | i32.const $1
+#0.  160: V:1  | i32.load $0:1+$2
+#0.  169: V:1  | drop
+#0.  170: V:0  | return
+i32.load() =>
+>>> running export "i64.load":
+#0.  171: V:0  | i32.const $1
+#0.  176: V:1  | i64.load $0:1+$2
+#0.  185: V:1  | drop
+#0.  186: V:0  | return
+i64.load() =>
+>>> running export "f32.load":
+#0.  187: V:0  | i32.const $1
+#0.  192: V:1  | f32.load $0:1+$2
+#0.  201: V:1  | drop
+#0.  202: V:0  | return
+f32.load() =>
+>>> running export "f64.load":
+#0.  203: V:0  | i32.const $1
+#0.  208: V:1  | f64.load $0:1+$2
+#0.  217: V:1  | drop
+#0.  218: V:0  | return
+f64.load() =>
+>>> running export "i32.load8_s":
+#0.  219: V:0  | i32.const $1
+#0.  224: V:1  | i32.load8_s $0:1+$2
+#0.  233: V:1  | drop
+#0.  234: V:0  | return
+i32.load8_s() =>
+>>> running export "i32.load8_u":
+#0.  235: V:0  | i32.const $1
+#0.  240: V:1  | i32.load8_u $0:1+$2
+#0.  249: V:1  | drop
+#0.  250: V:0  | return
+i32.load8_u() =>
+>>> running export "i32.load16_s":
+#0.  251: V:0  | i32.const $1
+#0.  256: V:1  | i32.load16_s $0:1+$2
+#0.  265: V:1  | drop
+#0.  266: V:0  | return
+i32.load16_s() =>
+>>> running export "i32.load16_u":
+#0.  267: V:0  | i32.const $1
+#0.  272: V:1  | i32.load16_u $0:1+$2
+#0.  281: V:1  | drop
+#0.  282: V:0  | return
+i32.load16_u() =>
+>>> running export "i64.load8_s":
+#0.  283: V:0  | i32.const $1
+#0.  288: V:1  | i64.load8_s $0:1+$2
+#0.  297: V:1  | drop
+#0.  298: V:0  | return
+i64.load8_s() =>
+>>> running export "i64.load8_u":
+#0.  299: V:0  | i32.const $1
+#0.  304: V:1  | i64.load8_u $0:1+$2
+#0.  313: V:1  | drop
+#0.  314: V:0  | return
+i64.load8_u() =>
+>>> running export "i64.load16_s":
+#0.  315: V:0  | i32.const $1
+#0.  320: V:1  | i64.load16_s $0:1+$2
+#0.  329: V:1  | drop
+#0.  330: V:0  | return
+i64.load16_s() =>
+>>> running export "i64.load16_u":
+#0.  331: V:0  | i32.const $1
+#0.  336: V:1  | i64.load16_u $0:1+$2
+#0.  345: V:1  | drop
+#0.  346: V:0  | return
+i64.load16_u() =>
+>>> running export "i64.load32_s":
+#0.  347: V:0  | i32.const $1
+#0.  352: V:1  | i64.load32_s $0:1+$2
+#0.  361: V:1  | drop
+#0.  362: V:0  | return
+i64.load32_s() =>
+>>> running export "i64.load32_u":
+#0.  363: V:0  | i32.const $1
+#0.  368: V:1  | i64.load32_u $0:1+$2
+#0.  377: V:1  | drop
+#0.  378: V:0  | return
+i64.load32_u() =>
+>>> running export "i32.store":
+#0.  379: V:0  | i32.const $1
+#0.  384: V:1  | i32.const $2
+#0.  389: V:2  | i32.store $0:1+$2, 2
+#0.  398: V:0  | return
+i32.store() =>
+>>> running export "i64.store":
+#0.  399: V:0  | i32.const $1
+#0.  404: V:1  | i64.const $2
+#0.  413: V:2  | i64.store $0:1+$2, 2
+#0.  422: V:0  | return
+i64.store() =>
+>>> running export "f32.store":
+#0.  423: V:0  | i32.const $1
+#0.  428: V:1  | f32.const $2
+#0.  433: V:2  | f32.store $0:1+$2, 2
+#0.  442: V:0  | return
+f32.store() =>
+>>> running export "f64.store":
+#0.  443: V:0  | i32.const $1
+#0.  448: V:1  | f64.const $2
+#0.  457: V:2  | f64.store $0:1+$2, 2
+#0.  466: V:0  | return
+f64.store() =>
+>>> running export "i32.store8":
+#0.  467: V:0  | i32.const $1
+#0.  472: V:1  | i32.const $2
+#0.  477: V:2  | i32.store8 $0:1+$2, 2
+#0.  486: V:0  | return
+i32.store8() =>
+>>> running export "i32.store16":
+#0.  487: V:0  | i32.const $1
+#0.  492: V:1  | i32.const $2
+#0.  497: V:2  | i32.store16 $0:1+$2, 2
+#0.  506: V:0  | return
+i32.store16() =>
+>>> running export "i64.store8":
+#0.  507: V:0  | i32.const $1
+#0.  512: V:1  | i64.const $2
+#0.  521: V:2  | i64.store8 $0:1+$2, 2
+#0.  530: V:0  | return
+i64.store8() =>
+>>> running export "i64.store16":
+#0.  531: V:0  | i32.const $1
+#0.  536: V:1  | i64.const $2
+#0.  545: V:2  | i64.store16 $0:1+$2, 2
+#0.  554: V:0  | return
+i64.store16() =>
+>>> running export "i64.store32":
+#0.  555: V:0  | i32.const $1
+#0.  560: V:1  | i64.const $2
+#0.  569: V:2  | i64.store32 $0:1+$2, 2
+#0.  578: V:0  | return
+i64.store32() =>
+>>> running export "current_memory":
+#0.  579: V:0  | memory.size $0
+#0.  584: V:1  | drop
+#0.  585: V:0  | return
+current_memory() =>
+>>> running export "grow_memory":
+#0.  586: V:0  | i32.const $1
+#0.  591: V:1  | memory.grow $0:1
+#0.  596: V:1  | drop
+#0.  597: V:0  | return
+grow_memory() =>
+>>> running export "i32.const":
+#0.  598: V:0  | i32.const $1
+#0.  603: V:1  | drop
+#0.  604: V:0  | return
+i32.const() =>
+>>> running export "i64.const":
+#0.  605: V:0  | i64.const $1
+#0.  614: V:1  | drop
+#0.  615: V:0  | return
+i64.const() =>
+>>> running export "f32.const":
+#0.  616: V:0  | f32.const $1
+#0.  621: V:1  | drop
+#0.  622: V:0  | return
+f32.const() =>
+>>> running export "f64.const":
+#0.  623: V:0  | f64.const $1
+#0.  632: V:1  | drop
+#0.  633: V:0  | return
+f64.const() =>
+>>> running export "i32.eqz":
+#0.  634: V:0  | i32.const $1
+#0.  639: V:1  | i32.eqz 1
+#0.  640: V:1  | drop
+#0.  641: V:0  | return
+i32.eqz() =>
+>>> running export "i32.eq":
+#0.  642: V:0  | i32.const $1
+#0.  647: V:1  | i32.const $2
+#0.  652: V:2  | i32.eq 1, 2
+#0.  653: V:1  | drop
+#0.  654: V:0  | return
+i32.eq() =>
+>>> running export "i32.ne":
+#0.  655: V:0  | i32.const $1
+#0.  660: V:1  | i32.const $2
+#0.  665: V:2  | i32.ne 1, 2
+#0.  666: V:1  | drop
+#0.  667: V:0  | return
+i32.ne() =>
+>>> running export "i32.lt_s":
+#0.  668: V:0  | i32.const $1
+#0.  673: V:1  | i32.const $2
+#0.  678: V:2  | i32.lt_s 1, 2
+#0.  679: V:1  | drop
+#0.  680: V:0  | return
+i32.lt_s() =>
+>>> running export "i32.lt_u":
+#0.  681: V:0  | i32.const $1
+#0.  686: V:1  | i32.const $2
+#0.  691: V:2  | i32.lt_u 1, 2
+#0.  692: V:1  | drop
+#0.  693: V:0  | return
+i32.lt_u() =>
+>>> running export "i32.gt_s":
+#0.  694: V:0  | i32.const $1
+#0.  699: V:1  | i32.const $2
+#0.  704: V:2  | i32.gt_s 1, 2
+#0.  705: V:1  | drop
+#0.  706: V:0  | return
+i32.gt_s() =>
+>>> running export "i32.gt_u":
+#0.  707: V:0  | i32.const $1
+#0.  712: V:1  | i32.const $2
+#0.  717: V:2  | i32.gt_u 1, 2
+#0.  718: V:1  | drop
+#0.  719: V:0  | return
+i32.gt_u() =>
+>>> running export "i32.le_s":
+#0.  720: V:0  | i32.const $1
+#0.  725: V:1  | i32.const $2
+#0.  730: V:2  | i32.le_s 1, 2
+#0.  731: V:1  | drop
+#0.  732: V:0  | return
+i32.le_s() =>
+>>> running export "i32.le_u":
+#0.  733: V:0  | i32.const $1
+#0.  738: V:1  | i32.const $2
+#0.  743: V:2  | i32.le_u 1, 2
+#0.  744: V:1  | drop
+#0.  745: V:0  | return
+i32.le_u() =>
+>>> running export "i32.ge_s":
+#0.  746: V:0  | i32.const $1
+#0.  751: V:1  | i32.const $2
+#0.  756: V:2  | i32.ge_s 1, 2
+#0.  757: V:1  | drop
+#0.  758: V:0  | return
+i32.ge_s() =>
+>>> running export "i32.ge_u":
+#0.  759: V:0  | i32.const $1
+#0.  764: V:1  | i32.const $2
+#0.  769: V:2  | i32.ge_u 1, 2
+#0.  770: V:1  | drop
+#0.  771: V:0  | return
+i32.ge_u() =>
+>>> running export "i64.eqz":
+#0.  772: V:0  | i64.const $1
+#0.  781: V:1  | i64.eqz 1
+#0.  782: V:1  | drop
+#0.  783: V:0  | return
+i64.eqz() =>
+>>> running export "i64.eq":
+#0.  784: V:0  | i64.const $1
+#0.  793: V:1  | i64.const $2
+#0.  802: V:2  | i64.eq 1, 2
+#0.  803: V:1  | drop
+#0.  804: V:0  | return
+i64.eq() =>
+>>> running export "i64.ne":
+#0.  805: V:0  | i64.const $1
+#0.  814: V:1  | i64.const $2
+#0.  823: V:2  | i64.ne 1, 2
+#0.  824: V:1  | drop
+#0.  825: V:0  | return
+i64.ne() =>
+>>> running export "i64.lt_s":
+#0.  826: V:0  | i64.const $1
+#0.  835: V:1  | i64.const $2
+#0.  844: V:2  | i64.lt_s 1, 2
+#0.  845: V:1  | drop
+#0.  846: V:0  | return
+i64.lt_s() =>
+>>> running export "i64.lt_u":
+#0.  847: V:0  | i64.const $1
+#0.  856: V:1  | i64.const $2
+#0.  865: V:2  | i64.lt_u 1, 2
+#0.  866: V:1  | drop
+#0.  867: V:0  | return
+i64.lt_u() =>
+>>> running export "i64.gt_s":
+#0.  868: V:0  | i64.const $1
+#0.  877: V:1  | i64.const $2
+#0.  886: V:2  | i64.gt_s 1, 2
+#0.  887: V:1  | drop
+#0.  888: V:0  | return
+i64.gt_s() =>
+>>> running export "i64.gt_u":
+#0.  889: V:0  | i64.const $1
+#0.  898: V:1  | i64.const $2
+#0.  907: V:2  | i64.gt_u 1, 2
+#0.  908: V:1  | drop
+#0.  909: V:0  | return
+i64.gt_u() =>
+>>> running export "i64.le_s":
+#0.  910: V:0  | i64.const $1
+#0.  919: V:1  | i64.const $2
+#0.  928: V:2  | i64.le_s 1, 2
+#0.  929: V:1  | drop
+#0.  930: V:0  | return
+i64.le_s() =>
+>>> running export "i64.le_u":
+#0.  931: V:0  | i64.const $1
+#0.  940: V:1  | i64.const $2
+#0.  949: V:2  | i64.le_u 1, 2
+#0.  950: V:1  | drop
+#0.  951: V:0  | return
+i64.le_u() =>
+>>> running export "i64.ge_s":
+#0.  952: V:0  | i64.const $1
+#0.  961: V:1  | i64.const $2
+#0.  970: V:2  | i64.ge_s 1, 2
+#0.  971: V:1  | drop
+#0.  972: V:0  | return
+i64.ge_s() =>
+>>> running export "i64.ge_u":
+#0.  973: V:0  | i64.const $1
+#0.  982: V:1  | i64.const $2
+#0.  991: V:2  | i64.ge_u 1, 2
+#0.  992: V:1  | drop
+#0.  993: V:0  | return
+i64.ge_u() =>
+>>> running export "f32.eq":
+#0.  994: V:0  | f32.const $1
+#0.  999: V:1  | f32.const $2
+#0. 1004: V:2  | f32.eq 1, 2
+#0. 1005: V:1  | drop
+#0. 1006: V:0  | return
+f32.eq() =>
+>>> running export "f32.ne":
+#0. 1007: V:0  | f32.const $1
+#0. 1012: V:1  | f32.const $2
+#0. 1017: V:2  | f32.ne 1, 2
+#0. 1018: V:1  | drop
+#0. 1019: V:0  | return
+f32.ne() =>
+>>> running export "f32.lt":
+#0. 1020: V:0  | f32.const $1
+#0. 1025: V:1  | f32.const $2
+#0. 1030: V:2  | f32.lt 1, 2
+#0. 1031: V:1  | drop
+#0. 1032: V:0  | return
+f32.lt() =>
+>>> running export "f32.gt":
+#0. 1033: V:0  | f32.const $1
+#0. 1038: V:1  | f32.const $2
+#0. 1043: V:2  | f32.gt 1, 2
+#0. 1044: V:1  | drop
+#0. 1045: V:0  | return
+f32.gt() =>
+>>> running export "f32.le":
+#0. 1046: V:0  | f32.const $1
+#0. 1051: V:1  | f32.const $2
+#0. 1056: V:2  | f32.le 1, 2
+#0. 1057: V:1  | drop
+#0. 1058: V:0  | return
+f32.le() =>
+>>> running export "f32.ge":
+#0. 1059: V:0  | f32.const $1
+#0. 1064: V:1  | f32.const $2
+#0. 1069: V:2  | f32.ge 1, 2
+#0. 1070: V:1  | drop
+#0. 1071: V:0  | return
+f32.ge() =>
+>>> running export "f64.eq":
+#0. 1072: V:0  | f64.const $1
+#0. 1081: V:1  | f64.const $2
+#0. 1090: V:2  | f64.eq 1, 2
+#0. 1091: V:1  | drop
+#0. 1092: V:0  | return
+f64.eq() =>
+>>> running export "f64.ne":
+#0. 1093: V:0  | f64.const $1
+#0. 1102: V:1  | f64.const $2
+#0. 1111: V:2  | f64.ne 1, 2
+#0. 1112: V:1  | drop
+#0. 1113: V:0  | return
+f64.ne() =>
+>>> running export "f64.lt":
+#0. 1114: V:0  | f64.const $1
+#0. 1123: V:1  | f64.const $2
+#0. 1132: V:2  | f64.lt 1, 2
+#0. 1133: V:1  | drop
+#0. 1134: V:0  | return
+f64.lt() =>
+>>> running export "f64.gt":
+#0. 1135: V:0  | f64.const $1
+#0. 1144: V:1  | f64.const $2
+#0. 1153: V:2  | f64.gt 1, 2
+#0. 1154: V:1  | drop
+#0. 1155: V:0  | return
+f64.gt() =>
+>>> running export "f64.le":
+#0. 1156: V:0  | f64.const $1
+#0. 1165: V:1  | f64.const $2
+#0. 1174: V:2  | f64.le 1, 2
+#0. 1175: V:1  | drop
+#0. 1176: V:0  | return
+f64.le() =>
+>>> running export "f64.ge":
+#0. 1177: V:0  | f64.const $1
+#0. 1186: V:1  | f64.const $2
+#0. 1195: V:2  | f64.ge 1, 2
+#0. 1196: V:1  | drop
+#0. 1197: V:0  | return
+f64.ge() =>
+>>> running export "i32.clz":
+#0. 1198: V:0  | i32.const $1
+#0. 1203: V:1  | i32.clz 1
+#0. 1204: V:1  | drop
+#0. 1205: V:0  | return
+i32.clz() =>
+>>> running export "i32.ctz":
+#0. 1206: V:0  | i32.const $1
+#0. 1211: V:1  | i32.ctz 1
+#0. 1212: V:1  | drop
+#0. 1213: V:0  | return
+i32.ctz() =>
+>>> running export "i32.popcnt":
+#0. 1214: V:0  | i32.const $1
+#0. 1219: V:1  | i32.popcnt 1
+#0. 1220: V:1  | drop
+#0. 1221: V:0  | return
+i32.popcnt() =>
+>>> running export "i32.add":
+#0. 1222: V:0  | i32.const $1
+#0. 1227: V:1  | i32.const $2
+#0. 1232: V:2  | i32.add 1, 2
+#0. 1233: V:1  | drop
+#0. 1234: V:0  | return
+i32.add() =>
+>>> running export "i32.sub":
+#0. 1235: V:0  | i32.const $1
+#0. 1240: V:1  | i32.const $2
+#0. 1245: V:2  | i32.sub 1, 2
+#0. 1246: V:1  | drop
+#0. 1247: V:0  | return
+i32.sub() =>
+>>> running export "i32.mul":
+#0. 1248: V:0  | i32.const $1
+#0. 1253: V:1  | i32.const $2
+#0. 1258: V:2  | i32.mul 1, 2
+#0. 1259: V:1  | drop
+#0. 1260: V:0  | return
+i32.mul() =>
+>>> running export "i32.div_s":
+#0. 1261: V:0  | i32.const $1
+#0. 1266: V:1  | i32.const $2
+#0. 1271: V:2  | i32.div_s 1, 2
+#0. 1272: V:1  | drop
+#0. 1273: V:0  | return
+i32.div_s() =>
+>>> running export "i32.div_u":
+#0. 1274: V:0  | i32.const $1
+#0. 1279: V:1  | i32.const $2
+#0. 1284: V:2  | i32.div_u 1, 2
+#0. 1285: V:1  | drop
+#0. 1286: V:0  | return
+i32.div_u() =>
+>>> running export "i32.rem_s":
+#0. 1287: V:0  | i32.const $1
+#0. 1292: V:1  | i32.const $2
+#0. 1297: V:2  | i32.rem_s 1, 2
+#0. 1298: V:1  | drop
+#0. 1299: V:0  | return
+i32.rem_s() =>
+>>> running export "i32.rem_u":
+#0. 1300: V:0  | i32.const $1
+#0. 1305: V:1  | i32.const $2
+#0. 1310: V:2  | i32.rem_u 1, 2
+#0. 1311: V:1  | drop
+#0. 1312: V:0  | return
+i32.rem_u() =>
+>>> running export "i32.and":
+#0. 1313: V:0  | i32.const $1
+#0. 1318: V:1  | i32.const $2
+#0. 1323: V:2  | i32.and 1, 2
+#0. 1324: V:1  | drop
+#0. 1325: V:0  | return
+i32.and() =>
+>>> running export "i32.or":
+#0. 1326: V:0  | i32.const $1
+#0. 1331: V:1  | i32.const $2
+#0. 1336: V:2  | i32.or 1, 2
+#0. 1337: V:1  | drop
+#0. 1338: V:0  | return
+i32.or() =>
+>>> running export "i32.xor":
+#0. 1339: V:0  | i32.const $1
+#0. 1344: V:1  | i32.const $2
+#0. 1349: V:2  | i32.xor 1, 2
+#0. 1350: V:1  | drop
+#0. 1351: V:0  | return
+i32.xor() =>
+>>> running export "i32.shl":
+#0. 1352: V:0  | i32.const $1
+#0. 1357: V:1  | i32.const $2
+#0. 1362: V:2  | i32.shl 1, 2
+#0. 1363: V:1  | drop
+#0. 1364: V:0  | return
+i32.shl() =>
+>>> running export "i32.shr_s":
+#0. 1365: V:0  | i32.const $1
+#0. 1370: V:1  | i32.const $2
+#0. 1375: V:2  | i32.shr_s 1, 2
+#0. 1376: V:1  | drop
+#0. 1377: V:0  | return
+i32.shr_s() =>
+>>> running export "i32.shr_u":
+#0. 1378: V:0  | i32.const $1
+#0. 1383: V:1  | i32.const $2
+#0. 1388: V:2  | i32.shr_u 1, 2
+#0. 1389: V:1  | drop
+#0. 1390: V:0  | return
+i32.shr_u() =>
+>>> running export "i32.rotl":
+#0. 1391: V:0  | i32.const $1
+#0. 1396: V:1  | i32.const $2
+#0. 1401: V:2  | i32.rotl 1, 2
+#0. 1402: V:1  | drop
+#0. 1403: V:0  | return
+i32.rotl() =>
+>>> running export "i32.rotr":
+#0. 1404: V:0  | i32.const $1
+#0. 1409: V:1  | i32.const $2
+#0. 1414: V:2  | i32.rotr 1, 2
+#0. 1415: V:1  | drop
+#0. 1416: V:0  | return
+i32.rotr() =>
+>>> running export "i64.clz":
+#0. 1417: V:0  | i64.const $1
+#0. 1426: V:1  | i64.clz 1
+#0. 1427: V:1  | drop
+#0. 1428: V:0  | return
+i64.clz() =>
+>>> running export "i64.ctz":
+#0. 1429: V:0  | i64.const $1
+#0. 1438: V:1  | i64.ctz 1
+#0. 1439: V:1  | drop
+#0. 1440: V:0  | return
+i64.ctz() =>
+>>> running export "i64.popcnt":
+#0. 1441: V:0  | i64.const $1
+#0. 1450: V:1  | i64.popcnt 1
+#0. 1451: V:1  | drop
+#0. 1452: V:0  | return
+i64.popcnt() =>
+>>> running export "i64.add":
+#0. 1453: V:0  | i64.const $1
+#0. 1462: V:1  | i64.const $2
+#0. 1471: V:2  | i64.add 1, 2
+#0. 1472: V:1  | drop
+#0. 1473: V:0  | return
+i64.add() =>
+>>> running export "i64.sub":
+#0. 1474: V:0  | i64.const $1
+#0. 1483: V:1  | i64.const $2
+#0. 1492: V:2  | i64.sub 1, 2
+#0. 1493: V:1  | drop
+#0. 1494: V:0  | return
+i64.sub() =>
+>>> running export "i64.mul":
+#0. 1495: V:0  | i64.const $1
+#0. 1504: V:1  | i64.const $2
+#0. 1513: V:2  | i64.mul 1, 2
+#0. 1514: V:1  | drop
+#0. 1515: V:0  | return
+i64.mul() =>
+>>> running export "i64.div_s":
+#0. 1516: V:0  | i64.const $1
+#0. 1525: V:1  | i64.const $2
+#0. 1534: V:2  | i64.div_s 1, 2
+#0. 1535: V:1  | drop
+#0. 1536: V:0  | return
+i64.div_s() =>
+>>> running export "i64.div_u":
+#0. 1537: V:0  | i64.const $1
+#0. 1546: V:1  | i64.const $2
+#0. 1555: V:2  | i64.div_u 1, 2
+#0. 1556: V:1  | drop
+#0. 1557: V:0  | return
+i64.div_u() =>
+>>> running export "i64.rem_s":
+#0. 1558: V:0  | i64.const $1
+#0. 1567: V:1  | i64.const $2
+#0. 1576: V:2  | i64.rem_s 1, 2
+#0. 1577: V:1  | drop
+#0. 1578: V:0  | return
+i64.rem_s() =>
+>>> running export "i64.rem_u":
+#0. 1579: V:0  | i64.const $1
+#0. 1588: V:1  | i64.const $2
+#0. 1597: V:2  | i64.rem_u 1, 2
+#0. 1598: V:1  | drop
+#0. 1599: V:0  | return
+i64.rem_u() =>
+>>> running export "i64.and":
+#0. 1600: V:0  | i64.const $1
+#0. 1609: V:1  | i64.const $2
+#0. 1618: V:2  | i64.and 1, 2
+#0. 1619: V:1  | drop
+#0. 1620: V:0  | return
+i64.and() =>
+>>> running export "i64.or":
+#0. 1621: V:0  | i64.const $1
+#0. 1630: V:1  | i64.const $2
+#0. 1639: V:2  | i64.or 1, 2
+#0. 1640: V:1  | drop
+#0. 1641: V:0  | return
+i64.or() =>
+>>> running export "i64.xor":
+#0. 1642: V:0  | i64.const $1
+#0. 1651: V:1  | i64.const $2
+#0. 1660: V:2  | i64.xor 1, 2
+#0. 1661: V:1  | drop
+#0. 1662: V:0  | return
+i64.xor() =>
+>>> running export "i64.shl":
+#0. 1663: V:0  | i64.const $1
+#0. 1672: V:1  | i64.const $2
+#0. 1681: V:2  | i64.shl 1, 2
+#0. 1682: V:1  | drop
+#0. 1683: V:0  | return
+i64.shl() =>
+>>> running export "i64.shr_s":
+#0. 1684: V:0  | i64.const $1
+#0. 1693: V:1  | i64.const $2
+#0. 1702: V:2  | i64.shr_s 1, 2
+#0. 1703: V:1  | drop
+#0. 1704: V:0  | return
+i64.shr_s() =>
+>>> running export "i64.shr_u":
+#0. 1705: V:0  | i64.const $1
+#0. 1714: V:1  | i64.const $2
+#0. 1723: V:2  | i64.shr_u 1, 2
+#0. 1724: V:1  | drop
+#0. 1725: V:0  | return
+i64.shr_u() =>
+>>> running export "i64.rotl":
+#0. 1726: V:0  | i64.const $1
+#0. 1735: V:1  | i64.const $2
+#0. 1744: V:2  | i64.rotl 1, 2
+#0. 1745: V:1  | drop
+#0. 1746: V:0  | return
+i64.rotl() =>
+>>> running export "i64.rotr":
+#0. 1747: V:0  | i64.const $1
+#0. 1756: V:1  | i64.const $2
+#0. 1765: V:2  | i64.rotr 1, 2
+#0. 1766: V:1  | drop
+#0. 1767: V:0  | return
+i64.rotr() =>
+>>> running export "f32.abs":
+#0. 1768: V:0  | f32.const $1
+#0. 1773: V:1  | f32.abs 1
+#0. 1774: V:1  | drop
+#0. 1775: V:0  | return
+f32.abs() =>
+>>> running export "f32.neg":
+#0. 1776: V:0  | f32.const $1
+#0. 1781: V:1  | f32.neg 1
+#0. 1782: V:1  | drop
+#0. 1783: V:0  | return
+f32.neg() =>
+>>> running export "f32.ceil":
+#0. 1784: V:0  | f32.const $1
+#0. 1789: V:1  | f32.ceil 1
+#0. 1790: V:1  | drop
+#0. 1791: V:0  | return
+f32.ceil() =>
+>>> running export "f32.floor":
+#0. 1792: V:0  | f32.const $1
+#0. 1797: V:1  | f32.floor 1
+#0. 1798: V:1  | drop
+#0. 1799: V:0  | return
+f32.floor() =>
+>>> running export "f32.trunc":
+#0. 1800: V:0  | f32.const $1
+#0. 1805: V:1  | f32.trunc 1
+#0. 1806: V:1  | drop
+#0. 1807: V:0  | return
+f32.trunc() =>
+>>> running export "f32.nearest":
+#0. 1808: V:0  | f32.const $1
+#0. 1813: V:1  | f32.nearest 1
+#0. 1814: V:1  | drop
+#0. 1815: V:0  | return
+f32.nearest() =>
+>>> running export "f32.sqrt":
+#0. 1816: V:0  | f32.const $1
+#0. 1821: V:1  | f32.sqrt 1
+#0. 1822: V:1  | drop
+#0. 1823: V:0  | return
+f32.sqrt() =>
+>>> running export "f32.add":
+#0. 1824: V:0  | f32.const $1
+#0. 1829: V:1  | f32.const $2
+#0. 1834: V:2  | f32.add 1, 2
+#0. 1835: V:1  | drop
+#0. 1836: V:0  | return
+f32.add() =>
+>>> running export "f32.sub":
+#0. 1837: V:0  | f32.const $1
+#0. 1842: V:1  | f32.const $2
+#0. 1847: V:2  | f32.sub 1, 2
+#0. 1848: V:1  | drop
+#0. 1849: V:0  | return
+f32.sub() =>
+>>> running export "f32.mul":
+#0. 1850: V:0  | f32.const $1
+#0. 1855: V:1  | f32.const $2
+#0. 1860: V:2  | f32.mul 1, 2
+#0. 1861: V:1  | drop
+#0. 1862: V:0  | return
+f32.mul() =>
+>>> running export "f32.div":
+#0. 1863: V:0  | f32.const $1
+#0. 1868: V:1  | f32.const $2
+#0. 1873: V:2  | f32.div 1, 2
+#0. 1874: V:1  | drop
+#0. 1875: V:0  | return
+f32.div() =>
+>>> running export "f32.min":
+#0. 1876: V:0  | f32.const $1
+#0. 1881: V:1  | f32.const $2
+#0. 1886: V:2  | f32.min 1, 2
+#0. 1887: V:1  | drop
+#0. 1888: V:0  | return
+f32.min() =>
+>>> running export "f32.max":
+#0. 1889: V:0  | f32.const $1
+#0. 1894: V:1  | f32.const $2
+#0. 1899: V:2  | f32.max 1, 2
+#0. 1900: V:1  | drop
+#0. 1901: V:0  | return
+f32.max() =>
+>>> running export "f32.copysign":
+#0. 1902: V:0  | f32.const $1
+#0. 1907: V:1  | f32.const $2
+#0. 1912: V:2  | f32.copysign 1, 2
+#0. 1913: V:1  | drop
+#0. 1914: V:0  | return
+f32.copysign() =>
+>>> running export "f64.abs":
+#0. 1915: V:0  | f64.const $1
+#0. 1924: V:1  | f64.abs 1
+#0. 1925: V:1  | drop
+#0. 1926: V:0  | return
+f64.abs() =>
+>>> running export "f64.neg":
+#0. 1927: V:0  | f64.const $1
+#0. 1936: V:1  | f64.neg 1
+#0. 1937: V:1  | drop
+#0. 1938: V:0  | return
+f64.neg() =>
+>>> running export "f64.ceil":
+#0. 1939: V:0  | f64.const $1
+#0. 1948: V:1  | f64.ceil 1
+#0. 1949: V:1  | drop
+#0. 1950: V:0  | return
+f64.ceil() =>
+>>> running export "f64.floor":
+#0. 1951: V:0  | f64.const $1
+#0. 1960: V:1  | f64.floor 1
+#0. 1961: V:1  | drop
+#0. 1962: V:0  | return
+f64.floor() =>
+>>> running export "f64.trunc":
+#0. 1963: V:0  | f64.const $1
+#0. 1972: V:1  | f64.trunc 1
+#0. 1973: V:1  | drop
+#0. 1974: V:0  | return
+f64.trunc() =>
+>>> running export "f64.nearest":
+#0. 1975: V:0  | f64.const $1
+#0. 1984: V:1  | f64.nearest 1
+#0. 1985: V:1  | drop
+#0. 1986: V:0  | return
+f64.nearest() =>
+>>> running export "f64.sqrt":
+#0. 1987: V:0  | f64.const $1
+#0. 1996: V:1  | f64.sqrt 1
+#0. 1997: V:1  | drop
+#0. 1998: V:0  | return
+f64.sqrt() =>
+>>> running export "f64.add":
+#0. 1999: V:0  | f64.const $1
+#0. 2008: V:1  | f64.const $2
+#0. 2017: V:2  | f64.add 1, 2
+#0. 2018: V:1  | drop
+#0. 2019: V:0  | return
+f64.add() =>
+>>> running export "f64.sub":
+#0. 2020: V:0  | f64.const $1
+#0. 2029: V:1  | f64.const $2
+#0. 2038: V:2  | f64.sub 1, 2
+#0. 2039: V:1  | drop
+#0. 2040: V:0  | return
+f64.sub() =>
+>>> running export "f64.mul":
+#0. 2041: V:0  | f64.const $1
+#0. 2050: V:1  | f64.const $2
+#0. 2059: V:2  | f64.mul 1, 2
+#0. 2060: V:1  | drop
+#0. 2061: V:0  | return
+f64.mul() =>
+>>> running export "f64.div":
+#0. 2062: V:0  | f64.const $1
+#0. 2071: V:1  | f64.const $2
+#0. 2080: V:2  | f64.div 1, 2
+#0. 2081: V:1  | drop
+#0. 2082: V:0  | return
+f64.div() =>
+>>> running export "f64.min":
+#0. 2083: V:0  | f64.const $1
+#0. 2092: V:1  | f64.const $2
+#0. 2101: V:2  | f64.min 1, 2
+#0. 2102: V:1  | drop
+#0. 2103: V:0  | return
+f64.min() =>
+>>> running export "f64.max":
+#0. 2104: V:0  | f64.const $1
+#0. 2113: V:1  | f64.const $2
+#0. 2122: V:2  | f64.max 1, 2
+#0. 2123: V:1  | drop
+#0. 2124: V:0  | return
+f64.max() =>
+>>> running export "f64.copysign":
+#0. 2125: V:0  | f64.const $1
+#0. 2134: V:1  | f64.const $2
+#0. 2143: V:2  | f64.copysign 1, 2
+#0. 2144: V:1  | drop
+#0. 2145: V:0  | return
+f64.copysign() =>
+>>> running export "i32.wrap/i64":
+#0. 2146: V:0  | i64.const $1
+#0. 2155: V:1  | i32.wrap/i64 1
+#0. 2156: V:1  | drop
+#0. 2157: V:0  | return
+i32.wrap/i64() =>
+>>> running export "i32.trunc_s/f32":
+#0. 2158: V:0  | f32.const $1
+#0. 2163: V:1  | i32.trunc_s/f32 1
+#0. 2164: V:1  | drop
+#0. 2165: V:0  | return
+i32.trunc_s/f32() =>
+>>> running export "i32.trunc_u/f32":
+#0. 2166: V:0  | f32.const $1
+#0. 2171: V:1  | i32.trunc_u/f32 1
+#0. 2172: V:1  | drop
+#0. 2173: V:0  | return
+i32.trunc_u/f32() =>
+>>> running export "i32.trunc_s/f64":
+#0. 2174: V:0  | f64.const $1
+#0. 2183: V:1  | i32.trunc_s/f64 1
+#0. 2184: V:1  | drop
+#0. 2185: V:0  | return
+i32.trunc_s/f64() =>
+>>> running export "i32.trunc_u/f64":
+#0. 2186: V:0  | f64.const $1
+#0. 2195: V:1  | i32.trunc_u/f64 1
+#0. 2196: V:1  | drop
+#0. 2197: V:0  | return
+i32.trunc_u/f64() =>
+>>> running export "i64.extend_s/i32":
+#0. 2198: V:0  | i32.const $1
+#0. 2203: V:1  | i64.extend_s/i32 1
+#0. 2204: V:1  | drop
+#0. 2205: V:0  | return
+i64.extend_s/i32() =>
+>>> running export "i64.extend_u/i32":
+#0. 2206: V:0  | i32.const $1
+#0. 2211: V:1  | i64.extend_u/i32 1
+#0. 2212: V:1  | drop
+#0. 2213: V:0  | return
+i64.extend_u/i32() =>
+>>> running export "i64.trunc_s/f32":
+#0. 2214: V:0  | f32.const $1
+#0. 2219: V:1  | i64.trunc_s/f32 1
+#0. 2220: V:1  | drop
+#0. 2221: V:0  | return
+i64.trunc_s/f32() =>
+>>> running export "i64.trunc_u/f32":
+#0. 2222: V:0  | f32.const $1
+#0. 2227: V:1  | i64.trunc_u/f32 1
+#0. 2228: V:1  | drop
+#0. 2229: V:0  | return
+i64.trunc_u/f32() =>
+>>> running export "i64.trunc_s/f64":
+#0. 2230: V:0  | f64.const $1
+#0. 2239: V:1  | i64.trunc_s/f64 1
+#0. 2240: V:1  | drop
+#0. 2241: V:0  | return
+i64.trunc_s/f64() =>
+>>> running export "i64.trunc_u/f64":
+#0. 2242: V:0  | f64.const $1
+#0. 2251: V:1  | i64.trunc_u/f64 1
+#0. 2252: V:1  | drop
+#0. 2253: V:0  | return
+i64.trunc_u/f64() =>
+>>> running export "f32.convert_s/i32":
+#0. 2254: V:0  | i32.const $1
+#0. 2259: V:1  | f32.convert_s/i32 1
+#0. 2260: V:1  | drop
+#0. 2261: V:0  | return
+f32.convert_s/i32() =>
+>>> running export "f32.convert_u/i32":
+#0. 2262: V:0  | i32.const $1
+#0. 2267: V:1  | f32.convert_u/i32 1
+#0. 2268: V:1  | drop
+#0. 2269: V:0  | return
+f32.convert_u/i32() =>
+>>> running export "f32.convert_s/i64":
+#0. 2270: V:0  | i64.const $1
+#0. 2279: V:1  | f32.convert_s/i64 1
+#0. 2280: V:1  | drop
+#0. 2281: V:0  | return
+f32.convert_s/i64() =>
+>>> running export "f32.convert_u/i64":
+#0. 2282: V:0  | i64.const $1
+#0. 2291: V:1  | f32.convert_u/i64 1
+#0. 2292: V:1  | drop
+#0. 2293: V:0  | return
+f32.convert_u/i64() =>
+>>> running export "f32.demote/f64":
+#0. 2294: V:0  | f64.const $1
+#0. 2303: V:1  | f32.demote/f64 1
+#0. 2304: V:1  | drop
+#0. 2305: V:0  | return
+f32.demote/f64() =>
+>>> running export "f64.convert_s/i32":
+#0. 2306: V:0  | i32.const $1
+#0. 2311: V:1  | f64.convert_s/i32 1
+#0. 2312: V:1  | drop
+#0. 2313: V:0  | return
+f64.convert_s/i32() =>
+>>> running export "f64.convert_u/i32":
+#0. 2314: V:0  | i32.const $1
+#0. 2319: V:1  | f64.convert_u/i32 1
+#0. 2320: V:1  | drop
+#0. 2321: V:0  | return
+f64.convert_u/i32() =>
+>>> running export "f64.convert_s/i64":
+#0. 2322: V:0  | i64.const $1
+#0. 2331: V:1  | f64.convert_s/i64 1
+#0. 2332: V:1  | drop
+#0. 2333: V:0  | return
+f64.convert_s/i64() =>
+>>> running export "f64.convert_u/i64":
+#0. 2334: V:0  | i64.const $1
+#0. 2343: V:1  | f64.convert_u/i64 1
+#0. 2344: V:1  | drop
+#0. 2345: V:0  | return
+f64.convert_u/i64() =>
+>>> running export "f64.promote/f32":
+#0. 2346: V:0  | f32.const $1
+#0. 2351: V:1  | f64.promote/f32 1
+#0. 2352: V:1  | drop
+#0. 2353: V:0  | return
+f64.promote/f32() =>
+>>> running export "i32.reinterpret/f32":
+#0. 2354: V:0  | i32.const $1
+#0. 2359: V:1  | f32.reinterpret/i32 1
+#0. 2360: V:1  | drop
+#0. 2361: V:0  | return
+i32.reinterpret/f32() =>
+>>> running export "f32.reinterpret/i32":
+#0. 2362: V:0  | f32.const $1
+#0. 2367: V:1  | i32.reinterpret/f32 1
+#0. 2368: V:1  | drop
+#0. 2369: V:0  | return
+f32.reinterpret/i32() =>
+>>> running export "i64.reinterpret/f64":
+#0. 2370: V:0  | i64.const $1
+#0. 2379: V:1  | f64.reinterpret/i64 1
+#0. 2380: V:1  | drop
+#0. 2381: V:0  | return
+i64.reinterpret/f64() =>
+>>> running export "f64.reinterpret/i64":
+#0. 2382: V:0  | f64.const $1
+#0. 2391: V:1  | i64.reinterpret/f64 1
+#0. 2392: V:1  | drop
+#0. 2393: V:0  | return
+f64.reinterpret/i64() =>
+>>> running export "i32.extend8_s":
+#0. 2394: V:0  | i32.const $1
+#0. 2399: V:1  | i32.extend8_s 1
+#0. 2400: V:1  | drop
+#0. 2401: V:0  | return
+i32.extend8_s() =>
+>>> running export "i32.extend16_s":
+#0. 2402: V:0  | i32.const $1
+#0. 2407: V:1  | i32.extend16_s 1
+#0. 2408: V:1  | drop
+#0. 2409: V:0  | return
+i32.extend16_s() =>
+>>> running export "i64.extend8_s":
+#0. 2410: V:0  | i64.const $1
+#0. 2419: V:1  | i64.extend8_s 1
+#0. 2420: V:1  | drop
+#0. 2421: V:0  | return
+i64.extend8_s() =>
+>>> running export "i64.extend16_s":
+#0. 2422: V:0  | i64.const $1
+#0. 2431: V:1  | i64.extend16_s 1
+#0. 2432: V:1  | drop
+#0. 2433: V:0  | return
+i64.extend16_s() =>
+>>> running export "i64.extend32_s":
+#0. 2434: V:0  | i64.const $1
+#0. 2443: V:1  | i64.extend32_s 1
+#0. 2444: V:1  | drop
+#0. 2445: V:0  | return
+i64.extend32_s() =>
+>>> running export "alloca":
+#0. 2446: V:0  | alloca $1
+#0. 2451: V:1  | drop
+#0. 2452: V:0  | return
+alloca() =>
+>>> running export "br_unless":
+#0. 2453: V:0  | i32.const $1
+#0. 2458: V:1  | br_unless @2468, 1
+#0. 2463: V:0  | br @2468
+#0. 2468: V:0  | return
+br_unless() =>
+>>> running export "call_host":
+#0. 2469: V:0  | i32.const $1
+#0. 2474: V:1  | call_host $0
+called host host.print(i32:1) =>
+#0. 2479: V:0  | return
+call_host() =>
+>>> running export "drop_keep":
+#0. 2480: V:0  | i32.const $1
+#0. 2485: V:1  | i32.const $2
+#0. 2490: V:2  | drop_keep $1 $1
+#0. 2499: V:1  | br @2504
+#0. 2504: V:1  | drop
+#0. 2505: V:0  | return
+drop_keep() =>
+>>> running export "i32.trunc_s:sat/f32":
+#0. 2506: V:0  | f32.const $1
+#0. 2511: V:1  | i32.trunc_s:sat/f32 1
+#0. 2513: V:1  | drop
+#0. 2514: V:0  | return
+i32.trunc_s:sat/f32() =>
+>>> running export "i32.trunc_u:sat/f32":
+#0. 2515: V:0  | f32.const $1
+#0. 2520: V:1  | i32.trunc_u:sat/f32 1
+#0. 2522: V:1  | drop
+#0. 2523: V:0  | return
+i32.trunc_u:sat/f32() =>
+>>> running export "i32.trunc_s:sat/f64":
+#0. 2524: V:0  | f64.const $1
+#0. 2533: V:1  | i32.trunc_s:sat/f64 1
+#0. 2535: V:1  | drop
+#0. 2536: V:0  | return
+i32.trunc_s:sat/f64() =>
+>>> running export "i32.trunc_u:sat/f64":
+#0. 2537: V:0  | f64.const $1
+#0. 2546: V:1  | i32.trunc_u:sat/f64 1
+#0. 2548: V:1  | drop
+#0. 2549: V:0  | return
+i32.trunc_u:sat/f64() =>
+>>> running export "i64.trunc_s:sat/f32":
+#0. 2550: V:0  | f32.const $1
+#0. 2555: V:1  | i64.trunc_s:sat/f32 1
+#0. 2557: V:1  | drop
+#0. 2558: V:0  | return
+i64.trunc_s:sat/f32() =>
+>>> running export "i64.trunc_u:sat/f32":
+#0. 2559: V:0  | f32.const $1
+#0. 2564: V:1  | i64.trunc_u:sat/f32 1
+#0. 2566: V:1  | drop
+#0. 2567: V:0  | return
+i64.trunc_u:sat/f32() =>
+>>> running export "i64.trunc_s:sat/f64":
+#0. 2568: V:0  | f64.const $1
+#0. 2577: V:1  | i64.trunc_s:sat/f64 1
+#0. 2579: V:1  | drop
+#0. 2580: V:0  | return
+i64.trunc_s:sat/f64() =>
+>>> running export "i64.trunc_u:sat/f64":
+#0. 2581: V:0  | f64.const $1
+#0. 2590: V:1  | i64.trunc_u:sat/f64 1
+#0. 2592: V:1  | drop
+#0. 2593: V:0  | return
+i64.trunc_u:sat/f64() =>
+>>> running export "v128.const":
+#0. 2594: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2612: V:1  | drop
+#0. 2613: V:0  | return
+v128.const() =>
+>>> running export "v128.load":
+#0. 2614: V:0  | i32.const $1
+#0. 2619: V:1  | v128.load $0:1+$3
+#0. 2629: V:1  | drop
+#0. 2630: V:0  | return
+v128.load() =>
+>>> running export "v128.store":
+#0. 2631: V:0  | i32.const $1
+#0. 2636: V:1  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2654: V:2  | v128.store $0:1+$3, $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2664: V:0  | return
+v128.store() =>
+>>> running export "i8x16.splat":
+#0. 2665: V:0  | i32.const $1
+#0. 2670: V:1  | i8x16.splat 1
+#0. 2672: V:1  | drop
+#0. 2673: V:0  | return
+i8x16.splat() =>
+>>> running export "i16x8.splat":
+#0. 2674: V:0  | i32.const $1
+#0. 2679: V:1  | i16x8.splat 1
+#0. 2681: V:1  | drop
+#0. 2682: V:0  | return
+i16x8.splat() =>
+>>> running export "i32x4.splat":
+#0. 2683: V:0  | i32.const $1
+#0. 2688: V:1  | i32x4.splat 1
+#0. 2690: V:1  | drop
+#0. 2691: V:0  | return
+i32x4.splat() =>
+>>> running export "i64x2.splat":
+#0. 2692: V:0  | i64.const $1
+#0. 2701: V:1  | i64x2.splat 1
+#0. 2703: V:1  | drop
+#0. 2704: V:0  | return
+i64x2.splat() =>
+>>> running export "f32x4.splat":
+#0. 2705: V:0  | f32.const $1
+#0. 2710: V:1  | f32x4.splat 1
+#0. 2712: V:1  | drop
+#0. 2713: V:0  | return
+f32x4.splat() =>
+>>> running export "f64x2.splat":
+#0. 2714: V:0  | f64.const $1
+#0. 2723: V:1  | f64x2.splat 1
+#0. 2725: V:1  | drop
+#0. 2726: V:0  | return
+f64x2.splat() =>
+>>> running export "i8x16.extract_lane_s":
+#0. 2727: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2745: V:1  | i8x16.extract_lane_s : LaneIdx 15 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2748: V:1  | drop
+#0. 2749: V:0  | return
+i8x16.extract_lane_s() =>
+>>> running export "i8x16.extract_lane_u":
+#0. 2750: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2768: V:1  | i8x16.extract_lane_u : LaneIdx 15 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2771: V:1  | drop
+#0. 2772: V:0  | return
+i8x16.extract_lane_u() =>
+>>> running export "i16x8.extract_lane_s":
+#0. 2773: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2791: V:1  | i16x8.extract_lane_s : LaneIdx 7 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2794: V:1  | drop
+#0. 2795: V:0  | return
+i16x8.extract_lane_s() =>
+>>> running export "i16x8.extract_lane_u":
+#0. 2796: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2814: V:1  | i16x8.extract_lane_u : LaneIdx 7 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2817: V:1  | drop
+#0. 2818: V:0  | return
+i16x8.extract_lane_u() =>
+>>> running export "i32x4.extract_lane":
+#0. 2819: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2837: V:1  | i32x4.extract_lane : LaneIdx 3 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2840: V:1  | drop
+#0. 2841: V:0  | return
+i32x4.extract_lane() =>
+>>> running export "i64x2.extract_lane":
+#0. 2842: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2860: V:1  | i64x2.extract_lane : LaneIdx 1 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2863: V:1  | drop
+#0. 2864: V:0  | return
+i64x2.extract_lane() =>
+>>> running export "f32x4.extract_lane":
+#0. 2865: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2883: V:1  | f32x4.extract_lane : LaneIdx 3 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2886: V:1  | drop
+#0. 2887: V:0  | return
+f32x4.extract_lane() =>
+>>> running export "f64x2.extract_lane":
+#0. 2888: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2906: V:1  | f64x2.extract_lane : LaneIdx 1 From $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2909: V:1  | drop
+#0. 2910: V:0  | return
+f64x2.extract_lane() =>
+>>> running export "i8x16.replace_lane":
+#0. 2911: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2929: V:1  | i32.const $0
+#0. 2934: V:2  | i8x16.replace_lane : Set 0 to LaneIdx 15 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2937: V:1  | drop
+#0. 2938: V:0  | return
+i8x16.replace_lane() =>
+>>> running export "i16x8.replace_lane":
+#0. 2939: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2957: V:1  | i32.const $0
+#0. 2962: V:2  | i16x8.replace_lane : Set 0 to LaneIdx 7 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2965: V:1  | drop
+#0. 2966: V:0  | return
+i16x8.replace_lane() =>
+>>> running export "i32x4.replace_lane":
+#0. 2967: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2985: V:1  | i32.const $0
+#0. 2990: V:2  | i32x4.replace_lane : Set 0 to LaneIdx 3 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 2993: V:1  | drop
+#0. 2994: V:0  | return
+i32x4.replace_lane() =>
+>>> running export "i64x2.replace_lane":
+#0. 2995: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3013: V:1  | i64.const $0
+#0. 3022: V:2  | i64x2.replace_lane : Set 0 to LaneIdx 1 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3025: V:1  | drop
+#0. 3026: V:0  | return
+i64x2.replace_lane() =>
+>>> running export "f32x4.replace_lane":
+#0. 3027: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3045: V:1  | f32.const $0
+#0. 3050: V:2  | f32x4.replace_lane : Set 0 to LaneIdx 3 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3053: V:1  | drop
+#0. 3054: V:0  | return
+f32x4.replace_lane() =>
+>>> running export "f64x2.replace_lane":
+#0. 3055: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3073: V:1  | f64.const $0
+#0. 3082: V:2  | f64x2.replace_lane : Set 0 to LaneIdx 1 In $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3085: V:1  | drop
+#0. 3086: V:0  | return
+f64x2.replace_lane() =>
+>>> running export "v8x16.shuffle":
+#0. 3087: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3105: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3123: V:2  | v8x16.shuffle $0x00000001 00000001 00000001 00000001 $0x00000002 00000002 00000002 00000002 : with lane imm: $0x00000001 00000001 00000001 00000001
+#0. 3141: V:1  | drop
+#0. 3142: V:0  | return
+v8x16.shuffle() =>
+>>> running export "i8x16.add":
+#0. 3143: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3161: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3179: V:2  | i8x16.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3181: V:1  | drop
+#0. 3182: V:0  | return
+i8x16.add() =>
+>>> running export "i16x8.add":
+#0. 3183: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3201: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3219: V:2  | i16x8.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3221: V:1  | drop
+#0. 3222: V:0  | return
+i16x8.add() =>
+>>> running export "i32x4.add":
+#0. 3223: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3241: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3259: V:2  | i32x4.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3261: V:1  | drop
+#0. 3262: V:0  | return
+i32x4.add() =>
+>>> running export "i64x2.add":
+#0. 3263: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3281: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3299: V:2  | i64x2.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3301: V:1  | drop
+#0. 3302: V:0  | return
+i64x2.add() =>
+>>> running export "i8x16.sub":
+#0. 3303: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3321: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3339: V:2  | i8x16.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3341: V:1  | drop
+#0. 3342: V:0  | return
+i8x16.sub() =>
+>>> running export "i16x8.sub":
+#0. 3343: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3361: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3379: V:2  | i16x8.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3381: V:1  | drop
+#0. 3382: V:0  | return
+i16x8.sub() =>
+>>> running export "i32x4.sub":
+#0. 3383: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3401: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3419: V:2  | i32x4.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3421: V:1  | drop
+#0. 3422: V:0  | return
+i32x4.sub() =>
+>>> running export "i64x2.sub":
+#0. 3423: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3441: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3459: V:2  | i64x2.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3461: V:1  | drop
+#0. 3462: V:0  | return
+i64x2.sub() =>
+>>> running export "i8x16.mul":
+#0. 3463: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3481: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3499: V:2  | i8x16.mul $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3501: V:1  | drop
+#0. 3502: V:0  | return
+i8x16.mul() =>
+>>> running export "i16x8.mul":
+#0. 3503: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3521: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3539: V:2  | i16x8.mul $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3541: V:1  | drop
+#0. 3542: V:0  | return
+i16x8.mul() =>
+>>> running export "i32x4.mul":
+#0. 3543: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3561: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3579: V:2  | i32x4.mul $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3581: V:1  | drop
+#0. 3582: V:0  | return
+i32x4.mul() =>
+>>> running export "i8x16.neg":
+#0. 3583: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3601: V:1  | i8x16.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3603: V:1  | drop
+#0. 3604: V:0  | return
+i8x16.neg() =>
+>>> running export "i16x8.neg":
+#0. 3605: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3623: V:1  | i16x8.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3625: V:1  | drop
+#0. 3626: V:0  | return
+i16x8.neg() =>
+>>> running export "i32x4.neg":
+#0. 3627: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3645: V:1  | i32x4.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3647: V:1  | drop
+#0. 3648: V:0  | return
+i32x4.neg() =>
+>>> running export "i64x2.neg":
+#0. 3649: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3667: V:1  | i64x2.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3669: V:1  | drop
+#0. 3670: V:0  | return
+i64x2.neg() =>
+>>> running export "i8x16.add_saturate_s":
+#0. 3671: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3689: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3707: V:2  | i8x16.add_saturate_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3709: V:1  | drop
+#0. 3710: V:0  | return
+i8x16.add_saturate_s() =>
+>>> running export "i8x16.add_saturate_u":
+#0. 3711: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3729: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3747: V:2  | i8x16.add_saturate_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3749: V:1  | drop
+#0. 3750: V:0  | return
+i8x16.add_saturate_u() =>
+>>> running export "i16x8.add_saturate_s":
+#0. 3751: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3769: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3787: V:2  | i16x8.add_saturate_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3789: V:1  | drop
+#0. 3790: V:0  | return
+i16x8.add_saturate_s() =>
+>>> running export "i16x8.add_saturate_u":
+#0. 3791: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3809: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3827: V:2  | i16x8.add_saturate_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3829: V:1  | drop
+#0. 3830: V:0  | return
+i16x8.add_saturate_u() =>
+>>> running export "i8x16.sub_saturate_s":
+#0. 3831: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3849: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3867: V:2  | i8x16.sub_saturate_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3869: V:1  | drop
+#0. 3870: V:0  | return
+i8x16.sub_saturate_s() =>
+>>> running export "i8x16.sub_saturate_u":
+#0. 3871: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3889: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3907: V:2  | i8x16.sub_saturate_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3909: V:1  | drop
+#0. 3910: V:0  | return
+i8x16.sub_saturate_u() =>
+>>> running export "i16x8.sub_saturate_s":
+#0. 3911: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3929: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3947: V:2  | i16x8.sub_saturate_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3949: V:1  | drop
+#0. 3950: V:0  | return
+i16x8.sub_saturate_s() =>
+>>> running export "i16x8.sub_saturate_u":
+#0. 3951: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 3969: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 3987: V:2  | i16x8.sub_saturate_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 3989: V:1  | drop
+#0. 3990: V:0  | return
+i16x8.sub_saturate_u() =>
+>>> running export "i8x16.shl":
+#0. 3991: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4009: V:1  | i32.const $0
+#0. 4014: V:2  | i8x16.shl $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4016: V:1  | drop
+#0. 4017: V:0  | return
+i8x16.shl() =>
+>>> running export "i16x8.shl":
+#0. 4018: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4036: V:1  | i32.const $0
+#0. 4041: V:2  | i16x8.shl $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4043: V:1  | drop
+#0. 4044: V:0  | return
+i16x8.shl() =>
+>>> running export "i32x4.shl":
+#0. 4045: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4063: V:1  | i32.const $0
+#0. 4068: V:2  | i32x4.shl $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4070: V:1  | drop
+#0. 4071: V:0  | return
+i32x4.shl() =>
+>>> running export "i64x2.shl":
+#0. 4072: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4090: V:1  | i32.const $0
+#0. 4095: V:2  | i64x2.shl $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4097: V:1  | drop
+#0. 4098: V:0  | return
+i64x2.shl() =>
+>>> running export "i8x16.shr_s":
+#0. 4099: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4117: V:1  | i32.const $0
+#0. 4122: V:2  | i8x16.shr_s $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4124: V:1  | drop
+#0. 4125: V:0  | return
+i8x16.shr_s() =>
+>>> running export "i8x16.shr_u":
+#0. 4126: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4144: V:1  | i32.const $0
+#0. 4149: V:2  | i8x16.shr_u $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4151: V:1  | drop
+#0. 4152: V:0  | return
+i8x16.shr_u() =>
+>>> running export "i16x8.shr_s":
+#0. 4153: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4171: V:1  | i32.const $0
+#0. 4176: V:2  | i16x8.shr_s $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4178: V:1  | drop
+#0. 4179: V:0  | return
+i16x8.shr_s() =>
+>>> running export "i16x8.shr_u":
+#0. 4180: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4198: V:1  | i32.const $0
+#0. 4203: V:2  | i16x8.shr_u $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4205: V:1  | drop
+#0. 4206: V:0  | return
+i16x8.shr_u() =>
+>>> running export "i32x4.shr_s":
+#0. 4207: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4225: V:1  | i32.const $0
+#0. 4230: V:2  | i32x4.shr_s $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4232: V:1  | drop
+#0. 4233: V:0  | return
+i32x4.shr_s() =>
+>>> running export "i32x4.shr_u":
+#0. 4234: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4252: V:1  | i32.const $0
+#0. 4257: V:2  | i32x4.shr_u $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4259: V:1  | drop
+#0. 4260: V:0  | return
+i32x4.shr_u() =>
+>>> running export "i64x2.shr_s":
+#0. 4261: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4279: V:1  | i32.const $0
+#0. 4284: V:2  | i64x2.shr_s $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4286: V:1  | drop
+#0. 4287: V:0  | return
+i64x2.shr_s() =>
+>>> running export "i64x2.shr_u":
+#0. 4288: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4306: V:1  | i32.const $0
+#0. 4311: V:2  | i64x2.shr_u $0x00000001 00000001 00000001 00000001  $0x00000000
+#0. 4313: V:1  | drop
+#0. 4314: V:0  | return
+i64x2.shr_u() =>
+>>> running export "v128.and":
+#0. 4315: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4333: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4351: V:2  | v128.and $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4353: V:1  | drop
+#0. 4354: V:0  | return
+v128.and() =>
+>>> running export "v128.or":
+#0. 4355: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4373: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4391: V:2  | v128.or $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4393: V:1  | drop
+#0. 4394: V:0  | return
+v128.or() =>
+>>> running export "v128.xor":
+#0. 4395: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4413: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4431: V:2  | v128.xor $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4433: V:1  | drop
+#0. 4434: V:0  | return
+v128.xor() =>
+>>> running export "v128.not":
+#0. 4435: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4453: V:1  | v128.not $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4455: V:1  | drop
+#0. 4456: V:0  | return
+v128.not() =>
+>>> running export "v128.bitselect":
+#0. 4457: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4475: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4493: V:2  | v128.const $0x00000003 0x00000003 0x00000003 0x00000003
+#0. 4511: V:3  | v128.bitselect $0x00000001 00000001 00000001 00000001 $0x00000002 00000002 00000002 00000002 $0x00000003 00000003 00000003 00000003
+#0. 4513: V:1  | drop
+#0. 4514: V:0  | return
+v128.bitselect() =>
+>>> running export "i8x16.any_true":
+#0. 4515: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4533: V:1  | i8x16.any_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4535: V:1  | drop
+#0. 4536: V:0  | return
+i8x16.any_true() =>
+>>> running export "i16x8.any_true":
+#0. 4537: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4555: V:1  | i16x8.any_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4557: V:1  | drop
+#0. 4558: V:0  | return
+i16x8.any_true() =>
+>>> running export "i32x4.any_true":
+#0. 4559: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4577: V:1  | i32x4.any_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4579: V:1  | drop
+#0. 4580: V:0  | return
+i32x4.any_true() =>
+>>> running export "i64x2.any_true":
+#0. 4581: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4599: V:1  | i64x2.any_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4601: V:1  | drop
+#0. 4602: V:0  | return
+i64x2.any_true() =>
+>>> running export "i8x16.all_true":
+#0. 4603: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4621: V:1  | i8x16.all_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4623: V:1  | drop
+#0. 4624: V:0  | return
+i8x16.all_true() =>
+>>> running export "i16x8.all_true":
+#0. 4625: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4643: V:1  | i16x8.all_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4645: V:1  | drop
+#0. 4646: V:0  | return
+i16x8.all_true() =>
+>>> running export "i32x4.all_true":
+#0. 4647: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4665: V:1  | i32x4.all_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4667: V:1  | drop
+#0. 4668: V:0  | return
+i32x4.all_true() =>
+>>> running export "i64x2.all_true":
+#0. 4669: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4687: V:1  | i64x2.all_true $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4689: V:1  | drop
+#0. 4690: V:0  | return
+i64x2.all_true() =>
+>>> running export "i8x16.eq":
+#0. 4691: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4709: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4727: V:2  | i8x16.eq $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4729: V:1  | drop
+#0. 4730: V:0  | return
+i8x16.eq() =>
+>>> running export "i16x8.eq":
+#0. 4731: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4749: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4767: V:2  | i16x8.eq $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4769: V:1  | drop
+#0. 4770: V:0  | return
+i16x8.eq() =>
+>>> running export "i32x4.eq":
+#0. 4771: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4789: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4807: V:2  | i32x4.eq $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4809: V:1  | drop
+#0. 4810: V:0  | return
+i32x4.eq() =>
+>>> running export "f32x4.eq":
+#0. 4811: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4829: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4847: V:2  | f32x4.eq $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4849: V:1  | drop
+#0. 4850: V:0  | return
+f32x4.eq() =>
+>>> running export "f64x2.eq":
+#0. 4851: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4869: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4887: V:2  | f64x2.eq $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4889: V:1  | drop
+#0. 4890: V:0  | return
+f64x2.eq() =>
+>>> running export "i8x16.ne":
+#0. 4891: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4909: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4927: V:2  | i8x16.ne $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4929: V:1  | drop
+#0. 4930: V:0  | return
+i8x16.ne() =>
+>>> running export "i16x8.ne":
+#0. 4931: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4949: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 4967: V:2  | i16x8.ne $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 4969: V:1  | drop
+#0. 4970: V:0  | return
+i16x8.ne() =>
+>>> running export "i32x4.ne":
+#0. 4971: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 4989: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5007: V:2  | i32x4.ne $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5009: V:1  | drop
+#0. 5010: V:0  | return
+i32x4.ne() =>
+>>> running export "f32x4.ne":
+#0. 5011: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5029: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5047: V:2  | f32x4.ne $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5049: V:1  | drop
+#0. 5050: V:0  | return
+f32x4.ne() =>
+>>> running export "f64x2.ne":
+#0. 5051: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5069: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5087: V:2  | f64x2.ne $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5089: V:1  | drop
+#0. 5090: V:0  | return
+f64x2.ne() =>
+>>> running export "i8x16.lt_s":
+#0. 5091: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5109: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5127: V:2  | i8x16.lt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5129: V:1  | drop
+#0. 5130: V:0  | return
+i8x16.lt_s() =>
+>>> running export "i8x16.lt_u":
+#0. 5131: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5149: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5167: V:2  | i8x16.lt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5169: V:1  | drop
+#0. 5170: V:0  | return
+i8x16.lt_u() =>
+>>> running export "i16x8.lt_s":
+#0. 5171: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5189: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5207: V:2  | i16x8.lt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5209: V:1  | drop
+#0. 5210: V:0  | return
+i16x8.lt_s() =>
+>>> running export "i16x8.lt_u":
+#0. 5211: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5229: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5247: V:2  | i16x8.lt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5249: V:1  | drop
+#0. 5250: V:0  | return
+i16x8.lt_u() =>
+>>> running export "i32x4.lt_s":
+#0. 5251: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5269: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5287: V:2  | i32x4.lt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5289: V:1  | drop
+#0. 5290: V:0  | return
+i32x4.lt_s() =>
+>>> running export "i32x4.lt_u":
+#0. 5291: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5309: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5327: V:2  | i32x4.lt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5329: V:1  | drop
+#0. 5330: V:0  | return
+i32x4.lt_u() =>
+>>> running export "f32x4.lt":
+#0. 5331: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5349: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5367: V:2  | f32x4.lt $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5369: V:1  | drop
+#0. 5370: V:0  | return
+f32x4.lt() =>
+>>> running export "f64x2.lt":
+#0. 5371: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5389: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5407: V:2  | f64x2.lt $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5409: V:1  | drop
+#0. 5410: V:0  | return
+f64x2.lt() =>
+>>> running export "i8x16.le_s":
+#0. 5411: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5429: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5447: V:2  | i8x16.le_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5449: V:1  | drop
+#0. 5450: V:0  | return
+i8x16.le_s() =>
+>>> running export "i8x16.le_u":
+#0. 5451: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5469: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5487: V:2  | i8x16.le_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5489: V:1  | drop
+#0. 5490: V:0  | return
+i8x16.le_u() =>
+>>> running export "i16x8.le_s":
+#0. 5491: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5509: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5527: V:2  | i16x8.le_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5529: V:1  | drop
+#0. 5530: V:0  | return
+i16x8.le_s() =>
+>>> running export "i16x8.le_u":
+#0. 5531: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5549: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5567: V:2  | i16x8.le_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5569: V:1  | drop
+#0. 5570: V:0  | return
+i16x8.le_u() =>
+>>> running export "i32x4.le_s":
+#0. 5571: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5589: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5607: V:2  | i32x4.le_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5609: V:1  | drop
+#0. 5610: V:0  | return
+i32x4.le_s() =>
+>>> running export "i32x4.le_u":
+#0. 5611: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5629: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5647: V:2  | i32x4.le_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5649: V:1  | drop
+#0. 5650: V:0  | return
+i32x4.le_u() =>
+>>> running export "f32x4.le":
+#0. 5651: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5669: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5687: V:2  | f32x4.le $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5689: V:1  | drop
+#0. 5690: V:0  | return
+f32x4.le() =>
+>>> running export "f64x2.le":
+#0. 5691: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5709: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5727: V:2  | f64x2.le $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5729: V:1  | drop
+#0. 5730: V:0  | return
+f64x2.le() =>
+>>> running export "i8x16.gt_s":
+#0. 5731: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5749: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5767: V:2  | i8x16.gt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5769: V:1  | drop
+#0. 5770: V:0  | return
+i8x16.gt_s() =>
+>>> running export "i8x16.gt_u":
+#0. 5771: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5789: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5807: V:2  | i8x16.gt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5809: V:1  | drop
+#0. 5810: V:0  | return
+i8x16.gt_u() =>
+>>> running export "i16x8.gt_s":
+#0. 5811: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5829: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5847: V:2  | i16x8.gt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5849: V:1  | drop
+#0. 5850: V:0  | return
+i16x8.gt_s() =>
+>>> running export "i16x8.gt_u":
+#0. 5851: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5869: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5887: V:2  | i16x8.gt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5889: V:1  | drop
+#0. 5890: V:0  | return
+i16x8.gt_u() =>
+>>> running export "i32x4.gt_s":
+#0. 5891: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5909: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5927: V:2  | i32x4.gt_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5929: V:1  | drop
+#0. 5930: V:0  | return
+i32x4.gt_s() =>
+>>> running export "i32x4.gt_u":
+#0. 5931: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5949: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 5967: V:2  | i32x4.gt_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 5969: V:1  | drop
+#0. 5970: V:0  | return
+i32x4.gt_u() =>
+>>> running export "f32x4.gt":
+#0. 5971: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 5989: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6007: V:2  | f32x4.gt $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6009: V:1  | drop
+#0. 6010: V:0  | return
+f32x4.gt() =>
+>>> running export "f64x2.gt":
+#0. 6011: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6029: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6047: V:2  | f64x2.gt $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6049: V:1  | drop
+#0. 6050: V:0  | return
+f64x2.gt() =>
+>>> running export "i8x16.ge_s":
+#0. 6051: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6069: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6087: V:2  | i8x16.ge_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6089: V:1  | drop
+#0. 6090: V:0  | return
+i8x16.ge_s() =>
+>>> running export "i8x16.ge_u":
+#0. 6091: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6109: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6127: V:2  | i8x16.ge_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6129: V:1  | drop
+#0. 6130: V:0  | return
+i8x16.ge_u() =>
+>>> running export "i16x8.ge_s":
+#0. 6131: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6149: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6167: V:2  | i16x8.ge_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6169: V:1  | drop
+#0. 6170: V:0  | return
+i16x8.ge_s() =>
+>>> running export "i16x8.ge_u":
+#0. 6171: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6189: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6207: V:2  | i16x8.ge_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6209: V:1  | drop
+#0. 6210: V:0  | return
+i16x8.ge_u() =>
+>>> running export "i32x4.ge_s":
+#0. 6211: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6229: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6247: V:2  | i32x4.ge_s $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6249: V:1  | drop
+#0. 6250: V:0  | return
+i32x4.ge_s() =>
+>>> running export "i32x4.ge_u":
+#0. 6251: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6269: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6287: V:2  | i32x4.ge_u $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6289: V:1  | drop
+#0. 6290: V:0  | return
+i32x4.ge_u() =>
+>>> running export "f32x4.ge":
+#0. 6291: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6309: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6327: V:2  | f32x4.ge $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6329: V:1  | drop
+#0. 6330: V:0  | return
+f32x4.ge() =>
+>>> running export "f64x2.ge":
+#0. 6331: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6349: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6367: V:2  | f64x2.ge $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6369: V:1  | drop
+#0. 6370: V:0  | return
+f64x2.ge() =>
+>>> running export "f32x4.neg":
+#0. 6371: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6389: V:1  | f32x4.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6391: V:1  | drop
+#0. 6392: V:0  | return
+f32x4.neg() =>
+>>> running export "f64x2.neg":
+#0. 6393: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6411: V:1  | f64x2.neg $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6413: V:1  | drop
+#0. 6414: V:0  | return
+f64x2.neg() =>
+>>> running export "f32x4.abs":
+#0. 6415: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6433: V:1  | f32x4.abs $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6435: V:1  | drop
+#0. 6436: V:0  | return
+f32x4.abs() =>
+>>> running export "f64x2.abs":
+#0. 6437: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6455: V:1  | f64x2.abs $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6457: V:1  | drop
+#0. 6458: V:0  | return
+f64x2.abs() =>
+>>> running export "f32x4.min":
+#0. 6459: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6477: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6495: V:2  | f32x4.min $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6497: V:1  | drop
+#0. 6498: V:0  | return
+f32x4.min() =>
+>>> running export "f64x2.min":
+#0. 6499: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6517: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6535: V:2  | f64x2.min $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6537: V:1  | drop
+#0. 6538: V:0  | return
+f64x2.min() =>
+>>> running export "f32x4.max":
+#0. 6539: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6557: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6575: V:2  | f32x4.max $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6577: V:1  | drop
+#0. 6578: V:0  | return
+f32x4.max() =>
+>>> running export "f64x2.max":
+#0. 6579: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6597: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6615: V:2  | f64x2.max $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6617: V:1  | drop
+#0. 6618: V:0  | return
+f64x2.max() =>
+>>> running export "f32x4.add":
+#0. 6619: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6637: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6655: V:2  | f32x4.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6657: V:1  | drop
+#0. 6658: V:0  | return
+f32x4.add() =>
+>>> running export "f64x2.add":
+#0. 6659: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6677: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6695: V:2  | f64x2.add $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6697: V:1  | drop
+#0. 6698: V:0  | return
+f64x2.add() =>
+>>> running export "f32x4.sub":
+#0. 6699: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6717: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6735: V:2  | f32x4.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6737: V:1  | drop
+#0. 6738: V:0  | return
+f32x4.sub() =>
+>>> running export "f64x2.sub":
+#0. 6739: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6757: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6775: V:2  | f64x2.sub $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6777: V:1  | drop
+#0. 6778: V:0  | return
+f64x2.sub() =>
+>>> running export "f32x4.div":
+#0. 6779: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6797: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6815: V:2  | f32x4.div $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6817: V:1  | drop
+#0. 6818: V:0  | return
+f32x4.div() =>
+>>> running export "f64x2.div":
+#0. 6819: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6837: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6855: V:2  | f64x2.div $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6857: V:1  | drop
+#0. 6858: V:0  | return
+f64x2.div() =>
+>>> running export "f32x4.mul":
+#0. 6859: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6877: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6895: V:2  | f32x4.mul $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6897: V:1  | drop
+#0. 6898: V:0  | return
+f32x4.mul() =>
+>>> running export "f64x2.mul":
+#0. 6899: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6917: V:1  | v128.const $0x00000002 0x00000002 0x00000002 0x00000002
+#0. 6935: V:2  | f64x2.mul $0x00000001 00000001 00000001 00000001  $0x00000002 00000002 00000002 00000002
+#0. 6937: V:1  | drop
+#0. 6938: V:0  | return
+f64x2.mul() =>
+>>> running export "f32x4.sqrt":
+#0. 6939: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6957: V:1  | f32x4.sqrt $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6959: V:1  | drop
+#0. 6960: V:0  | return
+f32x4.sqrt() =>
+>>> running export "f64x2.sqrt":
+#0. 6961: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6979: V:1  | f64x2.sqrt $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 6981: V:1  | drop
+#0. 6982: V:0  | return
+f64x2.sqrt() =>
+>>> running export "f32x4.convert_s/i32x4":
+#0. 6983: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7001: V:1  | f32x4.convert_s/i32x4 $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7003: V:1  | drop
+#0. 7004: V:0  | return
+f32x4.convert_s/i32x4() =>
+>>> running export "f32x4.convert_u/i32x4":
+#0. 7005: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7023: V:1  | f32x4.convert_u/i32x4 $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7025: V:1  | drop
+#0. 7026: V:0  | return
+f32x4.convert_u/i32x4() =>
+>>> running export "f64x2.convert_s/i64x2":
+#0. 7027: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7045: V:1  | f64x2.convert_s/i64x2 $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7047: V:1  | drop
+#0. 7048: V:0  | return
+f64x2.convert_s/i64x2() =>
+>>> running export "f64x2.convert_u/i64x2":
+#0. 7049: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7067: V:1  | f64x2.convert_u/i64x2 $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7069: V:1  | drop
+#0. 7070: V:0  | return
+f64x2.convert_u/i64x2() =>
+>>> running export "i32x4.trunc_s/f32x4:sat":
+#0. 7071: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7089: V:1  | i32x4.trunc_s/f32x4:sat $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7091: V:1  | drop
+#0. 7092: V:0  | return
+i32x4.trunc_s/f32x4:sat() =>
+>>> running export "i32x4.trunc_u/f32x4:sat":
+#0. 7093: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7111: V:1  | i32x4.trunc_u/f32x4:sat $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7113: V:1  | drop
+#0. 7114: V:0  | return
+i32x4.trunc_u/f32x4:sat() =>
+>>> running export "i64x2.trunc_s/f64x2:sat":
+#0. 7115: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7133: V:1  | i64x2.trunc_s/f64x2:sat $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7135: V:1  | drop
+#0. 7136: V:0  | return
+i64x2.trunc_s/f64x2:sat() =>
+>>> running export "i64x2.trunc_u/f64x2:sat":
+#0. 7137: V:0  | v128.const $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7155: V:1  | i64x2.trunc_u/f64x2:sat $0x00000001 0x00000001 0x00000001 0x00000001
+#0. 7157: V:1  | drop
+#0. 7158: V:0  | return
+i64x2.trunc_u/f64x2:sat() =>
+>>> running export "atomic.wake":
+#0. 7159: V:0  | i32.const $1
+#0. 7164: V:1  | i32.const $2
+#0. 7169: V:2  | atomic.wake $0:1+$3, 2
+atomic.wake() => error: unreachable executed
+>>> running export "i32.atomic.wait":
+#0. 7181: V:0  | i32.const $1
+#0. 7186: V:1  | i32.const $2
+#0. 7191: V:2  | i64.const $3
+#0. 7200: V:3  | i32.atomic.wait $0:1+$3, 2, 3
+i32.atomic.wait() => error: unreachable executed
+>>> running export "i64.atomic.wait":
+#0. 7212: V:0  | i32.const $1
+#0. 7217: V:1  | i64.const $2
+#0. 7226: V:2  | i64.const $3
+#0. 7235: V:3  | i64.atomic.wait $0:1+$3, 2, 3
+i64.atomic.wait() => error: unreachable executed
+>>> running export "i32.atomic.load":
+#0. 7247: V:0  | i32.const $1
+#0. 7252: V:1  | i32.atomic.load $0:1+$3
+#0. 7262: V:1  | drop
+#0. 7263: V:0  | return
+i32.atomic.load() =>
+>>> running export "i64.atomic.load":
+#0. 7264: V:0  | i32.const $1
+#0. 7269: V:1  | i64.atomic.load $0:1+$7
+#0. 7279: V:1  | drop
+#0. 7280: V:0  | return
+i64.atomic.load() =>
+>>> running export "i32.atomic.load8_u":
+#0. 7281: V:0  | i32.const $1
+#0. 7286: V:1  | i32.atomic.load8_u $0:1+$3
+#0. 7296: V:1  | drop
+#0. 7297: V:0  | return
+i32.atomic.load8_u() =>
+>>> running export "i32.atomic.load16_u":
+#0. 7298: V:0  | i32.const $1
+#0. 7303: V:1  | i32.atomic.load16_u $0:1+$3
+#0. 7313: V:1  | drop
+#0. 7314: V:0  | return
+i32.atomic.load16_u() =>
+>>> running export "i64.atomic.load8_u":
+#0. 7315: V:0  | i32.const $1
+#0. 7320: V:1  | i64.atomic.load8_u $0:1+$3
+#0. 7330: V:1  | drop
+#0. 7331: V:0  | return
+i64.atomic.load8_u() =>
+>>> running export "i64.atomic.load16_u":
+#0. 7332: V:0  | i32.const $1
+#0. 7337: V:1  | i64.atomic.load16_u $0:1+$3
+#0. 7347: V:1  | drop
+#0. 7348: V:0  | return
+i64.atomic.load16_u() =>
+>>> running export "i64.atomic.load32_u":
+#0. 7349: V:0  | i32.const $1
+#0. 7354: V:1  | i64.atomic.load32_u $0:1+$3
+#0. 7364: V:1  | drop
+#0. 7365: V:0  | return
+i64.atomic.load32_u() =>
+>>> running export "i32.atomic.store":
+#0. 7366: V:0  | i32.const $1
+#0. 7371: V:1  | i32.const $2
+#0. 7376: V:2  | i32.atomic.store $0:1+$3, 2
+#0. 7386: V:0  | return
+i32.atomic.store() =>
+>>> running export "i64.atomic.store":
+#0. 7387: V:0  | i32.const $1
+#0. 7392: V:1  | i64.const $2
+#0. 7401: V:2  | i64.atomic.store $0:1+$7, 2
+#0. 7411: V:0  | return
+i64.atomic.store() =>
+>>> running export "i32.atomic.store8":
+#0. 7412: V:0  | i32.const $1
+#0. 7417: V:1  | i32.const $2
+#0. 7422: V:2  | i32.atomic.store8 $0:1+$3, 2
+#0. 7432: V:0  | return
+i32.atomic.store8() =>
+>>> running export "i32.atomic.store16":
+#0. 7433: V:0  | i32.const $1
+#0. 7438: V:1  | i32.const $2
+#0. 7443: V:2  | i32.atomic.store16 $0:1+$3, 2
+#0. 7453: V:0  | return
+i32.atomic.store16() =>
+>>> running export "i64.atomic.store8":
+#0. 7454: V:0  | i32.const $1
+#0. 7459: V:1  | i64.const $2
+#0. 7468: V:2  | i64.atomic.store8 $0:1+$3, 2
+#0. 7478: V:0  | return
+i64.atomic.store8() =>
+>>> running export "i64.atomic.store16":
+#0. 7479: V:0  | i32.const $1
+#0. 7484: V:1  | i64.const $2
+#0. 7493: V:2  | i64.atomic.store16 $0:1+$3, 2
+#0. 7503: V:0  | return
+i64.atomic.store16() =>
+>>> running export "i64.atomic.store32":
+#0. 7504: V:0  | i32.const $1
+#0. 7509: V:1  | i64.const $2
+#0. 7518: V:2  | i64.atomic.store32 $0:1+$3, 2
+#0. 7528: V:0  | return
+i64.atomic.store32() =>
+>>> running export "i32.atomic.rmw.add":
+#0. 7529: V:0  | i32.const $1
+#0. 7534: V:1  | i32.const $2
+#0. 7539: V:2  | i32.atomic.rmw.add $0:1+$3, 2
+#0. 7549: V:1  | drop
+#0. 7550: V:0  | return
+i32.atomic.rmw.add() =>
+>>> running export "i64.atomic.rmw.add":
+#0. 7551: V:0  | i32.const $1
+#0. 7556: V:1  | i64.const $2
+#0. 7565: V:2  | i64.atomic.rmw.add $0:1+$7, 2
+#0. 7575: V:1  | drop
+#0. 7576: V:0  | return
+i64.atomic.rmw.add() =>
+>>> running export "i32.atomic.rmw8_u.add":
+#0. 7577: V:0  | i32.const $1
+#0. 7582: V:1  | i32.const $2
+#0. 7587: V:2  | i32.atomic.rmw8_u.add $0:1+$3, 2
+#0. 7597: V:1  | drop
+#0. 7598: V:0  | return
+i32.atomic.rmw8_u.add() =>
+>>> running export "i32.atomic.rmw16_u.add":
+#0. 7599: V:0  | i32.const $1
+#0. 7604: V:1  | i32.const $2
+#0. 7609: V:2  | i32.atomic.rmw16_u.add $0:1+$3, 2
+#0. 7619: V:1  | drop
+#0. 7620: V:0  | return
+i32.atomic.rmw16_u.add() =>
+>>> running export "i64.atomic.rmw8_u.add":
+#0. 7621: V:0  | i32.const $1
+#0. 7626: V:1  | i64.const $2
+#0. 7635: V:2  | i64.atomic.rmw8_u.add $0:1+$3, 2
+#0. 7645: V:1  | drop
+#0. 7646: V:0  | return
+i64.atomic.rmw8_u.add() =>
+>>> running export "i64.atomic.rmw16_u.add":
+#0. 7647: V:0  | i32.const $1
+#0. 7652: V:1  | i64.const $2
+#0. 7661: V:2  | i64.atomic.rmw16_u.add $0:1+$3, 2
+#0. 7671: V:1  | drop
+#0. 7672: V:0  | return
+i64.atomic.rmw16_u.add() =>
+>>> running export "i64.atomic.rmw32_u.add":
+#0. 7673: V:0  | i32.const $1
+#0. 7678: V:1  | i64.const $2
+#0. 7687: V:2  | i64.atomic.rmw32_u.add $0:1+$3, 2
+#0. 7697: V:1  | drop
+#0. 7698: V:0  | return
+i64.atomic.rmw32_u.add() =>
+>>> running export "i32.atomic.rmw.sub":
+#0. 7699: V:0  | i32.const $1
+#0. 7704: V:1  | i32.const $2
+#0. 7709: V:2  | i32.atomic.rmw.sub $0:1+$3, 2
+#0. 7719: V:1  | drop
+#0. 7720: V:0  | return
+i32.atomic.rmw.sub() =>
+>>> running export "i64.atomic.rmw.sub":
+#0. 7721: V:0  | i32.const $1
+#0. 7726: V:1  | i64.const $2
+#0. 7735: V:2  | i64.atomic.rmw.sub $0:1+$7, 2
+#0. 7745: V:1  | drop
+#0. 7746: V:0  | return
+i64.atomic.rmw.sub() =>
+>>> running export "i32.atomic.rmw8_u.sub":
+#0. 7747: V:0  | i32.const $1
+#0. 7752: V:1  | i32.const $2
+#0. 7757: V:2  | i32.atomic.rmw8_u.sub $0:1+$3, 2
+#0. 7767: V:1  | drop
+#0. 7768: V:0  | return
+i32.atomic.rmw8_u.sub() =>
+>>> running export "i32.atomic.rmw16_u.sub":
+#0. 7769: V:0  | i32.const $1
+#0. 7774: V:1  | i32.const $2
+#0. 7779: V:2  | i32.atomic.rmw16_u.sub $0:1+$3, 2
+#0. 7789: V:1  | drop
+#0. 7790: V:0  | return
+i32.atomic.rmw16_u.sub() =>
+>>> running export "i64.atomic.rmw8_u.sub":
+#0. 7791: V:0  | i32.const $1
+#0. 7796: V:1  | i64.const $2
+#0. 7805: V:2  | i64.atomic.rmw8_u.sub $0:1+$3, 2
+#0. 7815: V:1  | drop
+#0. 7816: V:0  | return
+i64.atomic.rmw8_u.sub() =>
+>>> running export "i64.atomic.rmw16_u.sub":
+#0. 7817: V:0  | i32.const $1
+#0. 7822: V:1  | i64.const $2
+#0. 7831: V:2  | i64.atomic.rmw16_u.sub $0:1+$3, 2
+#0. 7841: V:1  | drop
+#0. 7842: V:0  | return
+i64.atomic.rmw16_u.sub() =>
+>>> running export "i64.atomic.rmw32_u.sub":
+#0. 7843: V:0  | i32.const $1
+#0. 7848: V:1  | i64.const $2
+#0. 7857: V:2  | i64.atomic.rmw32_u.sub $0:1+$3, 2
+#0. 7867: V:1  | drop
+#0. 7868: V:0  | return
+i64.atomic.rmw32_u.sub() =>
+>>> running export "i32.atomic.rmw.and":
+#0. 7869: V:0  | i32.const $1
+#0. 7874: V:1  | i32.const $2
+#0. 7879: V:2  | i32.atomic.rmw.and $0:1+$3, 2
+#0. 7889: V:1  | drop
+#0. 7890: V:0  | return
+i32.atomic.rmw.and() =>
+>>> running export "i64.atomic.rmw.and":
+#0. 7891: V:0  | i32.const $1
+#0. 7896: V:1  | i64.const $2
+#0. 7905: V:2  | i64.atomic.rmw.and $0:1+$7, 2
+#0. 7915: V:1  | drop
+#0. 7916: V:0  | return
+i64.atomic.rmw.and() =>
+>>> running export "i32.atomic.rmw8_u.and":
+#0. 7917: V:0  | i32.const $1
+#0. 7922: V:1  | i32.const $2
+#0. 7927: V:2  | i32.atomic.rmw8_u.and $0:1+$3, 2
+#0. 7937: V:1  | drop
+#0. 7938: V:0  | return
+i32.atomic.rmw8_u.and() =>
+>>> running export "i32.atomic.rmw16_u.and":
+#0. 7939: V:0  | i32.const $1
+#0. 7944: V:1  | i32.const $2
+#0. 7949: V:2  | i32.atomic.rmw16_u.and $0:1+$3, 2
+#0. 7959: V:1  | drop
+#0. 7960: V:0  | return
+i32.atomic.rmw16_u.and() =>
+>>> running export "i64.atomic.rmw8_u.and":
+#0. 7961: V:0  | i32.const $1
+#0. 7966: V:1  | i64.const $2
+#0. 7975: V:2  | i64.atomic.rmw8_u.and $0:1+$3, 2
+#0. 7985: V:1  | drop
+#0. 7986: V:0  | return
+i64.atomic.rmw8_u.and() =>
+>>> running export "i64.atomic.rmw16_u.and":
+#0. 7987: V:0  | i32.const $1
+#0. 7992: V:1  | i64.const $2
+#0. 8001: V:2  | i64.atomic.rmw16_u.and $0:1+$3, 2
+#0. 8011: V:1  | drop
+#0. 8012: V:0  | return
+i64.atomic.rmw16_u.and() =>
+>>> running export "i64.atomic.rmw32_u.and":
+#0. 8013: V:0  | i32.const $1
+#0. 8018: V:1  | i64.const $2
+#0. 8027: V:2  | i64.atomic.rmw32_u.and $0:1+$3, 2
+#0. 8037: V:1  | drop
+#0. 8038: V:0  | return
+i64.atomic.rmw32_u.and() =>
+>>> running export "i32.atomic.rmw.or":
+#0. 8039: V:0  | i32.const $1
+#0. 8044: V:1  | i32.const $2
+#0. 8049: V:2  | i32.atomic.rmw.or $0:1+$3, 2
+#0. 8059: V:1  | drop
+#0. 8060: V:0  | return
+i32.atomic.rmw.or() =>
+>>> running export "i64.atomic.rmw.or":
+#0. 8061: V:0  | i32.const $1
+#0. 8066: V:1  | i64.const $2
+#0. 8075: V:2  | i64.atomic.rmw.or $0:1+$7, 2
+#0. 8085: V:1  | drop
+#0. 8086: V:0  | return
+i64.atomic.rmw.or() =>
+>>> running export "i32.atomic.rmw8_u.or":
+#0. 8087: V:0  | i32.const $1
+#0. 8092: V:1  | i32.const $2
+#0. 8097: V:2  | i32.atomic.rmw8_u.or $0:1+$3, 2
+#0. 8107: V:1  | drop
+#0. 8108: V:0  | return
+i32.atomic.rmw8_u.or() =>
+>>> running export "i32.atomic.rmw16_u.or":
+#0. 8109: V:0  | i32.const $1
+#0. 8114: V:1  | i32.const $2
+#0. 8119: V:2  | i32.atomic.rmw16_u.or $0:1+$3, 2
+#0. 8129: V:1  | drop
+#0. 8130: V:0  | return
+i32.atomic.rmw16_u.or() =>
+>>> running export "i64.atomic.rmw8_u.or":
+#0. 8131: V:0  | i32.const $1
+#0. 8136: V:1  | i64.const $2
+#0. 8145: V:2  | i64.atomic.rmw8_u.or $0:1+$3, 2
+#0. 8155: V:1  | drop
+#0. 8156: V:0  | return
+i64.atomic.rmw8_u.or() =>
+>>> running export "i64.atomic.rmw16_u.or":
+#0. 8157: V:0  | i32.const $1
+#0. 8162: V:1  | i64.const $2
+#0. 8171: V:2  | i64.atomic.rmw16_u.or $0:1+$3, 2
+#0. 8181: V:1  | drop
+#0. 8182: V:0  | return
+i64.atomic.rmw16_u.or() =>
+>>> running export "i64.atomic.rmw32_u.or":
+#0. 8183: V:0  | i32.const $1
+#0. 8188: V:1  | i64.const $2
+#0. 8197: V:2  | i64.atomic.rmw32_u.or $0:1+$3, 2
+#0. 8207: V:1  | drop
+#0. 8208: V:0  | return
+i64.atomic.rmw32_u.or() =>
+>>> running export "i32.atomic.rmw.xor":
+#0. 8209: V:0  | i32.const $1
+#0. 8214: V:1  | i32.const $2
+#0. 8219: V:2  | i32.atomic.rmw.xor $0:1+$3, 2
+#0. 8229: V:1  | drop
+#0. 8230: V:0  | return
+i32.atomic.rmw.xor() =>
+>>> running export "i64.atomic.rmw.xor":
+#0. 8231: V:0  | i32.const $1
+#0. 8236: V:1  | i64.const $2
+#0. 8245: V:2  | i64.atomic.rmw.xor $0:1+$7, 2
+#0. 8255: V:1  | drop
+#0. 8256: V:0  | return
+i64.atomic.rmw.xor() =>
+>>> running export "i32.atomic.rmw8_u.xor":
+#0. 8257: V:0  | i32.const $1
+#0. 8262: V:1  | i32.const $2
+#0. 8267: V:2  | i32.atomic.rmw8_u.xor $0:1+$3, 2
+#0. 8277: V:1  | drop
+#0. 8278: V:0  | return
+i32.atomic.rmw8_u.xor() =>
+>>> running export "i32.atomic.rmw16_u.xor":
+#0. 8279: V:0  | i32.const $1
+#0. 8284: V:1  | i32.const $2
+#0. 8289: V:2  | i32.atomic.rmw16_u.xor $0:1+$3, 2
+#0. 8299: V:1  | drop
+#0. 8300: V:0  | return
+i32.atomic.rmw16_u.xor() =>
+>>> running export "i64.atomic.rmw8_u.xor":
+#0. 8301: V:0  | i32.const $1
+#0. 8306: V:1  | i64.const $2
+#0. 8315: V:2  | i64.atomic.rmw8_u.xor $0:1+$3, 2
+#0. 8325: V:1  | drop
+#0. 8326: V:0  | return
+i64.atomic.rmw8_u.xor() =>
+>>> running export "i64.atomic.rmw16_u.xor":
+#0. 8327: V:0  | i32.const $1
+#0. 8332: V:1  | i64.const $2
+#0. 8341: V:2  | i64.atomic.rmw16_u.xor $0:1+$3, 2
+#0. 8351: V:1  | drop
+#0. 8352: V:0  | return
+i64.atomic.rmw16_u.xor() =>
+>>> running export "i64.atomic.rmw32_u.xor":
+#0. 8353: V:0  | i32.const $1
+#0. 8358: V:1  | i64.const $2
+#0. 8367: V:2  | i64.atomic.rmw32_u.xor $0:1+$3, 2
+#0. 8377: V:1  | drop
+#0. 8378: V:0  | return
+i64.atomic.rmw32_u.xor() =>
+>>> running export "i32.atomic.rmw.xchg":
+#0. 8379: V:0  | i32.const $1
+#0. 8384: V:1  | i32.const $2
+#0. 8389: V:2  | i32.atomic.rmw.xchg $0:1+$3, 2
+#0. 8399: V:1  | drop
+#0. 8400: V:0  | return
+i32.atomic.rmw.xchg() =>
+>>> running export "i64.atomic.rmw.xchg":
+#0. 8401: V:0  | i32.const $1
+#0. 8406: V:1  | i64.const $2
+#0. 8415: V:2  | i64.atomic.rmw.xchg $0:1+$7, 2
+#0. 8425: V:1  | drop
+#0. 8426: V:0  | return
+i64.atomic.rmw.xchg() =>
+>>> running export "i32.atomic.rmw8_u.xchg":
+#0. 8427: V:0  | i32.const $1
+#0. 8432: V:1  | i32.const $2
+#0. 8437: V:2  | i32.atomic.rmw8_u.xchg $0:1+$3, 2
+#0. 8447: V:1  | drop
+#0. 8448: V:0  | return
+i32.atomic.rmw8_u.xchg() =>
+>>> running export "i32.atomic.rmw16_u.xchg":
+#0. 8449: V:0  | i32.const $1
+#0. 8454: V:1  | i32.const $2
+#0. 8459: V:2  | i32.atomic.rmw16_u.xchg $0:1+$3, 2
+#0. 8469: V:1  | drop
+#0. 8470: V:0  | return
+i32.atomic.rmw16_u.xchg() =>
+>>> running export "i64.atomic.rmw8_u.xchg":
+#0. 8471: V:0  | i32.const $1
+#0. 8476: V:1  | i64.const $2
+#0. 8485: V:2  | i64.atomic.rmw8_u.xchg $0:1+$3, 2
+#0. 8495: V:1  | drop
+#0. 8496: V:0  | return
+i64.atomic.rmw8_u.xchg() =>
+>>> running export "i64.atomic.rmw16_u.xchg":
+#0. 8497: V:0  | i32.const $1
+#0. 8502: V:1  | i64.const $2
+#0. 8511: V:2  | i64.atomic.rmw16_u.xchg $0:1+$3, 2
+#0. 8521: V:1  | drop
+#0. 8522: V:0  | return
+i64.atomic.rmw16_u.xchg() =>
+>>> running export "i64.atomic.rmw32_u.xchg":
+#0. 8523: V:0  | i32.const $1
+#0. 8528: V:1  | i64.const $2
+#0. 8537: V:2  | i64.atomic.rmw32_u.xchg $0:1+$3, 2
+#0. 8547: V:1  | drop
+#0. 8548: V:0  | return
+i64.atomic.rmw32_u.xchg() =>
+>>> running export "i32.atomic.rmw.cmpxchg":
+#0. 8549: V:0  | i32.const $1
+#0. 8554: V:1  | i32.const $2
+#0. 8559: V:2  | i32.const $3
+#0. 8564: V:3  | i32.atomic.rmw.cmpxchg $0:1+$3, 2, 3
+#0. 8574: V:1  | drop
+#0. 8575: V:0  | return
+i32.atomic.rmw.cmpxchg() =>
+>>> running export "i64.atomic.rmw.cmpxchg":
+#0. 8576: V:0  | i32.const $1
+#0. 8581: V:1  | i64.const $2
+#0. 8590: V:2  | i64.const $3
+#0. 8599: V:3  | i64.atomic.rmw.cmpxchg $0:1+$7, 2, 3
+#0. 8609: V:1  | drop
+#0. 8610: V:0  | return
+i64.atomic.rmw.cmpxchg() =>
+>>> running export "i32.atomic.rmw8_u.cmpxchg":
+#0. 8611: V:0  | i32.const $1
+#0. 8616: V:1  | i32.const $2
+#0. 8621: V:2  | i32.const $3
+#0. 8626: V:3  | i32.atomic.rmw8_u.cmpxchg $0:1+$3, 2, 3
+#0. 8636: V:1  | drop
+#0. 8637: V:0  | return
+i32.atomic.rmw8_u.cmpxchg() =>
+>>> running export "i32.atomic.rmw16_u.cmpxchg":
+#0. 8638: V:0  | i32.const $1
+#0. 8643: V:1  | i32.const $2
+#0. 8648: V:2  | i32.const $3
+#0. 8653: V:3  | i32.atomic.rmw16_u.cmpxchg $0:1+$3, 2, 3
+#0. 8663: V:1  | drop
+#0. 8664: V:0  | return
+i32.atomic.rmw16_u.cmpxchg() =>
+>>> running export "i64.atomic.rmw8_u.cmpxchg":
+#0. 8665: V:0  | i32.const $1
+#0. 8670: V:1  | i64.const $2
+#0. 8679: V:2  | i64.const $3
+#0. 8688: V:3  | i64.atomic.rmw8_u.cmpxchg $0:1+$3, 2, 3
+#0. 8698: V:1  | drop
+#0. 8699: V:0  | return
+i64.atomic.rmw8_u.cmpxchg() =>
+>>> running export "i64.atomic.rmw16_u.cmpxchg":
+#0. 8700: V:0  | i32.const $1
+#0. 8705: V:1  | i64.const $2
+#0. 8714: V:2  | i64.const $3
+#0. 8723: V:3  | i64.atomic.rmw16_u.cmpxchg $0:1+$3, 2, 3
+#0. 8733: V:1  | drop
+#0. 8734: V:0  | return
+i64.atomic.rmw16_u.cmpxchg() =>
+>>> running export "i64.atomic.rmw32_u.cmpxchg":
+#0. 8735: V:0  | i32.const $1
+#0. 8740: V:1  | i64.const $2
+#0. 8749: V:2  | i64.const $3
+#0. 8758: V:3  | i64.atomic.rmw32_u.cmpxchg $0:1+$3, 2, 3
+#0. 8768: V:1  | drop
+#0. 8769: V:0  | return
+i64.atomic.rmw32_u.cmpxchg() =>
+;;; STDOUT ;;)

@@ -14,7 +14,7 @@ set(CMAKE_C_COMPILER "${WASM_ROOT}/bin/clang")
 set(CMAKE_CXX_COMPILER "${WASM_ROOT}/bin/clang++")
 set(TRIPLE "wasm32-unknown-unknown-elf")
 
-set(STD_FLAGS " -mllvm -use-cfl-aa-in-codegen=both --target=wasm32 -nostdlib -ffreestanding -fno-builtin -Xclang -load -Xclang ${EOSIO_APPLY_LIB}")
+set(STD_FLAGS " -mllvm -use-cfl-aa-in-codegen=both --target=wasm32 -DBOOST_DISABLE_ASSERTS -DBOOST_EXCEPTION_DISABLE -nostdlib -ffreestanding -fno-builtin -Xclang -load -Xclang ${EOSIO_APPLY_LIB}")
 
 set(CMAKE_C_COMPILER_TARGET  ${TRIPLE})
 set(CMAKE_CXX_COMPILER_TARGET ${TRIPLE})
@@ -33,7 +33,6 @@ set(CMAKE_RANLIB "${WASM_ROOT}/bin/llvm-ranlib" CACHE PATH "ranlib" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS "--allow-undefined-file=${WASM_IMPORTS} -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm -use-cfl-aa-in-codegen=both")
 
 find_package(Boost 1.67 REQUIRED)
-#set(BOOST_INSTALL_DIR "/usr/local/include" CACHE STRING "Boost include directory")
 
 if(WASM_SDK_BUILD)
    set(STANDARD_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libc++/libcxx/include"
@@ -43,6 +42,6 @@ if(WASM_SDK_BUILD)
                          "${Boost_INCLUDE_DIRS}")
 else(WASM_SDK_BUILD)
    set(STANDARD_INCLUDES "${WASM_ROOT}/include"
-                         "${BOOST_INSTALL_DIR}")
+                         "${Boost_INSTALL_DIRS}")
 endif(WASM_SDK_BUILD)
 set(STANDARD_LIBS c++ c eosio)

@@ -1,0 +1,39 @@
+---
+
+init:
+  - set PATH=C:\Python27\Scripts;%PATH%             # while python's bin is already in PATH, but pip.exe in Scripts\ dir isn't
+  - set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
+  # Python doesn't seem to be able to import files from the current script's
+  # directory on Windows.
+  - set PYTHONPATH=%APPVEYOR_BUILD_FOLDER%\test
+
+install:
+  - git submodule update --init
+
+environment:
+  JOBS: 3
+  matrix:
+  - GENERATOR: MSYS Makefiles
+    CONFIG: Release
+    JOBS_FLAG: -j
+    EXE_DIR: .
+  - GENERATOR: Visual Studio 14 2015
+    CONFIG: Release
+    JOBS_FLAG: "/m:"
+    EXE_DIR: '%CONFIG%'
+  - GENERATOR: Visual Studio 14 2015 Win64
+    CONFIG: Debug
+    JOBS_FLAG: "/m:"
+    EXE_DIR: '%CONFIG%'
+  - GENERATOR: Visual Studio 14 2015 Win64
+    CONFIG: Release
+    JOBS_FLAG: "/m:"
+    EXE_DIR: '%CONFIG%'
+
+build_script:
+  - cmake .  -DCMAKE_BUILD_TYPE=%CONFIG% -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER% -G "%GENERATOR%"
+  - cmake --build . --config %CONFIG% --target install -- %JOBS_FLAG%%JOBS%
+
+test_script:
+  - "%APPVEYOR_BUILD_FOLDER%\\bin\\wabt-unittests"
+  - python test\run-tests.py -v --bindir %APPVEYOR_BUILD_FOLDER%\bin

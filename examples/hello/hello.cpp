@@ -1,6 +1,5 @@
 #include <eosiolib/eosio.hpp>
 using namespace eosio;
-
 class hello : public eosio::contract {
   public:
       using contract::contract;

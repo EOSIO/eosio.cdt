@@ -1,0 +1,20 @@
+#! /bin/bash
+
+CFL_AA="-use-cfl-aa-in-codegen=both"
+STD_FLAGS=" -I${Boost_INCLUDE_DIRS} -mllvm $CFL_AA --target=wasm32 -nostdlib -ffreestanding -fno-builtin -Xclang -load -Xclang ${EOSIO_APPLY_LIB} "
+CPP_FLAGS=" -std=c++14 -fno-rtti -fno-exceptions "
+LD_FLAGS=" --allow-undefined-file=${CMAKE_INSTALL_PREFIX}/eosio.imports -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm $CFL_AA -lc++ -lc -leosio "
+EXE_LD_FLAGS=" -Wl,--allow-undefined-file=${CMAKE_INSTALL_PREFIX}/eosio.imports,-e,apply,--lto-O3,--gc-sections,--merge-data-segments,--strip-all,-stack-first,-zstack-size=8192,-mllvm,$CFL_AA -lc++ -lc -leosio "
+
+while getopts ":cS" opt; do
+   case $opt in
+      c)
+         EXE_LD_FLAGS=""   
+      ;;
+      S)
+         EXE_LD_FLAGS=""
+      ;;
+   esac
+done
+
+${CMAKE_INSTALL_PREFIX}/bin/clang++ $STD_FLAGS $CPP_FLAGS $@ --sysroot ${CMAKE_INSTALL_PREFIX} $EXE_LD_FLAGS

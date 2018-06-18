@@ -20,3 +20,9 @@ target_include_directories(c++
                            "${CMAKE_CURRENT_SOURCE_DIR}/../musl/libcxx/include")
 
 target_link_libraries(c++ c)
+
+install(TARGETS c++ EXPORT EosLibCpp
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
