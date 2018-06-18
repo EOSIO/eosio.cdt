@@ -16,13 +16,15 @@ add_library(c++
             ${SRC_FILES})
 
 target_include_directories(c++
-                           PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include" 
-                           "${CMAKE_CURRENT_SOURCE_DIR}/../musl/libcxx/include")
+                           PUBLIC 
+                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include>
+                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(c++ c)
 
-install(TARGETS c++ EXPORT EosLibCpp
+install(TARGETS c++ EXPORT EosioLibCXX
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(EXPORT EosioLibCXX DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
