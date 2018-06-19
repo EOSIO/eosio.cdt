@@ -31,7 +31,7 @@ set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET>
 set(CMAKE_AR "${WASM_INSTALL_ROOT}/eosiowasm/bin/llvm-ar" CACHE PATH "ar" FORCE)
 set(CMAKE_RANLIB "${WASM_INSTALL_ROOT}/eosiowasm/bin/llvm-ranlib" CACHE PATH "ranlib" FORCE)
 
-#set(CMAKE_EXE_LINKER_FLAGS "--allow-undefined-file=${WASM_IMPORTS} -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm -use-cfl-aa-in-codegen=both")
+set(CMAKE_EXE_LINKER_FLAGS "--allow-undefined-file=${WASM_IMPORTS} -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm -use-cfl-aa-in-codegen=both")
 
 find_package(Boost 1.67 REQUIRED)
 
