@@ -21,7 +21,8 @@ set(CMAKE_CXX_COMPILER_TARGET ${TRIPLE})
 set(CMAKE_C_FLAGS " ${STD_FLAGS} -O3")
 set(CMAKE_CXX_FLAGS " -std=c++14 -O3 -fno-rtti -fno-exceptions ${STD_FLAGS}")
 
-set(WASM_LINKER "${WASM_INSTALL_ROOT}/eosiowasm/bin/eosio.lld")
+#set(WASM_LINKER "${WASM_INSTALL_ROOT}/eosiowasm/bin/eosio.lld")
+set(WASM_LINKER "${WASM_INSTALL_ROOT}/eosiowasm/bin/wasm-ld")
 set(WASM_IMPORTS "${WASM_INSTALL_ROOT}/eosio.imports")
 
 set(CMAKE_C_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
