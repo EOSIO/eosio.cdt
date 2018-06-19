@@ -41,7 +41,6 @@ static std::string s_infile;
 static std::string s_outfile;
 static Features s_features;
 static WriteBinaryOptions s_write_binary_options;
-static WriteWatOptions s_write_wat_options;
 static std::unique_ptr<FileStream> s_log_stream;
 
 static const char s_description[] =
