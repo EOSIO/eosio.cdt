@@ -11,7 +11,7 @@ endif(WASM_SDK_BUILD)
 
 
 set(CMAKE_C_COMPILER "${WASM_INSTALL_ROOT}/eosiowasm/bin/clang")
-set(CMAKE_CXX_COMPILER "${WASM_INSTALL_ROOT}/eosiowasm/bin/clang++")
+set(CMAKE_CXX_COMPILER "${CMAKE_INSTALL_PREFIX}/eosiowasm/bin/clang++")
 set(TRIPLE "wasm32-unknown-unknown-elf")
 
 set(STD_FLAGS " -mllvm -use-cfl-aa-in-codegen=both --target=wasm32 -DBOOST_DISABLE_ASSERTS -DBOOST_EXCEPTION_DISABLE -nostdlib -ffreestanding -fno-builtin -Xclang -load -Xclang ${EOSIO_APPLY_LIB}")

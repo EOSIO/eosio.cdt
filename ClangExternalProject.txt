@@ -4,7 +4,7 @@ include(GNUInstallDirs)
 
 ExternalProject_Add(
   EosioClang
-  GIT_REPOSITORY "git@github.com:eosio/llvm"
+  GIT_REPOSITORY "https://github.com/eosio/llvm.git"
   GIT_SUBMODULES ""
   
   UPDATE_COMMAND ${GIT_EXECUTABLE} pull

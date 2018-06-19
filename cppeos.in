@@ -16,4 +16,4 @@ while getopts ":cS" opt; do
    esac
 done
 
-${CMAKE_INSTALL_PREFIX}/bin/clang++ $STD_FLAGS $CPP_FLAGS $@ --sysroot ${CMAKE_INSTALL_PREFIX} $EXE_LD_FLAGS
+${CMAKE_INSTALL_PREFIX}/eosiowasm/bin/clang++ $STD_FLAGS $CPP_FLAGS $@ --sysroot ${CMAKE_INSTALL_PREFIX} $EXE_LD_FLAGS

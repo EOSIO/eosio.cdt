@@ -2,9 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(eosio_wasm_sdk VERSION 0.0.0)
 
 set(INSTALL_BASE ${CMAKE_INSTALL_PREFIX})
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-   set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/opt/eosio-wasm")
-endif()
+#if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#endif()
 
 include(GNUInstallDirs)
 
