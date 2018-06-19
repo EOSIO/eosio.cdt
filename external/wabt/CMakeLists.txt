@@ -287,7 +287,7 @@ if (NOT EMSCRIPTEN)
       DEPENDS ${name}
     )
   endfunction()
-
+  wabt_executable(stripbss src/tools/stripbss.cc)
   # wat2wasm
   wabt_executable(wat2wasm src/tools/wat2wasm.cc)
 
@@ -386,6 +386,7 @@ if (NOT EMSCRIPTEN)
 
   # install
   install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
+  install(TARGETS stripbss DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 else ()
   # emscripten stuff
