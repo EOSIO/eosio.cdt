@@ -1,6 +1,6 @@
 #! /bin/bash
 
 CFL_AA="-use-cfl-aa-in-codegen=both"
-LD_FLAGS=" --allow-undefined-file=${CMAKE_INSTALL_PREFIX}/eosio.imports -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm $CFL_AA -lc++ -lc -leosio "
+LD_FLAGS=" --allow-undefined-file=${CMAKE_INSTALL_PREFIX}/eosiosdk/eosio.imports -e apply --lto-O3 --gc-sections --merge-data-segments --strip-all -stack-first -zstack-size=8192 -mllvm $CFL_AA -lc++ -lc -leosio "
 
-${CMAKE_INSTALL_PREFIX}/eosiowasm/bin/wasm-ld $@ -L${CMAKE_INSTALL_PREFIX}/lib $LD_FLAGS
+${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/wasm-ld $@ -L${CMAKE_INSTALL_PREFIX}/eosiosdk/lib $LD_FLAGS

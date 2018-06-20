@@ -48,12 +48,12 @@ add_dependencies(c EosioClang)
 target_include_directories(c 
                            PUBLIC 
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/musl/include;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt;${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos;${CMAKE_CURRENT_SOURCE_DIR}/../>"
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/eosiosdk/include/>)
 
 install(TARGETS c EXPORT EosioLib
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+   LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/lib/
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/lib/)
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/include/libc)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/include/libc)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/include/libc)
