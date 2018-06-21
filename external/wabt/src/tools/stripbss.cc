@@ -79,14 +79,10 @@ void StripZeroedData( Module& mod ) {
    std::vector<DataSegment*> ds;
    for ( auto DS : mod.data_segments ) {
       bool isZeroed = true;
-      std::cout << "DATA [";
       for ( auto datum : DS->data ) {
-         std::cout << uint32_t(datum) << " ";
          isZeroed &= datum == 0;
       }
-      std::cout << "\n";
       if (!isZeroed) {
-         std::cout << "WRITING\n";
          ds.push_back(DS);
       }
    }
