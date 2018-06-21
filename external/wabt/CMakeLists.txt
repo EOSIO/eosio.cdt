@@ -282,8 +282,8 @@ if (NOT EMSCRIPTEN)
     set(WABT_EXECUTABLES ${WABT_EXECUTABLES} PARENT_SCOPE)
 
     add_custom_target(${name}-copy-to-bin ALL
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${WABT_SOURCE_DIR}/bin
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${WABT_SOURCE_DIR}/bin
+       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_BINDIR}
+       COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_INSTALL_BINDIR}
       DEPENDS ${name}
     )
   endfunction()
