@@ -6,6 +6,15 @@
 	path = libraries/libc++/libcxx
 	url = git@github.com:eosio/libcxx
 	branch = eosiosdk
-[submodule "libraries/pfr"]
-	path = libraries/pfr
+[submodule "libraries/boost/pfr"]
+	path = libraries/boost/pfr
 	url = git@github.com:eosio/magic_get
+[submodule "libraries/boost/fusion"]
+	path = libraries/boost/fusion
+	url = git@github.com:larryk85/fusion
+[submodule "libraries/boost/hana"]
+	path = libraries/boost/hana
+	url = git@github.com:larryk85/hana
+[submodule "libraries/boost/container"]
+	path = libraries/boost/container
+	url = git@github.com:larryk85/container
