@@ -5,7 +5,7 @@
 namespace eosio {
 
    using boost::container::flat_map;
-
+   using namespace std;
    /**
     *  Each user has their own account with the exchange contract that keeps track
     *  of how much a user has on deposit for each extended asset type. The assumption

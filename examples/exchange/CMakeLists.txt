@@ -12,5 +12,12 @@ list(APPEND CMAKE_MODULE_PATH ${WASM_ROOT}/lib/cmake)
 #include the toolchain cmake
 include(EosioWasmToolchain)
 
+add_library(exchange_lib 
+   ${CMAKE_SOURCE_DIR}/exchange_accounts.cpp
+   ${CMAKE_SOURCE_DIR}/exchange_state.cpp
+   ${CMAKE_SOURCE_DIR}/market_state.cpp)
+target_include_directories( exchange_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../ )
+
 add_executable(exchange exchange.cpp )
 target_include_directories( exchange PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../ )
+target_link_libraries( exchange exchange_lib)

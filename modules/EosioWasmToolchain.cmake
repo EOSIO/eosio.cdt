@@ -14,22 +14,18 @@ set(CMAKE_C_FLAGS " -O3 ")
 set(CMAKE_CXX_FLAGS " -O3 ")
 
 set(WASM_LINKER "${WASM_INSTALL_ROOT}/bin/eosio.ld")
-set(WASM_IMPORTS "${WASM_INSTALL_ROOT}/eosio.wasmsdk/eosio.imports")
 
 set(CMAKE_C_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 
-set(CMAKE_AR "${WASM_INSTALL_ROOT}/bin/eosio.ar" CACHE PATH "ar" FORCE)
-set(CMAKE_RANLIB "${WASM_INSTALL_ROOT}/bin/eosio.ranlib" CACHE PATH "ranlib" FORCE)
+set(CMAKE_AR "${WASM_INSTALL_ROOT}/bin/eosio-ar" CACHE PATH "ar" FORCE)
+set(CMAKE_RANLIB "${WASM_INSTALL_ROOT}/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
 
 set(EosioLib_DIR ${WASM_INSTALL_ROOT}/lib/cmake)
 
-find_package(EosioLib CONFIG REQUIRED)
 # hack for CMake on Linux
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 # hack for OSX
 set(CMAKE_OSX_SYSROOT="${WASM_INSTALL_ROOT}/eosio.wasmsdk")
 set(CMAKE_OSX_DEPLOYMENT_TARGET="")
-
-#set(STANDARD_LIBS c++ c eosio)
