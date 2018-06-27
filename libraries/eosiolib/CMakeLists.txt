@@ -7,12 +7,12 @@ add_library(eosio
 
 target_include_directories(eosio PUBLIC 
                                  "$<BUILD_INTERFACE:${STANDARD_INCLUDES}>"
-                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/eosiosdk/include/>)
+                                 $<INSTALL_INTERFACE:${SDK_INSTALL_PREFIX}/include/>)
 
 target_link_libraries( eosio c c++ )
 
 install(TARGETS eosio EXPORT EosioLib
-   LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/lib/
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/lib/)
+   LIBRARY DESTINATION ${SDK_INSTALL_PREFIX}/lib/
+   ARCHIVE DESTINATION ${SDK_INSTALL_PREFIX}/lib/)
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/include/eosiolib)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${SDK_INSTALL_PREFIX}/include)

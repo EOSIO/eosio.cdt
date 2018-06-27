@@ -3,6 +3,8 @@ project(eosio_wasm_sdk VERSION 0.0.0)
 
 include(GNUInstallDirs)
 
+set(SDK_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.wasmsdk)
+
 if(NOT ${NO_WASM_COMPILER} STREQUAL "")
    string(TOLOWER ${NO_WASM_COMPILER} no_wasm_comp)
    if(NOT ${no_wasm_comp} STREQUAL "true")
@@ -24,30 +26,20 @@ set(WASM_SDK_BUILD true)
 configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
-include(EosioWasmToolchain)
+include(EosioWasmToolchainBuild)
 
 add_subdirectory(libraries)
 
-#add_subdirectory(examples)
-
-
-# install cpp ld ranlib ar objdump and readelf
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/llvm-ranlib DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.ranlib PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/llvm-ar DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.ar PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/llvm-objdump DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.objdump PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/llvm-readelf DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.readelf PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/eosio.cpp DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.cpp PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_INSTALL_PREFIX}/eosiosdk/eosiollvm/bin/eosio.ld DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.ld PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-
-# install pfr
-install(DIRECTORY libraries/pfr/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/include/)
+if ( ${no_wasm_comp} STREQUAL "false" )
+   include(InstallClang.txt)
+endif()
 
 # install examples
-install(DIRECTORY examples DESTINATION "${CMAKE_INSTALL_PREFIX}/eosiosdk")
+install(DIRECTORY examples DESTINATION "${SDK_INSTALL_PREFIX}")
 
 install(EXPORT EosioLib DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 
-set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/eosiosdk/include)
+set(INCLUDE_INSTALL_DIR ${SDK_INSTALL_PREFIX}/include)
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(EosioLibConfigVersion.cmake 
    COMPATIBILITY SameMajorVersion)
@@ -61,4 +53,4 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfigVersion.cmake
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfig.cmake
    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 install(FILES ${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
-install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX}/eosiosdk/)
+install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${SDK_INSTALL_PREFIX})

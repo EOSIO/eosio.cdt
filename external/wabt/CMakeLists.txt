@@ -287,7 +287,7 @@ if (NOT EMSCRIPTEN)
       DEPENDS ${name}
     )
   endfunction()
-  wabt_executable(stripbss src/tools/stripbss.cc)
+  wabt_executable(eosio.pp src/tools/postpass.cc)
   # wat2wasm
   wabt_executable(wat2wasm src/tools/wat2wasm.cc)
 
@@ -385,8 +385,11 @@ if (NOT EMSCRIPTEN)
   #  )
 
   # install
-  install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
-  install(TARGETS stripbss DESTINATION ${CMAKE_INSTALL_BINDIR})
+  #install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
+  install(TARGETS eosio.pp DESTINATION ${SDK_INSTALL_PREFIX}/bin)
+  install(FILES ${SDK_INSTALL_PREFIX}/bin/eosio.pp 
+     DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME eosio.pp
+     PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 else ()
   # emscripten stuff
