@@ -13,4 +13,5 @@ ExternalProject_Add(
 
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/llvm"
   TEST_COMMAND   ""
+  INSTALL_COMMAND ""
 )
