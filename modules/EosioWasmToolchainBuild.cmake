@@ -23,6 +23,5 @@ find_package(Boost 1.67 REQUIRED)
 set(STANDARD_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libc++/libcxx/include"
                       "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libc/musl/include"
                       "${CMAKE_CURRENT_SOURCE_DIR}/libraries/eosiolib"
-                      "${CMAKE_CURRENT_SOURCE_DIR}/libraries/pfr/include"
-                      "${Boost_INCLUDE_DIRS}")
+                      "${CMAKE_CURRENT_SOURCE_DIR}/libraries/boost/include")
 set(STANDARD_LIBS c++ c eosio)
