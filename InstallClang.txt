@@ -62,11 +62,11 @@ install(FILES ${CLANG_BIN_DIR}/../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFI
 
 install_symlink(llvm-ranlib eosio-ranlib)
 install_symlink(llvm-ar eosio-ar)
-install_symlink(llvm-objdump eosio.objdump)
-install_symlink(llvm-readelf eosio.readelf)
-install_symlink(eosio.cc eosio.cc)
-install_symlink(eosio.cpp eosio.cpp)
-install_symlink(eosio.ld eosio.ld)
+install_symlink(llvm-objdump eosio-objdump)
+install_symlink(llvm-readelf eosio-readelf)
+install_symlink(eosio.cc eosio-cc)
+install_symlink(eosio.cpp eosio-cpp)
+install_symlink(eosio.ld eosio-ld)
 
 install(CODE "
    execute_process(COMMAND ln -sf 
