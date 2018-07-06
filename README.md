@@ -143,7 +143,7 @@ Generic Options:
   -version                 - Display the version of this program
 ```
 
-### eosio.ld
+### eosio-ld
 ---
 ```bash
 OVERVIEW: eosio-ld (WebAssembly linker)
