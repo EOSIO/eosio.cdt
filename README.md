@@ -8,7 +8,7 @@ WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general W
 - ranlib and ar support for static libraries for WASM
 - \_\_FILE\_\_ and \_\_BASE\_FILE\_\_ will now only return the file name and not the fullpath. This eliminates any non-determinism from location of the compiled binary
 - Global constructors and global destructors are now supported
-- _eosio.cpp_, _eosio.cc_, _eosio.ld_, and _eosio.pp_ are set the core set of tools that you will interact with.
+- _eosio-cpp_, _eosio-cc_, _eosio-ld_, and _eosio-pp_ are set the core set of tools that you will interact with.
     * These are the C++ compiler, C compiler, linker and postpass tools.
 - A simple CMake interface to build contracts against WasmSDK
 - ABI generator (Coming Soon)
@@ -26,7 +26,7 @@ $ cd wasmsdk
 $ mkdir build && cd build
 ```
 
-Then configure with cmake to install to ```/usr/local```
+Then configure with cmake to install to ```/usr/local/eosio.wasmsdk```
 
 ```sh
 $ cmake ..
@@ -46,14 +46,14 @@ $ make && make install
 
 ### Installed Tools
 ---
-* [eosio.cpp](#eosio_cpp)
-* [eosio.cc](#eosio.cc)
-* [eosio.ld](#eosio.ld)
-* eosio.pp (only strips all zeroed initialized data segments for now, currently runs automatically with cpp/cc and ld)
-* eosio.ranlib
-* eosio.ar
-* eosio.objdump
-* eosio.readelf
+* [eosio-cpp](#eosio-cpp)
+* [eosio-cc](#eosio-cc)
+* [eosio-ld](#eosio-ld)
+* eosio-pp (only strips all zeroed initialized data segments for now, currently runs automatically with cpp/cc and ld)
+* eosio-ranlib
+* eosio-ar
+* eosio-objdump
+* eosio-readelf
 
 ### Usage
 ---
@@ -88,13 +88,13 @@ EOSIO_ABI( test, (test_action))
 Since, EosioWasmToolchain overwrites cmake to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.
 
 To manually compile source code:
-Use ```eosio.cpp/eosio.cc``` and ```eosio.ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
+Use ```eosio.cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
 
-### eosio.cpp
+### eosio-cpp
 ---
 ```bash
-OVERVIEW: eosio.cpp (Eosio C++ -> WebAssembly compiler)
-USAGE: eosio.cpp [options] <input file> ...
+OVERVIEW: eosio-cpp (Eosio C++ -> WebAssembly compiler)
+USAGE: eosio-cpp [options] <input file> ...
 
 OPTIONS:
   -C                       - Include comments in preprocessed output
@@ -146,8 +146,8 @@ Generic Options:
 ### eosio.ld
 ---
 ```bash
-OVERVIEW: eosio.ld (WebAssembly linker)
-USAGE: eosio.ld [options] <input file> ...
+OVERVIEW: eosio-ld (WebAssembly linker)
+USAGE: eosio-ld [options] <input file> ...
 
 OPTIONS:
 
@@ -169,7 +169,7 @@ eosio.ld options:
  
  ### Todos
  ---
- - Add ABI generation to eosio.cpp
+ - Add ABI generation to eosio-cpp
 
 License
 ----
