@@ -6,3 +6,6 @@
 	path = libraries/libc++/libcxx
 	url = git@github.com:eosio/libcxx
 	branch = eosiosdk
+[submodule "eosio_llvm"]
+	path = eosio_llvm
+	url = https://github.com/eosio/llvm
