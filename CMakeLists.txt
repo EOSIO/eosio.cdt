@@ -28,11 +28,24 @@ configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.im
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
 include(EosioWasmToolchainBuild)
 
+if ("${CORE_SYMBOL_NAME}" STREQUAL "")
+  set( CORE_SYMBOL_NAME "SYS" )
+endif()
+string(TOUPPER ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME)
+
+string(LENGTH ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME_LENGTH)
+if (CORE_SYMBOL_NAME_LENGTH GREATER 7)
+  message(FATAL_ERROR "CORE_SYMBOL_NAME length must be between 1 and 7 characters")
+endif()
+
+
 add_subdirectory(libraries)
 
 if ( ${no_wasm_comp} STREQUAL "false" )
    include(InstallClang.txt)
 endif()
+
+message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
 
 # install examples
 install(DIRECTORY examples DESTINATION "${SDK_INSTALL_PREFIX}")
