@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(eosio_wasm_sdk VERSION 0.0.0)
+project(eosio_wasm_sdk VERSION 1.0.0)
 
 include(GNUInstallDirs)
 

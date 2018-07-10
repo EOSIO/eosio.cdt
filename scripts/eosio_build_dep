@@ -1,0 +1,9 @@
+automake,-x,/usr/local/bin/automake,automake,http://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz
+Libtool,-x,/usr/local/bin/glibtool,libtool,http://gnu.askapache.com/libtool/libtool-2.4.6.tar.gz
+wget,-x,/usr/local/bin/wget,wget,https://ftp.gnu.org/gnu/wget/wget-1.19.2.tar.gz
+CMake,-x,/usr/local/bin/cmake,cmake,https://cmake.org/files/v3.10/cmake-3.10.1-Darwin-x86_64.tar.gz
+GMP,-f,/usr/local/opt/gmp/include/gmpxx.h,gmp,https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.bz2
+gettext,-x,/usr/local/opt/gettext/bin/gettext,gettext,https://ftp.gnu.org/pub/gnu/gettext/gettext-latest.tar.gz
+Doxygen,-x,/usr/local/bin/doxygen,doxygen,http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.14.src.tar.gz
+Graphviz,-x,/usr/local/bin/dot,graphviz,https://graphviz.gitlab.io/pub/graphviz/stable/SOURCES/graphviz.tar.gz
+LCOV,-f,/usr/local/bin/lcov,lcov,http://downloads.sourceforge.net/ltp/lcov-1.13.tar.gz
