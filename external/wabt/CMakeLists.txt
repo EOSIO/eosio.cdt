@@ -15,7 +15,14 @@
 #
 
 cmake_minimum_required(VERSION 2.6)
+if (POLICY CMP0048)
+   cmake_policy(SET CMP0048 NEW)
+endif()
 project(WABT)
+set(PROJECT_MAJOR_VERSION "0")
+set(PROJECT_MINO_VERSION "0")
+set(PROJECT_PATCH_VERSION "0")
+set(PROJECT_VERSION "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_PATCH_VERSION}")
 
 option(BUILD_TESTS "Build GTest-based tests" OFF)
 option(RUN_RE2C "Run re2c" ON)
