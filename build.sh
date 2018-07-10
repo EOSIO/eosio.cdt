@@ -5,11 +5,6 @@ printf "\t=========== Building eosio.wasmsdk ===========\n\n"
 RED='\033[0;31m'
 NC='\033[0m'
 
-if [ ! -d "/usr/local/eosio" ]; then
-   printf "${RED}Error, please ensure that eosio is installed correctly!\n\n${NC}"
-   exit -1
-fi
-
 export DISK_MIN=10
 export TEMP_DIR="/tmp"
 
