@@ -1,7 +1,7 @@
 # WasmSDK
-## Version : ```Prelease```
+## Version : 1.0.0
 
-WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general WebAssembly toolchain, additional [EOSIO](https://github.com/eosio/eos) specific optimizations are available.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
+WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
 
 ## New Features from EOSIO
 - Compile (-c) option flag will compile to a WASM-elf object file
@@ -13,10 +13,29 @@ WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general W
 - A simple CMake interface to build contracts against WasmSDK
 - ABI generator (Coming Soon)
 
-### Installation
-WasmSDK requires CMake v3.5+ and Boost 1.67.0 to run.
+### Guided Installation
+First clone
 
-Please note that because we have the compiler as an external project, this will cause it to be cloned during the ```make``` step.  The compiler repo can be cloned separately and installed to either default install prefix or where you specify during the ```cmake``` step.
+```sh
+$ git clone --recursive https://github.com/eosio/eosio.wasmsdk
+$ cd eosio.wasmsdk
+```
+
+Now run `build.sh` and give the core symbol for the EOSIO blockchain that intend to deploy to.
+    *`build.sh` will install any dependencies that are needed.
+```sh
+$ ./build.sh <CORE_SYMBOL>
+```
+
+Finally, install the build
+    *This install will install the core to ```/usr/local/eosio.wasmsdk``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
+```sh
+$ cd build
+$ sudo make install
+```
+
+### Manual Installation
+`WasmSDK requires CMake v3.5+ and Boost 1.67.0 to run.`
 
 First clone the repo and create a build directory
 
@@ -36,8 +55,6 @@ or configure cmake to install to a specific path
 ```sh
 $ cmake -DCMAKE_INSTALL_PREFIX=<install path> ..
 ```
-
-*If the compiler is cloned separetly, use the cmake flag ```-DNO_WASM_COMPILER```, this will allow for compilation and installation of the SDK independently of the compiler.
 
 Then to install, simply
 ```sh
@@ -85,10 +102,10 @@ public:
 EOSIO_ABI( test, (test_action))
 ```
 
-Since, EosioWasmToolchain overwrites cmake to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.
+Since, EosioWasmToolchain overwrites cmake to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __WASM_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
-Use ```eosio.cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
+Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
 
 ### eosio-cpp
 ---
