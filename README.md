@@ -1,7 +1,7 @@
 # WasmSDK
 ## Version : 1.0.0
 
-WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
+WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
 
 ## New Features from EOSIO
 - Compile (-c) option flag will compile to a WASM-elf object file
@@ -10,7 +10,7 @@ WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general W
 - Global constructors and global destructors are now supported
 - _eosio-cpp_, _eosio-cc_, _eosio-ld_, and _eosio-pp_ are set the core set of tools that you will interact with.
     * These are the C++ compiler, C compiler, linker and postpass tools.
-- A simple CMake interface to build contracts against WasmSDK
+- A simple CMake interface to build EOSIO smart contracts against WasmSDK
 - ABI generator (Coming Soon)
 
 ### Guided Installation
@@ -74,7 +74,7 @@ $ make && make install
 
 ### Usage
 ---
-To compile a contract, the perferred method is to use the template CMakeLists.txt in the examples folder.
+To compile an EOSIO smart contract, the perferred method is to use the template CMakeLists.txt in the examples folder.
 For example:
 ```CMakeLists.txt```
 ```
@@ -102,7 +102,7 @@ public:
 EOSIO_ABI( test, (test_action))
 ```
 
-Since, EosioWasmToolchain overwrites cmake to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __WASM_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
+Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __WASM_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
 Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
