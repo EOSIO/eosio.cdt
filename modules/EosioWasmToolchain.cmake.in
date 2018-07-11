@@ -10,8 +10,8 @@ endif(WASM_ROOT STREQUAL "")
 set(CMAKE_C_COMPILER "${WASM_INSTALL_ROOT}/bin/eosio-cc")
 set(CMAKE_CXX_COMPILER "${WASM_INSTALL_ROOT}/bin/eosio-cpp")
 
-set(CMAKE_C_FLAGS " -O3  ")
-set(CMAKE_CXX_FLAGS " -O3  ")
+set(CMAKE_C_FLAGS " -O3 -I@Boost_INCLUDE_DIRS@ ")
+set(CMAKE_CXX_FLAGS " -O3 -I@Boost_INCLUDE_DIRS@ ")
 
 set(WASM_LINKER "${WASM_INSTALL_ROOT}/bin/eosio-ld")
 

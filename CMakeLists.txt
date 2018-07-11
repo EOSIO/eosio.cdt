@@ -65,5 +65,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfigVersion.cmake
    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfig.cmake
    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
-install(FILES ${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${SDK_INSTALL_PREFIX})
