@@ -67,6 +67,7 @@ install_symlink(llvm-readelf eosio-readelf)
 install_symlink(eosio-cc eosio-cc)
 install_symlink(eosio-cpp eosio-cpp)
 install_symlink(eosio-ld eosio-ld)
+install_symlink(eosio-pp eosio-pp)
 
 install(CODE "
    execute_process(COMMAND ln -sf 
