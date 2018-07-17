@@ -1,8 +1,8 @@
 macro(install_symlink from to)
    install(CODE 
-      "execute_process(COMMAND mkdir -p ${SDK_INSTALL_PREFIX}/bin)
-       execute_process(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/bin)
-       execute_process(COMMAND ln -sf ${SDK_INSTALL_PREFIX}/bin/${from} ${CMAKE_INSTALL_PREFIX}/bin/${to})")
+      "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}${SDK_INSTALL_PREFIX}/bin)
+       execute_process(COMMAND mkdir -p \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin)
+       execute_process(COMMAND ln -sf  \$ENV{DESTDIR}${SDK_INSTALL_PREFIX}/bin/${from} \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/${to})")
 endmacro()
 
 install_symlink(llvm-ranlib eosio.ranlib)
@@ -67,6 +67,7 @@ install_symlink(llvm-readelf eosio-readelf)
 install_symlink(eosio-cc eosio-cc)
 install_symlink(eosio-cpp eosio-cpp)
 install_symlink(eosio-ld eosio-ld)
+install_symlink(eosio-pp eosio-pp)
 
 install(CODE "
    execute_process(COMMAND ln -sf 
