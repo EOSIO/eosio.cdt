@@ -1,8 +1,8 @@
 macro(install_symlink from to)
    install(CODE 
-      "execute_process(COMMAND mkdir -p ${SDK_INSTALL_PREFIX}/bin)
-       execute_process(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/bin)
-       execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../eosio.wasmsdk/bin/${from} ${CMAKE_INSTALL_PREFIX}/bin/${to})")
+      "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}${SDK_INSTALL_PREFIX}/bin)
+       execute_process(COMMAND mkdir -p \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin)
+       execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../eosio.wasmsdk/bin/${from} \ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/${to})")
 endmacro()
 
 # install clang and llvm
