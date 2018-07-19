@@ -11,4 +11,5 @@ ExternalProject_Add(
   PATCH_COMMAND  ""
   TEST_COMMAND   ""
   INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
 )
