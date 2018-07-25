@@ -62,7 +62,7 @@ fi
 CORES=`getconf _NPROCESSORS_ONLN`
 mkdir -p build
 pushd build &> /dev/null
-cmake -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.wasmsdk -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
 make -j${CORES}
 popd &> /dev/null
 
