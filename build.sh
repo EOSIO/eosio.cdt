@@ -4,6 +4,9 @@ printf "\t=========== Building eosio.wasmsdk ===========\n\n"
 
 RED='\033[0;31m'
 NC='\033[0m'
+txtbld=$(tput bold)
+bldred=${txtbld}$(tput setaf 1)
+txtrst=$(tput sgr0)
 
 export DISK_MIN=10
 export TEMP_DIR="/tmp"
@@ -63,3 +66,17 @@ cmake -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
 make -j${CORES}
 popd &> /dev/null
 
+printf "\n${bldred}\t      ___           ___           ___                       ___\n"
+printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
+printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
+printf "\t   /  /:/ /\\     /  /:/\\:\\     /  /:/ /\\    /  /:/       /  /:/\\:\\ \n"
+printf "\t  /  /:/ /:/_   /  /:/  \\:\\   /  /:/ /::\\  /__/::\\      /  /:/  \\:\\ \n"
+printf "\t /__/:/ /:/ /\\ /__/:/ \\__\\:\\ /__/:/ /:/\\:\\ \\__\\/\\:\\__  /__/:/ \\__\\:\\ \n"
+printf "\t \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  \\:\\ /  /:/ \n"
+printf "\t  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
+printf "\t   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
+printf "\t    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
+printf "\t     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
+
+printf "\\tFor more information:\\n"
+printf "\\tEOSIO website: https://eos.io\\n"

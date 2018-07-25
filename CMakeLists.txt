@@ -3,7 +3,7 @@ project(eosio_wasm_sdk VERSION 1.0.0)
 
 include(GNUInstallDirs)
 
-set(SDK_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.wasmsdk)
+#set(SDK_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.wasmsdk)
 
 if(NOT ${NO_WASM_COMPILER} STREQUAL "")
    string(TOLOWER ${NO_WASM_COMPILER} no_wasm_comp)
@@ -17,7 +17,6 @@ else(NOT ${NO_WASM_COMPILER} STREQUAL "")
    set(no_wasm_comp "false")
    include(ClangExternalProject.txt)
 endif()
-#include(ToolingExternalProject.txt)
 
 add_subdirectory(external)
 
@@ -48,23 +47,23 @@ endif()
 message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
 
 # install examples
-install(DIRECTORY examples DESTINATION "${SDK_INSTALL_PREFIX}")
+#install(DIRECTORY examples DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
-install(EXPORT EosioLib DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+install(EXPORT EosioLib DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 
-set(INCLUDE_INSTALL_DIR ${SDK_INSTALL_PREFIX}/include)
+set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(EosioLibConfigVersion.cmake 
    COMPATIBILITY SameMajorVersion)
 
-configure_package_config_file(${CMAKE_SOURCE_DIR}/modules/EosioLibConfig.cmake.in EosioLibConfig.cmake
-   INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/"
-   PATH_VARS INCLUDE_INSTALL_DIR)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfigVersion.cmake
-   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfig.cmake
-   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+#configure_package_config_file(${CMAKE_SOURCE_DIR}/modules/EosioLibConfig.cmake.in EosioLibConfig.cmake
+#   INSTALL_DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/"
+#   PATH_VARS INCLUDE_INSTALL_DIR)
+#
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfigVersion.cmake
+#   DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/EosioLibConfig.cmake
+#   DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
-install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${SDK_INSTALL_PREFIX})
+install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
