@@ -59,11 +59,21 @@ if [ $# -ge 1 ]; then
 fi
 
 
-CORES=`getconf _NPROCESSORS_ONLN`
+CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
+FREE_MEM=`free | grep "Mem:" | awk '{print $4}'`
+MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
+CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
+
 mkdir -p build
 pushd build &> /dev/null
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.wasmsdk -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+if [ $? -ne 0 ]; then
+   exit -1;
+fi
 make -j${CORES}
+if [ $? -ne 0 ]; then
+   exit -1;
+fi
 popd &> /dev/null
 
 printf "\n${bldred}\t      ___           ___           ___                       ___\n"

@@ -8,8 +8,8 @@ set(CLANG_DIR @CMAKE_INSTALL_PREFIX@/)
 set(CMAKE_C_COMPILER "${CLANG_DIR}/bin/eosio-cc")
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/eosio-cpp")
 
-set(CMAKE_C_FLAGS " -O3 ")
-set(CMAKE_CXX_FLAGS " -O3 ")
+set(CMAKE_C_FLAGS " -O3 -I@BOOST_ROOT@/include ")
+set(CMAKE_CXX_FLAGS " -O3 -I@BOOST_ROOT@/include ")
 
 set(WASM_LINKER "${CLANG_DIR}/bin/eosio-ld")
 
@@ -18,8 +18,6 @@ set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET>
 
 set(CMAKE_AR "${CLANG_DIR}/bin/eosio-ar" CACHE PATH "ar" FORCE)
 set(CMAKE_RANLIB "${CLANG_DIR}/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
-
-find_package(Boost 1.67 REQUIRED)
 
 # hack for CMake on Linux
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
