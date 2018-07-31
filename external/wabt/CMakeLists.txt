@@ -393,7 +393,9 @@ if (NOT EMSCRIPTEN)
 
   # install
   #install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
-  install(TARGETS eosio-pp DESTINATION ${SDK_INSTALL_PREFIX}/bin)
+  install(TARGETS wat2wasm DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  install(TARGETS wasm2wat DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  install(TARGETS eosio-pp DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 
 else ()
   # emscripten stuff
