@@ -1,5 +1,5 @@
 # WasmSDK
-## Version : 1.0.0
+## Version : 1.1.0
 
 WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
 
@@ -30,35 +30,7 @@ $ ./build.sh <CORE_SYMBOL>
 Finally, install the build
     *This install will install the core to ```/usr/local/eosio.wasmsdk``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
 ```sh
-$ cd build
-$ sudo make install
-```
-
-### Manual Installation
-`WasmSDK requires CMake v3.5+ and Boost 1.67.0 to run.`
-
-First clone the repo and create a build directory
-
-```sh
-$ git clone --recursive https://github.com/eosio/wasmsdk
-$ cd wasmsdk
-$ mkdir build && cd build
-```
-
-Then configure with cmake to install to ```/usr/local/eosio.wasmsdk```
-
-```sh
-$ cmake ..
-```
-
-or configure cmake to install to a specific path
-```sh
-$ cmake -DCMAKE_INSTALL_PREFIX=<install path> ..
-```
-
-Then to install, simply
-```sh
-$ make && make install
+$ sudo ./install.sh
 ```
 
 ### Installed Tools
@@ -66,7 +38,7 @@ $ make && make install
 * [eosio-cpp](#eosio-cpp)
 * [eosio-cc](#eosio-cc)
 * [eosio-ld](#eosio-ld)
-* eosio-pp (only strips all zeroed initialized data segments for now, currently runs automatically with cpp/cc and ld)
+* eosio-pp (post processing pass for WASM, automatically runs with eosio-cpp and eosio-ld)
 * eosio-ranlib
 * eosio-ar
 * eosio-objdump
@@ -179,6 +151,8 @@ eosio.ld options:
   -L=<string>       - Add directory to library search path
   -fno-cfl-aa       - Disable CFL Alias Analysis
   -fno-lto          - Disable LTO
+  -fno-post-pass    - Don't run post processing pass
+  -fno-stack-first  - Don't set the stack first in memory
   -l=<string>       - Root name of library to link
   -lto-opt=<string> - LTO Optimization level (O0-O3)
   -o=<string>       - Write output to <file>

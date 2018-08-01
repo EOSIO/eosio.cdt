@@ -4,6 +4,9 @@ printf "\t=========== Building eosio.wasmsdk ===========\n\n"
 
 RED='\033[0;31m'
 NC='\033[0m'
+txtbld=$(tput bold)
+bldred=${txtbld}$(tput setaf 1)
+txtrst=$(tput sgr0)
 
 export DISK_MIN=10
 export TEMP_DIR="/tmp"
@@ -55,11 +58,41 @@ if [ $# -ge 1 ]; then
    CORE_SYMBOL=$1
 fi
 
+if [[ `uname` == 'Darwin' ]]; then
+   FREE_MEM=`vm_stat | grep "Pages free:"`
+   read -ra FREE_MEM <<< "$FREE_MEM"
+   FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
+else
+   FREE_MEM=`free | grep "Mem:" | awk '{print $4}'`
+fi
 
-CORES=`getconf _NPROCESSORS_ONLN`
+CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
+MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
+CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
+
 mkdir -p build
 pushd build &> /dev/null
-cmake -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.wasmsdk -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+if [ $? -ne 0 ]; then
+   exit -1;
+fi
 make -j${CORES}
+if [ $? -ne 0 ]; then
+   exit -1;
+fi
 popd &> /dev/null
 
+printf "\n${bldred}\t      ___           ___           ___                       ___\n"
+printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
+printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
+printf "\t   /  /:/ /\\     /  /:/\\:\\     /  /:/ /\\    /  /:/       /  /:/\\:\\ \n"
+printf "\t  /  /:/ /:/_   /  /:/  \\:\\   /  /:/ /::\\  /__/::\\      /  /:/  \\:\\ \n"
+printf "\t /__/:/ /:/ /\\ /__/:/ \\__\\:\\ /__/:/ /:/\\:\\ \\__\\/\\:\\__  /__/:/ \\__\\:\\ \n"
+printf "\t \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  \\:\\ /  /:/ \n"
+printf "\t  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
+printf "\t   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
+printf "\t    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
+printf "\t     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
+
+printf "\\tFor more information:\\n"
+printf "\\tEOSIO website: https://eos.io\\n"
