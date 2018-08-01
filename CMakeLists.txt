@@ -5,6 +5,10 @@ set(VERSION_MAJOR 1)
 set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
+if ("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local")
+   message(WARNING "CMAKE_INSTALL_PREFIX is set to /usr/local, resetting to /usr/local/eosio.wasmsdk")
+   set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/eosio.wasmsdk")
+endif()
 
 include(GNUInstallDirs)
 
