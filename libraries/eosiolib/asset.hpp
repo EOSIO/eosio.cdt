@@ -248,6 +248,7 @@ namespace eosio {
        * @pre Both asset must have the same symbol
        */
       friend int64_t operator/( const asset& a, const asset& b ) {
+         eosio_assert( b.amount != 0, "divide by zero" );
          eosio_assert( a.symbol == b.symbol, "comparison of assets with different symbols is not allowed" );
          return a.amount / b.amount;
       }
