@@ -468,6 +468,49 @@ namespace eosio {
          return {a.quantity + b.quantity, a.contract};
       }
 
+      /// Addition operator.
+      friend extended_asset& operator+=( extended_asset& a, const extended_asset& b ) {
+         eosio_assert( a.contract == b.contract, "type mismatch" );
+         a.quantity += b.quantity;
+         return a;
+      }
+
+      /// Subtraction operator.
+      friend extended_asset& operator-=( extended_asset& a, const extended_asset& b ) {
+         eosio_assert( a.contract == b.contract, "type mismatch" );
+         a.quantity -= b.quantity;
+         return a;
+      }
+
+      /// Less than operator
+      friend bool operator<( const extended_asset& a, const extended_asset& b ) {
+         eosio_assert( a.contract == b.contract, "type mismatch" );
+         return a.quantity < b.quantity;
+      }
+
+
+      /// Comparison operator
+      friend bool operator==( const extended_asset& a, const extended_asset& b ) {
+         return std::tie(a.quantity, a.contract) == std::tie(b.quantity, b.contract);
+      }
+
+      /// Comparison operator
+      friend bool operator!=( const extended_asset& a, const extended_asset& b ) {
+         return std::tie(a.quantity, a.contract) != std::tie(b.quantity, b.contract);
+      }
+
+      /// Comparison operator
+      friend bool operator<=( const extended_asset& a, const extended_asset& b ) {
+         eosio_assert( a.contract == b.contract, "type mismatch" );
+         return a.quantity <= b.quantity;
+      }
+
+      /// Comparison operator
+      friend bool operator>=( const extended_asset& a, const extended_asset& b ) {
+         eosio_assert( a.contract == b.contract, "type mismatch" );
+         return a.quantity >= b.quantity;
+      }
+
       EOSLIB_SERIALIZE( extended_asset, (quantity)(contract) )
    };
 

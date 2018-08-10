@@ -94,7 +94,7 @@ namespace eosio {
          }
 
          static void inline_transfer( account_name from, account_name to, extended_asset amount, string memo = string(), permission_name perm = N(active) ) {
-            action act( permission_level( from, perm ), amount.contract, N(transfer), transfer{from,to,amount,memo} );
+            action act( permission_level( from, perm ), amount.contract, N(transfer), transfer{from,to,amount.quantity,memo} );
             act.send();
          }
 
