@@ -378,13 +378,18 @@ namespace eosio {
    *
    * @brief Extended asset which stores the information of the owner of the asset
    */
-   struct extended_asset : public asset {
+   struct extended_asset {
+      /**
+       * The asset
+       */
+      asset quantity;
+
       /**
        * The owner of the asset
        *
        * @brief The owner of the asset
        */
-      account_name contract;
+      name contract;
 
       /**
        * Get the extended symbol of the asset
@@ -392,7 +397,7 @@ namespace eosio {
        * @brief Get the extended symbol of the asset
        * @return extended_symbol - The extended symbol of the asset
        */
-      extended_symbol get_extended_symbol()const { return extended_symbol( symbol, contract ); }
+      extended_symbol get_extended_symbol()const { return extended_symbol{ quantity.symbol, contract }; }
 
       /**
        * Default constructor
@@ -406,13 +411,13 @@ namespace eosio {
        *
        * @brief Construct a new extended asset object
        */
-      extended_asset( int64_t v, extended_symbol s ):asset(v,s),contract(s.contract){}
+      extended_asset( int64_t v, extended_symbol s ):quantity(v,s.symbol),contract(s.contract){}
       /**
        * Construct a new extended asset given the asset and owner name
        *
        * @brief Construct a new extended asset object
        */
-      extended_asset( asset a, account_name c ):asset(a),contract(c){}
+      extended_asset( asset a, name c ):quantity(a),contract(c){}
 
       /**
        * %Print the extended asset
@@ -420,7 +425,7 @@ namespace eosio {
        * @brief %Print the extended asset
        */
       void print()const {
-         asset::print();
+         quantity.print();
          prints("@");
          printn(contract);
       }
@@ -432,8 +437,7 @@ namespace eosio {
        *  @return extended_asset - New extended asset with its amount is the negative amount of this extended asset
        */
       extended_asset operator-()const {
-         asset r = this->asset::operator-();
-         return {r, contract};
+         return {-quantity, contract};
       }
 
       /**
@@ -447,8 +451,7 @@ namespace eosio {
        */
       friend extended_asset operator - ( const extended_asset& a, const extended_asset& b ) {
          eosio_assert( a.contract == b.contract, "type mismatch" );
-         asset r = static_cast<const asset&>(a) - static_cast<const asset&>(b);
-         return {r, a.contract};
+         return {a.quantity - b.quantity, a.contract};
       }
 
       /**
@@ -462,11 +465,10 @@ namespace eosio {
        */
       friend extended_asset operator + ( const extended_asset& a, const extended_asset& b ) {
          eosio_assert( a.contract == b.contract, "type mismatch" );
-         asset r = static_cast<const asset&>(a) + static_cast<const asset&>(b);
-         return {r, a.contract};
+         return {a.quantity + b.quantity, a.contract};
       }
 
-      EOSLIB_SERIALIZE( extended_asset, (amount)(symbol)(contract) )
+      EOSLIB_SERIALIZE( extended_asset, (quantity)(contract) )
    };
 
 /// @} asset type
