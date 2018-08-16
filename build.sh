@@ -63,7 +63,7 @@ if [[ `uname` == 'Darwin' ]]; then
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
 else
-   FREE_MEM=`free | grep "Mem:" | awk '{print $4}'`
+   FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
 fi
 
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
