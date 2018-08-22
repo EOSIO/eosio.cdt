@@ -10,6 +10,8 @@ txtrst=$(tput sgr0)
 
 export DISK_MIN=10
 export TEMP_DIR="/tmp"
+TEMP_DIR='/tmp'
+DISK_MIN=10
 
 unamestr=`uname`
 if [[ "${unamestr}" == 'Darwin' ]]; then
