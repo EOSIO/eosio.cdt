@@ -98,6 +98,33 @@ namespace eosio {
    }
 
    /**
+    * @brief Symbol name which doesn't include precision
+    */
+   struct symbol_no_precision {
+      uint64_t value = 0;
+
+      /// Is this name valid
+      bool     is_valid()const  { return is_valid_symbol( value << 8 ); }
+
+      /// The length of this symbol
+      uint32_t name_length()const { return symbol_name_length( value << 8 ); }
+
+      /// Print the symbol
+      void print()const {
+         auto sym = value;
+         sym >>= 8;
+         for( int i = 0; i < 7; ++i ) {
+            char c = (char)(sym & 0xff);
+            if( !c ) return;
+            prints_l(&c, 1 );
+            sym >>= 8;
+         }
+      }
+
+      EOSLIB_SERIALIZE( symbol_no_precision, (value) )
+   };
+
+   /**
     * \struct Stores information about a symbol
     *
     * @brief Stores information about a symbol
@@ -114,6 +141,8 @@ namespace eosio {
        * What is the type of the symbol
        */
       symbol_type(symbol_name s): value(s) { }
+
+      symbol_type(symbol_no_precision s, uint8_t precision): value((s.value<<8) | precision) { }
 
       /**
        * Is this symbol valid
@@ -139,6 +168,8 @@ namespace eosio {
        *
        */
       operator symbol_name()const { return value; }
+
+      explicit operator symbol_no_precision()const { return {value >> 8}; }
 
       /**
        * %Print the symbol
