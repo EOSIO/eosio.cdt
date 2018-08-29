@@ -33,6 +33,97 @@ Finally, install the build
 $ sudo ./install.sh
 ```
 
+### Building your first smart contract
+- Navigate to the hello folder in examples (./examples/hello).
+- You should then see the hello.cpp file
+- Now run the compiler
+```sh
+$ eosio-cpp hello.cpp -o hello.wasm
+```
+- As of this release abi generation is not available.
+
+#### Optional, if you know cmake
+- If you want to test out the CMake system, stay in the same directory as the previous manual build.
+   - Sorry for the hiccup, but you will need to change one small line in the `CMakeLists.txt` file. Change `set(EOSIO_WASMSDK_ROOT ${CMAKE_INSTALL_PREFIX})` to `set(EOSIO_WASMSDK_ROOT "/usr/local/eosio.wasmsdk")`
+- Then create a build directory ```mkdir build``` and cd into that directory ```cd build```
+- Then run ```cmake ../```, this will generate the cache and supporting files for CMake to do it's job.
+- Now simply run ```make```.
+- You should now have a `hello` file in the build directory, this is the wasm file, if you'd like to change the name to have the .wasm extension that is perfectly fine, or you can change the add_executable target name to ```hello.wasm```, or simply use cleos to set code the ```hello``` file.
+
+### Writing an ABI
+- The sections to the abi are pretty simple to understand and the syntax is purely JSON, so we are going to write our own ABI file.
+- Even after ABI generation is available, an important note should be made that the generator will never be completely perfect for every contract written, advanced features of the newest version of the ABI will require manual construction of the ABI, and odd and advanced C++ patterns could capsize the generators type deductions, so having a good knowledge of how to write an ABI should be an essential piece of knowledge of a smart contract writer.
+#### The General Structure of An ABI
+```json
+{
+  "version": "eosio::abi/1.0",
+  "types": [
+    {
+      "new_type_name": "<alias name>",
+      "type": "<old type's name>"
+    }
+  ],
+  "structs": [{
+      "name": "<class/struct name>",
+      "base": "<base class of action if applicable>",
+      "fields": [{
+          "name": "<class field name>",
+          "type": "<class field type>"
+        }
+      ]
+    }
+  ],
+  "actions": [{
+      "name": "<action name>",
+      "type": "<action type>",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [{
+   "name": "<table name from multi_index>",
+   "type": "<typename from source file>",
+   "index_type": "i64",
+   "key_names": ["<key name>"],
+   "key_types": ["<key type>"]
+  }],
+  "ricardian_clauses": [{}
+  ],
+  "error_messages": [],
+  "abi_extensions": []
+}
+```
+- Let's unpack what each one these means
+##### abi structure :: types
+- ```types``` is a JSON array of objects, where each object has two fields (`new_type_name` and `type`)
+- If in your smart contract you would like to use a `typedef` of some type to another, simply add those to here. Where `new_type_name` is the new type name and `type` is simply what you are aliasing from.
+##### abi structure :: structs
+- ```structs``` is a JSON array of objects, where each object has three fields ( `name`, `base` and `fields` )
+- If in your smart contract you create a new structure that is not one supplied by `eosiolib`, we are going to express that here.  Some confusion will ultimately arise if using the `EOSIO_ABI` macro and the method style of writing your actions, because they go here too.
+- `name` is the stripped name of the struct/class (i.e. no namespaces, just the name of the class), if using the method style, this is the name of the method.
+- `base` is what class that class inherits from (same thing only the stripped name), or "" if it doesn't inherit from any class.  For the method style this is always "".
+- `fields` is a JSON array of objects with two fields (`name` and `type`), these express the fields of the class we are referencing.  For the method approach, these will be the arguments to your method.
+   - `name` is the field name and `type` is the type of said field.
+##### abi structure :: actions
+- ```actions``` is a JSON array of objects, where each object has three fields (`name`, `type` and `ricardian_contract`)
+- `name` is the name of the action, i.e. the name you would use with `push action`
+- `type` is the type of that action, if you are using the method style and the `EOSIO_ABI` macro, then this is the name of your action method. If you are using the struct approach, then this is simply the name of the struct.
+- `ricardian_contract` is a plain text contract that is cryptographically linked to each action, the full explanation of this is way beyond the scope of this readme.
+##### abi structure :: tables
+- ```tables``` is a JSON array of objects, where each object has five fields (`name`, `type`, `index_type`, `key_names`, `key_types`)
+- `name` is the name of the table that is given the multi_index typedef.
+- `type` is the struct/class type name that is being used as the table.
+- `index_type` is always "i64", this is a holdover and will be deprecated.
+- `key_names` is a JSON array of strings and is the name of the variable of primary key followed by the name any secondary tables (indexed_by name given with mulit_index typedef)
+- `key_types` is a JSON array of strings and is the type name associated with each element in `key_names` (the first element should always be uint64, as we only support i64 primary keys). 
+##### abi structure :: ricardian_clauses
+- ```ricardian_clauses``` is a JSON array of objects, where each object has two fields (`id` and `body`)
+- `id` is an identifier you would like to use with that clause
+- `body` is the main body of the clause
+- as with `ricardian_contracts`, any real explanation of these is beyond the scope of this readme.
+##### abi structure :: error_messages
+##### abi structure :: abi_extensions
+- For now you can ignore these two objects
+
 ### Installed Tools
 ---
 * [eosio-cpp](#eosio-cpp)
@@ -53,13 +144,13 @@ For example:
 cmake_minimum_required(VERSION 3.5)
 project(test_example VERSION 1.0.0)
 
-if(WASM_ROOT STREQUAL "" OR NOT WASM_ROOT)
-    set(WASM_ROOT ${CMAKE_INSTALL_PREFIX})
+if(EOSIO_WASMSDK_ROOT STREQUAL "" OR NOT EOSIO_WASMSDK_ROOT)
+    set(EOSIO_WASMSDK_ROOT "/usr/local/eosio.wasmsdk")
 endif()
 list(APPEND CMAKE_MODULE_PATH ${WASM_ROOT}/lib/cmake)
 include(EosioWasmToolchain)
 
-add_executable( test test.cpp )
+add_executable( test.wasm test.cpp )
 ```
 ```test.cpp```
 ```
@@ -160,7 +251,7 @@ eosio.ld options:
  
  ### Todos
  ---
- - Add ABI generation to eosio-cpp
+ - Add ABI generation to eosio.wasmsdk
 
 License
 ----
