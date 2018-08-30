@@ -48,12 +48,13 @@ $ eosio-cpp hello.cpp -o hello.wasm
 - Then create a build directory ```mkdir build``` and cd into that directory ```cd build```
 - Then run ```cmake ../```, this will generate the cache and supporting files for CMake to do it's job.
 - Now simply run ```make```.
-- You should now have a `hello` file in the build directory, this is the wasm file, if you'd like to change the name to have the .wasm extension that is perfectly fine, or you can change the add_executable target name to ```hello.wasm```, or simply use cleos to set code the ```hello``` file.
+- You should now have a `hello` file in the build directory, this is the wasm file,  if you would like to use ```cleos set contract``` and you need to change the name to have the .wasm extension that is perfectly fine, or you can change the add_executable target name to ```hello.wasm```, or you can use ```cleos set code <path-to-compiled-wasm>/hello``` to load the file to the blockchain , without the .wasm extension.
 
-### Writing an ABI
+### Fixing an ABI, or Writing an ABI
 - The sections to the abi are pretty simple to understand and the syntax is purely JSON, so we are going to write our own ABI file.
 - Even after ABI generation is available, an important note should be made that the generator will never be completely perfect for every contract written, advanced features of the newest version of the ABI will require manual construction of the ABI, and odd and advanced C++ patterns could capsize the generators type deductions, so having a good knowledge of how to write an ABI should be an essential piece of knowledge of a smart contract writer.
-#### The General Structure of An ABI
+- For more in-depth documentation please refer to [developers.eos.io "How to write an abi"](https://developers.eos.io/eosio-cpp/docs/how-to-write-an-abi)
+#### A Simplified View of The Structure of An ABI
 ```json
 {
   "version": "eosio::abi/1.0",
@@ -98,7 +99,7 @@ $ eosio-cpp hello.cpp -o hello.wasm
 - If in your smart contract you would like to use a `typedef` of some type to another, simply add those to here. Where `new_type_name` is the new type name and `type` is simply what you are aliasing from.
 ##### abi structure :: structs
 - ```structs``` is a JSON array of objects, where each object has three fields ( `name`, `base` and `fields` )
-- If in your smart contract you create a new structure that is not one supplied by `eosiolib`, we are going to express that here.  Some confusion will ultimately arise if using the `EOSIO_ABI` macro and the method style of writing your actions, because they go here too.
+- If in your smart contract you create a new structure that is not one supplied by `eosiolib`, we are going to express that here.  Some confusion will ultimately arise if using the `EOSIO_ABI` macro and the method style of writing your actions, [developers.eos.io "The ABI Macro & Apply"](https://developers.eos.io/eosio-cpp/docs/abi) and ["Creating an Action"](https://developers.eos.io/eosio-cpp/docs/this-does-not-exist), because the implicitly generated ```action``` class will go here too.
 - `name` is the stripped name of the struct/class (i.e. no namespaces, just the name of the class), if using the method style, this is the name of the method.
 - `base` is what class that class inherits from (same thing only the stripped name), or "" if it doesn't inherit from any class.  For the method style this is always "".
 - `fields` is a JSON array of objects with two fields (`name` and `type`), these express the fields of the class we are referencing.  For the method approach, these will be the arguments to your method.
@@ -110,11 +111,11 @@ $ eosio-cpp hello.cpp -o hello.wasm
 - `ricardian_contract` is a plain text contract that is cryptographically linked to each action, the full explanation of this is way beyond the scope of this readme.
 ##### abi structure :: tables
 - ```tables``` is a JSON array of objects, where each object has five fields (`name`, `type`, `index_type`, `key_names`, `key_types`)
-- `name` is the name of the table that is given the multi_index typedef.
+- `name` is the name of the table that is given the multi_index typedef, this will be the name that is used by the ```get_table_rows``` RPC and by ```cleos get table``` command.
 - `type` is the struct/class type name that is being used as the table.
 - `index_type` is always "i64", this is a holdover and will be deprecated.
-- `key_names` is a JSON array of strings and is the name of the variable of primary key followed by the name any secondary tables (indexed_by name given with mulit_index typedef)
-- `key_types` is a JSON array of strings and is the type name associated with each element in `key_names` (the first element should always be uint64, as we only support i64 primary keys). 
+- `key_names` is a JSON array of strings and is the name of the variable of primary key, this will be deprecated.
+- `key_types` is a JSON array of strings and is the type name associated with each element in `key_names`, this will be deprecated. 
 ##### abi structure :: ricardian_clauses
 - ```ricardian_clauses``` is a JSON array of objects, where each object has two fields (`id` and `body`)
 - `id` is an identifier you would like to use with that clause
@@ -147,7 +148,7 @@ project(test_example VERSION 1.0.0)
 if(EOSIO_WASMSDK_ROOT STREQUAL "" OR NOT EOSIO_WASMSDK_ROOT)
     set(EOSIO_WASMSDK_ROOT "/usr/local/eosio.wasmsdk")
 endif()
-list(APPEND CMAKE_MODULE_PATH ${WASM_ROOT}/lib/cmake)
+list(APPEND CMAKE_MODULE_PATH ${EOSIO_WASMSDK_ROOT}/lib/cmake)
 include(EosioWasmToolchain)
 
 add_executable( test.wasm test.cpp )
