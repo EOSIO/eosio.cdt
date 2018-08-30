@@ -3,7 +3,7 @@ project(hello_example VERSION 1.0.0)
 
 # if no wasm root is given use default path
 if(EOSIO_WASMSDK_ROOT STREQUAL "" OR NOT EOSIO_WASMSDK_ROOT)
-   set(EOSIO_WASMSDK_ROOT ${CMAKE_INSTALL_PREFIX})
+   set(EOSIO_WASMSDK_ROOT ${CMAKE_INSTALL_PREFIX}/eosio.wasmsdk)
 endif()
 
 # append the path to the module to include
