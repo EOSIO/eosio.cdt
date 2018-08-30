@@ -1,0 +1,1 @@
+/usr/local/eosio.wasmsdk//bin/eosio-ld  CMakeFiles/test.wasm.dir/test.cpp.o -o test.wasm 

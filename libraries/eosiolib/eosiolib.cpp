@@ -58,13 +58,7 @@ namespace eosio {
    using ::memset;
    using ::memcpy;
 
-  /**
-   *  @defgroup memorycppapi Memory C++ API
-   *  @brief Defines common memory functions
-   *  @ingroup memoryapi
-   *
-   *  @{
-   */
+
 
    class memory_manager  // NOTE: Should never allocate another instance of memory_manager
    {
@@ -520,7 +514,7 @@ namespace eosio {
       // allocate memory in 8 char blocks
       static const uint32_t _mem_block = 8;
       static const uint32_t _rem_mem_block_mask = _mem_block - 1;
-      static const uint32_t _initial_heap_size = 40;//32768;
+      static const uint32_t _initial_heap_size = 8192;//32768;
       // if sbrk is not called outside of this file, then this is the max times we can call it
       static const uint32_t _heaps_size = 16;
       char _initial_heap[_initial_heap_size];
@@ -536,6 +530,7 @@ namespace eosio {
 } /// namespace eosio
 
 extern "C" {
+
 
 void* malloc(size_t size)
 {
@@ -559,21 +554,4 @@ void free(void* ptr)
    return eosio::memory_heap.free(ptr);
 }
 
-uint32_t now() {
-   return (uint32_t)(current_time() / 1000000);
-}
-
-}
-
-/**
- * Provide == for checksum256 in global namespace
- */
-bool operator==(const checksum256& lhs, const checksum256& rhs) {
-   return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
-}
-bool operator==(const checksum160& lhs, const checksum160& rhs) {
-   return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
-}
-bool operator!=(const checksum160& lhs, const checksum160& rhs) {
-   return memcmp(&lhs, &rhs, sizeof(lhs)) != 0;
 }

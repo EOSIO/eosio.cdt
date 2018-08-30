@@ -1,0 +1,106 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Aug 30 18:00:10 2018",
+    "version": "eosio::abi/1.0",
+    "structs": [
+        {
+            "name": "testa",
+            "base": "",
+            "fields": [
+                {
+                    "name": "fielda",
+                    "type": "int32"
+                },
+                {
+                    "name": "fieldb",
+                    "type": "float32"
+                },
+                {
+                    "name": "name",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "testacta",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "testactb",
+            "base": "",
+            "fields": [
+                {
+                    "name": "input",
+                    "type": "testc"
+                }
+            ]
+        },
+        {
+            "name": "testc",
+            "base": "testb",
+            "fields": [
+                {
+                    "name": "num",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "testtable",
+            "base": "",
+            "fields": [
+                {
+                    "name": "owner",
+                    "type": "uint64"
+                },
+                {
+                    "name": "sec",
+                    "type": "uint64"
+                },
+                {
+                    "name": "third",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "types": [
+        {
+            "new_type_name": "account_name",
+            "type": "name"
+        }
+    ],
+    "actions": [
+        {
+            "name": "testa",
+            "type": "testa",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "testacta",
+            "type": "testacta",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "testactb",
+            "type": "testactb",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "testtab",
+            "type": "testtable",
+            "index_type": "i64",
+            "key_names": ["owner"],
+            "key_types": ["uint64"]
+        }
+    ],
+    "ricardian_clauses": [],
+    "abi_extensions": []
+}

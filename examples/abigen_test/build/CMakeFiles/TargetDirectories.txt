@@ -1,0 +1,3 @@
+/Users/judgefudge/eosio_wasmsdk/eosio.wasmsdk/examples/abigen_test/build/CMakeFiles/rebuild_cache.dir
+/Users/judgefudge/eosio_wasmsdk/eosio.wasmsdk/examples/abigen_test/build/CMakeFiles/edit_cache.dir
+/Users/judgefudge/eosio_wasmsdk/eosio.wasmsdk/examples/abigen_test/build/CMakeFiles/test.wasm.dir

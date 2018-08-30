@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/judgefudge/eosio_wasmsdk/eosio.wasmsdk/examples/abigen_test/test.cpp
+eosiolib/eosio.hpp
+-
+

@@ -8,8 +8,8 @@ set(CLANG_DIR @CMAKE_BINARY_DIR@/EosioClang-prefix/src/EosioClang-build)
 set(CMAKE_C_COMPILER "${CLANG_DIR}/bin/eosio-cc")
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/eosio-cpp")
 
-set(CMAKE_C_FLAGS " -O3 -I@CMAKE_SOURCE_DIR@/libraries/boost/include -I@CMAKE_SOURCE_DIR@/libraries/libc++/libcxx/include -I@CMAKE_SOURCE_DIR@/libraries/libc/musl/include -I@CMAKE_SOURCE_DIR@/libraries -I@BOOST_ROOT@/include")
-set(CMAKE_CXX_FLAGS " -O3 -I@CMAKE_SOURCE_DIR@/libraries/boost/include -I@CMAKE_SOURCE_DIR@/libraries/libc++/libcxx/include -I@CMAKE_SOURCE_DIR@/libraries/libc/musl/include -I@CMAKE_SOURCE_DIR@/libraries -I@BOOST_ROOT@/include --std=c++14 ")
+set(CMAKE_C_FLAGS " -O3 -I@CMAKE_BINARY_DIR@/libraries/ -I@CMAKE_SOURCE_DIR@/libraries/boost/include -I@CMAKE_SOURCE_DIR@/libraries/libc++/libcxx/include -I@CMAKE_SOURCE_DIR@/libraries/libc/musl/include -I@CMAKE_SOURCE_DIR@/libraries -I@BOOST_ROOT@/include")
+set(CMAKE_CXX_FLAGS " -O3 -I@CMAKE_BINARY_DIR@/libraries/ -I@CMAKE_SOURCE_DIR@/libraries/boost/include -I@CMAKE_SOURCE_DIR@/libraries/libc++/libcxx/include -I@CMAKE_SOURCE_DIR@/libraries/libc/musl/include -I@CMAKE_SOURCE_DIR@/libraries -I@BOOST_ROOT@/include --std=c++14 ")
 
 set(WASM_LINKER "${CLANG_DIR}/bin/eosio-ld ")
 
