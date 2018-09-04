@@ -19,18 +19,18 @@ To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eo
 
 Example:
 ```bash
-$ eosio-cpp hello.cpp -o hello.wasm -abigen
+$ eosio-cpp hello.cpp -o hello.wasm --abigen
 ```
 This will generate two files:
 * The compiled binary wasm (hello.wasm)
 * The generated abi file (hello.abi)
 
 ## using eosio-abigen alone
-To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `-output`.
+To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output`.
 
 Example:
 ```bash
-$ eosio-abigen hello.cpp -output=hello.abi
+$ eosio-abigen hello.cpp --output=hello.abi
 ```
 
 This will generate one file:
@@ -63,6 +63,7 @@ struct __attribute__((eosio_action)) testa {
     EOSLIB_SERIALIZE( testa, (n) )
 };
 ```
+If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
 
 Example (Two ways to declare a table for abi generation):
 ```c++
@@ -77,7 +78,10 @@ struct __attribute__((eosio_table)) testtable {
 };
 
 typedef eosio::multi_index<N(tablename), testtable> testtable_t;
-``
+```
+As with actions, if your table name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::table("<valid action name>")]]```
+
+For an example contract of abi generation please see the file ./examples/abigen_test/test.cpp, you can generate the abi for this file with `eosio-abigen test.cpp --output=test.abi`.
 
 ### Guided Installation
 First clone
