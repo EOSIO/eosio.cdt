@@ -1,6 +1,6 @@
 #! /bin/bash
 
-printf "\t=========== Building eosio.wasmsdk ===========\n\n"
+printf "\t=========== Building eosio.cdt ===========\n\n"
 
 RED='\033[0;31m'
 NC='\033[0m'
@@ -82,7 +82,7 @@ fi
 
 mkdir -p build
 pushd build &> /dev/null
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.wasmsdk -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi
