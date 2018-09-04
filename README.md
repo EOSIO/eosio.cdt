@@ -15,7 +15,7 @@ WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general p
 
 # How to use eosio-abigen
 ## using with eosio-cpp
-To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp with tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi 
+To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp will tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi 
 
 Example:
 ```bash
@@ -39,7 +39,7 @@ This will generate one file:
 # Difference from old abi generator
 Unlike the old abi generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
 
-Example:
+Example (four ways to declare an action for ABI generation):
 ```c++
 // this is the C++11 and greater style attribute
 [[eosio::action]]
@@ -64,9 +64,7 @@ struct __attribute__((eosio_action)) testa {
 };
 ```
 
-These are the four ways to declare an action, for abi generation.
-
-Example:
+Example (Two ways to declare a table for abi generation):
 ```c++
 struct [[eosio::table]] testtable {
 	uint64_t owner;
@@ -79,9 +77,7 @@ struct __attribute__((eosio_table)) testtable {
 };
 
 typedef eosio::multi_index<N(tablename), testtable> testtable_t;
-```
-
-These are the two ways to declare a table for abi generation.
+``
 
 ### Guided Installation
 First clone
