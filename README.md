@@ -53,77 +53,8 @@ $ eosio-cpp hello.cpp -o hello.wasm
 ### Fixing an ABI, or Writing an ABI
 - The sections to the abi are pretty simple to understand and the syntax is purely JSON, so we are going to write our own ABI file.
 - Even after ABI generation is available, an important note should be made that the generator will never be completely perfect for every contract written, advanced features of the newest version of the ABI will require manual construction of the ABI, and odd and advanced C++ patterns could capsize the generators type deductions, so having a good knowledge of how to write an ABI should be an essential piece of knowledge of a smart contract writer.
-- For more in-depth documentation please refer to [developers.eos.io "How to write an abi"](https://developers.eos.io/eosio-cpp/docs/how-to-write-an-abi)
-#### A Simplified View of The Structure of An ABI
-```json
-{
-  "version": "eosio::abi/1.0",
-  "types": [
-    {
-      "new_type_name": "<alias name>",
-      "type": "<old type's name>"
-    }
-  ],
-  "structs": [{
-      "name": "<class/struct name>",
-      "base": "<base class of action if applicable>",
-      "fields": [{
-          "name": "<class field name>",
-          "type": "<class field type>"
-        }
-      ]
-    }
-  ],
-  "actions": [{
-      "name": "<action name>",
-      "type": "<action type>",
-      "ricardian_contract": ""
-    }
-  ],
-  "tables": [{
-   "name": "<table name from multi_index>",
-   "type": "<typename from source file>",
-   "index_type": "i64",
-   "key_names": ["<key name>"],
-   "key_types": ["<key type>"]
-  }],
-  "ricardian_clauses": [{}
-  ],
-  "error_messages": [],
-  "abi_extensions": []
-}
-```
-- Let's unpack what each one these means
-##### abi structure :: types
-- ```types``` is a JSON array of objects, where each object has two fields (`new_type_name` and `type`)
-- If in your smart contract you would like to use a `typedef` of some type to another, simply add those to here. Where `new_type_name` is the new type name and `type` is simply what you are aliasing from.
-##### abi structure :: structs
-- ```structs``` is a JSON array of objects, where each object has three fields ( `name`, `base` and `fields` )
-- If in your smart contract you create a new structure that is not one supplied by `eosiolib`, we are going to express that here.  Some confusion will ultimately arise if using the `EOSIO_ABI` macro and the method style of writing your actions, [developers.eos.io "The ABI Macro & Apply"](https://developers.eos.io/eosio-cpp/docs/abi) and ["Creating an Action"](https://developers.eos.io/eosio-cpp/docs/this-does-not-exist), because the implicitly generated ```action``` class will go here too.
-- `name` is the stripped name of the struct/class (i.e. no namespaces, just the name of the class), if using the method style, this is the name of the method.
-- `base` is what class that class inherits from (same thing only the stripped name), or "" if it doesn't inherit from any class.  For the method style this is always "".
-- `fields` is a JSON array of objects with two fields (`name` and `type`), these express the fields of the class we are referencing.  For the method approach, these will be the arguments to your method.
-   - `name` is the field name and `type` is the type of said field.
-##### abi structure :: actions
-- ```actions``` is a JSON array of objects, where each object has three fields (`name`, `type` and `ricardian_contract`)
-- `name` is the name of the action, i.e. the name you would use with `push action`
-- `type` is the type of that action, if you are using the method style and the `EOSIO_ABI` macro, then this is the name of your action method. If you are using the struct approach, then this is simply the name of the struct.
-- `ricardian_contract` is a plain text contract that is cryptographically linked to each action, the full explanation of this is way beyond the scope of this readme.
-##### abi structure :: tables
-- ```tables``` is a JSON array of objects, where each object has five fields (`name`, `type`, `index_type`, `key_names`, `key_types`)
-- `name` is the name of the table that is given the multi_index typedef, this will be the name that is used by the ```get_table_rows``` RPC and by ```cleos get table``` command.
-- `type` is the struct/class type name that is being used as the table.
-- `index_type` is always "i64", this is a holdover and will be deprecated.
-- `key_names` is a JSON array of strings and is the name of the variable of primary key, this will be deprecated.
-- `key_types` is a JSON array of strings and is the type name associated with each element in `key_names`, this will be deprecated. 
-##### abi structure :: ricardian_clauses
-- ```ricardian_clauses``` is a JSON array of objects, where each object has two fields (`id` and `body`)
-- `id` is an identifier you would like to use with that clause
-- `body` is the main body of the clause
-- as with `ricardian_contracts`, any real explanation of these is beyond the scope of this readme.
-##### abi structure :: error_messages
-##### abi structure :: abi_extensions
-- For now you can ignore these two objects
+- Please refer to [developers.eos.io "How to write an abi"](https://developers.eos.io/eosio-cpp/docs/how-to-write-an-abi), to learn about the different sections of an ABI.
+
 
 ### Installed Tools
 ---
@@ -131,6 +62,8 @@ $ eosio-cpp hello.cpp -o hello.wasm
 * [eosio-cc](#eosio-cc)
 * [eosio-ld](#eosio-ld)
 * eosio-pp (post processing pass for WASM, automatically runs with eosio-cpp and eosio-ld)
+* eosio-wasm2wast
+* eosio-wast2wasm
 * eosio-ranlib
 * eosio-ar
 * eosio-objdump
