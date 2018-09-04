@@ -79,7 +79,7 @@ struct __attribute__((eosio_table)) testtable {
 
 typedef eosio::multi_index<N(tablename), testtable> testtable_t;
 ```
-As with actions, if your table name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::table("<valid action name>")]]```
+If you don't want to use the multi-index you can explicitly specify the name in the attribute ```c++ [[eosio::table("<valid action name>")]]```
 
 For an example contract of abi generation please see the file ./examples/abigen_test/test.cpp, you can generate the abi for this file with `eosio-abigen test.cpp --output=test.abi`.
 
