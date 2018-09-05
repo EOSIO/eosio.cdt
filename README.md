@@ -1,7 +1,7 @@
 # EOSIO.CDT (Contract Development Toolkit)
 ## Version : 1.2.0
 
-EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate contract writing for the EOSIO platform.  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that the SDK has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
+EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate contract writing for the EOSIO platform.  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
 
 ## New Features from EOSIO
 - Compile (-c) option flag will compile to a WASM-elf object file
@@ -17,8 +17,8 @@ EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate c
 First clone
 
 ```sh
-$ git clone --recursive https://github.com/eosio/eosio.wasmsdk
-$ cd eosio.wasmsdk
+$ git clone --recursive https://github.com/eosio/eosio.cdt
+$ cd eosio.cdt
 ```
 
 Now run `build.sh` and give the core symbol for the EOSIO blockchain that intend to deploy to.
@@ -28,7 +28,7 @@ $ ./build.sh <CORE_SYMBOL>
 ```
 
 Finally, install the build
-    *This install will install the core to ```/usr/local/eosio.wasmsdk``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
+    *This install will install the core to ```/usr/local/eosio.cdt``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
 ```sh
 $ sudo ./install.sh
 ```
@@ -173,7 +173,7 @@ EOSIO_ABI( test, (test_action))
 Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __EOSIO_CDT_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
-Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
+Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and CDT being baked in.
 
 ### eosio-cpp
 ---
