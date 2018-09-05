@@ -168,16 +168,19 @@ namespace eosio {
     * \struct Extended asset which stores the information of the owner of the symbol
     *
     */
-   struct extended_symbol : public symbol_type
+   struct extended_symbol
    {
+     /**
+      * The symbol
+      */
+     symbol_type symbol;
+
      /**
       * The owner of the symbol
       *
       * @brief The owner of the symbol
       */
-     account_name contract;
-
-     extended_symbol( symbol_name sym = 0, account_name acc = 0 ):symbol_type{sym},contract(acc){}
+     name contract;
 
       /**
        * %Print the extended symbol
@@ -185,7 +188,7 @@ namespace eosio {
        * @brief %Print the extended symbol
        */
       void print()const {
-         symbol_type::print();
+         symbol.print();
          prints("@");
          printn( contract );
       }
@@ -200,7 +203,7 @@ namespace eosio {
        * @return boolean - true if both provided symbols are the same
        */
       friend bool operator == ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.value, a.contract ) == std::tie( b.value, b.contract );
+        return std::tie( a.symbol, a.contract ) == std::tie( b.symbol, b.contract );
       }
 
       /**
@@ -212,14 +215,14 @@ namespace eosio {
        * @return boolean - true if both provided symbols are the same
        */
       friend bool operator != ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.value, a.contract ) != std::tie( b.value, b.contract );
+        return std::tie( a.symbol, a.contract ) != std::tie( b.symbol, b.contract );
       }
 
       friend bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.value, a.contract ) < std::tie( b.value, b.contract );
+        return std::tie( a.symbol, a.contract ) < std::tie( b.symbol, b.contract );
       }
 
-      EOSLIB_SERIALIZE( extended_symbol, (value)(contract) )
+      EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
    };
 
    // }@ symbolapi
