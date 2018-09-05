@@ -8,6 +8,7 @@ EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate c
 - ranlib and ar support for static libraries for WASM
 - \_\_FILE\_\_ and \_\_BASE\_FILE\_\_ will now only return the file name and not the fullpath. This eliminates any non-determinism from location of the compiled binary
 - Global constructors and global destructors are now supported
+
 - _eosio-cpp_, _eosio-cc_, _eosio-ld_, _eosio-pp_, and _eosio_abigen_ are set the core set of tools that you will interact with.
     * These are the C++ compiler, C compiler, linker, postpass tool and ABI generator.
 - A simple CMake interface to build EOSIO smart contracts against EOSIO.CDT
