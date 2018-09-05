@@ -167,7 +167,7 @@ public:
    void testact( account_name test ) {
    }
 };
-EOSIO_ABI( test, (test_action))
+EOSIO_ABI( test, (testact))
 ```
 
 Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __EOSIO_CDT_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
