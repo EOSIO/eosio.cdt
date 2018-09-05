@@ -3,7 +3,7 @@ project(abigen_test_example VERSION 1.0.0)
 
 # if no wasm root is given use default path
 if(EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT)
-   set(EOSIO_CDT_ROOT "/usr/local/eosio.wasmsdk")
+   set(EOSIO_CDT_ROOT "/usr/local/eosio.cdt")
 endif()
 
 # append the path to the module to include

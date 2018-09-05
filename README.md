@@ -44,7 +44,6 @@ $ eosio-cpp hello.cpp -o hello.wasm
 
 #### Optional, if you know cmake
 - If you want to test out the CMake system, stay in the same directory as the previous manual build.
-   - Sorry for the hiccup, but you will need to change one small line in the `CMakeLists.txt` file. Change `set(EOSIO_WASMSDK_ROOT ${CMAKE_INSTALL_PREFIX})` to `set(EOSIO_WASMSDK_ROOT "/usr/local/eosio.wasmsdk")`
 - Then create a build directory ```mkdir build``` and cd into that directory ```cd build```
 - Then run ```cmake ../```, this will generate the cache and supporting files for CMake to do it's job.
 - Now simply run ```make```.

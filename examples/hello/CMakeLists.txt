@@ -12,4 +12,4 @@ list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake)
 #include the toolchain cmake
 include(EosioWasmToolchain)
 
-add_executable( hello hello.cpp )
+add_executable( hello.wasm hello.cpp )
