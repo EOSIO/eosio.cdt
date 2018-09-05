@@ -87,8 +87,8 @@ For an example contract of abi generation please see the file ./examples/abigen_
 First clone
 
 ```sh
-$ git clone --recursive https://github.com/eosio/eosio.wasmsdk
-$ cd eosio.wasmsdk
+$ git clone --recursive https://github.com/eosio/eosio.cdt
+$ cd eosio.cdt
 ```
 
 Now run `build.sh` and give the core symbol for the EOSIO blockchain that intend to deploy to.
@@ -98,7 +98,7 @@ $ ./build.sh <CORE_SYMBOL>
 ```
 
 Finally, install the build
-    *This install will install the core to ```/usr/local/eosio.wasmsdk``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
+    *This install will install the core to ```/usr/local/eosio.cdt``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
 ```sh
 $ sudo ./install.sh
 ```
@@ -147,7 +147,7 @@ EOSIO_ABI( test, (test_action))
 Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __WASM_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
-Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and WasmSDK being baked in.
+Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and CDT being baked in.
 
 ### eosio-cpp
 ---

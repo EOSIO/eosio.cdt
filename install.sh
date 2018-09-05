@@ -87,7 +87,7 @@
    popd &> /dev/null 
 
    install_symlinks   
-   cp /usr/local/eosio.cdt/lib/cmake
+
    printf "\n${bldred}\t      ___           ___           ___                       ___\n"
    printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
    printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
