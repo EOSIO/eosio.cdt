@@ -11,7 +11,77 @@ WasmSDK is a toolchain for WebAssembly (WASM).  In addition to being a general p
 - _eosio-cpp_, _eosio-cc_, _eosio-ld_, and _eosio-pp_ are set the core set of tools that you will interact with.
     * These are the C++ compiler, C compiler, linker and postpass tools.
 - A simple CMake interface to build EOSIO smart contracts against WasmSDK
-- ABI generator (Coming Soon)
+- ABI generator
+
+# How to use eosio-abigen
+## using with eosio-cpp
+To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp will tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi 
+
+Example:
+```bash
+$ eosio-cpp hello.cpp -o hello.wasm --abigen
+```
+This will generate two files:
+* The compiled binary wasm (hello.wasm)
+* The generated abi file (hello.abi)
+
+## using eosio-abigen alone
+To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output`.
+
+Example:
+```bash
+$ eosio-abigen hello.cpp --output=hello.abi
+```
+
+This will generate one file:
+* The generated abi file (hello.abi)
+
+# Difference from old abi generator
+Unlike the old abi generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
+
+Example (four ways to declare an action for ABI generation):
+```c++
+// this is the C++11 and greater style attribute
+[[eosio::action]]
+void testa( account_name n ) {
+	// do something
+}
+
+// this is the GNU style attribute, this can be used in C code and prior to C++ 11
+__attribute__((eosio_action)) 
+void testa( account_name n ){
+	// do something
+}
+
+struct [[eosio::action]] testa {
+	account_name n;
+    EOSLIB_SERIALIZE( testa, (n) )
+};
+
+struct __attribute__((eosio_action)) testa {
+	account_name n;
+    EOSLIB_SERIALIZE( testa, (n) )
+};
+```
+If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
+
+Example (Two ways to declare a table for abi generation):
+```c++
+struct [[eosio::table]] testtable {
+	uint64_t owner;
+  	/* all other fields */
+};
+
+struct __attribute__((eosio_table)) testtable {
+	uint64_t owner;
+    /* all other fields */
+};
+
+typedef eosio::multi_index<N(tablename), testtable> testtable_t;
+```
+If you don't want to use the multi-index you can explicitly specify the name in the attribute ```c++ [[eosio::table("<valid action name>")]]```
+
+For an example contract of abi generation please see the file ./examples/abigen_test/test.cpp, you can generate the abi for this file with `eosio-abigen test.cpp --output=test.abi`.
 
 ### Guided Installation
 First clone
