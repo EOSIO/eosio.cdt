@@ -40,7 +40,7 @@
 	BUILD_DIR="${PWD}/build"
 	CMAKE_BUILD_TYPE=Release
 	TIME_BEGIN=$( date -u +%s )
-   INSTALL_PREFIX="/usr/local/eosio.wasmsdk"
+   INSTALL_PREFIX="/usr/local/eosio.cdt"
 	VERSION=1.2
 
 	txtbld=$(tput bold)
@@ -49,12 +49,12 @@
 
    create_symlink() {
       pushd /usr/local/bin &> /dev/null
-      ln -sf ../eosio.wasmsdk/bin/$1 $2
+      ln -sf ../eosio.cdt/bin/$1 $2
       popd &> /dev/null
    }
 
    install_symlinks() {
-		printf "\\n\\tInstalling EOSIO.WasmSDK Binary Symlinks\\n\\n"
+		printf "\\n\\tInstalling EOSIO.CDT Binary Symlinks\\n\\n"
       create_symlink "llvm-ranlib eosio-ranlib"
       create_symlink "llvm-ar eosio-ar"
       create_symlink "llvm-objdump eosio-objdump"
@@ -63,6 +63,7 @@
       create_symlink "eosio-cpp eosio-cpp"
       create_symlink "eosio-ld eosio-ld"
       create_symlink "eosio-pp eosio-pp"
+      create_symlink "eosio-abigen eosio-abigen"
       create_symlink "wasm2wat eosio-wasm2wast"
       create_symlink "wat2wasm eosio-wast2wasm"
    }
@@ -86,6 +87,7 @@
    popd &> /dev/null 
 
    install_symlinks   
+
    printf "\n${bldred}\t      ___           ___           ___                       ___\n"
    printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
    printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
