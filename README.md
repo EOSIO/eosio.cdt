@@ -89,12 +89,12 @@ void testa( account_name n ){
 	// do something
 }
 
-struct [[eosio::action]] testa {
+struct [[eosio::table]] testa {
 	account_name n;
     EOSLIB_SERIALIZE( testa, (n) )
 };
 
-struct __attribute__((eosio_action)) testa {
+struct __attribute__((eosio_table)) testa {
 	account_name n;
     EOSLIB_SERIALIZE( testa, (n) )
 };
