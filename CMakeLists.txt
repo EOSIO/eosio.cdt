@@ -27,17 +27,6 @@ include(EosioWasmToolchain)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
 
-if ("${CORE_SYMBOL_NAME}" STREQUAL "")
-  set( CORE_SYMBOL_NAME "SYS" )
-endif()
-string(TOUPPER ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME)
-
-string(LENGTH ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME_LENGTH)
-if (CORE_SYMBOL_NAME_LENGTH GREATER 7)
-  message(FATAL_ERROR "CORE_SYMBOL_NAME length must be between 1 and 7 characters")
-endif()
-
-
 add_subdirectory(libraries)
 
 include(InstallClang.txt)

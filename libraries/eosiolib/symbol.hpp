@@ -1,5 +1,4 @@
 #pragma once
-#include <eosiolib/core_symbol.hpp>
 #include <eosiolib/serialize.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/system.h>

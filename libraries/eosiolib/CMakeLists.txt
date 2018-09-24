@@ -1,8 +1,6 @@
 file(GLOB HEADERS "*.hpp"
                   "*.h")
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/core_symbol.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/core_symbol.hpp)
-
 add_library(eosio 
             eosiolib.cpp 
             ${HEADERS})
@@ -18,4 +16,3 @@ install(TARGETS eosio EXPORT EosioLib
    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR} FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/core_symbol.hpp DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/eosiolib)
