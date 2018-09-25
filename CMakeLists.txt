@@ -47,6 +47,7 @@ message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
 # install examples
 #install(DIRECTORY examples DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
+configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchainPackage.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
@@ -54,3 +55,5 @@ install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREF
 
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CMAKE_INSTALL_PREFIX}/scripts)
+
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_SOURCE_DIR}/packages/generate_package.sh @ONLY)

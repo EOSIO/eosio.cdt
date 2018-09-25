@@ -1,0 +1,6 @@
+#! /bin/bash
+
+VERSION="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
+VARIANT=$1
+
+./generate_bottle.sh $VERSION
