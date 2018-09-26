@@ -16,7 +16,7 @@ class EosioCdt < Formula
    bottle do
       root_url "https://github.com/larryk85/test/releases/download/1.0.5"
       #cellar :any_skip_relocation
-      sha256 "95b9516ebd4d907fe9541b8700773dfa97bb18f1a5bc330ad0677e7b3d5b34a5" => :high_sierra
+      sha256 "4b69ccf2100acda42a069a14ffb602cf6ea2157dac92d349a363229f08e869bb" => :high_sierra
    end
    def install
       system "./build.sh"

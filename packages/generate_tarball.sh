@@ -1,11 +1,17 @@
 #! /bin/bash
 
-mkdir -p usr/bin
-mkdir -p usr/lib/cmake
-mkdir -p usr/opt/eosio.cdt/bin
-mkdir -p usr/opt/eosio.cdt/lib
-mkdir -p usr/opt/eosio.cdt/include/eosiolib
-mkdir -p usr/opt/eosio.cdt/scripts
+VERSION=$1
+
+PREFIX=$2
+CDT_PREFIX=$3
+
+mkdir -p ${PREFIX}/bin
+mkdir -p ${PREFIX}/lib/cmake
+mkdir -p ${CDT_PREFIX}/bin 
+mkdir -p ${CDT_PREFIX}/lib 
+mkdir -p ${CDT_PREFIX}/cmake
+mkdir -p ${CDT_PREFIX}/include/eosiolib
+mkdir -p ${CDT_PREFIX}/scripts
 
 # install clang based tools and plugins
 clang_tools=(clang-7 
@@ -29,11 +35,16 @@ clang_tools=(clang-7
 clang_plugins=(LLVMEosioApply.*)
 
 for f in ${clang_tools[@]}; do
-   cp ../build/EosioClang-prefix/src/EosioClang-build/bin/$f usr/opt/eosio.cdt/bin
+   cp ../build/EosioClang-prefix/src/EosioClang-build/bin/$f ${CDT_PREFIX}/bin 
 done
 for f in ${clang_plugins[@]}; do
-   cp ../build/EosioClang-prefix/src/EosioClang-build/lib/$f usr/opt/eosio.cdt/bin
+   cp ../build/EosioClang-prefix/src/EosioClang-build/lib/$f ${CDT_PREFIX}/bin 
 done
+
+pushd ${CDT_PREFIX}/bin &> /dev/null
+ln -sf clang-7 clang
+ln -sf clang-7 clang++
+popd &> /dev/null
 
 # install wabt based tools
 wabt_tools=(eosio-pp
@@ -41,35 +52,38 @@ wabt_tools=(eosio-pp
             wat2wasm)
 
 for f in ${wabt_tools[@]}; do
-   cp ../build/external/wabt/$f usr/opt/eosio.cdt/bin
+   cp ../build/external/wabt/$f ${CDT_PREFIX}/bin
 done
 
 # install cmake modules
-cp ../build/modules/EosioWasmToolchainPackage.cmake usr/lib/cmake/EosioWasmToolchain.cmake
+sed 's/_PREFIX_/\/usr/g' ../build/modules/EosioWasmToolchainPackage.cmake &> ${CDT_PREFIX}/cmake/EosioWasmToolchain.cmake
+pushd ${PREFIX}/lib/cmake &> /dev/null
+ln -sf ../../../${CDT_PREFIX}/cmake/EosioWasmToolchain.cmake EosioWasmToolchain.cmake
+popd &> /dev/null
 
 # install scripts
-cp -R ../build/scripts usr/opt/eosio.cdt/
+cp -R ../build/scripts/* ${CDT_PREFIX}/scripts 
 
 # install misc.
-cp ../build/eosio.imports usr/opt/eosio.cdt
+cp ../build/eosio.imports ${CDT_PREFIX}
 
 # install wasm includes
-cp -R ../libraries/boost/include usr/opt/eosio.cdt
-cp ../libraries/eosiolib/*.h ../libraries/eosiolib/*.hpp usr/opt/eosio.cdt/include/eosiolib
-cp -R ../libraries/libc/musl/include usr/opt/eosio.cdt/include/libc
-cp -R ../libraries/libc/musl/src/internal usr/opt/eosio.cdt/include/libc
-cp -R ../libraries/libc/musl/arch/eos usr/opt/eosio.cdt/include/libc
-cp -R ../libraries/libc++/libcxx/include usr/opt/eosio.cdt/include/libcxx
+cp -R ../libraries/boost/include/* ${CDT_PREFIX}/include
+cp ../libraries/eosiolib/*.h ../libraries/eosiolib/*.hpp ${CDT_PREFIX}/include/eosiolib
+cp -R ../libraries/libc/musl/include ${CDT_PREFIX}/include/libc
+cp -R ../libraries/libc/musl/src/internal ${CDT_PREFIX}/include/libc/
+cp -R ../libraries/libc/musl/arch/eos ${CDT_PREFIX}/include/libc/
+cp -R ../libraries/libc++/libcxx/include ${CDT_PREFIX}/include/libcxx
 
 # install wasm libs
-cp ../build/libraries/eosiolib/libeosio.a usr/opt/eosio.cdt/lib
-cp ../build/libraries/libc/libc.a usr/opt/eosio.cdt/lib
-cp ../build/libraries/libc++/libc++.a usr/opt/eosio.cdt/lib
+cp ../build/libraries/eosiolib/libeosio.a ${CDT_PREFIX}/lib
+cp ../build/libraries/libc/libc.a ${CDT_PREFIX}/lib
+cp ../build/libraries/libc++/libc++.a ${CDT_PREFIX}/lib
 
 # make symlinks
 create_symlink() {
-   pushd usr/bin &> /dev/null
-   ln -sf ../opt/eosio.cdt/bin/$1 $2
+   pushd ${PREFIX}/bin &> /dev/null
+   ln -sf ../../${CDT_PREFIX}/bin/$1 $2
    popd &> /dev/null
 }
 create_symlink "llvm-ranlib eosio-ranlib"
@@ -84,5 +98,5 @@ create_symlink "eosio-abigen eosio-abigen"
 create_symlink "wasm2wat eosio-wasm2wast"
 create_symlink "wat2wasm eosio-wast2wasm"
 
-tar -cvzf eosio.cdt.tar.gz usr/*
-rm -r usr
+tar -cvzf $4 ./${PREFIX}/*
+rm -r ${PREFIX}
