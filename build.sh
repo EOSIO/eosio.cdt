@@ -32,6 +32,7 @@ else
          ;;
       "CentOS Linux")
          export ARCH="Centos"
+         export CMAKE=${HOME}/opt/cmake/bin/cmake
          bash ./scripts/eosio_build_centos.sh
          ;;
       "elementary OS")
@@ -86,7 +87,12 @@ fi
 
 mkdir -p build
 pushd build &> /dev/null
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+
+if [ -z "$CMAKE" ]; then
+  CMAKE=$( command -v cmake )
+fi
+
+"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi
