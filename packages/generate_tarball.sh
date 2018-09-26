@@ -4,11 +4,12 @@ VERSION=$1
 
 PREFIX=$2
 CDT_PREFIX=$3
+SYMLINK_PREFIX=$4
 
 mkdir -p ${PREFIX}/bin
 mkdir -p ${PREFIX}/lib/cmake
 mkdir -p ${CDT_PREFIX}/bin 
-mkdir -p ${CDT_PREFIX}/lib 
+mkdir -p ${CDT_PREFIX}/lib/cmake
 mkdir -p ${CDT_PREFIX}/cmake
 mkdir -p ${CDT_PREFIX}/include/eosiolib
 mkdir -p ${CDT_PREFIX}/scripts
@@ -56,9 +57,8 @@ for f in ${wabt_tools[@]}; do
 done
 
 # install cmake modules
-sed 's/_PREFIX_/\/usr/g' ../build/modules/EosioWasmToolchainPackage.cmake &> ${CDT_PREFIX}/cmake/EosioWasmToolchain.cmake
 pushd ${PREFIX}/lib/cmake &> /dev/null
-ln -sf ../../../${CDT_PREFIX}/cmake/EosioWasmToolchain.cmake EosioWasmToolchain.cmake
+ln -sf ../../${SYMLINK_PREFIX}/lib/cmake/EosioWasmToolchain.cmake EosioWasmToolchain.cmake
 popd &> /dev/null
 
 # install scripts
@@ -83,7 +83,7 @@ cp ../build/libraries/libc++/libc++.a ${CDT_PREFIX}/lib
 # make symlinks
 create_symlink() {
    pushd ${PREFIX}/bin &> /dev/null
-   ln -sf ../../${CDT_PREFIX}/bin/$1 $2
+   ln -sf ../${SYMLINK_PREFIX}/bin/$1 $2
    popd &> /dev/null
 }
 create_symlink "llvm-ranlib eosio-ranlib"
@@ -98,5 +98,5 @@ create_symlink "eosio-abigen eosio-abigen"
 create_symlink "wasm2wat eosio-wasm2wast"
 create_symlink "wat2wasm eosio-wast2wasm"
 
-tar -cvzf $4 ./${PREFIX}/*
+tar -cvzf $5 ./${PREFIX}/*
 rm -r ${PREFIX}
