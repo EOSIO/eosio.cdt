@@ -8,9 +8,9 @@ add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E cop
 add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-abigen ${CMAKE_BINARY_DIR}/bin/ )
 add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-ld ${CMAKE_BINARY_DIR}/bin/ )
 add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/wasm-ld ${CMAKE_BINARY_DIR}/bin/ )
-add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ar ${CMAKE_BINARY_DIR}/bin/ )
-add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ranlib ${CMAKE_BINARY_DIR}/bin/ )
-add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-nm ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ar ${CMAKE_BINARY_DIR}/bin/eosio-ar )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ranlib ${CMAKE_BINARY_DIR}/bin/eosio-ranlib )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-nm ${CMAKE_BINARY_DIR}/bin/eosio-nm )
 add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/clang-7 ${CMAKE_BINARY_DIR}/bin/ )
 add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/ )
 
