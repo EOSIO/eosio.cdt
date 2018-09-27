@@ -1,0 +1,5 @@
+if(EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT)
+   set(EOSIO_CDT_ROOT "@CMAKE_INSTALL_PREFIX@")
+endif()
+list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt)
+include(EosioWasmToolchain)

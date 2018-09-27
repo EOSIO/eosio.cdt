@@ -15,8 +15,6 @@
 #include <algorithm>
 #include <memory>
 
-#include <boost/multi_index/mem_fun.hpp>
-
 #include <eosiolib/action.h>
 #include <eosiolib/types.hpp>
 #include <eosiolib/serialize.hpp>
@@ -26,7 +24,33 @@
 
 namespace eosio {
 
-using boost::multi_index::const_mem_fun;
+template<class Class,typename Type,Type (Class::*PtrToMemberFunction)()const>
+struct const_mem_fun
+{
+  typedef typename std::remove_reference<Type>::type result_type;
+
+  template<typename ChainedPtr>
+
+  auto operator()(const ChainedPtr& x)const -> std::enable_if_t<!std::is_convertible<const ChainedPtr&, const Class&>::value, Type>
+  {
+    return operator()(*x);
+  }
+
+  Type operator()(const Class& x)const
+  {
+    return (x.*PtrToMemberFunction)();
+  }
+
+  Type operator()(const std::reference_wrapper<const Class>& x)const
+  { 
+    return operator()(x.get());
+  }
+
+  Type operator()(const std::reference_wrapper<Class>& x)const
+  { 
+    return operator()(x.get());
+  }
+};
 
 #define WRAP_SECONDARY_SIMPLE_TYPE(IDX, TYPE)\
 template<>\
