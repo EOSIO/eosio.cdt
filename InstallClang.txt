@@ -1,5 +1,19 @@
 # install clang and llvm
 set(CLANG_BIN_DIR ${CMAKE_BINARY_DIR}/EosioClang-prefix/src/EosioClang-build/bin)
+
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-cpp ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-cc ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-abigen ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/eosio-ld ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/wasm-ld ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ar ${CMAKE_BINARY_DIR}/bin/eosio-ar )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-ranlib ${CMAKE_BINARY_DIR}/bin/eosio-ranlib )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/llvm-nm ${CMAKE_BINARY_DIR}/bin/eosio-nm )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/clang-7 ${CMAKE_BINARY_DIR}/bin/ )
+add_custom_command( TARGET EosioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CLANG_BIN_DIR}/../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/ )
+
 install(FILES ${CLANG_BIN_DIR}/llvm-ranlib 
    DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -53,6 +67,7 @@ install(FILES ${CLANG_BIN_DIR}/eosio-abigen
    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 install(FILES ${CLANG_BIN_DIR}/../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX}
    DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+
 install(CODE "
    execute_process(COMMAND ln -sf 
       ${CMAKE_INSTALL_FULL_BINDIR}/clang-7
