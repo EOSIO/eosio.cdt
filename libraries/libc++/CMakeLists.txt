@@ -1,9 +1,7 @@
-SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp condition_variable.cpp exception.cpp functional.cpp
+SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp condition_variable.cpp functional.cpp
                   future.cpp ios.cpp iostream.cpp locale.cpp memory.cpp mutex.cpp new.cpp optional.cpp
-                  regex.cpp shared_mutex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp
-                  thread.cpp typeinfo.cpp utility.cpp valarray.cpp variant.cpp vector.cpp)
-
-#SET(SRC_FILENAMES exception.cpp)
+                  regex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp
+                  typeinfo.cpp utility.cpp valarray.cpp variant.cpp vector.cpp)
 
 SET(SRC_FILES "")
 FOREACH(FN ${SRC_FILENAMES})
@@ -26,4 +24,8 @@ install(TARGETS c++ EXPORT EosioLib
    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} 
    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
+add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${CMAKE_BINARY_DIR}/lib )
+
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libcxx)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_BINARY_DIR}/include/libcxx)
+
