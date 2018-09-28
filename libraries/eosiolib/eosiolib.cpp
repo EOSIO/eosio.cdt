@@ -531,7 +531,6 @@ namespace eosio {
 
 extern "C" {
 
-
 void* malloc(size_t size)
 {
    return eosio::memory_heap.malloc(size);

@@ -67,7 +67,13 @@
       create_symlink "wasm2wat eosio-wasm2wast"
       create_symlink "wat2wasm eosio-wast2wasm"
    }
-
+   
+   create_cmake_symlink() {
+      mkdir -p /usr/local/lib/cmake/eosio.cdt
+      pushd /usr/local/lib/cmake/eosio.cdt &> /dev/null
+      ln -sf ../../../eosio.cdt/lib/cmake/eosio.cdt/$1 $1
+      popd &> /dev/null
+   }
 	if [ ! -d "${BUILD_DIR}" ]; then
       printf "\\n\\tError, build.sh has not ran.  Please run ./build.sh first!\\n\\n"
       exit -1
@@ -87,6 +93,7 @@
    popd &> /dev/null 
 
    install_symlinks   
+   create_cmake_symlink "eosio.cdt-config.cmake"
 
    printf "\n${bldred}\t      ___           ___           ___                       ___\n"
    printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
