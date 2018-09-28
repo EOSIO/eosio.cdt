@@ -54,7 +54,7 @@ namespace eosio {
        *
        * @brief Construct a new asset object
        * @param a - The amount of the asset
-       * @param s - THe name of the symbol, default to CORE_SYMBOL
+       * @param s - The name of the symbol
        */
       asset() {}
       asset( int64_t a, class symbol s )
