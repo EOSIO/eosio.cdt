@@ -107,7 +107,7 @@ namespace eosio {
       */
       symbol_name value;
 
-      symbol_type() { }
+      symbol_type(): value(0) { }
 
       /**
        * What is the type of the symbol
