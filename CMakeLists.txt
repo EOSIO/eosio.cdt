@@ -34,8 +34,6 @@ add_subdirectory(libraries)
 
 include(InstallClang.txt)
 
-message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
-
 # install examples
 #install(DIRECTORY examples DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
