@@ -1,19 +1,24 @@
 #! /bin/bash
 
 VERSION=$1
-NAME="eosio.cdt-${VERSION}.high_sierra.bottle.tar.gz"
+NAME="${PROJEC}-${VERSION}.high_sierra.bottle.tar.gz"
 
 mkdir -p eosio.cdt/${VERSION}/opt/eosio_cdt/lib/cmake
 
 sed 's/_PREFIX_/\/usr\/local/g' ../build/modules/EosioWasmToolchainPackage.cmake &> eosio.cdt/${VERSION}/opt/eosio_cdt/lib/cmake/EosioWasmToolchain.cmake
 
-bash generate_tarball.sh ${VERSION} eosio.cdt/${VERSION} eosio.cdt/${VERSION}/opt/eosio_cdt opt/eosio_cdt ${NAME}
+PREFIX="${PROJECT}/${VERSION}"
+SUBPREFIX="opt/eosio_cdt"  #needs to be eosio_cdt and not eosio.cdt, brew weirdness
+export PREFIX
+export SUBPREFIX
+
+bash generate_tarball.sh ${NAME}
 
 hash=`openssl dgst -sha256 ${NAME} | awk 'NF>1{print $NF}'`
 
 echo "class EosioCdt < Formula
 
-   homepage \"https://github.com/eosio/eosio.cdt\"
+   homepage \"${URL}\"
    revision 0
    url \"https://github.com/larryk85/eosio.cdt/archive/v${VERSION}.tar.gz\"
    version \"${VERSION}\"

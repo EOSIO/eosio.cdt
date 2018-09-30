@@ -1,24 +1,29 @@
 #! /bin/bash
 
-VERSION=$1
+NAME="${PROJECT}-${VERSION}.x86_64"
+PREFIX="usr"
+SPREFIX=${PREFIX}
+SUBPREFIX="opt/${PROJECT}/${VERSION}"
+SSUBPREFIX="opt\/${PROJECT}\/${VERSION}"
 
-mkdir -p eosio.cdt/DEBIAN
-echo "Package: eosio.cdt
+mkdir -p ${PROJECT}/DEBIAN
+echo "Package: ${PROJECT} 
 Version: ${VERSION}
 Section: devel
 Priority: optional
 Architecture: amd64
-Homepage: https://github.com/EOSIO/eosio.cdt
-Maintainer: support@block.one
-Description: Toolchain and supporting tools for the EOS.IO platform" &> eosio.cdt/DEBIAN/control
+Homepage: ${URL} 
+Maintainer: ${EMAIL} 
+Description: ${DESC}" &> ${PROJECT}/DEBIAN/control
 
-mkdir -p usr/opt/eosio.cdt/${VERSION}/lib/cmake 
+export PREFIX
+export SUBPREFIX
+export SPREFIX
+export SSUBPREFIX
 
-sed 's/_PREFIX_/\/usr/g' ../build/modules/EosioWasmToolchainPackage.cmake &> usr/opt/eosio.cdt/${VERSION}/lib/cmake/EosioWasmToolchain.cmake
+bash generate_tarball.sh ${NAME}.tar.gz
 
-./generate_tarball.sh ${VERSION} usr usr/opt/eosio.cdt/${VERSION} eosio.cdt.tar.gz
-
-tar -xvzf eosio.cdt.tar.gz -C eosio.cdt
-dpkg-deb --build eosio.cdt
-
-rm -r eosio.cdt
+tar -xvzf ${NAME}.tar.gz -C ${PROJECT} 
+dpkg-deb --build ${PROJECT} 
+mv ${PROJECT}.deb ${NAME}.deb
+rm -r ${PROJECT}

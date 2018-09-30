@@ -64,8 +64,8 @@
       create_symlink "eosio-ld eosio-ld"
       create_symlink "eosio-pp eosio-pp"
       create_symlink "eosio-abigen eosio-abigen"
-      create_symlink "wasm2wat eosio-wasm2wast"
-      create_symlink "wat2wasm eosio-wast2wasm"
+      create_symlink "eosio-wasm2wast eosio-wasm2wast"
+      create_symlink "eosio-wast2wasm eosio-wast2wasm"
    }
    
    create_cmake_symlink() {

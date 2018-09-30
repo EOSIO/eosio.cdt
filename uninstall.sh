@@ -24,6 +24,8 @@ if [ -d "/usr/local/eosio.cdt" ]; then
                rm ${binary}
             done
             popd &> /dev/null
+            pushd lib/cmake &> /dev/null
+            rm -rf eosio.cdt
             break;;
          [Nn]* ) 
             printf "\tAborting uninstall\n\n"
