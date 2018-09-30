@@ -1,24 +1,43 @@
 #! /bin/bash
 
-VERSION=$1
+NAME="${PROJECT}-${VERSION}.x86_64"
+PREFIX="usr"
+SPREFIX=${PREFIX}
+SUBPREFIX="opt/${PROJECT}/${VERSION}"
+SSUBPREFIX="opt\/${PROJECT}\/${VERSION}"
 
-mkdir -p eosio.cdt/
-echo "Summary: Toolchain and supporting tools for the EOS.IO platform
-Name: eosio.cdt
-Version: ${VERSION}
+export PREFIX
+export SUBPREFIX
+export SPREFIX
+export SSUBPREFIX
+
+bash generate_tarball.sh ${NAME}.tar.gz
+
+RPMBUILD=`realpath ~/rpmbuild/BUILDROOT/${NAME}-0.x86_64`
+mkdir -p ${RPMBUILD} 
+FILES=$(tar -xvzf ${NAME}.tar.gz -C ${RPMBUILD})
+PFILES=""
+for f in ${FILES[@]}; do
+  if [ -f ${RPMBUILD}/${f} ]; then
+    PFILES="${PFILES}/${f}\n"
+  fi
+done
+echo -e ${PFILES} &> ~/rpmbuild/BUILD/filenames.txt
+
+mkdir -p ${PROJECT} 
+echo -e "Name: ${PROJECT} 
+Version: ${VERSION}.x86_64
 License: MIT
-Vendor: block.one
-Source: https://github.com/EOSIO/eosio.cdt
-URL: https://github.com/EOSIO/eosio.cdt
-Packager: block.one <support@block.one>" &> eosio.cdt.spec
+Vendor: ${VENDOR} 
+Source: ${URL} 
+URL: ${URL} 
+Packager: ${VENDOR} <${EMAIL}>
+Summary: ${DESC}
+Release: 0
+%description
+${DESC}
+%files -f filenames.txt" &> ${PROJECT}.spec
 
-mkdir -p usr/opt/eosio.cdt/${VERSION}/lib/cmake 
+rpmbuild -bb ${PROJECT}.spec
 
-sed 's/_PREFIX_/\/usr/g' ../build/modules/EosioWasmToolchainPackage.cmake &> usr/opt/eosio.cdt/${VERSION}/lib/cmake/EosioWasmToolchain.cmake
-
-./generate_tarball.sh ${VERSION} usr usr/opt/eosio.cdt/${VERSION} eosio.cdt.tar.gz
-
-tar -xvzf eosio.cdt.tar.gz -C eosio.cdt
-dpkg-deb --build eosio.cdt
-
-rm -r eosio.cdt
+rm -r ${PROJECT} ~/rpmbuild/BUILD/filenames.txt ${PROJECT}.spec
