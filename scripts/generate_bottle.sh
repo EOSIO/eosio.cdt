@@ -1,16 +1,19 @@
 #! /bin/bash
 
 VERSION=$1
-NAME="${PROJEC}-${VERSION}.high_sierra.bottle.tar.gz"
+NAME="${PROJECT}-${VERSION}.high_sierra.bottle.tar.gz"
 
-mkdir -p eosio.cdt/${VERSION}/opt/eosio_cdt/lib/cmake
-
-sed 's/_PREFIX_/\/usr\/local/g' ../build/modules/EosioWasmToolchainPackage.cmake &> eosio.cdt/${VERSION}/opt/eosio_cdt/lib/cmake/EosioWasmToolchain.cmake
+mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
 PREFIX="${PROJECT}/${VERSION}"
-SUBPREFIX="opt/eosio_cdt"  #needs to be eosio_cdt and not eosio.cdt, brew weirdness
+SPREFIX="\/usr\/local"
+SUBPREFIX="opt/${PROJECT}"
+SSUBPREFIX="opt\/${PROJECT}"
+
 export PREFIX
+export SPREFIX
 export SUBPREFIX
+export SSUBPREFIX
 
 bash generate_tarball.sh ${NAME}
 
@@ -47,3 +50,5 @@ echo "class EosioCdt < Formula
    end
 end
 __END__" &> eosio.cdt.rb
+
+rm -r ${PROJECT}
