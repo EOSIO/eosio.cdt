@@ -38,8 +38,9 @@ ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake Eosio
 popd &> /dev/null
 
 pushd ${PREFIX}/bin &> /dev/null
-for f in `find ${BUILD_DIR}/bin -name "eosio-*" -printf "%f\n"`; do
-   ln -sf ../${SUBPREFIX}/bin/$f $f
+for f in `find ${BUILD_DIR}/bin -name "eosio-*"`; do
+   bn=$(basename $f)
+   ln -sf ../${SUBPREFIX}/bin/$bn $bn
 done
 popd &> /dev/null
 
