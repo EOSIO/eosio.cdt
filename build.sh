@@ -46,7 +46,7 @@ else
          ;;
       "Ubuntu")
          export ARCH="Ubuntu"
-#         bash ./scripts/eosio_build_ubuntu.sh
+         bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Debian GNU/Linux")
          export ARCH="Debian"
