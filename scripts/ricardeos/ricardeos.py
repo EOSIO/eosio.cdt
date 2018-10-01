@@ -5,7 +5,7 @@ import sys
 import os.path
 import fnmatch
 
-def add_ricardian_contracts_to_actions(source_abi_directory, contract_name, abi_actions):
+def add_ricardian_contracts_to_actions(source_md_directory, contract_name, abi_actions):
     abi_actions_with_ricardian_contracts = []
 
     for abi_action in abi_actions:
@@ -13,7 +13,7 @@ def add_ricardian_contracts_to_actions(source_abi_directory, contract_name, abi_
         contract_action_filename = '{contract_name}-{action_name}-rc.md'.format(contract_name = contract_name, action_name = action_name)
 
         # check for rc file
-        rc_contract_path = os.path.join(source_abi_directory, contract_action_filename)
+        rc_contract_path = os.path.join(source_md_directory, contract_action_filename)
         if os.path.exists(rc_contract_path):
             print('Importing Contract {contract_action_filename} for {contract_name}:{action_name}'.format(
                 contract_action_filename = contract_action_filename, 
@@ -36,9 +36,9 @@ def add_ricardian_contracts_to_actions(source_abi_directory, contract_name, abi_
     
     return abi_actions_with_ricardian_contracts
 
-def create_ricardian_clauses_list(source_abi_directory, contract_name):
+def create_ricardian_clauses_list(source_md_directory, contract_name):
     clause_file_pattern = '*-clause*-rc.md'
-    clause_files = fnmatch.filter(os.listdir(source_abi_directory), clause_file_pattern)
+    clause_files = fnmatch.filter(os.listdir(source_md_directory), clause_file_pattern)
 
     clause_prefix = 'clause-'
     clause_postfix = '-rc.md'
@@ -46,7 +46,7 @@ def create_ricardian_clauses_list(source_abi_directory, contract_name):
     abi_ricardian_clauses = []
 
     for clause_file_name in clause_files:
-        rc_contract_path = os.path.join(source_abi_directory, clause_file_name)
+        rc_contract_path = os.path.join(source_md_directory, clause_file_name)
         with open(rc_contract_path) as contract_file_handle:
             contract_contents = contract_file_handle.read()
 
@@ -62,8 +62,8 @@ def create_ricardian_clauses_list(source_abi_directory, contract_name):
 
     return abi_ricardian_clauses
 
-def add_ricardian_contracts_to_abi(source_abi, output_abi):
-    source_abi_directory = os.path.dirname(source_abi)
+def add_ricardian_contracts_to_abi(source_abi, output_abi, source_md):
+    source_md_directory = source_md if os.path.isdir(source_md) else os.path.dirname(source_md)
     contract_name = os.path.split(source_abi)[1].rpartition(".")[0]
 
     print('Creating {output_abi} with ricardian contracts included'.format(output_abi = output_abi))
@@ -71,17 +71,21 @@ def add_ricardian_contracts_to_abi(source_abi, output_abi):
     with open(source_abi, 'r') as source_abi_file:
         source_abi_json = json.load(source_abi_file)
     try:
-        source_abi_json['actions'] = add_ricardian_contracts_to_actions(source_abi_directory, contract_name, source_abi_json['actions'])
-        source_abi_json['ricardian_clauses'] = create_ricardian_clauses_list(source_abi_directory, contract_name)
+        source_abi_json['actions'] = add_ricardian_contracts_to_actions(source_md_directory, contract_name, source_abi_json['actions'])
+        source_abi_json['ricardian_clauses'] = create_ricardian_clauses_list(source_md_directory, contract_name)
 
     except:
         pass
     with open(output_abi, 'w') as output_abi_file:
         json.dump(source_abi_json, output_abi_file, indent=2)
 
-def import_ricardian_to_abi(source_abi, output_abi):
+def import_ricardian_to_abi(source_abi, output_abi, source_md):
     if not os.path.exists(source_abi):
         print('Source ABI not found in {source_abi}'.format(source_abi = source_abi))
+        sys.exit(0)
+
+    if not os.path.exists(source_md):
+        print('Source ABI not found in {source_md}'.format(source_md = source_md))
         sys.exit(0)
 
     #if os.path.exists(output_abi):
@@ -94,7 +98,7 @@ def import_ricardian_to_abi(source_abi, output_abi):
     #        print('User aborted, not overwriting existing abi')
     #        sys.exit(0)
     #else:
-    add_ricardian_contracts_to_abi(source_abi, output_abi)
+    add_ricardian_contracts_to_abi(source_abi, output_abi, source_md)
 
 def write_rc_file(path, filename, content):
     output_filename = os.path.join(path, filename)
@@ -145,7 +149,7 @@ def main():
 
             sys.exit(0)
         else:
-            import_ricardian_to_abi(sys.argv[2], sys.argv[3])
+            import_ricardian_to_abi(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else sys.argv[3])
 
             sys.exit(0)
     elif sys.argv[1] == 'export':
