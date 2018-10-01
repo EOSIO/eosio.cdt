@@ -24,7 +24,7 @@ $ cd eosio.cdt
 Now run `build.sh` and give the core symbol for the EOSIO blockchain that intend to deploy to.
     *`build.sh` will install any dependencies that are needed.
 ```sh
-$ ./build.sh <CORE_SYMBOL>
+$ ./build.sh
 ```
 
 Finally, install the build
@@ -51,7 +51,7 @@ $ eosio-cpp hello.cpp -o hello.wasm
 
 ### How to use eosio-abigen
 #### using with eosio-cpp
-To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp will tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi 
+To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp will tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi
 
 Example:
 ```bash
@@ -84,7 +84,7 @@ void testa( account_name n ) {
 }
 
 // this is the GNU style attribute, this can be used in C code and prior to C++ 11
-__attribute__((eosio_action)) 
+__attribute__((eosio_action))
 void testa( account_name n ){
 	// do something
 }

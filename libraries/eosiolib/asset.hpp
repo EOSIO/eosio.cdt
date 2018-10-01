@@ -33,7 +33,7 @@ namespace eosio {
        *
        * @brief The amount of the asset
        */
-      int64_t      amount;
+      int64_t      amount = 0;
 
       /**
        * The symbol name of the asset
@@ -49,14 +49,16 @@ namespace eosio {
        */
       static constexpr int64_t max_amount    = (1LL << 62) - 1;
 
+      asset() {}
+
       /**
        * Construct a new asset given the symbol name and the amount
        *
        * @brief Construct a new asset object
        * @param a - The amount of the asset
-       * @param s - THe name of the symbol, default to CORE_SYMBOL
+       * @param s - The name of the symbol, default to 0
        */
-      explicit asset( int64_t a = 0, symbol_type s = CORE_SYMBOL )
+      asset( int64_t a, symbol_type s )
       :amount(a),symbol{s}
       {
          eosio_assert( is_amount_within_range(), "magnitude of asset amount must be less than 2^62" );

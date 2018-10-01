@@ -23,7 +23,7 @@ if [[ "${unamestr}" == 'Darwin' ]]; then
 else
    BOOST=~/opt/boost
    OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-	
+
    export BOOST_ROOT=${BOOST}
    case "$OS_NAME" in
       "Amazon Linux AMI")
@@ -61,10 +61,6 @@ else
    esac
 fi
 
-if [ $# -ge 1 ]; then
-   CORE_SYMBOL=$1
-fi
-
 if [[ `uname` == 'Darwin' ]]; then
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
@@ -92,7 +88,7 @@ if [ -z "$CMAKE" ]; then
   CMAKE=$( command -v cmake )
 fi
 
-"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi

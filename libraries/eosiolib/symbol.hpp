@@ -1,5 +1,4 @@
 #pragma once
-#include <eosiolib/core_symbol.hpp>
 #include <eosiolib/serialize.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/system.h>
@@ -108,7 +107,7 @@ namespace eosio {
       */
       symbol_name value;
 
-      symbol_type() { }
+      symbol_type(): value(0) { }
 
       /**
        * What is the type of the symbol
