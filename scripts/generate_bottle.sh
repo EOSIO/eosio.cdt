@@ -1,6 +1,5 @@
 #! /bin/bash
 
-VERSION=$1
 NAME="${PROJECT}-${VERSION}.high_sierra.bottle.tar.gz"
 
 mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
