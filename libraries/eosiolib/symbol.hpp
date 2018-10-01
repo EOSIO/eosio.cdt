@@ -5,6 +5,7 @@
 #include <eosiolib/system.h>
 #include <tuple>
 #include <limits>
+#include <string_view>
 
 namespace eosio {
 
@@ -22,48 +23,36 @@ namespace eosio {
    */
 
    /**
-    * Converts string to uint64_t representation of symbol
+    * uint64_t representation of a symbol code
+    */
+   typedef uint64_t symbol_code;
+
+   /**
+    * Converts string to uint64_t representation of symbol / non constexpr version
     *
     * @param precision - precision of symbol
     * @param str - the string representation of the symbol
     */
-   static constexpr uint64_t string_to_symbol( uint8_t precision, const char* str ) {
+   static constexpr uint64_t string_to_symbol_code( uint8_t precision, const char* str ) {
       uint32_t len = 0;
       while( str[len] ) ++len;
 
       uint64_t result = 0;
       for( uint32_t i = 0; i < len; ++i ) {
-         if( str[i] < 'A' || str[i] > 'Z' ) {
-            /// ERRORS?
-         } else {
-            result |= (uint64_t(str[i]) << (8*(1+i)));
-         }
+         result |= (uint64_t(str[i]) << (8*(1+i)));
       }
 
       result |= uint64_t(precision);
       return result;
    }
-
+ 
    /**
-    * Macro for converting string to char representation of symbol
+    * Checks if provided symbol code is valid.
     *
-    * @param precision - precision of symbol
-    * @param str - the string representation of the symbol
-    */
-   #define S(P,X) ::eosio::string_to_symbol(P,#X)
-
-   /**
-    * uint64_t representation of a symbol name
-    */
-   typedef uint64_t symbol_name;
-
-   /**
-    * Checks if provided symbol name is valid.
-    *
-    * @param sym - symbol name of type symbol_name
+    * @param sym - symbol code of type symbol code_
     * @return true - if symbol is valid
     */
-   static constexpr bool is_valid_symbol( symbol_name sym ) {
+   static constexpr bool is_valid_symbol_code( symbol_code sym ) {
       sym >>= 8;
       for( int i = 0; i < 7; ++i ) {
          char c = (char)(sym & 0xff);
@@ -86,7 +75,7 @@ namespace eosio {
     * @param sym - symbol to retrieve length for (uint64_t)
     * @return length - character length of the provided symbol
     */
-   static constexpr uint32_t symbol_name_length( symbol_name sym ) {
+   static constexpr uint32_t symbol_code_length( symbol_code sym ) {
       sym >>= 8; /// skip precision
       uint32_t length = 0;
       while( sym & 0xff && length <= 7) {
@@ -102,43 +91,36 @@ namespace eosio {
     *
     * @brief Stores information about a symbol
     */
-   struct symbol_type {
-     /**
-      * The symbol name
-      */
-      symbol_name value;
-
-      symbol_type() { }
-
-      /**
-       * What is the type of the symbol
-       */
-      symbol_type(symbol_name s): value(s) { }
+   class symbol {
+      public:
+      constexpr symbol() : value(0) { }
+      constexpr explicit symbol(uint64_t s): value(s) { }
+      constexpr symbol(uint8_t prec, const char* str) : value(string_to_symbol_code(prec, str)) {}
 
       /**
        * Is this symbol valid
        */
-      bool     is_valid()const  { return is_valid_symbol( value ); }
+      constexpr bool is_valid()const  { return is_valid_symbol_code( value ); }
 
       /**
        * This symbol's precision
        */
-      uint64_t precision()const { return value & 0xff; }
+      constexpr uint64_t precision()const { return value & 0xff; }
 
       /**
        * Returns uint64_t representation of symbol name
        */
-      uint64_t name()const      { return value >> 8;   }
+      constexpr uint64_t name()const      { return value >> 8;   }
 
       /**
        * The length of this symbol
        */
-      uint32_t name_length()const { return symbol_name_length( value ); }
+      constexpr uint32_t code_length()const { return symbol_code_length( value ); }
 
       /**
        *
        */
-      operator symbol_name()const { return value; }
+      constexpr operator symbol_code()const { return value; }
 
       /**
        * %Print the symbol
@@ -160,28 +142,27 @@ namespace eosio {
             sym >>= 8;
          }
       }
+      private:
+     /**
+      * The symbol code
+      */
+      symbol_code value;
 
-      EOSLIB_SERIALIZE( symbol_type, (value) )
+
+      EOSLIB_SERIALIZE( symbol, (value) )
    };
 
    /**
     * \struct Extended asset which stores the information of the owner of the symbol
     *
     */
-   struct extended_symbol
+   class extended_symbol
    {
-     /**
-      * The symbol
-      */
-     symbol_type symbol;
-
-     /**
-      * The owner of the symbol
-      *
-      * @brief The owner of the symbol
-      */
-     name contract;
-
+      public:
+      constexpr extended_symbol() {} 
+      constexpr extended_symbol(const symbol sym, const name con) : symbol(sym), contract(con) {}
+      constexpr inline symbol get_symbol() { return symbol; }
+      constexpr inline name   get_contract() { return contract; }
       /**
        * %Print the extended symbol
        *
@@ -192,7 +173,6 @@ namespace eosio {
          prints("@");
          printn( contract );
       }
-
 
       /**
        * Equivalency operator. Returns true if a == b (are the same)
@@ -221,6 +201,19 @@ namespace eosio {
       friend bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
         return std::tie( a.symbol, a.contract ) < std::tie( b.symbol, b.contract );
       }
+
+     private:
+     /**
+      * The symbol
+      */
+     symbol symbol;
+
+     /**
+      * The owner of the symbol
+      *
+      * @brief The owner of the symbol
+      */
+     name contract;
 
       EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
    };
