@@ -131,12 +131,12 @@ namespace eosio {
     */
    class symbol {
       public:
-      constexpr symbol() : _precision(0),_code((uint64_t)0) { }
-      constexpr explicit symbol( uint64_t sym ) : _precision(sym & 0xFF), _code(sym >> 8) { }
-      symbol(const uint8_t precision, const symbol_code& sc) : _precision(precision), _code(sc) {
+      constexpr symbol() : _code((uint64_t)0), _precision(0) { }
+      constexpr explicit symbol( uint64_t sym ) : _code(sym >>8), _precision(sym & 0xFF) { }
+      symbol(const uint8_t precision, const symbol_code& sc) : _code(sc), _precision(precision) {
          eosio_assert(sc.is_valid(), "symbol is not valid");
       }
-      constexpr symbol(const uint8_t precision, symbol_code&& sc) : _precision(precision), _code(std::move(sc)) {}
+      constexpr symbol(const uint8_t precision, symbol_code&& sc) : _code(std::move(sc)), _precision(precision) {}
 
       /**
        * Is this symbol valid
