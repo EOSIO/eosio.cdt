@@ -263,6 +263,40 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize a symbol_code into a stream
+ *
+ *  @brief Serialize a public_key
+ *  @param ds - The stream to write
+ *  @param sym - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym) {
+  uint64_t code = (sym.raw()) << 8);
+  ds.write( (const char*)&code, sizeof(uint64_t));
+  return ds;
+}
+
+/**
+ *  Deserialize a symbol_code from a stream
+ *
+ *  @brief Deserialize a public_key
+ *  @param ds - The stream to read
+ *  @param symbol - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym) {
+  uint64_t _sym;
+  ds.read((char*)&_sym, sizeof(uint64_t));
+  _sym >>= 8;
+  sym = symbol(_sym);
+  return ds;
+}
+
+/**
  *  Serialize a symbol into a stream
  *
  *  @brief Serialize a public_key
