@@ -22,7 +22,7 @@ echo "class EosioCdt < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/larryk85/eosio.cdt/archive/v${VERSION}.tar.gz\"
+   url \"https://github.com/eosio/eosio.cdt/archive/v${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
@@ -41,7 +41,7 @@ echo "class EosioCdt < Formula
    depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/larryk85/test/releases/download/1.0.5\"
+      root_url \"https://github.com/eosio/eosio.cdt/releases/download/v${VERSION}\"
       sha256 \"${hash}\" => :high_sierra
    end
    def install
