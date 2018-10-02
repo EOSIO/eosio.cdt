@@ -33,7 +33,6 @@ namespace eosio {
             uint32_t len = 0;
             while (str[len]) ++len;
             for ( uint32_t i=0; i < len; i++ ) {
-               eosio_assert(str[i] >= 'A' && str[i] <= 'Z', "error, not a valid symbol, you can only use [A-Z]");
                value |= (uint64_t(str[i]) << (8*i));
             }
          } 
@@ -48,10 +47,11 @@ namespace eosio {
                if ( !('A' <= c && c <= 'Z') ) return false;
                sym >>= 8;
                if ( !(sym & 0xFF) ) {
-                  for ( int i=0; i < 7; i++ ) {
+                  do {
                      sym >>= 8;
                      if ( (sym & 0xFF) ) return false;
-                  }
+                     i++;
+                  } while( i < 7 );
                }
             }
             return true;
