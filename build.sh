@@ -18,13 +18,10 @@ if [[ "${unamestr}" == 'Darwin' ]]; then
    BOOST=/usr/local
    CXX_COMPILER=g++
    export ARCH="Darwin"
-   export BOOST_ROOT=${BOOST}
    bash ./scripts/eosio_build_darwin.sh
 else
-   BOOST=~/opt/boost
    OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
 	
-   export BOOST_ROOT=${BOOST}
    case "$OS_NAME" in
       "Amazon Linux AMI")
          export ARCH="Amazon Linux AMI"
@@ -92,7 +89,7 @@ if [ -z "$CMAKE" ]; then
   CMAKE=$( command -v cmake )
 fi
 
-"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi

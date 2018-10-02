@@ -1,22 +1,23 @@
-message(STATUS "Setting up Eosio Wasm Toolchain")
+message(STATUS "Setting up Eosio Wasm Toolchain @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@ at @CDT_ROOT_DIR@")
 set(CMAKE_SYSTEM_NAME WebAssembly)
 
 set(EOSIO_CDT_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@")
 set(EOSIO_WASMSDK_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@")
 
-set(CMAKE_C_COMPILER "@SYSROOT_DIR@/bin/eosio-cc")
-set(CMAKE_CXX_COMPILER "@SYSROOT_DIR@/bin/eosio-cpp")
+set(CMAKE_C_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
+set(CMAKE_CXX_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cpp")
 
 set(CMAKE_C_FLAGS " -O3 ")
 set(CMAKE_CXX_FLAGS " -O3 ")
 
-set(WASM_LINKER "@SYSROOT_DIR@/bin/eosio-ld")
+set(WASM_LINKER "@CDT_ROOT_DIR@/bin/eosio-ld")
 
 set(CMAKE_C_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 
-set(CMAKE_AR "@SYSROOT_DIR@/bin/eosio-ar" CACHE PATH "ar" FORCE)
-set(CMAKE_RANLIB "@SYSROOT_DIR@/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
+set(CMAKE_AR "@CDT_ROOT_DIR@/bin/eosio-ar" CACHE PATH "ar" FORCE)
+set(CMAKE_RANLIB "@CDT_ROOT_DIR@/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
+set(ABIGEN "@CDT_ROOT_DIR@/bin/eosio-abigen")
 
 # hack for CMake on Linux
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
@@ -25,3 +26,10 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 # hack for OSX
 set(CMAKE_OSX_SYSROOT="@SYSROOT_DIR@")
 set(CMAKE_OSX_DEPLOYMENT_TARGET="")
+
+macro(add_eosio_cdt_executable TARGET)
+   add_executable( ${TARGET}.wasm ${ARGN} )
+   target_compile_options( ${TARGET}.wasm PUBLIC -abigen )
+   get_target_property(BINOUTPUT ${TARGET}.wasm BINARY_DIR)
+   target_compile_options( ${TARGET}.wasm PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
+endmacro()
