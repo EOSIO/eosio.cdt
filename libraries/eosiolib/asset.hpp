@@ -56,8 +56,9 @@ namespace eosio {
        * @param a - The amount of the asset
        * @param s - THe name of the symbol, default to CORE_SYMBOL
        */
+      constexpr asset() : amount(0) {}
       constexpr asset( const asset& s ) : amount(s.amount), symbol(s.symbol) {}
-      explicit asset( int64_t a = 0, class symbol s = {4, "SYS"} )
+      explicit asset( int64_t a, class symbol s )
       :amount(a),symbol{s}
       {
          eosio_assert( is_amount_within_range(), "magnitude of asset amount must be less than 2^62" );

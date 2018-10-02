@@ -6,6 +6,7 @@
 #include <eosiolib/system.h>
 #include <eosiolib/memory.h>
 #include <eosiolib/vector.hpp>
+#include <eosiolib/symbol.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 #include <eosiolib/varint.hpp>
@@ -260,6 +261,39 @@ class datastream<size_t> {
       */
      size_t _size;
 };
+
+/**
+ *  Serialize a symbol into a stream
+ *
+ *  @brief Serialize a public_key
+ *  @param ds - The stream to write
+ *  @param sym - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol sym) {
+  uint64_t code = (sym.code().raw() << 8) | sym.precision();
+  ds.write( (const char*)&code, sizeof(uint64_t));
+  return ds;
+}
+
+/**
+ *  Deserialize a symbol from a stream
+ *
+ *  @brief Deserialize a public_key
+ *  @param ds - The stream to read
+ *  @param symbol - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym) {
+  uint64_t _sym;
+  ds.read((char*)&_sym, sizeof(uint64_t));
+  sym = symbol(_sym);
+  return ds;
+}
 
 /**
  *  Serialize a public_key into a stream
