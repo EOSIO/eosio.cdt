@@ -273,7 +273,7 @@ class datastream<size_t> {
  */
 template<typename Stream>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym) {
-  uint64_t code = (sym.raw()) << 8);
+  uint64_t code = (sym.raw()) << 8;
   ds.write( (const char*)&code, sizeof(uint64_t));
   return ds;
 }
