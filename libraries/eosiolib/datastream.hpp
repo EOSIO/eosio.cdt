@@ -272,9 +272,9 @@ class datastream<size_t> {
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym) {
-  uint64_t code = (sym.raw()) << 8;
-  ds.write( (const char*)&code, sizeof(uint64_t));
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym_code) {
+  uint64_t raw = sym_code.raw();
+  ds.write( (const char*)&raw, sizeof(raw));
   return ds;
 }
 
@@ -288,11 +288,10 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbo
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym) {
-  uint64_t _sym;
-  ds.read((char*)&_sym, sizeof(uint64_t));
-  _sym >>= 8;
-  sym = symbol(_sym);
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym_code) {
+  uint64_t raw = 0;
+  ds.read((char*)&raw, sizeof(raw));
+  sym_code = symbol_code(raw);
   return ds;
 }
 
@@ -307,8 +306,8 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code
  */
 template<typename Stream>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol sym) {
-  uint64_t code = (sym.code().raw() << 8) | sym.precision();
-  ds.write( (const char*)&code, sizeof(uint64_t));
+  uint64_t raw = sym.raw();
+  ds.write( (const char*)&raw, sizeof(raw));
   return ds;
 }
 
@@ -323,9 +322,9 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbo
  */
 template<typename Stream>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym) {
-  uint64_t _sym;
-  ds.read((char*)&_sym, sizeof(uint64_t));
-  sym = symbol(_sym);
+  uint64_t raw = 0;
+  ds.read((char*)&raw, sizeof(raw));
+  sym = symbol(raw);
   return ds;
 }
 

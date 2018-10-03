@@ -49,6 +49,8 @@ namespace eosio {
        */
       static constexpr int64_t max_amount    = (1LL << 62) - 1;
 
+      asset() {}
+
       /**
        * Construct a new asset given the symbol name and the amount
        *
@@ -56,7 +58,6 @@ namespace eosio {
        * @param a - The amount of the asset
        * @param s - The name of the symbol
        */
-      asset() {}
       asset( int64_t a, class symbol s )
       :amount(a),symbol{s}
       {
