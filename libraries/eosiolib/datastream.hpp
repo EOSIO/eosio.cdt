@@ -262,6 +262,34 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize an ignored type into a stream
+ *
+ *  @brief Serialize a public_key
+ *  @param ds - The stream to write
+ *  @param ignore - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignored<T> ) {
+  return ds;
+}
+
+/**
+ *  Deserialize an ignored type from a stream
+ *
+ *  @brief Deserialize a public_key
+ *  @param ds - The stream to read
+ *  @param ignored - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignorred<T>) {
+  return ds;
+}
+
+/**
  *  Serialize a public_key into a stream
  *
  *  @brief Serialize a public_key

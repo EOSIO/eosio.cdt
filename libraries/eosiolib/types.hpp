@@ -163,7 +163,9 @@ namespace eosio {
             str = str.substr(0, last + 1);
       }
    };
-
+   
+   template <typename T>
+   struct [[eosio::ignore]] ignored {}
 } // namespace eosio
 
 namespace std {
