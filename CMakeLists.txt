@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(eosio_wasm_sdk)
+project(eosio_cdt)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 2)
@@ -20,37 +20,41 @@ add_subdirectory(external)
 
 set(WASM_SDK_BUILD true)
 
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchainBuild.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/EosioWasmToolchain.cmake @ONLY)
+### Configure the EosioWasmToolchain.cmakes
+set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
+configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/eosio.cdt-config.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake @ONLY)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/lib/cmake")
+set(CDT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/eosio.cdt)
+configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/eosio.cdt)
+
+set(CDT_ROOT_DIR "_PREFIX_")
+configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt")
 include(EosioWasmToolchain)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
-
-if ("${CORE_SYMBOL_NAME}" STREQUAL "")
-  set( CORE_SYMBOL_NAME "SYS" )
-endif()
-string(TOUPPER ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME)
-
-string(LENGTH ${CORE_SYMBOL_NAME} CORE_SYMBOL_NAME_LENGTH)
-if (CORE_SYMBOL_NAME_LENGTH GREATER 7)
-  message(FATAL_ERROR "CORE_SYMBOL_NAME length must be between 1 and 7 characters")
-endif()
-
 
 add_subdirectory(libraries)
 
 include(InstallClang.txt)
 
-message( STATUS "Using '${CORE_SYMBOL_NAME}' as CORE symbol name" )
-
-# install examples
-#install(DIRECTORY examples DESTINATION "${CMAKE_INSTALL_PREFIX}")
-
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CMAKE_INSTALL_PREFIX}/scripts)
+
+set(VENDOR "block.one")
+set(PROJECT_NAME "eosio.cdt")
+set(DESC "Toolchain and supporting tools for the EOS.IO platform")
+set(URL "https://github.com/eosio/eosio.cdt")
+set(EMAIL "support@block.one")
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_BINARY_DIR}/packages/generate_package.sh @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_deb.sh ${CMAKE_BINARY_DIR}/packages/generate_deb.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_bottle.sh ${CMAKE_BINARY_DIR}/packages/generate_bottle.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_rpm.sh ${CMAKE_BINARY_DIR}/packages/generate_rpm.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh ${CMAKE_BINARY_DIR}/packages/generate_tarball.sh COPYONLY)

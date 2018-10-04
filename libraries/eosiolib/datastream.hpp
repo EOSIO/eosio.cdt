@@ -752,6 +752,7 @@ DataStream& operator >> ( DataStream& ds, std::map<K,V>& m ) {
 }
 
 template<typename DataStream, typename T>
+[[ deprecated ]]
 DataStream& operator << ( DataStream& ds, const boost::container::flat_set<T>& s ) {
    ds << unsigned_int( s.size() );
    for( const auto& i : s ) {
@@ -761,6 +762,7 @@ DataStream& operator << ( DataStream& ds, const boost::container::flat_set<T>& s
 }
 
 template<typename DataStream, typename T>
+[[ deprecated ]]
 DataStream& operator >> ( DataStream& ds, boost::container::flat_set<T>& s ) {
    s.clear();
    unsigned_int sz; ds >> sz;
@@ -786,6 +788,7 @@ DataStream& operator >> ( DataStream& ds, boost::container::flat_set<T>& s ) {
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream, typename K, typename V>
+[[ deprecated ]]
 DataStream& operator<<( DataStream& ds, const boost::container::flat_map<K,V>& m ) {
    ds << unsigned_int( m.size() );
    for( const auto& i : m )
@@ -805,6 +808,7 @@ DataStream& operator<<( DataStream& ds, const boost::container::flat_map<K,V>& m
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream, typename K, typename V>
+[[ deprecated ]]
 DataStream& operator>>( DataStream& ds, boost::container::flat_map<K,V>& m ) {
    m.clear();
    unsigned_int s; ds >> s;

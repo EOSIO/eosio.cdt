@@ -11,7 +11,7 @@ namespace eosio {
      typedef std::false_type is_reflected;
      typedef std::false_type is_enum;
   };
-
+  
 } /// eosio
 
 
