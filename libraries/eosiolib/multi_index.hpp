@@ -42,12 +42,12 @@ struct const_mem_fun
   }
 
   Type operator()(const std::reference_wrapper<const Class>& x)const
-  { 
+  {
     return operator()(x.get());
   }
 
   Type operator()(const std::reference_wrapper<Class>& x)const
-  { 
+  {
     return operator()(x.get());
   }
 };
@@ -300,7 +300,7 @@ class multi_index
             typedef typename std::decay<decltype( Extractor()(nullptr) )>::type secondary_key_type;
 
             constexpr static bool validate_index_name( uint64_t n ) {
-               return n != 0 && n != N(primary); // Primary is a reserve index name.
+               return n != 0 && n != eosio::name("primary").raw(); // Primary is a reserve index name.
             }
 
             static_assert( validate_index_name(IndexName), "invalid index name used in multi_index" );
@@ -608,11 +608,11 @@ class multi_index
          auto pitr = itm->__primary_itr;
 
          _items_vector.emplace_back( std::move(itm), pk, pitr );
-         
+
          if ( max_stack_buffer_size < size_t(size) ) {
             free(buffer);
          }
-         
+
          return *ptr;
       } /// load_object_by_primary_iterator
 

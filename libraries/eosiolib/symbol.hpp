@@ -1,5 +1,4 @@
 #pragma once
-#include <eosiolib/core_symbol.hpp>
 #include <eosiolib/serialize.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/system.h>
@@ -108,7 +107,7 @@ namespace eosio {
        * @brief Equivalency operator
        * @return boolean - true if both provided symbol_codes are the same
        */
-      friend bool operator == ( const symbol_code& a, const symbol_code& b ) {
+      friend constexpr bool operator == ( const symbol_code& a, const symbol_code& b ) {
          return a.value == b.value;
       }
 
@@ -118,7 +117,7 @@ namespace eosio {
        * @brief Inverted equivalency operator
        * @return boolean - true if both provided symbol_codes are not the same
        */
-      friend bool operator != ( const symbol_code& a, const symbol_code& b ) {
+      friend constexpr bool operator != ( const symbol_code& a, const symbol_code& b ) {
          return a.value != b.value;
       }
 
@@ -127,7 +126,7 @@ namespace eosio {
        * @brief Less than operator
        * @return boolean - true if symbol_code `a` is less than `b`
        */
-      friend bool operator < ( const symbol_code& a, const symbol_code& b ) {
+      friend constexpr bool operator < ( const symbol_code& a, const symbol_code& b ) {
          return a.value < b.value;
       }
 
@@ -166,11 +165,6 @@ namespace eosio {
       constexpr symbol_code code()const              { return symbol_code{value >> 8};   }
 
       /**
-       *
-       */
-      constexpr explicit operator symbol_code()const { return code(); }
-
-      /**
        * Returns uint64_t repreresentation of the symbol
        */
       constexpr uint64_t raw()const                  { return value; }
@@ -194,7 +188,7 @@ namespace eosio {
        * @brief Equivalency operator
        * @return boolean - true if both provided symbols are the same
        */
-      friend bool operator == ( const symbol& a, const symbol& b ) {
+      friend constexpr bool operator == ( const symbol& a, const symbol& b ) {
          return a.value == b.value;
       }
 
@@ -204,7 +198,7 @@ namespace eosio {
        * @brief Inverted equivalency operator
        * @return boolean - true if both provided symbols are not the same
        */
-      friend bool operator != ( const symbol& a, const symbol& b ) {
+      friend constexpr bool operator != ( const symbol& a, const symbol& b ) {
          return a.value != b.value;
       }
 
@@ -213,7 +207,7 @@ namespace eosio {
        * @brief Less than operator
        * @return boolean - true if symbol `a` is less than `b`
        */
-      friend bool operator < ( const symbol& a, const symbol& b ) {
+      friend constexpr bool operator < ( const symbol& a, const symbol& b ) {
          return a.value < b.value;
       }
 
@@ -244,7 +238,7 @@ namespace eosio {
       void print()const {
          symbol.print();
          prints("@");
-         printn( contract );
+         printn( contract.raw() );
       }
 
       /**
@@ -253,7 +247,7 @@ namespace eosio {
        * @brief Equivalency operator
        * @return boolean - true if both provided extended_symbols are the same
        */
-      friend bool operator == ( const extended_symbol& a, const extended_symbol& b ) {
+      friend constexpr bool operator == ( const extended_symbol& a, const extended_symbol& b ) {
         return std::tie( a.symbol, a.contract ) == std::tie( b.symbol, b.contract );
       }
 
@@ -263,7 +257,7 @@ namespace eosio {
        * @brief Inverted equivalency operator
        * @return boolean - true if both provided extended_symbols are not the same
        */
-      friend bool operator != ( const extended_symbol& a, const extended_symbol& b ) {
+      friend constexpr bool operator != ( const extended_symbol& a, const extended_symbol& b ) {
         return std::tie( a.symbol, a.contract ) != std::tie( b.symbol, b.contract );
       }
 
@@ -272,7 +266,7 @@ namespace eosio {
        * @brief Less than operator
        * @return boolean - true if extended_symbol `a` is less than `b`
        */
-      friend bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
+      friend constexpr bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
         return std::tie( a.symbol, a.contract ) < std::tie( b.symbol, b.contract );
       }
 

@@ -6,6 +6,7 @@
 #include <eosiolib/system.h>
 #include <eosiolib/memory.h>
 #include <eosiolib/vector.hpp>
+#include <eosiolib/name.hpp>
 #include <eosiolib/symbol.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
@@ -263,9 +264,42 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize a name into a stream
+ *
+ *  @brief Serialize a name
+ *  @param ds - The stream to write
+ *  @param sym - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::name n) {
+  uint64_t raw = n.raw();
+  ds.write( (const char*)&raw, sizeof(raw));
+  return ds;
+}
+
+/**
+ *  Deserialize a name from a stream
+ *
+ *  @brief Deserialize a name
+ *  @param ds - The stream to read
+ *  @param symbol - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::name& n) {
+  uint64_t raw = 0;
+  ds.read((char*)&raw, sizeof(raw));
+  n = name(raw);
+  return ds;
+}
+
+/**
  *  Serialize a symbol_code into a stream
  *
- *  @brief Serialize a public_key
+ *  @brief Serialize a symbol_code
  *  @param ds - The stream to write
  *  @param sym - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -281,7 +315,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbo
 /**
  *  Deserialize a symbol_code from a stream
  *
- *  @brief Deserialize a public_key
+ *  @brief Deserialize a symbol_code
  *  @param ds - The stream to read
  *  @param symbol - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -298,7 +332,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code
 /**
  *  Serialize a symbol into a stream
  *
- *  @brief Serialize a public_key
+ *  @brief Serialize a symbol
  *  @param ds - The stream to write
  *  @param sym - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -314,7 +348,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbo
 /**
  *  Deserialize a symbol from a stream
  *
- *  @brief Deserialize a public_key
+ *  @brief Deserialize a symbol
  *  @param ds - The stream to read
  *  @param symbol - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer

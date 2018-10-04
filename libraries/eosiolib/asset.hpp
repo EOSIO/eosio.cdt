@@ -429,7 +429,7 @@ namespace eosio {
       void print()const {
          quantity.print();
          prints("@");
-         printn(contract);
+         printn(contract.raw());
       }
 
        /**

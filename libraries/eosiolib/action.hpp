@@ -327,7 +327,7 @@ namespace eosio {
    ///@} actioncpp api
 
    template<typename... Args>
-   void dispatch_inline( account_name code, action_name act,
+   void dispatch_inline( name code, name act,
                          vector<permission_level> perms,
                          std::tuple<Args...> args ) {
       action( perms, code, act, std::move(args) ).send();
@@ -340,11 +340,11 @@ namespace eosio {
 
    template<typename T, uint64_t Name, typename... Args>
    struct inline_dispatcher<void(T::*)(Args...), Name> {
-      static void call(account_name code, const permission_level& perm, std::tuple<Args...> args) {
-         dispatch_inline(code, Name, vector<permission_level>(1, perm), std::move(args));
+      static void call(name code, const permission_level& perm, std::tuple<Args...> args) {
+         dispatch_inline(code, name(Name), vector<permission_level>(1, perm), std::move(args));
       }
-      static void call(account_name code, vector<permission_level> perms, std::tuple<Args...> args) {
-         dispatch_inline(code, Name, std::move(perms), std::move(args));
+      static void call(name code, vector<permission_level> perms, std::tuple<Args...> args) {
+         dispatch_inline(code, name(Name), std::move(perms), std::move(args));
       }
    };
 
@@ -355,7 +355,7 @@ namespace eosio {
 ::eosio::inline_dispatcher<decltype(&CONTRACT_CLASS::FUNCTION_NAME), ACTION_NAME>::call
 
 #define INLINE_ACTION_SENDER2( CONTRACT_CLASS, NAME )\
-INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::string_to_name(#NAME) )
+INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME).raw() )
 
 #define INLINE_ACTION_SENDER(...) BOOST_PP_OVERLOAD(INLINE_ACTION_SENDER,__VA_ARGS__)(__VA_ARGS__)
 
@@ -384,6 +384,6 @@ BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TU
  * @param CODE - The account this action is intended for
  * @param NAME - The name of the action
  */
-#define ACTION( CODE, NAME ) struct NAME : ::eosio::action_meta<CODE, ::eosio::string_to_name(#NAME) >
+#define ACTION( CODE, NAME ) struct NAME : ::eosio::action_meta<CODE, ::eosio::name(#NAME).raw() >
 
    /// @}
