@@ -1,5 +1,9 @@
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/optional.hpp>
+
 using namespace eosio;
+
+typedef int type_def;
 
 namespace test {
    // mark this struct as an action
@@ -26,13 +30,13 @@ class test_contract : public eosio::contract {
       
       // mark this method as an action and specify the name explicity
       [[ eosio::action("testacta") ]]
-      void testact_a( account_name user ) {
+      void testact_a( account_name user, const std::string& s, std::vector<int>& c, std::vector<std::string> sv ) {
          print( "Hello, ", name{user} );
       }
       
       // mark this method as an action
       [[ eosio::action ]]
-      void testactb( test::test_c input ) {
+      void testactb( test::test_c input, type_def td, optional<int> cc, bool d ) {
          print(input.num);
       }
       

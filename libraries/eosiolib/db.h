@@ -60,7 +60,7 @@ extern "C" {
   *  @return iterator to the newly created table row
   *  @post a new entry is created in the table
   */
-int32_t db_store_i64(account_name scope, table_name table, account_name payer, uint64_t id,  const void* data, uint32_t len);
+int32_t db_store_i64(uint64_t scope, capi_name table, capi_name payer, uint64_t id,  const void* data, uint32_t len);
 
 /**
   *
@@ -76,7 +76,7 @@ int32_t db_store_i64(account_name scope, table_name table, account_name payer, u
   *  @pre `iterator` points to an existing table row in the table
   *  @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
   */
-void db_update_i64(int32_t iterator, account_name payer, const void* data, uint32_t len);
+void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t len);
 
 /**
   *
@@ -181,7 +181,7 @@ int32_t db_previous_i64(int32_t iterator, uint64_t* primary);
   *  int itr = db_find_i64(receiver, receiver, table1, N(charlie));
   *  @endcode
   */
-int32_t db_find_i64(account_name code, account_name scope, table_name table, uint64_t id);
+int32_t db_find_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
   *
@@ -195,7 +195,7 @@ int32_t db_find_i64(account_name code, account_name scope, table_name table, uin
   *  @param id - The primary key used to determine the lowerbound
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_lowerbound_i64(account_name code, account_name scope, table_name table, uint64_t id);
+int32_t db_lowerbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
   *
@@ -209,7 +209,7 @@ int32_t db_lowerbound_i64(account_name code, account_name scope, table_name tabl
   *  @param id - The primary key used to determine the upperbound
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_upperbound_i64(account_name code, account_name scope, table_name table, uint64_t id);
+int32_t db_upperbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
   *
@@ -221,7 +221,7 @@ int32_t db_upperbound_i64(account_name code, account_name scope, table_name tabl
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_end_i64(account_name code, account_name scope, table_name table);
+int32_t db_end_i64(capi_name code, uint64_t scope, capi_name table);
 
 /**
   *
@@ -236,7 +236,7 @@ int32_t db_end_i64(account_name code, account_name scope, table_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table
   */
-int32_t db_idx64_store(account_name scope, table_name table, account_name payer, uint64_t id, const uint64_t* secondary);
+int32_t db_idx64_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint64_t* secondary);
 
 /**
   *
@@ -249,7 +249,7 @@ int32_t db_idx64_store(account_name scope, table_name table, account_name payer,
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
-void db_idx64_update(int32_t iterator, account_name payer, const uint64_t* secondary);
+void db_idx64_update(int32_t iterator, capi_name payer, const uint64_t* secondary);
 
 /**
   *
@@ -301,7 +301,7 @@ int32_t db_idx64_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx64_find_primary(account_name code, account_name scope, table_name table, uint64_t* secondary, uint64_t primary);
+int32_t db_idx64_find_primary(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t primary);
 
 /**
   *
@@ -316,7 +316,7 @@ int32_t db_idx64_find_primary(account_name code, account_name scope, table_name 
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx64_find_secondary(account_name code, account_name scope, table_name table, const uint64_t* secondary, uint64_t* primary);
+int32_t db_idx64_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint64_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -333,7 +333,7 @@ int32_t db_idx64_find_secondary(account_name code, account_name scope, table_nam
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx64_lowerbound(account_name code, account_name scope, table_name table, uint64_t* secondary, uint64_t* primary);
+int32_t db_idx64_lowerbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -350,7 +350,7 @@ int32_t db_idx64_lowerbound(account_name code, account_name scope, table_name ta
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx64_upperbound(account_name code, account_name scope, table_name table, uint64_t* secondary, uint64_t* primary);
+int32_t db_idx64_upperbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -362,7 +362,7 @@ int32_t db_idx64_upperbound(account_name code, account_name scope, table_name ta
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_idx64_end(account_name code, account_name scope, table_name table);
+int32_t db_idx64_end(capi_name code, uint64_t scope, capi_name table);
 
 
 
@@ -379,7 +379,7 @@ int32_t db_idx64_end(account_name code, account_name scope, table_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table
   */
-int32_t db_idx128_store(account_name scope, table_name table, account_name payer, uint64_t id, const uint128_t* secondary);
+int32_t db_idx128_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* secondary);
 
 /**
   *
@@ -392,7 +392,7 @@ int32_t db_idx128_store(account_name scope, table_name table, account_name payer
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
-void db_idx128_update(int32_t iterator, account_name payer, const uint128_t* secondary);
+void db_idx128_update(int32_t iterator, capi_name payer, const uint128_t* secondary);
 
 /**
   *
@@ -444,7 +444,7 @@ int32_t db_idx128_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx128_find_primary(account_name code, account_name scope, table_name table, uint128_t* secondary, uint64_t primary);
+int32_t db_idx128_find_primary(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t primary);
 
 /**
   *
@@ -459,7 +459,7 @@ int32_t db_idx128_find_primary(account_name code, account_name scope, table_name
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx128_find_secondary(account_name code, account_name scope, table_name table, const uint128_t* secondary, uint64_t* primary);
+int32_t db_idx128_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint128_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -476,7 +476,7 @@ int32_t db_idx128_find_secondary(account_name code, account_name scope, table_na
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx128_lowerbound(account_name code, account_name scope, table_name table, uint128_t* secondary, uint64_t* primary);
+int32_t db_idx128_lowerbound(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -493,7 +493,7 @@ int32_t db_idx128_lowerbound(account_name code, account_name scope, table_name t
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx128_upperbound(account_name code, account_name scope, table_name table, uint128_t* secondary, uint64_t* primary);
+int32_t db_idx128_upperbound(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t* primary);
 
 /**
   *
@@ -505,7 +505,7 @@ int32_t db_idx128_upperbound(account_name code, account_name scope, table_name t
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_idx128_end(account_name code, account_name scope, table_name table);
+int32_t db_idx128_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
   *
@@ -521,7 +521,7 @@ int32_t db_idx128_end(account_name code, account_name scope, table_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table
   */
-int32_t db_idx256_store(account_name scope, table_name table, account_name payer, uint64_t id, const uint128_t* data, uint32_t data_len );
+int32_t db_idx256_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* data, uint32_t data_len );
 
 /**
   *
@@ -535,7 +535,7 @@ int32_t db_idx256_store(account_name scope, table_name table, account_name payer
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key
   */
-void db_idx256_update(int32_t iterator, account_name payer, const uint128_t* data, uint32_t data_len);
+void db_idx256_update(int32_t iterator, capi_name payer, const uint128_t* data, uint32_t data_len);
 
 /**
   *
@@ -588,7 +588,7 @@ int32_t db_idx256_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx256_find_primary(account_name code, account_name scope, table_name table, uint128_t* data, uint32_t data_len, uint64_t primary);
+int32_t db_idx256_find_primary(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t primary);
 
 /**
   *
@@ -604,7 +604,7 @@ int32_t db_idx256_find_primary(account_name code, account_name scope, table_name
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx256_find_secondary(account_name code, account_name scope, table_name table, const uint128_t* data, uint32_t data_len, uint64_t* primary);
+int32_t db_idx256_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
   *
@@ -622,7 +622,7 @@ int32_t db_idx256_find_secondary(account_name code, account_name scope, table_na
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx256_lowerbound(account_name code, account_name scope, table_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
+int32_t db_idx256_lowerbound(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
   *
@@ -640,7 +640,7 @@ int32_t db_idx256_lowerbound(account_name code, account_name scope, table_name t
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx256_upperbound(account_name code, account_name scope, table_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
+int32_t db_idx256_upperbound(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
   *
@@ -652,7 +652,7 @@ int32_t db_idx256_upperbound(account_name code, account_name scope, table_name t
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_idx256_end(account_name code, account_name scope, table_name table);
+int32_t db_idx256_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
   *
@@ -667,7 +667,7 @@ int32_t db_idx256_end(account_name code, account_name scope, table_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table
   */
-int32_t db_idx_double_store(account_name scope, table_name table, account_name payer, uint64_t id, const double* secondary);
+int32_t db_idx_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const double* secondary);
 
 /**
   *
@@ -680,7 +680,7 @@ int32_t db_idx_double_store(account_name scope, table_name table, account_name p
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
-void db_idx_double_update(int32_t iterator, account_name payer, const double* secondary);
+void db_idx_double_update(int32_t iterator, capi_name payer, const double* secondary);
 
 /**
   *
@@ -732,7 +732,7 @@ int32_t db_idx_double_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_double_find_primary(account_name code, account_name scope, table_name table, double* secondary, uint64_t primary);
+int32_t db_idx_double_find_primary(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t primary);
 
 /**
   *
@@ -747,7 +747,7 @@ int32_t db_idx_double_find_primary(account_name code, account_name scope, table_
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_double_find_secondary(account_name code, account_name scope, table_name table, const double* secondary, uint64_t* primary);
+int32_t db_idx_double_find_secondary(capi_name code, uint64_t scope, capi_name table, const double* secondary, uint64_t* primary);
 
 /**
   *
@@ -764,7 +764,7 @@ int32_t db_idx_double_find_secondary(account_name code, account_name scope, tabl
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_double_lowerbound(account_name code, account_name scope, table_name table, double* secondary, uint64_t* primary);
+int32_t db_idx_double_lowerbound(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t* primary);
 
 /**
   *
@@ -781,7 +781,7 @@ int32_t db_idx_double_lowerbound(account_name code, account_name scope, table_na
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_double_upperbound(account_name code, account_name scope, table_name table, double* secondary, uint64_t* primary);
+int32_t db_idx_double_upperbound(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t* primary);
 
 /**
   *
@@ -793,7 +793,7 @@ int32_t db_idx_double_upperbound(account_name code, account_name scope, table_na
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_idx_double_end(account_name code, account_name scope, table_name table);
+int32_t db_idx_double_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
   *
@@ -808,7 +808,7 @@ int32_t db_idx_double_end(account_name code, account_name scope, table_name tabl
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table
   */
-int32_t db_idx_long_double_store(account_name scope, table_name table, account_name payer, uint64_t id, const long double* secondary);
+int32_t db_idx_long_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const long double* secondary);
 
 /**
   *
@@ -821,7 +821,7 @@ int32_t db_idx_long_double_store(account_name scope, table_name table, account_n
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
-void db_idx_long_double_update(int32_t iterator, account_name payer, const long double* secondary);
+void db_idx_long_double_update(int32_t iterator, capi_name payer, const long double* secondary);
 
 /**
   *
@@ -873,7 +873,7 @@ int32_t db_idx_long_double_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_long_double_find_primary(account_name code, account_name scope, table_name table, long double* secondary, uint64_t primary);
+int32_t db_idx_long_double_find_primary(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t primary);
 
 /**
   *
@@ -888,7 +888,7 @@ int32_t db_idx_long_double_find_primary(account_name code, account_name scope, t
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_long_double_find_secondary(account_name code, account_name scope, table_name table, const long double* secondary, uint64_t* primary);
+int32_t db_idx_long_double_find_secondary(capi_name code, uint64_t scope, capi_name table, const long double* secondary, uint64_t* primary);
 
 /**
   *
@@ -905,7 +905,7 @@ int32_t db_idx_long_double_find_secondary(account_name code, account_name scope,
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_long_double_lowerbound(account_name code, account_name scope, table_name table, long double* secondary, uint64_t* primary);
+int32_t db_idx_long_double_lowerbound(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t* primary);
 
 /**
   *
@@ -922,7 +922,7 @@ int32_t db_idx_long_double_lowerbound(account_name code, account_name scope, tab
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
-int32_t db_idx_long_double_upperbound(account_name code, account_name scope, table_name table, long double* secondary, uint64_t* primary);
+int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t* primary);
 
 /**
   *
@@ -934,7 +934,7 @@ int32_t db_idx_long_double_upperbound(account_name code, account_name scope, tab
   *  @param table - The table name
   *  @return end iterator of the table
   */
-int32_t db_idx_long_double_end(account_name code, account_name scope, table_name table);
+int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@} databasec
 }

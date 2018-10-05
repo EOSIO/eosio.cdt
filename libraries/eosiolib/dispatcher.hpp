@@ -6,7 +6,7 @@
 #include <boost/fusion/include/std_tuple.hpp>
 
 #include <boost/mp11/tuple.hpp>
-#define N(X) ::eosio::string_to_name(#X)
+
 namespace eosio {
 
    template<typename Contract, typename FirstAction>
@@ -43,7 +43,7 @@ namespace eosio {
     * @brief Defines functions to dispatch action to proper action handler inside a contract
     * @ingroup contractdev
     */
-   
+
    /**
     * @defgroup dispatchercpp Dispatcher C++ API
     * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
@@ -53,14 +53,14 @@ namespace eosio {
 
    /**
     * Unpack the received action and execute the correponding action handler
-    * 
+    *
     * @brief Unpack the received action and execute the correponding action handler
     * @tparam T - The contract class that has the correponding action handler, this contract should be derived from eosio::contract
-    * @tparam Q - The namespace of the action handler function 
+    * @tparam Q - The namespace of the action handler function
     * @tparam Args - The arguments that the action handler accepts, i.e. members of the action
     * @param obj - The contract object that has the correponding action handler
     * @param func - The action handler
-    * @return true  
+    * @return true
     */
    template<typename T, typename Q, typename... Args>
    bool execute_action( T* obj, void (Q::*func)(Args...)  ) {
@@ -80,8 +80,8 @@ namespace eosio {
          free(buffer);
       }
 
-      auto f2 = [&]( auto... a ){  
-         (obj->*func)( a... ); 
+      auto f2 = [&]( auto... a ){
+         (obj->*func)( a... );
       };
 
       boost::mp11::tuple_apply( f2, args );
@@ -91,7 +91,7 @@ namespace eosio {
 
 // Helper macro for EOSIO_API
 #define EOSIO_API_CALL( r, OP, elem ) \
-   case ::eosio::string_to_name( BOOST_PP_STRINGIZE(elem) ): \
+   case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
       eosio::execute_action( &thiscontract, &OP::elem ); \
       break;
 
@@ -104,14 +104,14 @@ namespace eosio {
  * @{
  */
 
-/** 
+/**
  * Convenient macro to create contract apply handler
  * To be able to use this macro, the contract needs to be derived from eosio::contract
- * 
- * @brief Convenient macro to create contract apply handler 
+ *
+ * @brief Convenient macro to create contract apply handler
  * @param TYPE - The class name of the contract
  * @param MEMBERS - The sequence of available actions supported by this contract
- * 
+ *
  * Example:
  * @code
  * EOSIO_ABI( eosio::bios, (setpriv)(setalimits)(setglimits)(setprods)(reqauth) )
@@ -120,12 +120,12 @@ namespace eosio {
 #define EOSIO_ABI( TYPE, MEMBERS ) \
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-      auto self = receiver; \
-      if( action == N(onerror)) { \
+      eosio::name self(receiver); \
+      if( action == eosio::name("onerror").value) { \
          /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-         eosio_assert(code == N(eosio), "onerror action's are only valid from the \"eosio\" system account"); \
+         eosio_assert(code == eosio::name("eosio").value, "onerror action's are only valid from the \"eosio\" system account"); \
       } \
-      if( code == self || action == N(onerror) ) { \
+      if( code == self.value || action == eosio::name("onerror").value ) { \
          TYPE thiscontract( self ); \
          switch( action ) { \
             EOSIO_API( TYPE, MEMBERS ) \
@@ -135,21 +135,5 @@ extern "C" { \
    } \
 } \
  /// @}  dispatcher
-
-
-   /*
-   template<typename T>
-   struct dispatcher {
-      dispatcher( account_name code ):_contract(code){}
-
-      template<typename FuncPtr>
-      void dispatch( account_name action, FuncPtr ) {
-      }
-
-      T contract;
-   };
-
-   void dispatch( account_name code, account_name action, 
-   */
 
 }
