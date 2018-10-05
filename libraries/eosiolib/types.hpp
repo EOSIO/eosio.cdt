@@ -165,7 +165,19 @@ namespace eosio {
    };
    
    template <typename T>
-   struct [[eosio::ignore]] ignored {}
+   struct [[eosio::ignore]] ignore {};
+   
+   template <typename T>
+   struct ignore_wrapper {
+      constexpr ignore_wrapper() {}
+      constexpr ignore_wrapper(T val) : value(val) {}
+      constexpr ignore_wrapper(ignore<T> val) {}
+      constexpr inline T get() { return value; }
+      constexpr operator T() { return value; }
+      constexpr operator ignore<T>() { return {}; }
+      T value;
+   };
+   
 } // namespace eosio
 
 namespace std {

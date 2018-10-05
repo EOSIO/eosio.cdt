@@ -13,6 +13,7 @@
 #include <set>
 #include <map>
 #include <string>
+#include <optional>
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -262,6 +263,45 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize an optional into a stream
+ *
+ *  @brief Serialize an optional
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optional<T>& opt) {
+  char valid = opt.has_value();
+  ds << valid;
+  if (valid)
+     ds << *opt;
+  return ds;
+}
+
+/**
+ *  Deserialize an optional from a stream
+ *
+ *  @brief Deserialize an optional 
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::optional<T>& opt) {
+  char valid = 0;
+  ds >> valid;
+  if (valid) {
+     T val;
+     ds >> val;
+     opt = val;
+  }
+  return ds;
+}
+
+/**
  *  Serialize an ignored type into a stream
  *
  *  @brief Serialize a public_key
@@ -271,7 +311,7 @@ class datastream<size_t> {
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream, typename T>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignored<T> ) {
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignore_wrapper<T>& val) {
   return ds;
 }
 
@@ -285,7 +325,35 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ign
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream, typename T>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignorred<T>) {
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore_wrapper<T>) {
+  return ds;
+}
+
+/**
+ *  Serialize an ignored type into a stream
+ *
+ *  @brief Serialize a public_key
+ *  @param ds - The stream to write
+ *  @param ignore - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignore<T>& val) {
+  return ds;
+}
+
+/**
+ *  Deserialize an ignored type from a stream
+ *
+ *  @brief Deserialize a public_key
+ *  @param ds - The stream to read
+ *  @param ignored - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore<T>) {
   return ds;
 }
 

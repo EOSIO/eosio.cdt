@@ -333,11 +333,9 @@ namespace eosio {
       action( perms, code, act, std::move(args) ).send();
    }
 
-
    template<typename, uint64_t>
    struct inline_dispatcher;
-
-
+   
    template<typename T, uint64_t Name, typename... Args>
    struct inline_dispatcher<void(T::*)(Args...), Name> {
       static void call(account_name code, const permission_level& perm, std::tuple<Args...> args) {
