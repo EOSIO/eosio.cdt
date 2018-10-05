@@ -205,14 +205,14 @@ namespace eosio {
        *
        * @brief List of permissions that authorize this action
        */
-      vector<permission_level>   authorization;
+      std::vector<permission_level>   authorization;
 
       /**
        * Payload data
        *
        * @brief Payload data
        */
-      bytes                      data;
+      std::vector<char>               data;
 
       /**
        * Default Constructor
@@ -246,7 +246,7 @@ namespace eosio {
        * @param value - The action struct that will be serialized via pack into data
        */
       template<typename T>
-      action( vector<permission_level> auths, name a, name n, T&& value )
+      action( std::vector<permission_level> auths, name a, name n, T&& value )
       :code_account(a), action_name(n), authorization(std::move(auths)), data(pack(std::forward<T>(value))) {}
 
       EOSLIB_SERIALIZE( action, (code_account)(action_name)(authorization)(data) )
@@ -291,7 +291,7 @@ namespace eosio {
 
    template<typename... Args>
    void dispatch_inline( name code, name act,
-                         vector<permission_level> perms,
+                         std::vector<permission_level> perms,
                          std::tuple<Args...> args ) {
       action( perms, code, act, std::move(args) ).send();
    }
@@ -304,9 +304,9 @@ namespace eosio {
    template<typename T, name::raw Name, typename... Args>
    struct inline_dispatcher<void(T::*)(Args...), Name> {
       static void call(name code, const permission_level& perm, std::tuple<Args...> args) {
-         dispatch_inline(code, name(Name), vector<permission_level>(1, perm), std::move(args));
+         dispatch_inline(code, name(Name), std::vector<permission_level>(1, perm), std::move(args));
       }
-      static void call(name code, vector<permission_level> perms, std::tuple<Args...> args) {
+      static void call(name code, std::vector<permission_level> perms, std::tuple<Args...> args) {
          dispatch_inline(code, name(Name), std::move(perms), std::move(args));
       }
    };

@@ -16,7 +16,6 @@
 #include <memory>
 
 #include <eosiolib/action.h>
-#include <eosiolib/types.hpp>
 #include <eosiolib/name.hpp>
 #include <eosiolib/serialize.hpp>
 #include <eosiolib/datastream.hpp>

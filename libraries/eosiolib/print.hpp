@@ -4,7 +4,7 @@
  */
 #pragma once
 #include <eosiolib/print.h>
-#include <eosiolib/types.hpp>
+#include <eosiolib/name.hpp>
 #include <eosiolib/fixed_key.hpp>
 #include <utility>
 #include <string>

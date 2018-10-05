@@ -5,12 +5,12 @@
 #pragma once
 #include <eosiolib/system.h>
 #include <eosiolib/memory.h>
-#include <eosiolib/vector.hpp>
 #include <eosiolib/name.hpp>
 #include <eosiolib/symbol.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 #include <eosiolib/varint.hpp>
+#include <vector>
 #include <array>
 #include <set>
 #include <map>
@@ -693,7 +693,7 @@ DataStream& operator >> ( DataStream& ds, T (&v)[N] ) {
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream>
-DataStream& operator << ( DataStream& ds, const vector<char>& v ) {
+DataStream& operator << ( DataStream& ds, const std::vector<char>& v ) {
    ds << unsigned_int( v.size() );
    ds.write( v.data(), v.size() );
    return ds;
@@ -710,7 +710,7 @@ DataStream& operator << ( DataStream& ds, const vector<char>& v ) {
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream, typename T>
-DataStream& operator << ( DataStream& ds, const vector<T>& v ) {
+DataStream& operator << ( DataStream& ds, const std::vector<T>& v ) {
    ds << unsigned_int( v.size() );
    for( const auto& i : v )
       ds << i;
@@ -727,7 +727,7 @@ DataStream& operator << ( DataStream& ds, const vector<T>& v ) {
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream>
-DataStream& operator >> ( DataStream& ds, vector<char>& v ) {
+DataStream& operator >> ( DataStream& ds, std::vector<char>& v ) {
    unsigned_int s;
    ds >> s;
    v.resize( s.value );
@@ -746,7 +746,7 @@ DataStream& operator >> ( DataStream& ds, vector<char>& v ) {
  *  @return DataStream& - Reference to the datastream
  */
 template<typename DataStream, typename T>
-DataStream& operator >> ( DataStream& ds, vector<T>& v ) {
+DataStream& operator >> ( DataStream& ds, std::vector<T>& v ) {
    unsigned_int s;
    ds >> s;
    v.resize(s.value);
@@ -1021,7 +1021,7 @@ T unpack( const char* buffer, size_t len ) {
  * @return T - The unpacked data
  */
 template<typename T>
-T unpack( const vector<char>& bytes ) {
+T unpack( const std::vector<char>& bytes ) {
    return unpack<T>( bytes.data(), bytes.size() );
 }
 
@@ -1049,8 +1049,8 @@ size_t pack_size( const T& value ) {
  * @return bytes - The packed data
  */
 template<typename T>
-bytes pack( const T& value ) {
-  bytes result;
+std::vector<char> pack( const T& value ) {
+  std::vector<char> result;
   result.resize(pack_size(value));
 
   datastream<char*> ds( result.data(), result.size() );

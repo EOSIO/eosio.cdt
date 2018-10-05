@@ -27,15 +27,15 @@ namespace eosio {
                                     const std::set<public_key>&        provided_keys = std::set<public_key>()
                                   )
    {
-      bytes packed_trx = pack(trx);
+      auto packed_trx = pack(trx);
 
-      bytes packed_keys;
+      std::vector<char> packed_keys;
       auto nkeys = provided_keys.size();
       if( nkeys > 0 ) {
          packed_keys = pack(provided_keys);
       }
 
-      bytes packed_perms;
+      std::vector<char> packed_perms;
       auto nperms = provided_permissions.size();
       if( nperms > 0 ) {
          packed_perms = pack(provided_permissions);
@@ -71,13 +71,13 @@ namespace eosio {
                                    uint64_t                           provided_delay_us = static_cast<uint64_t>(std::numeric_limits<int64_t>::max())
                                  )
    {
-      bytes packed_keys;
+      std::vector<char> packed_keys;
       auto nkeys = provided_keys.size();
       if( nkeys > 0 ) {
          packed_keys = pack(provided_keys);
       }
 
-      bytes packed_perms;
+      std::vector<char> packed_perms;
       auto nperms = provided_permissions.size();
       if( nperms > 0 ) {
          packed_perms = pack(provided_permissions);
