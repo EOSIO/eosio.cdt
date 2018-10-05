@@ -76,7 +76,7 @@ MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 #check submodules
-if [ $(( $(git submodule status | grep -c "^[+\-]") )) -gt 0 ]; then
+if [ $(( $(git submodule status --recursive | grep -c "^[+\-]") )) -gt 0 ]; then
    printf "\\n\\tgit submodules are not up to date.\\n"
    printf "\\tPlease run the command 'git submodule update --init --recursive'.\\n"
    exit 1
