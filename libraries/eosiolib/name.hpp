@@ -180,8 +180,9 @@ namespace eosio {
 
       uint64_t value = 0;
 
-   private:
+      EOSLIB_SERIALIZE( name, (value) )
 
+   private:
       static void trim_right_dots(std::string& str ) {
          const auto last = str.find_last_not_of('.');
          if (last != std::string::npos)
