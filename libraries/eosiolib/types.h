@@ -20,50 +20,14 @@ extern "C" {
  */
 
 /**
- * @brief Name of an account
- * @details Name of an account
- */
-typedef uint64_t account_name;
-
-/**
- * @brief Name of a permission
- * @details Name of an account
- */
-typedef uint64_t permission_name;
-
-/**
- * @brief Name of a table
- * @details Name of atable
- */
-typedef uint64_t table_name;
-
-/**
- * @brief Time
- * @details Time
- */
-typedef uint32_t time;
-
-/**
- * @brief Name of a scope
- * @details Name of a scope
- */
-typedef uint64_t scope_name;
-
-/**
- * @brief Name of an action
- * @details Name of an action
- */
-typedef uint64_t action_name;
-
-/**
  * @brief Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
  * @details Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
  */
 
-typedef uint16_t weight_type;
-
 /* macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned */
 #define ALIGNED(X) __attribute__ ((aligned (16))) X
+
+typedef uint64_t capi_name;
 
 /**
  * @brief EOSIO Public Key
@@ -103,18 +67,6 @@ struct ALIGNED(checksum160) {
  */
 struct ALIGNED(checksum512) {
    uint8_t hash[64];
-};
-
-/**
- * @brief Type of EOSIO Transaction Id
- * @details Type of EOSIO Transaction Id. It is 256-bit hash
- */
-typedef struct checksum256 transaction_id_type;
-typedef struct checksum256 block_id_type;
-
-struct account_permission {
-   account_name account;
-   permission_name permission;
 };
 
 #ifdef __cplusplus

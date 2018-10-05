@@ -144,7 +144,7 @@ namespace eosio {
        *
        * @brief Name of the producer
        */
-      account_name     producer_name;
+      name             producer_name;
 
       /**
        * Block signing key used by this producer
@@ -153,7 +153,7 @@ namespace eosio {
        */
       public_key       block_signing_key;
 
-      friend bool operator < ( const producer_key& a, const producer_key& b ) {
+      friend constexpr bool operator < ( const producer_key& a, const producer_key& b ) {
          return a.producer_name < b.producer_name;
       }
 

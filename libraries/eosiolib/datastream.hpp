@@ -274,8 +274,7 @@ class datastream<size_t> {
  */
 template<typename Stream>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::name n) {
-  uint64_t raw = n.raw();
-  ds.write( (const char*)&raw, sizeof(raw));
+  ds.write( (const char*)&n.value, sizeof(n.value));
   return ds;
 }
 
@@ -290,9 +289,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::name 
  */
 template<typename Stream>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::name& n) {
-  uint64_t raw = 0;
-  ds.read((char*)&raw, sizeof(raw));
-  n = name(raw);
+  ds.read((char*)&n.value, sizeof(n.value));
   return ds;
 }
 

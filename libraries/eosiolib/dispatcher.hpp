@@ -91,7 +91,7 @@ namespace eosio {
 
 // Helper macro for EOSIO_API
 #define EOSIO_API_CALL( r, OP, elem ) \
-   case eosio::name( BOOST_PP_STRINGIZE(elem) ).raw(): \
+   case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
       eosio::execute_action( &thiscontract, &OP::elem ); \
       break;
 
@@ -121,11 +121,11 @@ namespace eosio {
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
       eosio::name self(receiver); \
-      if( action == eosio::name("onerror").raw()) { \
+      if( action == eosio::name("onerror").value) { \
          /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-         eosio_assert(code == eosio::name("eosio").raw(), "onerror action's are only valid from the \"eosio\" system account"); \
+         eosio_assert(code == eosio::name("eosio").value, "onerror action's are only valid from the \"eosio\" system account"); \
       } \
-      if( code == self.raw() || action == eosio::name("onerror").raw() ) { \
+      if( code == self.value || action == eosio::name("onerror").value ) { \
          TYPE thiscontract( self ); \
          switch( action ) { \
             EOSIO_API( TYPE, MEMBERS ) \
@@ -135,21 +135,5 @@ extern "C" { \
    } \
 } \
  /// @}  dispatcher
-
-
-   /*
-   template<typename T>
-   struct dispatcher {
-      dispatcher( account_name code ):_contract(code){}
-
-      template<typename FuncPtr>
-      void dispatch( account_name action, FuncPtr ) {
-      }
-
-      T contract;
-   };
-
-   void dispatch( account_name code, account_name action,
-   */
 
 }

@@ -1,4 +1,9 @@
+/**
+ *  @file
+ *  @copyright defined in eos/LICENSE.txt
+ */
 #pragma once
+
 #include <eosiolib/serialize.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/system.h>
@@ -86,6 +91,8 @@ namespace eosio {
 
       constexpr uint64_t raw()const { return value; }
 
+      constexpr explicit operator bool()const { return value != 0; }
+
       /**
        * %Print the symbol code
        *
@@ -169,6 +176,8 @@ namespace eosio {
        */
       constexpr uint64_t raw()const                  { return value; }
 
+      constexpr explicit operator bool()const { return value != 0; }
+
       /**
        * %Print the symbol
        *
@@ -238,7 +247,7 @@ namespace eosio {
       void print()const {
          symbol.print();
          prints("@");
-         printn( contract.raw() );
+         printn( contract.value );
       }
 
       /**

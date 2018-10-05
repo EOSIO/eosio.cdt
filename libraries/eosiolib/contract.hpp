@@ -32,7 +32,7 @@ class contract {
        * Get this contract name
        *
        * @brief Get this contract name.
-       * @return account_name - The name of this contract
+       * @return name - The name of this contract
        */
       inline name get_self()const { return _self; }
 

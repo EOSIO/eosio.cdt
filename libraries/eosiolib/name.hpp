@@ -1,3 +1,7 @@
+/**
+ *  @file
+ *  @copyright defined in eos/LICENSE.txt
+ */
 #pragma once
 
 #include <eosiolib/system.h>
@@ -14,12 +18,18 @@ namespace eosio {
     *  @brief wraps a uint64_t to ensure it is only passed to methods that expect a Name
     *  @ingroup types
     */
-   class name {
+   struct name {
    public:
+      enum class raw : uint64_t {};
+
       constexpr name() : value(0) {}
 
-      constexpr explicit name( uint64_t raw )
-      :value(raw)
+      constexpr explicit name( uint64_t v )
+      :value(v)
+      {}
+
+      constexpr explicit name( name::raw r )
+      :value(static_cast<uint64_t>(r))
       {}
 
       constexpr explicit name( std::string_view str )
@@ -64,7 +74,29 @@ namespace eosio {
          return 0; // control flow will never reach here; just added to suppress warning
       }
 
+      /**
+       *  Returns the length of the name
+       */
+      constexpr uint8_t length()const {
+         constexpr uint64_t mask = 0xF800000000000000ull;
 
+         if( value == 0 )
+            return 0;
+
+         uint8_t l = 0;
+         uint8_t i = 0;
+         for( auto v = value; i < 13; ++i, v <<= 5 ) {
+            if( (v & mask) > 0 ) {
+               l = i;
+            }
+         }
+
+         return l + 1;
+      }
+
+      /**
+       *  Returns the suffix of the name
+       */
       constexpr name suffix()const {
          uint32_t remaining_bits_after_last_actual_dot = 0;
          uint32_t tmp = 0;
@@ -95,12 +127,9 @@ namespace eosio {
          return name{ ((value & mask) << shift) + (thirteenth_character << (shift-1)) };
       }
 
-      /**
-       * Returns uint64_t repreresentation of the name
-       */
-      constexpr uint64_t raw()const { return value; }
+      constexpr operator raw()const { return raw(value); }
 
-      constexpr operator uint64_t()const { return value; }
+      constexpr explicit operator bool()const { return value != 0; }
 
       // keep in sync with name::operator string() in eosio source code definition for name
       std::string to_string() const {
@@ -148,8 +177,10 @@ namespace eosio {
          return a.value < b.value;
       }
 
-   private:
+
       uint64_t value = 0;
+
+   private:
 
       static void trim_right_dots(std::string& str ) {
          const auto last = str.find_last_not_of('.');

@@ -64,8 +64,8 @@ namespace eosio {
     *  @return whether the permission was authorized by provided delay, keys, and permissions
     */
    bool
-   check_permission_authorization( account_name                       account,
-                                   permission_name                    permission,
+   check_permission_authorization( name                               account,
+                                   name                               permission,
                                    const std::set<public_key>&        provided_keys,
                                    const std::set<permission_level>&  provided_permissions = std::set<permission_level>(),
                                    uint64_t                           provided_delay_us = static_cast<uint64_t>(std::numeric_limits<int64_t>::max())
@@ -83,8 +83,8 @@ namespace eosio {
          packed_perms = pack(provided_permissions);
       }
 
-      auto res = ::check_permission_authorization( account,
-                                                   permission,
+      auto res = ::check_permission_authorization( account.value,
+                                                   permission.value,
                                                    (nkeys > 0)  ? packed_keys.data()  : (const char*)0,
                                                    (nkeys > 0)  ? packed_keys.size()  : 0,
                                                    (nperms > 0) ? packed_perms.data() : (const char*)0,

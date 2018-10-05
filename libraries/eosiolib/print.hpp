@@ -173,7 +173,7 @@ namespace eosio {
     * @param name 64 bit name to be printed
     */
    inline void print( name name ) {
-      printn(name.raw());
+      printn(name.value);
    }
 
   /**
