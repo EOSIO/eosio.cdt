@@ -21,7 +21,7 @@ if [[ "${unamestr}" == 'Darwin' ]]; then
    bash ./scripts/eosio_build_darwin.sh
 else
    OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-	
+
    case "$OS_NAME" in
       "Amazon Linux AMI")
          export ARCH="Amazon Linux AMI"
@@ -58,10 +58,6 @@ else
    esac
 fi
 
-if [ $# -ge 1 ]; then
-   CORE_SYMBOL=$1
-fi
-
 if [[ `uname` == 'Darwin' ]]; then
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
@@ -89,7 +85,7 @@ if [ -z "$CMAKE" ]; then
   CMAKE=$( command -v cmake )
 fi
 
-"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi

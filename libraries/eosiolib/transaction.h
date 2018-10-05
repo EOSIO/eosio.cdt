@@ -53,7 +53,7 @@ extern "C" {
      *  @param size - Size to reserve
      *  @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
      */
-     void send_deferred(const uint128_t& sender_id, account_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing = 0);
+     void send_deferred(const uint128_t& sender_id, capi_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing = 0);
 
     /**
      *  Cancels a deferred transaction.
@@ -122,14 +122,14 @@ extern "C" {
     * Gets the expiration of the currently executing transaction.
     *
     * @brief Gets the expiration of the currently executing transaction.
-    * @return expiration of the currently executing transaction
+    * @return expiration of the currently executing transaction in seconds since Unix epoch
     * Example:
     * @code
-    * time tm = expiration();
+    * uint32_t tm = expiration();
     * eosio_print(tm);
     * @endcode
     */
-   time expiration();
+   uint32_t expiration();
 
    /**
     * Retrieves the indicated action from the active transaction.
