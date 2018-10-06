@@ -62,8 +62,8 @@ namespace eosio {
     * @param func - The action handler
     * @return true
     */
-   template<typename T, typename Q, typename... Args>
-   bool execute_action( T* obj, void (Q::*func)(Args...)  ) {
+   template<typename T, typename... Args>
+   bool execute_action( name self, void (T::*func)(Args...)  ) {
       size_t size = action_data_size();
 
       //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
@@ -73,18 +73,21 @@ namespace eosio {
          buffer = max_stack_buffer_size < size ? malloc(size) : alloca(size);
          read_action_data( buffer, size );
       }
-
-      auto args = unpack<std::tuple<std::decay_t<Args>...>>( (char*)buffer, size );
-
-      if ( max_stack_buffer_size < size ) {
-         free(buffer);
-      }
+      
+      std::tuple<std::decay_t<Args>...> args;
+      datastream<const char*> ds((char*)buffer, size);
+      ds >> args;
+      
+      T inst(self, ds);
 
       auto f2 = [&]( auto... a ){
-         (obj->*func)( a... );
+         ((&inst)->*func)( a... );
       };
 
       boost::mp11::tuple_apply( f2, args );
+      if ( max_stack_buffer_size < size ) {
+         free(buffer);
+      }
       return true;
    }
  /// @}  dispatcher
@@ -92,7 +95,7 @@ namespace eosio {
 // Helper macro for EOSIO_API
 #define EOSIO_API_CALL( r, OP, elem ) \
    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
-      eosio::execute_action( &thiscontract, &OP::elem ); \
+      eosio::execute_action( self, &OP::elem ); \
       break;
 
 // Helper macro for EOSIO_ABI
@@ -114,10 +117,10 @@ namespace eosio {
  *
  * Example:
  * @code
- * EOSIO_ABI( eosio::bios, (setpriv)(setalimits)(setglimits)(setprods)(reqauth) )
+ * EOSIO_DISPATCH( eosio::bios, (setpriv)(setalimits)(setglimits)(setprods)(reqauth) )
  * @endcode
  */
-#define EOSIO_ABI( TYPE, MEMBERS ) \
+#define EOSIO_DISPATCH( TYPE, MEMBERS ) \
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
       eosio::name self(receiver); \
@@ -126,7 +129,6 @@ extern "C" { \
          eosio_assert(code == eosio::name("eosio").value, "onerror action's are only valid from the \"eosio\" system account"); \
       } \
       if( code == self.value || action == eosio::name("onerror").value ) { \
-         TYPE thiscontract( self ); \
          switch( action ) { \
             EOSIO_API( TYPE, MEMBERS ) \
          } \
