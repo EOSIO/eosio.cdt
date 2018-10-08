@@ -191,14 +191,14 @@ namespace eosio {
        *
        * @brief Name of the account the action is intended for
        */
-      name                       code_account;
+      name                       account;
 
       /**
        * Name of the action
        *
        * @brief Name of the action
        */
-      name                       action_name;
+      name                       name;
 
       /**
        * List of permissions that authorize this action
@@ -232,8 +232,8 @@ namespace eosio {
        * @param value - The action struct that will be serialized via pack into data
        */
       template<typename T>
-      action( const permission_level& auth, name a, name n, T&& value )
-      :code_account(a), action_name(n), authorization(1,auth), data(pack(std::forward<T>(value))) {}
+      action( const permission_level& auth, struct name a, struct name n, T&& value )
+      :account(a), name(n), authorization(1,auth), data(pack(std::forward<T>(value))) {}
 
       /**
        * Construct a new action object with the given action struct
@@ -246,10 +246,10 @@ namespace eosio {
        * @param value - The action struct that will be serialized via pack into data
        */
       template<typename T>
-      action( std::vector<permission_level> auths, name a, name n, T&& value )
-      :code_account(a), action_name(n), authorization(std::move(auths)), data(pack(std::forward<T>(value))) {}
+      action( std::vector<permission_level> auths, struct name a, struct name n, T&& value )
+      :account(a), name(n), authorization(std::move(auths)), data(pack(std::forward<T>(value))) {}
 
-      EOSLIB_SERIALIZE( action, (code_account)(action_name)(authorization)(data) )
+      EOSLIB_SERIALIZE( action, (account)(name)(authorization)(data) )
 
       /**
        * Send the action as inline action
