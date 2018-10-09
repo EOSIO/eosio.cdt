@@ -296,7 +296,6 @@ namespace eosio {
       action( perms, code, act, std::move(args) ).send();
    }
 
-
    template<typename, name::raw>
    struct inline_dispatcher;
 
@@ -310,7 +309,6 @@ namespace eosio {
          dispatch_inline(code, name(Name), std::move(perms), std::move(args));
       }
    };
-
 
 } // namespace eosio
 
