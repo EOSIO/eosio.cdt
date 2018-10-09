@@ -2,7 +2,7 @@
 
 namespace eosio {
    /**
-    * Tells the datastream not ignore this type, but allows the abi generator to add the correct type.
+    * Tells the datastream to ignore this type, but allows the abi generator to add the correct type.
     * @brief Tells the datastream not ignore this type, but allows the abi generator to add the correct type.
     */
    template <typename T>
