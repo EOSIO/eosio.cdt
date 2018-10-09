@@ -46,22 +46,6 @@ namespace eosio {
 
       uint32_t min_transaction_cpu_usage;
 
-
-      /**
-       * The numerator for the discount on cpu usage for CFA's
-       *
-       * @brief The numerator for the discount on cpu usage for CFA's
-       */
-      uint64_t context_free_discount_cpu_usage_num;
-
-      /**
-       * The denominator for the discount on cpu usage for CFA's
-       *
-       * @brief The denominator for the discount on cpu usage for CFA's
-
-       */
-      uint64_t context_free_discount_cpu_usage_den;
-
       /**
        * Maximum lifetime of a transacton
        *

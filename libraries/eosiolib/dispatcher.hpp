@@ -62,8 +62,8 @@ namespace eosio {
     * @param func - The action handler
     * @return true
     */
-   template<typename T, typename Q, typename... Args>
-   bool execute_action( T* obj, void (Q::*func)(Args...)  ) {
+   template<typename T, typename... Args>
+   bool execute_action( name self, name code, void (T::*func)(Args...)  ) {
       size_t size = action_data_size();
 
       //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
@@ -73,31 +73,34 @@ namespace eosio {
          buffer = max_stack_buffer_size < size ? malloc(size) : alloca(size);
          read_action_data( buffer, size );
       }
-
-      auto args = unpack<std::tuple<std::decay_t<Args>...>>( (char*)buffer, size );
-
-      if ( max_stack_buffer_size < size ) {
-         free(buffer);
-      }
+      
+      std::tuple<std::decay_t<Args>...> args;
+      datastream<const char*> ds((char*)buffer, size);
+      ds >> args;
+      
+      T inst(self, code, ds);
 
       auto f2 = [&]( auto... a ){
-         (obj->*func)( a... );
+         ((&inst)->*func)( a... );
       };
 
       boost::mp11::tuple_apply( f2, args );
+      if ( max_stack_buffer_size < size ) {
+         free(buffer);
+      }
       return true;
    }
  /// @}  dispatcher
 
-// Helper macro for EOSIO_API
-#define EOSIO_API_CALL( r, OP, elem ) \
+// Helper macro for EOSIO_DISPATCH_INTERNAL
+#define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
-      eosio::execute_action( &thiscontract, &OP::elem ); \
+      eosio::execute_action( eosio::name(receiver), eosio::name(code), &OP::elem ); \
       break;
 
-// Helper macro for EOSIO_ABI
-#define EOSIO_API( TYPE,  MEMBERS ) \
-   BOOST_PP_SEQ_FOR_EACH( EOSIO_API_CALL, TYPE, MEMBERS )
+// Helper macro for EOSIO_DISPATCH
+#define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
+   BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
 
 /**
  * @addtogroup dispatcher
@@ -114,21 +117,15 @@ namespace eosio {
  *
  * Example:
  * @code
- * EOSIO_ABI( eosio::bios, (setpriv)(setalimits)(setglimits)(setprods)(reqauth) )
+ * EOSIO_DISPATCH( eosio::bios, (setpriv)(setalimits)(setglimits)(setprods)(reqauth) )
  * @endcode
  */
-#define EOSIO_ABI( TYPE, MEMBERS ) \
+#define EOSIO_DISPATCH( TYPE, MEMBERS ) \
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-      eosio::name self(receiver); \
-      if( action == eosio::name("onerror").value) { \
-         /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-         eosio_assert(code == eosio::name("eosio").value, "onerror action's are only valid from the \"eosio\" system account"); \
-      } \
-      if( code == self.value || action == eosio::name("onerror").value ) { \
-         TYPE thiscontract( self ); \
+      if( code == receiver ) { \
          switch( action ) { \
-            EOSIO_API( TYPE, MEMBERS ) \
+            EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
          } \
          /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
       } \

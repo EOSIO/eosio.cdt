@@ -374,7 +374,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym
  *
  *  @brief Serialize ignored_wrapper<T>'s T value 
  *  @param ds - The stream to write
- *  @param ignore - The value to serialize
+ *  @param val - The value to serialize
  *  @tparam Stream - Type of datastream buffer
  *  @return datastream<Stream>& - Reference to the datastream
  */
