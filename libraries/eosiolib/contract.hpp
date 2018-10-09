@@ -71,9 +71,9 @@ class contract {
       name _self;
 
       /**
-       * The code name of this contract
+       * The code name of the action this contract is processing.
        *
-       * @brief The code name of this contract.
+       * @brief The code name of the action this contract is processing.
        */
       name _code;
 
