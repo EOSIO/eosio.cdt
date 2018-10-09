@@ -95,7 +95,7 @@ namespace eosio {
 // Helper macro for EOSIO_DISPATCH_INTERNAL
 #define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
-      eosio::execute_action( self, eosio::name(code), &OP::elem ); \
+      eosio::execute_action( eosio::name(receiver), eosio::name(code), &OP::elem ); \
       break;
 
 // Helper macro for EOSIO_DISPATCH
@@ -123,8 +123,7 @@ namespace eosio {
 #define EOSIO_DISPATCH( TYPE, MEMBERS ) \
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-      eosio::name self(receiver); \
-      if( code == self.value ) { \
+      if( code == receiver ) { \
          switch( action ) { \
             EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
          } \
