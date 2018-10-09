@@ -385,20 +385,6 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ign
 }
 
 /**
- *  Deserialize an ignored_wrapper type from a stream
- *
- *  @brief Deserialize an ignore_wrapper type
- *  @param ds - The stream to read
- *  @param ignored - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename T>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore_wrapper<T>) {
-  return ds;
-}
-
-/**
  *  Serialize an ignored type into a stream
  *
  *  @brief Serialize an ignored type
