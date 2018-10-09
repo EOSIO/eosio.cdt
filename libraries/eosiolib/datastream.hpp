@@ -370,16 +370,17 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym
 }
 
 /**
- *  Deserialize an ignored_wrapper type from a stream
+ *  Serialize an ignored_wrapper type into a stream
  *
- *  @brief Deserialize an ignore_wrapper type
- *  @param ds - The stream to read
- *  @param ignored - The destination for deserialized value
+ *  @brief Serialize ignored_wrapper<T>'s T value 
+ *  @param ds - The stream to write
+ *  @param val - The value to serialize
  *  @tparam Stream - Type of datastream buffer
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream, typename T>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore_wrapper<T>) {
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignore_wrapper<T>& val) {
+  ds << val.value;
   return ds;
 }
 
