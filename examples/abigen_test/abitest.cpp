@@ -1,5 +1,5 @@
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/optional.hpp>
+#include <optional>
 
 using namespace eosio;
 
@@ -11,7 +11,7 @@ namespace test {
       void printddd() { print("testa"); }
       int fielda;
       float fieldb;
-      account_name name;
+      capi_name name;
    };
 
    struct testb {
@@ -24,24 +24,23 @@ namespace test {
    };
 }
 
-class test_contract : public eosio::contract {
+CONTRACT abitest : public eosio::contract {
   public:
       using contract::contract;
       
       // mark this method as an action and specify the name explicity
       [[ eosio::action("testacta") ]]
-      void testact_a( account_name user, const std::string& s, std::vector<int>& c, std::vector<std::string> sv ) {
+      void testact_a( name user, const std::string& s, std::vector<int>& c, std::vector<std::string> sv ) {
          print( "Hello, ", name{user} );
       }
       
       // mark this method as an action
-      [[ eosio::action ]]
-      void testactb( test::test_c input, type_def td, optional<int> cc, bool d ) {
+      ACTION testactb( test::test_c input, type_def td, std::optional<int> cc, bool d ) {
          print(input.num);
       }
       
       // mark this struct as a table and allow multi_index typedefs to define the tables
-      struct [[eosio::table]] testtable {
+      TABLE testtable {
          uint64_t owner;
          uint64_t third;
          uint64_t primary_key() const { return owner; }
@@ -56,9 +55,10 @@ class test_contract : public eosio::contract {
       };
 };
 
-typedef eosio::multi_index< N(testtab), test_contract::testtable > testtable_t;
-typedef eosio::multi_index< N(testtaba), test_contract::testtable > testtable_a_t;
-typedef eosio::multi_index< N(testtab2), test_contract::test_table2 > testtable2_t;
+typedef eosio::multi_index< "testtab"_n,  abitest::testtable > testtable_t;
+typedef eosio::multi_index< "testtaba"_n, abitest::testtable > testtable_a_t;
+typedef eosio::multi_index< "testtab2"_n, abitest::test_table2 > testtable2_t;
 
 // NOTE THIS IS A TEST CONTRACT AND WILL NOT WORK CORRECTLY, the action `testa` will not be in the dispatcher of this macro
-EOSIO_ABI( test_contract, (testact_a)(testactb) )
+extern "C" 
+void apply(uint64_t, uint64_t, uint64_t){}

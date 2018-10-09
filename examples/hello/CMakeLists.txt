@@ -7,4 +7,4 @@ find_package(eosio.cdt)
 #add_executable( hello.wasm hello.cpp )
 
 ### Generate the wasm and abi
-add_eosio_cdt_executable( hello hello.cpp )
+add_contract( hello hello hello.cpp )

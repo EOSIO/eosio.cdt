@@ -63,7 +63,7 @@ namespace eosio {
     * @return true
     */
    template<typename T, typename... Args>
-   bool execute_action( name self, void (T::*func)(Args...)  ) {
+   bool execute_action( name self, name code, void (T::*func)(Args...)  ) {
       size_t size = action_data_size();
 
       //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
@@ -78,7 +78,7 @@ namespace eosio {
       datastream<const char*> ds((char*)buffer, size);
       ds >> args;
       
-      T inst(self, ds);
+      T inst(self, code, ds);
 
       auto f2 = [&]( auto... a ){
          ((&inst)->*func)( a... );
@@ -92,15 +92,15 @@ namespace eosio {
    }
  /// @}  dispatcher
 
-// Helper macro for EOSIO_API
-#define EOSIO_API_CALL( r, OP, elem ) \
+// Helper macro for EOSIO_DISPATCH_INTERNAL
+#define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
-      eosio::execute_action( self, &OP::elem ); \
+      eosio::execute_action( self, eosio::name(code), &OP::elem ); \
       break;
 
-// Helper macro for EOSIO_ABI
-#define EOSIO_API( TYPE,  MEMBERS ) \
-   BOOST_PP_SEQ_FOR_EACH( EOSIO_API_CALL, TYPE, MEMBERS )
+// Helper macro for EOSIO_DISPATCH
+#define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
+   BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
 
 /**
  * @addtogroup dispatcher
@@ -124,13 +124,9 @@ namespace eosio {
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
       eosio::name self(receiver); \
-      if( action == eosio::name("onerror").value) { \
-         /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-         eosio_assert(code == eosio::name("eosio").value, "onerror action's are only valid from the \"eosio\" system account"); \
-      } \
-      if( code == self.value || action == eosio::name("onerror").value ) { \
+      if( code == self.value ) { \
          switch( action ) { \
-            EOSIO_API( TYPE, MEMBERS ) \
+            EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
          } \
          /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
       } \

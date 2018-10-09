@@ -26,7 +26,7 @@ class contract {
        * @brief Construct a new contract object.
        * @param n - The name of this contract
        */
-      contract( name n ):_self(n) {}
+      contract( name n, name code ):_self(n), _code(code) {}
 
       /**
        * Construct a new contract given the contract name
@@ -35,7 +35,7 @@ class contract {
        * @param n - The name of this contract
        * @param ds - The datastream used 
        */
-      contract( name n, datastream<const char*> ds ):_self(n), _ds(ds) {}
+      contract( name n, name code, datastream<const char*> ds ):_self(n), _ds(ds) {}
 
       /**
        *
@@ -45,7 +45,13 @@ class contract {
        * @return name - The name of this contract
        */
       inline name get_self()const { return _self; }
-
+      
+      /**
+       * Get this contract code name
+       * @brief Get this contract code name.
+       * @return name - The code name of this contract
+       */
+      inline name get_code()const { return _code; }
       /**
        * Get the datastream for this contract
        * @brief Get the datastream for this contract
@@ -60,6 +66,13 @@ class contract {
        * @brief The name of this contract.
        */
       name _self;
+
+      /**
+       * The code name of this contract
+       *
+       * @brief The code name of this contract.
+       */
+      name _code;
 
       /**
        * The datastream for this contract
