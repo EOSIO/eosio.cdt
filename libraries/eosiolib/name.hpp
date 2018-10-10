@@ -5,6 +5,7 @@
 #pragma once
 
 #include <eosiolib/system.h>
+#include <eosiolib/serialize.hpp>
 #include <string>
 #include <string_view>
 
@@ -131,21 +132,40 @@ namespace eosio {
 
       constexpr explicit operator bool()const { return value != 0; }
 
-      // keep in sync with name::operator string() in eosio source code definition for name
-      std::string to_string() const {
+      /**
+       *  Writes the name as a string to the provided char buffer
+       *
+       *
+       *  @brief Writes the name as a string to the provided char buffer
+       *  @pre Appropriate Size Precondition: (begin + 13) <= end and (begin + 13) does not overflow
+       *  @pre Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to.
+       *  @param begin - The start of the char buffer
+       *  @param end - Just past the end of the char buffer
+       *  @return char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied)
+       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the name.
+       */
+      char* write_as_string( char* begin, char* end )const {
          static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
+         constexpr uint64_t mask = 0xF800000000000000ull;
 
-         std::string str(13,'.');
+         if( (begin + 13) < begin || (begin + 13) > end ) return begin;
 
-         uint64_t tmp = value;
-         for( uint32_t i = 0; i <= 12; ++i ) {
-            char c = charmap[tmp & (i == 0 ? 0x0f : 0x1f)];
-            str[12-i] = c;
-            tmp >>= (i == 0 ? 4 : 5);
+         auto v = value;
+         for( auto i = 0;   i < 13; ++i, v <<= 5 ) {
+            if( v == 0 ) return begin;
+
+            auto indx = (v & mask) >> (i == 12 ? 60 : 59);
+            *begin = charmap[indx];
+            ++begin;
          }
 
-         trim_right_dots( str );
-         return str;
+         return begin;
+      }
+
+      std::string to_string()const {
+         char buffer[13];
+         auto end = write_as_string( buffer, buffer + sizeof(buffer) );
+         return {buffer, end};
       }
 
       /**
@@ -181,13 +201,6 @@ namespace eosio {
       uint64_t value = 0;
 
       EOSLIB_SERIALIZE( name, (value) )
-
-   private:
-      static void trim_right_dots(std::string& str ) {
-         const auto last = str.find_last_not_of('.');
-         if (last != std::string::npos)
-            str = str.substr(0, last + 1);
-      }
    };
 
 } /// namespace eosio

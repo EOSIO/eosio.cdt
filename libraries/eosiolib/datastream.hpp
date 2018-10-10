@@ -6,6 +6,7 @@
 #include <eosiolib/system.h>
 #include <eosiolib/memory.h>
 #include <eosiolib/symbol.hpp>
+#include <eosiolib/fixed_key.hpp>
 #include <eosiolib/ignore.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
@@ -285,7 +286,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optiona
 /**
  *  Deserialize an optional from a stream
  *
- *  @brief Deserialize an optional 
+ *  @brief Deserialize an optional
  *  @param ds - The stream to read
  *  @param opt - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -372,7 +373,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym
 /**
  *  Serialize an ignored_wrapper type into a stream
  *
- *  @brief Serialize ignored_wrapper<T>'s T value 
+ *  @brief Serialize ignored_wrapper<T>'s T value
  *  @param ds - The stream to write
  *  @param val - The value to serialize
  *  @tparam Stream - Type of datastream buffer
