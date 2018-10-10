@@ -40,7 +40,6 @@ $ sudo ./install.sh
 ```sh
 $ eosio-cpp hello.cpp -o hello.wasm
 ```
-- As of this release abi generation is not available.
 
 #### Optional, if you know cmake
 - If you want to test out the CMake system, stay in the same directory as the previous manual build.
