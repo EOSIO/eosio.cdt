@@ -26,15 +26,6 @@ class contract {
        * @brief Construct a new contract object.
        * @param receiver - The name of this contract
        * @param code - The code name of the action this contract is processing.
-       */
-      contract( name receiver, name code ):_self(receiver), _code(code) {}
-
-      /**
-       * Construct a new contract given the contract name
-       *
-       * @brief Construct a new contract object.
-       * @param receiver - The name of this contract
-       * @param code - The code name of the action this contract is processing.
        * @param ds - The datastream used 
        */
       contract( name receiver, name code, datastream<const char*> ds ):_self(receiver),_code(code),_ds(ds) {}
