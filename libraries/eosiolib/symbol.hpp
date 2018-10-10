@@ -4,9 +4,10 @@
  */
 #pragma once
 
-#include <eosiolib/serialize.hpp>
-#include <eosiolib/print.hpp>
 #include <eosiolib/system.h>
+#include <eosiolib/print.h>
+#include <eosiolib/name.hpp>
+#include <eosiolib/serialize.hpp>
 #include <tuple>
 #include <limits>
 #include <string_view>
@@ -94,18 +95,37 @@ namespace eosio {
       constexpr explicit operator bool()const { return value != 0; }
 
       /**
-       * %Print the symbol code
+       *  Writes the symbol_code as a string to the provided char buffer
        *
-       * @brief %Print the symbol code
+       *
+       *  @brief Writes the symbol_code as a string to the provided char buffer
+       *  @pre Appropriate Size Precondition: (begin + 7) <= end and (begin + 7) does not overflow
+       *  @pre Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to.
+       *  @param begin - The start of the char buffer
+       *  @param end - Just past the end of the char buffer
+       *  @return char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied)
+       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the symbol_code.
        */
-      void print()const {
-         auto sym = value;
-         for( int i = 0; i < 7; ++i ) {
-            char c = (char)(sym & 0xff);
-            if( !c ) return;
-            prints_l(&c, 1 );
-            sym >>= 8;
+      char* write_as_string( char* begin, char* end )const {
+         constexpr uint64_t mask = 0xFFull;
+
+         if( (begin + 7) < begin || (begin + 7) > end ) return begin;
+
+         auto v = value;
+         for( auto i = 0; i < 7; ++i, v >>= 8 ) {
+            if( v == 0 ) return begin;
+
+            *begin = static_cast<char>(v & mask);
+            ++begin;
          }
+
+         return begin;
+      }
+
+      std::string to_string()const {
+         char buffer[7];
+         auto end = write_as_string( buffer, buffer + sizeof(buffer) );
+         return {buffer, end};
       }
 
       /**
@@ -185,10 +205,13 @@ namespace eosio {
        */
       void print( bool show_precision = true )const {
          if( show_precision ){
-            ::eosio::print( static_cast<uint64_t>(precision()) );
+            printui( static_cast<uint64_t>(precision()) );
             prints(",");
          }
-         code().print();
+         char buffer[7];
+         auto end = code().write_as_string( buffer, buffer + sizeof(buffer) );
+         if( buffer < end )
+            prints_l( buffer, (end-buffer) );
       }
 
       /**
@@ -244,8 +267,8 @@ namespace eosio {
        *
        * @brief %Print the extended symbol
        */
-      void print()const {
-         symbol.print();
+      void print( bool show_precision = true )const {
+         symbol.print( show_precision );
          prints("@");
          printn( contract.value );
       }

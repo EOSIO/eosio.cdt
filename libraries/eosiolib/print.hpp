@@ -5,6 +5,7 @@
 #pragma once
 #include <eosiolib/print.h>
 #include <eosiolib/name.hpp>
+#include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
 #include <utility>
 #include <string>
@@ -174,6 +175,19 @@ namespace eosio {
     */
    inline void print( name name ) {
       printn(name.value);
+   }
+
+   /**
+    * Prints a symbol_code
+    *
+    * @brief Prints a symbol_code
+    * @param sym_code symbol code to be printed
+    */
+   inline void print( eosio::symbol_code sym_code ) {
+      char buffer[7];
+      auto end = sym_code.write_as_string( buffer, buffer + sizeof(buffer) );
+      if( buffer < end )
+         prints_l( buffer, (end-buffer) );
    }
 
   /**
