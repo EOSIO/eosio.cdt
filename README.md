@@ -63,6 +63,17 @@ This will generate two files:
 * The compiled binary wasm (hello.wasm)
 * The generated abi file (hello.abi)
 
+#### using eosio-abigen alone
+To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output` and generating against the contract name `--contract`.
+
+Example:
+```bash
+$ eosio-abigen hello.cpp --contract=hello --output=hello.abi
+```
+
+This will generate one file:
+* The generated abi file (hello.abi)
+
 ## Differences between Version 1.2.x and Version 1.3.0
 ### eosiolib C API
 - addition of `uint64_t` typedef `capi_name`
@@ -215,18 +226,8 @@ This will generate two files:
 ### boost
 - is now part of the library (Boost will be removed in a future release), no more external dependence on Boost and all system inclusion are within it's `sysroot`.
 
-#### using eosio-abigen alone
-To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output`.
 
-Example:
-```bash
-$ eosio-abigen hello.cpp --contract=hello --output=hello.abi
-```
-
-This will generate one file:
-* The generated abi file (hello.abi)
-
-### abi generator attributes
+## abi generator attributes
 Unlike the old abi generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
 #### [[eosio::action]]
 this attribute marks either a struct or a method as an action.
@@ -320,8 +321,6 @@ public:
 };
 EOSIO_ABI( test, (testact))
 ```
-
-Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __EOSIO_CDT_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
 Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and CDT being baked in.
