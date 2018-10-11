@@ -15,11 +15,12 @@ namespace test {
    };
 
    struct testb {
+      float field;
       void printll() { print("testb"); }
    };
    
    // mark this struct as an action and specify the name explicitly
-   struct [[ eosio::action("testc") ]] test_c : testb {
+   struct [[ using eosio: action("testc"), contract("abitest") ]] test_c : testb {
       uint64_t num;
    };
 }
@@ -32,6 +33,7 @@ CONTRACT abitest : public eosio::contract {
       [[ eosio::action("testacta") ]]
       void testact_a( name user, const std::string& s, std::vector<int>& c, std::vector<std::string> sv ) {
          print( "Hello, ", name{user} );
+         symbol sym("TEST", 4);
       }
       
       // mark this method as an action
@@ -59,6 +61,6 @@ typedef eosio::multi_index< "testtab"_n,  abitest::testtable > testtable_t;
 typedef eosio::multi_index< "testtaba"_n, abitest::testtable > testtable_a_t;
 typedef eosio::multi_index< "testtab2"_n, abitest::test_table2 > testtable2_t;
 
-// NOTE THIS IS A TEST CONTRACT AND WILL NOT WORK CORRECTLY, the action `testa` will not be in the dispatcher of this macro
 extern "C" 
-void apply(uint64_t, uint64_t, uint64_t){}
+void apply(uint64_t, uint64_t, uint64_t){
+}

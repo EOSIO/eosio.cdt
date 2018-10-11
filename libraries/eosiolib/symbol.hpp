@@ -176,6 +176,10 @@ namespace eosio {
       : value( (sc.raw() << 8) | static_cast<uint64_t>(precision) )
       {}
 
+      constexpr symbol( std::string_view ss, uint8_t precision )
+      : value( (symbol_code(ss).raw() << 8)  | static_cast<uint64_t>(precision) )
+      {}
+
       /**
        * Is this symbol valid
        */
