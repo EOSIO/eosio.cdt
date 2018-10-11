@@ -222,7 +222,7 @@ This will generate one file:
     int b
   };
   typedef eosio::multi_index<"testtaba"_n, test::taba> table_a;
-  typedef eosio::multi_index<"testtabb"_n, taba> table_b;
+  typedef eosio::multi_index<"testtabb"_n, tabb> table_b;
   ```
   this will produce the tables `testtaba` and `testtabb` in your abi. Example: `eosio-cpp -abigen test.cpp -o test.wasm` will mark this compilation and abi generation for the `eosio::contract` `test`, so will `eosio-cpp -abigen test.cpp -o <some else> --contract test` and finally CMake `add_contract( test, test_contract, test.cpp )`, this will produce test_contract.wasm, test_contract.abi generated against `test` contract name.
 
