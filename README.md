@@ -135,7 +135,7 @@ This will generate one file:
 - Removed `eosio::string_to_symbol`, `eosio::is_valid_symbol`, `eosio::symbol_name_length` functions.
 - Removed the `S` macro. The symbol constructor should be used as a type safe replacement. Example: `S(4,SYS)` -> `symbol(symbol_code("SYS"), 4)` (or simply `symbol("SYS", 4)` as of v1.3.1).
 - Added struct `eosio::symbol`:
-  - Added two `constexpr` constructors that take either a raw `uint64_t` or a `symbol_code` and a `uint8_t` precision.
+  - Added three `constexpr` constructors that take either a raw `uint64_t`, `symbol_code` and a `uint8_t` precision or an `std::string_view` and a `uint8_t` precision.
   - Added `constexpr` methods `is_valid`, `precision`, `code`, and `raw`. These, respectively, check if the `symbol` is valid, get the `uint8_t` precision, get the `symbol_code` part of the `symbol`, and get the raw `uint64_t` representation of `symbol`.
   - Added equivalence, inverted equivalence and less than operators to `eosio::symbol`.
 - Modified struct `eosio::extended_symbol`:
