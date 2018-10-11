@@ -33,14 +33,14 @@ namespace eosio {
        *
        * @brief The amount of the asset
        */
-      int64_t      amount;
+      int64_t      amount = 0;
 
       /**
        * The symbol name of the asset
        *
        * @brief The symbol name of the asset
        */
-      symbol_type  symbol;
+      symbol  symbol;
 
       /**
        * Maximum amount possible for this asset. It's capped to 2^62 - 1
@@ -49,14 +49,16 @@ namespace eosio {
        */
       static constexpr int64_t max_amount    = (1LL << 62) - 1;
 
+      asset() {}
+
       /**
        * Construct a new asset given the symbol name and the amount
        *
        * @brief Construct a new asset object
        * @param a - The amount of the asset
-       * @param s - THe name of the symbol, default to CORE_SYMBOL
+       * @param s - The name of the symbol
        */
-      explicit asset( int64_t a = 0, symbol_type s = CORE_SYMBOL )
+      asset( int64_t a, class symbol s )
       :amount(a),symbol{s}
       {
          eosio_assert( is_amount_within_range(), "magnitude of asset amount must be less than 2^62" );
@@ -411,7 +413,7 @@ namespace eosio {
        *
        * @brief Construct a new extended asset object
        */
-      extended_asset( int64_t v, extended_symbol s ):quantity(v,s.symbol),contract(s.contract){}
+      extended_asset( int64_t v, extended_symbol s ):quantity(v,s.get_symbol()),contract(s.get_contract()){}
       /**
        * Construct a new extended asset given the asset and owner name
        *
@@ -427,7 +429,7 @@ namespace eosio {
       void print()const {
          quantity.print();
          prints("@");
-         printn(contract);
+         printn(contract.value);
       }
 
        /**

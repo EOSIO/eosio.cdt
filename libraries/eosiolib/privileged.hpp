@@ -1,7 +1,7 @@
 #pragma once
 #include "privileged.h"
 #include "serialize.hpp"
-#include "types.h"
+#include "public_key.hpp"
 
 namespace eosio {
 
@@ -45,22 +45,6 @@ namespace eosio {
       uint32_t max_transaction_cpu_usage;
 
       uint32_t min_transaction_cpu_usage;
-
-
-      /**
-       * The numerator for the discount on cpu usage for CFA's
-       *
-       * @brief The numerator for the discount on cpu usage for CFA's
-       */
-      uint64_t context_free_discount_cpu_usage_num;
-
-      /**
-       * The denominator for the discount on cpu usage for CFA's
-       *
-       * @brief The denominator for the discount on cpu usage for CFA's
-
-       */
-      uint64_t context_free_discount_cpu_usage_den;
 
       /**
        * Maximum lifetime of a transacton
@@ -144,7 +128,7 @@ namespace eosio {
        *
        * @brief Name of the producer
        */
-      account_name     producer_name;
+      name             producer_name;
 
       /**
        * Block signing key used by this producer
@@ -153,7 +137,7 @@ namespace eosio {
        */
       public_key       block_signing_key;
 
-      friend bool operator < ( const producer_key& a, const producer_key& b ) {
+      friend constexpr bool operator < ( const producer_key& a, const producer_key& b ) {
          return a.producer_name < b.producer_name;
       }
 

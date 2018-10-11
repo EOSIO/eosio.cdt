@@ -1,101 +1,260 @@
 # EOSIO.CDT (Contract Development Toolkit)
-## Version : 1.2.1
+## Version : 1.3.0
 
 EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate contract writing for the EOSIO platform.  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
 
-## New Features from EOSIO
-- Compile (-c) option flag will compile to a WASM-elf object file
-- ranlib and ar support for static libraries for WASM
-- \_\_FILE\_\_ and \_\_BASE\_FILE\_\_ will now only return the file name and not the fullpath. This eliminates any non-determinism from location of the compiled binary
-- Global constructors and global destructors are now supported
+## Important!
+EOSIO.CDT Version 1.3.0 introduces quite a few breaking changes.  To have binary releases we needed to remove the concept of core symbol from EOSIO.CDT, this meant drastic changes to symbol, asset and other types/functions that were connected to them. Since these changes would be disruptive, we decided to add as many disruptive changes needed for future contract writing, so that disruption should only occur once. Please read the **_Differences between Version 1.2.x and Version 1.3.0_** section of this readme.
 
-- _eosio-cpp_, _eosio-cc_, _eosio-ld_, _eosio-pp_, and _eosio_abigen_ are set the core set of tools that you will interact with.
-    * These are the C++ compiler, C compiler, linker, postpass tool and ABI generator.
-- A simple CMake interface to build EOSIO smart contracts against EOSIO.CDT
+### Binary Releases
+EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Linux x86_64 RPM packages.
 
-### Guided Installation
-First clone
+**If you have previously installed EOSIO.CDT, please run the `uninstall` script (it is in the directory where you cloned EOSIO.CDT) before downloading and using the binary releases.**
 
+#### Mac OS X Brew Install
+```sh
+$ brew tap eosio/eosio.cdt
+$ brew install eosio.cdt
+```
+#### Mac OS X Brew Uninstall
+```sh
+$ brew remove eosio.cdt
+```
+#### Debian Package Install
+```sh
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.3.0/eosio.cdt-1.3.0.x86_64.deb
+$ sudo apt install ./eosio.cdt-1.3.0.x86_64.deb
+```
+#### Debian Package Uninstall
+```sh
+$ sudo apt uninstall eosio.cdt
+```
+
+#### RPM Package Install
+```sh
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.3.0/eosio.cdt-1.3.0.x86_64-0.x86_64.rpm
+$ sudo yum install ./eosio.cdt-1.3.0.x86_64-0.x86_64.rpm
+```
+
+#### RPM Package Uninstall
+```sh
+$ sudo yum remove eosio.cdt
+```
+
+### Guided Installation (Building from Scratch)
 ```sh
 $ git clone --recursive https://github.com/eosio/eosio.cdt
 $ cd eosio.cdt
-```
-
-Now run `build.sh` and give the core symbol for the EOSIO blockchain that intend to deploy to.
-    *`build.sh` will install any dependencies that are needed.
-```sh
-$ ./build.sh <CORE_SYMBOL>
-```
-
-Finally, install the build
-    *This install will install the core to ```/usr/local/eosio.cdt``` and symlinks to the top level tools (compiler, ld, etc.) to ```/usr/local/bin```
-```sh
+$ ./build.sh
 $ sudo ./install.sh
 ```
-
 ### Building your first smart contract
 - Navigate to the hello folder in examples (./examples/hello).
 - You should then see the hello.cpp file
 - Now run the compiler
 ```sh
-$ eosio-cpp hello.cpp -o hello.wasm
+$ eosio-cpp -abigen hello.cpp -o hello.wasm
 ```
-- As of this release abi generation is not available.
-
-#### Optional, if you know cmake
-- If you want to test out the CMake system, stay in the same directory as the previous manual build.
-- Then create a build directory ```mkdir build``` and cd into that directory ```cd build```
-- Then run ```cmake ../```, this will generate the cache and supporting files for CMake to do it's job.
-- Now simply run ```make```.
-- You should now have a `hello` file in the build directory, this is the wasm file,  if you would like to use ```cleos set contract``` and you need to change the name to have the .wasm extension that is perfectly fine, or you can change the add_executable target name to ```hello.wasm```, or you can use ```cleos set code <path-to-compiled-wasm>/hello``` to load the file to the blockchain , without the .wasm extension.
-
-### How to use eosio-abigen
-#### using with eosio-cpp
-To generate an abi with ```eosio-cpp```, the only flag you need to pass to ```eosio-cpp``` is `-abigen`, this will tell the compiler to run `eosio-abigen` after compilation and linking stages.  If the output filename is specified as a '.wasm' file with the `-o` option (e.g. \<filename\>.wasm) then eosio-cpp will tell the abi generator to create the abi with the name \<filename\>.abi, if no '.wasm' suffix is used then the resulting output filename is still \<filename\>.abi 
-
-Example:
-```bash
-$ eosio-cpp hello.cpp -o hello.wasm --abigen
-```
+- Or with CMake
+  ```sh
+  $ mkdir build
+  $ cd build
+  $ cmake ..
+  $ make
+  ```
 This will generate two files:
 * The compiled binary wasm (hello.wasm)
 * The generated abi file (hello.abi)
 
 #### using eosio-abigen alone
-To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output`.
+To generate an abi with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output` and generating against the contract name `--contract`.
 
 Example:
 ```bash
-$ eosio-abigen hello.cpp --output=hello.abi
+$ eosio-abigen hello.cpp --contract=hello --output=hello.abi
 ```
 
 This will generate one file:
 * The generated abi file (hello.abi)
 
-### Difference from old abi generator
-Unlike the old abi generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
+## Differences between Version 1.2.x and Version 1.3.0
+### eosiolib C API
+- addition of `uint64_t` typedef `capi_name`
+- removal of `uint64_t` typedefs 
+  - `account_name`
+  - `permission_name`
+  - `scope_name`
+  - `table_name`
+  - `action_name`
+    - these have been replaced by `capi_name`, and as a practice should not be used.  The new version of the `name` type should be used to replace these instances. This decision was made because of bad implict casting issues with `uint64_t` and the new pattern should allow for better type safety.
+  - `symbol_name`
+    - this has no C equivalent and is superceded by the `symbol_code` struct.  As with the previously mentioned named types, this was removed and replaced with `symbol_code` to allow for better type safety in contracts.  To use a symbol, i.e. symbol name and precision, use the `symbol` class.
+- removal of `time` and `weight_type` typedefs
+- removal of the typedefs `transaction_id_type` and `block_id_type`
+- removal of the `account_permission` struct
+- renaming of typedefs
+  - `checksum160` -> `capi_checksum160`
+  - `checksum256` -> `capi_checksum256`
+  - `checksum512` -> `capi_checksum512`
+  - `public_key`  -> `capi_public_key`
+  - `signature`   -> `capi_signature`
+- removal of non-existent intrinsics declarations `require_write_lock` and `require_read_lock`
+### eosiolib C++ API
+- removal of eosiolib/vector.hpp
+  - removed alias `eosio::vector` and typedef `bytes`
+  - going forward contract writers should include `<vector>` from the STL and use `std::vector<char>` instead of bytes.
+- removal of eosiolib/types.hpp
+- removal of eosiolib/optional.hpp, use `std::optional` as a replacement.
+- removal of eosiolib/core_symbol.hpp, the contract writer should explicitly specify the symbol.
+- added eosiolib/name.hpp
 
+#### eosiolib/types.hpp
+- moved the typedef `eosio::extensions_types` to eosiolib/transaction.hpp
+- removed comparison functions for `checksum` structs
+- removal of `eosio::char_to_symbol`, `eosio::string_to_name`, `eosio::name_suffix` functions
+- removal of the `N` macro. The ""\_n operator or the `name` constructor should be used as a type safe replacement. Example: `N(foo)` -> `"foo"\_n`, or `N(foo)` -> `name("foo")`.
+- moved `eosio::name` struct definition and ""\_n operator to eosiolib/name.hpp
+
+#### eosiolib/name.hpp
+- removal of implicit and explicit conversions to `uint64_t`.
+- addition of `enum class` `eosio::name::raw` which will implicitly convert to `uint64_t` (used for template non-type parameters).
+- added `bool` conversion operator for conditionally testing if a name is empty
+- all constructors are now `constexpr`
+  - these take either a `uint64_t`, an `eosio::name::raw` or a `std::string_view`
+- added `constexpr` methods `eosio::name::length`, `eosio::name::suffix`
+- added equivalence, inverted equivalence and less than operators to `eosio::name`
+
+#### eosiolib/symbol.hpp
+- removed `eosio::symbol_type` struct and replaced with `eosio::symbol` class
+- added struct `eosio::symbol_code`
+  - added two `constexpr` constructors that take either a raw `uint64_t` or an `std::string_view`
+  - added `constexpr` methods `is_valid`, `length` and `raw`
+  - added a print method
+  - added `bool` conversion operator to test is `symbol_code` is empty
+- removal of `eosio::string_to_symbol`, `eosio::is_valid_symbol`, `eosio::symbol_name_length` functions
+- removal of the `S` macro. The symbol constructor should be used as a type safe replacement. Example: `S(4,SYS)` -> `symbol("SYS", 4)`.
+- added struct `eosio::symbol`
+  - added two `constexpr` constructors that take either a raw `uint64_t` or a `symbol_code` and a `uint8_t` precision.
+  - added `constexpr` methods `is_valid`, `precision`, `code`, and `raw`. These call the `symbol_code` is_valid, get the `uint8_t` precision, get the `symbol_code` and get the raw `uint64_t`.
+  - added equivalence, inverted equivalence and less than operators to `eosio::symbol`
+- modified struct `eosio::extended_symbol`
+  - restricted fields to private
+  - added `constexpr` constructor that takes a `eosio::symbol` and an `eosio::name`.
+  - added `constexpr` methods `get_symbol` and `get_contract`.
+  - made existing comparison operators `constexpr`
+
+#### eosiolib/asset.hpp
+- The main constructor now requires a `int64_t` (quantity) and `eosio::symbol` explicitly.
+- The default constructor no longer initializes the instance to a valid zero quantity asset with a symbol equivalent to "core symbol". Instead the default constructed `eosio::asset` is a bit representation of all zeros (which will cause `is_valid` to fail), so that check is bypassed to allow for `multi_index` and `datastream` to work.
+- Old contracts that use `eosio::asset()` should be changed to either use the core symbol of the specific chain they are targeting i.e. `eosio::asset(0, symbol(4,SYS))` to reduce writing `symbol(4,SYS)` over and over, a `constexpr` function to return the symbol or `constexpr` global variable should be used.
+
+#### eosiolib/contract.hpp
+- The constructor for `eosio::contract` now takes an `eosio::name` for the receiver, an `eosio::name` for the code, and a `eosio::datastream<const char*>` for the datastream used for the contract.  The last argument is for manually unpacking an action, see the section on `eosio::ignore` for a more indepth usage.
+
+#### eosiolib/dispatcher.hpp
+- renamed the macro `EOSIO_ABI` to `EOSIO_DISPATCH`, as this makes more sense as to what this macro does.
+- modified the definition of `EOSIO_DISPATCH` to work with the new constructor for `eosio::contract`
+
+#### eosiolib/multi_index.hpp
+- the first template parameter for `indexed_by` now requires the argument be convertible to `eosio::name::raw` (replacing `uint64_t`.
+- the first template parameter for `multi_index` now requires the argument be convertible to `eosio::name::raw` (replacing `uint64_t`.
+- the constructor now takes an `eosio::name` type for the code (replacing `uint64_t`), scope is still `uint64_t`.
+- various other replacements of `uint64_t` to `eosio::name`
+
+#### eosiolib/singleton.hpp
+- the first template parameter for `eosio::singleton` now requires the argument be convertible to `eosio::name::raw` (replacing `uint64_t`.
+- the constructor now takes an `eosio::name` type for the code.
+- in the methods `get_or_create` and `set` the argument `bill_to_account` is now of type `eosio::name` (replacing `uint64_t`).
+
+#### eosiolib/action.hpp
+- added C++ function `eosio::require_auth`
+- added C++ function `eosio::has_auth`
+- added C++ function `eosio::is_account`
+- redefined `eosio::permission_level` to use `eosio::name` in place of `uint64_t`
+- removed the macro `ACTION`
+
+#### eosiolib/permission.hpp
+ - The optional provided_keys argument of the function `eosio::check_transaction_authorization` is now of the type `std::set<eosio::public_key>` rather than the type `std::set<capi_public_key>`. C++ contract code should most likely be using the eosio::public_key struct (defined in "eosiolib/public_key.hpp") if they need to deal with EOSIO-compatible public keys rather than the capi_public_key struct (now renamed from its original name of ::public_key) from the eosiolib C API. Note that existing contract code that just referred to the type public_key without namespace qualification may have accidentally been using the capi_public_key struct and therefore should ideally be modified to use the eosio::public_key C++ type.
+ - the `account` and `permission` arguments of `eosio::check_transaction_authorization` are both `eosio::name` now instead of `uint64_t`
+
+#### eosiolib/ignore.hpp
+- added new type `ignore`
+  - this type acts as a placeholder for actions that don't want to deserialize their fields but what the types to be reflected in the abi.
+    ```c
+   	ACTION action(ignore<some_type>) { some_type st; _ds >> st; }
+    ```
+- added new type `ignore_wrapper`
+  - this allows for calling `SEND_INLINE_ACTION` with `ignore_wrapper(some_value)` against an action with an `ignore` of matching types.
+
+### macros
+- added `ACTION` macro, this is simply a wrapper for `[[eosio::action]] void`
+- added `TABLE` macro, this is simply a wrapper for `struct [[eosio::table]]` 
+- added `CONTRACT` macro, this is simply a wrapper for `class [[eosio::contract]]`
+
+### CMake
+- added `eosio.cdt-config.cmake` to allow for `find_package(eosio.cdt)`, see eosio.cdt/examples/hello or eosio.cdt/examples/template for an example
+- added new macro `add_contract`, this new contract takes a contract name, cmake target, then any normal arguments you would give to `add_executable`, see eosio.cdt/examples/hello or eosio.cdt/examples/template
+- new version checking mechanism is included, see eosio.contracts/CMakeLists.txt to see this in use.
+
+### libc
+- replaced `printf`, `sprintf`, and `snprintf` with new minimal variants, and allows contracts to use these functions without causing stack overflow issues.
+
+### libcxx
+- removed `sstream`, with the intent to return this after more has been done.
+- added `__cxa_pure_virtual` to allow for pure virtual methods in contract classes.
+- `std::to_string` now works without the issues of stack overflows.
+
+### attributes
+- added `[[eosio::ignore]]` attribute to flag a type as being ignored by the deserializer, this attribute is primarily only used for internal use within eosiolib.
+- added `[[eosio::contract]]` attribute, this new attribute is used to mark a contract class as "contract" with the name being either the C++ name of the class or a user specified name (i.e. [[eosio::contract("somecontract")]]), this attribute can also be used in conjunction with the `eosio::action` and `eosio::table` attributes for tables that you would like to define outside of the `eosio::contract` class.  This is used in conjunction with either the raw `eosio-cpp` option `--contract <name>`, `-o <name>/.wasm` or with CMake `add_contract`.  This acts as a filter, so that users who want to include a header file with attributes and generate an abi devoid of those actions and tables (e.g. eosio.token).
+  ```c
+  CONTRACT test {
+  	ACTION acta(){}
+	TABLE taba {
+	  uint64_t a;
+	  float b;
+	  uint64_t primary_key() { return a; }
+	};
+  };
+  struct [[eosio::table, eosio::contract("test")]]
+  tabb {
+    uint64_t a;
+    int b
+  };
+  typedef eosio::multi_index<"testtaba"_n, test::taba> table_a;
+  typedef eosio::multi_index<"testtabb"_n, taba> table_b;
+  ```
+  this will produce the tables `testtaba` and `testtabb` in your abi. Example: `eosio-cpp -abigen test.cpp -o test.wasm` will mark this compilation and abi generation for the `eosio::contract` `test`, so will `eosio-cpp -abigen test.cpp -o <some else> --contract test` and finally CMake `add_contract( test, test_contract, test.cpp )`, this will produce test_contract.wasm, test_contract.abi generated against `test` contract name.
+
+### boost
+- is now part of the library (Boost will be removed in a future release), no more external dependence on Boost and all system inclusion are within it's `sysroot`.
+
+
+## abi generator attributes
+Unlike the old abi generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
+#### [[eosio::action]]
+this attribute marks either a struct or a method as an action.
 Example (four ways to declare an action for ABI generation):
 ```c++
 // this is the C++11 and greater style attribute
 [[eosio::action]]
-void testa( account_name n ) {
+void testa( name n ) {
 	// do something
 }
 
 // this is the GNU style attribute, this can be used in C code and prior to C++ 11
-__attribute__((eosio_action)) 
-void testa( account_name n ){
+__attribute__((eosio_action))
+void testa( name n ){
 	// do something
 }
 
 struct [[eosio::action]] testa {
-	account_name n;
+	name n;
     EOSLIB_SERIALIZE( testa, (n) )
 };
 
 struct __attribute__((eosio_action)) testa {
-	account_name n;
+	name n;
     EOSLIB_SERIALIZE( testa, (n) )
 };
 ```
@@ -148,29 +307,23 @@ For example:
 cmake_minimum_required(VERSION 3.5)
 project(test_example VERSION 1.0.0)
 
-if(EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT)
-    set(EOSIO_CDT_ROOT "/usr/local/eosio.cdt")
-endif()
-list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake)
-include(EosioWasmToolchain)
+find_package(eosio.cdt)
 
-add_executable( test.wasm test.cpp )
+add_contract( test test test.cpp )
 ```
 ```test.cpp```
 ```
 #include <eosiolib/eosio.hpp>
 using namespace eosio;
-class test : public eosio::contract {
+CONTRACT test : public eosio::contract {
 public:
    using contract::contract;
-   [[eosio::action]]
-   void testact( account_name test ) {
+
+   ACTION testact( account_name test ) {
    }
 };
 EOSIO_ABI( test, (testact))
 ```
-
-Since, EosioWasmToolchain overwrites `cmake` to cross-compile WASM, standard cmake commands of _add\_executable/ add\_library_ can then be used.  Also note, the __EOSIO_CDT_ROOT__ variable, this needs to be set if you decided to install to the non-default location.
 
 To manually compile source code:
 Use ```eosio-cpp/eosio-cc``` and ```eosio-ld``` as if it were __clang__ and __lld__ , with all includes and options specific to EOSIO and CDT being baked in.

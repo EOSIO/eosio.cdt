@@ -20,56 +20,20 @@ extern "C" {
  */
 
 /**
- * @brief Name of an account
- * @details Name of an account
- */
-typedef uint64_t account_name;
-
-/**
- * @brief Name of a permission
- * @details Name of an account
- */
-typedef uint64_t permission_name;
-
-/**
- * @brief Name of a table
- * @details Name of atable
- */
-typedef uint64_t table_name;
-
-/**
- * @brief Time
- * @details Time
- */
-typedef uint32_t time;
-
-/**
- * @brief Name of a scope
- * @details Name of a scope
- */
-typedef uint64_t scope_name;
-
-/**
- * @brief Name of an action
- * @details Name of an action
- */
-typedef uint64_t action_name;
-
-/**
  * @brief Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
  * @details Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
  */
 
-typedef uint16_t weight_type;
-
 /* macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned */
 #define ALIGNED(X) __attribute__ ((aligned (16))) X
+
+typedef uint64_t capi_name;
 
 /**
  * @brief EOSIO Public Key
  * @details EOSIO Public Key. It is 34 bytes.
  */
-struct public_key {
+struct capi_public_key {
    char data[34];
 };
 
@@ -77,7 +41,7 @@ struct public_key {
  * @brief EOSIO Signature
  * @details EOSIO Signature. It is 66 bytes.
  */
-struct signature {
+struct capi_signature {
    uint8_t data[66];
 };
 
@@ -85,7 +49,7 @@ struct signature {
  * @brief 256-bit hash
  * @details 256-bit hash
  */
-struct ALIGNED(checksum256) {
+struct ALIGNED(capi_checksum256) {
    uint8_t hash[32];
 };
 
@@ -93,7 +57,7 @@ struct ALIGNED(checksum256) {
  * @brief 160-bit hash
  * @details 160-bit hash
  */
-struct ALIGNED(checksum160) {
+struct ALIGNED(capi_checksum160) {
    uint8_t hash[20];
 };
 
@@ -101,20 +65,8 @@ struct ALIGNED(checksum160) {
  * @brief 512-bit hash
  * @details 512-bit hash
  */
-struct ALIGNED(checksum512) {
+struct ALIGNED(capi_checksum512) {
    uint8_t hash[64];
-};
-
-/**
- * @brief Type of EOSIO Transaction Id
- * @details Type of EOSIO Transaction Id. It is 256-bit hash
- */
-typedef struct checksum256 transaction_id_type;
-typedef struct checksum256 block_id_type;
-
-struct account_permission {
-   account_name account;
-   permission_name permission;
 };
 
 #ifdef __cplusplus

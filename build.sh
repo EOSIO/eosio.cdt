@@ -18,13 +18,10 @@ if [[ "${unamestr}" == 'Darwin' ]]; then
    BOOST=/usr/local
    CXX_COMPILER=g++
    export ARCH="Darwin"
-   export BOOST_ROOT=${BOOST}
    bash ./scripts/eosio_build_darwin.sh
 else
-   BOOST=~/opt/boost
    OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-	
-   export BOOST_ROOT=${BOOST}
+
    case "$OS_NAME" in
       "Amazon Linux AMI")
          export ARCH="Amazon Linux AMI"
@@ -32,6 +29,7 @@ else
          ;;
       "CentOS Linux")
          export ARCH="Centos"
+         export CMAKE=${HOME}/opt/cmake/bin/cmake
          bash ./scripts/eosio_build_centos.sh
          ;;
       "elementary OS")
@@ -60,10 +58,6 @@ else
    esac
 fi
 
-if [ $# -ge 1 ]; then
-   CORE_SYMBOL=$1
-fi
-
 if [[ `uname` == 'Darwin' ]]; then
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
@@ -78,7 +72,7 @@ MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 #check submodules
-if [ $(( $(git submodule status | grep -c "^[+\-]") )) -gt 0 ]; then
+if [ $(( $(git submodule status --recursive | grep -c "^[+\-]") )) -gt 0 ]; then
    printf "\\n\\tgit submodules are not up to date.\\n"
    printf "\\tPlease run the command 'git submodule update --init --recursive'.\\n"
    exit 1
@@ -86,7 +80,12 @@ fi
 
 mkdir -p build
 pushd build &> /dev/null
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt -DBOOST_ROOT="${BOOST}" -DCORE_SYMBOL_NAME="${CORE_SYMBOL}" ../
+
+if [ -z "$CMAKE" ]; then
+  CMAKE=$( command -v cmake )
+fi
+
+"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi

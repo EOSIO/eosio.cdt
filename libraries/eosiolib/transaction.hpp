@@ -5,12 +5,13 @@
 #pragma once
 #include <eosiolib/transaction.h>
 #include <eosiolib/action.hpp>
-#include <eosiolib/types.hpp>
 #include <eosiolib/time.hpp>
 #include <eosiolib/serialize.hpp>
 #include <vector>
 
 namespace eosio {
+   typedef std::tuple<uint16_t, std::vector<char>> extension;
+   typedef std::vector<extension> extensions_type;
 
    /**
     * @defgroup transactioncppapi Transaction C++ API
@@ -31,25 +32,25 @@ namespace eosio {
       time_point_sec  expiration;
       uint16_t        ref_block_num;
       uint32_t        ref_block_prefix;
-      unsigned_int    net_usage_words = 0UL; /// number of 8 byte words this transaction can serialize into after compressions
+      unsigned_int    max_net_usage_words = 0UL; /// number of 8 byte words this transaction can serialize into after compressions
       uint8_t         max_cpu_usage_ms = 0UL; /// number of CPU usage units to bill transaction for
       unsigned_int    delay_sec = 0UL; /// number of seconds to delay transaction, default: 0
 
-      EOSLIB_SERIALIZE( transaction_header, (expiration)(ref_block_num)(ref_block_prefix)(net_usage_words)(max_cpu_usage_ms)(delay_sec) )
+      EOSLIB_SERIALIZE( transaction_header, (expiration)(ref_block_num)(ref_block_prefix)(max_net_usage_words)(max_cpu_usage_ms)(delay_sec) )
    };
 
    class transaction : public transaction_header {
    public:
       transaction(time_point_sec exp = time_point_sec(now() + 60)) : transaction_header( exp ) {}
 
-      void send(const uint128_t& sender_id, account_name payer, bool replace_existing = false) const {
+      void send(const uint128_t& sender_id, name payer, bool replace_existing = false) const {
          auto serialize = pack(*this);
-         send_deferred(sender_id, payer, serialize.data(), serialize.size(), replace_existing);
+         send_deferred(sender_id, payer.value, serialize.data(), serialize.size(), replace_existing);
       }
 
-      vector<action>  context_free_actions;
-      vector<action>  actions;
-      extensions_type transaction_extensions;
+      std::vector<action>  context_free_actions;
+      std::vector<action>  actions;
+      extensions_type      transaction_extensions;
 
       EOSLIB_SERIALIZE_DERIVED( transaction, transaction_header, (context_free_actions)(actions)(transaction_extensions) )
    };
@@ -61,8 +62,8 @@ namespace eosio {
     *
     */
    struct onerror {
-      uint128_t sender_id;
-      bytes     sent_trx;
+      uint128_t          sender_id;
+      std::vector<char> sent_trx;
 
       static onerror from_current_action() {
          return unpack_action_data<onerror>();
