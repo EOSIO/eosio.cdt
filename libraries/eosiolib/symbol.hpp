@@ -258,9 +258,9 @@ namespace eosio {
 
       constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}
 
-      constexpr symbol get_symbol() { return symbol; }
+      constexpr symbol get_symbol() const { return symbol; }
 
-      constexpr name   get_contract() { return contract; }
+      constexpr name   get_contract() const { return contract; }
 
       /**
        * %Print the extended symbol
