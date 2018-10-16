@@ -56,12 +56,12 @@ $ sudo ./install.sh
 $ eosio-cpp -abigen hello.cpp -o hello.wasm
 ```
 - Or with CMake
-  ```sh
-  $ mkdir build
-  $ cd build
-  $ cmake ..
-  $ make
-  ```
+```sh
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+```
 This will generate two files:
 * The compiled binary wasm (hello.wasm)
 * The generated ABI file (hello.abi)
@@ -182,7 +182,7 @@ This will generate one file:
 - Added new type `ignore`:
   - This type acts as a placeholder for actions that don't want to deserialize their fields but want the types to be reflected in the ABI.
     ```c
-   	ACTION action(ignore<some_type>) { some_type st; _ds >> st; }
+    ACTION action(ignore<some_type>) { some_type st; _ds >> st; }
     ```
 - Added new type `ignore_wrapper`:
   - This allows for calling `SEND_INLINE_ACTION` with `ignore_wrapper(some_value)` against an action with an `ignore` of matching types.
@@ -207,23 +207,28 @@ This will generate one file:
 
 ### attributes
 - Added `[[eosio::ignore]]` attribute to flag a type as being ignored by the deserializer. This attribute is primarily only used for internal use within eosiolib.
-- Added `[[eosio::contract]]` attribute. This new attribute is used to mark a contract class as "contract" with the name being either the C++ name of the class or a user specified name (i.e. `[[eosio::contract("somecontract")]]`). This attribute can also be used in conjunction with the `eosio::action` and `eosio::table` attributes for tables that you would like to define outside of the `eosio::contract` class.  This is used in conjunction with either the raw `eosio-cpp` option `--contract <name>`, `-o <name>/.wasm` or with CMake `add_contract`.  It acts as a filter enabling contract developers to include a header file with attributes from another contract (e.g. eosio.token) while generating an ABI devoid of those actions and tables.
-  ```c
-  CONTRACT test {
-  	ACTION acta(){}
-	TABLE taba {
-	  uint64_t a;
-	  float b;
-	  uint64_t primary_key() { return a; }
-	};
+- Added `[[eosio::contract]]` attribute. This new attribute is used to mark a contract class as "contract" with the name being either the C++ name of the class or a user specified name (i.e. `[[eosio::contract("somecontract")]]`). This attribute can also be used in conjunction with the `eosio::action` and `eosio::table` attributes for tables that you would like to define outside of the `eosio::contract` class.  This is used in conjunction with either the raw `eosio-cpp` option `--contract <name>`, `-o <name>.wasm` or with CMake `add_contract`.  It acts as a filter enabling contract developers to include a header file with attributes from another contract (e.g. eosio.token) while generating an ABI devoid of those actions and tables.
+  ```c++
+  #include <eosiolib/eosio.hpp>
+  using namespace eosio;
+  CONTRACT test : public eosio::contract {
+  public:
+     using contract::contract;
+     ACTION acta(){}
+     TABLE taba {
+        uint64_t a;
+        float b;
+        uint64_t primary_key() const { return a; }
+     };
   };
   struct [[eosio::table, eosio::contract("test")]]
   tabb {
-    uint64_t a;
-    int b
+     uint64_t a;
+     int b;
   };
   typedef eosio::multi_index<"testtaba"_n, test::taba> table_a;
   typedef eosio::multi_index<"testtabb"_n, tabb> table_b;
+  EOSIO_DISPATCH( test, (acta) )
   ```
   The above code will produce the tables `testtaba` and `testtabb` in your ABI. Example: `eosio-cpp -abigen test.cpp -o test.wasm` will mark this compilation and ABI generation for the `eosio::contract` `test`. The same thing can be done with `eosio-cpp -abigen test.cpp -o test_contract.wasm --contract test` or with the CMake command `add_contract( test, test_contract, test.cpp )`. Either of the previous two approaches will produce a test_contract.wasm and test_contract.abi generated under the context of the contract name of `test`.
 
@@ -240,23 +245,23 @@ Example (four ways to declare an action for ABI generation):
 // this is the C++11 and greater style attribute
 [[eosio::action]]
 void testa( name n ) {
-	// do something
+   // do something
 }
 
 // this is the GNU style attribute, this can be used in C code and prior to C++ 11
 __attribute__((eosio_action))
 void testa( name n ){
-	// do something
+   // do something
 }
 
 struct [[eosio::action]] testa {
-	name n;
-    EOSLIB_SERIALIZE( testa, (n) )
+   name n;
+   EOSLIB_SERIALIZE( testa, (n) )
 };
 
 struct __attribute__((eosio_action)) testa {
-	name n;
-    EOSLIB_SERIALIZE( testa, (n) )
+   name n;
+   EOSLIB_SERIALIZE( testa, (n) )
 };
 ```
 If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
@@ -264,16 +269,16 @@ If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-
 Example (two ways to declare a table for ABI generation):
 ```c++
 struct [[eosio::table]] testtable {
-	uint64_t owner;
-  	/* all other fields */
+   uint64_t owner;
+   /* all other fields */
 };
 
 struct __attribute__((eosio_table)) testtable {
-	uint64_t owner;
-    /* all other fields */
+   uint64_t owner;
+   /* all other fields */
 };
 
-typedef eosio::multi_index<N(tablename), testtable> testtable_t;
+typedef eosio::multi_index<"tablename"_n, testtable> testtable_t;
 ```
 If you don't want to use the multi-index you can explicitly specify the name in the attribute ```c++ [[eosio::table("<valid action name>")]]```.
 
@@ -327,7 +332,7 @@ CONTRACT test : public eosio::contract {
 public:
    using contract::contract;
 
-   ACTION testact( account_name test ) {
+   ACTION testact( name test ) {
    }
 };
 
