@@ -809,6 +809,16 @@ DataStream& operator >> ( DataStream& ds, std::vector<T>& v ) {
    return ds;
 }
 
+/**
+ *  Serialize a set
+ *
+ *  @brief Serialize a set
+ *  @param ds - The stream to write
+ *  @param s - The value to serialize
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the object contained in the set
+ *  @return DataStream& - Reference to the datastream
+ */
 template<typename DataStream, typename T>
 DataStream& operator << ( DataStream& ds, const std::set<T>& s ) {
    ds << unsigned_int( s.size() );
@@ -818,6 +828,17 @@ DataStream& operator << ( DataStream& ds, const std::set<T>& s ) {
    return ds;
 }
 
+
+/**
+ *  Deserialize a set
+ *
+ *  @brief Deserialize a set
+ *  @param ds - The stream to read
+ *  @param s - The destination for deserialized value
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the object contained in the set
+ *  @return DataStream& - Reference to the datastream
+ */
 template<typename DataStream, typename T>
 DataStream& operator >> ( DataStream& ds, std::set<T>& s ) {
    s.clear();
@@ -875,6 +896,17 @@ DataStream& operator >> ( DataStream& ds, std::map<K,V>& m ) {
    return ds;
 }
 
+
+/**
+ *  Serialize a flat_set
+ *
+ *  @brief Serialize a flat_set
+ *  @param ds - The stream to write
+ *  @param s - The value to serialize
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the value contained in the flat_set
+ *  @return DataStream& - Reference to the datastream
+ */
 template<typename DataStream, typename T>
 [[ deprecated ]]
 DataStream& operator << ( DataStream& ds, const boost::container::flat_set<T>& s ) {
@@ -885,6 +917,16 @@ DataStream& operator << ( DataStream& ds, const boost::container::flat_set<T>& s
    return ds;
 }
 
+/**
+ *  Deserialize a flat_set
+ *
+ *  @brief Deserialize a flat_set
+ *  @param ds - The stream to read
+ *  @param s - The destination for deserialized value
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the value contained in the flat_set
+ *  @return DataStream& - Reference to the datastream
+ */
 template<typename DataStream, typename T>
 [[ deprecated ]]
 DataStream& operator >> ( DataStream& ds, boost::container::flat_set<T>& s ) {
