@@ -145,6 +145,19 @@ namespace eosio {
          return std::tie( a.actor, a.permission ) == std::tie( b.actor, b.permission );
       }
 
+      /**
+       * less compare of two permissions
+       *
+       * @brief Check equality of two permissions
+       * @param a - first permission to compare
+       * @param b - second permission to compare
+       * @return true if a less then b
+       * @return false if a equal or larger then b
+       */
+      friend constexpr bool operator < ( const permission_level& a, const permission_level& b ) {
+         return std::tie( a.actor, a.permission ) < std::tie( b.actor, b.permission );
+      }
+
       EOSLIB_SERIALIZE( permission_level, (actor)(permission) )
    };
 
