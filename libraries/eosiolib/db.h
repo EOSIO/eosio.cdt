@@ -90,7 +90,7 @@ void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t
   *  Example:
   *
   *  @code
-  *  int32_t itr = db_find_i64(receiver, receiver, table1, N(alice));
+  *  int32_t itr = db_find_i64(receiver, receiver, table1, "alice"_n);
   *  eosio_assert(itr >= 0, "Alice cannot be removed since she was already not found in the table");
   *  db_remove_i64(itr);
   *  @endcode
@@ -135,7 +135,7 @@ int32_t db_get_i64(int32_t iterator, const void* data, uint32_t len);
   *  Example:
   *
   *  @code
-  *  int32_t charlie_itr = db_find_i64(receiver, receiver, table1, N(charlie));
+  *  int32_t charlie_itr = db_find_i64(receiver, receiver, table1, "charlie"_n);
   *  // expect nothing after charlie
   *  uint64_t prim = 0
   *  int32_t  end_itr = db_next_i64(charlie_itr, &prim);
@@ -178,7 +178,7 @@ int32_t db_previous_i64(int32_t iterator, uint64_t* primary);
   *  Example:
   *
   *  @code
-  *  int itr = db_find_i64(receiver, receiver, table1, N(charlie));
+  *  int itr = db_find_i64(receiver, receiver, table1, "charlie"_n);
   *  @endcode
   */
 int32_t db_find_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
