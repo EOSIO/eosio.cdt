@@ -119,6 +119,12 @@ extern "C" {
     */
    void require_auth2( capi_name name, capi_name permission );
 
+   /**
+    *  Verifies that @ref name is an existing account.
+    *
+    *  @brief Verifies that @ref name is an existing account.
+    *  @param name - name of the account to check
+    */
    bool is_account( capi_name name );
 
    /**
