@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import io
 import json
+import re
 import sys
 import os.path
 import fnmatch
@@ -10,14 +12,14 @@ def add_ricardian_contracts_to_actions(source_abi_directory, contract_name, abi_
 
     for abi_action in abi_actions:
         action_name = abi_action["name"]
-        contract_action_filename = '{contract_name}-{action_name}-rc.md'.format(contract_name = contract_name, action_name = action_name)
+        contract_action_filename = '{contract_name}.{action_name}_rc.md'.format(contract_name = contract_name, action_name = action_name)
 
         # check for rc file
         rc_contract_path = os.path.join(source_abi_directory, contract_action_filename)
         if os.path.exists(rc_contract_path):
             print('Importing Contract {contract_action_filename} for {contract_name}:{action_name}'.format(
-                contract_action_filename = contract_action_filename, 
-                contract_name = contract_name, 
+                contract_action_filename = contract_action_filename,
+                contract_name = contract_name,
                 action_name = action_name
             ))
 
@@ -33,34 +35,70 @@ def add_ricardian_contracts_to_actions(source_abi_directory, contract_name, abi_
             ))
 
         abi_actions_with_ricardian_contracts.append(abi_action)
-    
+
     return abi_actions_with_ricardian_contracts
 
 def create_ricardian_clauses_list(source_abi_directory, contract_name):
-    clause_file_pattern = '*-clause*-rc.md'
-    clause_files = fnmatch.filter(os.listdir(source_abi_directory), clause_file_pattern)
+    rc_contract_filename = '{contract_name}_rc.md'.format(contract_name = contract_name)
+    rc_contract_path = os.path.join(source_abi_directory, rc_contract_filename)
 
-    clause_prefix = 'clause-'
-    clause_postfix = '-rc.md'
+    if os.path.exists(rc_contract_path):
+        print('Importing ricardian contract {rc_contract_filename} for {contract_name}'.format(
+            rc_contract_filename = rc_contract_filename,
+            contract_name = contract_name
+        ))
 
-    abi_ricardian_clauses = []
+        clauses = extract_ricardian_clauses(rc_contract_path)
+        if len(clauses) <= 0:
+            print('No clauses extracted from ricardian contract {rc_contract_filename} for {contract_name}, ensures you use `### Clause Name` format'.format(
+                rc_contract_filename = rc_contract_filename,
+                contract_name = contract_name
+            ))
 
-    for clause_file_name in clause_files:
-        rc_contract_path = os.path.join(source_abi_directory, clause_file_name)
-        with open(rc_contract_path) as contract_file_handle:
-            contract_contents = contract_file_handle.read()
+        return clauses
 
-        start_of_clause_id = clause_file_name.index( clause_prefix ) + len( clause_prefix )
-        end_of_clause_id = clause_file_name.rindex(clause_postfix, start_of_clause_id)
+    else:
+        print('Did not find ricardian contract file {rc_contract_filename} for {contract_name}, skipping inclusion'.format(
+            rc_contract_filename = rc_contract_filename,
+            contract_name = contract_name
+        ))
 
-        clause_id = clause_file_name[start_of_clause_id:end_of_clause_id]
+        return []
 
-        abi_ricardian_clauses.append({
-            'id': clause_id, 
-            'body': contract_contents
-        })
+def extract_ricardian_clauses(rc_contract_path):
+    section = {
+        'id': '',
+        'lines': [],
+        'active': False,
+    }
 
-    return abi_ricardian_clauses
+    clauses = []
+    add_clause = lambda section: clauses.append({
+        'id': section['id'],
+        'body': "\n".join(section['lines'])
+    })
+
+    with open(rc_contract_path) as file:
+        for index, line in enumerate(file):
+            match = re.search('^###(.*)$', line, re.IGNORECASE)
+            if match:
+                if section['active']:
+                    add_clause(section)
+                    section = {
+                        'id': '',
+                        'lines': [],
+                        'active': False,
+                    }
+
+                section['id'] = match.group(1).strip()
+                section['active'] = True
+            elif section['active'] and len(line.strip()) > 0:
+                section['lines'].append(line.strip())
+
+    if section['active']:
+        add_clause(section)
+
+    return clauses
 
 def add_ricardian_contracts_to_abi(source_abi, output_abi):
     source_abi_directory = os.path.dirname(source_abi)
@@ -84,17 +122,17 @@ def import_ricardian_to_abi(source_abi, output_abi):
         print('Source ABI not found in {source_abi}'.format(source_abi = source_abi))
         sys.exit(0)
 
-    #if os.path.exists(output_abi):
-    #    overwrite_prompt_response = input('Output ABI {output_abi} already exists, do you want to proceed? (y|n): '.format(output_abi = output_abi))
-    #    if  overwrite_prompt_response == 'y':
-    #        print('Overwriting existing output abi')
-    #        add_ricardian_contracts_to_abi(source_abi, output_abi)
-    #        sys.exit(0)
-    #    else:
-    #        print('User aborted, not overwriting existing abi')
-    #        sys.exit(0)
-    #else:
-    add_ricardian_contracts_to_abi(source_abi, output_abi)
+    if os.path.exists(output_abi):
+        overwrite_prompt_response = input('Output ABI {output_abi} already exists, do you want to proceed? (y|n): '.format(output_abi = output_abi))
+        if  overwrite_prompt_response == 'y':
+            print('Overwriting existing output abi')
+            add_ricardian_contracts_to_abi(source_abi, output_abi)
+            sys.exit(0)
+        else:
+            print('User aborted, not overwriting existing abi')
+            sys.exit(0)
+    else:
+        add_ricardian_contracts_to_abi(source_abi, output_abi)
 
 def write_rc_file(path, filename, content):
     output_filename = os.path.join(path, filename)
@@ -111,7 +149,7 @@ def write_rc_file(path, filename, content):
     if write_file:
         with open(output_filename, 'w') as text_file:
             print(content, file=text_file)
-        
+
         print('Wrote {output_filename}'.format(output_filename = output_filename))
 
 def export_ricardian_from_abi(source_abi):
@@ -126,12 +164,25 @@ def export_ricardian_from_abi(source_abi):
         source_abi_json = json.load(source_abi_file)
 
     for abi_action in source_abi_json['actions']:
-        output_action_rc_file_name = '{contract_name}-{action_name}-rc.md'.format(contract_name = contract_name, action_name = abi_action['name'])
+        output_action_rc_file_name = '{contract_name}.{action_name}_rc.md'.format(contract_name = contract_name, action_name = abi_action['name'])
         write_rc_file(source_abi_directory, output_action_rc_file_name, abi_action['ricardian_contract'])
 
-    for abi_clause in source_abi_json['ricardian_clauses']:
-        output_clause_rc_file_name = '{contract_name}-clause-{clause_id}-rc.md'.format(contract_name = contract_name, clause_id = abi_clause['id'])
-        write_rc_file(source_abi_directory, output_clause_rc_file_name, abi_clause['body'])
+    if source_abi_json['ricardian_clauses']:
+        rc_file_content = generate_rc_file_content(contract_name, source_abi_json['ricardian_clauses'])
+        output_rc_file_name = '{contract_name}_rc.md'.format(contract_name = contract_name)
+        write_rc_file(source_abi_directory, output_rc_file_name, rc_file_content)
+
+def generate_rc_file_content(contract_name, clauses):
+    with io.StringIO() as buffer:
+        print('## CONTRACT FOR {contract_name}'.format(contract_name = contract_name.upper()), file = buffer)
+        print('', file = buffer)
+
+        for clause in clauses:
+            print('### {clause}'.format(clause = clause['id']), file = buffer)
+            print(clause['body'], file = buffer)
+            print('', file = buffer)
+
+        return buffer.getvalue()
 
 def main():
     if len(sys.argv) == 1:
@@ -158,7 +209,7 @@ def main():
             export_ricardian_from_abi(sys.argv[2])
 
             sys.exit(0)
-        
+
     else:
         print('Operation not recognized only import and export operations are supported')
 
