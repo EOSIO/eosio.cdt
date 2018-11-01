@@ -7,8 +7,6 @@ search:
 
 **[Go to the source code of this file.](db_8h_source.md)**
 Defines C API for interfacing with blockchain database. [More...](#detailed-description)
-## Functions
-
 |Type|Name|
 |-----|-----|
 |int32\_t|[**db\_store\_i64**](group__database_ga3f259dd4be6adc25d95e897b7724bbc4.md#ga3f259dd4be6adc25d95e897b7724bbc4) (uint64\_t scope, **[capi\_name](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)** table, **[capi\_name](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)** payer, uint64\_t id, const void \* data, uint32\_t len) <br>Store a record in a primary 64-bit integer index table. |

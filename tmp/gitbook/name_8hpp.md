@@ -13,7 +13,6 @@ search:
 |struct|[**eosio::name**](structeosio_1_1name.md)|
 
 
-## Functions
 
 |Type|Name|
 |-----|-----|

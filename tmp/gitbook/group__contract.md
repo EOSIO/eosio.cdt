@@ -15,8 +15,6 @@ Defines contract type which is base class for every EOSIO contract.
 
 ## Variables
 
-## Functions
-
 ## Variables Documentation
 
 ### variable <a id="ga29c0c98c72ab578a5965d13b00dca0c0" href="#ga29c0c98c72ab578a5965d13b00dca0c0">\_self</a>

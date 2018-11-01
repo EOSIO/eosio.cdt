@@ -76,15 +76,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>record,<sp/>(primary)(secondary)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mycontract(<sp/>name<sp/>self<sp/>):contract(self){}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mycontract(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds){}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>code<sp/>=<sp/>_self;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>scope<sp/>=<sp/>_self;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>multi_index&lt;N(mytable),<sp/>record,</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary),<sp/>const_mem_fun&lt;record,<sp/>uint128_t,<sp/>&amp;record::get_secondary&gt;<sp/>&gt;<sp/>&gt;<sp/>table(<sp/>code,<sp/>scope);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>multi_index&lt;name(&quot;mytable&quot;),<sp/>record,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>name(&quot;bysecondary&quot;),<sp/>const_mem_fun&lt;record,<sp/>uint128_t,<sp/>&amp;record::get_secondary&gt;<sp/>&gt;<sp/>&gt;<sp/>table(<sp/>code,<sp/>scope.value);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>mycontract,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>mycontract,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>    </detaileddescription>
     <location file="libraries/eosiolib/multi_index.hpp" line="181" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="181" bodyend="184"/>
     <listofallmembers>

@@ -21,14 +21,12 @@ search:
 ||[**ALIGNED**](types_8h_a9763e79ee25e85ca02c0d05e3aee7135.md#1a9763e79ee25e85ca02c0d05e3aee7135)<br>Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned. |
 
 
-## Typedefs
 
 |Type|Name|
 |-----|-----|
 |typedef uint64\_t|[**capi\_name**](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)|
 
 
-## Functions
 
 |Type|Name|
 |-----|-----|

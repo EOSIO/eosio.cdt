@@ -12,7 +12,7 @@ test.skip('Creates a select dropdown with versions', (t) => {
     .withLocalPlugin(__dirname)
     .withBookJson({
       gitbook: pkg.engines.gitbook,
-      plugins: ['versions-select']
+      plugins: ['versions-minimal']
     })
     .create()
     .then(function(result) {

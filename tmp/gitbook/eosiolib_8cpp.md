@@ -15,7 +15,6 @@ search:
 |class|[**eosio::memory\_manager::memory::buffer\_ptr**](classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr.md)|
 
 
-## Functions
 
 |Type|Name|
 |-----|-----|

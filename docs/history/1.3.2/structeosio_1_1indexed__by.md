@@ -41,15 +41,15 @@ class mycontract: eosio::contract {
      EOSLIB_SERIALIZE( record, (primary)(secondary) )
    };
   public:
-    mycontract( name self ):contract(self){}
+    mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
     void myaction() {
       auto code = _self;
       auto scope = _self;
-      multi_index<N(mytable), record,
-                 indexed_by< N(bysecondary), const_mem_fun<record, uint128_t, &record::get_secondary> > > table( code, scope);
+      multi_index<name("mytable"), record,
+                 indexed_by< name("bysecondary"), const_mem_fun<record, uint128_t, &record::get_secondary> > > table( code, scope.value);
     }
 }
-EOSIO_ABI( mycontract, (myaction) )
+EOSIO_DISPATCH( mycontract, (myaction) )
 ```
 
  

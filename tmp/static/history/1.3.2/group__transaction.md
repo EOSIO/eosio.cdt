@@ -15,11 +15,7 @@ Type-safe C++ wrappers for transaction C API. [More...](#detailed-description)
 |struct|[**eosio::onerror**](structeosio_1_1onerror.md)|
 
 
-## Typedefs
-
 ## Variables
-
-## Functions
 
 ## Detailed Description
 

@@ -118,8 +118,8 @@ Secondary indices are updated to refer to the newly added object. If the seconda
 The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.
 
 
-Notes The `` template has template parameters `<uint64\_t TableName, typename T, typename... Indices>`, where:
-* `TableName` is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the "." (period) character;
+Notes The `` template has template parameters `<`, where:
+* `TableName` is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the "." (period) character and is converted to a eosio::raw - which wraps uint64\_t;
 * `T` is the object type (i.e., row definition);
 * `Indices` is a list of up to 16 secondary indices.
 * Each must be a default constructable class or struct
@@ -142,16 +142,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -186,17 +185,16 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(N(dan), N(dan)); // code, scope
-      eosio_assert(addresses.get_code() == N(dan), "Codes don't match.");
+      address_index addresses(name("dan"), name("dan").value); // code, scope
+      eosio_assert(addresses.get_code() == name("dan"), "Lock arf, Codes don't match.");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -231,17 +229,16 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(N(dan), N(dan)); // code, scope
-      eosio_assert(addresses.get_code() == N(dan), "Scopes don't match");
+      address_index addresses(name("dan"), name("dan").value); // code, scope
+      eosio_assert(addresses.get_scope() == name("dan").value, "Lock arf, Scopes don't match");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -276,27 +273,26 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.cbegin(), "Only address is not at front.");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr == addresses.cbegin(), "Lock arf, Only address is not at front.");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -331,24 +327,23 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.begin(), "Only address is not at front.");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr == addresses.begin(), "Lock arf, Only address is not at front.");
     }
 }
 EOSIO_ABI( addressbook, (myaction) )
@@ -386,27 +381,26 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.cend(), "Address for account doesn't exist");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.cend(), "Lock arf, Address for account doesn't exist");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -441,27 +435,26 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Address for account doesn't exist");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Lock arf, Address for account doesn't exist");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -496,16 +489,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -513,7 +505,7 @@ class addressbook: contract {
         address.state = "VA";
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -521,12 +513,12 @@ class addressbook: contract {
         address.state = "HK";
       });
       auto itr = addresses.crbegin();
-      eosio_assert(itr->account_name == N(dan), "Incorrect Last Record ");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
       itr++;
-      eosio_assert(itr->account_name == N(brendan), "Incorrect Second Last Record");
+      eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -561,16 +553,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -578,7 +569,7 @@ class addressbook: contract {
         address.state = "VA";
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -586,12 +577,12 @@ class addressbook: contract {
         address.state = "HK";
       });
       auto itr = addresses.rbegin();
-      eosio_assert(itr->account_name == N(dan), "Incorrect Last Record ");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
       itr++;
-      eosio_assert(itr->account_name == N(brendan), "Incorrect Second Last Record");
+      eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -626,16 +617,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -643,7 +633,7 @@ class addressbook: contract {
         address.state = "VA";
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -652,12 +642,12 @@ class addressbook: contract {
       });
       auto itr = addresses.crend();
       itr--;
-      eosio_assert(itr->account_name == N(brendan), "Incorrect First Record ");
+      eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
       itr--;
-      eosio_assert(itr->account_name == N(dan), "Incorrect Second Record");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -692,16 +682,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -709,7 +698,7 @@ class addressbook: contract {
         address.state = "VA";
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -718,12 +707,12 @@ class addressbook: contract {
       });
       auto itr = addresses.rend();
       itr--;
-      eosio_assert(itr->account_name == N(brendan), "Incorrect First Record ");
+      eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
       itr--;
-      eosio_assert(itr->account_name == N(dan), "Incorrect Second Record");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -769,16 +758,15 @@ class addressbook: contract {
      uint32_t zip = 0;
      uint64_t primary_key() const { return account_name; }
      uint64_t by_zip() const { return zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address, indexed_by< N(zip), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -787,7 +775,7 @@ class addressbook: contract {
         address.zip = 93446;
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -796,16 +784,16 @@ class addressbook: contract {
         address.zip = 93445;
       });
       uint32_t zipnumb = 93445;
-      auto zip_index = addresses.get_index<N(zip)>();
+      auto zip_index = addresses.get_index<name("zip")>();
       auto itr = zip_index.lower_bound(zipnumb);
-      eosio_assert(itr->account_name == N(brendan), "Incorrect First Lower Bound Record ");
+      eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Lower Bound Record ");
       itr++;
-      eosio_assert(itr->account_name == N(dan), "Incorrect Second Lower Bound Record");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Lower Bound Record");
       itr++;
-      eosio_assert(itr == zip_index.end(), "Incorrect End of Iterator");
+      eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -852,16 +840,15 @@ class addressbook: contract {
      uint64_t liked = 0;
      uint64_t primary_key() const { return account_name; }
      uint64_t by_zip() const { return zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address, indexed_by< N(zip), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -870,7 +857,7 @@ class addressbook: contract {
         address.zip = 93446;
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -879,14 +866,14 @@ class addressbook: contract {
         address.zip = 93445;
       });
       uint32_t zipnumb = 93445;
-      auto zip_index = addresses.get_index<N(zip)>();
+      auto zip_index = addresses.get_index<name("zip")>();
       auto itr = zip_index.upper_bound(zipnumb);
-      eosio_assert(itr->account_name == N(dan), "Incorrect First Upper Bound Record ");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
       itr++;
-      eosio_assert(itr == zip_index.end(), "Incorrect End of Iterator");
+      eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -922,13 +909,12 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return key; }
-     EOSLIB_SERIALIZE( address, (key)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
         address.key = addresses.available_primary_key();
@@ -940,7 +926,7 @@ class addressbook: contract {
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -984,16 +970,15 @@ class addressbook: contract {
      uint32_t zip = 0;
      uint64_t primary_key() const { return account_name; }
      uint64_t by_zip() const { return zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address, indexed_by< N(zip), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
     void myaction() {
-      address_index addresses(_self, _self);  // code, scope
+      address_index addresses(_self, _self.value);  // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -1002,12 +987,12 @@ class addressbook: contract {
         address.zip = 93446;
       });
       uint32_t zipnumb = 93446;
-      auto zip_index = addresses.get_index<N(zip)>();
+      auto zip_index = addresses.get_index<name("zip")>();
       auto itr = zip_index.find(zipnumb);
-      eosio_assert(itr->account_name == N(dan), "Incorrect Record ");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Record ");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1051,16 +1036,15 @@ class addressbook: contract {
      uint32_t zip = 0;
      uint64_t primary_key() const { return account_name; }
      uint64_t by_zip() const { return zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address, indexed_by< N(zip), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -1069,7 +1053,7 @@ class addressbook: contract {
         address.zip = 93446;
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -1078,14 +1062,14 @@ class addressbook: contract {
         address.zip = 93445;
       });
       uint32_t zipnumb = 93445;
-      auto zip_index = addresses.get_index<N(zip)>();
+      auto zip_index = addresses.get_index<name("zip")>();
       auto itr = zip_index.upper_bound(zipnumb);
-      eosio_assert(itr->account_name == N(dan), "Incorrect First Upper Bound Record ");
+      eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
       itr++;
-      eosio_assert(itr == zip_index.end(), "Incorrect End of Iterator");
+      eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1131,16 +1115,15 @@ class addressbook: contract {
      uint32_t zip = 0;
      uint64_t primary_key() const { return account_name; }
      uint64_t by_zip() const { return zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address, indexed_by< N(zip), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -1149,7 +1132,7 @@ class addressbook: contract {
         address.zip = 93446;
       });
       addresses.emplace(payer, [&](auto& address) {
-        address.account_name = N(brendan);
+        address.account_name = name("brendan");
         address.first_name = "Brendan";
         address.last_name = "Blumer";
         address.street = "1 EOS Way";
@@ -1157,12 +1140,12 @@ class addressbook: contract {
         address.state = "HK";
         address.zip = 93445;
       });
-      auto user = addresses.get(N(dan));
-      auto itr = address.find(N(dan));
-      eosio_assert(iterator_to(user) == itr, "Invalid iterator");
+      auto user = addresses.get(name("dan"));
+      auto itr = address.find(name("dan"));
+      eosio_assert(iterator_to(user) == itr, "Lock arf, Invalid iterator");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1237,16 +1220,15 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
@@ -1255,7 +1237,7 @@ class addressbook: contract {
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1346,31 +1328,30 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Address for account not found");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Lock arf, Address for account not found");
       addresses.modify( itr, account payer, [&]( auto& address ) {
         address.city = "San Luis Obispo";
         address.state = "CA";
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1461,32 +1442,31 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Address for account not found");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Lock arf, Address for account not found");
       addresses.modify( *itr, payer, [&]( auto& address ) {
         address.city = "San Luis Obispo";
         address.state = "CA";
       });
-      eosio_assert(itr->city == "San Luis Obispo", "Address not modified");
+      eosio_assert(itr->city == "San Luis Obispo", "Lock arf, Address not modified");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1532,27 +1512,26 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto user = addresses.get(N(dan));
-      eosio_assert(user.first_name == "Daniel", "Couldn't get him.");
+      auto user = addresses.get(name("dan"));
+      eosio_assert(user.first_name == "Daniel", "Lock arf, Couldn't get him.");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1596,27 +1575,26 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Couldn't get him.");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Everting Lock arf, Couldn't get him.");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  
@@ -1717,26 +1695,25 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Address for account not found");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Lock arf, Address for account not found");
       addresses.erase( itr );
-      eosio_assert(itr != addresses.end(), "Address not erased properly");
+      eosio_assert(itr != addresses.end(), "Everting lock arf, Address not erased properly");
     }
 }
 EOSIO_ABI( addressbook, (myaction) )
@@ -1805,30 +1782,29 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index< N(address), address > address_index;
+    addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index< name("address"), address > address_index;
     void myaction() {
-      address_index addresses(_self, _self); // code, scope
+      address_index addresses(_self, _self.value); // code, scope
       // add to table, first argument is account to bill for storage
       addresses.emplace(_self, [&](auto& address) {
-        address.account_name = N(dan);
+        address.account_name = name("dan");
         address.first_name = "Daniel";
         address.last_name = "Larimer";
         address.street = "1 EOS Way";
         address.city = "Blacksburg";
         address.state = "VA";
       });
-      auto itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), "Record is not found");
+      auto itr = addresses.find(name("dan"));
+      eosio_assert(itr != addresses.end(), "Lock arf, Record is not found");
       addresses.erase(*itr);
-      itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.end(), "Record is not deleted");
+      itr = addresses.find(name("dan"));
+      eosio_assert(itr == addresses.end(), "Lock arf, Record is not deleted");
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 ```
 
  

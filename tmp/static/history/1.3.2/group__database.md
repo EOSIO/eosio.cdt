@@ -6,8 +6,6 @@ search:
 # group database
 
 Defines C APIs for interfacing with the database. [More...](#detailed-description)
-## Functions
-
 ## Detailed Description
 
 Database C API provides low level interface to EOSIO database.

@@ -15,10 +15,6 @@ search:
 |class|[**eosio::block\_timestamp**](classeosio_1_1block__timestamp.md)|
 
 
-## Typedefs
-
-## Functions
-
 ## Typedefs Documentation
 
 ### typedef <a id="ga4f8fa835ef0dc341addb6e51d0d840b3" href="#ga4f8fa835ef0dc341addb6e51d0d840b3">block\_timestamp\_type</a>

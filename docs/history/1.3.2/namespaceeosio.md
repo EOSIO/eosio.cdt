@@ -50,7 +50,6 @@ search:
 |class|[**transaction\_header**](classeosio_1_1transaction__header.md)|
 
 
-## Typedefs
 
 |Type|Name|
 |-----|-----|
@@ -69,7 +68,6 @@ search:
 |static **[iostream](classeosio_1_1iostream.md)**|[**cout**](group__console.md#gaed9b7380e114191d3dac1857b35e3da2)|
 
 
-## Functions
 
 |Type|Name|
 |-----|-----|

@@ -14,8 +14,6 @@ Defines type-safe C++ wrapers for querying action and sending action. [More...](
 |struct|[**eosio::action**](structeosio_1_1action.md)|
 
 
-## Functions
-
 ## Defines
 
 ## Detailed Description

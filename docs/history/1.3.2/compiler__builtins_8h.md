@@ -6,8 +6,6 @@ search:
 # file compiler\_builtins.h
 
 **[Go to the source code of this file.](compiler__builtins_8h_source.md)**
-## Functions
-
 |Type|Name|
 |-----|-----|
 |void|[**\_\_multi3**](group__compiler__builtins_gaa03897335f1fcc54f469e17c32ae9920.md#gaa03897335f1fcc54f469e17c32ae9920) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Multiply two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers. |

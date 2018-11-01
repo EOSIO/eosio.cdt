@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="802" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="802" bodyend="-1"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="799" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="799" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structeosio_1_1multi__index_1_1const__iterator_1a624b7d8c5704d52d7bb8a6fde140a2b0" prot="private" static="no" mutable="no">
         <type>const item *</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="803" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="803" bodyend="-1"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="800" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="800" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="804" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="804" bodyend="-1"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="801" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="801" bodyend="-1"/>
       </memberdef>
       <memberdef kind="friend" id="structeosio_1_1multi__index_1_1const__iterator_ab0ac7de651351823aece097eb3be1cfb_1ab0ac7de651351823aece097eb3be1cfb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>friend bool</type>
@@ -65,7 +65,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="747" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="747" bodyend="749"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="744" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="744" bodyend="746"/>
       </memberdef>
       <memberdef kind="friend" id="structeosio_1_1multi__index_1_1const__iterator_a5fbca5b71055f2b793ae1607239b13a0_1a5fbca5b71055f2b793ae1607239b13a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>friend bool</type>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="750" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="750" bodyend="752"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="747" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="747" bodyend="749"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="754" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="754" bodyend="754"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="751" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="751" bodyend="751"/>
       </memberdef>
       <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a24a83ecc4a2288ac35afb785b64dff12_1a24a83ecc4a2288ac35afb785b64dff12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const T *</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="755" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="755" bodyend="755"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="752" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="752" bodyend="752"/>
       </memberdef>
       <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a751d1e7eedadb5b3033cedc6f8e8078e_1a751d1e7eedadb5b3033cedc6f8e8078e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="757" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="757" bodyend="761"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="754" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="754" bodyend="758"/>
       </memberdef>
       <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a3a0faabfa94970b0d94d9b2977c69f43_1a3a0faabfa94970b0d94d9b2977c69f43" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="763" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="763" bodyend="767"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="760" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="760" bodyend="764"/>
       </memberdef>
       <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_aaec476e83abc7018972986594509a477_1aaec476e83abc7018972986594509a477" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="769" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="769" bodyend="779"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="766" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="766" bodyend="776"/>
       </memberdef>
       <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a3f5b8d0651cef32ef99565be6fc1de23_1a3f5b8d0651cef32ef99565be6fc1de23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="780" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="780" bodyend="796"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="777" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="777" bodyend="793"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -196,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="799" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="799" bodyend="800"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="796" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="796" bodyend="797"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -225,7 +225,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="libraries/eosiolib/multi_index.hpp" line="746" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="746" bodyend="805"/>
+    <location file="libraries/eosiolib/multi_index.hpp" line="743" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="743" bodyend="802"/>
     <listofallmembers>
       <member refid="structeosio_1_1multi__index_1_1const__iterator_1a624b7d8c5704d52d7bb8a6fde140a2b0" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>_item</name></member>
       <member refid="structeosio_1_1multi__index_1_1const__iterator_1aa042e4b8058f024f220cee9d6c9a5f96" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>_multidx</name></member>

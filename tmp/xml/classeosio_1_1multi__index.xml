@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="807" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="807" bodyend="-1"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="804" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="804" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
@@ -252,8 +252,8 @@
 <simplesect kind="post"><para>each secondary index table initialized </para></simplesect>
 <simplesect kind="post"><para>Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created. </para></simplesect>
 <simplesect kind="post"><para>The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.</para></simplesect>
-Notes The <computeroutput><ref refid="classeosio_1_1multi__index" kindref="compound">eosio::multi_index</ref></computeroutput> template has template parameters <computeroutput>&lt;uint64_t TableName, typename T, typename... Indices&gt;</computeroutput>, where:<itemizedlist>
-<listitem><para><computeroutput>TableName</computeroutput> is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the &quot;.&quot; (period) character;</para></listitem><listitem><para><computeroutput>T</computeroutput> is the object type (i.e., row definition);</para></listitem><listitem><para><computeroutput>Indices</computeroutput> is a list of up to 16 secondary indices.</para></listitem><listitem><para>Each must be a default constructable class or struct</para></listitem><listitem><para>Each must have a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type</para></listitem><listitem><para>It is recommended to use the <ref refid="structeosio_1_1const__mem__fun" kindref="compound">eosio::const_mem_fun</ref> template, which is a type alias to the boost::multi_index::const_mem_fun. See the documentation for the Boost <ref refid="structeosio_1_1const__mem__fun" kindref="compound">const_mem_fun</ref> key extractor for more details.</para></listitem></itemizedlist>
+Notes The <computeroutput><ref refid="classeosio_1_1multi__index" kindref="compound">eosio::multi_index</ref></computeroutput> template has template parameters <computeroutput>&lt;<ref refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kindref="member">name::raw</ref> TableName, typename T, typename... Indices&gt;</computeroutput>, where:<itemizedlist>
+<listitem><para><computeroutput>TableName</computeroutput> is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the &quot;.&quot; (period) character and is converted to a eosio::raw - which wraps uint64_t;</para></listitem><listitem><para><computeroutput>T</computeroutput> is the object type (i.e., row definition);</para></listitem><listitem><para><computeroutput>Indices</computeroutput> is a list of up to 16 secondary indices.</para></listitem><listitem><para>Each must be a default constructable class or struct</para></listitem><listitem><para>Each must have a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type</para></listitem><listitem><para>It is recommended to use the <ref refid="structeosio_1_1const__mem__fun" kindref="compound">eosio::const_mem_fun</ref> template, which is a type alias to the boost::multi_index::const_mem_fun. See the documentation for the Boost <ref refid="structeosio_1_1const__mem__fun" kindref="compound">const_mem_fun</ref> key extractor for more details.</para></listitem></itemizedlist>
 </para><para>Example:</para><para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;eosiolib/eosio.hpp&gt;</highlight></codeline>
 <codeline><highlight class="normal">using<sp/>namespace<sp/>eosio;</highlight></codeline>
 <codeline><highlight class="normal">using<sp/>namespace<sp/>std;</highlight></codeline>
@@ -266,20 +266,19 @@ Notes The <computeroutput><ref refid="classeosio_1_1multi__index" kindref="compo
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="670" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="670" bodyend="672"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="669" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="669" bodyend="671"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a6ef0fb806ad6edf50b670a115fc3d5a1_1a6ef0fb806ad6edf50b670a115fc3d5a1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
@@ -302,21 +301,20 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(N(dan),<sp/>N(dan));<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(addresses.get_code()<sp/>==<sp/>N(dan),<sp/>&quot;Codes<sp/>don&apos;t<sp/>match.&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(name(&quot;dan&quot;),<sp/>name(&quot;dan&quot;).value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(addresses.get_code()<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Codes<sp/>don&apos;t<sp/>match.&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="708" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="708" bodyend="708"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="706" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="706" bodyend="706"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a0690e9e9a30254240fa0cb6bb12bebf3_1a0690e9e9a30254240fa0cb6bb12bebf3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>uint64_t</type>
@@ -339,21 +337,20 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(N(dan),<sp/>N(dan));<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(addresses.get_code()<sp/>==<sp/>N(dan),<sp/>&quot;Scopes<sp/>don&apos;t<sp/>match&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(name(&quot;dan&quot;),<sp/>name(&quot;dan&quot;).value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(addresses.get_scope()<sp/>==<sp/>name(&quot;dan&quot;).value,<sp/>&quot;Lock<sp/>arf,<sp/>Scopes<sp/>don&apos;t<sp/>match&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="744" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="744" bodyend="744"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="741" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="741" bodyend="741"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a36ad6b1c1013b6f753660b334de96aef_1a36ad6b1c1013b6f753660b334de96aef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -376,31 +373,30 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.cbegin(),<sp/>&quot;Only<sp/>address<sp/>is<sp/>not<sp/>at<sp/>front.&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.cbegin(),<sp/>&quot;Lock<sp/>arf,<sp/>Only<sp/>address<sp/>is<sp/>not<sp/>at<sp/>front.&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="853" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="853" bodyend="855"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="849" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="849" bodyend="851"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a060b08a9da300e3a4ab669b35f07c9bc_1a060b08a9da300e3a4ab669b35f07c9bc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -423,31 +419,30 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.begin(),<sp/>&quot;Only<sp/>address<sp/>is<sp/>not<sp/>at<sp/>front.&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.begin(),<sp/>&quot;Lock<sp/>arf,<sp/>Only<sp/>address<sp/>is<sp/>not<sp/>at<sp/>front.&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 <codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="901" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="901" bodyend="901"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="896" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="896" bodyend="896"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_aece639944fa9031debbd984bbd42485a_1aece639944fa9031debbd984bbd42485a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -470,31 +465,30 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.cend(),<sp/>&quot;Address<sp/>for<sp/>account<sp/>doesn&apos;t<sp/>exist&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.cend(),<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>for<sp/>account<sp/>doesn&apos;t<sp/>exist&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="947" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="947" bodyend="947"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="941" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="941" bodyend="941"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a748fcb4d6a08962ad8a7c92da359e3d7_1a748fcb4d6a08962ad8a7c92da359e3d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -517,31 +511,30 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Address<sp/>for<sp/>account<sp/>doesn&apos;t<sp/>exist&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>for<sp/>account<sp/>doesn&apos;t<sp/>exist&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="993" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="993" bodyend="993"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="986" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="986" bodyend="986"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_abe296816f75cdb69e6698724e7b0c29d_1abe296816f75cdb69e6698724e7b0c29d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
@@ -564,16 +557,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -581,7 +573,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -589,16 +581,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;HK&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.crbegin();</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Last<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Last<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(brendan),<sp/>&quot;Incorrect<sp/>Second<sp/>Last<sp/>Record&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;brendan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Second<sp/>Last<sp/>Record&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1049" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1049" bodyend="1049"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1041" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1041" bodyend="1041"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_acdc14cc71a43489507341d2709696e7d_1acdc14cc71a43489507341d2709696e7d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
@@ -621,16 +613,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -638,7 +629,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -646,16 +637,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;HK&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.rbegin();</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Last<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Last<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(brendan),<sp/>&quot;Incorrect<sp/>Second<sp/>Last<sp/>Record&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;brendan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Second<sp/>Last<sp/>Record&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1105" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1105" bodyend="1105"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1096" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1096" bodyend="1096"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a6ce680bcec3a391e0ad89a1cd1143231_1a6ce680bcec3a391e0ad89a1cd1143231" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
@@ -678,16 +669,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -695,7 +685,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -704,16 +694,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.crend();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr--;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(brendan),<sp/>&quot;Incorrect<sp/>First<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;brendan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>First<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr--;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Second<sp/>Record&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Second<sp/>Record&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1162" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1162" bodyend="1162"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1152" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1152" bodyend="1152"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a659b2744975d0a54162c44fbcbc28115_1a659b2744975d0a54162c44fbcbc28115" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
@@ -736,16 +726,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -753,7 +742,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -762,16 +751,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.rend();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr--;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(brendan),<sp/>&quot;Incorrect<sp/>First<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;brendan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>First<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr--;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Second<sp/>Record&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Second<sp/>Record&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1219" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1219" bodyend="1219"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1208" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1208" bodyend="1208"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_aa642a184ce729f91bc70200ba2a55253_1aa642a184ce729f91bc70200ba2a55253" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -808,16 +797,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zip<sp/>=<sp/>0;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>by_zip()<sp/>const<sp/>{<sp/>return<sp/>zip;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)(zip)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address,<sp/>indexed_by&lt;<sp/>N(zip),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address,<sp/>indexed_by&lt;<sp/>name(&quot;zip&quot;),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -826,7 +814,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93446;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -835,20 +823,20 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93445;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zipnumb<sp/>=<sp/>93445;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;N(zip)&gt;();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;name(&quot;zip&quot;)&gt;();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>zip_index.lower_bound(zipnumb);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(brendan),<sp/>&quot;Incorrect<sp/>First<sp/>Lower<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;brendan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>First<sp/>Lower<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Second<sp/>Lower<sp/>Bound<sp/>Record&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Second<sp/>Lower<sp/>Bound<sp/>Record&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1285" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1285" bodyend="1290"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1273" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1273" bodyend="1278"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a5a9f1b25fd64a2bdb163f97ca97eb371_1a5a9f1b25fd64a2bdb163f97ca97eb371" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -886,16 +874,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>liked<sp/>=<sp/>0;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>by_zip()<sp/>const<sp/>{<sp/>return<sp/>zip;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)(zip)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address,<sp/>indexed_by&lt;<sp/>N(zip),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address,<sp/>indexed_by&lt;<sp/>name(&quot;zip&quot;),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -904,7 +891,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93446;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -913,18 +900,18 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93445;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zipnumb<sp/>=<sp/>93445;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;N(zip)&gt;();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;name(&quot;zip&quot;)&gt;();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>zip_index.upper_bound(zipnumb);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>First<sp/>Upper<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>First<sp/>Upper<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1355" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1355" bodyend="1360"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1342" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1342" bodyend="1347"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a1b2d26324eb34354f5db2abcf2d87853_1a1b2d26324eb34354f5db2abcf2d87853" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>uint64_t</type>
@@ -947,13 +934,12 @@ Notes: Intended to be used in tables in which the primary keys of the table are 
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>key;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(key)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.key<sp/>=<sp/>addresses.available_primary_key();</highlight></codeline>
@@ -965,11 +951,11 @@ Notes: Intended to be used in tables in which the primary keys of the table are 
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1408" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1408" bodyend="1425"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1394" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1394" bodyend="1411"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a98fecc3166ebb3746ee810f7f7d9beac_1a98fecc3166ebb3746ee810f7f7d9beac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1009,16 +995,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zip<sp/>=<sp/>0;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>by_zip()<sp/>const<sp/>{<sp/>return<sp/>zip;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)(zip)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address,<sp/>indexed_by&lt;<sp/>N(zip),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address,<sp/>indexed_by&lt;<sp/>name(&quot;zip&quot;),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/><sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1027,16 +1012,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93446;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zipnumb<sp/>=<sp/>93446;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;N(zip)&gt;();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;name(&quot;zip&quot;)&gt;();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>zip_index.find(zipnumb);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1479" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1479" bodyend="1489"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1464" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1464" bodyend="1474"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ae6e01877b9862c8193df27f05c305f2c_1ae6e01877b9862c8193df27f05c305f2c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1076,16 +1061,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zip<sp/>=<sp/>0;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>by_zip()<sp/>const<sp/>{<sp/>return<sp/>zip;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)(zip)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address,<sp/>indexed_by&lt;<sp/>N(zip),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address,<sp/>indexed_by&lt;<sp/>name(&quot;zip&quot;),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1094,7 +1078,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93446;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1103,18 +1087,18 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93445;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zipnumb<sp/>=<sp/>93445;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;N(zip)&gt;();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>zip_index<sp/>=<sp/>addresses.get_index&lt;name(&quot;zip&quot;)&gt;();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>zip_index.upper_bound(zipnumb);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>N(dan),<sp/>&quot;Incorrect<sp/>First<sp/>Upper<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;account_name<sp/>==<sp/>name(&quot;dan&quot;),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>First<sp/>Upper<sp/>Bound<sp/>Record<sp/>&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr++;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>zip_index.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Incorrect<sp/>End<sp/>of<sp/>Iterator&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1554" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1554" bodyend="1564"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1538" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1538" bodyend="1548"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ad611e3ff51efdf038b934138d071cf83_1ad611e3ff51efdf038b934138d071cf83" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -1151,16 +1135,15 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>zip<sp/>=<sp/>0;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>by_zip()<sp/>const<sp/>{<sp/>return<sp/>zip;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)(zip)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address,<sp/>indexed_by&lt;<sp/>N(zip),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address,<sp/>indexed_by&lt;<sp/>name(&quot;zip&quot;),<sp/>const_mem_fun&lt;address,<sp/>uint64_t,<sp/>&amp;address::by_zip&gt;<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1169,7 +1152,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93446;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(payer,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(brendan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;brendan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Brendan&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Blumer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1177,16 +1160,16 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;HK&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.zip<sp/>=<sp/>93445;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>user<sp/>=<sp/>addresses.get(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>address.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(iterator_to(user)<sp/>==<sp/>itr,<sp/>&quot;Invalid<sp/>iterator&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>user<sp/>=<sp/>addresses.get(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>address.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(iterator_to(user)<sp/>==<sp/>itr,<sp/>&quot;Lock<sp/>arf,<sp/>Invalid<sp/>iterator&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1625" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1625" bodyend="1629"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1608" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1608" bodyend="1612"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ab64fbf4dd04be357ec0cbbf125a3da5e_1ab64fbf4dd04be357ec0cbbf125a3da5e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1241,16 +1224,15 @@ Exception - The account is not authorized to write to the table.</para><para>Exa
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
@@ -1259,11 +1241,11 @@ Exception - The account is not authorized to write to the table.</para><para>Exa
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1683" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1683" bodyend="1725"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1665" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1665" bodyend="1707"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a4b3556ef69c7faa917f185ae33a34442_1a4b3556ef69c7faa917f185ae33a34442" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1331,35 +1313,34 @@ Exceptions: If called with an invalid precondition, execution is aborted.</para>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.modify(<sp/>itr,<sp/>account<sp/>payer,<sp/>[&amp;](<sp/>auto&amp;<sp/>address<sp/>)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;San<sp/>Luis<sp/>Obispo&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;CA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1790" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1790" bodyend="1794"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1771" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1771" bodyend="1775"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ab44fb8b993970f1b3b7ac5f37cd2d2c9_1ab44fb8b993970f1b3b7ac5f37cd2d2c9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1427,36 +1408,35 @@ Exceptions: If called with an invalid precondition, execution is aborted.</para>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.modify(<sp/>*itr,<sp/>payer,<sp/>[&amp;](<sp/>auto&amp;<sp/>address<sp/>)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;San<sp/>Luis<sp/>Obispo&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;CA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;city<sp/>==<sp/>&quot;San<sp/>Luis<sp/>Obispo&quot;,<sp/>&quot;Address<sp/>not<sp/>modified&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr-&gt;city<sp/>==<sp/>&quot;San<sp/>Luis<sp/>Obispo&quot;,<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>not<sp/>modified&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1860" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1860" bodyend="1913"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1840" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1840" bodyend="1893"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_af05dfe7b56cf37179f76632cf619f0d1_1af05dfe7b56cf37179f76632cf619f0d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const T &amp;</type>
@@ -1496,31 +1476,30 @@ Exception - No object matches the given key</para><para>Example:</para><para><pr
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>user<sp/>=<sp/>addresses.get(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(user.first_name<sp/>==<sp/>&quot;Daniel&quot;,<sp/>&quot;Couldn&apos;t<sp/>get<sp/>him.&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>user<sp/>=<sp/>addresses.get(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(user.first_name<sp/>==<sp/>&quot;Daniel&quot;,<sp/>&quot;Lock<sp/>arf,<sp/>Couldn&apos;t<sp/>get<sp/>him.&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="1962" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1962" bodyend="1966"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1941" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1941" bodyend="1945"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -1555,31 +1534,30 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Couldn&apos;t<sp/>get<sp/>him.&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Everting<sp/>Lock<sp/>arf,<sp/>Couldn&apos;t<sp/>get<sp/>him.&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="2013" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2013" bodyend="2025"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="1991" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="1991" bodyend="2003"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_a8a65dee974002fd6324e72a0a978fddf_1a8a65dee974002fd6324e72a0a978fddf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -1617,7 +1595,7 @@ Example:</para><para><programlisting><codeline><highlight class="normal">#includ
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="2036" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2036" bodyend="2048"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="2014" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2014" bodyend="2026"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ad28ac8d91e9af22cbbc12962a805d253_1ad28ac8d91e9af22cbbc12962a805d253" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
@@ -1656,33 +1634,32 @@ Exceptions: The object to be removed is not in the table. The action is not auth
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Address<sp/>for<sp/>account<sp/>not<sp/>found&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.erase(<sp/>itr<sp/>);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Address<sp/>not<sp/>erased<sp/>properly&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Everting<sp/>lock<sp/>arf,<sp/>Address<sp/>not<sp/>erased<sp/>properly&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 <codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="2108" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2108" bodyend="2117"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="2085" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2085" bodyend="2094"/>
       </memberdef>
       <memberdef kind="function" id="classeosio_1_1multi__index_ac5f84064eacb4265ad44f15cecebb4be_1ac5f84064eacb4265ad44f15cecebb4be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1720,41 +1697,40 @@ Exceptions: The object to be removed is not in the table. The action is not auth
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>city;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>string<sp/>state;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>account_name;<sp/>}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>address,<sp/>(account_name)(first_name)(last_name)(street)(city)(state)<sp/>)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>self):contract(self)<sp/>{}</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>N(address),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>addressbook(name<sp/>receiver,<sp/>name<sp/>code,<sp/>datastream&lt;const<sp/>char*&gt;<sp/>ds):contract(receiver,<sp/>code,<sp/>ds)<sp/>{}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>typedef<sp/>eosio::multi_index&lt;<sp/>name(&quot;address&quot;),<sp/>address<sp/>&gt;<sp/>address_index;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>address_index<sp/>addresses(_self,<sp/>_self.value);<sp/>//<sp/>code,<sp/>scope</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>add<sp/>to<sp/>table,<sp/>first<sp/>argument<sp/>is<sp/>account<sp/>to<sp/>bill<sp/>for<sp/>storage</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.emplace(_self,<sp/>[&amp;](auto&amp;<sp/>address)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>N(dan);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.account_name<sp/>=<sp/>name(&quot;dan&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.first_name<sp/>=<sp/>&quot;Daniel&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.last_name<sp/>=<sp/>&quot;Larimer&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.street<sp/>=<sp/>&quot;1<sp/>EOS<sp/>Way&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.city<sp/>=<sp/>&quot;Blacksburg&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>address.state<sp/>=<sp/>&quot;VA&quot;;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Record<sp/>is<sp/>not<sp/>found&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>!=<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Record<sp/>is<sp/>not<sp/>found&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>addresses.erase(*itr);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr<sp/>=<sp/>addresses.find(N(dan));</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.end(),<sp/>&quot;Record<sp/>is<sp/>not<sp/>deleted&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>itr<sp/>=<sp/>addresses.find(name(&quot;dan&quot;));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eosio_assert(itr<sp/>==<sp/>addresses.end(),<sp/>&quot;Lock<sp/>arf,<sp/>Record<sp/>is<sp/>not<sp/>deleted&quot;);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal">EOSIO_ABI(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_DISPATCH(<sp/>addressbook,<sp/>(myaction)<sp/>)</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="libraries/eosiolib/multi_index.hpp" line="2176" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2176" bodyend="2205"/>
+        <location file="libraries/eosiolib/multi_index.hpp" line="2152" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="2152" bodyend="2181"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="libraries/eosiolib/multi_index.hpp" line="248" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="247" bodyend="2207"/>
+    <location file="libraries/eosiolib/multi_index.hpp" line="248" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="247" bodyend="2183"/>
     <listofallmembers>
       <member refid="classeosio_1_1multi__index_1a170b18041c86014bf85de0e6392b7b94" prot="private" virt="non-virtual"><scope>eosio::multi_index</scope><name>_code</name></member>
       <member refid="classeosio_1_1multi__index_1a4ffdf846dc2640c6b50fe88a49197219" prot="private" virt="non-virtual"><scope>eosio::multi_index</scope><name>_indices</name></member>

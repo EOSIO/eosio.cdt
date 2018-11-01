@@ -20,8 +20,6 @@ Defines C++ wrapper to log/print text messages. [More...](#detailed-description)
 |static iostream|[**cout**](group__console.md#gaed9b7380e114191d3dac1857b35e3da2)|
 
 
-## Functions
-
 ## Detailed Description
 
 This API uses C++ variadic templates and type detection to make it easy to print any native type. You can even overload the `` method for your own custom types.

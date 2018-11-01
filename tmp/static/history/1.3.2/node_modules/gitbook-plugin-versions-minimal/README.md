@@ -1,4 +1,4 @@
-## gitbook-plugin-versions-select
+## gitbook-plugin-versions-minimal
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -17,7 +17,7 @@ Put this in your book.json:
 
 ```js
 {
-  "plugins": [ "versions-select" ],
+  "plugins": [ "versions-minimal" ],
   "pluginsConfig": {
     "versions": {
       "gitbookConfigURL": "https://raw.githubusercontent.com/prescottprue/react-redux-firebase/v2.0.0/book.json",
@@ -59,10 +59,10 @@ Original work by @mjackson.
 Apache 2
 
 
-[npm-image]: https://img.shields.io/npm/v/gitbook-plugin-versions-select.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/gitbook-plugin-versions-select
-[npm-downloads-image]: https://img.shields.io/npm/dm/gitbook-plugin-versions-select.svg?style=flat-square
-[license-image]: https://img.shields.io/npm/l/gitbook-plugin-versions-select.svg?style=flat-square
-[license-url]: https://github.com/prescottprue/gitbook-plugin-versions-select/blob/master/LICENSE
+[npm-image]: https://img.shields.io/npm/v/gitbook-plugin-versions-minimal.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/gitbook-plugin-versions-minimal
+[npm-downloads-image]: https://img.shields.io/npm/dm/gitbook-plugin-versions-minimal.svg?style=flat-square
+[license-image]: https://img.shields.io/npm/l/gitbook-plugin-versions-minimal.svg?style=flat-square
+[license-url]: https://github.com/prescottprue/gitbook-plugin-versions-minimal/blob/master/LICENSE
 [code-style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [code-style-url]: http://standardjs.com/

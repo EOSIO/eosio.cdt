@@ -8,8 +8,6 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**\_datastream\_detail**](namespaceeosio_1_1__datastream__detail.md)
 
 
-## Functions
-
 |Type|Name|
 |-----|-----|
 |constexpr bool|[**is\_pointer**](namespaceeosio_1_1__datastream__detail_a756af9772c5c98915bbdacafa7165278.md#1a756af9772c5c98915bbdacafa7165278) () <br>Check if type T is a pointer. |

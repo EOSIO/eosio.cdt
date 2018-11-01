@@ -13,10 +13,6 @@ Fixed size key sorted lexicographically for Multi Index Table.
 |class|[**eosio::fixed\_key**](classeosio_1_1fixed__key.md)|
 
 
-## Typedefs
-
-## Functions
-
 ## Typedefs Documentation
 
 ### typedef <a id="ga9ae210ffc1e7d1e4f1514431b26aa3d1" href="#ga9ae210ffc1e7d1e4f1514431b26aa3d1">key256</a>

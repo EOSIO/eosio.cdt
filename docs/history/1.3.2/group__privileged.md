@@ -12,8 +12,6 @@ search:
 |struct|[**eosio::blockchain\_parameters**](structeosio_1_1blockchain__parameters.md)|
 
 
-## Functions
-
 ## Detailed Description
 
 Defines C++ Privileged API 

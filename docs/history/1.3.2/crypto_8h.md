@@ -6,8 +6,6 @@ search:
 # file crypto.h
 
 **[Go to the source code of this file.](crypto_8h_source.md)**
-## Functions
-
 |Type|Name|
 |-----|-----|
 |void|[**assert\_sha256**](group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb.md#ga72b4fe70a6c503bf37ccf7285e03d4bb) (const char \* data, uint32\_t length, const capi\_checksum256 \* hash) <br>Tests if the sha256 hash generated from data matches the provided checksum. |

@@ -1004,6 +1004,8 @@
   </compound>
   <compound refid="group__fixed__point" kind="group"><name>fixed_point</name>
   </compound>
+  <compound refid="group__multiindex" kind="group"><name>multiindex</name>
+  </compound>
   <compound refid="group__console" kind="group"><name>console</name>
     <member refid="group__console_1gaed9b7380e114191d3dac1857b35e3da2" kind="variable"><name>cout</name></member>
     <member refid="group__console_gaa0a56fe314d032d027a1565d93a68b21_1gaa0a56fe314d032d027a1565d93a68b21" kind="function"><name>print</name></member>
@@ -1230,8 +1232,6 @@
   </compound>
   <compound refid="group__dispatcher" kind="group"><name>dispatcher</name>
     <member refid="group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9_1ga8c4928c29096799ef6ddabf148dc9cf9" kind="function"><name>execute_action</name></member>
-  </compound>
-  <compound refid="group__multi__index" kind="group"><name>multi_index</name>
   </compound>
   <compound refid="group__privileged" kind="group"><name>privileged</name>
     <member refid="group__privileged_ga4b6f34ade1f06f6583b4a17738bebe0c_1ga4b6f34ade1f06f6583b4a17738bebe0c" kind="function"><name>set_blockchain_parameters</name></member>

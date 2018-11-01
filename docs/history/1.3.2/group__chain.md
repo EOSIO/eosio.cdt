@@ -6,8 +6,6 @@ search:
 # group chain
 
 Defines C API for querying internal chain state. 
-## Functions
-
 ## Functions Documentation
 
 ### function <a id="gafb1878d4d55d275a1729f44ecc72848a" href="#gafb1878d4d55d275a1729f44ecc72848a">get\_active\_producers</a>

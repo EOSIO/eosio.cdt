@@ -6,8 +6,6 @@ search:
 # group dispatcher
 
 Defines C++ functions to dispatch action to proper action handler inside a contract. [More...](#detailed-description)
-## Functions
-
 ## Detailed Description
 
 Convenient macro to create contract apply handler.

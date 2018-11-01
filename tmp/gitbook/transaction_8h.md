@@ -6,8 +6,6 @@ search:
 # file transaction.h
 
 **[Go to the source code of this file.](transaction_8h_source.md)**
-## Functions
-
 |Type|Name|
 |-----|-----|
 |void|[**send\_deferred**](group__transaction__c_ga07e6ca6c01d86389ee6a09bbc79d5771.md#ga07e6ca6c01d86389ee6a09bbc79d5771) (const uint128\_t & sender\_id, **[capi\_name](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)** payer, const char \* serialized\_transaction, size\_t size, uint32\_t replace\_existing = 0) <br>Sends a deferred transaction. |

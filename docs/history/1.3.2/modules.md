@@ -1,6 +1,6 @@
 ---
 search:
-    keywords: ['Compiler_builtins', 'action', 'asset', 'chain', 'console', 'contract', 'crypto', 'database', 'datastream', 'dispatcher', 'fixed_key', 'fixed_point', 'multi_index', 'privileged', 'singleton', 'symbol', 'time', 'transaction', 'transaction_c', 'types']
+    keywords: ['Compiler_builtins', 'action', 'asset', 'chain', 'console', 'contract', 'crypto', 'database', 'datastream', 'dispatcher', 'fixed_key', 'fixed_point', 'multiindex', 'privileged', 'singleton', 'symbol', 'time', 'transaction', 'transaction_c', 'types']
 ---
 
 # Modules
@@ -18,7 +18,7 @@ Here is a list of all modules:
 * **[dispatcher](group__dispatcher.md)** Defines C++ functions to dispatch action to proper action handler inside a contract. 
 * **[fixed\_key](group__fixed__key.md)** Fixed size key sorted lexicographically for Multi Index Table. 
 * **[fixed\_point](group__fixed__point.md)** 32,64,128,256 bits version of fixed point variables 
-* **[multi\_index](group__multi__index.md)** Defines EOSIO Multi Index Table. 
+* **[multiindex](group__multiindex.md)** Defines EOSIO Multi Index Table. 
 * **[privileged](group__privileged.md)** 
 * **[singleton](group__singleton.md)** Defines EOSIO Singleton Table. 
 * **[symbol](group__symbol.md)** Defines CPP API for managing symbols. 

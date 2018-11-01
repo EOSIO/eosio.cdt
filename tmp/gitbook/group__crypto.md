@@ -6,8 +6,6 @@ search:
 # group crypto
 
 Defines C API for calculating and checking hash. 
-## Functions
-
 ## Functions Documentation
 
 ### function <a id="ga72b4fe70a6c503bf37ccf7285e03d4bb" href="#ga72b4fe70a6c503bf37ccf7285e03d4bb">assert\_sha256</a>

@@ -139,7 +139,7 @@
                 <a href="modules.html">
             
                     
-                    API
+                    API Reference
             
                 </a>
             
@@ -304,12 +304,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.13" data-path="group__multi__index.html">
+        <li class="chapter " data-level="1.2.13" data-path="group__multiindex.html">
             
-                <a href="group__multi__index.html">
+                <a href="group__multiindex.html">
             
                     
-                    Multi index
+                    Multiindex
             
                 </a>
             
@@ -413,9 +413,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="tmp/gitbook/index.md">
+        <li class="chapter " data-level="1.3" data-path="classes.html">
             
-                <span>
+                <a href="classes.html">
             
                     
                     Browse
@@ -2347,9 +2347,9 @@
 <p>Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created. </p>
 <p><strong>Post</strong></p>
 <p>The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.</p>
-<p>Notes The <code>` template has template parameters</code><uint64\_t tablename,="" typename="" t,="" typename...="" indices="">`, where:</uint64\_t></p>
+<p>Notes The <code>` template has template parameters</code>&lt;`, where:</p>
 <ul>
-<li><code>TableName</code> is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the &quot;.&quot; (period) character;</li>
+<li><code>TableName</code> is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the &quot;.&quot; (period) character and is converted to a eosio::raw - which wraps uint64_t;</li>
 <li><code>T</code> is the object type (i.e., row definition);</li>
 <li><code>Indices</code> is a list of up to 16 secondary indices.</li>
 <li>Each must be a default constructable class or struct</li>
@@ -2369,16 +2369,15 @@
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-getcode">function <a id="1a6ef0fb806ad6edf50b670a115fc3d5a1" href="#1a6ef0fb806ad6edf50b670a115fc3d5a1">get_code</a></h3>
 <pre><code class="lang-cpp">name eosio::multi_index::get_code () <span class="hljs-keyword">const</span>
@@ -2400,17 +2399,16 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;const char*&gt; ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index&lt; name(&quot;address&quot;), address &gt; address_index;
     void myaction() {
-      address_index addresses(N(dan), N(dan)); // code, scope
-      eosio_assert(addresses.get_code() == N(dan), &quot;Codes don&apos;t match.&quot;);
+      address_index addresses(name(&quot;dan&quot;), name(&quot;dan&quot;).value); // code, scope
+      eosio_assert(addresses.get_code() == name(&quot;dan&quot;), &quot;Lock arf, Codes don&apos;t match.&quot;);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-getscope">function <a id="1a0690e9e9a30254240fa0cb6bb12bebf3" href="#1a0690e9e9a30254240fa0cb6bb12bebf3">get_scope</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">uint64_t</span> eosio::multi_index::get_scope () <span class="hljs-keyword">const</span>
@@ -2432,17 +2430,16 @@ class addressbook: contract {
      string city;
      string state;
      uint64_t primary_key() const { return account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   public:
-    addressbook(name self):contract(self) {}
-    typedef eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;const char*&gt; ds):contract(receiver, code, ds) {}
+    typedef eosio::multi_index&lt; name(&quot;address&quot;), address &gt; address_index;
     void myaction() {
-      address_index addresses(N(dan), N(dan)); // code, scope
-      eosio_assert(addresses.get_code() == N(dan), &quot;Scopes don&apos;t match&quot;);
+      address_index addresses(name(&quot;dan&quot;), name(&quot;dan&quot;).value); // code, scope
+      eosio_assert(addresses.get_scope() == name(&quot;dan&quot;).value, &quot;Lock arf, Scopes don&apos;t match&quot;);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-cbegin">function <a id="1a36ad6b1c1013b6f753660b334de96aef" href="#1a36ad6b1c1013b6f753660b334de96aef">cbegin</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::cbegin () <span class="hljs-keyword">const</span>
@@ -2464,27 +2461,26 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.cbegin(), <span class="hljs-string">&quot;Only address is not at front.&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr == addresses.cbegin(), <span class="hljs-string">&quot;Lock arf, Only address is not at front.&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-begin">function <a id="1a060b08a9da300e3a4ab669b35f07c9bc" href="#1a060b08a9da300e3a4ab669b35f07c9bc">begin</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::begin () <span class="hljs-keyword">const</span>
@@ -2506,24 +2502,23 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.begin(), <span class="hljs-string">&quot;Only address is not at front.&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr == addresses.begin(), <span class="hljs-string">&quot;Lock arf, Only address is not at front.&quot;</span>);
     }
 }
 EOSIO_ABI( addressbook, (myaction) )
@@ -2548,27 +2543,26 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.cend(), <span class="hljs-string">&quot;Address for account doesn&apos;t exist&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.cend(), <span class="hljs-string">&quot;Lock arf, Address for account doesn&apos;t exist&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-end">function <a id="1a748fcb4d6a08962ad8a7c92da359e3d7" href="#1a748fcb4d6a08962ad8a7c92da359e3d7">end</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::end () <span class="hljs-keyword">const</span>
@@ -2590,27 +2584,26 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Address for account doesn&apos;t exist&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Lock arf, Address for account doesn&apos;t exist&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-crbegin">function <a id="1abe296816f75cdb69e6698724e7b0c29d" href="#1abe296816f75cdb69e6698724e7b0c29d">crbegin</a></h3>
 <pre><code class="lang-cpp">const_reverse_iterator eosio::multi_index::crbegin () <span class="hljs-keyword">const</span>
@@ -2632,16 +2625,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2649,7 +2641,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2657,12 +2649,12 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;HK&quot;</span>;
       });
       <span class="hljs-keyword">auto</span> itr = addresses.crbegin();
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Last Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Last Record &quot;</span>);
       itr++;
-      eosio_assert(itr-&gt;account_name == N(brendan), <span class="hljs-string">&quot;Incorrect Second Last Record&quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;brendan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Second Last Record&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-rbegin">function <a id="1acdc14cc71a43489507341d2709696e7d" href="#1acdc14cc71a43489507341d2709696e7d">rbegin</a></h3>
 <pre><code class="lang-cpp">const_reverse_iterator eosio::multi_index::rbegin () <span class="hljs-keyword">const</span>
@@ -2684,16 +2676,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2701,7 +2692,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2709,12 +2700,12 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;HK&quot;</span>;
       });
       <span class="hljs-keyword">auto</span> itr = addresses.rbegin();
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Last Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Last Record &quot;</span>);
       itr++;
-      eosio_assert(itr-&gt;account_name == N(brendan), <span class="hljs-string">&quot;Incorrect Second Last Record&quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;brendan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Second Last Record&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-crend">function <a id="1a6ce680bcec3a391e0ad89a1cd1143231" href="#1a6ce680bcec3a391e0ad89a1cd1143231">crend</a></h3>
 <pre><code class="lang-cpp">const_reverse_iterator eosio::multi_index::crend () <span class="hljs-keyword">const</span>
@@ -2736,16 +2727,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2753,7 +2743,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2762,12 +2752,12 @@ EOSIO_ABI( addressbook, (myaction) )
       });
       <span class="hljs-keyword">auto</span> itr = addresses.crend();
       itr--;
-      eosio_assert(itr-&gt;account_name == N(brendan), <span class="hljs-string">&quot;Incorrect First Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;brendan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect First Record &quot;</span>);
       itr--;
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Second Record&quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Second Record&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-rend">function <a id="1a659b2744975d0a54162c44fbcbc28115" href="#1a659b2744975d0a54162c44fbcbc28115">rend</a></h3>
 <pre><code class="lang-cpp">const_reverse_iterator eosio::multi_index::rend () <span class="hljs-keyword">const</span>
@@ -2789,16 +2779,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2806,7 +2795,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2815,12 +2804,12 @@ EOSIO_ABI( addressbook, (myaction) )
       });
       <span class="hljs-keyword">auto</span> itr = addresses.rend();
       itr--;
-      eosio_assert(itr-&gt;account_name == N(brendan), <span class="hljs-string">&quot;Incorrect First Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;brendan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect First Record &quot;</span>);
       itr--;
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Second Record&quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Second Record&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-lowerbound">function <a id="1aa642a184ce729f91bc70200ba2a55253" href="#1aa642a184ce729f91bc70200ba2a55253">lower_bound</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::lower_bound (
@@ -2850,16 +2839,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-keyword">uint32_t</span> zip = <span class="hljs-number">0</span>;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
      <span class="hljs-keyword">uint64_t</span> by_zip() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address, indexed_by&lt; N(zip), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address, indexed_by&lt; name(<span class="hljs-string">&quot;zip&quot;</span>), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2868,7 +2856,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93446</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2877,16 +2865,16 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93445</span>;
       });
       <span class="hljs-keyword">uint32_t</span> zipnumb = <span class="hljs-number">93445</span>;
-      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;N(zip)&gt;();
+      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;name(<span class="hljs-string">&quot;zip&quot;</span>)&gt;();
       <span class="hljs-keyword">auto</span> itr = zip_index.lower_bound(zipnumb);
-      eosio_assert(itr-&gt;account_name == N(brendan), <span class="hljs-string">&quot;Incorrect First Lower Bound Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;brendan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect First Lower Bound Record &quot;</span>);
       itr++;
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Second Lower Bound Record&quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Second Lower Bound Record&quot;</span>);
       itr++;
-      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Incorrect End of Iterator&quot;</span>);
+      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Lock arf, Incorrect End of Iterator&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-upperbound">function <a id="1a5a9f1b25fd64a2bdb163f97ca97eb371" href="#1a5a9f1b25fd64a2bdb163f97ca97eb371">upper_bound</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::upper_bound (
@@ -2917,16 +2905,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-keyword">uint64_t</span> liked = <span class="hljs-number">0</span>;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
      <span class="hljs-keyword">uint64_t</span> by_zip() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address, indexed_by&lt; N(zip), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address, indexed_by&lt; name(<span class="hljs-string">&quot;zip&quot;</span>), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2935,7 +2922,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93446</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -2944,14 +2931,14 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93445</span>;
       });
       <span class="hljs-keyword">uint32_t</span> zipnumb = <span class="hljs-number">93445</span>;
-      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;N(zip)&gt;();
+      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;name(<span class="hljs-string">&quot;zip&quot;</span>)&gt;();
       <span class="hljs-keyword">auto</span> itr = zip_index.upper_bound(zipnumb);
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect First Upper Bound Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect First Upper Bound Record &quot;</span>);
       itr++;
-      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Incorrect End of Iterator&quot;</span>);
+      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Lock arf, Incorrect End of Iterator&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-availableprimarykey">function <a id="1a1b2d26324eb34354f5db2abcf2d87853" href="#1a1b2d26324eb34354f5db2abcf2d87853">available_primary_key</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">uint64_t</span> eosio::multi_index::available_primary_key () <span class="hljs-keyword">const</span>
@@ -2974,13 +2961,12 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> key; }
-     EOSLIB_SERIALIZE( address, (key)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
         address.key = addresses.available_primary_key();
@@ -2992,7 +2978,7 @@ Example:</p>
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-getindex-12">function <a id="1a98fecc3166ebb3746ee810f7f7d9beac" href="#1a98fecc3166ebb3746ee810f7f7d9beac">get_index (1/2)</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">auto</span> eosio::multi_index::get_index ()
@@ -3020,16 +3006,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-keyword">uint32_t</span> zip = <span class="hljs-number">0</span>;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
      <span class="hljs-keyword">uint64_t</span> by_zip() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address, indexed_by&lt; N(zip), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address, indexed_by&lt; name(<span class="hljs-string">&quot;zip&quot;</span>), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>;  <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>;  <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3038,12 +3023,12 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93446</span>;
       });
       <span class="hljs-keyword">uint32_t</span> zipnumb = <span class="hljs-number">93446</span>;
-      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;N(zip)&gt;();
+      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;name(<span class="hljs-string">&quot;zip&quot;</span>)&gt;();
       <span class="hljs-keyword">auto</span> itr = zip_index.find(zipnumb);
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect Record &quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-getindex-22">function <a id="1ae6e01877b9862c8193df27f05c305f2c" href="#1ae6e01877b9862c8193df27f05c305f2c">get_index (2/2)</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">auto</span> eosio::multi_index::get_index () <span class="hljs-keyword">const</span>
@@ -3071,16 +3056,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-keyword">uint32_t</span> zip = <span class="hljs-number">0</span>;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
      <span class="hljs-keyword">uint64_t</span> by_zip() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address, indexed_by&lt; N(zip), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address, indexed_by&lt; name(<span class="hljs-string">&quot;zip&quot;</span>), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3089,7 +3073,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93446</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3098,14 +3082,14 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93445</span>;
       });
       <span class="hljs-keyword">uint32_t</span> zipnumb = <span class="hljs-number">93445</span>;
-      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;N(zip)&gt;();
+      <span class="hljs-keyword">auto</span> zip_index = addresses.get_index&lt;name(<span class="hljs-string">&quot;zip&quot;</span>)&gt;();
       <span class="hljs-keyword">auto</span> itr = zip_index.upper_bound(zipnumb);
-      eosio_assert(itr-&gt;account_name == N(dan), <span class="hljs-string">&quot;Incorrect First Upper Bound Record &quot;</span>);
+      eosio_assert(itr-&gt;account_name == name(<span class="hljs-string">&quot;dan&quot;</span>), <span class="hljs-string">&quot;Lock arf, Incorrect First Upper Bound Record &quot;</span>);
       itr++;
-      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Incorrect End of Iterator&quot;</span>);
+      eosio_assert(itr == zip_index.end(), <span class="hljs-string">&quot;Lock arf, Incorrect End of Iterator&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-iteratorto">function <a id="1ad611e3ff51efdf038b934138d071cf83" href="#1ad611e3ff51efdf038b934138d071cf83">iterator_to</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::iterator_to (
@@ -3135,16 +3119,15 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-keyword">uint32_t</span> zip = <span class="hljs-number">0</span>;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
      <span class="hljs-keyword">uint64_t</span> by_zip() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> zip; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state)(zip) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address, indexed_by&lt; N(zip), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address, indexed_by&lt; name(<span class="hljs-string">&quot;zip&quot;</span>), const_mem_fun&lt;address, <span class="hljs-keyword">uint64_t</span>, &amp;address::by_zip&gt; &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3153,7 +3136,7 @@ EOSIO_ABI( addressbook, (myaction) )
         address.zip = <span class="hljs-number">93446</span>;
       });
       addresses.emplace(payer, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(brendan);
+        address.account_name = name(<span class="hljs-string">&quot;brendan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Brendan&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Blumer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3161,12 +3144,12 @@ EOSIO_ABI( addressbook, (myaction) )
         address.state = <span class="hljs-string">&quot;HK&quot;</span>;
         address.zip = <span class="hljs-number">93445</span>;
       });
-      <span class="hljs-keyword">auto</span> user = addresses.get(N(dan));
-      <span class="hljs-keyword">auto</span> itr = address.find(N(dan));
-      eosio_assert(iterator_to(user) == itr, <span class="hljs-string">&quot;Invalid iterator&quot;</span>);
+      <span class="hljs-keyword">auto</span> user = addresses.get(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      <span class="hljs-keyword">auto</span> itr = address.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(iterator_to(user) == itr, <span class="hljs-string">&quot;Lock arf, Invalid iterator&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-emplace">function <a id="1ab64fbf4dd04be357ec0cbbf125a3da5e" href="#1ab64fbf4dd04be357ec0cbbf125a3da5e">emplace</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::emplace (
@@ -3205,16 +3188,15 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
@@ -3223,7 +3205,7 @@ Example:</p>
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-modify-12">function <a id="1a4b3556ef69c7faa917f185ae33a34442" href="#1a4b3556ef69c7faa917f185ae33a34442">modify (1/2)</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">void</span> eosio::multi_index::modify (
@@ -3268,31 +3250,30 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Address for account not found&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Lock arf, Address for account not found&quot;</span>);
       addresses.modify( itr, account payer, [&amp;]( <span class="hljs-keyword">auto</span>&amp; address ) {
         address.city = <span class="hljs-string">&quot;San Luis Obispo&quot;</span>;
         address.state = <span class="hljs-string">&quot;CA&quot;</span>;
       });
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-modify-22">function <a id="1ab44fb8b993970f1b3b7ac5f37cd2d2c9" href="#1ab44fb8b993970f1b3b7ac5f37cd2d2c9">modify (2/2)</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">void</span> eosio::multi_index::modify (
@@ -3337,32 +3318,31 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Address for account not found&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Lock arf, Address for account not found&quot;</span>);
       addresses.modify( *itr, payer, [&amp;]( <span class="hljs-keyword">auto</span>&amp; address ) {
         address.city = <span class="hljs-string">&quot;San Luis Obispo&quot;</span>;
         address.state = <span class="hljs-string">&quot;CA&quot;</span>;
       });
-      eosio_assert(itr-&gt;city == <span class="hljs-string">&quot;San Luis Obispo&quot;</span>, <span class="hljs-string">&quot;Address not modified&quot;</span>);
+      eosio_assert(itr-&gt;city == <span class="hljs-string">&quot;San Luis Obispo&quot;</span>, <span class="hljs-string">&quot;Lock arf, Address not modified&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-get">function <a id="1af05dfe7b56cf37179f76632cf619f0d1" href="#1af05dfe7b56cf37179f76632cf619f0d1">get</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">const</span> T &amp; eosio::multi_index::get (
@@ -3392,27 +3372,26 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> user = addresses.get(N(dan));
-      eosio_assert(user.first_name == <span class="hljs-string">&quot;Daniel&quot;</span>, <span class="hljs-string">&quot;Couldn&apos;t get him.&quot;</span>);
+      <span class="hljs-keyword">auto</span> user = addresses.get(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(user.first_name == <span class="hljs-string">&quot;Daniel&quot;</span>, <span class="hljs-string">&quot;Lock arf, Couldn&apos;t get him.&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-find">function <a id="1a40a65cdfcc298b85e0e4ddf4c3581c1c" href="#1a40a65cdfcc298b85e0e4ddf4c3581c1c">find</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::find (
@@ -3440,27 +3419,26 @@ EOSIO_ABI( addressbook, (myaction) )
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Couldn&apos;t get him.&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Everting Lock arf, Couldn&apos;t get him.&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <h3 id="function-requirefind">function <a id="1a8a65dee974002fd6324e72a0a978fddf" href="#1a8a65dee974002fd6324e72a0a978fddf">require_find</a></h3>
 <pre><code class="lang-cpp">const_iterator eosio::multi_index::require_find (
@@ -3512,26 +3490,25 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Address for account not found&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Lock arf, Address for account not found&quot;</span>);
       addresses.erase( itr );
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Address not erased properly&quot;</span>);
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Everting lock arf, Address not erased properly&quot;</span>);
     }
 }
 EOSIO_ABI( addressbook, (myaction) )
@@ -3569,30 +3546,29 @@ Example:</p>
      <span class="hljs-built_in">string</span> city;
      <span class="hljs-built_in">string</span> state;
      <span class="hljs-keyword">uint64_t</span> primary_key() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> account_name; }
-     EOSLIB_SERIALIZE( address, (account_name)(first_name)(last_name)(street)(city)(state) )
   };
   <span class="hljs-keyword">public</span>:
-    addressbook(name self):contract(self) {}
-    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; N(address), address &gt; address_index;
+    addressbook(name receiver, name code, datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; ds):contract(receiver, code, ds) {}
+    <span class="hljs-keyword">typedef</span> eosio::multi_index&lt; name(<span class="hljs-string">&quot;address&quot;</span>), address &gt; address_index;
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myaction</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self)</span></span>; <span class="hljs-comment">// code, scope</span>
+      <span class="hljs-function">address_index <span class="hljs-title">addresses</span><span class="hljs-params">(_self, _self.value)</span></span>; <span class="hljs-comment">// code, scope</span>
       <span class="hljs-comment">// add to table, first argument is account to bill for storage</span>
       addresses.emplace(_self, [&amp;](<span class="hljs-keyword">auto</span>&amp; address) {
-        address.account_name = N(dan);
+        address.account_name = name(<span class="hljs-string">&quot;dan&quot;</span>);
         address.first_name = <span class="hljs-string">&quot;Daniel&quot;</span>;
         address.last_name = <span class="hljs-string">&quot;Larimer&quot;</span>;
         address.street = <span class="hljs-string">&quot;1 EOS Way&quot;</span>;
         address.city = <span class="hljs-string">&quot;Blacksburg&quot;</span>;
         address.state = <span class="hljs-string">&quot;VA&quot;</span>;
       });
-      <span class="hljs-keyword">auto</span> itr = addresses.find(N(dan));
-      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Record is not found&quot;</span>);
+      <span class="hljs-keyword">auto</span> itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr != addresses.end(), <span class="hljs-string">&quot;Lock arf, Record is not found&quot;</span>);
       addresses.erase(*itr);
-      itr = addresses.find(N(dan));
-      eosio_assert(itr == addresses.end(), <span class="hljs-string">&quot;Record is not deleted&quot;</span>);
+      itr = addresses.find(name(<span class="hljs-string">&quot;dan&quot;</span>));
+      eosio_assert(itr == addresses.end(), <span class="hljs-string">&quot;Lock arf, Record is not deleted&quot;</span>);
     }
 }
-EOSIO_ABI( addressbook, (myaction) )
+EOSIO_DISPATCH( addressbook, (myaction) )
 </code></pre>
 <hr>
 <p>The documentation for this class was generated from the following file: <code>libraries/eosiolib/multi\_index.hpp</code></p>
@@ -3639,7 +3615,7 @@ EOSIO_ABI( addressbook, (myaction) )
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"search":{"keywords":["eosio::multi_index","const_iterator","index","intc","item","item_ptr","const_reverse_iterator","multi_index","get_code","get_scope","cbegin","begin","cend","end","crbegin","rbegin","crend","rend","lower_bound","upper_bound","available_primary_key","get_index","get_index","iterator_to","emplace","modify","modify","get","find","require_find","erase","erase"]},"title":"class multi_index","level":"1.3.5.5.25","depth":4,"next":{"title":"struct const_iterator","level":"1.3.5.5.25.1","depth":5,"path":"structeosio_1_1multi__index_1_1const__iterator.md","ref":"structeosio_1_1multi__index_1_1const__iterator.md","articles":[]},"previous":{"title":"class microseconds","level":"1.3.5.5.24","depth":4,"path":"classeosio_1_1microseconds.md","ref":"classeosio_1_1microseconds.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters"],"pluginsConfig":{"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"localhost:4000/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"EOSIO.CDT","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"classeosio_1_1multi__index.md","mtime":"2018-11-01T02:03:17.548Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-01T02:03:31.094Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"search":{"keywords":["eosio::multi_index","const_iterator","index","intc","item","item_ptr","const_reverse_iterator","multi_index","get_code","get_scope","cbegin","begin","cend","end","crbegin","rbegin","crend","rend","lower_bound","upper_bound","available_primary_key","get_index","get_index","iterator_to","emplace","modify","modify","get","find","require_find","erase","erase"]},"title":"class multi_index","level":"1.3.5.5.25","depth":4,"next":{"title":"struct const_iterator","level":"1.3.5.5.25.1","depth":5,"path":"structeosio_1_1multi__index_1_1const__iterator.md","ref":"structeosio_1_1multi__index_1_1const__iterator.md","articles":[]},"previous":{"title":"class microseconds","level":"1.3.5.5.24","depth":4,"path":"classeosio_1_1microseconds.md","ref":"classeosio_1_1microseconds.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters"],"pluginsConfig":{"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"classeosio_1_1multi__index.md","mtime":"2018-11-01T07:18:09.391Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-01T07:18:18.534Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

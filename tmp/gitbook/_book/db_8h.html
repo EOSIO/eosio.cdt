@@ -139,7 +139,7 @@
                 <a href="modules.html">
             
                     
-                    API
+                    API Reference
             
                 </a>
             
@@ -304,12 +304,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.13" data-path="group__multi__index.html">
+        <li class="chapter " data-level="1.2.13" data-path="group__multiindex.html">
             
-                <a href="group__multi__index.html">
+                <a href="group__multiindex.html">
             
                     
-                    Multi index
+                    Multiindex
             
                 </a>
             
@@ -413,9 +413,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="tmp/gitbook/index.md">
+        <li class="chapter " data-level="1.3" data-path="classes.html">
             
-                <span>
+                <a href="classes.html">
             
                     
                     Browse
@@ -2163,258 +2163,69 @@
                                 
                                 <h1 id="file-dbh">file db.h</h1>
 <p><strong><a href="db_8h_source.md">Go to the source code of this file.</a></strong>
-Defines C API for interfacing with blockchain database. <a href="#detailed-description">More...</a></p>
-<h2 id="functions">Functions</h2>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga3f259dd4be6adc25d95e897b7724bbc4.md#ga3f259dd4be6adc25d95e897b7724bbc4"><strong>db_store_i64</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const void * data, uint32_t len) <br>Store a record in a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_gadfdbc05600fee5ea9d0741fa9ba7cc04.md#gadfdbc05600fee5ea9d0741fa9ba7cc04"><strong>db_update_i64</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const void * data, uint32_t len) <br>Update a record in a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga3b3d2cb9baaffcca277aceafe15f885f.md#ga3b3d2cb9baaffcca277aceafe15f885f"><strong>db_remove_i64</strong></a> (int32_t iterator) <br>Remove a record from a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gae030353968fb545531c5286da8778808.md#gae030353968fb545531c5286da8778808"><strong>db_get_i64</strong></a> (int32_t iterator, const void * data, uint32_t len) <br>Get a record in a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gab8a30f733c6cd6c9111f25adae685899.md#gab8a30f733c6cd6c9111f25adae685899"><strong>db_next_i64</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga2ffe62dd0ab43732ccebc441a2186139.md#ga2ffe62dd0ab43732ccebc441a2186139"><strong>db_previous_i64</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gaa1f2c0990c948f52c5d9d2b7ace3e9c5.md#gaa1f2c0990c948f52c5d9d2b7ace3e9c5"><strong>db_find_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find a table row in a primary 64-bit integer index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga817277bc1a591237ac20e2c6a64242a4.md#ga817277bc1a591237ac20e2c6a64242a4"><strong>db_lowerbound_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gabca89e9c328d8ee50c35f93c6908cbf0.md#gabca89e9c328d8ee50c35f93c6908cbf0"><strong>db_upperbound_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gab755d000538cddee84abbae2ed06f821.md#gab755d000538cddee84abbae2ed06f821"><strong>db_end_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gaf00f39b0c943e762cd13ae1d73172261.md#gaf00f39b0c943e762cd13ae1d73172261"><strong>db_idx64_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint64_t * secondary) <br>Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga118d635a2600ed798478ad829f36abac.md#ga118d635a2600ed798478ad829f36abac"><strong>db_idx64_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint64_t * secondary) <br>Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_gaae117d50bba68c7a1f3b8f8828dc1699.md#gaae117d50bba68c7a1f3b8f8828dc1699"><strong>db_idx64_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga5fc70218dc661865823e57055801df24.md#ga5fc70218dc661865823e57055801df24"><strong>db_idx64_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga243746a77546a54ce85345a537872cb7.md#ga243746a77546a54ce85345a537872cb7"><strong>db_idx64_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga4dcc0485335856945baebf6b5e246c81.md#ga4dcc0485335856945baebf6b5e246c81"><strong>db_idx64_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t primary) <br>Find a table row in a secondary 64-bit integer index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga87ebf49c63616d8f4db298daea4fb1ec.md#ga87ebf49c63616d8f4db298daea4fb1ec"><strong>db_idx64_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint64_t * secondary, uint64_t * primary) <br>Find a table row in a secondary 64-bit integer index table by secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga6a94c6bbb0cc74ca76c6f0fd56c03e2a.md#ga6a94c6bbb0cc74ca76c6f0fd56c03e2a"><strong>db_idx64_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gacf9f8b130509755bb05cc28b974caca4.md#gacf9f8b130509755bb05cc28b974caca4"><strong>db_idx64_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga9596d2d4adea77798e08e7f3a5ac7586.md#ga9596d2d4adea77798e08e7f3a5ac7586"><strong>db_idx64_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga39cc50eac1593784a3c82a5a54d50d4b.md#ga39cc50eac1593784a3c82a5a54d50d4b"><strong>db_idx128_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint128_t * secondary) <br>Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga97763f770a398b600a160ea69ed17cc3.md#ga97763f770a398b600a160ea69ed17cc3"><strong>db_idx128_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint128_t * secondary) <br>Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga60e66048c40043424581fe8e507a353b.md#ga60e66048c40043424581fe8e507a353b"><strong>db_idx128_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gaac074a8b2d42865e7ca1b7932e234655.md#gaac074a8b2d42865e7ca1b7932e234655"><strong>db_idx128_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gae56365d133e8c27ba709121ed1ad0db9.md#gae56365d133e8c27ba709121ed1ad0db9"><strong>db_idx128_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga0c371690e732d2f18e7037e038d4685d.md#ga0c371690e732d2f18e7037e038d4685d"><strong>db_idx128_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t primary) <br>Find a table row in a secondary 128-bit integer index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga157160bb9692e0f1f6a98337e751f713.md#ga157160bb9692e0f1f6a98337e751f713"><strong>db_idx128_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint128_t * secondary, uint64_t * primary) <br>Find a table row in a secondary 128-bit integer index table by secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga32e8a5092c3ad1b31b512e2b240fc8a8.md#ga32e8a5092c3ad1b31b512e2b240fc8a8"><strong>db_idx128_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga00bc640a4a60ac49a07d538af3cadfd8.md#ga00bc640a4a60ac49a07d538af3cadfd8"><strong>db_idx128_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gad7250e200698d82294588a636356c555.md#gad7250e200698d82294588a636356c555"><strong>db_idx128_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga6e8c05d79f751ca250f454b5211fd149.md#ga6e8c05d79f751ca250f454b5211fd149"><strong>db_idx256_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint128_t * data, uint32_t data_len) <br>Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga68a96c6e3358a8efa1a6c0b1ac57fbb2.md#ga68a96c6e3358a8efa1a6c0b1ac57fbb2"><strong>db_idx256_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint128_t * data, uint32_t data_len) <br>Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga08729f61864b60499a55cc226bf9d51f.md#ga08729f61864b60499a55cc226bf9d51f"><strong>db_idx256_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga50b09ae563e297d986852b639fc569c4.md#ga50b09ae563e297d986852b639fc569c4"><strong>db_idx256_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga658db41ae01fd5f9350dead6d90c301e.md#ga658db41ae01fd5f9350dead6d90c301e"><strong>db_idx256_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gab3174c648f526d352dcbc013ac9c7df4.md#gab3174c648f526d352dcbc013ac9c7df4"><strong>db_idx256_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t primary) <br>Find a table row in a secondary 128-bit integer index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga32b944f43d73d2dd8f81d4a8cbf1881a.md#ga32b944f43d73d2dd8f81d4a8cbf1881a"><strong>db_idx256_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find a table row in a secondary 256-bit index table by secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gacb2612415bf82cd5c8363ae8d82b19e7.md#gacb2612415bf82cd5c8363ae8d82b19e7"><strong>db_idx256_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga9be64d138ab8007da86302dc56b54f4b.md#ga9be64d138ab8007da86302dc56b54f4b"><strong>db_idx256_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga6890b5f6167a302e2b1dacdcdac24538.md#ga6890b5f6167a302e2b1dacdcdac24538"><strong>db_idx256_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga0a743bd3d42153ba725f8c7bff79bf2b.md#ga0a743bd3d42153ba725f8c7bff79bf2b"><strong>db_idx_double_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const double * secondary) <br>Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga5652bf74b99632b57e371ba3aaa3e8db.md#ga5652bf74b99632b57e371ba3aaa3e8db"><strong>db_idx_double_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const double * secondary) <br>Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga7879ef20b38df7a936152cd875307002.md#ga7879ef20b38df7a936152cd875307002"><strong>db_idx_double_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga47f20afce175cd339e73bd124b756c8f.md#ga47f20afce175cd339e73bd124b756c8f"><strong>db_idx_double_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga19bc2a710628fd89639c7ffbb8c63607.md#ga19bc2a710628fd89639c7ffbb8c63607"><strong>db_idx_double_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gaa53fb148f8152067cc849a3b3f660794.md#gaa53fb148f8152067cc849a3b3f660794"><strong>db_idx_double_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t primary) <br>Find a table row in a secondary double-precision floating-point index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gab2c538b679cfe4ca8e87cf076beb5f33.md#gab2c538b679cfe4ca8e87cf076beb5f33"><strong>db_idx_double_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const double * secondary, uint64_t * primary) <br>Find a table row in a secondary double-precision floating-point index table by secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gaedc57b6d44b12c4c37f13190fd9b6ef0.md#gaedc57b6d44b12c4c37f13190fd9b6ef0"><strong>db_idx_double_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t * primary) <br>Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga7641eec51617092e0496c9522cbfd00a.md#ga7641eec51617092e0496c9522cbfd00a"><strong>db_idx_double_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t * primary) <br>Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga29878ff539946d778ddcdf8191c421b6.md#ga29878ff539946d778ddcdf8191c421b6"><strong>db_idx_double_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga86b5890f0e33b19be05965b49a31ba89.md#ga86b5890f0e33b19be05965b49a31ba89"><strong>db_idx_long_double_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const long double * secondary) <br>Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_gaf38e68c7cf06346f9e9e4d11eb02296c.md#gaf38e68c7cf06346f9e9e4d11eb02296c"><strong>db_idx_long_double_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const long double * secondary) <br>Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><a href="group__database_ga758aaa59619b46af51e33f823c19af06.md#ga758aaa59619b46af51e33f823c19af06"><strong>db_idx_long_double_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary quadruple-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga715571a131a495836fff374ad2beffd7.md#ga715571a131a495836fff374ad2beffd7"><strong>db_idx_long_double_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_gadebcf8cd357d1ff5f42fa06bd44f4733.md#gadebcf8cd357d1ff5f42fa06bd44f4733"><strong>db_idx_long_double_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga2e60c45b99c33117a86cd36fdb00baac.md#ga2e60c45b99c33117a86cd36fdb00baac"><strong>db_idx_long_double_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t primary) <br>Find a table row in a secondary quadruple-precision floating-point index table by primary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga6b090dce51381f87ce9a9b86329d8576.md#ga6b090dce51381f87ce9a9b86329d8576"><strong>db_idx_long_double_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const long double * secondary, uint64_t * primary) <br>Find a table row in a secondary quadruple-precision floating-point index table by secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga3a6943d41bc35b02a9d4565174993cbd.md#ga3a6943d41bc35b02a9d4565174993cbd"><strong>db_idx_long_double_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t * primary) <br>Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga6a3326debe372bc025b3d12ac06e36b1.md#ga6a3326debe372bc025b3d12ac06e36b1"><strong>db_idx_long_double_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t * primary) <br>Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key.</td>
-</tr>
-<tr>
-<td>int32_t</td>
-<td><a href="group__database_ga3886b3d6d0ab2ac606c52b58c87d7546.md#ga3886b3d6d0ab2ac606c52b58c87d7546"><strong>db_idx_long_double_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table.</td>
-</tr>
-</tbody>
-</table>
+Defines C API for interfacing with blockchain database. <a href="#detailed-description">More...</a>
+|Type|Name|
+|-----|-----|
+|int32_t|<a href="group__database_ga3f259dd4be6adc25d95e897b7724bbc4.md#ga3f259dd4be6adc25d95e897b7724bbc4"><strong>db_store_i64</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const void * data, uint32_t len) <br>Store a record in a primary 64-bit integer index table. |
+|void|<a href="group__database_gadfdbc05600fee5ea9d0741fa9ba7cc04.md#gadfdbc05600fee5ea9d0741fa9ba7cc04"><strong>db_update_i64</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const void * data, uint32_t len) <br>Update a record in a primary 64-bit integer index table. |
+|void|<a href="group__database_ga3b3d2cb9baaffcca277aceafe15f885f.md#ga3b3d2cb9baaffcca277aceafe15f885f"><strong>db_remove_i64</strong></a> (int32_t iterator) <br>Remove a record from a primary 64-bit integer index table. |
+|int32_t|<a href="group__database_gae030353968fb545531c5286da8778808.md#gae030353968fb545531c5286da8778808"><strong>db_get_i64</strong></a> (int32_t iterator, const void * data, uint32_t len) <br>Get a record in a primary 64-bit integer index table. |
+|int32_t|<a href="group__database_gab8a30f733c6cd6c9111f25adae685899.md#gab8a30f733c6cd6c9111f25adae685899"><strong>db_next_i64</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a primary 64-bit integer index table. |
+|int32_t|<a href="group__database_ga2ffe62dd0ab43732ccebc441a2186139.md#ga2ffe62dd0ab43732ccebc441a2186139"><strong>db_previous_i64</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a primary 64-bit integer index table. |
+|int32_t|<a href="group__database_gaa1f2c0990c948f52c5d9d2b7ace3e9c5.md#gaa1f2c0990c948f52c5d9d2b7ace3e9c5"><strong>db_find_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find a table row in a primary 64-bit integer index table by primary key. |
+|int32_t|<a href="group__database_ga817277bc1a591237ac20e2c6a64242a4.md#ga817277bc1a591237ac20e2c6a64242a4"><strong>db_lowerbound_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key. |
+|int32_t|<a href="group__database_gabca89e9c328d8ee50c35f93c6908cbf0.md#gabca89e9c328d8ee50c35f93c6908cbf0"><strong>db_upperbound_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t id) <br>Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key. |
+|int32_t|<a href="group__database_gab755d000538cddee84abbae2ed06f821.md#gab755d000538cddee84abbae2ed06f821"><strong>db_end_i64</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table. |
+|int32_t|<a href="group__database_gaf00f39b0c943e762cd13ae1d73172261.md#gaf00f39b0c943e762cd13ae1d73172261"><strong>db_idx64_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint64_t * secondary) <br>Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table. |
+|void|<a href="group__database_ga118d635a2600ed798478ad829f36abac.md#ga118d635a2600ed798478ad829f36abac"><strong>db_idx64_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint64_t * secondary) <br>Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table. |
+|void|<a href="group__database_gaae117d50bba68c7a1f3b8f8828dc1699.md#gaae117d50bba68c7a1f3b8f8828dc1699"><strong>db_idx64_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 64-bit integer index table. |
+|int32_t|<a href="group__database_ga5fc70218dc661865823e57055801df24.md#ga5fc70218dc661865823e57055801df24"><strong>db_idx64_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 64-bit integer index table. |
+|int32_t|<a href="group__database_ga243746a77546a54ce85345a537872cb7.md#ga243746a77546a54ce85345a537872cb7"><strong>db_idx64_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 64-bit integer index table. |
+|int32_t|<a href="group__database_ga4dcc0485335856945baebf6b5e246c81.md#ga4dcc0485335856945baebf6b5e246c81"><strong>db_idx64_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t primary) <br>Find a table row in a secondary 64-bit integer index table by primary key. |
+|int32_t|<a href="group__database_ga87ebf49c63616d8f4db298daea4fb1ec.md#ga87ebf49c63616d8f4db298daea4fb1ec"><strong>db_idx64_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint64_t * secondary, uint64_t * primary) <br>Find a table row in a secondary 64-bit integer index table by secondary key. |
+|int32_t|<a href="group__database_ga6a94c6bbb0cc74ca76c6f0fd56c03e2a.md#ga6a94c6bbb0cc74ca76c6f0fd56c03e2a"><strong>db_idx64_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key. |
+|int32_t|<a href="group__database_gacf9f8b130509755bb05cc28b974caca4.md#gacf9f8b130509755bb05cc28b974caca4"><strong>db_idx64_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint64_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga9596d2d4adea77798e08e7f3a5ac7586.md#ga9596d2d4adea77798e08e7f3a5ac7586"><strong>db_idx64_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table. |
+|int32_t|<a href="group__database_ga39cc50eac1593784a3c82a5a54d50d4b.md#ga39cc50eac1593784a3c82a5a54d50d4b"><strong>db_idx128_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint128_t * secondary) <br>Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table. |
+|void|<a href="group__database_ga97763f770a398b600a160ea69ed17cc3.md#ga97763f770a398b600a160ea69ed17cc3"><strong>db_idx128_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint128_t * secondary) <br>Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table. |
+|void|<a href="group__database_ga60e66048c40043424581fe8e507a353b.md#ga60e66048c40043424581fe8e507a353b"><strong>db_idx128_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 128-bit integer index table. |
+|int32_t|<a href="group__database_gaac074a8b2d42865e7ca1b7932e234655.md#gaac074a8b2d42865e7ca1b7932e234655"><strong>db_idx128_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 128-bit integer index table. |
+|int32_t|<a href="group__database_gae56365d133e8c27ba709121ed1ad0db9.md#gae56365d133e8c27ba709121ed1ad0db9"><strong>db_idx128_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 128-bit integer index table. |
+|int32_t|<a href="group__database_ga0c371690e732d2f18e7037e038d4685d.md#ga0c371690e732d2f18e7037e038d4685d"><strong>db_idx128_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t primary) <br>Find a table row in a secondary 128-bit integer index table by primary key. |
+|int32_t|<a href="group__database_ga157160bb9692e0f1f6a98337e751f713.md#ga157160bb9692e0f1f6a98337e751f713"><strong>db_idx128_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint128_t * secondary, uint64_t * primary) <br>Find a table row in a secondary 128-bit integer index table by secondary key. |
+|int32_t|<a href="group__database_ga32e8a5092c3ad1b31b512e2b240fc8a8.md#ga32e8a5092c3ad1b31b512e2b240fc8a8"><strong>db_idx128_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga00bc640a4a60ac49a07d538af3cadfd8.md#ga00bc640a4a60ac49a07d538af3cadfd8"><strong>db_idx128_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * secondary, uint64_t * primary) <br>Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key. |
+|int32_t|<a href="group__database_gad7250e200698d82294588a636356c555.md#gad7250e200698d82294588a636356c555"><strong>db_idx128_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table. |
+|int32_t|<a href="group__database_ga6e8c05d79f751ca250f454b5211fd149.md#ga6e8c05d79f751ca250f454b5211fd149"><strong>db_idx256_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const uint128_t * data, uint32_t data_len) <br>Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table. |
+|void|<a href="group__database_ga68a96c6e3358a8efa1a6c0b1ac57fbb2.md#ga68a96c6e3358a8efa1a6c0b1ac57fbb2"><strong>db_idx256_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const uint128_t * data, uint32_t data_len) <br>Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table. |
+|void|<a href="group__database_ga08729f61864b60499a55cc226bf9d51f.md#ga08729f61864b60499a55cc226bf9d51f"><strong>db_idx256_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary 256-bit index table. |
+|int32_t|<a href="group__database_ga50b09ae563e297d986852b639fc569c4.md#ga50b09ae563e297d986852b639fc569c4"><strong>db_idx256_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary 256-bit index table. |
+|int32_t|<a href="group__database_ga658db41ae01fd5f9350dead6d90c301e.md#ga658db41ae01fd5f9350dead6d90c301e"><strong>db_idx256_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary 256-bit index table. |
+|int32_t|<a href="group__database_gab3174c648f526d352dcbc013ac9c7df4.md#gab3174c648f526d352dcbc013ac9c7df4"><strong>db_idx256_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t primary) <br>Find a table row in a secondary 128-bit integer index table by primary key. |
+|int32_t|<a href="group__database_ga32b944f43d73d2dd8f81d4a8cbf1881a.md#ga32b944f43d73d2dd8f81d4a8cbf1881a"><strong>db_idx256_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find a table row in a secondary 256-bit index table by secondary key. |
+|int32_t|<a href="group__database_gacb2612415bf82cd5c8363ae8d82b19e7.md#gacb2612415bf82cd5c8363ae8d82b19e7"><strong>db_idx256_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga9be64d138ab8007da86302dc56b54f4b.md#ga9be64d138ab8007da86302dc56b54f4b"><strong>db_idx256_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, uint128_t * data, uint32_t data_len, uint64_t * primary) <br>Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga6890b5f6167a302e2b1dacdcdac24538.md#ga6890b5f6167a302e2b1dacdcdac24538"><strong>db_idx256_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table. |
+|int32_t|<a href="group__database_ga0a743bd3d42153ba725f8c7bff79bf2b.md#ga0a743bd3d42153ba725f8c7bff79bf2b"><strong>db_idx_double_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const double * secondary) <br>Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table. |
+|void|<a href="group__database_ga5652bf74b99632b57e371ba3aaa3e8db.md#ga5652bf74b99632b57e371ba3aaa3e8db"><strong>db_idx_double_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const double * secondary) <br>Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table. |
+|void|<a href="group__database_ga7879ef20b38df7a936152cd875307002.md#ga7879ef20b38df7a936152cd875307002"><strong>db_idx_double_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary double-precision floating-point index table. |
+|int32_t|<a href="group__database_ga47f20afce175cd339e73bd124b756c8f.md#ga47f20afce175cd339e73bd124b756c8f"><strong>db_idx_double_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary double-precision floating-point index table. |
+|int32_t|<a href="group__database_ga19bc2a710628fd89639c7ffbb8c63607.md#ga19bc2a710628fd89639c7ffbb8c63607"><strong>db_idx_double_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary double-precision floating-point index table. |
+|int32_t|<a href="group__database_gaa53fb148f8152067cc849a3b3f660794.md#gaa53fb148f8152067cc849a3b3f660794"><strong>db_idx_double_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t primary) <br>Find a table row in a secondary double-precision floating-point index table by primary key. |
+|int32_t|<a href="group__database_gab2c538b679cfe4ca8e87cf076beb5f33.md#gab2c538b679cfe4ca8e87cf076beb5f33"><strong>db_idx_double_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const double * secondary, uint64_t * primary) <br>Find a table row in a secondary double-precision floating-point index table by secondary key. |
+|int32_t|<a href="group__database_gaedc57b6d44b12c4c37f13190fd9b6ef0.md#gaedc57b6d44b12c4c37f13190fd9b6ef0"><strong>db_idx_double_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t * primary) <br>Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga7641eec51617092e0496c9522cbfd00a.md#ga7641eec51617092e0496c9522cbfd00a"><strong>db_idx_double_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, double * secondary, uint64_t * primary) <br>Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga29878ff539946d778ddcdf8191c421b6.md#ga29878ff539946d778ddcdf8191c421b6"><strong>db_idx_double_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table. |
+|int32_t|<a href="group__database_ga86b5890f0e33b19be05965b49a31ba89.md#ga86b5890f0e33b19be05965b49a31ba89"><strong>db_idx_long_double_store</strong></a> (uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, uint64_t id, const long double * secondary) <br>Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table. |
+|void|<a href="group__database_gaf38e68c7cf06346f9e9e4d11eb02296c.md#gaf38e68c7cf06346f9e9e4d11eb02296c"><strong>db_idx_long_double_update</strong></a> (int32_t iterator, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> payer, const long double * secondary) <br>Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table. |
+|void|<a href="group__database_ga758aaa59619b46af51e33f823c19af06.md#ga758aaa59619b46af51e33f823c19af06"><strong>db_idx_long_double_remove</strong></a> (int32_t iterator) <br>Remove a table row from a secondary quadruple-precision floating-point index table. |
+|int32_t|<a href="group__database_ga715571a131a495836fff374ad2beffd7.md#ga715571a131a495836fff374ad2beffd7"><strong>db_idx_long_double_next</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table. |
+|int32_t|<a href="group__database_gadebcf8cd357d1ff5f42fa06bd44f4733.md#gadebcf8cd357d1ff5f42fa06bd44f4733"><strong>db_idx_long_double_previous</strong></a> (int32_t iterator, uint64_t * primary) <br>Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table. |
+|int32_t|<a href="group__database_ga2e60c45b99c33117a86cd36fdb00baac.md#ga2e60c45b99c33117a86cd36fdb00baac"><strong>db_idx_long_double_find_primary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t primary) <br>Find a table row in a secondary quadruple-precision floating-point index table by primary key. |
+|int32_t|<a href="group__database_ga6b090dce51381f87ce9a9b86329d8576.md#ga6b090dce51381f87ce9a9b86329d8576"><strong>db_idx_long_double_find_secondary</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, const long double * secondary, uint64_t * primary) <br>Find a table row in a secondary quadruple-precision floating-point index table by secondary key. |
+|int32_t|<a href="group__database_ga3a6943d41bc35b02a9d4565174993cbd.md#ga3a6943d41bc35b02a9d4565174993cbd"><strong>db_idx_long_double_lowerbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t * primary) <br>Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga6a3326debe372bc025b3d12ac06e36b1.md#ga6a3326debe372bc025b3d12ac06e36b1"><strong>db_idx_long_double_upperbound</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table, long double * secondary, uint64_t * primary) <br>Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key. |
+|int32_t|<a href="group__database_ga3886b3d6d0ab2ac606c52b58c87d7546.md#ga3886b3d6d0ab2ac606c52b58c87d7546"><strong>db_idx_long_double_end</strong></a> (<strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> code, uint64_t scope, <strong><a href="types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f">capi_name</a></strong> table) <br>Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table. |</p>
 <h2 id="detailed-description">Detailed Description</h2>
 <p><strong>Copyright</strong></p>
 <p>defined in eos/LICENSE.txt </p>
@@ -3745,7 +3556,7 @@ eosio_assert(end_itr &lt; <span class="hljs-number">-1</span>, <span class="hljs
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"search":{"keywords":["db.h","db_store_i64","db_update_i64","db_remove_i64","db_get_i64","db_next_i64","db_previous_i64","db_find_i64","db_lowerbound_i64","db_upperbound_i64","db_end_i64","db_idx64_store","db_idx64_update","db_idx64_remove","db_idx64_next","db_idx64_previous","db_idx64_find_primary","db_idx64_find_secondary","db_idx64_lowerbound","db_idx64_upperbound","db_idx64_end","db_idx128_store","db_idx128_update","db_idx128_remove","db_idx128_next","db_idx128_previous","db_idx128_find_primary","db_idx128_find_secondary","db_idx128_lowerbound","db_idx128_upperbound","db_idx128_end","db_idx256_store","db_idx256_update","db_idx256_remove","db_idx256_next","db_idx256_previous","db_idx256_find_primary","db_idx256_find_secondary","db_idx256_lowerbound","db_idx256_upperbound","db_idx256_end","db_idx_double_store","db_idx_double_update","db_idx_double_remove","db_idx_double_next","db_idx_double_previous","db_idx_double_find_primary","db_idx_double_find_secondary","db_idx_double_lowerbound","db_idx_double_upperbound","db_idx_double_end","db_idx_long_double_store","db_idx_long_double_update","db_idx_long_double_remove","db_idx_long_double_next","db_idx_long_double_previous","db_idx_long_double_find_primary","db_idx_long_double_find_secondary","db_idx_long_double_lowerbound","db_idx_long_double_upperbound","db_idx_long_double_end"]},"title":"db.h","level":"1.3.6.1.1.15","depth":5,"next":{"title":"db.h - source","level":"1.3.6.1.1.16","depth":5,"path":"db_8h_source.md","ref":"db_8h_source.md","articles":[]},"previous":{"title":"datastream.hpp - source","level":"1.3.6.1.1.14","depth":5,"path":"datastream_8hpp_source.md","ref":"datastream_8hpp_source.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters"],"pluginsConfig":{"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"localhost:4000/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"EOSIO.CDT","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"db_8h.md","mtime":"2018-11-01T02:03:18.849Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-01T02:03:31.094Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"search":{"keywords":["db.h","db_store_i64","db_update_i64","db_remove_i64","db_get_i64","db_next_i64","db_previous_i64","db_find_i64","db_lowerbound_i64","db_upperbound_i64","db_end_i64","db_idx64_store","db_idx64_update","db_idx64_remove","db_idx64_next","db_idx64_previous","db_idx64_find_primary","db_idx64_find_secondary","db_idx64_lowerbound","db_idx64_upperbound","db_idx64_end","db_idx128_store","db_idx128_update","db_idx128_remove","db_idx128_next","db_idx128_previous","db_idx128_find_primary","db_idx128_find_secondary","db_idx128_lowerbound","db_idx128_upperbound","db_idx128_end","db_idx256_store","db_idx256_update","db_idx256_remove","db_idx256_next","db_idx256_previous","db_idx256_find_primary","db_idx256_find_secondary","db_idx256_lowerbound","db_idx256_upperbound","db_idx256_end","db_idx_double_store","db_idx_double_update","db_idx_double_remove","db_idx_double_next","db_idx_double_previous","db_idx_double_find_primary","db_idx_double_find_secondary","db_idx_double_lowerbound","db_idx_double_upperbound","db_idx_double_end","db_idx_long_double_store","db_idx_long_double_update","db_idx_long_double_remove","db_idx_long_double_next","db_idx_long_double_previous","db_idx_long_double_find_primary","db_idx_long_double_find_secondary","db_idx_long_double_lowerbound","db_idx_long_double_upperbound","db_idx_long_double_end"]},"title":"db.h","level":"1.3.6.1.1.15","depth":5,"next":{"title":"db.h - source","level":"1.3.6.1.1.16","depth":5,"path":"db_8h_source.md","ref":"db_8h_source.md","articles":[]},"previous":{"title":"datastream.hpp - source","level":"1.3.6.1.1.14","depth":5,"path":"datastream_8hpp_source.md","ref":"datastream_8hpp_source.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters"],"pluginsConfig":{"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"db_8h.md","mtime":"2018-11-01T07:18:09.917Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-01T07:18:18.534Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
