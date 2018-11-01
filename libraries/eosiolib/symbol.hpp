@@ -176,6 +176,10 @@ namespace eosio {
       : value( (sc.raw() << 8) | static_cast<uint64_t>(precision) )
       {}
 
+      constexpr symbol( std::string_view ss, uint8_t precision )
+      : value( (symbol_code(ss).raw() << 8)  | static_cast<uint64_t>(precision) )
+      {}
+
       /**
        * Is this symbol valid
        */
@@ -258,9 +262,9 @@ namespace eosio {
 
       constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}
 
-      constexpr symbol get_symbol() { return symbol; }
+      constexpr symbol get_symbol() const { return symbol; }
 
-      constexpr name   get_contract() { return contract; }
+      constexpr name   get_contract() const { return contract; }
 
       /**
        * %Print the extended symbol

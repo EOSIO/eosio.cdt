@@ -1,6 +1,6 @@
 SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp condition_variable.cpp functional.cpp
                   future.cpp ios.cpp iostream.cpp locale.cpp memory.cpp mutex.cpp new.cpp optional.cpp
-                  regex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp
+                  regex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp exception.cpp
                   typeinfo.cpp utility.cpp valarray.cpp variant.cpp vector.cpp eosio.cpp)
 
 SET(SRC_FILES "")
