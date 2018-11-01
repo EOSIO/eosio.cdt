@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;</compoundname>
+    <includes refid="action_8hpp" local="no">action.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type><ref refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kindref="member">name::raw</ref></type>
+        <declname>Name</declname>
+        <defname>Name</defname>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>Args</declname>
+        <defname>Args</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a8ccabfd180270a8128685eeaea33c75a_1a8ccabfd180270a8128685eeaea33c75a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;::call</definition>
+        <argsstring>(name code, const permission_level &amp;perm, std::tuple&lt; Args... &gt; args)</argsstring>
+        <name>call</name>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>code</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1permission__level" kindref="compound">permission_level</ref> &amp;</type>
+          <declname>perm</declname>
+        </param>
+        <param>
+          <type>std::tuple&lt; Args... &gt;</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="304" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="304" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a43a9a1084e226ca5e3b8f306174a18ef_1a43a9a1084e226ca5e3b8f306174a18ef" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;::call</definition>
+        <argsstring>(name code, std::vector&lt; permission_level &gt; perms, std::tuple&lt; Args... &gt; args)</argsstring>
+        <name>call</name>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>code</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="structeosio_1_1permission__level" kindref="compound">permission_level</ref> &gt;</type>
+          <declname>perms</declname>
+        </param>
+        <param>
+          <type>std::tuple&lt; Args... &gt;</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="307" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="307" bodyend="309"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/action.hpp" line="303" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="303" bodyend="310"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a8ccabfd180270a8128685eeaea33c75a_1a8ccabfd180270a8128685eeaea33c75a" prot="public" virt="non-virtual"><scope>eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;</scope><name>call</name></member>
+      <member refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a43a9a1084e226ca5e3b8f306174a18ef_1a43a9a1084e226ca5e3b8f306174a18ef" prot="public" virt="non-virtual"><scope>eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;</scope><name>call</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

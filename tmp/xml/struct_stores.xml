@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="struct_stores" kind="struct" language="C++" prot="public">
+    <compoundname>Stores</compoundname>
+    <briefdescription>
+<para><ref refid="struct_stores" kindref="compound">Stores</ref> the symbol code. </para>    </briefdescription>
+    <detaileddescription>
+<para>code </para>    </detaileddescription>
+    <location file="libraries/eosiolib/symbol.hpp" line="24" column="1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

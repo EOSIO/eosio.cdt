@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="eosiolib_8cpp" kind="file" language="C++">
+    <compoundname>eosiolib.cpp</compoundname>
+    <includes refid="datastream_8hpp" local="yes">datastream.hpp</includes>
+    <includes local="yes">memory.hpp</includes>
+    <includes local="no">eosiolib/memory.h</includes>
+    <includes local="no">eosiolib/print.hpp</includes>
+    <includes refid="privileged_8hpp" local="yes">privileged.hpp</includes>
+    <incdepgraph>
+      <node id="271">
+        <label>memory.hpp</label>
+      </node>
+      <node id="275">
+        <label>serialize.hpp</label>
+      </node>
+      <node id="255">
+        <label>limits</label>
+      </node>
+      <node id="274">
+        <label>privileged.h</label>
+      </node>
+      <node id="250">
+        <label>eosiolib/name.hpp</label>
+        <link refid="name_8hpp"/>
+        <childnode refid="246" relation="include">
+        </childnode>
+        <childnode refid="251" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="253" relation="include">
+        </childnode>
+      </node>
+      <node id="273">
+        <label>privileged.hpp</label>
+        <link refid="privileged_8hpp"/>
+        <childnode refid="274" relation="include">
+        </childnode>
+        <childnode refid="275" relation="include">
+        </childnode>
+        <childnode refid="276" relation="include">
+        </childnode>
+      </node>
+      <node id="244">
+        <label>libraries/eosiolib/eosiolib.cpp</label>
+        <link refid="eosiolib_8cpp"/>
+        <childnode refid="245" relation="include">
+        </childnode>
+        <childnode refid="271" relation="include">
+        </childnode>
+        <childnode refid="247" relation="include">
+        </childnode>
+        <childnode refid="272" relation="include">
+        </childnode>
+        <childnode refid="273" relation="include">
+        </childnode>
+      </node>
+      <node id="260">
+        <label>eosiolib/ignore.hpp</label>
+        <link refid="ignore_8hpp"/>
+      </node>
+      <node id="252">
+        <label>string</label>
+      </node>
+      <node id="266">
+        <label>map</label>
+      </node>
+      <node id="247">
+        <label>eosiolib/memory.h</label>
+      </node>
+      <node id="269">
+        <label>boost/fusion/include/for_each.hpp</label>
+      </node>
+      <node id="248">
+        <label>eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="246" relation="include">
+        </childnode>
+        <childnode refid="249" relation="include">
+        </childnode>
+        <childnode refid="250" relation="include">
+        </childnode>
+        <childnode refid="251" relation="include">
+        </childnode>
+        <childnode refid="254" relation="include">
+        </childnode>
+        <childnode refid="255" relation="include">
+        </childnode>
+        <childnode refid="253" relation="include">
+        </childnode>
+      </node>
+      <node id="251">
+        <label>eosiolib/serialize.hpp</label>
+      </node>
+      <node id="253">
+        <label>string_view</label>
+      </node>
+      <node id="272">
+        <label>eosiolib/print.hpp</label>
+      </node>
+      <node id="261">
+        <label>boost/container/flat_set.hpp</label>
+      </node>
+      <node id="249">
+        <label>eosiolib/print.h</label>
+      </node>
+      <node id="254">
+        <label>tuple</label>
+      </node>
+      <node id="267">
+        <label>optional</label>
+      </node>
+      <node id="264">
+        <label>vector</label>
+      </node>
+      <node id="257">
+        <label>array</label>
+      </node>
+      <node id="245">
+        <label>datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="246" relation="include">
+        </childnode>
+        <childnode refid="247" relation="include">
+        </childnode>
+        <childnode refid="248" relation="include">
+        </childnode>
+        <childnode refid="256" relation="include">
+        </childnode>
+        <childnode refid="260" relation="include">
+        </childnode>
+        <childnode refid="261" relation="include">
+        </childnode>
+        <childnode refid="262" relation="include">
+        </childnode>
+        <childnode refid="263" relation="include">
+        </childnode>
+        <childnode refid="264" relation="include">
+        </childnode>
+        <childnode refid="257" relation="include">
+        </childnode>
+        <childnode refid="265" relation="include">
+        </childnode>
+        <childnode refid="266" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="267" relation="include">
+        </childnode>
+        <childnode refid="268" relation="include">
+        </childnode>
+        <childnode refid="269" relation="include">
+        </childnode>
+        <childnode refid="270" relation="include">
+        </childnode>
+      </node>
+      <node id="263">
+        <label>eosiolib/varint.hpp</label>
+        <link refid="varint_8hpp"/>
+      </node>
+      <node id="270">
+        <label>boost/pfr.hpp</label>
+      </node>
+      <node id="262">
+        <label>boost/container/flat_map.hpp</label>
+      </node>
+      <node id="246">
+        <label>eosiolib/system.h</label>
+      </node>
+      <node id="276">
+        <label>public_key.hpp</label>
+        <link refid="public__key_8hpp"/>
+        <childnode refid="263" relation="include">
+        </childnode>
+        <childnode refid="251" relation="include">
+        </childnode>
+      </node>
+      <node id="259">
+        <label>type_traits</label>
+      </node>
+      <node id="265">
+        <label>set</label>
+      </node>
+      <node id="268">
+        <label>boost/fusion/algorithm/iteration/for_each.hpp</label>
+      </node>
+      <node id="258">
+        <label>algorithm</label>
+      </node>
+      <node id="256">
+        <label>eosiolib/fixed_key.hpp</label>
+        <link refid="fixed__key_8hpp"/>
+        <childnode refid="257" relation="include">
+        </childnode>
+        <childnode refid="258" relation="include">
+        </childnode>
+        <childnode refid="259" relation="include">
+        </childnode>
+        <childnode refid="246" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classeosio_1_1memory__manager" prot="public">eosio::memory_manager</innerclass>
+    <innerclass refid="classeosio_1_1memory__manager_1_1memory" prot="private">eosio::memory_manager::memory</innerclass>
+    <innerclass refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr" prot="private">eosio::memory_manager::memory::buffer_ptr</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="eosiolib_8cpp_aeda051d5eb402437e0d2289cc6321fcd_1aeda051d5eb402437e0d2289cc6321fcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* sbrk</definition>
+        <argsstring>(size_t num_bytes)</argsstring>
+        <name>sbrk</name>
+        <param>
+          <type>size_t</type>
+          <declname>num_bytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="5" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="5" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="eosiolib_8cpp_a7ac38fce3243a7dcf448301ee9ffd392_1a7ac38fce3243a7dcf448301ee9ffd392" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* malloc</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>malloc</name>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>namespace eosio </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="534" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="534" bodyend="537"/>
+      </memberdef>
+      <memberdef kind="function" id="eosiolib_8cpp_add8a2c74f2c5f5e3db163234988f61d6_1add8a2c74f2c5f5e3db163234988f61d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* calloc</definition>
+        <argsstring>(size_t count, size_t size)</argsstring>
+        <name>calloc</name>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="539" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="539" bodyend="544"/>
+      </memberdef>
+      <memberdef kind="function" id="eosiolib_8cpp_a1a6b5e8d2f1c37e5b43e4345586075be_1a1a6b5e8d2f1c37e5b43e4345586075be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* realloc</definition>
+        <argsstring>(void *ptr, size_t size)</argsstring>
+        <name>realloc</name>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="546" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="546" bodyend="549"/>
+      </memberdef>
+      <memberdef kind="function" id="eosiolib_8cpp_afbedc913aa4651b3c3b4b3aecd9b4711_1afbedc913aa4651b3c3b4b3aecd9b4711" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void free</definition>
+        <argsstring>(void *ptr)</argsstring>
+        <name>free</name>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="551" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="551" bodyend="554"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/eosiolib.cpp"/>
+  </compounddef>
+</doxygen>

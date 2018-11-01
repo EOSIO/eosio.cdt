@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__transaction" kind="group">
+    <compoundname>transaction</compoundname>
+    <title>Transaction C++ API</title>
+    <innerclass refid="classeosio_1_1transaction__header" prot="public">eosio::transaction_header</innerclass>
+    <innerclass refid="classeosio_1_1transaction" prot="public">eosio::transaction</innerclass>
+    <innerclass refid="structeosio_1_1onerror" prot="public">eosio::onerror</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__transaction_1gaaf3ea17209c6d47129b2b232aede5439" prot="public" static="no">
+        <type>std::tuple&lt; uint16_t, std::vector&lt; char &gt; &gt;</type>
+        <definition>typedef std::tuple&lt;uint16_t, std::vector&lt;char&gt; &gt; eosio::extension</definition>
+        <argsstring></argsstring>
+        <name>extension</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="20" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__transaction_1ga19c346b66f7145a5336177ac3eb0849e" prot="public" static="no">
+        <type>std::vector&lt; extension &gt;</type>
+        <definition>typedef std::vector&lt;extension&gt; eosio::extensions_type</definition>
+        <argsstring></argsstring>
+        <name>extensions_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="21" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__transaction_1ga32a532f21d5a5eeadd892723d9171e05" prot="public" static="no" mutable="no">
+        <type>time_point_sec</type>
+        <definition>time_point_sec eosio::transaction_header::expiration</definition>
+        <argsstring></argsstring>
+        <name>expiration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="29" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1ga7bd1f446f3a9a212183787d223d89766" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t eosio::transaction_header::ref_block_num</definition>
+        <argsstring></argsstring>
+        <name>ref_block_num</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="30" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1gaed4b528cd8a73ac9fa9cb5b7c429f90c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::transaction_header::ref_block_prefix</definition>
+        <argsstring></argsstring>
+        <name>ref_block_prefix</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="31" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1gaad5eeaa9d26473ae8faa0d9c5cf44c0e" prot="public" static="no" mutable="no">
+        <type><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref></type>
+        <definition>unsigned_int eosio::transaction_header::max_net_usage_words</definition>
+        <argsstring></argsstring>
+        <name>max_net_usage_words</name>
+        <initializer>= 0UL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="32" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1ga5fbc5f8eef0093ad65598953156d4359" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t eosio::transaction_header::max_cpu_usage_ms</definition>
+        <argsstring></argsstring>
+        <name>max_cpu_usage_ms</name>
+        <initializer>= 0UL</initializer>
+        <briefdescription>
+<para>number of 8 byte words this transaction can serialize into after compressions </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="33" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1gadbe5ee5f38a82db68162188c49d62f39" prot="public" static="no" mutable="no">
+        <type><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref></type>
+        <definition>unsigned_int eosio::transaction_header::delay_sec</definition>
+        <argsstring></argsstring>
+        <name>delay_sec</name>
+        <initializer>= 0UL</initializer>
+        <briefdescription>
+<para>number of CPU usage units to bill transaction for </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="34" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1ga38263b68fda9925f2c6472777a04179c" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; action &gt;</type>
+        <definition>std::vector&lt;action&gt; eosio::transaction::context_free_actions</definition>
+        <argsstring></argsstring>
+        <name>context_free_actions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="48" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1gad53cc19e62742bf205934509c1363e42" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; action &gt;</type>
+        <definition>std::vector&lt;action&gt; eosio::transaction::actions</definition>
+        <argsstring></argsstring>
+        <name>actions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="49" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1ga445fd87e3465a1ca647c711c1ac0c711" prot="public" static="no" mutable="no">
+        <type>extensions_type</type>
+        <definition>extensions_type eosio::transaction::transaction_extensions</definition>
+        <argsstring></argsstring>
+        <name>transaction_extensions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="50" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1gae6686bc621795ad87f257d0be72f345c" prot="public" static="no" mutable="no">
+        <type>uint128_t</type>
+        <definition>uint128_t eosio::onerror::sender_id</definition>
+        <argsstring></argsstring>
+        <name>sender_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="62" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_1ga1cae304360f79394762ec5040046887e" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; char &gt;</type>
+        <definition>std::vector&lt;char&gt; eosio::onerror::sent_trx</definition>
+        <argsstring></argsstring>
+        <name>sent_trx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="63" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__transaction_1ga27106464af5cbbfd09b223eeb48d1e37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::transaction_header::transaction_header</definition>
+        <argsstring>(time_point_sec exp=time_point_sec(now()+60))</argsstring>
+        <name>transaction_header</name>
+        <param>
+          <type>time_point_sec</type>
+          <declname>exp</declname>
+          <defval>time_point_sec(now()+60)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="25" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="25" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_1gad090d569f520dce4919de93bcec2e260" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::transaction::transaction</definition>
+        <argsstring>(time_point_sec exp=time_point_sec(now()+60))</argsstring>
+        <name>transaction</name>
+        <param>
+          <type>time_point_sec</type>
+          <declname>exp</declname>
+          <defval>time_point_sec(now()+60)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="41" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="41" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_1gaff16436e52fff284fabc0b748be342b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::transaction::send</definition>
+        <argsstring>(const uint128_t &amp;sender_id, name payer, bool replace_existing=false) const</argsstring>
+        <name>send</name>
+        <param>
+          <type>const uint128_t &amp;</type>
+          <declname>sender_id</declname>
+        </param>
+        <param>
+          <type>name</type>
+          <declname>payer</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>replace_existing</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="43" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="43" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_1gabdf7bc0ef45beae2daf8cf3f08a7cd42" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>onerror</type>
+        <definition>static onerror eosio::onerror::from_current_action</definition>
+        <argsstring>()</argsstring>
+        <name>from_current_action</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="65" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="65" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_1ga8fe8368f7a3213b5ab0a93407f41cd66" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>transaction</type>
+        <definition>transaction eosio::onerror::unpack_sent_trx</definition>
+        <argsstring>() const</argsstring>
+        <name>unpack_sent_trx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="69" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="69" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_1gac01a00482f2dc95bf4850b2e8213ee90" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>action</type>
+        <definition>action eosio::get_action</definition>
+        <argsstring>(uint32_t type, uint32_t index)</argsstring>
+        <name>get_action</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieve the indicated action from the active transaction. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 0 for context free action, 1 for action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the index of the requested action </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the indicated action </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="82" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="82" bodyend="91"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Type-safe C++ wrappers for transaction C API. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>There are some methods from the transactioncapi that can be used directly from C++ </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

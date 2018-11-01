@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1symbol" kind="class" language="C++" prot="public">
+    <compoundname>eosio::symbol</compoundname>
+    <includes refid="symbol_8hpp" local="no">symbol.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classeosio_1_1symbol_1a6b68532eb893ff1769b8c715e702f126" prot="private" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::symbol::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="244" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classeosio_1_1symbol_a6604372bb0cc9d3c70a3b77973517e41_1a6604372bb0cc9d3c70a3b77973517e41" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::symbol::symbol</definition>
+        <argsstring>()</argsstring>
+        <name>symbol</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="164" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_abcbc25794d1a3e0477be40441be6b210_1abcbc25794d1a3e0477be40441be6b210" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::symbol::symbol</definition>
+        <argsstring>(uint64_t raw)</argsstring>
+        <name>symbol</name>
+        <param>
+          <type>uint64_t</type>
+          <declname>raw</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="166" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_a990e99879ecbebb194e5de43932ec59b_1a990e99879ecbebb194e5de43932ec59b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::symbol::symbol</definition>
+        <argsstring>(symbol_code sc, uint8_t precision)</argsstring>
+        <name>symbol</name>
+        <param>
+          <type><ref refid="classeosio_1_1symbol__code" kindref="compound">symbol_code</ref></type>
+          <declname>sc</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>precision</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="168" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="168" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_afc5e4be9944b51deac6484128deb2ce2_1afc5e4be9944b51deac6484128deb2ce2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::symbol::symbol</definition>
+        <argsstring>(std::string_view ss, uint8_t precision)</argsstring>
+        <name>symbol</name>
+        <param>
+          <type>std::string_view</type>
+          <declname>ss</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>precision</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="172" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="172" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_af52f86a82390abe6be09e9745df30815_1af52f86a82390abe6be09e9745df30815" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr bool</type>
+        <definition>constexpr bool eosio::symbol::is_valid</definition>
+        <argsstring>() const</argsstring>
+        <name>is_valid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Is this symbol valid </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="179" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="179" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_af2153bf9cfc5bd79c3f1787f8028646a_1af2153bf9cfc5bd79c3f1787f8028646a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint8_t</type>
+        <definition>constexpr uint8_t eosio::symbol::precision</definition>
+        <argsstring>() const</argsstring>
+        <name>precision</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This symbol&apos;s precision </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="184" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="184" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_a559c818f42e9d0df1a4c4823d7c6ecd8_1a559c818f42e9d0df1a4c4823d7c6ecd8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr <ref refid="classeosio_1_1symbol__code" kindref="compound">symbol_code</ref></type>
+        <definition>constexpr symbol_code eosio::symbol::code</definition>
+        <argsstring>() const</argsstring>
+        <name>code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns representation of symbol name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="189" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="189" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_a9cb96662a0965ac03e1bf5acfbbda011_1a9cb96662a0965ac03e1bf5acfbbda011" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint64_t</type>
+        <definition>constexpr uint64_t eosio::symbol::raw</definition>
+        <argsstring>() const</argsstring>
+        <name>raw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns uint64_t repreresentation of the symbol </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="194" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="194" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_a6c974f93f06131859376b75c4df03a53_1a6c974f93f06131859376b75c4df03a53" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::symbol::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="196" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="196" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1symbol_a9f8042d110a6fff15ea1813987c0fbe6_1a9f8042d110a6fff15ea1813987c0fbe6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::symbol::print</definition>
+        <argsstring>(bool show_precision=true) const</argsstring>
+        <name>print</name>
+        <param>
+          <type>bool</type>
+          <declname>show_precision</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Print the symbol </para>        </briefdescription>
+        <detaileddescription>
+<para>Print the symbol </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="203" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="203" bodyend="212"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classeosio_1_1symbol_aec9fbc4e4aff91276e8c1f71f113c494_1aec9fbc4e4aff91276e8c1f71f113c494" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator==</definition>
+        <argsstring>(const symbol &amp;a, const symbol &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Equivalency operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Equivalency operator. Returns true if a == b (are the same)</para><para><simplesect kind="return"><para>boolean - true if both provided symbols are the same </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="220" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="220" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1symbol_a62adc71177b7a104162f7618cb0bac44_1a62adc71177b7a104162f7618cb0bac44" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator!=</definition>
+        <argsstring>(const symbol &amp;a, const symbol &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Inverted equivalency operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Inverted equivalency operator. Returns true if a != b (are different)</para><para><simplesect kind="return"><para>boolean - true if both provided symbols are not the same </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="230" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="230" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1symbol_a5ffd3dd1dfad342b30aed2c53993c548_1a5ffd3dd1dfad342b30aed2c53993c548" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator&lt;</definition>
+        <argsstring>(const symbol &amp;a, const symbol &amp;b)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Less than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Less than operator. Returns true if a &lt; b. <simplesect kind="return"><para>boolean - true if symbol <computeroutput>a</computeroutput> is less than <computeroutput>b</computeroutput> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/symbol.hpp" line="239" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="239" bodyend="241"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/symbol.hpp" line="162" column="1" bodyfile="libraries/eosiolib/symbol.hpp" bodystart="162" bodyend="245"/>
+    <listofallmembers>
+      <member refid="classeosio_1_1symbol_a559c818f42e9d0df1a4c4823d7c6ecd8_1a559c818f42e9d0df1a4c4823d7c6ecd8" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>code</name></member>
+      <member refid="classeosio_1_1symbol_af52f86a82390abe6be09e9745df30815_1af52f86a82390abe6be09e9745df30815" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>is_valid</name></member>
+      <member refid="classeosio_1_1symbol_a6c974f93f06131859376b75c4df03a53_1a6c974f93f06131859376b75c4df03a53" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>operator bool</name></member>
+      <member refid="classeosio_1_1symbol_a62adc71177b7a104162f7618cb0bac44_1a62adc71177b7a104162f7618cb0bac44" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>operator!=</name></member>
+      <member refid="classeosio_1_1symbol_a5ffd3dd1dfad342b30aed2c53993c548_1a5ffd3dd1dfad342b30aed2c53993c548" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>operator&lt;</name></member>
+      <member refid="classeosio_1_1symbol_aec9fbc4e4aff91276e8c1f71f113c494_1aec9fbc4e4aff91276e8c1f71f113c494" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>operator==</name></member>
+      <member refid="classeosio_1_1symbol_af2153bf9cfc5bd79c3f1787f8028646a_1af2153bf9cfc5bd79c3f1787f8028646a" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>precision</name></member>
+      <member refid="classeosio_1_1symbol_a9f8042d110a6fff15ea1813987c0fbe6_1a9f8042d110a6fff15ea1813987c0fbe6" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>print</name></member>
+      <member refid="classeosio_1_1symbol_a9cb96662a0965ac03e1bf5acfbbda011_1a9cb96662a0965ac03e1bf5acfbbda011" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>raw</name></member>
+      <member refid="classeosio_1_1symbol_a6604372bb0cc9d3c70a3b77973517e41_1a6604372bb0cc9d3c70a3b77973517e41" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>symbol</name></member>
+      <member refid="classeosio_1_1symbol_abcbc25794d1a3e0477be40441be6b210_1abcbc25794d1a3e0477be40441be6b210" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>symbol</name></member>
+      <member refid="classeosio_1_1symbol_a990e99879ecbebb194e5de43932ec59b_1a990e99879ecbebb194e5de43932ec59b" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>symbol</name></member>
+      <member refid="classeosio_1_1symbol_afc5e4be9944b51deac6484128deb2ce2_1afc5e4be9944b51deac6484128deb2ce2" prot="public" virt="non-virtual"><scope>eosio::symbol</scope><name>symbol</name></member>
+      <member refid="classeosio_1_1symbol_1a6b68532eb893ff1769b8c715e702f126" prot="private" virt="non-virtual"><scope>eosio::symbol</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

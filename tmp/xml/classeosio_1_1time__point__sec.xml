@@ -1,0 +1,524 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1time__point__sec" kind="class" language="C++" prot="public">
+    <compoundname>eosio::time_point_sec</compoundname>
+    <includes refid="time_8hpp" local="no">time.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classeosio_1_1time__point__sec_a3195e1b5f4f989e6a0f21b1886f5aa0d_1a3195e1b5f4f989e6a0f21b1886f5aa0d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::time_point_sec::utc_seconds</definition>
+        <argsstring></argsstring>
+        <name>utc_seconds</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="108" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_ab0f6a00b7d53d82a9c68ee385d35c0cb_1ab0f6a00b7d53d82a9c68ee385d35c0cb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::time_point_sec::time_point_sec</definition>
+        <argsstring>()</argsstring>
+        <name>time_point_sec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="69" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="69" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a119a4edea2590a1152db08c4fc51e811_1a119a4edea2590a1152db08c4fc51e811" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::time_point_sec::time_point_sec</definition>
+        <argsstring>(uint32_t seconds)</argsstring>
+        <name>time_point_sec</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>seconds</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="72" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="72" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_afc6c67209c28cd9e5d70a4298deb39ad_1afc6c67209c28cd9e5d70a4298deb39ad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::time_point_sec::time_point_sec</definition>
+        <argsstring>(const time_point &amp;t)</argsstring>
+        <name>time_point_sec</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="75" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="75" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_acd75205a33a0ccbb5e2d3ceea12182a7_1acd75205a33a0ccbb5e2d3ceea12182a7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::time_point_sec::operator time_point</definition>
+        <argsstring>() const</argsstring>
+        <name>operator time_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="81" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a9f061ae99cc49726e27ac9c29a460b5f_1a9f061ae99cc49726e27ac9c29a460b5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::time_point_sec::sec_since_epoch</definition>
+        <argsstring>() const</argsstring>
+        <name>sec_since_epoch</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="82" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a47062563fa316f7adcb7a698cc2b5857_1a47062563fa316f7adcb7a698cc2b5857" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+        <definition>time_point_sec eosio::time_point_sec::operator=</definition>
+        <argsstring>(const eosio::time_point &amp;t)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">eosio::time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="84" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="84" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a7bde2f25b9212d0fa5f229832aa4f1a5_1a7bde2f25b9212d0fa5f229832aa4f1a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator+=</definition>
+        <argsstring>(uint32_t m)</argsstring>
+        <name>operator+=</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="95" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_ab53a318265b51e0e52adc2458dcc26cd_1ab53a318265b51e0e52adc2458dcc26cd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator+=</definition>
+        <argsstring>(microseconds m)</argsstring>
+        <name>operator+=</name>
+        <param>
+          <type><ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="96" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_afc0cc61c1e3a6f82346174d28b8bfbd2_1afc0cc61c1e3a6f82346174d28b8bfbd2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator+=</definition>
+        <argsstring>(time_point_sec m)</argsstring>
+        <name>operator+=</name>
+        <param>
+          <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="97" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_afdabb4bd8b2fdebd095332e2ee7dbaac_1afdabb4bd8b2fdebd095332e2ee7dbaac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator-=</definition>
+        <argsstring>(uint32_t m)</argsstring>
+        <name>operator-=</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="98" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_abe62536e71e9470639acaed585331968_1abe62536e71e9470639acaed585331968" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator-=</definition>
+        <argsstring>(microseconds m)</argsstring>
+        <name>operator-=</name>
+        <param>
+          <type><ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="99" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a7f23051d52d646c6b4739fd0aa89f76d_1a7f23051d52d646c6b4739fd0aa89f76d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+        <definition>time_point_sec&amp; eosio::time_point_sec::operator-=</definition>
+        <argsstring>(time_point_sec m)</argsstring>
+        <name>operator-=</name>
+        <param>
+          <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="100" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_acfdc7be20b4dea4ef2b764b9b9802ab2_1acfdc7be20b4dea4ef2b764b9b9802ab2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+        <definition>time_point_sec eosio::time_point_sec::operator+</definition>
+        <argsstring>(uint32_t offset) const</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="101" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a865a895a4f2e4849b762829e4f4763cf_1a865a895a4f2e4849b762829e4f4763cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+        <definition>time_point_sec eosio::time_point_sec::operator-</definition>
+        <argsstring>(uint32_t offset) const</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="102" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a7e1d564816b972cf8c5962fc3ad348a9_1a7e1d564816b972cf8c5962fc3ad348a9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+        <definition>static time_point_sec eosio::time_point_sec::maximum</definition>
+        <argsstring>()</argsstring>
+        <name>maximum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="78" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1time__point__sec_a090e65b6dc831f54eed58059b1718714_1a090e65b6dc831f54eed58059b1718714" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+        <definition>static time_point_sec eosio::time_point_sec::min</definition>
+        <argsstring>()</argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="79" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_adf55a60cc15afb538eb8d5bf3a838b35_1adf55a60cc15afb538eb8d5bf3a838b35" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="89" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_aaaeb236eab5e19e5657e60b73c92e6c1_1aaaeb236eab5e19e5657e60b73c92e6c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="90" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a2ad8fce220805a5529f16e6ac1698728_1a2ad8fce220805a5529f16e6ac1698728" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;=</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="91" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a3e7839d4f7e9cc5a49d580b398b6ee5e_1a3e7839d4f7e9cc5a49d580b398b6ee5e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;=</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="92" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_ad97eba5244d2729349e69939e68fc939_1ad97eba5244d2729349e69939e68fc939" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="93" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a9bbbbf540848bdf3829b810d542e8b4f_1a9bbbbf540848bdf3829b810d542e8b4f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const time_point_sec &amp;a, const time_point_sec &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="94" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a33d1bd167b2e7986485b0979250b4b55_1a33d1bd167b2e7986485b0979250b4b55" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref></type>
+        <definition>time_point operator+</definition>
+        <argsstring>(const time_point_sec &amp;t, const microseconds &amp;m)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="104" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_ab0485dce4d4b0fc5813b33818ff03692_1ab0485dce4d4b0fc5813b33818ff03692" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref></type>
+        <definition>time_point operator-</definition>
+        <argsstring>(const time_point_sec &amp;t, const microseconds &amp;m)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="105" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a40c52d6b3551ec223d707d9ba128dc9b_1a40c52d6b3551ec223d707d9ba128dc9b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref></type>
+        <definition>microseconds operator-</definition>
+        <argsstring>(const time_point_sec &amp;t, const time_point_sec &amp;m)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="106" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="friend" id="classeosio_1_1time__point__sec_a1a8ae19b63eb263fc2435ef5ac9bf4f1_1a1a8ae19b63eb263fc2435ef5ac9bf4f1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="classeosio_1_1microseconds" kindref="compound">microseconds</ref></type>
+        <definition>microseconds operator-</definition>
+        <argsstring>(const time_point &amp;t, const time_point_sec &amp;m)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="107" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="107" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A lower resolution <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> accurate only to seconds from 1970 </para>    </detaileddescription>
+    <location file="libraries/eosiolib/time.hpp" line="67" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="66" bodyend="111"/>
+    <listofallmembers>
+      <member refid="classeosio_1_1time__point__sec_a7e1d564816b972cf8c5962fc3ad348a9_1a7e1d564816b972cf8c5962fc3ad348a9" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>maximum</name></member>
+      <member refid="classeosio_1_1time__point__sec_a090e65b6dc831f54eed58059b1718714_1a090e65b6dc831f54eed58059b1718714" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>min</name></member>
+      <member refid="classeosio_1_1time__point__sec_acd75205a33a0ccbb5e2d3ceea12182a7_1acd75205a33a0ccbb5e2d3ceea12182a7" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator time_point</name></member>
+      <member refid="classeosio_1_1time__point__sec_a9bbbbf540848bdf3829b810d542e8b4f_1a9bbbbf540848bdf3829b810d542e8b4f" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator!=</name></member>
+      <member refid="classeosio_1_1time__point__sec_acfdc7be20b4dea4ef2b764b9b9802ab2_1acfdc7be20b4dea4ef2b764b9b9802ab2" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator+</name></member>
+      <member refid="classeosio_1_1time__point__sec_a33d1bd167b2e7986485b0979250b4b55_1a33d1bd167b2e7986485b0979250b4b55" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator+</name></member>
+      <member refid="classeosio_1_1time__point__sec_a7bde2f25b9212d0fa5f229832aa4f1a5_1a7bde2f25b9212d0fa5f229832aa4f1a5" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator+=</name></member>
+      <member refid="classeosio_1_1time__point__sec_ab53a318265b51e0e52adc2458dcc26cd_1ab53a318265b51e0e52adc2458dcc26cd" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator+=</name></member>
+      <member refid="classeosio_1_1time__point__sec_afc0cc61c1e3a6f82346174d28b8bfbd2_1afc0cc61c1e3a6f82346174d28b8bfbd2" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator+=</name></member>
+      <member refid="classeosio_1_1time__point__sec_a865a895a4f2e4849b762829e4f4763cf_1a865a895a4f2e4849b762829e4f4763cf" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-</name></member>
+      <member refid="classeosio_1_1time__point__sec_ab0485dce4d4b0fc5813b33818ff03692_1ab0485dce4d4b0fc5813b33818ff03692" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-</name></member>
+      <member refid="classeosio_1_1time__point__sec_a40c52d6b3551ec223d707d9ba128dc9b_1a40c52d6b3551ec223d707d9ba128dc9b" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-</name></member>
+      <member refid="classeosio_1_1time__point__sec_a1a8ae19b63eb263fc2435ef5ac9bf4f1_1a1a8ae19b63eb263fc2435ef5ac9bf4f1" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-</name></member>
+      <member refid="classeosio_1_1time__point__sec_afdabb4bd8b2fdebd095332e2ee7dbaac_1afdabb4bd8b2fdebd095332e2ee7dbaac" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-=</name></member>
+      <member refid="classeosio_1_1time__point__sec_abe62536e71e9470639acaed585331968_1abe62536e71e9470639acaed585331968" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-=</name></member>
+      <member refid="classeosio_1_1time__point__sec_a7f23051d52d646c6b4739fd0aa89f76d_1a7f23051d52d646c6b4739fd0aa89f76d" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator-=</name></member>
+      <member refid="classeosio_1_1time__point__sec_adf55a60cc15afb538eb8d5bf3a838b35_1adf55a60cc15afb538eb8d5bf3a838b35" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator&lt;</name></member>
+      <member refid="classeosio_1_1time__point__sec_a2ad8fce220805a5529f16e6ac1698728_1a2ad8fce220805a5529f16e6ac1698728" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator&lt;=</name></member>
+      <member refid="classeosio_1_1time__point__sec_a47062563fa316f7adcb7a698cc2b5857_1a47062563fa316f7adcb7a698cc2b5857" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator=</name></member>
+      <member refid="classeosio_1_1time__point__sec_ad97eba5244d2729349e69939e68fc939_1ad97eba5244d2729349e69939e68fc939" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator==</name></member>
+      <member refid="classeosio_1_1time__point__sec_aaaeb236eab5e19e5657e60b73c92e6c1_1aaaeb236eab5e19e5657e60b73c92e6c1" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator&gt;</name></member>
+      <member refid="classeosio_1_1time__point__sec_a3e7839d4f7e9cc5a49d580b398b6ee5e_1a3e7839d4f7e9cc5a49d580b398b6ee5e" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>operator&gt;=</name></member>
+      <member refid="classeosio_1_1time__point__sec_a9f061ae99cc49726e27ac9c29a460b5f_1a9f061ae99cc49726e27ac9c29a460b5f" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>sec_since_epoch</name></member>
+      <member refid="classeosio_1_1time__point__sec_ab0f6a00b7d53d82a9c68ee385d35c0cb_1ab0f6a00b7d53d82a9c68ee385d35c0cb" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>time_point_sec</name></member>
+      <member refid="classeosio_1_1time__point__sec_a119a4edea2590a1152db08c4fc51e811_1a119a4edea2590a1152db08c4fc51e811" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>time_point_sec</name></member>
+      <member refid="classeosio_1_1time__point__sec_afc6c67209c28cd9e5d70a4298deb39ad_1afc6c67209c28cd9e5d70a4298deb39ad" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>time_point_sec</name></member>
+      <member refid="classeosio_1_1time__point__sec_a3195e1b5f4f989e6a0f21b1886f5aa0d_1a3195e1b5f4f989e6a0f21b1886f5aa0d" prot="public" virt="non-virtual"><scope>eosio::time_point_sec</scope><name>utc_seconds</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

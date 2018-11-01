@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1singleton_1_1row" kind="struct" language="C++" prot="private">
+    <compoundname>eosio::singleton::row</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1singleton_1_1row_a1453fcd490c4d142635fbb30a01d8d82_1a1453fcd490c4d142635fbb30a01d8d82" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T eosio::singleton&lt; SingletonName, T &gt;::row::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Value to be stored inside the singleton table. </para>        </briefdescription>
+        <detaileddescription>
+<para>Value to be stored inside the singleton table </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="41" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1singleton_1_1row_a9849634575cdaa0d994f5bef1f8ee141_1a9849634575cdaa0d994f5bef1f8ee141" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::singleton&lt; SingletonName, T &gt;::row::primary_key</definition>
+        <argsstring>() const</argsstring>
+        <name>primary_key</name>
+        <briefdescription>
+<para>Get primary key of the data. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get primary key of the data</para><para><simplesect kind="return"><para>uint64_t - Primary Key </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="49" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="49" bodyend="49"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure of data inside the singleton table. </para>    </briefdescription>
+    <detaileddescription>
+<para>Structure of data inside the singleton table </para>    </detaileddescription>
+    <location file="libraries/eosiolib/singleton.hpp" line="35" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="35" bodyend="52"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1singleton_1_1row_a9849634575cdaa0d994f5bef1f8ee141_1a9849634575cdaa0d994f5bef1f8ee141" prot="public" virt="non-virtual"><scope>eosio::singleton::row</scope><name>primary_key</name></member>
+      <member refid="structeosio_1_1singleton_1_1row_a1453fcd490c4d142635fbb30a01d8d82_1a1453fcd490c4d142635fbb30a01d8d82" prot="public" virt="non-virtual"><scope>eosio::singleton::row</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

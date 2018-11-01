@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="dir_9e60c71e6dfb8d92b39aded6f4ab9fa8" kind="dir">
+    <compoundname>libraries/eosiolib</compoundname>
+    <innerfile refid="action_8hpp">action.hpp</innerfile>
+    <innerfile refid="asset_8hpp">asset.hpp</innerfile>
+    <innerfile refid="chain_8h">chain.h</innerfile>
+    <innerfile refid="compiler__builtins_8h">compiler_builtins.h</innerfile>
+    <innerfile refid="contract_8hpp">contract.hpp</innerfile>
+    <innerfile refid="crypto_8h">crypto.h</innerfile>
+    <innerfile refid="datastream_8hpp">datastream.hpp</innerfile>
+    <innerfile refid="db_8h">db.h</innerfile>
+    <innerfile refid="dispatcher_8hpp">dispatcher.hpp</innerfile>
+    <innerfile refid="eosio_8hpp">eosio.hpp</innerfile>
+    <innerfile refid="eosiolib_8cpp">eosiolib.cpp</innerfile>
+    <innerfile refid="fixed__key_8hpp">fixed_key.hpp</innerfile>
+    <innerfile refid="fixedpoint_8hpp">fixedpoint.hpp</innerfile>
+    <innerfile refid="ignore_8hpp">ignore.hpp</innerfile>
+    <innerfile refid="multi__index_8hpp">multi_index.hpp</innerfile>
+    <innerfile refid="name_8hpp">name.hpp</innerfile>
+    <innerfile refid="permission_8hpp">permission.hpp</innerfile>
+    <innerfile refid="print_8hpp">print.hpp</innerfile>
+    <innerfile refid="privileged_8hpp">privileged.hpp</innerfile>
+    <innerfile refid="producer__schedule_8hpp">producer_schedule.hpp</innerfile>
+    <innerfile refid="public__key_8hpp">public_key.hpp</innerfile>
+    <innerfile refid="singleton_8hpp">singleton.hpp</innerfile>
+    <innerfile refid="stdlib_8hpp">stdlib.hpp</innerfile>
+    <innerfile refid="symbol_8hpp">symbol.hpp</innerfile>
+    <innerfile refid="time_8hpp">time.hpp</innerfile>
+    <innerfile refid="transaction_8h">transaction.h</innerfile>
+    <innerfile refid="transaction_8hpp">transaction.hpp</innerfile>
+    <innerfile refid="types_8h">types.h</innerfile>
+    <innerfile refid="varint_8hpp">varint.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/"/>
+  </compounddef>
+</doxygen>

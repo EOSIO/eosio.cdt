@@ -1,0 +1,23 @@
+language: node_js
+
+node_js:
+  - 8
+
+sudo: false
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+notifications:
+  email:
+    on_failure: change
+    on_success: change
+
+branches:
+  only:
+    - master
+
+script:
+  - npm run lint:fix

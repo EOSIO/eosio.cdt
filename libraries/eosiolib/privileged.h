@@ -14,8 +14,6 @@ extern "C" {
     * @defgroup privilegedcapi Privileged C API
     * @ingroup privilegedapi
     * @brief Defines %C Privileged API
-    *
-    * @{
     */
 
     /**
@@ -98,8 +96,7 @@ extern "C" {
     * @param f - name (identifier) of the feature to be activated
     */
    void activate_feature( int64_t f );
-
-   ///@ } privilegedcapi
+   
 #ifdef __cplusplus
 }
 #endif

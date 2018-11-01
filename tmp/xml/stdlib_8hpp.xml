@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="stdlib_8hpp" kind="file" language="C++">
+    <compoundname>stdlib.hpp</compoundname>
+    <includes local="no">initializer_list</includes>
+    <includes local="no">iterator</includes>
+    <includes local="no">memory</includes>
+    <incdepgraph>
+      <node id="541">
+        <label>iterator</label>
+      </node>
+      <node id="539">
+        <label>libraries/eosiolib/stdlib.hpp</label>
+        <link refid="stdlib_8hpp"/>
+        <childnode refid="540" relation="include">
+        </childnode>
+        <childnode refid="541" relation="include">
+        </childnode>
+        <childnode refid="542" relation="include">
+        </childnode>
+      </node>
+      <node id="542">
+        <label>memory</label>
+      </node>
+      <node id="540">
+        <label>initializer_list</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/stdlib.hpp"/>
+  </compounddef>
+</doxygen>

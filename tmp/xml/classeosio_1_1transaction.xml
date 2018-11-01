@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1transaction" kind="class" language="C++" prot="public">
+    <compoundname>eosio::transaction</compoundname>
+    <basecompoundref refid="classeosio_1_1transaction__header" prot="public" virt="non-virtual">eosio::transaction_header</basecompoundref>
+    <includes refid="transaction_8hpp" local="no">transaction.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="group__transaction_ga38263b68fda9925f2c6472777a04179c_1ga38263b68fda9925f2c6472777a04179c" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structeosio_1_1action" kindref="compound">action</ref> &gt;</type>
+        <definition>std::vector&lt;action&gt; eosio::transaction::context_free_actions</definition>
+        <argsstring></argsstring>
+        <name>context_free_actions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="48" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_gad53cc19e62742bf205934509c1363e42_1gad53cc19e62742bf205934509c1363e42" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structeosio_1_1action" kindref="compound">action</ref> &gt;</type>
+        <definition>std::vector&lt;action&gt; eosio::transaction::actions</definition>
+        <argsstring></argsstring>
+        <name>actions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="49" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__transaction_ga445fd87e3465a1ca647c711c1ac0c711_1ga445fd87e3465a1ca647c711c1ac0c711" prot="public" static="no" mutable="no">
+        <type><ref refid="group__transaction_ga19c346b66f7145a5336177ac3eb0849e_1ga19c346b66f7145a5336177ac3eb0849e" kindref="member">extensions_type</ref></type>
+        <definition>extensions_type eosio::transaction::transaction_extensions</definition>
+        <argsstring></argsstring>
+        <name>transaction_extensions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="50" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="group__transaction_gad090d569f520dce4919de93bcec2e260_1gad090d569f520dce4919de93bcec2e260" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::transaction::transaction</definition>
+        <argsstring>(time_point_sec exp=time_point_sec(now()+60))</argsstring>
+        <name>transaction</name>
+        <param>
+          <type><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref></type>
+          <declname>exp</declname>
+          <defval><ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref>(now()+60)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="41" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="41" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="group__transaction_gaff16436e52fff284fabc0b748be342b4_1gaff16436e52fff284fabc0b748be342b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::transaction::send</definition>
+        <argsstring>(const uint128_t &amp;sender_id, name payer, bool replace_existing=false) const</argsstring>
+        <name>send</name>
+        <param>
+          <type>const uint128_t &amp;</type>
+          <declname>sender_id</declname>
+        </param>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>payer</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>replace_existing</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/transaction.hpp" line="43" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="43" bodyend="46"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="128">
+        <label>eosio::transaction</label>
+        <link refid="classeosio_1_1transaction"/>
+        <childnode refid="129" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="129">
+        <label>eosio::transaction_header</label>
+        <link refid="classeosio_1_1transaction__header"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="130">
+        <label>eosio::transaction</label>
+        <link refid="classeosio_1_1transaction"/>
+        <childnode refid="131" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="131">
+        <label>eosio::transaction_header</label>
+        <link refid="classeosio_1_1transaction__header"/>
+        <childnode refid="132" relation="usage">
+          <edgelabel>max_net_usage_words</edgelabel>
+          <edgelabel>delay_sec</edgelabel>
+        </childnode>
+        <childnode refid="133" relation="usage">
+          <edgelabel>expiration</edgelabel>
+        </childnode>
+      </node>
+      <node id="132">
+        <label>unsigned_int</label>
+        <link refid="structunsigned__int"/>
+      </node>
+      <node id="133">
+        <label>eosio::time_point_sec</label>
+        <link refid="classeosio_1_1time__point__sec"/>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/transaction.hpp" line="39" column="1" bodyfile="libraries/eosiolib/transaction.hpp" bodystart="39" bodyend="53"/>
+    <listofallmembers>
+      <member refid="group__transaction_gad53cc19e62742bf205934509c1363e42_1gad53cc19e62742bf205934509c1363e42" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>actions</name></member>
+      <member refid="group__transaction_ga38263b68fda9925f2c6472777a04179c_1ga38263b68fda9925f2c6472777a04179c" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>context_free_actions</name></member>
+      <member refid="group__transaction_gadbe5ee5f38a82db68162188c49d62f39_1gadbe5ee5f38a82db68162188c49d62f39" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>delay_sec</name></member>
+      <member refid="group__transaction_ga32a532f21d5a5eeadd892723d9171e05_1ga32a532f21d5a5eeadd892723d9171e05" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>expiration</name></member>
+      <member refid="group__transaction_ga5fbc5f8eef0093ad65598953156d4359_1ga5fbc5f8eef0093ad65598953156d4359" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>max_cpu_usage_ms</name></member>
+      <member refid="group__transaction_gaad5eeaa9d26473ae8faa0d9c5cf44c0e_1gaad5eeaa9d26473ae8faa0d9c5cf44c0e" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>max_net_usage_words</name></member>
+      <member refid="group__transaction_ga7bd1f446f3a9a212183787d223d89766_1ga7bd1f446f3a9a212183787d223d89766" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>ref_block_num</name></member>
+      <member refid="group__transaction_gaed4b528cd8a73ac9fa9cb5b7c429f90c_1gaed4b528cd8a73ac9fa9cb5b7c429f90c" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>ref_block_prefix</name></member>
+      <member refid="group__transaction_gaff16436e52fff284fabc0b748be342b4_1gaff16436e52fff284fabc0b748be342b4" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>send</name></member>
+      <member refid="group__transaction_gad090d569f520dce4919de93bcec2e260_1gad090d569f520dce4919de93bcec2e260" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>transaction</name></member>
+      <member refid="group__transaction_ga445fd87e3465a1ca647c711c1ac0c711_1ga445fd87e3465a1ca647c711c1ac0c711" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>transaction_extensions</name></member>
+      <member refid="group__transaction_ga27106464af5cbbfd09b223eeb48d1e37_1ga27106464af5cbbfd09b223eeb48d1e37" prot="public" virt="non-virtual"><scope>eosio::transaction</scope><name>transaction_header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

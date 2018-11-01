@@ -15,15 +15,8 @@
 namespace eosio {
 
   /**
-   *  @defgroup symbolapi Symbol API
-   *  @brief Defines API for managing symbols
-   *  @ingroup contractdev
-   */
-
-  /**
-   *  @defgroup symbolcppapi Symbol CPP API
+   *  @addtogroup symbol Symbol CPP API
    *  @brief Defines %CPP API for managing symbols
-   *  @ingroup symbolapi
    *  @{
    */
 
@@ -313,6 +306,5 @@ namespace eosio {
       EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
    };
 
-   // }@ symbolapi
-
-} /// namespace eosio
+   /// @}
+}

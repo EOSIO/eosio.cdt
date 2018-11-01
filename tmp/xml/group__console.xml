@@ -1,0 +1,755 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__console" kind="group">
+    <compoundname>console</compoundname>
+    <title>Console C++ API</title>
+    <innerclass refid="classeosio_1_1iostream" prot="public">eosio::iostream</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__console_1gaed9b7380e114191d3dac1857b35e3da2" prot="public" static="yes" mutable="no">
+        <type>iostream</type>
+        <definition>iostream eosio::cout</definition>
+        <argsstring></argsstring>
+        <name>cout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="329" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="329" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__console_1gaa0a56fe314d032d027a1565d93a68b21" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(const char *ptr)</argsstring>
+        <name>print</name>
+        <param>
+          <type>const char *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+<para>Prints string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints string</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- a null terminated string </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="46" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="46" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gabe1c02d3a4a65108ff3bc59db64485a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(const std::string &amp;s)</argsstring>
+        <name>print</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="50" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="50" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga6daff3c05760581064c390a27a79fd30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(std::string &amp;s)</argsstring>
+        <name>print</name>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="54" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga514f168270d72ecae0083dd2968f7329" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(const char c)</argsstring>
+        <name>print</name>
+        <param>
+          <type>const char</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="58" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="58" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gad0342d58fa17a7bea359607c6cfcf0cf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(int num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>int</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints signed integer as a 64 bit signed integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints signed integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="68" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="68" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga4412b37ef401946605e5cef937c3f8dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(int32_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>int32_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 32 bit signed integer as a 64 bit signed integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 32 bit signed integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="78" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="78" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gaad90d9aa7b7ba103d2e943bf38c91072" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(int64_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>int64_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 64 bit signed integer as a 64 bit signed integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 64 bit signed integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="88" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="88" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga3c85835d3c6e556b5da524030e70e971" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(unsigned int num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints unsigned integer as a 64 bit unsigned integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="99" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="99" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga0c95ab36e2c3f91a627270c09ff9140f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(uint32_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 32 bit unsigned integer as a 64 bit unsigned integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 32 bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="109" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="109" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga9bdf0bd18006f43820d73ec9f8cc50b8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(uint64_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>uint64_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 64 bit unsigned integer as a 64 bit unsigned integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 64 bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="119" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="119" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga925806f986898c01e8de34234f951bdc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(int128_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>int128_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 128 bit signed integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 128 bit signed integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="129" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="129" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gacbb116ac61f216fafa100011bce090ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(uint128_t num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>uint128_t</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints 128 bit unsigned integer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints 128 bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="139" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="139" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga02d168bc05492d64cefea469dd114c12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(float num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>float</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints single-precision floating point number (i.e. float) </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints single-precision floating point number</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="150" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga8753f6a7c7d5c518f6369cfebf5be1bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(double num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>double</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints double-precision floating point number (i.e. double) </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints double-precision floating point number</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="158" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="158" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga2a3eea270ff4dbe4a15c2269a5c2cfec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(long double num)</argsstring>
+        <name>print</name>
+        <param>
+          <type>long double</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+<para>Prints quadruple-precision floating point number (i.e. long double) </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints quadruple-precision floating point number</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="166" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga2785282e4babb79499ba03e719e20aa1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>size_t</type>
+            <declname>Size</declname>
+            <defname>Size</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(const fixed_key&lt; Size &gt; &amp;val)</argsstring>
+        <name>print</name>
+        <param>
+          <type>const fixed_key&lt; Size &gt; &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Prints <ref refid="classeosio_1_1fixed__key" kindref="compound">fixed_key</ref> as a hexidecimal string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints <ref refid="classeosio_1_1fixed__key" kindref="compound">fixed_key</ref> as a hexidecimal string</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="176" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="176" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gaa47b5b44cf50be5fe5ca837ef7e6d583" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>size_t</type>
+            <declname>Size</declname>
+            <defname>Size</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(fixed_key&lt; Size &gt; &amp;val)</argsstring>
+        <name>print</name>
+        <param>
+          <type>fixed_key&lt; Size &gt; &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Prints <ref refid="classeosio_1_1fixed__key" kindref="compound">fixed_key</ref> as a hexidecimal string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints <ref refid="classeosio_1_1fixed__key" kindref="compound">fixed_key</ref> as a hexidecimal string</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="189" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="189" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gaddacdc539ef6e6fb4f55bf04d1a0d22c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(name name)</argsstring>
+        <name>print</name>
+        <param>
+          <type>name</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Prints a 64 bit names as base32 encoded string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints a 64 bit names as base32 encoded string</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>64 bit name to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="199" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="199" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gaeb64d709bf057338af83ea1b95a0d16d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(eosio::symbol_code sym_code)</argsstring>
+        <name>print</name>
+        <param>
+          <type><ref refid="classeosio_1_1symbol__code" kindref="compound">eosio::symbol_code</ref></type>
+          <declname>sym_code</declname>
+        </param>
+        <briefdescription>
+<para>Prints a <ref refid="classeosio_1_1symbol__code" kindref="compound">symbol_code</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints a <ref refid="classeosio_1_1symbol__code" kindref="compound">symbol_code</ref></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sym_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>symbol code to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="209" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="209" bodyend="214"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga3b7dd9bbca5a20bad3acb94b6b7354be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(bool val)</argsstring>
+        <name>print</name>
+        <param>
+          <type>bool</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Prints bool. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints bool</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="222" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="222" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gaa09d15641c76813eea61b876d8266400" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(T &amp;&amp;t)</argsstring>
+        <name>print</name>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Prints class object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints class object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para>T must implements <ref refid="group__console_gaa0a56fe314d032d027a1565d93a68b21_1gaa0a56fe314d032d027a1565d93a68b21" kindref="member">print()</ref> function </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="235" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="235" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gab9715bf002b919701d38e3ff931feabf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::print_f</definition>
+        <argsstring>(const char *s)</argsstring>
+        <name>print_f</name>
+        <param>
+          <type>const char *</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+<para>Prints null terminated string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints null terminated string</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>null terminated string to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="245" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="245" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gafcfae01c6d714474da8407a1c195c836" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Arg</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::print_f</definition>
+        <argsstring>(const char *s, Arg val, Args... rest)</argsstring>
+        <name>print_f</name>
+        <param>
+          <type>const char *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>Arg</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>rest</declname>
+        </param>
+        <briefdescription>
+<para>Prints formatted string. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints formatted string. It behaves similar to C printf/</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of the value used to replace the format specifier </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of the value used to replace the format specifier </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Null terminated string with to be printed (it can contains format specifier) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The value used to replace the format specifier </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The values used to replace the format specifier</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">print_f(&quot;Number<sp/>of<sp/>apples:<sp/>%&quot;,<sp/>10);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="265" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="265" bodyend="275"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1gab5232cf7452d463948eac1179f31d9f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Arg</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::print</definition>
+        <argsstring>(Arg &amp;&amp;a, Args &amp;&amp;... args)</argsstring>
+        <name>print</name>
+        <param>
+          <type>Arg &amp;&amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>Args &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Print out value / list of values. </para>        </briefdescription>
+        <detaileddescription>
+<para>Print out value / list of values <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The value to be printed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The other values to be printed</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">const<sp/>char<sp/>*s<sp/>=<sp/>&quot;Hello<sp/>World!&quot;;</highlight></codeline>
+<codeline><highlight class="normal">uint64_t<sp/>unsigned_64_bit_int<sp/>=<sp/>1e+18;</highlight></codeline>
+<codeline><highlight class="normal">uint128_t<sp/>unsigned_128_bit_int<sp/>(87654323456);</highlight></codeline>
+<codeline><highlight class="normal">uint64_t<sp/>string_as_unsigned_64_bit<sp/>=<sp/>N(abcde);</highlight></codeline>
+<codeline><highlight class="normal">print(s<sp/>,<sp/>unsigned_64_bit_int,<sp/>unsigned_128_bit_int,<sp/>string_as_unsigned_64_bit);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Ouput:<sp/>Hello<sp/>World!100000000000000000087654323456abcde</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="295" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="295" bodyend="298"/>
+      </memberdef>
+      <memberdef kind="function" id="group__console_1ga827f0aac6315e7963bcd52656cd7eeed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>iostream &amp;</type>
+        <definition>iostream&amp; eosio::operator&lt;&lt;</definition>
+        <argsstring>(iostream &amp;out, const T &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>iostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Overload c++ iostream. </para>        </briefdescription>
+        <detaileddescription>
+<para>Overload c++ iostream <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Output strem </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The value to be printed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>iostream&amp; - Reference to the input output stream</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">const<sp/>char<sp/>*s<sp/>=<sp/>&quot;Hello<sp/>World!&quot;;</highlight></codeline>
+<codeline><highlight class="normal">uint64_t<sp/>unsigned_64_bit_int<sp/>=<sp/>1e+18;</highlight></codeline>
+<codeline><highlight class="normal">uint128_t<sp/>unsigned_128_bit_int<sp/>(87654323456);</highlight></codeline>
+<codeline><highlight class="normal">uint64_t<sp/>string_as_unsigned_64_bit<sp/>=<sp/>N(abcde);</highlight></codeline>
+<codeline><highlight class="normal">std::out<sp/>&lt;&lt;<sp/>s<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;<sp/>&lt;&lt;<sp/>unsigned_64_bit_int<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;<sp/><sp/>&lt;&lt;<sp/>unsigned_128_bit_int<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;<sp/>&lt;&lt;<sp/>string_as_unsigned_64_bit;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Output:<sp/>Hello<sp/>World!<sp/>1000000000000000000<sp/>87654323456<sp/>abcde</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/print.hpp" line="324" column="1" bodyfile="libraries/eosiolib/print.hpp" bodystart="324" bodyend="327"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Defines C++ wrapper to log/print text messages. </para>    </briefdescription>
+    <detaileddescription>
+<para>This API uses C++ variadic templates and type detection to make it easy to print any native type. You can even overload the <computeroutput><ref refid="group__console_gab5232cf7452d463948eac1179f31d9f0_1gab5232cf7452d463948eac1179f31d9f0" kindref="member">print()</ref></computeroutput> method for your own custom types.</para><para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">print(<sp/>&quot;hello<sp/>world,<sp/>this<sp/>is<sp/>a<sp/>number:<sp/>&quot;,<sp/>5<sp/>);</highlight></codeline>
+</programlisting></para><sect1 id="group__console_1override">
+<title>Overriding Print for your Types</title>
+<para>There are two ways to overload print:<orderedlist>
+<listitem><para>implement void print( const T&amp; )</para></listitem><listitem><para>implement T::print()const </para></listitem></orderedlist>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

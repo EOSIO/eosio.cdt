@@ -1,0 +1,654 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1multi__index_1_1index" kind="struct" language="C++" prot="private">
+    <compoundname>eosio::multi_index::index</compoundname>
+    <innerclass refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" prot="public">eosio::multi_index::index::const_iterator</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kindref="member">name::raw</ref></type>
+        <declname>IndexName</declname>
+        <defname>IndexName</defname>
+      </param>
+      <param>
+        <type>typename Extractor</type>
+      </param>
+      <param>
+        <type>uint64_t</type>
+        <declname>Number</declname>
+        <defname>Number</defname>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>IsConst</declname>
+        <defname>IsConst</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181" prot="public" static="no" strong="no">
+        <type></type>
+        <name>constants</name>
+        <enumvalue id="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a7c81fd120c8d86b5851b870de759c96b" prot="public">
+          <name>table_name</name>
+          <initializer>= static_cast&lt;uint64_t&gt;(TableName)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181af0ccf10d060dfc7fbc8679df025ed94b" prot="public">
+          <name>index_name</name>
+          <initializer>= static_cast&lt;uint64_t&gt;(IndexName)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a79f077835667cb8246df7f119e80c6f0" prot="public">
+          <name>index_number</name>
+          <initializer>= Number</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a0c2b58abe06cedbe2fe1807a25052e4f" prot="public">
+          <name>index_table_name</name>
+          <initializer>= (static_cast&lt;uint64_t&gt;(TableName) &amp; 0xFFFFFFFFFFFFFFF0ULL)
+                                    | (Number &amp; 0x000000000000000FULL)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="309" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="309" bodyend="315"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structeosio_1_1multi__index_1_1index_a2f3c3f4f02371ab09d995b4ed08772ce_1a2f3c3f4f02371ab09d995b4ed08772ce" prot="public" static="no">
+        <type>Extractor</type>
+        <definition>typedef Extractor eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::secondary_extractor_type</definition>
+        <argsstring></argsstring>
+        <name>secondary_extractor_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="300" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structeosio_1_1multi__index_1_1index_a49f2c5517ef496a53beda1c4fa8165b5_1a49f2c5517ef496a53beda1c4fa8165b5" prot="public" static="no">
+        <type>std::decay&lt; decltype(Extractor()(nullptr))&gt;::type</type>
+        <definition>typedef std::decay&lt;decltype( Extractor()(nullptr) )&gt;::type eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::secondary_key_type</definition>
+        <argsstring></argsstring>
+        <name>secondary_key_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="301" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="301" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structeosio_1_1multi__index_1_1index_a710c24cb9fa944ba8e26d14b4d407b6b_1a710c24cb9fa944ba8e26d14b4d407b6b" prot="public" static="no">
+        <type>std::reverse_iterator&lt; <ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref> &gt;</type>
+        <definition>typedef std::reverse_iterator&lt;const_iterator&gt; eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::const_reverse_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_reverse_iterator</name>
+        <briefdescription>
+<para>struct <ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">multi_index::index::const_iterator</ref> </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="411" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structeosio_1_1multi__index_1_1index_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>friend class</type>
+        <definition>friend class multi_index</definition>
+        <argsstring></argsstring>
+        <name>multi_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="540" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="540" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1index_1ade8523c09fabc6a744f34f8002e6ac8f" prot="private" static="no" mutable="no">
+        <type>std::conditional&lt; IsConst, const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *, <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> * &gt;::type</type>
+        <definition>std::conditional&lt;IsConst, const multi_index*, multi_index*&gt;::type eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::_multidx</definition>
+        <argsstring></argsstring>
+        <name>_multidx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="545" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="545" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a1961eb9f6802b27c3938b205eba2b4e8_1a1961eb9f6802b27c3938b205eba2b4e8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr bool</type>
+        <definition>static constexpr bool eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::validate_index_name</definition>
+        <argsstring>(eosio::name n)</argsstring>
+        <name>validate_index_name</name>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="303" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="303" bodyend="305"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a48e393c34c4c66a2fdeb768b9cd244d8_1a48e393c34c4c66a2fdeb768b9cd244d8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint64_t</type>
+        <definition>static constexpr uint64_t eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::name</definition>
+        <argsstring>()</argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="317" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="317" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a123d2367cc502c2e2bd9d234c0759733_1a123d2367cc502c2e2bd9d234c0759733" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint64_t</type>
+        <definition>static constexpr uint64_t eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::number</definition>
+        <argsstring>()</argsstring>
+        <name>number</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="318" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="318" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_aa6c304af30c9cd2f5e401e3b8cd415bd_1aa6c304af30c9cd2f5e401e3b8cd415bd" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>static auto eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::extract_secondary_key</definition>
+        <argsstring>(const T &amp;obj)</argsstring>
+        <name>extract_secondary_key</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="537" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="537" bodyend="537"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_aa34db18061849360328e05fa9eb105f4_1aa34db18061849360328e05fa9eb105f4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::cbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>cbegin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="413" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="413" bodyend="416"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ae52505fea2dda6750bc8ee2ce523529b_1ae52505fea2dda6750bc8ee2ce523529b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="417" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="417" bodyend="417"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_aa62e31d8bec7e50750a0149725d90600_1aa62e31d8bec7e50750a0149725d90600" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::cend</definition>
+        <argsstring>() const</argsstring>
+        <name>cend</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="419" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="419" bodyend="419"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a723113602490d02f1e5dfd336413e312_1a723113602490d02f1e5dfd336413e312" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="420" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="420" bodyend="420"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a5182e6d7629fb4277866f219cdeb3f63_1a5182e6d7629fb4277866f219cdeb3f63" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::crbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>crbegin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="422" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="422" bodyend="422"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_af3283589ad1738f4a254ba3a7347e71e_1af3283589ad1738f4a254ba3a7347e71e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::rbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>rbegin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="423" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="423" bodyend="423"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a772ee8db2ef5a9c447b393cd3b2b8621_1a772ee8db2ef5a9c447b393cd3b2b8621" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::crend</definition>
+        <argsstring>() const</argsstring>
+        <name>crend</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="425" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="425" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_aa9537b1dcbe7e123e84ec825eb4b4766_1aa9537b1dcbe7e123e84ec825eb4b4766" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::rend</definition>
+        <argsstring>() const</argsstring>
+        <name>rend</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="426" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="426" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a17e0b1a69195b5b2dd6c81ed8b87b7d5_1a17e0b1a69195b5b2dd6c81ed8b87b7d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::find</definition>
+        <argsstring>(secondary_key_type &amp;&amp;secondary) const</argsstring>
+        <name>find</name>
+        <param>
+          <type>secondary_key_type &amp;&amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="428" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="428" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_aa6eb920454428f1bdbc3b35e8a1907ee_1aa6eb920454428f1bdbc3b35e8a1907ee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::find</definition>
+        <argsstring>(const secondary_key_type &amp;secondary) const</argsstring>
+        <name>find</name>
+        <param>
+          <type>const secondary_key_type &amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="432" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="432" bodyend="440"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a57327224628a5a875cd116568a9275e4_1a57327224628a5a875cd116568a9275e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::require_find</definition>
+        <argsstring>(secondary_key_type &amp;&amp;secondary, const char *error_msg=&quot;unable to find secondary key&quot;) const</argsstring>
+        <name>require_find</name>
+        <param>
+          <type>secondary_key_type &amp;&amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>error_msg</declname>
+          <defval>&quot;unable to <ref refid="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" kindref="member">find</ref> secondary key&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="442" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="442" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a2456a37fb65fa72f666adf74659f8177_1a2456a37fb65fa72f666adf74659f8177" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::require_find</definition>
+        <argsstring>(const secondary_key_type &amp;secondary, const char *error_msg=&quot;unable to find secondary key&quot;) const</argsstring>
+        <name>require_find</name>
+        <param>
+          <type>const secondary_key_type &amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>error_msg</declname>
+          <defval>&quot;unable to <ref refid="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" kindref="member">find</ref> secondary key&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="446" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="446" bodyend="451"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ac1b7fe4bd83241550b8ad605caa383cd_1ac1b7fe4bd83241550b8ad605caa383cd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T &amp;</type>
+        <definition>const T&amp; eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::get</definition>
+        <argsstring>(secondary_key_type &amp;&amp;secondary, const char *error_msg=&quot;unable to find secondary key&quot;) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>secondary_key_type &amp;&amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>error_msg</declname>
+          <defval>&quot;unable to <ref refid="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" kindref="member">find</ref> secondary key&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="453" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="453" bodyend="455"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a5800f8274ec86dc27f53e1a3708e0b6c_1a5800f8274ec86dc27f53e1a3708e0b6c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T &amp;</type>
+        <definition>const T&amp; eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::get</definition>
+        <argsstring>(const secondary_key_type &amp;secondary, const char *error_msg=&quot;unable to find secondary key&quot;) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>const secondary_key_type &amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>error_msg</declname>
+          <defval>&quot;unable to <ref refid="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" kindref="member">find</ref> secondary key&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="458" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="458" bodyend="462"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ad074700e6763eed28e5b9b88b30fbad8_1ad074700e6763eed28e5b9b88b30fbad8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::lower_bound</definition>
+        <argsstring>(secondary_key_type &amp;&amp;secondary) const</argsstring>
+        <name>lower_bound</name>
+        <param>
+          <type>secondary_key_type &amp;&amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="464" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="464" bodyend="466"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a21c01dac797e4f767fe8ab24d36c0d73_1a21c01dac797e4f767fe8ab24d36c0d73" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::lower_bound</definition>
+        <argsstring>(const secondary_key_type &amp;secondary) const</argsstring>
+        <name>lower_bound</name>
+        <param>
+          <type>const secondary_key_type &amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="467" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="467" bodyend="480"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a19934ccb4ce8ac6b77b26b7ef8ad528b_1a19934ccb4ce8ac6b77b26b7ef8ad528b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::upper_bound</definition>
+        <argsstring>(secondary_key_type &amp;&amp;secondary) const</argsstring>
+        <name>upper_bound</name>
+        <param>
+          <type>secondary_key_type &amp;&amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="482" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="482" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ae0f8f9892cda39b37fa850e71377ca55_1ae0f8f9892cda39b37fa850e71377ca55" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::upper_bound</definition>
+        <argsstring>(const secondary_key_type &amp;secondary) const</argsstring>
+        <name>upper_bound</name>
+        <param>
+          <type>const secondary_key_type &amp;</type>
+          <declname>secondary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="485" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="485" bodyend="498"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a7b0ed8e2378ad5a13ecd2b3cf09a4b1f_1a7b0ed8e2378ad5a13ecd2b3cf09a4b1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::iterator_to</definition>
+        <argsstring>(const T &amp;obj)</argsstring>
+        <name>iterator_to</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="500" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="500" bodyend="514"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ae124e86de4d3cc8d34202007a235a29a_1ae124e86de4d3cc8d34202007a235a29a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Lambda</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::modify</definition>
+        <argsstring>(const_iterator itr, eosio::name payer, Lambda &amp;&amp;updater)</argsstring>
+        <name>modify</name>
+        <param>
+          <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+          <declname>itr</declname>
+        </param>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref></type>
+          <declname>payer</declname>
+        </param>
+        <param>
+          <type>Lambda &amp;&amp;</type>
+          <declname>updater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="517" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="517" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a7646329d161840fc5590f24186f61da0_1a7646329d161840fc5590f24186f61da0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::erase</definition>
+        <argsstring>(const_iterator itr)</argsstring>
+        <name>erase</name>
+        <param>
+          <type><ref refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+          <declname>itr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="523" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="523" bodyend="532"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_a0b704fc6937b41494c82de218190019a_1a0b704fc6937b41494c82de218190019a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref></type>
+        <definition>eosio::name eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::get_code</definition>
+        <argsstring>() const</argsstring>
+        <name>get_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="534" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="534" bodyend="534"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_ac56321d4dcffcd76b850c788b3c6fbb6_1ac56321d4dcffcd76b850c788b3c6fbb6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::get_scope</definition>
+        <argsstring>() const</argsstring>
+        <name>get_scope</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="535" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="535" bodyend="535"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1index_1a9df4e082a0d6e66e3b9933bb137886cd" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::multi_index&lt; TableName, T, Indices &gt;::index&lt; IndexName, Extractor, Number, IsConst &gt;::index</definition>
+        <argsstring>(typename std::conditional&lt; IsConst, const multi_index *, multi_index *&gt;::type midx)</argsstring>
+        <name>index</name>
+        <param>
+          <type>typename std::conditional&lt; IsConst, const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *, <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *&gt;::type</type>
+          <declname>midx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="542" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="542" bodyend="543"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/multi_index.hpp" line="298" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="298" bodyend="546"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1multi__index_1_1index_1ade8523c09fabc6a744f34f8002e6ac8f" prot="private" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>_multidx</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ae52505fea2dda6750bc8ee2ce523529b_1ae52505fea2dda6750bc8ee2ce523529b" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>begin</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_aa34db18061849360328e05fa9eb105f4_1aa34db18061849360328e05fa9eb105f4" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>cbegin</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_aa62e31d8bec7e50750a0149725d90600_1aa62e31d8bec7e50750a0149725d90600" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>cend</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a710c24cb9fa944ba8e26d14b4d407b6b_1a710c24cb9fa944ba8e26d14b4d407b6b" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>const_reverse_iterator</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>constants</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a5182e6d7629fb4277866f219cdeb3f63_1a5182e6d7629fb4277866f219cdeb3f63" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>crbegin</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a772ee8db2ef5a9c447b393cd3b2b8621_1a772ee8db2ef5a9c447b393cd3b2b8621" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>crend</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a723113602490d02f1e5dfd336413e312_1a723113602490d02f1e5dfd336413e312" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>end</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a7646329d161840fc5590f24186f61da0_1a7646329d161840fc5590f24186f61da0" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>erase</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_aa6c304af30c9cd2f5e401e3b8cd415bd_1aa6c304af30c9cd2f5e401e3b8cd415bd" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>extract_secondary_key</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a17e0b1a69195b5b2dd6c81ed8b87b7d5_1a17e0b1a69195b5b2dd6c81ed8b87b7d5" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>find</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_aa6eb920454428f1bdbc3b35e8a1907ee_1aa6eb920454428f1bdbc3b35e8a1907ee" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>find</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ac1b7fe4bd83241550b8ad605caa383cd_1ac1b7fe4bd83241550b8ad605caa383cd" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>get</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a5800f8274ec86dc27f53e1a3708e0b6c_1a5800f8274ec86dc27f53e1a3708e0b6c" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>get</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a0b704fc6937b41494c82de218190019a_1a0b704fc6937b41494c82de218190019a" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>get_code</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ac56321d4dcffcd76b850c788b3c6fbb6_1ac56321d4dcffcd76b850c788b3c6fbb6" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>get_scope</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_1a9df4e082a0d6e66e3b9933bb137886cd" prot="private" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>index</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181af0ccf10d060dfc7fbc8679df025ed94b" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>index_name</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a79f077835667cb8246df7f119e80c6f0" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>index_number</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a0c2b58abe06cedbe2fe1807a25052e4f" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>index_table_name</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a7b0ed8e2378ad5a13ecd2b3cf09a4b1f_1a7b0ed8e2378ad5a13ecd2b3cf09a4b1f" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>iterator_to</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ad074700e6763eed28e5b9b88b30fbad8_1ad074700e6763eed28e5b9b88b30fbad8" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>lower_bound</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a21c01dac797e4f767fe8ab24d36c0d73_1a21c01dac797e4f767fe8ab24d36c0d73" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>lower_bound</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ae124e86de4d3cc8d34202007a235a29a_1ae124e86de4d3cc8d34202007a235a29a" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>modify</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" prot="private" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>multi_index</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a48e393c34c4c66a2fdeb768b9cd244d8_1a48e393c34c4c66a2fdeb768b9cd244d8" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>name</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a123d2367cc502c2e2bd9d234c0759733_1a123d2367cc502c2e2bd9d234c0759733" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>number</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_af3283589ad1738f4a254ba3a7347e71e_1af3283589ad1738f4a254ba3a7347e71e" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>rbegin</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_aa9537b1dcbe7e123e84ec825eb4b4766_1aa9537b1dcbe7e123e84ec825eb4b4766" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>rend</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a57327224628a5a875cd116568a9275e4_1a57327224628a5a875cd116568a9275e4" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>require_find</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a2456a37fb65fa72f666adf74659f8177_1a2456a37fb65fa72f666adf74659f8177" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>require_find</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a2f3c3f4f02371ab09d995b4ed08772ce_1a2f3c3f4f02371ab09d995b4ed08772ce" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>secondary_extractor_type</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a49f2c5517ef496a53beda1c4fa8165b5_1a49f2c5517ef496a53beda1c4fa8165b5" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>secondary_key_type</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a7c81fd120c8d86b5851b870de759c96b" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>table_name</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a19934ccb4ce8ac6b77b26b7ef8ad528b_1a19934ccb4ce8ac6b77b26b7ef8ad528b" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>upper_bound</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_ae0f8f9892cda39b37fa850e71377ca55_1ae0f8f9892cda39b37fa850e71377ca55" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>upper_bound</name></member>
+      <member refid="structeosio_1_1multi__index_1_1index_a1961eb9f6802b27c3938b205eba2b4e8_1a1961eb9f6802b27c3938b205eba2b4e8" prot="public" virt="non-virtual"><scope>eosio::multi_index::index</scope><name>validate_index_name</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

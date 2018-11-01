@@ -10,18 +10,15 @@
 #include <vector>
 
 namespace eosio {
+
+  /**
+   * @defgroup transaction Transaction C++ API
+   * @brief Type-safe C++ wrappers for transaction C API
+   * @note There are some methods from the @ref transactioncapi that can be used directly from C++
+   * @{
+   */
    typedef std::tuple<uint16_t, std::vector<char>> extension;
    typedef std::vector<extension> extensions_type;
-
-   /**
-    * @defgroup transactioncppapi Transaction C++ API
-    * @ingroup transactionapi
-    * @brief Type-safe C++ wrappers for transaction C API
-    *
-    * @note There are some methods from the @ref transactioncapi that can be used directly from C++
-    *
-    * @{
-    */
 
    class transaction_header {
    public:
@@ -93,6 +90,5 @@ namespace eosio {
       return eosio::unpack<eosio::action>( buffer, size );
    }
 
-   ///@} transactioncpp api
-
-} // namespace eos
+   ///}@
+}

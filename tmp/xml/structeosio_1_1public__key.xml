@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1public__key" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::public_key</compoundname>
+    <includes refid="public__key_8hpp" local="no">public_key.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1public__key_aaba0301ecc27240508120958503b2361_1aaba0301ecc27240508120958503b2361" prot="public" static="no" mutable="no">
+        <type><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref></type>
+        <definition>unsigned_int eosio::public_key::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>Type of the public key. </para>        </briefdescription>
+        <detaileddescription>
+<para>Type of the public key, could be either K1 or R1 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/public_key.hpp" line="20" column="1" bodyfile="libraries/eosiolib/public_key.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1public__key_af05e926b56c5f221dc502a6f68dbba58_1af05e926b56c5f221dc502a6f68dbba58" prot="public" static="no" mutable="no">
+        <type>std::array&lt; char, 33 &gt;</type>
+        <definition>std::array&lt;char,33&gt; eosio::public_key::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Bytes of the public key. </para>        </briefdescription>
+        <detaileddescription>
+<para>Bytes of the public key </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/public_key.hpp" line="27" column="1" bodyfile="libraries/eosiolib/public_key.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structeosio_1_1public__key_a4f2610bdec460bf2b0203684a9599da5_1a4f2610bdec460bf2b0203684a9599da5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const public_key &amp;a, const public_key &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1public__key" kindref="compound">public_key</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1public__key" kindref="compound">public_key</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/public_key.hpp" line="29" column="1" bodyfile="libraries/eosiolib/public_key.hpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1public__key_a5faa639eb95ed12c1be5d8ae65c7cb54_1a5faa639eb95ed12c1be5d8ae65c7cb54" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const public_key &amp;a, const public_key &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1public__key" kindref="compound">public_key</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1public__key" kindref="compound">public_key</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/public_key.hpp" line="32" column="1" bodyfile="libraries/eosiolib/public_key.hpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>EOSIO Public Key </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="101">
+        <label>eosio::public_key</label>
+        <link refid="structeosio_1_1public__key"/>
+        <childnode refid="102" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+      </node>
+      <node id="102">
+        <label>unsigned_int</label>
+        <link refid="structunsigned__int"/>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/public_key.hpp" line="15" column="1" bodyfile="libraries/eosiolib/public_key.hpp" bodystart="15" bodyend="36"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1public__key_af05e926b56c5f221dc502a6f68dbba58_1af05e926b56c5f221dc502a6f68dbba58" prot="public" virt="non-virtual"><scope>eosio::public_key</scope><name>data</name></member>
+      <member refid="structeosio_1_1public__key_a5faa639eb95ed12c1be5d8ae65c7cb54_1a5faa639eb95ed12c1be5d8ae65c7cb54" prot="public" virt="non-virtual"><scope>eosio::public_key</scope><name>operator!=</name></member>
+      <member refid="structeosio_1_1public__key_a4f2610bdec460bf2b0203684a9599da5_1a4f2610bdec460bf2b0203684a9599da5" prot="public" virt="non-virtual"><scope>eosio::public_key</scope><name>operator==</name></member>
+      <member refid="structeosio_1_1public__key_aaba0301ecc27240508120958503b2361_1aaba0301ecc27240508120958503b2361" prot="public" virt="non-virtual"><scope>eosio::public_key</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

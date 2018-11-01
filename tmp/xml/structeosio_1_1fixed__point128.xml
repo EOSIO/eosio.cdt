@@ -1,0 +1,477 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1fixed__point128" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::fixed_point128</compoundname>
+    <includes refid="fixedpoint_8hpp" local="no">fixedpoint.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>uint8_t</type>
+        <declname>Q</declname>
+        <defname>Q</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1fixed__point128_aca06ae4275f148e87dcd527cbdaf87c5_1aca06ae4275f148e87dcd527cbdaf87c5" prot="public" static="no" mutable="no">
+        <type>int128_t</type>
+        <definition>int128_t eosio::fixed_point128&lt; Q &gt;::val</definition>
+        <argsstring></argsstring>
+        <name>val</name>
+        <briefdescription>
+<para>Value of the fixed point represented as int128_t. </para>        </briefdescription>
+        <detaileddescription>
+<para>Value of the fixed point represented as int128_t </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="109" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a35bb5e4ffc953d845551dadf79455ab8_1a35bb5e4ffc953d845551dadf79455ab8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::fixed_point128&lt; Q &gt;::fixed_point128</definition>
+        <argsstring>(int128_t v=0)</argsstring>
+        <name>fixed_point128</name>
+        <param>
+          <type>int128_t</type>
+          <declname>v</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Various constructors for <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Various constructors for <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>. Can create <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref> instance from an int128_t, <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>,64,32 instance</para><para>Example: <programlisting><codeline><highlight class="normal">fixed_point64&lt;18&gt;<sp/>a(1234.455667);</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;3&gt;<sp/>b(a);</highlight></codeline>
+<codeline><highlight class="normal">fixed_point32&lt;6&gt;<sp/>b(13324.32323);</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;5&gt;<sp/>c(a);</highlight></codeline>
+</programlisting> Construct a new fixed point128 object from int128_t</para><para>Construct a new fixed point128 object <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- int128_t representation of the fixed point value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="131" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a9a6e26a69471e1d42ca0f6b41b673734_1a9a6e26a69471e1d42ca0f6b41b673734" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::fixed_point128&lt; Q &gt;::fixed_point128</definition>
+        <argsstring>(const fixed_point128&lt; qr &gt; &amp;r)</argsstring>
+        <name>fixed_point128</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Another <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref> as source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="139" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="683" bodyend="685"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_ac03c87c2b4a19daf60e5f9c56c4584f0_1ac03c87c2b4a19daf60e5f9c56c4584f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::fixed_point128&lt; Q &gt;::fixed_point128</definition>
+        <argsstring>(const fixed_point64&lt; qr &gt; &amp;r)</argsstring>
+        <name>fixed_point128</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point64" kindref="compound">fixed_point64</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point64" kindref="compound">fixed_point64</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point64" kindref="compound">fixed_point64</ref></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>-fixed_point64 as source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="147" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="688" bodyend="690"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_ab26dee4e941063197fb98f2d71d9c8ce_1ab26dee4e941063197fb98f2d71d9c8ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::fixed_point128&lt; Q &gt;::fixed_point128</definition>
+        <argsstring>(const fixed_point32&lt; qr &gt; &amp;r)</argsstring>
+        <name>fixed_point128</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new fixed point128 object from another <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>-fixed_point32 as source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="155" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="693" bodyend="695"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a1790a1e9c8858987870440b7d0221702_1a1790a1e9c8858987870440b7d0221702" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int128_t</type>
+        <definition>int128_t eosio::fixed_point128&lt; Q &gt;::int_part</definition>
+        <argsstring>() const</argsstring>
+        <name>int_part</name>
+        <briefdescription>
+<para>To get the integer part of the fixed number. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the integer part of the 64 bit fixed number</para><para><simplesect kind="return"><para>Returns integer part of the fixed number</para></simplesect>
+Example: <programlisting><codeline><highlight class="normal">fixed_point64&lt;5&gt;<sp/>a(1234.455667)</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>a.int_part();<sp/>//<sp/>Output:<sp/>1234</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="169" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="169" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a039ff620c0ccbde2438615df5d6d3ab8_1a039ff620c0ccbde2438615df5d6d3ab8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint128_t</type>
+        <definition>uint128_t eosio::fixed_point128&lt; Q &gt;::frac_part</definition>
+        <argsstring>() const</argsstring>
+        <name>frac_part</name>
+        <briefdescription>
+<para>To get the decimal part of the fixed number. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the decimal part of the 64 bit fixed number</para><para><simplesect kind="return"><para>Returns decimal part of the fixed number</para></simplesect>
+Example: <programlisting><codeline><highlight class="normal">fixed_point128&lt;3&gt;<sp/>a(1234.455667)</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>a.decimal_part();<sp/>//<sp/>Output:<sp/>455</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="185" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="185" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_ae8064361384dfea9d6d7984719ef4b01_1ae8064361384dfea9d6d7984719ef4b01" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::fixed_point128&lt; Q &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+<para>Prints the fixed point value. </para>        </briefdescription>
+        <detaileddescription>
+<para>Prints the fixed point value </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="195" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="195" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_ad93deaa805f79fa8547f76039ef9c24d_1ad93deaa805f79fa8547f76039ef9c24d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref> &amp;</type>
+        <definition>fixed_point128&amp; eosio::fixed_point128&lt; Q &gt;::operator=</definition>
+        <argsstring>(const fixed_point32&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. Assign <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref> to <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&amp; - Reference to this object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="212" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_ac6221bff5864db61cce02e21d4fa9159_1ac6221bff5864db61cce02e21d4fa9159" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref> &amp;</type>
+        <definition>fixed_point128&amp; eosio::fixed_point128&lt; Q &gt;::operator=</definition>
+        <argsstring>(const fixed_point64&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point64" kindref="compound">fixed_point64</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. Assign <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref> to <ref refid="structeosio_1_1fixed__point64" kindref="compound">fixed_point64</ref></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&amp; - Reference to this object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="221" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a30180ac339ef359d5d553c7e5eb1af83_1a30180ac339ef359d5d553c7e5eb1af83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref> &amp;</type>
+        <definition>fixed_point128&amp; eosio::fixed_point128&lt; Q &gt;::operator=</definition>
+        <argsstring>(const fixed_point128&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. Assign <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref> to <ref refid="structeosio_1_1fixed__point32" kindref="compound">fixed_point32</ref></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&amp; - Reference to this object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="230" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_aec57d31fe7d5ef08eac57ac793aefa83_1aec57d31fe7d5ef08eac57ac793aefa83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool eosio::fixed_point128&lt; Q &gt;::operator==</definition>
+        <argsstring>(const fixed_point128&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Equality operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Equality operator</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="242" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="242" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a062d76e3f824db70e6007dbe34f24874_1a062d76e3f824db70e6007dbe34f24874" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool eosio::fixed_point128&lt; Q &gt;::operator&gt;</definition>
+        <argsstring>(const fixed_point128&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Greater than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Greater than operator</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="253" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="253" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1fixed__point128_a0f5ea9645922ee31ea90cc3c9bbb58ae_1a0f5ea9645922ee31ea90cc3c9bbb58ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>uint8_t</type>
+            <declname>qr</declname>
+            <defname>qr</defname>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool eosio::fixed_point128&lt; Q &gt;::operator&lt;</definition>
+        <argsstring>(const fixed_point128&lt; qr &gt; &amp;r)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1fixed__point128" kindref="compound">fixed_point128</ref>&lt; qr &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Less than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Less than operator</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>qr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Precision of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/fixedpoint.hpp" line="264" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="264" bodyend="264"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>128 bits representation of Fixed Point class. </para>    </briefdescription>
+    <detaileddescription>
+<para>The template param Q represents the Q Factor i.e number of decimals</para><para>Example: <programlisting><codeline><highlight class="normal">fixed_point128&lt;6&gt;<sp/>a(123232.455667233)</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;0&gt;<sp/>a(123424)</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;18&gt;<sp/>c<sp/>=<sp/>a*b;</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;24&gt;<sp/>d<sp/>=<sp/>a+b+c;</highlight></codeline>
+<codeline><highlight class="normal">fixed_point128&lt;24&gt;<sp/>e<sp/>=<sp/>b/a;</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="libraries/eosiolib/fixedpoint.hpp" line="22" column="1" bodyfile="libraries/eosiolib/fixedpoint.hpp" bodystart="22" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1fixed__point128_a35bb5e4ffc953d845551dadf79455ab8_1a35bb5e4ffc953d845551dadf79455ab8" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>fixed_point128</name></member>
+      <member refid="structeosio_1_1fixed__point128_a9a6e26a69471e1d42ca0f6b41b673734_1a9a6e26a69471e1d42ca0f6b41b673734" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>fixed_point128</name></member>
+      <member refid="structeosio_1_1fixed__point128_ac03c87c2b4a19daf60e5f9c56c4584f0_1ac03c87c2b4a19daf60e5f9c56c4584f0" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>fixed_point128</name></member>
+      <member refid="structeosio_1_1fixed__point128_ab26dee4e941063197fb98f2d71d9c8ce_1ab26dee4e941063197fb98f2d71d9c8ce" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>fixed_point128</name></member>
+      <member refid="structeosio_1_1fixed__point128_a039ff620c0ccbde2438615df5d6d3ab8_1a039ff620c0ccbde2438615df5d6d3ab8" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>frac_part</name></member>
+      <member refid="structeosio_1_1fixed__point128_a1790a1e9c8858987870440b7d0221702_1a1790a1e9c8858987870440b7d0221702" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>int_part</name></member>
+      <member refid="structeosio_1_1fixed__point128_a0f5ea9645922ee31ea90cc3c9bbb58ae_1a0f5ea9645922ee31ea90cc3c9bbb58ae" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator&lt;</name></member>
+      <member refid="structeosio_1_1fixed__point128_ad93deaa805f79fa8547f76039ef9c24d_1ad93deaa805f79fa8547f76039ef9c24d" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator=</name></member>
+      <member refid="structeosio_1_1fixed__point128_ac6221bff5864db61cce02e21d4fa9159_1ac6221bff5864db61cce02e21d4fa9159" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator=</name></member>
+      <member refid="structeosio_1_1fixed__point128_a30180ac339ef359d5d553c7e5eb1af83_1a30180ac339ef359d5d553c7e5eb1af83" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator=</name></member>
+      <member refid="structeosio_1_1fixed__point128_aec57d31fe7d5ef08eac57ac793aefa83_1aec57d31fe7d5ef08eac57ac793aefa83" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator==</name></member>
+      <member refid="structeosio_1_1fixed__point128_a062d76e3f824db70e6007dbe34f24874_1a062d76e3f824db70e6007dbe34f24874" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>operator&gt;</name></member>
+      <member refid="structeosio_1_1fixed__point128_ae8064361384dfea9d6d7984719ef4b01_1ae8064361384dfea9d6d7984719ef4b01" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>print</name></member>
+      <member refid="structeosio_1_1fixed__point128_aca06ae4275f148e87dcd527cbdaf87c5_1aca06ae4275f148e87dcd527cbdaf87c5" prot="public" virt="non-virtual"><scope>eosio::fixed_point128</scope><name>val</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

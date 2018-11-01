@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__action" kind="group">
+    <compoundname>action</compoundname>
+    <title>Action C++ API</title>
+    <innerclass refid="structeosio_1_1permission__level" prot="public">eosio::permission_level</innerclass>
+    <innerclass refid="structeosio_1_1action" prot="public">eosio::action</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__action_1ga3ce0a297276d44f03c9b5dc17fcd2b31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T eosio::unpack_action_data</definition>
+        <argsstring>()</argsstring>
+        <name>unpack_action_data</name>
+        <briefdescription>
+<para>Interpret the action body as type T. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method unpacks the current action at type T.</para><para><simplesect kind="return"><para>Unpacked action data casted as T.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">struct<sp/>dummy_action<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>char<sp/>a;<sp/>//1</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unsigned<sp/>long<sp/>long<sp/>b;<sp/>//8</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>int<sp/><sp/>c;<sp/>//4</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>EOSLIB_SERIALIZE(<sp/>dummy_action,<sp/>(a)(b)(c)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">dummy_action<sp/>msg<sp/>=<sp/>unpack_action_data&lt;dummy_action&gt;();</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="47" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="47" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1ga4e1838d05857e38ddf8916e616698460" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::require_recipient</definition>
+        <argsstring>(name notify_account)</argsstring>
+        <name>require_recipient</name>
+        <param>
+          <type>name</type>
+          <declname>notify_account</declname>
+        </param>
+        <briefdescription>
+<para>Add the specified account to set of accounts to be notified. </para>        </briefdescription>
+        <detaileddescription>
+<para>Add the specified account to set of accounts to be notified</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>notify_account</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- name of the account to be verified </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="61" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="61" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1gaa61e47227ac315887caf1e028191ff7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>accounts</declname>
+            <defname>accounts</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void eosio::require_recipient</definition>
+        <argsstring>(name notify_account, accounts... remaining_accounts)</argsstring>
+        <name>require_recipient</name>
+        <param>
+          <type>name</type>
+          <declname>notify_account</declname>
+        </param>
+        <param>
+          <type>accounts...</type>
+          <declname>remaining_accounts</declname>
+        </param>
+        <briefdescription>
+<para>Notify an account for this action. </para>        </briefdescription>
+        <detaileddescription>
+<para>All of the listed accounts will be added to the set of accounts to be notified</para><para>This helper method enables you to add multiple accounts to accounts to be notified list with a single call rather than having to call the similar C API multiple times.</para><para><simplesect kind="note"><para>action.code is also considered as part of the set of notified accounts</para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>notify_account</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>account to be notified </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>remaining_accounts</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>accounts to be notified</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">require_recipient(N(Account1),<sp/>N(Account2),<sp/>N(Account3));<sp/>//<sp/>throws<sp/>exception<sp/>if<sp/>any<sp/>of<sp/>them<sp/>not<sp/>in<sp/>set.</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="84" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="84" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1ga47b4afe79f1de07376e2ecdd541f92c7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::require_auth</definition>
+        <argsstring>(name n)</argsstring>
+        <name>require_auth</name>
+        <param>
+          <type>name</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Verify specified account exists in the set of provided auths. </para>        </briefdescription>
+        <detaileddescription>
+<para>Verifies that <ref refid="structeosio_1_1name" kindref="compound">name</ref> exists in the set of provided auths on a action. Fails if not found.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- name of the account to be verified </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="95" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="95" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1gaa9c6bd255a286073e7dc8a337f2b11a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::require_auth</definition>
+        <argsstring>(const permission_level &amp;level)</argsstring>
+        <name>require_auth</name>
+        <param>
+          <type>const permission_level &amp;</type>
+          <declname>level</declname>
+        </param>
+        <briefdescription>
+<para>Require the specified authorization for this action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Require the specified authorization for this action. If this action doesn&apos;t contain the specified auth, it will fail.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Authorization to be required </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="157" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="157" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1ga9e4650a61bbe0809cc62e6b2af8252d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::has_auth</definition>
+        <argsstring>(name n)</argsstring>
+        <name>has_auth</name>
+        <param>
+          <type>name</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Verifies that n has auth. </para>        </briefdescription>
+        <detaileddescription>
+<para>Verifies that n has auth.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- name of the account to be verified </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="167" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="167" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="group__action_1ga887cd0fed2350c5ae52565ba6e290db3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::is_account</definition>
+        <argsstring>(name n)</argsstring>
+        <name>is_account</name>
+        <param>
+          <type>name</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Verifies that n is an existing account. </para>        </briefdescription>
+        <detaileddescription>
+<para>Verifies that n is an existing account.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- name of the account to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="177" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="177" bodyend="179"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__action_1ga7c267f408db88d60ce0a5c74845596ee" prot="public" static="no">
+        <name>SEND_INLINE_ACTION</name>
+        <param><defname>CONTRACT</defname></param>
+        <param><defname>NAME</defname></param>
+        <param><defname>...</defname></param>
+        <initializer><ref refid="action_8hpp_a1bb288791cd436d07bddf3d43f4740d4_1a1bb288791cd436d07bddf3d43f4740d4" kindref="member">INLINE_ACTION_SENDER</ref>(std::decay_t&lt;decltype(<ref refid="eosio_8hpp_a3dd8a1be2fbf980ee66578476244d85f_1a3dd8a1be2fbf980ee66578476244d85f" kindref="member">CONTRACT</ref>)&gt;, NAME)( (<ref refid="eosio_8hpp_a3dd8a1be2fbf980ee66578476244d85f_1a3dd8a1be2fbf980ee66578476244d85f" kindref="member">CONTRACT</ref>).get_self(),\
+BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );</initializer>
+        <briefdescription>
+<para>Send inline action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Send inline action</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>CONTRACT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The account this action is intended for </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NAME</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The member of the action specified as (&quot;action_member1_name&quot;, action_member1_value)(&quot;action_member2_name&quot;, action_member2_value) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="335" column="9" bodyfile="libraries/eosiolib/action.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Defines type-safe C++ wrapers for querying action and sending action. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>There are some methods from the <ref refid="group__action" kindref="compound">Action C++ API</ref> that can be used directly from C++ </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

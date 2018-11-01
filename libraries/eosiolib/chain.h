@@ -7,15 +7,8 @@
 #include <eosiolib/types.h>
 
 /**
- *  @defgroup chainapi Chain API
- *  @brief Defines API for querying internal chain state
- *  @ingroup contractdev
- */
-
-/**
- *  @defgroup chaincapi Chain C API
+ *  @addtogroup chain
  *  @brief Defines %C API for querying internal chain state
- *  @ingroup chainapi
  *  @{
  */
 
@@ -40,6 +33,6 @@ extern "C" {
      */
 
     uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
-
-   ///@ } chaincapi
 }
+
+/// @}

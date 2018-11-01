@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__privileged" kind="group">
+    <compoundname>privileged</compoundname>
+    <title>Privileged C++ API</title>
+    <innerclass refid="structeosio_1_1blockchain__parameters" prot="public">eosio::blockchain_parameters</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__privileged_1ga4b6f34ade1f06f6583b4a17738bebe0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::set_blockchain_parameters</definition>
+        <argsstring>(const eosio::blockchain_parameters &amp;params)</argsstring>
+        <name>set_blockchain_parameters</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1blockchain__parameters" kindref="compound">eosio::blockchain_parameters</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Set the blockchain parameters Set the blockchain parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- New blockchain parameters to set </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="43" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="43" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="group__privileged_1ga673da670d201ba73461eedd8bd1aec8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::get_blockchain_parameters</definition>
+        <argsstring>(eosio::blockchain_parameters &amp;params)</argsstring>
+        <name>get_blockchain_parameters</name>
+        <param>
+          <type><ref refid="structeosio_1_1blockchain__parameters" kindref="compound">eosio::blockchain_parameters</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the blolckchain parameters Retrieve the blolckchain parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- It will be replaced with the retrieved blockchain params </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="50" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="50" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Defines C++ Privileged API </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

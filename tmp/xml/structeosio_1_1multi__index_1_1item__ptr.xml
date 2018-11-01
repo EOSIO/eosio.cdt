@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1multi__index_1_1item__ptr" kind="struct" language="C++" prot="private">
+    <compoundname>eosio::multi_index::item_ptr</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item__ptr_a76caf0c83e2d01052f6f9f9a1202779a_1a76caf0c83e2d01052f6f9f9a1202779a" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; item &gt;</type>
+        <definition>std::unique_ptr&lt;item&gt; eosio::multi_index&lt; TableName, T, Indices &gt;::item_ptr::_item</definition>
+        <argsstring></argsstring>
+        <name>_item</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="290" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item__ptr_a4f0ea92f1a3f1a161339bab5f1684490_1a4f0ea92f1a3f1a161339bab5f1684490" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::multi_index&lt; TableName, T, Indices &gt;::item_ptr::_primary_key</definition>
+        <argsstring></argsstring>
+        <name>_primary_key</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="291" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item__ptr_a3de098b77400e8b8c2be71f841f979b1_1a3de098b77400e8b8c2be71f841f979b1" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t eosio::multi_index&lt; TableName, T, Indices &gt;::item_ptr::_primary_itr</definition>
+        <argsstring></argsstring>
+        <name>_primary_itr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="292" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1item__ptr_aae582bb6e081ba5fd90afd5874c13f1c_1aae582bb6e081ba5fd90afd5874c13f1c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::multi_index&lt; TableName, T, Indices &gt;::item_ptr::item_ptr</definition>
+        <argsstring>(std::unique_ptr&lt; item &gt; &amp;&amp;i, uint64_t pk, int32_t pitr)</argsstring>
+        <name>item_ptr</name>
+        <param>
+          <type>std::unique_ptr&lt; item &gt; &amp;&amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>uint64_t</type>
+          <declname>pk</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>pitr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="287" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="287" bodyend="288"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/multi_index.hpp" line="286" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="285" bodyend="293"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1multi__index_1_1item__ptr_a76caf0c83e2d01052f6f9f9a1202779a_1a76caf0c83e2d01052f6f9f9a1202779a" prot="public" virt="non-virtual"><scope>eosio::multi_index::item_ptr</scope><name>_item</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item__ptr_a3de098b77400e8b8c2be71f841f979b1_1a3de098b77400e8b8c2be71f841f979b1" prot="public" virt="non-virtual"><scope>eosio::multi_index::item_ptr</scope><name>_primary_itr</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item__ptr_a4f0ea92f1a3f1a161339bab5f1684490_1a4f0ea92f1a3f1a161339bab5f1684490" prot="public" virt="non-virtual"><scope>eosio::multi_index::item_ptr</scope><name>_primary_key</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item__ptr_aae582bb6e081ba5fd90afd5874c13f1c_1aae582bb6e081ba5fd90afd5874c13f1c" prot="public" virt="non-virtual"><scope>eosio::multi_index::item_ptr</scope><name>item_ptr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

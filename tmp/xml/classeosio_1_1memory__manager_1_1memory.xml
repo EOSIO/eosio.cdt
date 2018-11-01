@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1memory__manager_1_1memory" kind="class" language="C++" prot="private">
+    <compoundname>eosio::memory_manager::memory</compoundname>
+    <innerclass refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr" prot="private">eosio::memory_manager::memory::buffer_ptr</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classeosio_1_1memory__manager_1_1memory_1a06fcb4aecae9f08c2b3eb6befacffb72" prot="private" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::memory_manager::memory::_heap_size</definition>
+        <argsstring></argsstring>
+        <name>_heap_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="508" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="508" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classeosio_1_1memory__manager_1_1memory_1abf33f3218fa54b3cbaeef15ee98ec898" prot="private" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* eosio::memory_manager::memory::_heap</definition>
+        <argsstring></argsstring>
+        <name>_heap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="509" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="509" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classeosio_1_1memory__manager_1_1memory_1ac48160fc38ebf12211429cff410c75ef" prot="private" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::memory_manager::memory::_offset</definition>
+        <argsstring></argsstring>
+        <name>_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="510" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="510" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_af85ade61b24019eea6306cf648f1d625_1af85ade61b24019eea6306cf648f1d625" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::memory_manager::memory::memory</definition>
+        <argsstring>()</argsstring>
+        <name>memory</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="249" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="249" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a09c3fb534b185d02d44c44a65687303d_1a09c3fb534b185d02d44c44a65687303d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::memory_manager::memory::init</definition>
+        <argsstring>(char *const mem_heap, uint32_t size)</argsstring>
+        <name>init</name>
+        <param>
+          <type>char *const</type>
+          <declname>mem_heap</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="256" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="256" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_accfe081869782f56b8b21d1335368c3e_1accfe081869782f56b8b21d1335368c3e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::memory_manager::memory::is_init</definition>
+        <argsstring>() const</argsstring>
+        <name>is_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="262" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="262" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a93951eea84e88bf8855dbc8eb96af62d_1a93951eea84e88bf8855dbc8eb96af62d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::memory_manager::memory::is_in_heap</definition>
+        <argsstring>(const char *const ptr) const</argsstring>
+        <name>is_in_heap</name>
+        <param>
+          <type>const char *const</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="267" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="267" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a53fc9d9c352df6bc90b44f559bed968b_1a53fc9d9c352df6bc90b44f559bed968b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::memory_manager::memory::is_capacity_remaining</definition>
+        <argsstring>() const</argsstring>
+        <name>is_capacity_remaining</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="274" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="274" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a2e3a3b2c09d28da026c8ed93811b9d6e_1a2e3a3b2c09d28da026c8ed93811b9d6e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* eosio::memory_manager::memory::malloc</definition>
+        <argsstring>(uint32_t size)</argsstring>
+        <name>malloc</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="279" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="279" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_abf4eba30b71bdd9a15478ee22688f581_1abf4eba30b71bdd9a15478ee22688f581" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* eosio::memory_manager::memory::malloc_from_freed</definition>
+        <argsstring>(uint32_t size)</argsstring>
+        <name>malloc_from_freed</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="293" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="293" bodyend="316"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a32ce5b71a89a4388e84748dfc03df3f1_1a32ce5b71a89a4388e84748dfc03df3f1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* eosio::memory_manager::memory::realloc_in_place</definition>
+        <argsstring>(char *const ptr, uint32_t size, uint32_t *orig_ptr_size)</argsstring>
+        <name>realloc_in_place</name>
+        <param>
+          <type>char *const</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>size</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>orig_ptr_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="318" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="318" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_a53ae2045de1772dae532bb03da755eee_1a53ae2045de1772dae532bb03da755eee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::memory_manager::memory::free</definition>
+        <argsstring>(char *ptr)</argsstring>
+        <name>free</name>
+        <param>
+          <type>char *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="366" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="366" bodyend="370"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_af9adcac3f8b1fbea2fb929290d92e7d3_1af9adcac3f8b1fbea2fb929290d92e7d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::memory_manager::memory::cleanup_remaining</definition>
+        <argsstring>()</argsstring>
+        <name>cleanup_remaining</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="372" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="372" bodyend="382"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1memory__manager_1_1memory_aa2c5013fac6521de3cf024201696341c_1aa2c5013fac6521de3cf024201696341c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::memory_manager::memory::expand_memory</definition>
+        <argsstring>(char *exp_mem, uint32_t size)</argsstring>
+        <name>expand_memory</name>
+        <param>
+          <type>char *</type>
+          <declname>exp_mem</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/eosiolib.cpp" line="384" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="384" bodyend="392"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/eosiolib.cpp" line="247" column="1" bodyfile="libraries/eosiolib/eosiolib.cpp" bodystart="246" bodyend="511"/>
+    <listofallmembers>
+      <member refid="classeosio_1_1memory__manager_1_1memory_1abf33f3218fa54b3cbaeef15ee98ec898" prot="private" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>_heap</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_1a06fcb4aecae9f08c2b3eb6befacffb72" prot="private" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>_heap_size</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_1ac48160fc38ebf12211429cff410c75ef" prot="private" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>_offset</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_af9adcac3f8b1fbea2fb929290d92e7d3_1af9adcac3f8b1fbea2fb929290d92e7d3" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>cleanup_remaining</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_aa2c5013fac6521de3cf024201696341c_1aa2c5013fac6521de3cf024201696341c" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>expand_memory</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a53ae2045de1772dae532bb03da755eee_1a53ae2045de1772dae532bb03da755eee" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>free</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a09c3fb534b185d02d44c44a65687303d_1a09c3fb534b185d02d44c44a65687303d" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>init</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a53fc9d9c352df6bc90b44f559bed968b_1a53fc9d9c352df6bc90b44f559bed968b" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>is_capacity_remaining</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a93951eea84e88bf8855dbc8eb96af62d_1a93951eea84e88bf8855dbc8eb96af62d" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>is_in_heap</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_accfe081869782f56b8b21d1335368c3e_1accfe081869782f56b8b21d1335368c3e" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>is_init</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a2e3a3b2c09d28da026c8ed93811b9d6e_1a2e3a3b2c09d28da026c8ed93811b9d6e" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>malloc</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_abf4eba30b71bdd9a15478ee22688f581_1abf4eba30b71bdd9a15478ee22688f581" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>malloc_from_freed</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_af85ade61b24019eea6306cf648f1d625_1af85ade61b24019eea6306cf648f1d625" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>memory</name></member>
+      <member refid="classeosio_1_1memory__manager_1_1memory_a32ce5b71a89a4388e84748dfc03df3f1_1a32ce5b71a89a4388e84748dfc03df3f1" prot="public" virt="non-virtual"><scope>eosio::memory_manager::memory</scope><name>realloc_in_place</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

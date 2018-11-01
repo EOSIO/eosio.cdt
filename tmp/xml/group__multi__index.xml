@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__multi__index" kind="group">
+    <compoundname>multi_index</compoundname>
+    <title>Multi Index Table</title>
+    <innerclass refid="classeosio_1_1multi__index" prot="public">eosio::multi_index</innerclass>
+    <briefdescription>
+<para>Defines EOSIO Multi Index Table. </para>    </briefdescription>
+    <detaileddescription>
+<para>EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container. EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key, the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t. EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:<itemizedlist>
+<listitem><para>uint64_t</para></listitem><listitem><para>uint128_t</para></listitem><listitem><para>uint256_t</para></listitem><listitem><para>double</para></listitem><listitem><para>long double</para></listitem></itemizedlist>
+</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- name of the table </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- type of the data stored inside the table </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- secondary indices for the table, up to 16 indices is supported here</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;eosiolib/eosio.hpp&gt;</highlight></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>eosio;</highlight></codeline>
+<codeline><highlight class="normal">class<sp/>mycontract:<sp/>contract<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>struct<sp/>record<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><sp/><sp/><sp/>primary;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><sp/><sp/><sp/>secondary_1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint128_t<sp/><sp/><sp/>secondary_2;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint256_t<sp/><sp/><sp/>secondary_3;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/><sp/><sp/><sp/><sp/><sp/>secondary_4;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>long<sp/>double<sp/>secondary_5;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/>primary_key()<sp/>const<sp/>{<sp/>return<sp/>primary;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/>get_secondary_1()<sp/>const<sp/>{<sp/>return<sp/>secondary_1;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint128_t<sp/>get_secondary_2()<sp/>const<sp/>{<sp/>return<sp/>secondary_2;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint256_t<sp/>get_secondary_3()<sp/>const<sp/>{<sp/>return<sp/>secondary_3;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>get_secondary_4()<sp/>const<sp/>{<sp/>return<sp/>secondary_4;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>long<sp/>double<sp/>get_secondary_5()<sp/>const<sp/>{<sp/>return<sp/>secondary_5;<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>EOSLIB_SERIALIZE(<sp/>record,<sp/>(primary)(secondary_1)(secondary_2)(secondary_3)(secondary_4)(secondary_5)<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mycontract(<sp/>name<sp/>self<sp/>):contract(self){}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void<sp/>myaction()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>code<sp/>=<sp/>_self;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>scope<sp/>=<sp/>_self;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>multi_index&lt;N(mytable),<sp/>record,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary1),<sp/>const_mem_fun&lt;record,<sp/>uint64_t,<sp/>&amp;record::get_secondary_1&gt;<sp/>&gt;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary2),<sp/>const_mem_fun&lt;record,<sp/>uint128_t,<sp/>&amp;record::get_secondary_2&gt;<sp/>&gt;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary3),<sp/>const_mem_fun&lt;record,<sp/>uint256_t,<sp/>&amp;record::get_secondary_3&gt;<sp/>&gt;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary4),<sp/>const_mem_fun&lt;record,<sp/>double,<sp/>&amp;record::get_secondary_4&gt;<sp/>&gt;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indexed_by&lt;<sp/>N(bysecondary5),<sp/>const_mem_fun&lt;record,<sp/>long<sp/>double,<sp/>&amp;record::get_secondary_5&gt;<sp/>&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&gt;<sp/>table(<sp/>code,<sp/>scope);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">EOSIO_ABI(<sp/>mycontract,<sp/>(myaction)<sp/>)</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1blockchain__parameters" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::blockchain_parameters</compoundname>
+    <includes refid="privileged_8hpp" local="no">privileged.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_aaffe7d6c7437826f208c68e9ee2acf65_1aaffe7d6c7437826f208c68e9ee2acf65" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::blockchain_parameters::max_block_net_usage</definition>
+        <argsstring></argsstring>
+        <name>max_block_net_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="19" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a346f353931e0403d07e27da151a8af4d_1a346f353931e0403d07e27da151a8af4d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::target_block_net_usage_pct</definition>
+        <argsstring></argsstring>
+        <name>target_block_net_usage_pct</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="21" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a07d6c92013fce008071d9b610544c4c6_1a07d6c92013fce008071d9b610544c4c6" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_transaction_net_usage</definition>
+        <argsstring></argsstring>
+        <name>max_transaction_net_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="23" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a944e5020392feb3aa43452db31dd6c53_1a944e5020392feb3aa43452db31dd6c53" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::base_per_transaction_net_usage</definition>
+        <argsstring></argsstring>
+        <name>base_per_transaction_net_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The base amount of net usage billed for a transaction to cover incidentals </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="28" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a5066e04cd3a3d74459e810d253c29ebf_1a5066e04cd3a3d74459e810d253c29ebf" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::net_usage_leeway</definition>
+        <argsstring></argsstring>
+        <name>net_usage_leeway</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="30" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a8ee23aba0c372b7d62b18e749e0e8798_1a8ee23aba0c372b7d62b18e749e0e8798" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::context_free_discount_net_usage_num</definition>
+        <argsstring></argsstring>
+        <name>context_free_discount_net_usage_num</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="32" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a34aa31b25c026f190097d3b66b5d8b28_1a34aa31b25c026f190097d3b66b5d8b28" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::context_free_discount_net_usage_den</definition>
+        <argsstring></argsstring>
+        <name>context_free_discount_net_usage_den</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="34" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_af6a0f851f934100f4cfc5d7cce8c3542_1af6a0f851f934100f4cfc5d7cce8c3542" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_block_cpu_usage</definition>
+        <argsstring></argsstring>
+        <name>max_block_cpu_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="36" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_aa8e6bff1b7d255588fb31ccdf6035aba_1aa8e6bff1b7d255588fb31ccdf6035aba" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::target_block_cpu_usage_pct</definition>
+        <argsstring></argsstring>
+        <name>target_block_cpu_usage_pct</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="38" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a59893f31083ea0239eff0fdb47a3e9a2_1a59893f31083ea0239eff0fdb47a3e9a2" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_transaction_cpu_usage</definition>
+        <argsstring></argsstring>
+        <name>max_transaction_cpu_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="40" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a5c15c7c28e28d93183e85639ddd3dd83_1a5c15c7c28e28d93183e85639ddd3dd83" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::min_transaction_cpu_usage</definition>
+        <argsstring></argsstring>
+        <name>min_transaction_cpu_usage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="42" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_ae9595da087ba46dbada5f785ec9191e6_1ae9595da087ba46dbada5f785ec9191e6" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_transaction_lifetime</definition>
+        <argsstring></argsstring>
+        <name>max_transaction_lifetime</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum lifetime of a transacton </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="47" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a8cf445a327ffb230b9751f3b6764efaa_1a8cf445a327ffb230b9751f3b6764efaa" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::deferred_trx_expiration_window</definition>
+        <argsstring></argsstring>
+        <name>deferred_trx_expiration_window</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="49" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_ac1ad602bce04bb7de2b83acf319605ac_1ac1ad602bce04bb7de2b83acf319605ac" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_transaction_delay</definition>
+        <argsstring></argsstring>
+        <name>max_transaction_delay</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="51" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a7dbcbc6c005be48b9d42fe21ee3c034f_1a7dbcbc6c005be48b9d42fe21ee3c034f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::blockchain_parameters::max_inline_action_size</definition>
+        <argsstring></argsstring>
+        <name>max_inline_action_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum size of inline action </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="56" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_a2a6f29f85a765e80fab44ca4c8bf4104_1a2a6f29f85a765e80fab44ca4c8bf4104" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t eosio::blockchain_parameters::max_inline_action_depth</definition>
+        <argsstring></argsstring>
+        <name>max_inline_action_depth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum depth of inline action </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="61" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1blockchain__parameters_aef65360380b879d1782d0b202b96c776_1aef65360380b879d1782d0b202b96c776" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t eosio::blockchain_parameters::max_authority_depth</definition>
+        <argsstring></argsstring>
+        <name>max_authority_depth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum authority depth </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/privileged.hpp" line="66" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Tunable blockchain configuration that can be changed via consensus </para>    </detaileddescription>
+    <location file="libraries/eosiolib/privileged.hpp" line="17" column="1" bodyfile="libraries/eosiolib/privileged.hpp" bodystart="17" bodyend="80"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1blockchain__parameters_a944e5020392feb3aa43452db31dd6c53_1a944e5020392feb3aa43452db31dd6c53" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>base_per_transaction_net_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a34aa31b25c026f190097d3b66b5d8b28_1a34aa31b25c026f190097d3b66b5d8b28" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>context_free_discount_net_usage_den</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a8ee23aba0c372b7d62b18e749e0e8798_1a8ee23aba0c372b7d62b18e749e0e8798" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>context_free_discount_net_usage_num</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a8cf445a327ffb230b9751f3b6764efaa_1a8cf445a327ffb230b9751f3b6764efaa" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>deferred_trx_expiration_window</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_aef65360380b879d1782d0b202b96c776_1aef65360380b879d1782d0b202b96c776" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_authority_depth</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_af6a0f851f934100f4cfc5d7cce8c3542_1af6a0f851f934100f4cfc5d7cce8c3542" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_block_cpu_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_aaffe7d6c7437826f208c68e9ee2acf65_1aaffe7d6c7437826f208c68e9ee2acf65" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_block_net_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a2a6f29f85a765e80fab44ca4c8bf4104_1a2a6f29f85a765e80fab44ca4c8bf4104" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_inline_action_depth</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a7dbcbc6c005be48b9d42fe21ee3c034f_1a7dbcbc6c005be48b9d42fe21ee3c034f" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_inline_action_size</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a59893f31083ea0239eff0fdb47a3e9a2_1a59893f31083ea0239eff0fdb47a3e9a2" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_transaction_cpu_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_ac1ad602bce04bb7de2b83acf319605ac_1ac1ad602bce04bb7de2b83acf319605ac" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_transaction_delay</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_ae9595da087ba46dbada5f785ec9191e6_1ae9595da087ba46dbada5f785ec9191e6" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_transaction_lifetime</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a07d6c92013fce008071d9b610544c4c6_1a07d6c92013fce008071d9b610544c4c6" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>max_transaction_net_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a5c15c7c28e28d93183e85639ddd3dd83_1a5c15c7c28e28d93183e85639ddd3dd83" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>min_transaction_cpu_usage</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a5066e04cd3a3d74459e810d253c29ebf_1a5066e04cd3a3d74459e810d253c29ebf" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>net_usage_leeway</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_aa8e6bff1b7d255588fb31ccdf6035aba_1aa8e6bff1b7d255588fb31ccdf6035aba" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>target_block_cpu_usage_pct</name></member>
+      <member refid="structeosio_1_1blockchain__parameters_a346f353931e0403d07e27da151a8af4d_1a346f353931e0403d07e27da151a8af4d" prot="public" virt="non-virtual"><scope>eosio::blockchain_parameters</scope><name>target_block_net_usage_pct</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

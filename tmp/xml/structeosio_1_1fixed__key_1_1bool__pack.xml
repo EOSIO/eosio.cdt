@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1fixed__key_1_1bool__pack" kind="struct" language="C++" prot="private">
+    <compoundname>eosio::fixed_key::bool_pack</compoundname>
+    <templateparamlist>
+      <param>
+        <type>bool...</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/fixed_key.hpp" line="45" column="1" bodyfile="libraries/eosiolib/fixed_key.hpp" bodystart="45" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

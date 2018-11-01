@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="varint_8hpp" kind="file" language="C++">
+    <compoundname>varint.hpp</compoundname>
+    <includedby refid="datastream_8hpp" local="no">libraries/eosiolib/datastream.hpp</includedby>
+    <includedby refid="public__key_8hpp" local="no">libraries/eosiolib/public_key.hpp</includedby>
+    <invincdepgraph>
+      <node id="705">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="711">
+        <label>libraries/eosiolib/privileged.hpp</label>
+        <link refid="privileged_8hpp"/>
+        <childnode refid="707" relation="include">
+        </childnode>
+        <childnode refid="712" relation="include">
+        </childnode>
+      </node>
+      <node id="707">
+        <label>libraries/eosiolib/eosiolib.cpp</label>
+        <link refid="eosiolib_8cpp"/>
+      </node>
+      <node id="701">
+        <label>libraries/eosiolib/dispatcher.hpp</label>
+        <link refid="dispatcher_8hpp"/>
+        <childnode refid="702" relation="include">
+        </childnode>
+      </node>
+      <node id="700">
+        <label>libraries/eosiolib/action.hpp</label>
+        <link refid="action_8hpp"/>
+        <childnode refid="701" relation="include">
+        </childnode>
+        <childnode refid="702" relation="include">
+        </childnode>
+        <childnode refid="704" relation="include">
+        </childnode>
+      </node>
+      <node id="708">
+        <label>libraries/eosiolib/multi_index.hpp</label>
+        <link refid="multi__index_8hpp"/>
+        <childnode refid="702" relation="include">
+        </childnode>
+        <childnode refid="709" relation="include">
+        </childnode>
+      </node>
+      <node id="704">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="705" relation="include">
+        </childnode>
+      </node>
+      <node id="699">
+        <label>libraries/eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="700" relation="include">
+        </childnode>
+        <childnode refid="706" relation="include">
+        </childnode>
+        <childnode refid="707" relation="include">
+        </childnode>
+        <childnode refid="708" relation="include">
+        </childnode>
+      </node>
+      <node id="698">
+        <label>libraries/eosiolib/varint.hpp</label>
+        <link refid="varint_8hpp"/>
+        <childnode refid="699" relation="include">
+        </childnode>
+        <childnode refid="710" relation="include">
+        </childnode>
+      </node>
+      <node id="709">
+        <label>libraries/eosiolib/singleton.hpp</label>
+        <link refid="singleton_8hpp"/>
+      </node>
+      <node id="706">
+        <label>libraries/eosiolib/contract.hpp</label>
+        <link refid="contract_8hpp"/>
+        <childnode refid="702" relation="include">
+        </childnode>
+      </node>
+      <node id="710">
+        <label>libraries/eosiolib/public_key.hpp</label>
+        <link refid="public__key_8hpp"/>
+        <childnode refid="711" relation="include">
+        </childnode>
+        <childnode refid="705" relation="include">
+        </childnode>
+      </node>
+      <node id="703">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="704" relation="include">
+        </childnode>
+      </node>
+      <node id="702">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="703" relation="include">
+        </childnode>
+      </node>
+      <node id="712">
+        <label>libraries/eosiolib/producer_schedule.hpp</label>
+        <link refid="producer__schedule_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structunsigned__int" prot="public">unsigned_int</innerclass>
+    <innerclass refid="structsigned__int" prot="public">signed_int</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="copyright"><para>defined in eos/LICENSE.txt </para></simplesect>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/varint.hpp"/>
+  </compounddef>
+</doxygen>

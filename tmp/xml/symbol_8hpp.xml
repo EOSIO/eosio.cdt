@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="symbol_8hpp" kind="file" language="C++">
+    <compoundname>symbol.hpp</compoundname>
+    <includes local="no">eosiolib/system.h</includes>
+    <includes local="no">eosiolib/print.h</includes>
+    <includes refid="name_8hpp" local="no">eosiolib/name.hpp</includes>
+    <includes local="no">eosiolib/serialize.hpp</includes>
+    <includes local="no">tuple</includes>
+    <includes local="no">limits</includes>
+    <includes local="no">string_view</includes>
+    <includedby refid="asset_8hpp" local="no">libraries/eosiolib/asset.hpp</includedby>
+    <includedby refid="datastream_8hpp" local="no">libraries/eosiolib/datastream.hpp</includedby>
+    <includedby refid="print_8hpp" local="no">libraries/eosiolib/print.hpp</includedby>
+    <incdepgraph>
+      <node id="552">
+        <label>limits</label>
+      </node>
+      <node id="547">
+        <label>eosiolib/name.hpp</label>
+        <link refid="name_8hpp"/>
+        <childnode refid="545" relation="include">
+        </childnode>
+        <childnode refid="548" relation="include">
+        </childnode>
+        <childnode refid="549" relation="include">
+        </childnode>
+        <childnode refid="550" relation="include">
+        </childnode>
+      </node>
+      <node id="549">
+        <label>string</label>
+      </node>
+      <node id="544">
+        <label>libraries/eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="545" relation="include">
+        </childnode>
+        <childnode refid="546" relation="include">
+        </childnode>
+        <childnode refid="547" relation="include">
+        </childnode>
+        <childnode refid="548" relation="include">
+        </childnode>
+        <childnode refid="551" relation="include">
+        </childnode>
+        <childnode refid="552" relation="include">
+        </childnode>
+        <childnode refid="550" relation="include">
+        </childnode>
+      </node>
+      <node id="548">
+        <label>eosiolib/serialize.hpp</label>
+      </node>
+      <node id="550">
+        <label>string_view</label>
+      </node>
+      <node id="546">
+        <label>eosiolib/print.h</label>
+      </node>
+      <node id="551">
+        <label>tuple</label>
+      </node>
+      <node id="545">
+        <label>eosiolib/system.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="561">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="567">
+        <label>libraries/eosiolib/fixedpoint.hpp</label>
+        <link refid="fixedpoint_8hpp"/>
+      </node>
+      <node id="563">
+        <label>libraries/eosiolib/eosiolib.cpp</label>
+        <link refid="eosiolib_8cpp"/>
+      </node>
+      <node id="554">
+        <label>libraries/eosiolib/asset.hpp</label>
+        <link refid="asset_8hpp"/>
+      </node>
+      <node id="557">
+        <label>libraries/eosiolib/dispatcher.hpp</label>
+        <link refid="dispatcher_8hpp"/>
+        <childnode refid="558" relation="include">
+        </childnode>
+      </node>
+      <node id="556">
+        <label>libraries/eosiolib/action.hpp</label>
+        <link refid="action_8hpp"/>
+        <childnode refid="557" relation="include">
+        </childnode>
+        <childnode refid="558" relation="include">
+        </childnode>
+        <childnode refid="560" relation="include">
+        </childnode>
+      </node>
+      <node id="553">
+        <label>libraries/eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="554" relation="include">
+        </childnode>
+        <childnode refid="555" relation="include">
+        </childnode>
+        <childnode refid="566" relation="include">
+        </childnode>
+      </node>
+      <node id="566">
+        <label>libraries/eosiolib/print.hpp</label>
+        <link refid="print_8hpp"/>
+        <childnode refid="554" relation="include">
+        </childnode>
+        <childnode refid="557" relation="include">
+        </childnode>
+        <childnode refid="558" relation="include">
+        </childnode>
+        <childnode refid="567" relation="include">
+        </childnode>
+      </node>
+      <node id="564">
+        <label>libraries/eosiolib/multi_index.hpp</label>
+        <link refid="multi__index_8hpp"/>
+        <childnode refid="558" relation="include">
+        </childnode>
+        <childnode refid="565" relation="include">
+        </childnode>
+      </node>
+      <node id="560">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="561" relation="include">
+        </childnode>
+      </node>
+      <node id="555">
+        <label>libraries/eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="556" relation="include">
+        </childnode>
+        <childnode refid="562" relation="include">
+        </childnode>
+        <childnode refid="563" relation="include">
+        </childnode>
+        <childnode refid="564" relation="include">
+        </childnode>
+      </node>
+      <node id="565">
+        <label>libraries/eosiolib/singleton.hpp</label>
+        <link refid="singleton_8hpp"/>
+      </node>
+      <node id="562">
+        <label>libraries/eosiolib/contract.hpp</label>
+        <link refid="contract_8hpp"/>
+        <childnode refid="558" relation="include">
+        </childnode>
+      </node>
+      <node id="559">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="560" relation="include">
+        </childnode>
+      </node>
+      <node id="558">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="559" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classeosio_1_1symbol__code" prot="public">eosio::symbol_code</innerclass>
+    <innerclass refid="classeosio_1_1symbol" prot="public">eosio::symbol</innerclass>
+    <innerclass refid="classeosio_1_1extended__symbol" prot="public">eosio::extended_symbol</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="copyright"><para>defined in eos/LICENSE.txt </para></simplesect>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/symbol.hpp"/>
+  </compounddef>
+</doxygen>

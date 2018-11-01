@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1multi__index_1_1item" kind="struct" language="C++" prot="private">
+    <compoundname>eosio::multi_index::item</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">T</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item_a99cf43d99bdedf53df84ae32799d2d09_1a99cf43d99bdedf53df84ae32799d2d09" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *</type>
+        <definition>const multi_index* eosio::multi_index&lt; TableName, T, Indices &gt;::item::__idx</definition>
+        <argsstring></argsstring>
+        <name>__idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="280" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item_a6105bc1647981c2c79aed428a8ec02e1_1a6105bc1647981c2c79aed428a8ec02e1" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t eosio::multi_index&lt; TableName, T, Indices &gt;::item::__primary_itr</definition>
+        <argsstring></argsstring>
+        <name>__primary_itr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="281" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1item_a07b7d499080ec3df9ee3087fb9002b43_1a07b7d499080ec3df9ee3087fb9002b43" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t eosio::multi_index&lt; TableName, T, Indices &gt;::item::__iters[sizeof...(Indices)+(sizeof...(Indices)==0)]</definition>
+        <argsstring>[sizeof...(Indices)+(sizeof...(Indices)==0)]</argsstring>
+        <name>__iters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="282" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1item_a9834dde25b2bf497571b4ffffb7cc682_1a9834dde25b2bf497571b4ffffb7cc682" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Constructor</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::multi_index&lt; TableName, T, Indices &gt;::item::item</definition>
+        <argsstring>(const multi_index *idx, Constructor &amp;&amp;c)</argsstring>
+        <name>item</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *</type>
+          <declname>idx</declname>
+        </param>
+        <param>
+          <type>Constructor &amp;&amp;</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="275" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="275" bodyend="278"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="72">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>eosio::multi_index&lt; TableName, T, Indices &gt;::item</label>
+        <childnode refid="72" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="74">
+        <label>T</label>
+      </node>
+      <node id="75">
+        <label>eosio::multi_index&lt; TableName, T, Indices &gt;</label>
+        <link refid="classeosio_1_1multi__index"/>
+      </node>
+      <node id="73">
+        <label>eosio::multi_index&lt; TableName, T, Indices &gt;::item</label>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>__idx</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/multi_index.hpp" line="273" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="272" bodyend="283"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1multi__index_1_1item_a99cf43d99bdedf53df84ae32799d2d09_1a99cf43d99bdedf53df84ae32799d2d09" prot="public" virt="non-virtual"><scope>eosio::multi_index::item</scope><name>__idx</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item_a07b7d499080ec3df9ee3087fb9002b43_1a07b7d499080ec3df9ee3087fb9002b43" prot="public" virt="non-virtual"><scope>eosio::multi_index::item</scope><name>__iters</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item_a6105bc1647981c2c79aed428a8ec02e1_1a6105bc1647981c2c79aed428a8ec02e1" prot="public" virt="non-virtual"><scope>eosio::multi_index::item</scope><name>__primary_itr</name></member>
+      <member refid="structeosio_1_1multi__index_1_1item_a9834dde25b2bf497571b4ffffb7cc682_1a9834dde25b2bf497571b4ffffb7cc682" prot="public" virt="non-virtual"><scope>eosio::multi_index::item</scope><name>item</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

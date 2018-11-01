@@ -1,0 +1,605 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="crypto_8h" kind="file" language="C++">
+    <compoundname>crypto.h</compoundname>
+    <includes refid="types_8h" local="no">eosiolib/types.h</includes>
+    <incdepgraph>
+      <node id="97">
+        <label>stdint.h</label>
+      </node>
+      <node id="96">
+        <label>eosiolib/types.h</label>
+        <link refid="types_8h"/>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>libraries/eosiolib/crypto.h</label>
+        <link refid="crypto_8h"/>
+        <childnode refid="96" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>wchar.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb_1ga72b4fe70a6c503bf37ccf7285e03d4bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assert_sha256</definition>
+        <argsstring>(const char *data, uint32_t length, const capi_checksum256 *hash)</argsstring>
+        <name>assert_sha256</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const capi_checksum256 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Tests if the sha256 hash generated from data matches the provided checksum. </para>        </briefdescription>
+        <detaileddescription>
+<para>Tests if the sha256 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <computeroutput>capi_checksum256*</computeroutput> hash to compare to</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para><bold>assert256 hash</bold> of <computeroutput>data</computeroutput> equals provided <computeroutput>hash</computeroutput> parameter. </para></simplesect>
+<simplesect kind="post"><para>Executes next statement. If was not <computeroutput>true</computeroutput>, hard return.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>hash;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">uint32_t<sp/>length;</highlight></codeline>
+<codeline><highlight class="normal">assert_sha256(<sp/>data,<sp/>length,<sp/>hash<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">//If<sp/>the<sp/>sha256<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>does<sp/>not<sp/>equal<sp/>provided<sp/>hash,<sp/>anything<sp/>below<sp/>will<sp/>never<sp/>fire.</highlight></codeline>
+<codeline><highlight class="normal">eosio::print(&quot;sha256<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>equals<sp/>provided<sp/>hash&quot;);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="39" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_gab870a63902f83fcf0c8346206e0e1f4c_1gab870a63902f83fcf0c8346206e0e1f4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assert_sha1</definition>
+        <argsstring>(const char *data, uint32_t length, const capi_checksum160 *hash)</argsstring>
+        <name>assert_sha1</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const capi_checksum160 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Tests if the sha1 hash generated from data matches the provided checksum. </para>        </briefdescription>
+        <detaileddescription>
+<para>Tests if the sha1 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <computeroutput>capi_checksum160*</computeroutput> hash to compare to</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para><bold>sha1 hash</bold> of <computeroutput>data</computeroutput> equals provided <computeroutput>hash</computeroutput> parameter. </para></simplesect>
+<simplesect kind="post"><para>Executes next statement. If was not <computeroutput>true</computeroutput>, hard return.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>hash;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">uint32_t<sp/>length;</highlight></codeline>
+<codeline><highlight class="normal">assert_sha1(<sp/>data,<sp/>length,<sp/>hash<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">//If<sp/>the<sp/>sha1<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>does<sp/>not<sp/>equal<sp/>provided<sp/>hash,<sp/>anything<sp/>below<sp/>will<sp/>never<sp/>fire.</highlight></codeline>
+<codeline><highlight class="normal">eosio::print(&quot;sha1<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>equals<sp/>provided<sp/>hash&quot;);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_ga11c2f4f3e6b2e0a61d0b40f0e9f29d14_1ga11c2f4f3e6b2e0a61d0b40f0e9f29d14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assert_sha512</definition>
+        <argsstring>(const char *data, uint32_t length, const capi_checksum512 *hash)</argsstring>
+        <name>assert_sha512</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const capi_checksum512 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Tests if the sha512 hash generated from data matches the provided checksum. </para>        </briefdescription>
+        <detaileddescription>
+<para>Tests if the sha512 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <computeroutput>capi_checksum512*</computeroutput> hash to compare to</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para><bold>assert512 hash</bold> of <computeroutput>data</computeroutput> equals provided <computeroutput>hash</computeroutput> parameter. </para></simplesect>
+<simplesect kind="post"><para>Executes next statement. If was not <computeroutput>true</computeroutput>, hard return.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>hash;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">uint32_t<sp/>length;</highlight></codeline>
+<codeline><highlight class="normal">assert_sha512(<sp/>data,<sp/>length,<sp/>hash<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">//If<sp/>the<sp/>sha512<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>does<sp/>not<sp/>equal<sp/>provided<sp/>hash,<sp/>anything<sp/>below<sp/>will<sp/>never<sp/>fire.</highlight></codeline>
+<codeline><highlight class="normal">eosio::print(&quot;sha512<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>equals<sp/>provided<sp/>hash&quot;);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="89" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_ga5fa71c353dbb47f9f2068e33a1a79d71_1ga5fa71c353dbb47f9f2068e33a1a79d71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assert_ripemd160</definition>
+        <argsstring>(const char *data, uint32_t length, const capi_checksum160 *hash)</argsstring>
+        <name>assert_ripemd160</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const capi_checksum160 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Tests if the ripemod160 hash generated from data matches the provided checksum. </para>        </briefdescription>
+        <detaileddescription>
+<para>Tests if the ripemod160 hash generated from data matches the provided checksum. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <computeroutput>capi_checksum160*</computeroutput> hash to compare to</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para><bold>assert160 hash</bold> of <computeroutput>data</computeroutput> equals provided <computeroutput>hash</computeroutput> parameter. </para></simplesect>
+<simplesect kind="post"><para>Executes next statement. If was not <computeroutput>true</computeroutput>, hard return.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>hash;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">uint32_t<sp/>length;</highlight></codeline>
+<codeline><highlight class="normal">assert_ripemod160(<sp/>data,<sp/>length,<sp/>hash<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">//If<sp/>the<sp/>ripemod160<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>does<sp/>not<sp/>equal<sp/>provided<sp/>hash,<sp/>anything<sp/>below<sp/>will<sp/>never<sp/>fire.</highlight></codeline>
+<codeline><highlight class="normal">eosio::print(&quot;ripemod160<sp/>hash<sp/>generated<sp/>from<sp/>data<sp/>equals<sp/>provided<sp/>hash&quot;);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="113" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_ga7e93f6228e21884c348ad6589050b9eb_1ga7e93f6228e21884c348ad6589050b9eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sha256</definition>
+        <argsstring>(const char *data, uint32_t length, capi_checksum256 *hash)</argsstring>
+        <name>sha256</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>capi_checksum256 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha256</computeroutput> and stores result in memory pointed to by hash. </para>        </briefdescription>
+        <detaileddescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha256</computeroutput> and stores result in memory pointed to by hash. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Hash pointer</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>calc_hash;</highlight></codeline>
+<codeline><highlight class="normal">sha256(<sp/>data,<sp/>length,<sp/>&amp;calc_hash<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">eos_assert(<sp/>calc_hash<sp/>==<sp/>hash,<sp/>&quot;invalid<sp/>hash&quot;<sp/>);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="131" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_ga382d8329db6727bd460e81c72bdc926a_1ga382d8329db6727bd460e81c72bdc926a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sha1</definition>
+        <argsstring>(const char *data, uint32_t length, capi_checksum160 *hash)</argsstring>
+        <name>sha1</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>capi_checksum160 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha1</computeroutput> and stores result in memory pointed to by hash. </para>        </briefdescription>
+        <detaileddescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha1</computeroutput> and stores result in memory pointed to by hash. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Hash pointer</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>calc_hash;</highlight></codeline>
+<codeline><highlight class="normal">sha1(<sp/>data,<sp/>length,<sp/>&amp;calc_hash<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">eos_assert(<sp/>calc_hash<sp/>==<sp/>hash,<sp/>&quot;invalid<sp/>hash&quot;<sp/>);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="149" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_gace935d4721e179120b86cbfdc86590b9_1gace935d4721e179120b86cbfdc86590b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sha512</definition>
+        <argsstring>(const char *data, uint32_t length, capi_checksum512 *hash)</argsstring>
+        <name>sha512</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>capi_checksum512 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha512</computeroutput> and stores result in memory pointed to by hash. </para>        </briefdescription>
+        <detaileddescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>sha512</computeroutput> and stores result in memory pointed to by hash. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Hash pointer</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>calc_hash;</highlight></codeline>
+<codeline><highlight class="normal">sha512(<sp/>data,<sp/>length,<sp/>&amp;calc_hash<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">eos_assert(<sp/>calc_hash<sp/>==<sp/>hash,<sp/>&quot;invalid<sp/>hash&quot;<sp/>);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="167" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_ga156b5b599dfafe44c64b2e923e0ad114_1ga156b5b599dfafe44c64b2e923e0ad114" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ripemd160</definition>
+        <argsstring>(const char *data, uint32_t length, capi_checksum160 *hash)</argsstring>
+        <name>ripemd160</name>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>capi_checksum160 *</type>
+          <declname>hash</declname>
+        </param>
+        <briefdescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>ripemod160</computeroutput> and stores result in memory pointed to by hash. </para>        </briefdescription>
+        <detaileddescription>
+<para>Hashes <computeroutput>data</computeroutput> using <computeroutput>ripemod160</computeroutput> and stores result in memory pointed to by hash. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data you want to hash </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Data length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Hash pointer</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>calc_hash;</highlight></codeline>
+<codeline><highlight class="normal">ripemod160(<sp/>data,<sp/>length,<sp/>&amp;calc_hash<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">eos_assert(<sp/>calc_hash<sp/>==<sp/>hash,<sp/>&quot;invalid<sp/>hash&quot;<sp/>);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="185" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_gaa9f54e1ba406bdb5a509c8fe91d214c2_1gaa9f54e1ba406bdb5a509c8fe91d214c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int recover_key</definition>
+        <argsstring>(const capi_checksum256 *digest, const char *sig, size_t siglen, char *pub, size_t publen)</argsstring>
+        <name>recover_key</name>
+        <param>
+          <type>const capi_checksum256 *</type>
+          <declname>digest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>siglen</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>pub</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>publen</declname>
+        </param>
+        <briefdescription>
+<para>Calculates the public key used for a given signature and hash used to create a message. </para>        </briefdescription>
+        <detaileddescription>
+<para>Calculates the public key used for a given signature and hash used to create a message. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>digest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Hash used to create a message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sig</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Signature </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>siglen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Signature length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pub</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Public key </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>publen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Public key length</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Example:</para><para><programlisting></programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="202" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__crypto_gacc12ec8a9ab4b0135a4fd743a6d9b4e4_1gacc12ec8a9ab4b0135a4fd743a6d9b4e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assert_recover_key</definition>
+        <argsstring>(const capi_checksum256 *digest, const char *sig, size_t siglen, const char *pub, size_t publen)</argsstring>
+        <name>assert_recover_key</name>
+        <param>
+          <type>const capi_checksum256 *</type>
+          <declname>digest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>siglen</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>pub</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>publen</declname>
+        </param>
+        <briefdescription>
+<para>Tests a given public key with the generated key from digest and the signature. </para>        </briefdescription>
+        <detaileddescription>
+<para>Tests a given public key with the generated key from digest and the signature. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>digest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- What the key will be generated from </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sig</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Signature </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>siglen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Signature length </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pub</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Public key </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>publen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Public key length</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para><bold>assert recovery key</bold> of <computeroutput>pub</computeroutput> equals the key generated from the <computeroutput>digest</computeroutput> parameter </para></simplesect>
+<simplesect kind="post"><para>Executes next statement. If was not <computeroutput>true</computeroutput>, hard return.</para></simplesect>
+Example:</para><para><programlisting><codeline><highlight class="normal">checksum<sp/>digest;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>sig;</highlight></codeline>
+<codeline><highlight class="normal">size_t<sp/>siglen;</highlight></codeline>
+<codeline><highlight class="normal">char<sp/>pub;</highlight></codeline>
+<codeline><highlight class="normal">size_t<sp/>publen;</highlight></codeline>
+<codeline><highlight class="normal">assert_recover_key(<sp/>digest,<sp/>sig,<sp/>siglen,<sp/>pub,<sp/>publen<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>If<sp/>the<sp/>given<sp/>public<sp/>key<sp/>does<sp/>not<sp/>match<sp/>with<sp/>the<sp/>generated<sp/>key<sp/>from<sp/>digest<sp/>and<sp/>the<sp/>signature,<sp/>anything<sp/>below<sp/>will<sp/>never<sp/>fire.</highlight></codeline>
+<codeline><highlight class="normal">eosio::print(&quot;pub<sp/>key<sp/>matches<sp/>the<sp/>pub<sp/>key<sp/>generated<sp/>from<sp/>digest&quot;);</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/crypto.h" line="230" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="copyright"><para>defined in eos/LICENSE.txt </para></simplesect>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/crypto.h"/>
+  </compounddef>
+</doxygen>

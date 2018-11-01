@@ -1,0 +1,326 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1name" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::name</compoundname>
+    <includes refid="name_8hpp" local="no">name.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" prot="public" static="no" strong="yes">
+        <type>uint64_t</type>
+        <name>raw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="24" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="24" bodyend="24"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1name_adb309a6e132467ef2c53e953b56ebb52_1adb309a6e132467ef2c53e953b56ebb52" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t eosio::name::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="201" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1name_a3e05c2f8c5eb5fa35dc1a99918d57c19_1a3e05c2f8c5eb5fa35dc1a99918d57c19" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::name</definition>
+        <argsstring>()</argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="26" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="26" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_abc1f35add0a585ea60d6c7333b87f595_1abc1f35add0a585ea60d6c7333b87f595" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::name</definition>
+        <argsstring>(uint64_t v)</argsstring>
+        <name>name</name>
+        <param>
+          <type>uint64_t</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="28" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="28" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_a4679582f6b187de123c5167db945b0fe_1a4679582f6b187de123c5167db945b0fe" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::name</definition>
+        <argsstring>(name::raw r)</argsstring>
+        <name>name</name>
+        <param>
+          <type><ref refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kindref="member">name::raw</ref></type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="32" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_a0ce912cd61e77f223ac1d252deec0d04_1a0ce912cd61e77f223ac1d252deec0d04" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::name</definition>
+        <argsstring>(std::string_view str)</argsstring>
+        <name>name</name>
+        <param>
+          <type>std::string_view</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="36" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="36" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_a757935f0931b482c554686c2ea2a42b2_1a757935f0931b482c554686c2ea2a42b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint8_t</type>
+        <definition>constexpr uint8_t eosio::name::length</definition>
+        <argsstring>() const</argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the length of the name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="81" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="81" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_a806f77788fe466215adeb2b78553b6f8_1a806f77788fe466215adeb2b78553b6f8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr <ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+        <definition>constexpr name eosio::name::suffix</definition>
+        <argsstring>() const</argsstring>
+        <name>suffix</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the suffix of the name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="101" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="101" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_afd3799cbd1bc276a81dba035599f535c_1afd3799cbd1bc276a81dba035599f535c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::operator raw</definition>
+        <argsstring>() const</argsstring>
+        <name>operator raw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="131" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_a667462189a277a9f11f66fcd88af05df_1a667462189a277a9f11f66fcd88af05df" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr eosio::name::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="133" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="133" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_adf844a1e7846f23bcf1d2a9ba282f0cb_1adf844a1e7846f23bcf1d2a9ba282f0cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* eosio::name::write_as_string</definition>
+        <argsstring>(char *begin, char *end) const</argsstring>
+        <name>write_as_string</name>
+        <param>
+          <type>char *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>Writes the name as a string to the provided char buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Writes the name as a string to the provided char buffer</para><para><simplesect kind="pre"><para>Appropriate Size Precondition: (begin + 13) &lt;= end and (begin + 13) does not overflow </para></simplesect>
+<simplesect kind="pre"><para>Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The start of the char buffer </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Just past the end of the char buffer </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied) </para></simplesect>
+<simplesect kind="post"><para>If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the name. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="147" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="147" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1name_ae9b8c13d32a86f9ff355b6dce3955ab6_1ae9b8c13d32a86f9ff355b6dce3955ab6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string eosio::name::to_string</definition>
+        <argsstring>() const</argsstring>
+        <name>to_string</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="165" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="165" bodyend="169"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structeosio_1_1name_a051cf40d16909e5c352cf85edb15fc9c_1a051cf40d16909e5c352cf85edb15fc9c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr uint8_t</type>
+        <definition>static constexpr uint8_t eosio::name::char_to_value</definition>
+        <argsstring>(char c)</argsstring>
+        <name>char_to_value</name>
+        <param>
+          <type>char</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Converts a (<ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref> style) Base32 symbol into its corresponding value. </para>        </briefdescription>
+        <detaileddescription>
+<para>Converts a (<ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref> style) Base32 symbol into its corresponding value</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Character to be converted </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>constexpr char - Converted value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="65" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="65" bodyend="76"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structeosio_1_1name_a7815a04748b0d6b1e28f1bb11e668595_1a7815a04748b0d6b1e28f1bb11e668595" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator==</definition>
+        <argsstring>(const name &amp;a, const name &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Equivalency operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Equivalency operator. Returns true if a == b (are the same)</para><para><simplesect kind="return"><para>boolean - true if both provided names are the same </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="177" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="177" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1name_af1df898dfc723d4873fe9356cc70eacb_1af1df898dfc723d4873fe9356cc70eacb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator!=</definition>
+        <argsstring>(const name &amp;a, const name &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Inverted equivalency operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Inverted equivalency operator. Returns true if a != b (are different)</para><para><simplesect kind="return"><para>boolean - true if both provided names are not the same </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="187" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="187" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1name_a743497f458dd217e1eccf368d060bbd5_1a743497f458dd217e1eccf368d060bbd5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend constexpr bool</type>
+        <definition>constexpr bool operator&lt;</definition>
+        <argsstring>(const name &amp;a, const name &amp;b)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1name" kindref="compound">name</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Less than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Less than operator. Returns true if a &lt; b. <simplesect kind="return"><para>boolean - true if name <computeroutput>a</computeroutput> is less than <computeroutput>b</computeroutput> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/name.hpp" line="196" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="196" bodyend="198"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>wraps a uint64_t to ensure it is only passed to methods that expect a Name </para>    </briefdescription>
+    <detaileddescription>
+<para>Wraps a uint64_t to ensure it is only passed to methods that expect a Name and that no mathematical operations occur. It also enables specialization of print so that it is printed as a base32 string. </para>    </detaileddescription>
+    <location file="libraries/eosiolib/name.hpp" line="22" column="1" bodyfile="libraries/eosiolib/name.hpp" bodystart="22" bodyend="204"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1name_a051cf40d16909e5c352cf85edb15fc9c_1a051cf40d16909e5c352cf85edb15fc9c" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>char_to_value</name></member>
+      <member refid="structeosio_1_1name_a757935f0931b482c554686c2ea2a42b2_1a757935f0931b482c554686c2ea2a42b2" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>length</name></member>
+      <member refid="structeosio_1_1name_a3e05c2f8c5eb5fa35dc1a99918d57c19_1a3e05c2f8c5eb5fa35dc1a99918d57c19" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>name</name></member>
+      <member refid="structeosio_1_1name_abc1f35add0a585ea60d6c7333b87f595_1abc1f35add0a585ea60d6c7333b87f595" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>name</name></member>
+      <member refid="structeosio_1_1name_a4679582f6b187de123c5167db945b0fe_1a4679582f6b187de123c5167db945b0fe" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>name</name></member>
+      <member refid="structeosio_1_1name_a0ce912cd61e77f223ac1d252deec0d04_1a0ce912cd61e77f223ac1d252deec0d04" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>name</name></member>
+      <member refid="structeosio_1_1name_a667462189a277a9f11f66fcd88af05df_1a667462189a277a9f11f66fcd88af05df" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>operator bool</name></member>
+      <member refid="structeosio_1_1name_afd3799cbd1bc276a81dba035599f535c_1afd3799cbd1bc276a81dba035599f535c" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>operator raw</name></member>
+      <member refid="structeosio_1_1name_af1df898dfc723d4873fe9356cc70eacb_1af1df898dfc723d4873fe9356cc70eacb" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>operator!=</name></member>
+      <member refid="structeosio_1_1name_a743497f458dd217e1eccf368d060bbd5_1a743497f458dd217e1eccf368d060bbd5" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>operator&lt;</name></member>
+      <member refid="structeosio_1_1name_a7815a04748b0d6b1e28f1bb11e668595_1a7815a04748b0d6b1e28f1bb11e668595" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>operator==</name></member>
+      <member refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>raw</name></member>
+      <member refid="structeosio_1_1name_a806f77788fe466215adeb2b78553b6f8_1a806f77788fe466215adeb2b78553b6f8" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>suffix</name></member>
+      <member refid="structeosio_1_1name_ae9b8c13d32a86f9ff355b6dce3955ab6_1ae9b8c13d32a86f9ff355b6dce3955ab6" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>to_string</name></member>
+      <member refid="structeosio_1_1name_adb309a6e132467ef2c53e953b56ebb52_1adb309a6e132467ef2c53e953b56ebb52" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>value</name></member>
+      <member refid="structeosio_1_1name_adf844a1e7846f23bcf1d2a9ba282f0cb_1adf844a1e7846f23bcf1d2a9ba282f0cb" prot="public" virt="non-virtual"><scope>eosio::name</scope><name>write_as_string</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

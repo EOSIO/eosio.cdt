@@ -1,0 +1,355 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1block__timestamp" kind="class" language="C++" prot="public">
+    <compoundname>eosio::block_timestamp</compoundname>
+    <includes refid="time_8hpp" local="no">time.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classeosio_1_1block__timestamp_a80ffae898b495e10882b9b0c516acbbd_1a80ffae898b495e10882b9b0c516acbbd" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::block_timestamp::slot</definition>
+        <argsstring></argsstring>
+        <name>slot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="160" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classeosio_1_1block__timestamp_afd46fd13c5b26916f1ee04f9e6d653cf_1afd46fd13c5b26916f1ee04f9e6d653cf" prot="public" static="yes" mutable="no">
+        <type>constexpr int32_t</type>
+        <definition>constexpr int32_t eosio::block_timestamp::block_interval_ms</definition>
+        <argsstring></argsstring>
+        <name>block_interval_ms</name>
+        <initializer>= 500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="161" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classeosio_1_1block__timestamp_a4565cdbb18f05a1f6ca75ea72a1c2c25_1a4565cdbb18f05a1f6ca75ea72a1c2c25" prot="public" static="yes" mutable="no">
+        <type>constexpr int64_t</type>
+        <definition>constexpr int64_t eosio::block_timestamp::block_timestamp_epoch</definition>
+        <argsstring></argsstring>
+        <name>block_timestamp_epoch</name>
+        <initializer>= 946684800000ll</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="162" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_aa719feec777894d3612305fcdf579d1e_1aa719feec777894d3612305fcdf579d1e" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::block_timestamp::block_timestamp</definition>
+        <argsstring>(uint32_t s=0)</argsstring>
+        <name>block_timestamp</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>s</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="120" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a72934b4290a476785f852983608263b0_1a72934b4290a476785f852983608263b0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::block_timestamp::block_timestamp</definition>
+        <argsstring>(const time_point &amp;t)</argsstring>
+        <name>block_timestamp</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="122" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="122" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_aae1af00ad48d215fbd72d3e2339655bf_1aae1af00ad48d215fbd72d3e2339655bf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::block_timestamp::block_timestamp</definition>
+        <argsstring>(const time_point_sec &amp;t)</argsstring>
+        <name>block_timestamp</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="126" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="126" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a07825f36097aa846aecaa221239874d6_1a07825f36097aa846aecaa221239874d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref></type>
+        <definition>block_timestamp eosio::block_timestamp::next</definition>
+        <argsstring>() const</argsstring>
+        <name>next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="133" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="133" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_ac645cbc95a573b9ddc33439bf7953e83_1ac645cbc95a573b9ddc33439bf7953e83" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref></type>
+        <definition>time_point eosio::block_timestamp::to_time_point</definition>
+        <argsstring>() const</argsstring>
+        <name>to_time_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="140" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="140" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_abc0874625ff948fb8f23dd41644aee23_1abc0874625ff948fb8f23dd41644aee23" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::block_timestamp::operator time_point</definition>
+        <argsstring>() const</argsstring>
+        <name>operator time_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="144" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="144" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_acf6395d8b163ec1b0c87e81758ca1c4f_1acf6395d8b163ec1b0c87e81758ca1c4f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::block_timestamp::operator=</definition>
+        <argsstring>(const time_point &amp;t)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="150" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="150" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a2fd610a1b45ad9ca6f51625e7236b9d2_1a2fd610a1b45ad9ca6f51625e7236b9d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator&gt;</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="154" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_af7b8bd34ae4576f6829402d4f09e6da7_1af7b8bd34ae4576f6829402d4f09e6da7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator&gt;=</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="155" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="155" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_aa8ab75a684478d9879e4bf2f0ff63432_1aa8ab75a684478d9879e4bf2f0ff63432" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator&lt;</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="156" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="156" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a937c773b3117b920a737b7349b630c53_1a937c773b3117b920a737b7349b630c53" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator&lt;=</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="157" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="157" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_afe243beb6b6d4c34a7f8a5620b641ead_1afe243beb6b6d4c34a7f8a5620b641ead" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator==</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="158" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="158" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a4c83752575fffc12ddac3186080ca885_1a4c83752575fffc12ddac3186080ca885" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::block_timestamp::operator!=</definition>
+        <argsstring>(const block_timestamp &amp;t) const</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="159" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="159" bodyend="159"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a30ae0cff751d3f0ff01010f4a4f6d052_1a30ae0cff751d3f0ff01010f4a4f6d052" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref></type>
+        <definition>static block_timestamp eosio::block_timestamp::maximum</definition>
+        <argsstring>()</argsstring>
+        <name>maximum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="130" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_a97cc3a05e64223e6144fde0ccfac1abd_1a97cc3a05e64223e6144fde0ccfac1abd" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classeosio_1_1block__timestamp" kindref="compound">block_timestamp</ref></type>
+        <definition>static block_timestamp eosio::block_timestamp::min</definition>
+        <argsstring>()</argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="131" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_1a521ac45e42dadadf54af93fec2655019" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::block_timestamp::set_time_point</definition>
+        <argsstring>(const time_point &amp;t)</argsstring>
+        <name>set_time_point</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point" kindref="compound">time_point</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="168" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="168" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1block__timestamp_1abc5b1df5a4253e8214d50c712dc3e9e1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::block_timestamp::set_time_point</definition>
+        <argsstring>(const time_point_sec &amp;t)</argsstring>
+        <name>set_time_point</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1time__point__sec" kindref="compound">time_point_sec</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="174" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="174" bodyend="177"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This class is used in the block headers to represent the block time It is a parameterised class that takes an Epoch in milliseconds and and an interval in milliseconds and computes the number of slots. </para>    </detaileddescription>
+    <location file="libraries/eosiolib/time.hpp" line="118" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="118" bodyend="178"/>
+    <listofallmembers>
+      <member refid="classeosio_1_1block__timestamp_afd46fd13c5b26916f1ee04f9e6d653cf_1afd46fd13c5b26916f1ee04f9e6d653cf" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>block_interval_ms</name></member>
+      <member refid="classeosio_1_1block__timestamp_aa719feec777894d3612305fcdf579d1e_1aa719feec777894d3612305fcdf579d1e" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>block_timestamp</name></member>
+      <member refid="classeosio_1_1block__timestamp_a72934b4290a476785f852983608263b0_1a72934b4290a476785f852983608263b0" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>block_timestamp</name></member>
+      <member refid="classeosio_1_1block__timestamp_aae1af00ad48d215fbd72d3e2339655bf_1aae1af00ad48d215fbd72d3e2339655bf" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>block_timestamp</name></member>
+      <member refid="classeosio_1_1block__timestamp_a4565cdbb18f05a1f6ca75ea72a1c2c25_1a4565cdbb18f05a1f6ca75ea72a1c2c25" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>block_timestamp_epoch</name></member>
+      <member refid="classeosio_1_1block__timestamp_a30ae0cff751d3f0ff01010f4a4f6d052_1a30ae0cff751d3f0ff01010f4a4f6d052" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>maximum</name></member>
+      <member refid="classeosio_1_1block__timestamp_a97cc3a05e64223e6144fde0ccfac1abd_1a97cc3a05e64223e6144fde0ccfac1abd" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>min</name></member>
+      <member refid="classeosio_1_1block__timestamp_a07825f36097aa846aecaa221239874d6_1a07825f36097aa846aecaa221239874d6" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>next</name></member>
+      <member refid="classeosio_1_1block__timestamp_abc0874625ff948fb8f23dd41644aee23_1abc0874625ff948fb8f23dd41644aee23" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator time_point</name></member>
+      <member refid="classeosio_1_1block__timestamp_a4c83752575fffc12ddac3186080ca885_1a4c83752575fffc12ddac3186080ca885" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator!=</name></member>
+      <member refid="classeosio_1_1block__timestamp_aa8ab75a684478d9879e4bf2f0ff63432_1aa8ab75a684478d9879e4bf2f0ff63432" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator&lt;</name></member>
+      <member refid="classeosio_1_1block__timestamp_a937c773b3117b920a737b7349b630c53_1a937c773b3117b920a737b7349b630c53" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator&lt;=</name></member>
+      <member refid="classeosio_1_1block__timestamp_acf6395d8b163ec1b0c87e81758ca1c4f_1acf6395d8b163ec1b0c87e81758ca1c4f" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator=</name></member>
+      <member refid="classeosio_1_1block__timestamp_afe243beb6b6d4c34a7f8a5620b641ead_1afe243beb6b6d4c34a7f8a5620b641ead" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator==</name></member>
+      <member refid="classeosio_1_1block__timestamp_a2fd610a1b45ad9ca6f51625e7236b9d2_1a2fd610a1b45ad9ca6f51625e7236b9d2" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator&gt;</name></member>
+      <member refid="classeosio_1_1block__timestamp_af7b8bd34ae4576f6829402d4f09e6da7_1af7b8bd34ae4576f6829402d4f09e6da7" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>operator&gt;=</name></member>
+      <member refid="classeosio_1_1block__timestamp_1a521ac45e42dadadf54af93fec2655019" prot="private" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>set_time_point</name></member>
+      <member refid="classeosio_1_1block__timestamp_1abc5b1df5a4253e8214d50c712dc3e9e1" prot="private" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>set_time_point</name></member>
+      <member refid="classeosio_1_1block__timestamp_a80ffae898b495e10882b9b0c516acbbd_1a80ffae898b495e10882b9b0c516acbbd" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>slot</name></member>
+      <member refid="classeosio_1_1block__timestamp_ac645cbc95a573b9ddc33439bf7953e83_1ac645cbc95a573b9ddc33439bf7953e83" prot="public" virt="non-virtual"><scope>eosio::block_timestamp</scope><name>to_time_point</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

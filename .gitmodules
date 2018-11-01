@@ -9,3 +9,6 @@
 [submodule "eosio_llvm"]
 	path = eosio_llvm
 	url = https://github.com/eosio/llvm
+[submodule ".docs"]
+	path = .docs
+	url = /Users/sandwich/Develop/util-docs-cpp

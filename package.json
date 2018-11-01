@@ -1,0 +1,31 @@
+{
+  "name": "eosio.cdt",
+  "version": "1.0.0",
+  "description": "scripts for documenting eosio.cdt",
+  "main": "none",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "docs:init": "sh .docs/scripts/init.sh",
+    "docs:build": "sh .docs/scripts/build.sh",
+    "docs:serve": "sh .docs/scripts/serve.sh",
+    "docs:publish": "sh .docs/scripts/publish.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EOSIO/eosio.cdt.git"
+  },
+  "keywords": [
+    "docs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EOSIO/eosio.cdt/issues"
+  },
+  "homepage": "https://github.com/EOSIO/eosio.cdt#readme",
+  "dependencies": {
+    "commander": "^2.19.0"
+  }
+}

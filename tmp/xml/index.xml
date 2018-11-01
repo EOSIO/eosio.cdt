@@ -1,0 +1,1265 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.14">
+  <compound refid="structeosio_1_1action" kind="struct"><name>eosio::action</name>
+    <member refid="structeosio_1_1action_a4fc65ee0b7c184e7fcb8cdf6242220af_1a4fc65ee0b7c184e7fcb8cdf6242220af" kind="variable"><name>account</name></member>
+    <member refid="structeosio_1_1action_a407ffb98514612d2e9683dd7d88af91a_1a407ffb98514612d2e9683dd7d88af91a" kind="variable"><name>name</name></member>
+    <member refid="structeosio_1_1action_a65851242b65f483e6b84d602d599f4e5_1a65851242b65f483e6b84d602d599f4e5" kind="variable"><name>authorization</name></member>
+    <member refid="structeosio_1_1action_a51845c4ffbe1c97fc8d05115d05a3ab1_1a51845c4ffbe1c97fc8d05115d05a3ab1" kind="variable"><name>data</name></member>
+    <member refid="structeosio_1_1action_aebc29a38547efa71db8ec20cc56d69a4_1aebc29a38547efa71db8ec20cc56d69a4" kind="function"><name>action</name></member>
+    <member refid="structeosio_1_1action_a9ef6c7fc0a06f53c754a1cc8af513d00_1a9ef6c7fc0a06f53c754a1cc8af513d00" kind="function"><name>action</name></member>
+    <member refid="structeosio_1_1action_aa6b336f4f7a8c61d68e14d99a0a9cd9d_1aa6b336f4f7a8c61d68e14d99a0a9cd9d" kind="function"><name>action</name></member>
+    <member refid="structeosio_1_1action_a848cfa77395aa8447c5468c619c4a42a_1a848cfa77395aa8447c5468c619c4a42a" kind="function"><name>EOSLIB_SERIALIZE</name></member>
+    <member refid="structeosio_1_1action_a984a41daf2d1c4d6506cac0c98ac7a2a_1a984a41daf2d1c4d6506cac0c98ac7a2a" kind="function"><name>send_context_free</name></member>
+    <member refid="structeosio_1_1action_ab10f4621dd9e24a33642d8fb240b1a01_1ab10f4621dd9e24a33642d8fb240b1a01" kind="function"><name>data_as</name></member>
+  </compound>
+  <compound refid="structeosio_1_1asset" kind="struct"><name>eosio::asset</name>
+    <member refid="structeosio_1_1asset_ac76c16a58851550706c6709698ed7255_1ac76c16a58851550706c6709698ed7255" kind="variable"><name>amount</name></member>
+    <member refid="structeosio_1_1asset_a374520d98a22f5a89a26025154944756_1a374520d98a22f5a89a26025154944756" kind="variable"><name>symbol</name></member>
+    <member refid="structeosio_1_1asset_a478eb6a3bb302652748acfcf85738f5f_1a478eb6a3bb302652748acfcf85738f5f" kind="variable"><name>max_amount</name></member>
+    <member refid="structeosio_1_1asset_abdde8d4b53c1b8f1027ab6cb2b13b845_1abdde8d4b53c1b8f1027ab6cb2b13b845" kind="function"><name>asset</name></member>
+    <member refid="structeosio_1_1asset_abb4cf1f370bb101c7d61910ff45d6b55_1abb4cf1f370bb101c7d61910ff45d6b55" kind="function"><name>asset</name></member>
+    <member refid="structeosio_1_1asset_a815b58378c8849fbb2a68f288edf5f31_1a815b58378c8849fbb2a68f288edf5f31" kind="function"><name>is_amount_within_range</name></member>
+    <member refid="structeosio_1_1asset_aa2e8739bf534ea99199d121143ca7a0a_1aa2e8739bf534ea99199d121143ca7a0a" kind="function"><name>is_valid</name></member>
+    <member refid="structeosio_1_1asset_a0b6c8ba10eedc0129364fc910e840d7f_1a0b6c8ba10eedc0129364fc910e840d7f" kind="function"><name>set_amount</name></member>
+    <member refid="structeosio_1_1asset_a16bee92e23903707b37a1e7c91e1a4f1_1a16bee92e23903707b37a1e7c91e1a4f1" kind="function"><name>operator-</name></member>
+    <member refid="structeosio_1_1asset_ac34e7c2da42b547142cbc7e7e6348e23_1ac34e7c2da42b547142cbc7e7e6348e23" kind="function"><name>operator-=</name></member>
+    <member refid="structeosio_1_1asset_ab94816fdb1ce8d429ccb63d46251e476_1ab94816fdb1ce8d429ccb63d46251e476" kind="function"><name>operator+=</name></member>
+    <member refid="structeosio_1_1asset_a4875ab6d76c75c195bb3fb725407ab30_1a4875ab6d76c75c195bb3fb725407ab30" kind="function"><name>operator*=</name></member>
+    <member refid="structeosio_1_1asset_a5c86834934fe75db077730628608b6d3_1a5c86834934fe75db077730628608b6d3" kind="function"><name>operator/=</name></member>
+    <member refid="structeosio_1_1asset_a111a52097d1761898d5641536c308416_1a111a52097d1761898d5641536c308416" kind="function"><name>print</name></member>
+    <member refid="structeosio_1_1asset_a606c72fe4e28b359ba977a6043f56300_1a606c72fe4e28b359ba977a6043f56300" kind="friend"><name>operator+</name></member>
+    <member refid="structeosio_1_1asset_a101f03e631cf8c72d8094b91a5524207_1a101f03e631cf8c72d8094b91a5524207" kind="friend"><name>operator-</name></member>
+    <member refid="structeosio_1_1asset_aad999a1c807bf5b87b6af18c7deb7383_1aad999a1c807bf5b87b6af18c7deb7383" kind="friend"><name>operator*</name></member>
+    <member refid="structeosio_1_1asset_a2680e36287438fb993924afb89203d0f_1a2680e36287438fb993924afb89203d0f" kind="friend"><name>operator*</name></member>
+    <member refid="structeosio_1_1asset_ae07741c290b600e5d2891c47cc04d371_1ae07741c290b600e5d2891c47cc04d371" kind="friend"><name>operator/</name></member>
+    <member refid="structeosio_1_1asset_a3ed38863be7162b18973870814c26346_1a3ed38863be7162b18973870814c26346" kind="friend"><name>operator/</name></member>
+    <member refid="structeosio_1_1asset_a8c79ce3d3e367c6345a8c5cb75bab48d_1a8c79ce3d3e367c6345a8c5cb75bab48d" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1asset_adb0577649f2f48023169390b0b78e234_1adb0577649f2f48023169390b0b78e234" kind="friend"><name>operator!=</name></member>
+    <member refid="structeosio_1_1asset_a4c5d8977b23e534426a070f568524d02_1a4c5d8977b23e534426a070f568524d02" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structeosio_1_1asset_a9d586e9b54232432779a91e2d6d8b78e_1a9d586e9b54232432779a91e2d6d8b78e" kind="friend"><name>operator&lt;=</name></member>
+    <member refid="structeosio_1_1asset_a88d1352c1cf2b7377292377449a4ced8_1a88d1352c1cf2b7377292377449a4ced8" kind="friend"><name>operator&gt;</name></member>
+    <member refid="structeosio_1_1asset_aa5ae6feb2c7097211820fc31cf24b5f5_1aa5ae6feb2c7097211820fc31cf24b5f5" kind="friend"><name>operator&gt;=</name></member>
+  </compound>
+  <compound refid="classeosio_1_1block__timestamp" kind="class"><name>eosio::block_timestamp</name>
+    <member refid="classeosio_1_1block__timestamp_a80ffae898b495e10882b9b0c516acbbd_1a80ffae898b495e10882b9b0c516acbbd" kind="variable"><name>slot</name></member>
+    <member refid="classeosio_1_1block__timestamp_afd46fd13c5b26916f1ee04f9e6d653cf_1afd46fd13c5b26916f1ee04f9e6d653cf" kind="variable"><name>block_interval_ms</name></member>
+    <member refid="classeosio_1_1block__timestamp_a4565cdbb18f05a1f6ca75ea72a1c2c25_1a4565cdbb18f05a1f6ca75ea72a1c2c25" kind="variable"><name>block_timestamp_epoch</name></member>
+    <member refid="classeosio_1_1block__timestamp_aa719feec777894d3612305fcdf579d1e_1aa719feec777894d3612305fcdf579d1e" kind="function"><name>block_timestamp</name></member>
+    <member refid="classeosio_1_1block__timestamp_a72934b4290a476785f852983608263b0_1a72934b4290a476785f852983608263b0" kind="function"><name>block_timestamp</name></member>
+    <member refid="classeosio_1_1block__timestamp_aae1af00ad48d215fbd72d3e2339655bf_1aae1af00ad48d215fbd72d3e2339655bf" kind="function"><name>block_timestamp</name></member>
+    <member refid="classeosio_1_1block__timestamp_a07825f36097aa846aecaa221239874d6_1a07825f36097aa846aecaa221239874d6" kind="function"><name>next</name></member>
+    <member refid="classeosio_1_1block__timestamp_ac645cbc95a573b9ddc33439bf7953e83_1ac645cbc95a573b9ddc33439bf7953e83" kind="function"><name>to_time_point</name></member>
+    <member refid="classeosio_1_1block__timestamp_abc0874625ff948fb8f23dd41644aee23_1abc0874625ff948fb8f23dd41644aee23" kind="function"><name>operator time_point</name></member>
+    <member refid="classeosio_1_1block__timestamp_acf6395d8b163ec1b0c87e81758ca1c4f_1acf6395d8b163ec1b0c87e81758ca1c4f" kind="function"><name>operator=</name></member>
+    <member refid="classeosio_1_1block__timestamp_a2fd610a1b45ad9ca6f51625e7236b9d2_1a2fd610a1b45ad9ca6f51625e7236b9d2" kind="function"><name>operator&gt;</name></member>
+    <member refid="classeosio_1_1block__timestamp_af7b8bd34ae4576f6829402d4f09e6da7_1af7b8bd34ae4576f6829402d4f09e6da7" kind="function"><name>operator&gt;=</name></member>
+    <member refid="classeosio_1_1block__timestamp_aa8ab75a684478d9879e4bf2f0ff63432_1aa8ab75a684478d9879e4bf2f0ff63432" kind="function"><name>operator&lt;</name></member>
+    <member refid="classeosio_1_1block__timestamp_a937c773b3117b920a737b7349b630c53_1a937c773b3117b920a737b7349b630c53" kind="function"><name>operator&lt;=</name></member>
+    <member refid="classeosio_1_1block__timestamp_afe243beb6b6d4c34a7f8a5620b641ead_1afe243beb6b6d4c34a7f8a5620b641ead" kind="function"><name>operator==</name></member>
+    <member refid="classeosio_1_1block__timestamp_a4c83752575fffc12ddac3186080ca885_1a4c83752575fffc12ddac3186080ca885" kind="function"><name>operator!=</name></member>
+    <member refid="classeosio_1_1block__timestamp_a30ae0cff751d3f0ff01010f4a4f6d052_1a30ae0cff751d3f0ff01010f4a4f6d052" kind="function"><name>maximum</name></member>
+    <member refid="classeosio_1_1block__timestamp_a97cc3a05e64223e6144fde0ccfac1abd_1a97cc3a05e64223e6144fde0ccfac1abd" kind="function"><name>min</name></member>
+    <member refid="classeosio_1_1block__timestamp_1a521ac45e42dadadf54af93fec2655019" kind="function"><name>set_time_point</name></member>
+    <member refid="classeosio_1_1block__timestamp_1abc5b1df5a4253e8214d50c712dc3e9e1" kind="function"><name>set_time_point</name></member>
+  </compound>
+  <compound refid="structeosio_1_1blockchain__parameters" kind="struct"><name>eosio::blockchain_parameters</name>
+    <member refid="structeosio_1_1blockchain__parameters_aaffe7d6c7437826f208c68e9ee2acf65_1aaffe7d6c7437826f208c68e9ee2acf65" kind="variable"><name>max_block_net_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a346f353931e0403d07e27da151a8af4d_1a346f353931e0403d07e27da151a8af4d" kind="variable"><name>target_block_net_usage_pct</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a07d6c92013fce008071d9b610544c4c6_1a07d6c92013fce008071d9b610544c4c6" kind="variable"><name>max_transaction_net_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a944e5020392feb3aa43452db31dd6c53_1a944e5020392feb3aa43452db31dd6c53" kind="variable"><name>base_per_transaction_net_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a5066e04cd3a3d74459e810d253c29ebf_1a5066e04cd3a3d74459e810d253c29ebf" kind="variable"><name>net_usage_leeway</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a8ee23aba0c372b7d62b18e749e0e8798_1a8ee23aba0c372b7d62b18e749e0e8798" kind="variable"><name>context_free_discount_net_usage_num</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a34aa31b25c026f190097d3b66b5d8b28_1a34aa31b25c026f190097d3b66b5d8b28" kind="variable"><name>context_free_discount_net_usage_den</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_af6a0f851f934100f4cfc5d7cce8c3542_1af6a0f851f934100f4cfc5d7cce8c3542" kind="variable"><name>max_block_cpu_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_aa8e6bff1b7d255588fb31ccdf6035aba_1aa8e6bff1b7d255588fb31ccdf6035aba" kind="variable"><name>target_block_cpu_usage_pct</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a59893f31083ea0239eff0fdb47a3e9a2_1a59893f31083ea0239eff0fdb47a3e9a2" kind="variable"><name>max_transaction_cpu_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a5c15c7c28e28d93183e85639ddd3dd83_1a5c15c7c28e28d93183e85639ddd3dd83" kind="variable"><name>min_transaction_cpu_usage</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_ae9595da087ba46dbada5f785ec9191e6_1ae9595da087ba46dbada5f785ec9191e6" kind="variable"><name>max_transaction_lifetime</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a8cf445a327ffb230b9751f3b6764efaa_1a8cf445a327ffb230b9751f3b6764efaa" kind="variable"><name>deferred_trx_expiration_window</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_ac1ad602bce04bb7de2b83acf319605ac_1ac1ad602bce04bb7de2b83acf319605ac" kind="variable"><name>max_transaction_delay</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a7dbcbc6c005be48b9d42fe21ee3c034f_1a7dbcbc6c005be48b9d42fe21ee3c034f" kind="variable"><name>max_inline_action_size</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_a2a6f29f85a765e80fab44ca4c8bf4104_1a2a6f29f85a765e80fab44ca4c8bf4104" kind="variable"><name>max_inline_action_depth</name></member>
+    <member refid="structeosio_1_1blockchain__parameters_aef65360380b879d1782d0b202b96c776_1aef65360380b879d1782d0b202b96c776" kind="variable"><name>max_authority_depth</name></member>
+  </compound>
+  <compound refid="structeosio_1_1fixed__key_1_1bool__pack" kind="struct"><name>eosio::fixed_key::bool_pack</name>
+  </compound>
+  <compound refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr" kind="class"><name>eosio::memory_manager::memory::buffer_ptr</name>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_1afb555347a05553650ae41aa5a8610f6f" kind="variable"><name>_ptr</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_1a554adf769c3ff9a6c5dffcf9e5f323c4" kind="variable"><name>_size</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_1a38788b12c04fc23328d78561d607ea31" kind="variable"><name>_heap_end</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_ac5456120e436769c2b2942f70e4ac25f_1ac5456120e436769c2b2942f70e4ac25f" kind="function"><name>buffer_ptr</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a1ed3dec5960241e58f5596f504d48564_1a1ed3dec5960241e58f5596f504d48564" kind="function"><name>buffer_ptr</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a6d3faad0f9dd8b428e08003db54a4534_1a6d3faad0f9dd8b428e08003db54a4534" kind="function"><name>size</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a654082fb0667d60c52cee9ba9c37bde2_1a654082fb0667d60c52cee9ba9c37bde2" kind="function"><name>next_ptr</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a92c13d6fcb75e4471275d8c480d29d4e_1a92c13d6fcb75e4471275d8c480d29d4e" kind="function"><name>size</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a5aee1ccf724a3b6b1085707f8684b961_1a5aee1ccf724a3b6b1085707f8684b961" kind="function"><name>end</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a74c2399ffda524cbc52bce8e6d7a10d2_1a74c2399ffda524cbc52bce8e6d7a10d2" kind="function"><name>ptr</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_ac67096ce1051b46b23d105dda3a0beab_1ac67096ce1051b46b23d105dda3a0beab" kind="function"><name>mark_alloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_ab175f38d0934fa8ee4781a18dffe9bd8_1ab175f38d0934fa8ee4781a18dffe9bd8" kind="function"><name>mark_free</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_a1a30813caab9470accb4d39d4d61b170_1a1a30813caab9470accb4d39d4d61b170" kind="function"><name>is_alloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_af70f3f1e34ef94c65a74c95397b22a5a_1af70f3f1e34ef94c65a74c95397b22a5a" kind="function"><name>merge_contiguous_if_available</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_af15531da7d6fa587d88a23a4beb84148_1af15531da7d6fa587d88a23a4beb84148" kind="function"><name>merge_contiguous</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1_1buffer__ptr_1a73a88d6a27f196c2abaa98bf7818b56c" kind="function"><name>merge_contiguous</name></member>
+  </compound>
+  <compound refid="structcapi__public__key" kind="struct"><name>capi_public_key</name>
+    <member refid="structcapi__public__key_ab4fb9fec8d0d6cc076baf49bba28e176_1ab4fb9fec8d0d6cc076baf49bba28e176" kind="variable"><name>data</name></member>
+  </compound>
+  <compound refid="structcapi__signature" kind="struct"><name>capi_signature</name>
+    <member refid="structcapi__signature_aabc3369de2ee49fe73865d3399794b65_1aabc3369de2ee49fe73865d3399794b65" kind="variable"><name>data</name></member>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1index_1_1const__iterator" kind="struct"><name>eosio::multi_index::index::const_iterator</name>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_a98d9477848d2c563b310010a4f7b8fed_1a98d9477848d2c563b310010a4f7b8fed" kind="friend"><name>index</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_ab0ac7de651351823aece097eb3be1cfb_1ab0ac7de651351823aece097eb3be1cfb" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_a5fbca5b71055f2b793ae1607239b13a0_1a5fbca5b71055f2b793ae1607239b13a0" kind="friend"><name>operator!=</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_1af707068418b7cfaac017630b7b7dfba6" kind="variable"><name>_idx</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_1a445bec0b186998f6a093fff13354df79" kind="variable"><name>_item</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_ae717dad91e163ae8a1d04d9043261211_1ae717dad91e163ae8a1d04d9043261211" kind="function"><name>operator*</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_ac945b05a32096e86a99718728e944b09_1ac945b05a32096e86a99718728e944b09" kind="function"><name>operator-&gt;</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_aaa017dc5dc3ecac344a590f409371216_1aaa017dc5dc3ecac344a590f409371216" kind="function"><name>operator++</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_a058bad034470139d1e1518d5533122bf_1a058bad034470139d1e1518d5533122bf" kind="function"><name>operator--</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_ac21740a04210f02f1fad68e03724c932_1ac21740a04210f02f1fad68e03724c932" kind="function"><name>operator++</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_aec23aecad7c4f2fc8bd3fb4c84de4b4f_1aec23aecad7c4f2fc8bd3fb4c84de4b4f" kind="function"><name>operator--</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_a6d0b7e7cb0410b12d4333e5b53eb9ea8_1a6d0b7e7cb0410b12d4333e5b53eb9ea8" kind="function"><name>const_iterator</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1_1const__iterator_1a96207ea7a3622ca9c848c491e560a2f8" kind="function"><name>const_iterator</name></member>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1const__iterator" kind="struct"><name>eosio::multi_index::const_iterator</name>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_1aa042e4b8058f024f220cee9d6c9a5f96" kind="variable"><name>_multidx</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_1a624b7d8c5704d52d7bb8a6fde140a2b0" kind="variable"><name>_item</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" kind="friend"><name>multi_index</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_ab0ac7de651351823aece097eb3be1cfb_1ab0ac7de651351823aece097eb3be1cfb" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a5fbca5b71055f2b793ae1607239b13a0_1a5fbca5b71055f2b793ae1607239b13a0" kind="friend"><name>operator!=</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a41b221797d68b605c8811c21249c37f7_1a41b221797d68b605c8811c21249c37f7" kind="function"><name>operator*</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a24a83ecc4a2288ac35afb785b64dff12_1a24a83ecc4a2288ac35afb785b64dff12" kind="function"><name>operator-&gt;</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a751d1e7eedadb5b3033cedc6f8e8078e_1a751d1e7eedadb5b3033cedc6f8e8078e" kind="function"><name>operator++</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a3a0faabfa94970b0d94d9b2977c69f43_1a3a0faabfa94970b0d94d9b2977c69f43" kind="function"><name>operator--</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_aaec476e83abc7018972986594509a477_1aaec476e83abc7018972986594509a477" kind="function"><name>operator++</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_a3f5b8d0651cef32ef99565be6fc1de23_1a3f5b8d0651cef32ef99565be6fc1de23" kind="function"><name>operator--</name></member>
+    <member refid="structeosio_1_1multi__index_1_1const__iterator_1a217070802ce241355cfdb4b13ae2a89c" kind="function"><name>const_iterator</name></member>
+  </compound>
+  <compound refid="structeosio_1_1const__mem__fun" kind="struct"><name>eosio::const_mem_fun</name>
+    <member refid="structeosio_1_1const__mem__fun_a12f7a54a640c4224bccfbbe401ffb16f_1a12f7a54a640c4224bccfbbe401ffb16f" kind="typedef"><name>result_type</name></member>
+    <member refid="structeosio_1_1const__mem__fun_a3c026ddc053c6c87d0c466830cc691c9_1a3c026ddc053c6c87d0c466830cc691c9" kind="function"><name>operator()</name></member>
+    <member refid="structeosio_1_1const__mem__fun_a04df970f69c75d7fc9d4949c3c0b0d19_1a04df970f69c75d7fc9d4949c3c0b0d19" kind="function"><name>operator()</name></member>
+    <member refid="structeosio_1_1const__mem__fun_a35e521958c3954d0eacac56ce37153d7_1a35e521958c3954d0eacac56ce37153d7" kind="function"><name>operator()</name></member>
+    <member refid="structeosio_1_1const__mem__fun_a8191e327113ef08c101ae22d495315ae_1a8191e327113ef08c101ae22d495315ae" kind="function"><name>operator()</name></member>
+  </compound>
+  <compound refid="classeosio_1_1contract" kind="class"><name>eosio::contract</name>
+    <member refid="group__contract_ga29c0c98c72ab578a5965d13b00dca0c0_1ga29c0c98c72ab578a5965d13b00dca0c0" kind="variable"><name>_self</name></member>
+    <member refid="group__contract_ga7bcf83f433ecb0b305dfd7d217c2dde8_1ga7bcf83f433ecb0b305dfd7d217c2dde8" kind="variable"><name>_code</name></member>
+    <member refid="group__contract_ga66b526b89bc6d35b63b874615f1d27b8_1ga66b526b89bc6d35b63b874615f1d27b8" kind="variable"><name>_ds</name></member>
+    <member refid="group__contract_ga592e8ee6dabf85e272cc0a833c3fe453_1ga592e8ee6dabf85e272cc0a833c3fe453" kind="function"><name>contract</name></member>
+    <member refid="group__contract_ga7564cad9be4ee5dcaac832511d9a0e05_1ga7564cad9be4ee5dcaac832511d9a0e05" kind="function"><name>get_self</name></member>
+    <member refid="group__contract_ga4efcd5638d26dad3e5dc075bad152d45_1ga4efcd5638d26dad3e5dc075bad152d45" kind="function"><name>get_code</name></member>
+    <member refid="group__contract_ga3bb1107c2675ef69f3eca8e3793701c7_1ga3bb1107c2675ef69f3eca8e3793701c7" kind="function"><name>get_datastream</name></member>
+  </compound>
+  <compound refid="classeosio_1_1datastream" kind="class"><name>eosio::datastream</name>
+    <member refid="classeosio_1_1datastream_1a3a24843f2718aaf21be6cdda42bd1a04" kind="variable"><name>_start</name></member>
+    <member refid="classeosio_1_1datastream_1a1e89446be51e05f62999bb2b0645953c" kind="variable"><name>_pos</name></member>
+    <member refid="classeosio_1_1datastream_1a79bb786dbbeb6de3a5579d9f8dbe8036" kind="variable"><name>_end</name></member>
+    <member refid="classeosio_1_1datastream_a72befc5c1f51a601ad07e7c8e61856f4_1a72befc5c1f51a601ad07e7c8e61856f4" kind="function"><name>datastream</name></member>
+    <member refid="classeosio_1_1datastream_a928fbd3301caee3c64ea620442fb0e64_1a928fbd3301caee3c64ea620442fb0e64" kind="function"><name>skip</name></member>
+    <member refid="classeosio_1_1datastream_ae1d8d46d5cf80745bbb00a6b8fee243a_1ae1d8d46d5cf80745bbb00a6b8fee243a" kind="function"><name>read</name></member>
+    <member refid="classeosio_1_1datastream_a1e42133f6f57a8c89e1db04abe44b342_1a1e42133f6f57a8c89e1db04abe44b342" kind="function"><name>write</name></member>
+    <member refid="classeosio_1_1datastream_ad0a23aa024810028ce8669627577859d_1ad0a23aa024810028ce8669627577859d" kind="function"><name>put</name></member>
+    <member refid="classeosio_1_1datastream_a001047d70942ab5beb836e498d9f9eab_1a001047d70942ab5beb836e498d9f9eab" kind="function"><name>get</name></member>
+    <member refid="classeosio_1_1datastream_a10ab58b7cc695366b42957f4b8ff56eb_1a10ab58b7cc695366b42957f4b8ff56eb" kind="function"><name>get</name></member>
+    <member refid="classeosio_1_1datastream_a090e80d1bddd21337b16b3fad76c551d_1a090e80d1bddd21337b16b3fad76c551d" kind="function"><name>pos</name></member>
+    <member refid="classeosio_1_1datastream_a69cbb57958a1ec6d66e6aa4bcc39ec23_1a69cbb57958a1ec6d66e6aa4bcc39ec23" kind="function"><name>valid</name></member>
+    <member refid="classeosio_1_1datastream_ac82f1102bb9593764a654dfbedb88328_1ac82f1102bb9593764a654dfbedb88328" kind="function"><name>seekp</name></member>
+    <member refid="classeosio_1_1datastream_a32df7a816da793f3183d235c67b042a7_1a32df7a816da793f3183d235c67b042a7" kind="function"><name>tellp</name></member>
+    <member refid="classeosio_1_1datastream_af57bc94263dc08eb60b910a53645a052_1af57bc94263dc08eb60b910a53645a052" kind="function"><name>remaining</name></member>
+  </compound>
+  <compound refid="classeosio_1_1datastream_3_01size__t_01_4" kind="class"><name>eosio::datastream&lt; size_t &gt;</name>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_1a78a824d310a0f188b5cad38a0f3d09dc" kind="variable"><name>_size</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_abf5e113ace4a6bfa309fcecf3fc49f63_1abf5e113ace4a6bfa309fcecf3fc49f63" kind="function"><name>datastream</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_ad9d7da49e77a5db9c80c256845b26894_1ad9d7da49e77a5db9c80c256845b26894" kind="function"><name>skip</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_a3c2ca245c9f33549505ea7886a1d3ecf_1a3c2ca245c9f33549505ea7886a1d3ecf" kind="function"><name>write</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_a4a1a95751dafd76aea580d80c84bf8bb_1a4a1a95751dafd76aea580d80c84bf8bb" kind="function"><name>put</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_a46f1fc6f14d7e79c2181f4e3a2ae5b12_1a46f1fc6f14d7e79c2181f4e3a2ae5b12" kind="function"><name>valid</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_ac4720cb82d256a41f27bbf389b37790b_1ac4720cb82d256a41f27bbf389b37790b" kind="function"><name>seekp</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_aadcdabf95d8b142bd9b43bbcdc4e0d9f_1aadcdabf95d8b142bd9b43bbcdc4e0d9f" kind="function"><name>tellp</name></member>
+    <member refid="classeosio_1_1datastream_3_01size__t_01_4_a345f36fa8492917662d6185db631042d_1a345f36fa8492917662d6185db631042d" kind="function"><name>remaining</name></member>
+  </compound>
+  <compound refid="struct_extended" kind="struct"><name>Extended</name>
+  </compound>
+  <compound refid="struct_extended" kind="struct"><name>Extended</name>
+  </compound>
+  <compound refid="structeosio_1_1extended__asset" kind="struct"><name>eosio::extended_asset</name>
+    <member refid="structeosio_1_1extended__asset_aacd83a028c55e22db2e8f14027827ad7_1aacd83a028c55e22db2e8f14027827ad7" kind="variable"><name>quantity</name></member>
+    <member refid="structeosio_1_1extended__asset_acac503620c8c59864b065360fb50868b_1acac503620c8c59864b065360fb50868b" kind="variable"><name>contract</name></member>
+    <member refid="structeosio_1_1extended__asset_a7604109863c6d45bc54347c27bd632a4_1a7604109863c6d45bc54347c27bd632a4" kind="function"><name>get_extended_symbol</name></member>
+    <member refid="structeosio_1_1extended__asset_a7747448ddea804e84fe72decd40ee3a2_1a7747448ddea804e84fe72decd40ee3a2" kind="function"><name>extended_asset</name></member>
+    <member refid="structeosio_1_1extended__asset_a831a169f25c972af14a01e0305ab8d74_1a831a169f25c972af14a01e0305ab8d74" kind="function"><name>extended_asset</name></member>
+    <member refid="structeosio_1_1extended__asset_a29f3c5f054f754ab4fac481cce633682_1a29f3c5f054f754ab4fac481cce633682" kind="function"><name>extended_asset</name></member>
+    <member refid="structeosio_1_1extended__asset_af5993cb01622505de48870ba728cec3b_1af5993cb01622505de48870ba728cec3b" kind="function"><name>print</name></member>
+    <member refid="structeosio_1_1extended__asset_a6ed16665f2ef5843b3dea2e2429f7147_1a6ed16665f2ef5843b3dea2e2429f7147" kind="function"><name>operator-</name></member>
+    <member refid="structeosio_1_1extended__asset_ab4d2266e6f926377337a626e990a5e7c_1ab4d2266e6f926377337a626e990a5e7c" kind="friend"><name>operator-</name></member>
+    <member refid="structeosio_1_1extended__asset_a407c4e55064a39fa993303aa2d428244_1a407c4e55064a39fa993303aa2d428244" kind="friend"><name>operator+</name></member>
+    <member refid="structeosio_1_1extended__asset_a905237f4cfc32d33e8c89223461fa466_1a905237f4cfc32d33e8c89223461fa466" kind="friend"><name>operator+=</name></member>
+    <member refid="structeosio_1_1extended__asset_a93c002db9cb9b3137fba4dbe2ee3c87b_1a93c002db9cb9b3137fba4dbe2ee3c87b" kind="friend"><name>operator-=</name></member>
+    <member refid="structeosio_1_1extended__asset_a8a4fd918c008063c91c5dc1c47a7379b_1a8a4fd918c008063c91c5dc1c47a7379b" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structeosio_1_1extended__asset_a3aa0a4107431f276a87ee9d375057f9c_1a3aa0a4107431f276a87ee9d375057f9c" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1extended__asset_a804dc3c59aaec0a3c6a4b8c516fda329_1a804dc3c59aaec0a3c6a4b8c516fda329" kind="friend"><name>operator!=</name></member>
+    <member refid="structeosio_1_1extended__asset_a76fd9f6a03d7be197796bdcf7875c399_1a76fd9f6a03d7be197796bdcf7875c399" kind="friend"><name>operator&lt;=</name></member>
+    <member refid="structeosio_1_1extended__asset_a4969e409e5f8d32e48b40ebc4ba4f6af_1a4969e409e5f8d32e48b40ebc4ba4f6af" kind="friend"><name>operator&gt;=</name></member>
+  </compound>
+  <compound refid="classeosio_1_1extended__symbol" kind="class"><name>eosio::extended_symbol</name>
+    <member refid="classeosio_1_1extended__symbol_1a07141fb78b807c3a2619e252127bda01" kind="variable"><name>symbol</name></member>
+    <member refid="classeosio_1_1extended__symbol_1a3220dd8dc50717bbf20dbd8297a5cc08" kind="variable"><name>contract</name></member>
+    <member refid="classeosio_1_1extended__symbol_a56dc99d1a5b4a6edb9366d2b3f64b4f7_1a56dc99d1a5b4a6edb9366d2b3f64b4f7" kind="function"><name>extended_symbol</name></member>
+    <member refid="classeosio_1_1extended__symbol_a53adc0870f45a4a6e70fd223f046f201_1a53adc0870f45a4a6e70fd223f046f201" kind="function"><name>extended_symbol</name></member>
+    <member refid="classeosio_1_1extended__symbol_a81b0741a1705ad99855aa375fe004b9d_1a81b0741a1705ad99855aa375fe004b9d" kind="function"><name>get_symbol</name></member>
+    <member refid="classeosio_1_1extended__symbol_aa215d71db628ab457c8eff30912eae82_1aa215d71db628ab457c8eff30912eae82" kind="function"><name>get_contract</name></member>
+    <member refid="classeosio_1_1extended__symbol_a2b1d5fafb307b27aab4274560a09866e_1a2b1d5fafb307b27aab4274560a09866e" kind="function"><name>print</name></member>
+    <member refid="classeosio_1_1extended__symbol_ad306b3eaac29fba58441578b179398bc_1ad306b3eaac29fba58441578b179398bc" kind="friend"><name>operator==</name></member>
+    <member refid="classeosio_1_1extended__symbol_aafb631b64d0586016ca8ea499350820d_1aafb631b64d0586016ca8ea499350820d" kind="friend"><name>operator!=</name></member>
+    <member refid="classeosio_1_1extended__symbol_afeaa211627f6df2a4f4f31aefedc6077_1afeaa211627f6df2a4f4f31aefedc6077" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="classeosio_1_1fixed__key" kind="class"><name>eosio::fixed_key</name>
+    <member refid="classeosio_1_1fixed__key_1ae7df7de9adda297f16039664a31549df" kind="typedef"><name>all_true</name></member>
+    <member refid="classeosio_1_1fixed__key_a9a6e8a685e7bafe688fce78adb6b4c43_1a9a6e8a685e7bafe688fce78adb6b4c43" kind="typedef"><name>word_t</name></member>
+    <member refid="classeosio_1_1fixed__key_a0f8f02c751a182e95804504f1748cadc_1a0f8f02c751a182e95804504f1748cadc" kind="variable"><name>arr_itr</name></member>
+    <member refid="classeosio_1_1fixed__key_a3dd16555ceab5388156a62fbca11f7af_1a3dd16555ceab5388156a62fbca11f7af" kind="variable"><name>arr</name></member>
+    <member refid="classeosio_1_1fixed__key_1a0604b8fcc628fd531477a9c3e67fceee" kind="variable"><name>_data</name></member>
+    <member refid="classeosio_1_1fixed__key_1a98a35d3529ef5f777745eb73a2217a25" kind="function"><name>set_from_word_sequence</name></member>
+    <member refid="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71_1aa948895b18141aa14b1fa20326396d71" kind="function"><name>num_words</name></member>
+    <member refid="classeosio_1_1fixed__key_afa54ad415d104999704b6278f4701e66_1afa54ad415d104999704b6278f4701e66" kind="function"><name>padded_bytes</name></member>
+    <member refid="classeosio_1_1fixed__key_a892c6c60af975d98d6ff6a8e3bb7c822_1a892c6c60af975d98d6ff6a8e3bb7c822" kind="function"><name>fixed_key</name></member>
+    <member refid="classeosio_1_1fixed__key_a1e21d6bc807df3fe3148e1df7af12472_1a1e21d6bc807df3fe3148e1df7af12472" kind="function"><name>fixed_key</name></member>
+    <member refid="classeosio_1_1fixed__key_a30f70a7e52cc0469c1e48d261fec6f48_1a30f70a7e52cc0469c1e48d261fec6f48" kind="friend"><name>operator==</name></member>
+    <member refid="classeosio_1_1fixed__key_ac19901f66d7942ad087edef0daef485d_1ac19901f66d7942ad087edef0daef485d" kind="friend"><name>operator!=</name></member>
+    <member refid="classeosio_1_1fixed__key_a0d80d7fcf875276760867c2be8b66438_1a0d80d7fcf875276760867c2be8b66438" kind="friend"><name>operator&gt;</name></member>
+    <member refid="classeosio_1_1fixed__key_aed9cc9961cc5c84cdefa193a7baf3f9a_1aed9cc9961cc5c84cdefa193a7baf3f9a" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="structeosio_1_1fixed__point128" kind="struct"><name>eosio::fixed_point128</name>
+    <member refid="structeosio_1_1fixed__point128_aca06ae4275f148e87dcd527cbdaf87c5_1aca06ae4275f148e87dcd527cbdaf87c5" kind="variable"><name>val</name></member>
+    <member refid="structeosio_1_1fixed__point128_a35bb5e4ffc953d845551dadf79455ab8_1a35bb5e4ffc953d845551dadf79455ab8" kind="function"><name>fixed_point128</name></member>
+    <member refid="structeosio_1_1fixed__point128_a9a6e26a69471e1d42ca0f6b41b673734_1a9a6e26a69471e1d42ca0f6b41b673734" kind="function"><name>fixed_point128</name></member>
+    <member refid="structeosio_1_1fixed__point128_ac03c87c2b4a19daf60e5f9c56c4584f0_1ac03c87c2b4a19daf60e5f9c56c4584f0" kind="function"><name>fixed_point128</name></member>
+    <member refid="structeosio_1_1fixed__point128_ab26dee4e941063197fb98f2d71d9c8ce_1ab26dee4e941063197fb98f2d71d9c8ce" kind="function"><name>fixed_point128</name></member>
+    <member refid="structeosio_1_1fixed__point128_a1790a1e9c8858987870440b7d0221702_1a1790a1e9c8858987870440b7d0221702" kind="function"><name>int_part</name></member>
+    <member refid="structeosio_1_1fixed__point128_a039ff620c0ccbde2438615df5d6d3ab8_1a039ff620c0ccbde2438615df5d6d3ab8" kind="function"><name>frac_part</name></member>
+    <member refid="structeosio_1_1fixed__point128_ae8064361384dfea9d6d7984719ef4b01_1ae8064361384dfea9d6d7984719ef4b01" kind="function"><name>print</name></member>
+    <member refid="structeosio_1_1fixed__point128_ad93deaa805f79fa8547f76039ef9c24d_1ad93deaa805f79fa8547f76039ef9c24d" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point128_ac6221bff5864db61cce02e21d4fa9159_1ac6221bff5864db61cce02e21d4fa9159" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point128_a30180ac339ef359d5d553c7e5eb1af83_1a30180ac339ef359d5d553c7e5eb1af83" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point128_aec57d31fe7d5ef08eac57ac793aefa83_1aec57d31fe7d5ef08eac57ac793aefa83" kind="function"><name>operator==</name></member>
+    <member refid="structeosio_1_1fixed__point128_a062d76e3f824db70e6007dbe34f24874_1a062d76e3f824db70e6007dbe34f24874" kind="function"><name>operator&gt;</name></member>
+    <member refid="structeosio_1_1fixed__point128_a0f5ea9645922ee31ea90cc3c9bbb58ae_1a0f5ea9645922ee31ea90cc3c9bbb58ae" kind="function"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="structeosio_1_1fixed__point32" kind="struct"><name>eosio::fixed_point32</name>
+    <member refid="structeosio_1_1fixed__point32_adc0fb8c31ec9e07e6e3a4a7e04fe2471_1adc0fb8c31ec9e07e6e3a4a7e04fe2471" kind="variable"><name>val</name></member>
+    <member refid="structeosio_1_1fixed__point32_a81c6f339a55c8327935ef972ebdb278d_1a81c6f339a55c8327935ef972ebdb278d" kind="function"><name>fixed_point32</name></member>
+    <member refid="structeosio_1_1fixed__point32_a7ad1f82c49b206575fccf8b736815d7c_1a7ad1f82c49b206575fccf8b736815d7c" kind="function"><name>fixed_point32</name></member>
+    <member refid="structeosio_1_1fixed__point32_af7b7646354bc934510228ca1bd53e6b1_1af7b7646354bc934510228ca1bd53e6b1" kind="function"><name>fixed_point32</name></member>
+    <member refid="structeosio_1_1fixed__point32_ad877eb1cdb682c9c1412204a304c1300_1ad877eb1cdb682c9c1412204a304c1300" kind="function"><name>int_part</name></member>
+    <member refid="structeosio_1_1fixed__point32_a41ff73528b152e09796cde085fac502d_1a41ff73528b152e09796cde085fac502d" kind="function"><name>frac_part</name></member>
+    <member refid="structeosio_1_1fixed__point32_a464c1dfdc7c689f18fadcd1de6de1359_1a464c1dfdc7c689f18fadcd1de6de1359" kind="function"><name>print</name></member>
+    <member refid="structeosio_1_1fixed__point32_a58d7f252b05e4d5af1376741f8f6f80b_1a58d7f252b05e4d5af1376741f8f6f80b" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point32_a3746c182de95876fcbf5784b620d4aed_1a3746c182de95876fcbf5784b620d4aed" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point32_a031984309854b00133383caa360dfaef_1a031984309854b00133383caa360dfaef" kind="function"><name>operator+</name></member>
+    <member refid="structeosio_1_1fixed__point32_a8b853041cdc62f50f21067198ea5d20c_1a8b853041cdc62f50f21067198ea5d20c" kind="function"><name>operator-</name></member>
+    <member refid="structeosio_1_1fixed__point32_a6e18faa394f294b64783e6b46b5d88d6_1a6e18faa394f294b64783e6b46b5d88d6" kind="function"><name>operator*</name></member>
+    <member refid="structeosio_1_1fixed__point32_abeb73cfe2cf17016a4ad843f3a8a229c_1abeb73cfe2cf17016a4ad843f3a8a229c" kind="function"><name>operator/</name></member>
+    <member refid="structeosio_1_1fixed__point32_a7a0bf6847a222bf4055736839675a92c_1a7a0bf6847a222bf4055736839675a92c" kind="function"><name>operator==</name></member>
+    <member refid="structeosio_1_1fixed__point32_a6dcd57ee7c9f558a74d8ce561666745d_1a6dcd57ee7c9f558a74d8ce561666745d" kind="function"><name>operator&gt;</name></member>
+    <member refid="structeosio_1_1fixed__point32_a971f9af6f6dd127c726c9238dcf95aa1_1a971f9af6f6dd127c726c9238dcf95aa1" kind="function"><name>operator&lt;</name></member>
+    <member refid="structeosio_1_1fixed__point32_a7e9ed1f23b132f0a8c7cca091321807f_1a7e9ed1f23b132f0a8c7cca091321807f" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point32_a346f1bad63f2779ddcfc1fb4bbb533f7_1a346f1bad63f2779ddcfc1fb4bbb533f7" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point32_a6eefa850d217b820020e76752abfc3eb_1a6eefa850d217b820020e76752abfc3eb" kind="function"><name>operator+</name></member>
+    <member refid="structeosio_1_1fixed__point32_a2c2084d8e4a80f4e75346174b23e78aa_1a2c2084d8e4a80f4e75346174b23e78aa" kind="function"><name>operator-</name></member>
+  </compound>
+  <compound refid="structeosio_1_1fixed__point64" kind="struct"><name>eosio::fixed_point64</name>
+    <member refid="structeosio_1_1fixed__point64_adf1b4e4d25279c532d9ac3ff56d9af21_1adf1b4e4d25279c532d9ac3ff56d9af21" kind="variable"><name>val</name></member>
+    <member refid="structeosio_1_1fixed__point64_ab9f53ce12bd0a23708ec0b67ec7848cb_1ab9f53ce12bd0a23708ec0b67ec7848cb" kind="function"><name>fixed_point64</name></member>
+    <member refid="structeosio_1_1fixed__point64_a0fcb07196ce3b1ee19897d2edd1f362b_1a0fcb07196ce3b1ee19897d2edd1f362b" kind="function"><name>fixed_point64</name></member>
+    <member refid="structeosio_1_1fixed__point64_a02a221576feae394dc006a6f65ba66c2_1a02a221576feae394dc006a6f65ba66c2" kind="function"><name>fixed_point64</name></member>
+    <member refid="structeosio_1_1fixed__point64_a713dad1088c1c4a95ed446e055f0a523_1a713dad1088c1c4a95ed446e055f0a523" kind="function"><name>int_part</name></member>
+    <member refid="structeosio_1_1fixed__point64_a616163b00e9c4ff8e237139bb96ad6b1_1a616163b00e9c4ff8e237139bb96ad6b1" kind="function"><name>frac_part</name></member>
+    <member refid="structeosio_1_1fixed__point64_a85bae51f6eb5071be1e0388e8f0c44af_1a85bae51f6eb5071be1e0388e8f0c44af" kind="function"><name>print</name></member>
+    <member refid="structeosio_1_1fixed__point64_a36ebd8f73c42839443039dbef6462ff4_1a36ebd8f73c42839443039dbef6462ff4" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point64_a4f8cc600e51217711153481052e0002c_1a4f8cc600e51217711153481052e0002c" kind="function"><name>operator=</name></member>
+    <member refid="structeosio_1_1fixed__point64_a91f5e8b0aad593b8f92d8ed9b8f287d0_1a91f5e8b0aad593b8f92d8ed9b8f287d0" kind="function"><name>operator+</name></member>
+    <member refid="structeosio_1_1fixed__point64_a9b0a83b256f3a7c2dac7a2ba838d8397_1a9b0a83b256f3a7c2dac7a2ba838d8397" kind="function"><name>operator-</name></member>
+    <member refid="structeosio_1_1fixed__point64_af88630db8a6e5f2f026abe4b6fc953dc_1af88630db8a6e5f2f026abe4b6fc953dc" kind="function"><name>operator*</name></member>
+    <member refid="structeosio_1_1fixed__point64_a810e2397dd4645ec575430ffd54b5d3f_1a810e2397dd4645ec575430ffd54b5d3f" kind="function"><name>operator/</name></member>
+    <member refid="structeosio_1_1fixed__point64_ad2fb0230d48ccc90795e278e1ef12df6_1ad2fb0230d48ccc90795e278e1ef12df6" kind="function"><name>operator==</name></member>
+    <member refid="structeosio_1_1fixed__point64_a63ee72acb0a3307d54283dba95dc623b_1a63ee72acb0a3307d54283dba95dc623b" kind="function"><name>operator&gt;</name></member>
+    <member refid="structeosio_1_1fixed__point64_a2c28bc89073dfa8c6f81ee2594a3272c_1a2c28bc89073dfa8c6f81ee2594a3272c" kind="function"><name>operator&lt;</name></member>
+    <member refid="structeosio_1_1fixed__point64_a949ad7f0149535736353c9283797468b_1a949ad7f0149535736353c9283797468b" kind="function"><name>operator+</name></member>
+    <member refid="structeosio_1_1fixed__point64_a49301a70e323c7b6fa7e8b4d4cd1cce2_1a49301a70e323c7b6fa7e8b4d4cd1cce2" kind="function"><name>operator-</name></member>
+  </compound>
+  <compound refid="structeosio_1_1ignore" kind="struct"><name>eosio::ignore</name>
+  </compound>
+  <compound refid="structeosio_1_1ignore__wrapper" kind="struct"><name>eosio::ignore_wrapper</name>
+    <member refid="structeosio_1_1ignore__wrapper_a4f84e678095bec6a25ce72256b4cbfce_1a4f84e678095bec6a25ce72256b4cbfce" kind="variable"><name>value</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_a89db1ce457bcd345d9c0403ad6c4936f_1a89db1ce457bcd345d9c0403ad6c4936f" kind="function"><name>ignore_wrapper</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_ac6cf7a6be9c0cc5013c68c1e39a0bab8_1ac6cf7a6be9c0cc5013c68c1e39a0bab8" kind="function"><name>ignore_wrapper</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_a0dcb6bbda0a915c87264dc0119fc9ded_1a0dcb6bbda0a915c87264dc0119fc9ded" kind="function"><name>ignore_wrapper</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_adcb05b331265687383a2324c8e47c428_1adcb05b331265687383a2324c8e47c428" kind="function"><name>get</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_ac438b2240f6513b7ccac4d7c6876bd95_1ac438b2240f6513b7ccac4d7c6876bd95" kind="function"><name>operator T</name></member>
+    <member refid="structeosio_1_1ignore__wrapper_a79d94e050efb9c7b3cd6a01fe1c8350b_1a79d94e050efb9c7b3cd6a01fe1c8350b" kind="function"><name>operator ignore&lt; T &gt;</name></member>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1index" kind="struct"><name>eosio::multi_index::index</name>
+    <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181" kind="enum"><name>constants</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a7c81fd120c8d86b5851b870de759c96b" kind="enumvalue"><name>table_name</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181af0ccf10d060dfc7fbc8679df025ed94b" kind="enumvalue"><name>index_name</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a79f077835667cb8246df7f119e80c6f0" kind="enumvalue"><name>index_number</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a014b97a5206ff7807cf7c62e772b8181_1a014b97a5206ff7807cf7c62e772b8181a0c2b58abe06cedbe2fe1807a25052e4f" kind="enumvalue"><name>index_table_name</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a2f3c3f4f02371ab09d995b4ed08772ce_1a2f3c3f4f02371ab09d995b4ed08772ce" kind="typedef"><name>secondary_extractor_type</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a49f2c5517ef496a53beda1c4fa8165b5_1a49f2c5517ef496a53beda1c4fa8165b5" kind="typedef"><name>secondary_key_type</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a710c24cb9fa944ba8e26d14b4d407b6b_1a710c24cb9fa944ba8e26d14b4d407b6b" kind="typedef"><name>const_reverse_iterator</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" kind="friend"><name>multi_index</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1ade8523c09fabc6a744f34f8002e6ac8f" kind="variable"><name>_multidx</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a1961eb9f6802b27c3938b205eba2b4e8_1a1961eb9f6802b27c3938b205eba2b4e8" kind="function"><name>validate_index_name</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a48e393c34c4c66a2fdeb768b9cd244d8_1a48e393c34c4c66a2fdeb768b9cd244d8" kind="function"><name>name</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a123d2367cc502c2e2bd9d234c0759733_1a123d2367cc502c2e2bd9d234c0759733" kind="function"><name>number</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_aa6c304af30c9cd2f5e401e3b8cd415bd_1aa6c304af30c9cd2f5e401e3b8cd415bd" kind="function"><name>extract_secondary_key</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_aa34db18061849360328e05fa9eb105f4_1aa34db18061849360328e05fa9eb105f4" kind="function"><name>cbegin</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ae52505fea2dda6750bc8ee2ce523529b_1ae52505fea2dda6750bc8ee2ce523529b" kind="function"><name>begin</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_aa62e31d8bec7e50750a0149725d90600_1aa62e31d8bec7e50750a0149725d90600" kind="function"><name>cend</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a723113602490d02f1e5dfd336413e312_1a723113602490d02f1e5dfd336413e312" kind="function"><name>end</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a5182e6d7629fb4277866f219cdeb3f63_1a5182e6d7629fb4277866f219cdeb3f63" kind="function"><name>crbegin</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_af3283589ad1738f4a254ba3a7347e71e_1af3283589ad1738f4a254ba3a7347e71e" kind="function"><name>rbegin</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a772ee8db2ef5a9c447b393cd3b2b8621_1a772ee8db2ef5a9c447b393cd3b2b8621" kind="function"><name>crend</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_aa9537b1dcbe7e123e84ec825eb4b4766_1aa9537b1dcbe7e123e84ec825eb4b4766" kind="function"><name>rend</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a17e0b1a69195b5b2dd6c81ed8b87b7d5_1a17e0b1a69195b5b2dd6c81ed8b87b7d5" kind="function"><name>find</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_aa6eb920454428f1bdbc3b35e8a1907ee_1aa6eb920454428f1bdbc3b35e8a1907ee" kind="function"><name>find</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a57327224628a5a875cd116568a9275e4_1a57327224628a5a875cd116568a9275e4" kind="function"><name>require_find</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a2456a37fb65fa72f666adf74659f8177_1a2456a37fb65fa72f666adf74659f8177" kind="function"><name>require_find</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ac1b7fe4bd83241550b8ad605caa383cd_1ac1b7fe4bd83241550b8ad605caa383cd" kind="function"><name>get</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a5800f8274ec86dc27f53e1a3708e0b6c_1a5800f8274ec86dc27f53e1a3708e0b6c" kind="function"><name>get</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ad074700e6763eed28e5b9b88b30fbad8_1ad074700e6763eed28e5b9b88b30fbad8" kind="function"><name>lower_bound</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a21c01dac797e4f767fe8ab24d36c0d73_1a21c01dac797e4f767fe8ab24d36c0d73" kind="function"><name>lower_bound</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a19934ccb4ce8ac6b77b26b7ef8ad528b_1a19934ccb4ce8ac6b77b26b7ef8ad528b" kind="function"><name>upper_bound</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ae0f8f9892cda39b37fa850e71377ca55_1ae0f8f9892cda39b37fa850e71377ca55" kind="function"><name>upper_bound</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a7b0ed8e2378ad5a13ecd2b3cf09a4b1f_1a7b0ed8e2378ad5a13ecd2b3cf09a4b1f" kind="function"><name>iterator_to</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ae124e86de4d3cc8d34202007a235a29a_1ae124e86de4d3cc8d34202007a235a29a" kind="function"><name>modify</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a7646329d161840fc5590f24186f61da0_1a7646329d161840fc5590f24186f61da0" kind="function"><name>erase</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_a0b704fc6937b41494c82de218190019a_1a0b704fc6937b41494c82de218190019a" kind="function"><name>get_code</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_ac56321d4dcffcd76b850c788b3c6fbb6_1ac56321d4dcffcd76b850c788b3c6fbb6" kind="function"><name>get_scope</name></member>
+    <member refid="structeosio_1_1multi__index_1_1index_1a9df4e082a0d6e66e3b9933bb137886cd" kind="function"><name>index</name></member>
+  </compound>
+  <compound refid="structeosio_1_1indexed__by" kind="struct"><name>eosio::indexed_by</name>
+    <member refid="structeosio_1_1indexed__by_ad04dd8d771430edeb499c9d03bc9bb60_1ad04dd8d771430edeb499c9d03bc9bb60" kind="enum"><name>constants</name></member>
+    <member refid="structeosio_1_1indexed__by_ad04dd8d771430edeb499c9d03bc9bb60_1ad04dd8d771430edeb499c9d03bc9bb60a4645263158ffe7d237fda11ac37aea05" kind="enumvalue"><name>index_name</name></member>
+    <member refid="structeosio_1_1indexed__by_affd7e285b6b9435c7c2b0104a14b5791_1affd7e285b6b9435c7c2b0104a14b5791" kind="typedef"><name>secondary_extractor_type</name></member>
+  </compound>
+  <compound refid="structeosio_1_1inline__dispatcher" kind="struct"><name>eosio::inline_dispatcher</name>
+  </compound>
+  <compound refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4" kind="struct"><name>eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;</name>
+    <member refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a8ccabfd180270a8128685eeaea33c75a_1a8ccabfd180270a8128685eeaea33c75a" kind="function"><name>call</name></member>
+    <member refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4_a43a9a1084e226ca5e3b8f306174a18ef_1a43a9a1084e226ca5e3b8f306174a18ef" kind="function"><name>call</name></member>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1intc" kind="struct"><name>eosio::multi_index::intc</name>
+    <member refid="structeosio_1_1multi__index_1_1intc_aa20be69bf60a1b54805679120bda9462_1aa20be69bf60a1b54805679120bda9462" kind="enum"><name>e</name></member>
+    <member refid="structeosio_1_1multi__index_1_1intc_aa20be69bf60a1b54805679120bda9462_1aa20be69bf60a1b54805679120bda9462af6cfc86ea08c0e269f6802939e7c6de8" kind="enumvalue"><name>value</name></member>
+    <member refid="structeosio_1_1multi__index_1_1intc_ac8991c83a299f86717489606300320cd_1ac8991c83a299f86717489606300320cd" kind="function"><name>operator uint64_t</name></member>
+  </compound>
+  <compound refid="classeosio_1_1iostream" kind="class"><name>eosio::iostream</name>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1item" kind="struct"><name>eosio::multi_index::item</name>
+    <member refid="structeosio_1_1multi__index_1_1item_a99cf43d99bdedf53df84ae32799d2d09_1a99cf43d99bdedf53df84ae32799d2d09" kind="variable"><name>__idx</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item_a6105bc1647981c2c79aed428a8ec02e1_1a6105bc1647981c2c79aed428a8ec02e1" kind="variable"><name>__primary_itr</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item_a07b7d499080ec3df9ee3087fb9002b43_1a07b7d499080ec3df9ee3087fb9002b43" kind="variable"><name>__iters</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item_a9834dde25b2bf497571b4ffffb7cc682_1a9834dde25b2bf497571b4ffffb7cc682" kind="function"><name>item</name></member>
+  </compound>
+  <compound refid="structeosio_1_1multi__index_1_1item__ptr" kind="struct"><name>eosio::multi_index::item_ptr</name>
+    <member refid="structeosio_1_1multi__index_1_1item__ptr_a76caf0c83e2d01052f6f9f9a1202779a_1a76caf0c83e2d01052f6f9f9a1202779a" kind="variable"><name>_item</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item__ptr_a4f0ea92f1a3f1a161339bab5f1684490_1a4f0ea92f1a3f1a161339bab5f1684490" kind="variable"><name>_primary_key</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item__ptr_a3de098b77400e8b8c2be71f841f979b1_1a3de098b77400e8b8c2be71f841f979b1" kind="variable"><name>_primary_itr</name></member>
+    <member refid="structeosio_1_1multi__index_1_1item__ptr_aae582bb6e081ba5fd90afd5874c13f1c_1aae582bb6e081ba5fd90afd5874c13f1c" kind="function"><name>item_ptr</name></member>
+  </compound>
+  <compound refid="classeosio_1_1memory__manager_1_1memory" kind="class"><name>eosio::memory_manager::memory</name>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1a06fcb4aecae9f08c2b3eb6befacffb72" kind="variable"><name>_heap_size</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1abf33f3218fa54b3cbaeef15ee98ec898" kind="variable"><name>_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_1ac48160fc38ebf12211429cff410c75ef" kind="variable"><name>_offset</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_af85ade61b24019eea6306cf648f1d625_1af85ade61b24019eea6306cf648f1d625" kind="function"><name>memory</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a09c3fb534b185d02d44c44a65687303d_1a09c3fb534b185d02d44c44a65687303d" kind="function"><name>init</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_accfe081869782f56b8b21d1335368c3e_1accfe081869782f56b8b21d1335368c3e" kind="function"><name>is_init</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a93951eea84e88bf8855dbc8eb96af62d_1a93951eea84e88bf8855dbc8eb96af62d" kind="function"><name>is_in_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a53fc9d9c352df6bc90b44f559bed968b_1a53fc9d9c352df6bc90b44f559bed968b" kind="function"><name>is_capacity_remaining</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a2e3a3b2c09d28da026c8ed93811b9d6e_1a2e3a3b2c09d28da026c8ed93811b9d6e" kind="function"><name>malloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_abf4eba30b71bdd9a15478ee22688f581_1abf4eba30b71bdd9a15478ee22688f581" kind="function"><name>malloc_from_freed</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a32ce5b71a89a4388e84748dfc03df3f1_1a32ce5b71a89a4388e84748dfc03df3f1" kind="function"><name>realloc_in_place</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_a53ae2045de1772dae532bb03da755eee_1a53ae2045de1772dae532bb03da755eee" kind="function"><name>free</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_af9adcac3f8b1fbea2fb929290d92e7d3_1af9adcac3f8b1fbea2fb929290d92e7d3" kind="function"><name>cleanup_remaining</name></member>
+    <member refid="classeosio_1_1memory__manager_1_1memory_aa2c5013fac6521de3cf024201696341c_1aa2c5013fac6521de3cf024201696341c" kind="function"><name>expand_memory</name></member>
+  </compound>
+  <compound refid="classeosio_1_1memory__manager" kind="class"><name>eosio::memory_manager</name>
+    <member refid="classeosio_1_1memory__manager_1a8948503a876a552ca95a6c9800bf3ca5" kind="variable"><name>_size_marker</name></member>
+    <member refid="classeosio_1_1memory__manager_1a784eb311a694360b1f876148920ab076" kind="variable"><name>_mem_block</name></member>
+    <member refid="classeosio_1_1memory__manager_1a63a0c3ed8044534757e18a9cd98f2de1" kind="variable"><name>_rem_mem_block_mask</name></member>
+    <member refid="classeosio_1_1memory__manager_1a3465a7fa7cacdf01488e811dae60e283" kind="variable"><name>_initial_heap_size</name></member>
+    <member refid="classeosio_1_1memory__manager_1a0bc390e03a768b631e9cc7fb87a4ef0d" kind="variable"><name>_heaps_size</name></member>
+    <member refid="classeosio_1_1memory__manager_1aaea90f9172e8eadd2c8d0237351de4f6" kind="variable"><name>_alloc_memory_mask</name></member>
+    <member refid="classeosio_1_1memory__manager_1a03e2eac24cad266d4e93c73059068e85" kind="variable"><name>_initial_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_1ae32e16a020bbb39f00fafb116846a532" kind="variable"><name>_available_heaps</name></member>
+    <member refid="classeosio_1_1memory__manager_1afb41ba2a99e3f80f7ea3e8d9067eadf1" kind="variable"><name>_heaps_actual_size</name></member>
+    <member refid="classeosio_1_1memory__manager_1afbd2d66a64e16f5cc1f0950ac61678ca" kind="variable"><name>_active_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_1aaf3a53d2a55d9e50c2a8c683ece5deeb" kind="variable"><name>_active_free_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_a7ac38fce3243a7dcf448301ee9ffd392_1a7ac38fce3243a7dcf448301ee9ffd392" kind="friend"><name>malloc</name></member>
+    <member refid="classeosio_1_1memory__manager_add8a2c74f2c5f5e3db163234988f61d6_1add8a2c74f2c5f5e3db163234988f61d6" kind="friend"><name>calloc</name></member>
+    <member refid="classeosio_1_1memory__manager_a1a6b5e8d2f1c37e5b43e4345586075be_1a1a6b5e8d2f1c37e5b43e4345586075be" kind="friend"><name>realloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1a24214202c17c82370d7d97c1543604c4" kind="function"><name>void ::free</name></member>
+    <member refid="classeosio_1_1memory__manager_1a813e6267c08356568b81850cdc6b4c88" kind="function"><name>next_active_heap</name></member>
+    <member refid="classeosio_1_1memory__manager_1aafeb7bd9b43e974406fc490a78465f1c" kind="function"><name>malloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1ae363b7f43c0e24fb06e462c3939e25a3" kind="function"><name>realloc</name></member>
+    <member refid="classeosio_1_1memory__manager_1a97110459f8b470e11a754792e02349d6" kind="function"><name>free</name></member>
+    <member refid="classeosio_1_1memory__manager_1ada065b32aa56d50ee10e11a0dec050e4" kind="function"><name>adjust_to_mem_block</name></member>
+    <member refid="classeosio_1_1memory__manager_a1263e25250550298ba8408cce464a87c_1a1263e25250550298ba8408cce464a87c" kind="function"><name>memory_manager</name></member>
+  </compound>
+  <compound refid="classeosio_1_1microseconds" kind="class"><name>eosio::microseconds</name>
+    <member refid="classeosio_1_1microseconds_af2faf1e08a77aafe6485d0e62813354c_1af2faf1e08a77aafe6485d0e62813354c" kind="variable"><name>_count</name></member>
+    <member refid="classeosio_1_1microseconds_aaba1d7b327cc33fcbaf19e870d0c1733_1aaba1d7b327cc33fcbaf19e870d0c1733" kind="friend"><name>time_point</name></member>
+    <member refid="classeosio_1_1microseconds_a4aefc6bb1acd38167eb501722616714d_1a4aefc6bb1acd38167eb501722616714d" kind="friend"><name>operator+</name></member>
+    <member refid="classeosio_1_1microseconds_ada590d04fee1d36be15cdda38b581531_1ada590d04fee1d36be15cdda38b581531" kind="friend"><name>operator-</name></member>
+    <member refid="classeosio_1_1microseconds_afce366cbc2e650931e2d1eb856c1339e_1afce366cbc2e650931e2d1eb856c1339e" kind="friend"><name>operator&gt;</name></member>
+    <member refid="classeosio_1_1microseconds_ad4531296ec947832cc4b3f5dfbc9fc0b_1ad4531296ec947832cc4b3f5dfbc9fc0b" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="classeosio_1_1microseconds_aa1877d2e6b18621502415bb755c51108_1aa1877d2e6b18621502415bb755c51108" kind="friend"><name>operator&lt;</name></member>
+    <member refid="classeosio_1_1microseconds_a01d844cd1e5a8b2108b564ac3b1a8ed4_1a01d844cd1e5a8b2108b564ac3b1a8ed4" kind="friend"><name>operator&lt;=</name></member>
+    <member refid="classeosio_1_1microseconds_a59aa821c27e2073ede1ddf759e26317f_1a59aa821c27e2073ede1ddf759e26317f" kind="function"><name>microseconds</name></member>
+    <member refid="classeosio_1_1microseconds_aecd2e119c3bd9254a29dd2667da37ff0_1aecd2e119c3bd9254a29dd2667da37ff0" kind="function"><name>operator==</name></member>
+    <member refid="classeosio_1_1microseconds_a2c2cb714e79a3f4d984b068702496533_1a2c2cb714e79a3f4d984b068702496533" kind="function"><name>operator!=</name></member>
+    <member refid="classeosio_1_1microseconds_ae23f9854f69a44225d8f96092cdc032e_1ae23f9854f69a44225d8f96092cdc032e" kind="function"><name>operator+=</name></member>
+    <member refid="classeosio_1_1microseconds_a91086401e39a026d06ab5d2a41a27f22_1a91086401e39a026d06ab5d2a41a27f22" kind="function"><name>operator-=</name></member>
+    <member refid="classeosio_1_1microseconds_a0d847f20b3d17f6743e39773ea0431b2_1a0d847f20b3d17f6743e39773ea0431b2" kind="function"><name>count</name></member>
+    <member refid="classeosio_1_1microseconds_aa9396d5bd773c4169ff6aca7344988a6_1aa9396d5bd773c4169ff6aca7344988a6" kind="function"><name>to_seconds</name></member>
+    <member refid="classeosio_1_1microseconds_a9b6c52f413afce012f9bfebe66b4b6a1_1a9b6c52f413afce012f9bfebe66b4b6a1" kind="function"><name>maximum</name></member>
+  </compound>
+  <compound refid="classeosio_1_1multi__index" kind="class"><name>eosio::multi_index</name>
+    <member refid="classeosio_1_1multi__index_1a840b92a700679f8a9e10abb7096f9a04" kind="enum"><name>next_primary_key_tags</name></member>
+    <member refid="classeosio_1_1multi__index_1a840b92a700679f8a9e10abb7096f9a04af30e520a26372d7754c175fedbbbcb1c" kind="enumvalue"><name>no_available_primary_key</name></member>
+    <member refid="classeosio_1_1multi__index_1a840b92a700679f8a9e10abb7096f9a04a60a92fb56cf888900303470b503c2317" kind="enumvalue"><name>unset_next_primary_key</name></member>
+    <member refid="classeosio_1_1multi__index_ab46b850d4d0d3da39cd96e77ec10c51e_1ab46b850d4d0d3da39cd96e77ec10c51e" kind="typedef"><name>const_reverse_iterator</name></member>
+    <member refid="classeosio_1_1multi__index_1ae5c7ac234346753de6ff21acf3816caf" kind="variable"><name>max_stack_buffer_size</name></member>
+    <member refid="classeosio_1_1multi__index_1a170b18041c86014bf85de0e6392b7b94" kind="variable"><name>_code</name></member>
+    <member refid="classeosio_1_1multi__index_1a58bc2f0bbda3c312d2c3799946f6ff2b" kind="variable"><name>_scope</name></member>
+    <member refid="classeosio_1_1multi__index_1a24a34937df2dd8179ae93f4177044822" kind="variable"><name>_next_primary_key</name></member>
+    <member refid="classeosio_1_1multi__index_1a148b464cd18d933799b0c06dd2f5297f" kind="variable"><name>_items_vector</name></member>
+    <member refid="classeosio_1_1multi__index_1a6c0338041215c04bbddea4e365c46947" kind="variable"><name>indices_type</name></member>
+    <member refid="classeosio_1_1multi__index_1a4ffdf846dc2640c6b50fe88a49197219" kind="variable"><name>_indices</name></member>
+    <member refid="classeosio_1_1multi__index_1ad36bc5a01892a68153cbcf63645ff37e" kind="function"><name>validate_table_name</name></member>
+    <member refid="classeosio_1_1multi__index_1a62970d54716d15e2aa5a87a7f48dd535" kind="function"><name>transform_indices</name></member>
+    <member refid="classeosio_1_1multi__index_1a86077fdc3c4f30857a46f5b3cff8f5bd" kind="function"><name>load_object_by_primary_iterator</name></member>
+    <member refid="classeosio_1_1multi__index_aa081f69f6fa288869d1d5881f0be04dd_1aa081f69f6fa288869d1d5881f0be04dd" kind="function"><name>multi_index</name></member>
+    <member refid="classeosio_1_1multi__index_a6ef0fb806ad6edf50b670a115fc3d5a1_1a6ef0fb806ad6edf50b670a115fc3d5a1" kind="function"><name>get_code</name></member>
+    <member refid="classeosio_1_1multi__index_a0690e9e9a30254240fa0cb6bb12bebf3_1a0690e9e9a30254240fa0cb6bb12bebf3" kind="function"><name>get_scope</name></member>
+    <member refid="classeosio_1_1multi__index_a36ad6b1c1013b6f753660b334de96aef_1a36ad6b1c1013b6f753660b334de96aef" kind="function"><name>cbegin</name></member>
+    <member refid="classeosio_1_1multi__index_a060b08a9da300e3a4ab669b35f07c9bc_1a060b08a9da300e3a4ab669b35f07c9bc" kind="function"><name>begin</name></member>
+    <member refid="classeosio_1_1multi__index_aece639944fa9031debbd984bbd42485a_1aece639944fa9031debbd984bbd42485a" kind="function"><name>cend</name></member>
+    <member refid="classeosio_1_1multi__index_a748fcb4d6a08962ad8a7c92da359e3d7_1a748fcb4d6a08962ad8a7c92da359e3d7" kind="function"><name>end</name></member>
+    <member refid="classeosio_1_1multi__index_abe296816f75cdb69e6698724e7b0c29d_1abe296816f75cdb69e6698724e7b0c29d" kind="function"><name>crbegin</name></member>
+    <member refid="classeosio_1_1multi__index_acdc14cc71a43489507341d2709696e7d_1acdc14cc71a43489507341d2709696e7d" kind="function"><name>rbegin</name></member>
+    <member refid="classeosio_1_1multi__index_a6ce680bcec3a391e0ad89a1cd1143231_1a6ce680bcec3a391e0ad89a1cd1143231" kind="function"><name>crend</name></member>
+    <member refid="classeosio_1_1multi__index_a659b2744975d0a54162c44fbcbc28115_1a659b2744975d0a54162c44fbcbc28115" kind="function"><name>rend</name></member>
+    <member refid="classeosio_1_1multi__index_aa642a184ce729f91bc70200ba2a55253_1aa642a184ce729f91bc70200ba2a55253" kind="function"><name>lower_bound</name></member>
+    <member refid="classeosio_1_1multi__index_a5a9f1b25fd64a2bdb163f97ca97eb371_1a5a9f1b25fd64a2bdb163f97ca97eb371" kind="function"><name>upper_bound</name></member>
+    <member refid="classeosio_1_1multi__index_a1b2d26324eb34354f5db2abcf2d87853_1a1b2d26324eb34354f5db2abcf2d87853" kind="function"><name>available_primary_key</name></member>
+    <member refid="classeosio_1_1multi__index_a98fecc3166ebb3746ee810f7f7d9beac_1a98fecc3166ebb3746ee810f7f7d9beac" kind="function"><name>get_index</name></member>
+    <member refid="classeosio_1_1multi__index_ae6e01877b9862c8193df27f05c305f2c_1ae6e01877b9862c8193df27f05c305f2c" kind="function"><name>get_index</name></member>
+    <member refid="classeosio_1_1multi__index_ad611e3ff51efdf038b934138d071cf83_1ad611e3ff51efdf038b934138d071cf83" kind="function"><name>iterator_to</name></member>
+    <member refid="classeosio_1_1multi__index_ab64fbf4dd04be357ec0cbbf125a3da5e_1ab64fbf4dd04be357ec0cbbf125a3da5e" kind="function"><name>emplace</name></member>
+    <member refid="classeosio_1_1multi__index_a4b3556ef69c7faa917f185ae33a34442_1a4b3556ef69c7faa917f185ae33a34442" kind="function"><name>modify</name></member>
+    <member refid="classeosio_1_1multi__index_ab44fb8b993970f1b3b7ac5f37cd2d2c9_1ab44fb8b993970f1b3b7ac5f37cd2d2c9" kind="function"><name>modify</name></member>
+    <member refid="classeosio_1_1multi__index_af05dfe7b56cf37179f76632cf619f0d1_1af05dfe7b56cf37179f76632cf619f0d1" kind="function"><name>get</name></member>
+    <member refid="classeosio_1_1multi__index_a40a65cdfcc298b85e0e4ddf4c3581c1c_1a40a65cdfcc298b85e0e4ddf4c3581c1c" kind="function"><name>find</name></member>
+    <member refid="classeosio_1_1multi__index_a8a65dee974002fd6324e72a0a978fddf_1a8a65dee974002fd6324e72a0a978fddf" kind="function"><name>require_find</name></member>
+    <member refid="classeosio_1_1multi__index_ad28ac8d91e9af22cbbc12962a805d253_1ad28ac8d91e9af22cbbc12962a805d253" kind="function"><name>erase</name></member>
+    <member refid="classeosio_1_1multi__index_ac5f84064eacb4265ad44f15cecebb4be_1ac5f84064eacb4265ad44f15cecebb4be" kind="function"><name>erase</name></member>
+  </compound>
+  <compound refid="structeosio_1_1name" kind="struct"><name>eosio::name</name>
+    <member refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kind="enum"><name>raw</name></member>
+    <member refid="structeosio_1_1name_adb309a6e132467ef2c53e953b56ebb52_1adb309a6e132467ef2c53e953b56ebb52" kind="variable"><name>value</name></member>
+    <member refid="structeosio_1_1name_a3e05c2f8c5eb5fa35dc1a99918d57c19_1a3e05c2f8c5eb5fa35dc1a99918d57c19" kind="function"><name>name</name></member>
+    <member refid="structeosio_1_1name_abc1f35add0a585ea60d6c7333b87f595_1abc1f35add0a585ea60d6c7333b87f595" kind="function"><name>name</name></member>
+    <member refid="structeosio_1_1name_a4679582f6b187de123c5167db945b0fe_1a4679582f6b187de123c5167db945b0fe" kind="function"><name>name</name></member>
+    <member refid="structeosio_1_1name_a0ce912cd61e77f223ac1d252deec0d04_1a0ce912cd61e77f223ac1d252deec0d04" kind="function"><name>name</name></member>
+    <member refid="structeosio_1_1name_a757935f0931b482c554686c2ea2a42b2_1a757935f0931b482c554686c2ea2a42b2" kind="function"><name>length</name></member>
+    <member refid="structeosio_1_1name_a806f77788fe466215adeb2b78553b6f8_1a806f77788fe466215adeb2b78553b6f8" kind="function"><name>suffix</name></member>
+    <member refid="structeosio_1_1name_afd3799cbd1bc276a81dba035599f535c_1afd3799cbd1bc276a81dba035599f535c" kind="function"><name>operator raw</name></member>
+    <member refid="structeosio_1_1name_a667462189a277a9f11f66fcd88af05df_1a667462189a277a9f11f66fcd88af05df" kind="function"><name>operator bool</name></member>
+    <member refid="structeosio_1_1name_adf844a1e7846f23bcf1d2a9ba282f0cb_1adf844a1e7846f23bcf1d2a9ba282f0cb" kind="function"><name>write_as_string</name></member>
+    <member refid="structeosio_1_1name_ae9b8c13d32a86f9ff355b6dce3955ab6_1ae9b8c13d32a86f9ff355b6dce3955ab6" kind="function"><name>to_string</name></member>
+    <member refid="structeosio_1_1name_a051cf40d16909e5c352cf85edb15fc9c_1a051cf40d16909e5c352cf85edb15fc9c" kind="function"><name>char_to_value</name></member>
+    <member refid="structeosio_1_1name_a7815a04748b0d6b1e28f1bb11e668595_1a7815a04748b0d6b1e28f1bb11e668595" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1name_af1df898dfc723d4873fe9356cc70eacb_1af1df898dfc723d4873fe9356cc70eacb" kind="friend"><name>operator!=</name></member>
+    <member refid="structeosio_1_1name_a743497f458dd217e1eccf368d060bbd5_1a743497f458dd217e1eccf368d060bbd5" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="structeosio_1_1onerror" kind="struct"><name>eosio::onerror</name>
+    <member refid="group__transaction_gae6686bc621795ad87f257d0be72f345c_1gae6686bc621795ad87f257d0be72f345c" kind="variable"><name>sender_id</name></member>
+    <member refid="group__transaction_ga1cae304360f79394762ec5040046887e_1ga1cae304360f79394762ec5040046887e" kind="variable"><name>sent_trx</name></member>
+    <member refid="group__transaction_gabdf7bc0ef45beae2daf8cf3f08a7cd42_1gabdf7bc0ef45beae2daf8cf3f08a7cd42" kind="function"><name>from_current_action</name></member>
+    <member refid="group__transaction_ga8fe8368f7a3213b5ab0a93407f41cd66_1ga8fe8368f7a3213b5ab0a93407f41cd66" kind="function"><name>unpack_sent_trx</name></member>
+  </compound>
+  <compound refid="structeosio_1_1permission__level" kind="struct"><name>eosio::permission_level</name>
+    <member refid="structeosio_1_1permission__level_ab5d07611f5ba5e7b5dff9e749c5696e0_1ab5d07611f5ba5e7b5dff9e749c5696e0" kind="variable"><name>actor</name></member>
+    <member refid="structeosio_1_1permission__level_af30baa92f0b3d6b611967c0dfb7555a7_1af30baa92f0b3d6b611967c0dfb7555a7" kind="variable"><name>permission</name></member>
+    <member refid="structeosio_1_1permission__level_a5b23258308433be05a03ab4e2fce9b36_1a5b23258308433be05a03ab4e2fce9b36" kind="function"><name>permission_level</name></member>
+    <member refid="structeosio_1_1permission__level_a80e38737c6e727a27e9ff7a195f74d5d_1a80e38737c6e727a27e9ff7a195f74d5d" kind="function"><name>permission_level</name></member>
+    <member refid="structeosio_1_1permission__level_a40e360b0bfdb5aa413812d5cb171ff51_1a40e360b0bfdb5aa413812d5cb171ff51" kind="friend"><name>operator==</name></member>
+  </compound>
+  <compound refid="structeosio_1_1producer__key" kind="struct"><name>eosio::producer_key</name>
+    <member refid="structeosio_1_1producer__key_abec477141e08f7648fbdb5d7c2e69824_1abec477141e08f7648fbdb5d7c2e69824" kind="variable"><name>producer_name</name></member>
+    <member refid="structeosio_1_1producer__key_af5899a46ea38009f20643792af38d26b_1af5899a46ea38009f20643792af38d26b" kind="variable"><name>block_signing_key</name></member>
+    <member refid="structeosio_1_1producer__key_a90ba7a85612a19a42fb7c598cd0d3406_1a90ba7a85612a19a42fb7c598cd0d3406" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="structeosio_1_1producer__schedule" kind="struct"><name>eosio::producer_schedule</name>
+    <member refid="structeosio_1_1producer__schedule_a3958be89c877e9249710a8aafa155829_1a3958be89c877e9249710a8aafa155829" kind="variable"><name>version</name></member>
+    <member refid="structeosio_1_1producer__schedule_a10628b8023f6db90687a54776d15a117_1a10628b8023f6db90687a54776d15a117" kind="variable"><name>producers</name></member>
+  </compound>
+  <compound refid="structeosio_1_1public__key" kind="struct"><name>eosio::public_key</name>
+    <member refid="structeosio_1_1public__key_aaba0301ecc27240508120958503b2361_1aaba0301ecc27240508120958503b2361" kind="variable"><name>type</name></member>
+    <member refid="structeosio_1_1public__key_af05e926b56c5f221dc502a6f68dbba58_1af05e926b56c5f221dc502a6f68dbba58" kind="variable"><name>data</name></member>
+    <member refid="structeosio_1_1public__key_a4f2610bdec460bf2b0203684a9599da5_1a4f2610bdec460bf2b0203684a9599da5" kind="friend"><name>operator==</name></member>
+    <member refid="structeosio_1_1public__key_a5faa639eb95ed12c1be5d8ae65c7cb54_1a5faa639eb95ed12c1be5d8ae65c7cb54" kind="friend"><name>operator!=</name></member>
+  </compound>
+  <compound refid="structeosio_1_1singleton_1_1row" kind="struct"><name>eosio::singleton::row</name>
+    <member refid="structeosio_1_1singleton_1_1row_a1453fcd490c4d142635fbb30a01d8d82_1a1453fcd490c4d142635fbb30a01d8d82" kind="variable"><name>value</name></member>
+    <member refid="structeosio_1_1singleton_1_1row_a9849634575cdaa0d994f5bef1f8ee141_1a9849634575cdaa0d994f5bef1f8ee141" kind="function"><name>primary_key</name></member>
+  </compound>
+  <compound refid="structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions" kind="struct"><name>eosio::_multi_index_detail::secondary_index_db_functions</name>
+  </compound>
+  <compound refid="structeosio_1_1__multi__index__detail_1_1secondary__key__traits" kind="struct"><name>eosio::_multi_index_detail::secondary_key_traits</name>
+  </compound>
+  <compound refid="structeosio_1_1__multi__index__detail_1_1secondary__key__traits_3_01key256_01_4" kind="struct"><name>eosio::_multi_index_detail::secondary_key_traits&lt; key256 &gt;</name>
+    <member refid="structeosio_1_1__multi__index__detail_1_1secondary__key__traits_3_01key256_01_4_ad398496eb7a0f734cb982acd152cfd75_1ad398496eb7a0f734cb982acd152cfd75" kind="function"><name>lowest</name></member>
+  </compound>
+  <compound refid="structsigned__int" kind="struct"><name>signed_int</name>
+    <member refid="structsigned__int_aa943a3c55006fb2cc4e88afd6edc1755_1aa943a3c55006fb2cc4e88afd6edc1755" kind="variable"><name>value</name></member>
+    <member refid="structsigned__int_aeb8e4505fb74ac10c901ef905ff82d2e_1aeb8e4505fb74ac10c901ef905ff82d2e" kind="function"><name>signed_int</name></member>
+    <member refid="structsigned__int_afe5db7c1297bb56cc454fe413959c07c_1afe5db7c1297bb56cc454fe413959c07c" kind="function"><name>operator int32_t</name></member>
+    <member refid="structsigned__int_a94d683e2056158e266f64ac0cd60ecaf_1a94d683e2056158e266f64ac0cd60ecaf" kind="function"><name>operator=</name></member>
+    <member refid="structsigned__int_a21a8dab0e714a1bac2cbd91810ac6a77_1a21a8dab0e714a1bac2cbd91810ac6a77" kind="function"><name>operator++</name></member>
+    <member refid="structsigned__int_a364a6dedb3372b0c318d0954ba0909d3_1a364a6dedb3372b0c318d0954ba0909d3" kind="function"><name>operator++</name></member>
+    <member refid="structsigned__int_a7e5690c7ad2505e2297e0e536a3ad740_1a7e5690c7ad2505e2297e0e536a3ad740" kind="friend"><name>operator==</name></member>
+    <member refid="structsigned__int_aec106017391627bd0e273592c18a0eb5_1aec106017391627bd0e273592c18a0eb5" kind="friend"><name>operator==</name></member>
+    <member refid="structsigned__int_a5612a3dbcbfd3d1fa335aa402c29ac35_1a5612a3dbcbfd3d1fa335aa402c29ac35" kind="friend"><name>operator==</name></member>
+    <member refid="structsigned__int_a3ee2f31815a95ec9ffd2ab7a7f02d524_1a3ee2f31815a95ec9ffd2ab7a7f02d524" kind="friend"><name>operator!=</name></member>
+    <member refid="structsigned__int_a6abfcdc55171168e5679ccd9f37ba471_1a6abfcdc55171168e5679ccd9f37ba471" kind="friend"><name>operator!=</name></member>
+    <member refid="structsigned__int_a6e25feb014836d0288a262e5d488533c_1a6e25feb014836d0288a262e5d488533c" kind="friend"><name>operator!=</name></member>
+    <member refid="structsigned__int_adbae5ebcac1cb6ed6a7547a427c7cf95_1adbae5ebcac1cb6ed6a7547a427c7cf95" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structsigned__int_ae0ebf886eb4f8bd58f41626bfc2d88b7_1ae0ebf886eb4f8bd58f41626bfc2d88b7" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structsigned__int_ac2eea5a817b5774997100c0cdb8c81d2_1ac2eea5a817b5774997100c0cdb8c81d2" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structsigned__int_a0b7eb30fe9fdbc1f375309719ad8248c_1a0b7eb30fe9fdbc1f375309719ad8248c" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structsigned__int_accb4bcf54dbdec11cdcbd06167d677c9_1accb4bcf54dbdec11cdcbd06167d677c9" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structsigned__int_ab249950f493a3623cf845633e07df502_1ab249950f493a3623cf845633e07df502" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structsigned__int_afabc024d2020505d135d9efbcf9e16a8_1afabc024d2020505d135d9efbcf9e16a8" kind="friend"><name>operator&lt;&lt;</name></member>
+    <member refid="structsigned__int_a7eef08b0d7662636e1b0fa0f90bc8ccd_1a7eef08b0d7662636e1b0fa0f90bc8ccd" kind="friend"><name>operator&gt;&gt;</name></member>
+  </compound>
+  <compound refid="classeosio_1_1singleton" kind="class"><name>eosio::singleton</name>
+    <member refid="classeosio_1_1singleton_1a45175cb75e2b2ac6e5b761cf4fa5e010" kind="typedef"><name>table</name></member>
+    <member refid="classeosio_1_1singleton_1a5e508b3e17337158988d1b90ee3b7e33" kind="variable"><name>pk_value</name></member>
+    <member refid="classeosio_1_1singleton_1a57b4ca60619672a6bdbc66c04d29b299" kind="variable"><name>_t</name></member>
+    <member refid="classeosio_1_1singleton_aacf881ed97b04496be325d74f6b9d25e_1aacf881ed97b04496be325d74f6b9d25e" kind="function"><name>singleton</name></member>
+    <member refid="classeosio_1_1singleton_ae6eed2e5197e5b4216450e5940ab9141_1ae6eed2e5197e5b4216450e5940ab9141" kind="function"><name>exists</name></member>
+    <member refid="classeosio_1_1singleton_a53b56e4e8ed2fddd61175285afdf44d4_1a53b56e4e8ed2fddd61175285afdf44d4" kind="function"><name>get</name></member>
+    <member refid="classeosio_1_1singleton_a6a252d888f4c0b20bb3045a443267951_1a6a252d888f4c0b20bb3045a443267951" kind="function"><name>get_or_default</name></member>
+    <member refid="classeosio_1_1singleton_a7e632785eac3f1d05e08b34c49cb35dc_1a7e632785eac3f1d05e08b34c49cb35dc" kind="function"><name>get_or_create</name></member>
+    <member refid="classeosio_1_1singleton_aada28dbeaf0961614beff67a38553a3c_1aada28dbeaf0961614beff67a38553a3c" kind="function"><name>set</name></member>
+    <member refid="classeosio_1_1singleton_afc70106337f2cec280dfd797a1c7920a_1afc70106337f2cec280dfd797a1c7920a" kind="function"><name>remove</name></member>
+  </compound>
+  <compound refid="struct_stores" kind="struct"><name>Stores</name>
+  </compound>
+  <compound refid="struct_stores" kind="struct"><name>Stores</name>
+  </compound>
+  <compound refid="classeosio_1_1symbol" kind="class"><name>eosio::symbol</name>
+    <member refid="classeosio_1_1symbol_1a6b68532eb893ff1769b8c715e702f126" kind="variable"><name>value</name></member>
+    <member refid="classeosio_1_1symbol_a6604372bb0cc9d3c70a3b77973517e41_1a6604372bb0cc9d3c70a3b77973517e41" kind="function"><name>symbol</name></member>
+    <member refid="classeosio_1_1symbol_abcbc25794d1a3e0477be40441be6b210_1abcbc25794d1a3e0477be40441be6b210" kind="function"><name>symbol</name></member>
+    <member refid="classeosio_1_1symbol_a990e99879ecbebb194e5de43932ec59b_1a990e99879ecbebb194e5de43932ec59b" kind="function"><name>symbol</name></member>
+    <member refid="classeosio_1_1symbol_afc5e4be9944b51deac6484128deb2ce2_1afc5e4be9944b51deac6484128deb2ce2" kind="function"><name>symbol</name></member>
+    <member refid="classeosio_1_1symbol_af52f86a82390abe6be09e9745df30815_1af52f86a82390abe6be09e9745df30815" kind="function"><name>is_valid</name></member>
+    <member refid="classeosio_1_1symbol_af2153bf9cfc5bd79c3f1787f8028646a_1af2153bf9cfc5bd79c3f1787f8028646a" kind="function"><name>precision</name></member>
+    <member refid="classeosio_1_1symbol_a559c818f42e9d0df1a4c4823d7c6ecd8_1a559c818f42e9d0df1a4c4823d7c6ecd8" kind="function"><name>code</name></member>
+    <member refid="classeosio_1_1symbol_a9cb96662a0965ac03e1bf5acfbbda011_1a9cb96662a0965ac03e1bf5acfbbda011" kind="function"><name>raw</name></member>
+    <member refid="classeosio_1_1symbol_a6c974f93f06131859376b75c4df03a53_1a6c974f93f06131859376b75c4df03a53" kind="function"><name>operator bool</name></member>
+    <member refid="classeosio_1_1symbol_a9f8042d110a6fff15ea1813987c0fbe6_1a9f8042d110a6fff15ea1813987c0fbe6" kind="function"><name>print</name></member>
+    <member refid="classeosio_1_1symbol_aec9fbc4e4aff91276e8c1f71f113c494_1aec9fbc4e4aff91276e8c1f71f113c494" kind="friend"><name>operator==</name></member>
+    <member refid="classeosio_1_1symbol_a62adc71177b7a104162f7618cb0bac44_1a62adc71177b7a104162f7618cb0bac44" kind="friend"><name>operator!=</name></member>
+    <member refid="classeosio_1_1symbol_a5ffd3dd1dfad342b30aed2c53993c548_1a5ffd3dd1dfad342b30aed2c53993c548" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="classeosio_1_1symbol__code" kind="class"><name>eosio::symbol_code</name>
+    <member refid="classeosio_1_1symbol__code_1ac9f8aec29c30e987ececc9e31dcae1e9" kind="variable"><name>value</name></member>
+    <member refid="classeosio_1_1symbol__code_a9d8538c2ff41df391b45cfb6190a1ed4_1a9d8538c2ff41df391b45cfb6190a1ed4" kind="function"><name>symbol_code</name></member>
+    <member refid="classeosio_1_1symbol__code_a5a95bedec99aff1d70a782b365bc28d0_1a5a95bedec99aff1d70a782b365bc28d0" kind="function"><name>symbol_code</name></member>
+    <member refid="classeosio_1_1symbol__code_afba617179edadad41667b707176943fc_1afba617179edadad41667b707176943fc" kind="function"><name>symbol_code</name></member>
+    <member refid="classeosio_1_1symbol__code_a87acfd4b3bd04ca4b9ba84f6ea12d5d0_1a87acfd4b3bd04ca4b9ba84f6ea12d5d0" kind="function"><name>is_valid</name></member>
+    <member refid="classeosio_1_1symbol__code_adf291364853aa746ddc32942881b2e64_1adf291364853aa746ddc32942881b2e64" kind="function"><name>length</name></member>
+    <member refid="classeosio_1_1symbol__code_a9c4430961f11cf7a207ac7d4c4827210_1a9c4430961f11cf7a207ac7d4c4827210" kind="function"><name>raw</name></member>
+    <member refid="classeosio_1_1symbol__code_a9b45275437c716ebc9ba95d199c04ed1_1a9b45275437c716ebc9ba95d199c04ed1" kind="function"><name>operator bool</name></member>
+    <member refid="classeosio_1_1symbol__code_a9f6752ffa0fd8b10d2531b18978aeb9e_1a9f6752ffa0fd8b10d2531b18978aeb9e" kind="function"><name>write_as_string</name></member>
+    <member refid="classeosio_1_1symbol__code_a075d0d69307bd9180b147a809f07bad5_1a075d0d69307bd9180b147a809f07bad5" kind="function"><name>to_string</name></member>
+    <member refid="classeosio_1_1symbol__code_a679be838b5e39b806fa42577124a214a_1a679be838b5e39b806fa42577124a214a" kind="friend"><name>operator==</name></member>
+    <member refid="classeosio_1_1symbol__code_acd21f55772dbdf25fe5dbc182683fee0_1acd21f55772dbdf25fe5dbc182683fee0" kind="friend"><name>operator!=</name></member>
+    <member refid="classeosio_1_1symbol__code_a8dd79cc2a20dc7bf2788fd6416003891_1a8dd79cc2a20dc7bf2788fd6416003891" kind="friend"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="classeosio_1_1time__point" kind="class"><name>eosio::time_point</name>
+    <member refid="classeosio_1_1time__point_ab27eaf8e2d1f09470fbfb9332115e22a_1ab27eaf8e2d1f09470fbfb9332115e22a" kind="variable"><name>elapsed</name></member>
+    <member refid="classeosio_1_1time__point_a307b17c8475291a97892a1f9cd76fa36_1a307b17c8475291a97892a1f9cd76fa36" kind="function"><name>time_point</name></member>
+    <member refid="classeosio_1_1time__point_a0ace41dcb1cd4579bf9df284b34435ae_1a0ace41dcb1cd4579bf9df284b34435ae" kind="function"><name>time_since_epoch</name></member>
+    <member refid="classeosio_1_1time__point_aedda68d4c06c12b9dcf27a8964f2c6a9_1aedda68d4c06c12b9dcf27a8964f2c6a9" kind="function"><name>sec_since_epoch</name></member>
+    <member refid="classeosio_1_1time__point_ae195795ab46c28061aba38fb7f373796_1ae195795ab46c28061aba38fb7f373796" kind="function"><name>operator&gt;</name></member>
+    <member refid="classeosio_1_1time__point_acdbdefb8449e14bb0eadbfbc01a9b00b_1acdbdefb8449e14bb0eadbfbc01a9b00b" kind="function"><name>operator&gt;=</name></member>
+    <member refid="classeosio_1_1time__point_a908072e64586f7d21a897090da7f8fa0_1a908072e64586f7d21a897090da7f8fa0" kind="function"><name>operator&lt;</name></member>
+    <member refid="classeosio_1_1time__point_ab33b62e5d591dc6285141020de6cad0d_1ab33b62e5d591dc6285141020de6cad0d" kind="function"><name>operator&lt;=</name></member>
+    <member refid="classeosio_1_1time__point_a86d3524598f9f0f00d1f4f2440684350_1a86d3524598f9f0f00d1f4f2440684350" kind="function"><name>operator==</name></member>
+    <member refid="classeosio_1_1time__point_a54d756d8704d82cf9416a14243f755f9_1a54d756d8704d82cf9416a14243f755f9" kind="function"><name>operator!=</name></member>
+    <member refid="classeosio_1_1time__point_a0ac241c9e0ed72797f7acec49db681ea_1a0ac241c9e0ed72797f7acec49db681ea" kind="function"><name>operator+=</name></member>
+    <member refid="classeosio_1_1time__point_a124d983527e88de1dedee84fe4befd6e_1a124d983527e88de1dedee84fe4befd6e" kind="function"><name>operator-=</name></member>
+    <member refid="classeosio_1_1time__point_a361fac9d2b22ad32d562c308ab32f204_1a361fac9d2b22ad32d562c308ab32f204" kind="function"><name>operator+</name></member>
+    <member refid="classeosio_1_1time__point_aca0f3dc8b64085ad2e9f2c2cb98b5697_1aca0f3dc8b64085ad2e9f2c2cb98b5697" kind="function"><name>operator+</name></member>
+    <member refid="classeosio_1_1time__point_a3b4cc7e277ea59460b963c4d1b026fea_1a3b4cc7e277ea59460b963c4d1b026fea" kind="function"><name>operator-</name></member>
+    <member refid="classeosio_1_1time__point_a8fa1704a4bf3732790bee43925a4f192_1a8fa1704a4bf3732790bee43925a4f192" kind="function"><name>operator-</name></member>
+  </compound>
+  <compound refid="classeosio_1_1time__point__sec" kind="class"><name>eosio::time_point_sec</name>
+    <member refid="classeosio_1_1time__point__sec_a3195e1b5f4f989e6a0f21b1886f5aa0d_1a3195e1b5f4f989e6a0f21b1886f5aa0d" kind="variable"><name>utc_seconds</name></member>
+    <member refid="classeosio_1_1time__point__sec_ab0f6a00b7d53d82a9c68ee385d35c0cb_1ab0f6a00b7d53d82a9c68ee385d35c0cb" kind="function"><name>time_point_sec</name></member>
+    <member refid="classeosio_1_1time__point__sec_a119a4edea2590a1152db08c4fc51e811_1a119a4edea2590a1152db08c4fc51e811" kind="function"><name>time_point_sec</name></member>
+    <member refid="classeosio_1_1time__point__sec_afc6c67209c28cd9e5d70a4298deb39ad_1afc6c67209c28cd9e5d70a4298deb39ad" kind="function"><name>time_point_sec</name></member>
+    <member refid="classeosio_1_1time__point__sec_acd75205a33a0ccbb5e2d3ceea12182a7_1acd75205a33a0ccbb5e2d3ceea12182a7" kind="function"><name>operator time_point</name></member>
+    <member refid="classeosio_1_1time__point__sec_a9f061ae99cc49726e27ac9c29a460b5f_1a9f061ae99cc49726e27ac9c29a460b5f" kind="function"><name>sec_since_epoch</name></member>
+    <member refid="classeosio_1_1time__point__sec_a47062563fa316f7adcb7a698cc2b5857_1a47062563fa316f7adcb7a698cc2b5857" kind="function"><name>operator=</name></member>
+    <member refid="classeosio_1_1time__point__sec_a7bde2f25b9212d0fa5f229832aa4f1a5_1a7bde2f25b9212d0fa5f229832aa4f1a5" kind="function"><name>operator+=</name></member>
+    <member refid="classeosio_1_1time__point__sec_ab53a318265b51e0e52adc2458dcc26cd_1ab53a318265b51e0e52adc2458dcc26cd" kind="function"><name>operator+=</name></member>
+    <member refid="classeosio_1_1time__point__sec_afc0cc61c1e3a6f82346174d28b8bfbd2_1afc0cc61c1e3a6f82346174d28b8bfbd2" kind="function"><name>operator+=</name></member>
+    <member refid="classeosio_1_1time__point__sec_afdabb4bd8b2fdebd095332e2ee7dbaac_1afdabb4bd8b2fdebd095332e2ee7dbaac" kind="function"><name>operator-=</name></member>
+    <member refid="classeosio_1_1time__point__sec_abe62536e71e9470639acaed585331968_1abe62536e71e9470639acaed585331968" kind="function"><name>operator-=</name></member>
+    <member refid="classeosio_1_1time__point__sec_a7f23051d52d646c6b4739fd0aa89f76d_1a7f23051d52d646c6b4739fd0aa89f76d" kind="function"><name>operator-=</name></member>
+    <member refid="classeosio_1_1time__point__sec_acfdc7be20b4dea4ef2b764b9b9802ab2_1acfdc7be20b4dea4ef2b764b9b9802ab2" kind="function"><name>operator+</name></member>
+    <member refid="classeosio_1_1time__point__sec_a865a895a4f2e4849b762829e4f4763cf_1a865a895a4f2e4849b762829e4f4763cf" kind="function"><name>operator-</name></member>
+    <member refid="classeosio_1_1time__point__sec_a7e1d564816b972cf8c5962fc3ad348a9_1a7e1d564816b972cf8c5962fc3ad348a9" kind="function"><name>maximum</name></member>
+    <member refid="classeosio_1_1time__point__sec_a090e65b6dc831f54eed58059b1718714_1a090e65b6dc831f54eed58059b1718714" kind="function"><name>min</name></member>
+    <member refid="classeosio_1_1time__point__sec_adf55a60cc15afb538eb8d5bf3a838b35_1adf55a60cc15afb538eb8d5bf3a838b35" kind="friend"><name>operator&lt;</name></member>
+    <member refid="classeosio_1_1time__point__sec_aaaeb236eab5e19e5657e60b73c92e6c1_1aaaeb236eab5e19e5657e60b73c92e6c1" kind="friend"><name>operator&gt;</name></member>
+    <member refid="classeosio_1_1time__point__sec_a2ad8fce220805a5529f16e6ac1698728_1a2ad8fce220805a5529f16e6ac1698728" kind="friend"><name>operator&lt;=</name></member>
+    <member refid="classeosio_1_1time__point__sec_a3e7839d4f7e9cc5a49d580b398b6ee5e_1a3e7839d4f7e9cc5a49d580b398b6ee5e" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="classeosio_1_1time__point__sec_ad97eba5244d2729349e69939e68fc939_1ad97eba5244d2729349e69939e68fc939" kind="friend"><name>operator==</name></member>
+    <member refid="classeosio_1_1time__point__sec_a9bbbbf540848bdf3829b810d542e8b4f_1a9bbbbf540848bdf3829b810d542e8b4f" kind="friend"><name>operator!=</name></member>
+    <member refid="classeosio_1_1time__point__sec_a33d1bd167b2e7986485b0979250b4b55_1a33d1bd167b2e7986485b0979250b4b55" kind="friend"><name>operator+</name></member>
+    <member refid="classeosio_1_1time__point__sec_ab0485dce4d4b0fc5813b33818ff03692_1ab0485dce4d4b0fc5813b33818ff03692" kind="friend"><name>operator-</name></member>
+    <member refid="classeosio_1_1time__point__sec_a40c52d6b3551ec223d707d9ba128dc9b_1a40c52d6b3551ec223d707d9ba128dc9b" kind="friend"><name>operator-</name></member>
+    <member refid="classeosio_1_1time__point__sec_a1a8ae19b63eb263fc2435ef5ac9bf4f1_1a1a8ae19b63eb263fc2435ef5ac9bf4f1" kind="friend"><name>operator-</name></member>
+  </compound>
+  <compound refid="classeosio_1_1transaction" kind="class"><name>eosio::transaction</name>
+    <member refid="group__transaction_ga38263b68fda9925f2c6472777a04179c_1ga38263b68fda9925f2c6472777a04179c" kind="variable"><name>context_free_actions</name></member>
+    <member refid="group__transaction_gad53cc19e62742bf205934509c1363e42_1gad53cc19e62742bf205934509c1363e42" kind="variable"><name>actions</name></member>
+    <member refid="group__transaction_ga445fd87e3465a1ca647c711c1ac0c711_1ga445fd87e3465a1ca647c711c1ac0c711" kind="variable"><name>transaction_extensions</name></member>
+    <member refid="group__transaction_gad090d569f520dce4919de93bcec2e260_1gad090d569f520dce4919de93bcec2e260" kind="function"><name>transaction</name></member>
+    <member refid="group__transaction_gaff16436e52fff284fabc0b748be342b4_1gaff16436e52fff284fabc0b748be342b4" kind="function"><name>send</name></member>
+  </compound>
+  <compound refid="classeosio_1_1transaction__header" kind="class"><name>eosio::transaction_header</name>
+    <member refid="group__transaction_ga32a532f21d5a5eeadd892723d9171e05_1ga32a532f21d5a5eeadd892723d9171e05" kind="variable"><name>expiration</name></member>
+    <member refid="group__transaction_ga7bd1f446f3a9a212183787d223d89766_1ga7bd1f446f3a9a212183787d223d89766" kind="variable"><name>ref_block_num</name></member>
+    <member refid="group__transaction_gaed4b528cd8a73ac9fa9cb5b7c429f90c_1gaed4b528cd8a73ac9fa9cb5b7c429f90c" kind="variable"><name>ref_block_prefix</name></member>
+    <member refid="group__transaction_gaad5eeaa9d26473ae8faa0d9c5cf44c0e_1gaad5eeaa9d26473ae8faa0d9c5cf44c0e" kind="variable"><name>max_net_usage_words</name></member>
+    <member refid="group__transaction_ga5fbc5f8eef0093ad65598953156d4359_1ga5fbc5f8eef0093ad65598953156d4359" kind="variable"><name>max_cpu_usage_ms</name></member>
+    <member refid="group__transaction_gadbe5ee5f38a82db68162188c49d62f39_1gadbe5ee5f38a82db68162188c49d62f39" kind="variable"><name>delay_sec</name></member>
+    <member refid="group__transaction_ga27106464af5cbbfd09b223eeb48d1e37_1ga27106464af5cbbfd09b223eeb48d1e37" kind="function"><name>transaction_header</name></member>
+  </compound>
+  <compound refid="structunsigned__int" kind="struct"><name>unsigned_int</name>
+    <member refid="structunsigned__int_a247200b83e3cb2019efb8569a7e3937a_1a247200b83e3cb2019efb8569a7e3937a" kind="variable"><name>value</name></member>
+    <member refid="structunsigned__int_aaaeee21167478df0b454f001d0567cd7_1aaaeee21167478df0b454f001d0567cd7" kind="function"><name>unsigned_int</name></member>
+    <member refid="structunsigned__int_adda0360df1de313f0df5c5570aebdfdd_1adda0360df1de313f0df5c5570aebdfdd" kind="function"><name>unsigned_int</name></member>
+    <member refid="structunsigned__int_a5627f0b22068d1761f2e416e7ae64a3c_1a5627f0b22068d1761f2e416e7ae64a3c" kind="function"><name>operator T</name></member>
+    <member refid="structunsigned__int_a7d9250cd41ed15bd3b04a1f003f41154_1a7d9250cd41ed15bd3b04a1f003f41154" kind="function"><name>operator=</name></member>
+    <member refid="structunsigned__int_a08687d9bd50d9dec64808a19580f2a47_1a08687d9bd50d9dec64808a19580f2a47" kind="friend"><name>operator==</name></member>
+    <member refid="structunsigned__int_a8c6aae02c0e6500d98d56544b4c49da0_1a8c6aae02c0e6500d98d56544b4c49da0" kind="friend"><name>operator==</name></member>
+    <member refid="structunsigned__int_add87b4023be256deec5ac1afe4faf17c_1add87b4023be256deec5ac1afe4faf17c" kind="friend"><name>operator==</name></member>
+    <member refid="structunsigned__int_a53410718318d48dd4e6279103b351663_1a53410718318d48dd4e6279103b351663" kind="friend"><name>operator!=</name></member>
+    <member refid="structunsigned__int_a1f618b0b2975a066c658435fb7eca0f9_1a1f618b0b2975a066c658435fb7eca0f9" kind="friend"><name>operator!=</name></member>
+    <member refid="structunsigned__int_a897385977d9c06e539a1c19dbdffb5ec_1a897385977d9c06e539a1c19dbdffb5ec" kind="friend"><name>operator!=</name></member>
+    <member refid="structunsigned__int_a1ff316df3fa8ffdc0886d48e4d50e7f2_1a1ff316df3fa8ffdc0886d48e4d50e7f2" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structunsigned__int_a9672c0a7766d6491003103052ddc692b_1a9672c0a7766d6491003103052ddc692b" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structunsigned__int_a5c44ed2d978a1bdaf65166f98592192c_1a5c44ed2d978a1bdaf65166f98592192c" kind="friend"><name>operator&lt;</name></member>
+    <member refid="structunsigned__int_abf1274ffb924723bc12f17544159c799_1abf1274ffb924723bc12f17544159c799" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structunsigned__int_ad6f6d75188bb59e24af40ff8aa4de947_1ad6f6d75188bb59e24af40ff8aa4de947" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structunsigned__int_aedda267438195592daa499b41727101a_1aedda267438195592daa499b41727101a" kind="friend"><name>operator&gt;=</name></member>
+    <member refid="structunsigned__int_a3df4fdc722c22ec765f68db19116266e_1a3df4fdc722c22ec765f68db19116266e" kind="friend"><name>operator&lt;&lt;</name></member>
+    <member refid="structunsigned__int_a63b42b42b55b512f25e5fc9ec6e20787_1a63b42b42b55b512f25e5fc9ec6e20787" kind="friend"><name>operator&gt;&gt;</name></member>
+  </compound>
+  <compound refid="namespaceeosio" kind="namespace"><name>eosio</name>
+    <member refid="group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1_1ga9ae210ffc1e7d1e4f1514431b26aa3d1" kind="typedef"><name>key256</name></member>
+    <member refid="group__time_ga4f8fa835ef0dc341addb6e51d0d840b3_1ga4f8fa835ef0dc341addb6e51d0d840b3" kind="typedef"><name>block_timestamp_type</name></member>
+    <member refid="group__transaction_gaaf3ea17209c6d47129b2b232aede5439_1gaaf3ea17209c6d47129b2b232aede5439" kind="typedef"><name>extension</name></member>
+    <member refid="group__transaction_ga19c346b66f7145a5336177ac3eb0849e_1ga19c346b66f7145a5336177ac3eb0849e" kind="typedef"><name>extensions_type</name></member>
+    <member refid="namespaceeosio_abf83ffbbc722aa405f727e3eda4cc2d2_1abf83ffbbc722aa405f727e3eda4cc2d2" kind="variable"><name>memory_heap</name></member>
+    <member refid="namespaceeosio_1a8afb93d00970c42ecd4c8cf2ff458c4c" kind="variable"><name>same_payer</name></member>
+    <member refid="group__console_1gaed9b7380e114191d3dac1857b35e3da2" kind="variable"><name>cout</name></member>
+    <member refid="group__action_ga3ce0a297276d44f03c9b5dc17fcd2b31_1ga3ce0a297276d44f03c9b5dc17fcd2b31" kind="function"><name>unpack_action_data</name></member>
+    <member refid="group__action_ga4e1838d05857e38ddf8916e616698460_1ga4e1838d05857e38ddf8916e616698460" kind="function"><name>require_recipient</name></member>
+    <member refid="group__action_gaa61e47227ac315887caf1e028191ff7d_1gaa61e47227ac315887caf1e028191ff7d" kind="function"><name>require_recipient</name></member>
+    <member refid="group__action_ga47b4afe79f1de07376e2ecdd541f92c7_1ga47b4afe79f1de07376e2ecdd541f92c7" kind="function"><name>require_auth</name></member>
+    <member refid="group__action_gaa9c6bd255a286073e7dc8a337f2b11a2_1gaa9c6bd255a286073e7dc8a337f2b11a2" kind="function"><name>require_auth</name></member>
+    <member refid="group__action_ga9e4650a61bbe0809cc62e6b2af8252d3_1ga9e4650a61bbe0809cc62e6b2af8252d3" kind="function"><name>has_auth</name></member>
+    <member refid="group__action_ga887cd0fed2350c5ae52565ba6e290db3_1ga887cd0fed2350c5ae52565ba6e290db3" kind="function"><name>is_account</name></member>
+    <member refid="namespaceeosio_a0917f40ecb384d7934f7983351b397ce_1a0917f40ecb384d7934f7983351b397ce" kind="function"><name>dispatch_inline</name></member>
+    <member refid="group__datastream_ga1e49e445971a761be9607c1a3eb85bde_1ga1e49e445971a761be9607c1a3eb85bde" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga9e230ddd4f3d8ff314410dc9832829fd_1ga9e230ddd4f3d8ff314410dc9832829fd" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga5413cb7eba4e557a70d93ffa9f39b725_1ga5413cb7eba4e557a70d93ffa9f39b725" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga647b59d0f66be8cbb0bac116d7d14a9e_1ga647b59d0f66be8cbb0bac116d7d14a9e" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga4f20e587315c1c625ec8c7092f9d8465_1ga4f20e587315c1c625ec8c7092f9d8465" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga015cd9edd44cc1af80641c39b4816f13_1ga015cd9edd44cc1af80641c39b4816f13" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga344108ff96bcee67d40711dacdd42845_1ga344108ff96bcee67d40711dacdd42845" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga05879a71914d293c8a30b1a6710f8e51_1ga05879a71914d293c8a30b1a6710f8e51" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gafea0491fecd3df192a3f245e8105a026_1gafea0491fecd3df192a3f245e8105a026" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaeb6280d5e7942fcf839024442bc5c814_1gaeb6280d5e7942fcf839024442bc5c814" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga6f1b392200e9452c7f410ffd8fdfafe1_1ga6f1b392200e9452c7f410ffd8fdfafe1" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaed3bc5bd372251b9cb90aff4cf85be5f_1gaed3bc5bd372251b9cb90aff4cf85be5f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga74974be2214a4e50e463ae866f9297d4_1ga74974be2214a4e50e463ae866f9297d4" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga7875cabe436fe6756c4b30eec326fe16_1ga7875cabe436fe6756c4b30eec326fe16" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga860a2cac0f4f00dacdade421c303ea9c_1ga860a2cac0f4f00dacdade421c303ea9c" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga69731c7e836d6521c2aa7d67ad1dbc4d_1ga69731c7e836d6521c2aa7d67ad1dbc4d" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gaf18798375dd9ed43bea5888101883b9c_1gaf18798375dd9ed43bea5888101883b9c" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gab1dffa510122bd62ce3975e7b302c2c1_1gab1dffa510122bd62ce3975e7b302c2c1" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gaa02846796253d9db1064e43fadbecb8e_1gaa02846796253d9db1064e43fadbecb8e" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga86c994b49d0af580c72f4d966baca75b_1ga86c994b49d0af580c72f4d966baca75b" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga60d3eb6bab6da17bd2986a051126d471_1ga60d3eb6bab6da17bd2986a051126d471" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gac4ea18eb72ec93e5d06fff5a83623581_1gac4ea18eb72ec93e5d06fff5a83623581" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga0c8758a01d2cdcd99922c268f2f4e4e9_1ga0c8758a01d2cdcd99922c268f2f4e4e9" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga9ddfcc1002e9cd4c267ca0986753c686_1ga9ddfcc1002e9cd4c267ca0986753c686" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga5cb28ef1142e7ec5ba5c6672265efd47_1ga5cb28ef1142e7ec5ba5c6672265efd47" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga53f4e770b9b3c9f1e92c2fa3fa0ec73a_1ga53f4e770b9b3c9f1e92c2fa3fa0ec73a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gad202e8fcf8f49970c1710410c6059cde_1gad202e8fcf8f49970c1710410c6059cde" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaedee239cff148b596f19a3c2c6c1adf1_1gaedee239cff148b596f19a3c2c6c1adf1" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaf98424a2563d883b3883a14692aa195a_1gaf98424a2563d883b3883a14692aa195a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gae2a202ccccf405468ad654676bb41d40_1gae2a202ccccf405468ad654676bb41d40" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga0bb2cdf062825f96551ba663f3d74e17_1ga0bb2cdf062825f96551ba663f3d74e17" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga63b7d3e0c99e4f049574fd366a1c528a_1ga63b7d3e0c99e4f049574fd366a1c528a" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gab7049fdaa7895e6c31a482deba846434_1gab7049fdaa7895e6c31a482deba846434" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga5f545f70b39155d1cd1da85f0e00b742_1ga5f545f70b39155d1cd1da85f0e00b742" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga85b47a27bb41a2854d2b8daea9e7b9f0_1ga85b47a27bb41a2854d2b8daea9e7b9f0" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga3b973878181cef2bdad7139958bd6ecf_1ga3b973878181cef2bdad7139958bd6ecf" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga124a00ba4d603044ef25be84a9fade48_1ga124a00ba4d603044ef25be84a9fade48" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gac2e5487f43a496d7c263071e2502b986_1gac2e5487f43a496d7c263071e2502b986" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga59511f8552dbf4a2aced270041c17f04_1ga59511f8552dbf4a2aced270041c17f04" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga7d64e2f48bca13601cf6606934e6e8e6_1ga7d64e2f48bca13601cf6606934e6e8e6" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga2ffaa5bd18836b7d40db601fb20965bb_1ga2ffaa5bd18836b7d40db601fb20965bb" kind="function"><name>unpack</name></member>
+    <member refid="group__datastream_ga666b4d583161e4db595e31565fbb6a3d_1ga666b4d583161e4db595e31565fbb6a3d" kind="function"><name>unpack</name></member>
+    <member refid="group__datastream_ga30aa7d1c92792afc7f78af37372d68b7_1ga30aa7d1c92792afc7f78af37372d68b7" kind="function"><name>pack_size</name></member>
+    <member refid="group__datastream_ga16e657110c5a8e1ac34056bc473460a8_1ga16e657110c5a8e1ac34056bc473460a8" kind="function"><name>pack</name></member>
+    <member refid="group__datastream_gac006ab398b288a0582a2a59b991bf37c_1gac006ab398b288a0582a2a59b991bf37c" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga2cbcd06b5aae0e8ffd8b1550b0f39983_1ga2cbcd06b5aae0e8ffd8b1550b0f39983" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gafd1c5d3fad33115c2ba6a65f8f4b5792_1gafd1c5d3fad33115c2ba6a65f8f4b5792" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga14d1988dcb3235cf059d90c01a2b7d74_1ga14d1988dcb3235cf059d90c01a2b7d74" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="namespaceeosio_a78b2709044b48bb39105d37d787fefea_1a78b2709044b48bb39105d37d787fefea" kind="function"><name>dispatch</name></member>
+    <member refid="namespaceeosio_a289285490058d17de4a6a052b52dd680_1a289285490058d17de4a6a052b52dd680" kind="function"><name>dispatch</name></member>
+    <member refid="group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9_1ga8c4928c29096799ef6ddabf148dc9cf9" kind="function"><name>execute_action</name></member>
+    <member refid="group__privileged_ga4b6f34ade1f06f6583b4a17738bebe0c_1ga4b6f34ade1f06f6583b4a17738bebe0c" kind="function"><name>set_blockchain_parameters</name></member>
+    <member refid="group__privileged_ga673da670d201ba73461eedd8bd1aec8f_1ga673da670d201ba73461eedd8bd1aec8f" kind="function"><name>get_blockchain_parameters</name></member>
+    <member refid="group__fixed__key_gabbac43a956f81fd4bd4379ede0f82dd7_1gabbac43a956f81fd4bd4379ede0f82dd7" kind="function"><name>operator==</name></member>
+    <member refid="group__fixed__key_ga27b953728fd2a29e49f84e35135a70de_1ga27b953728fd2a29e49f84e35135a70de" kind="function"><name>operator!=</name></member>
+    <member refid="group__fixed__key_gada6d080f1501ee085aabf5c7736461ca_1gada6d080f1501ee085aabf5c7736461ca" kind="function"><name>operator&gt;</name></member>
+    <member refid="group__fixed__key_ga0d8567b962caa06cf0994134725e3f8d_1ga0d8567b962caa06cf0994134725e3f8d" kind="function"><name>operator&lt;</name></member>
+    <member refid="namespaceeosio_a68c90c18b96d6e1789a567b16a7cdf2f_1a68c90c18b96d6e1789a567b16a7cdf2f" kind="function"><name>assignHelper</name></member>
+    <member refid="namespaceeosio_a6d31edb37da483459fb277534d74bbf5_1a6d31edb37da483459fb277534d74bbf5" kind="function"><name>fixed_divide</name></member>
+    <member refid="namespaceeosio_a26f98cb47eae52015cd24d3c104fc50d_1a26f98cb47eae52015cd24d3c104fc50d" kind="function"><name>fixed_divide</name></member>
+    <member refid="namespaceeosio_ad879334b66c1201b982eda5a4fea9507_1ad879334b66c1201b982eda5a4fea9507" kind="function"><name>check_transaction_authorization</name></member>
+    <member refid="namespaceeosio_a2ded7b51e4363cd7634070612add2e99_1a2ded7b51e4363cd7634070612add2e99" kind="function"><name>check_permission_authorization</name></member>
+    <member refid="group__console_gaa0a56fe314d032d027a1565d93a68b21_1gaa0a56fe314d032d027a1565d93a68b21" kind="function"><name>print</name></member>
+    <member refid="group__console_gabe1c02d3a4a65108ff3bc59db64485a0_1gabe1c02d3a4a65108ff3bc59db64485a0" kind="function"><name>print</name></member>
+    <member refid="group__console_ga6daff3c05760581064c390a27a79fd30_1ga6daff3c05760581064c390a27a79fd30" kind="function"><name>print</name></member>
+    <member refid="group__console_ga514f168270d72ecae0083dd2968f7329_1ga514f168270d72ecae0083dd2968f7329" kind="function"><name>print</name></member>
+    <member refid="group__console_gad0342d58fa17a7bea359607c6cfcf0cf_1gad0342d58fa17a7bea359607c6cfcf0cf" kind="function"><name>print</name></member>
+    <member refid="group__console_ga4412b37ef401946605e5cef937c3f8dc_1ga4412b37ef401946605e5cef937c3f8dc" kind="function"><name>print</name></member>
+    <member refid="group__console_gaad90d9aa7b7ba103d2e943bf38c91072_1gaad90d9aa7b7ba103d2e943bf38c91072" kind="function"><name>print</name></member>
+    <member refid="group__console_ga3c85835d3c6e556b5da524030e70e971_1ga3c85835d3c6e556b5da524030e70e971" kind="function"><name>print</name></member>
+    <member refid="group__console_ga0c95ab36e2c3f91a627270c09ff9140f_1ga0c95ab36e2c3f91a627270c09ff9140f" kind="function"><name>print</name></member>
+    <member refid="group__console_ga9bdf0bd18006f43820d73ec9f8cc50b8_1ga9bdf0bd18006f43820d73ec9f8cc50b8" kind="function"><name>print</name></member>
+    <member refid="group__console_ga925806f986898c01e8de34234f951bdc_1ga925806f986898c01e8de34234f951bdc" kind="function"><name>print</name></member>
+    <member refid="group__console_gacbb116ac61f216fafa100011bce090ee_1gacbb116ac61f216fafa100011bce090ee" kind="function"><name>print</name></member>
+    <member refid="group__console_ga02d168bc05492d64cefea469dd114c12_1ga02d168bc05492d64cefea469dd114c12" kind="function"><name>print</name></member>
+    <member refid="group__console_ga8753f6a7c7d5c518f6369cfebf5be1bb_1ga8753f6a7c7d5c518f6369cfebf5be1bb" kind="function"><name>print</name></member>
+    <member refid="group__console_ga2a3eea270ff4dbe4a15c2269a5c2cfec_1ga2a3eea270ff4dbe4a15c2269a5c2cfec" kind="function"><name>print</name></member>
+    <member refid="group__console_ga2785282e4babb79499ba03e719e20aa1_1ga2785282e4babb79499ba03e719e20aa1" kind="function"><name>print</name></member>
+    <member refid="group__console_gaa47b5b44cf50be5fe5ca837ef7e6d583_1gaa47b5b44cf50be5fe5ca837ef7e6d583" kind="function"><name>print</name></member>
+    <member refid="group__console_gaddacdc539ef6e6fb4f55bf04d1a0d22c_1gaddacdc539ef6e6fb4f55bf04d1a0d22c" kind="function"><name>print</name></member>
+    <member refid="group__console_gaeb64d709bf057338af83ea1b95a0d16d_1gaeb64d709bf057338af83ea1b95a0d16d" kind="function"><name>print</name></member>
+    <member refid="group__console_ga3b7dd9bbca5a20bad3acb94b6b7354be_1ga3b7dd9bbca5a20bad3acb94b6b7354be" kind="function"><name>print</name></member>
+    <member refid="group__console_gaa09d15641c76813eea61b876d8266400_1gaa09d15641c76813eea61b876d8266400" kind="function"><name>print</name></member>
+    <member refid="group__console_gab9715bf002b919701d38e3ff931feabf_1gab9715bf002b919701d38e3ff931feabf" kind="function"><name>print_f</name></member>
+    <member refid="group__console_gafcfae01c6d714474da8407a1c195c836_1gafcfae01c6d714474da8407a1c195c836" kind="function"><name>print_f</name></member>
+    <member refid="group__console_gab5232cf7452d463948eac1179f31d9f0_1gab5232cf7452d463948eac1179f31d9f0" kind="function"><name>print</name></member>
+    <member refid="group__console_ga827f0aac6315e7963bcd52656cd7eeed_1ga827f0aac6315e7963bcd52656cd7eeed" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__time_gaf7174ec0c48074b993ec6bac37a84682_1gaf7174ec0c48074b993ec6bac37a84682" kind="function"><name>seconds</name></member>
+    <member refid="group__time_ga2b8d5b8f5a1829bd6967c3fe89eea506_1ga2b8d5b8f5a1829bd6967c3fe89eea506" kind="function"><name>milliseconds</name></member>
+    <member refid="group__time_ga29a31fdb3cb6abce3f6abcf6840ea00c_1ga29a31fdb3cb6abce3f6abcf6840ea00c" kind="function"><name>minutes</name></member>
+    <member refid="group__time_ga33b982404d2fd14a2618564ae69db447_1ga33b982404d2fd14a2618564ae69db447" kind="function"><name>hours</name></member>
+    <member refid="group__time_gae1538fa412576d5b367a62c2f0e38730_1gae1538fa412576d5b367a62c2f0e38730" kind="function"><name>days</name></member>
+    <member refid="group__transaction_gac01a00482f2dc95bf4850b2e8213ee90_1gac01a00482f2dc95bf4850b2e8213ee90" kind="function"><name>get_action</name></member>
+  </compound>
+  <compound refid="namespaceeosio_1_1__datastream__detail" kind="namespace"><name>eosio::_datastream_detail</name>
+    <member refid="namespaceeosio_1_1__datastream__detail_a756af9772c5c98915bbdacafa7165278_1a756af9772c5c98915bbdacafa7165278" kind="function"><name>is_pointer</name></member>
+    <member refid="namespaceeosio_1_1__datastream__detail_ab1b99c65e9a4c3ec9a0077b17466043d_1ab1b99c65e9a4c3ec9a0077b17466043d" kind="function"><name>is_primitive</name></member>
+  </compound>
+  <compound refid="namespaceeosio_1_1__multi__index__detail" kind="namespace"><name>eosio::_multi_index_detail</name>
+  </compound>
+  <compound refid="action_8hpp" kind="file"><name>action.hpp</name>
+    <member refid="action_8hpp_a20c19e0f931fad16c4db6d29480acddf_1a20c19e0f931fad16c4db6d29480acddf" kind="define"><name>INLINE_ACTION_SENDER3</name></member>
+    <member refid="action_8hpp_abeecc07548f70308a4aab9fcdb2d22f1_1abeecc07548f70308a4aab9fcdb2d22f1" kind="define"><name>INLINE_ACTION_SENDER2</name></member>
+    <member refid="action_8hpp_a1bb288791cd436d07bddf3d43f4740d4_1a1bb288791cd436d07bddf3d43f4740d4" kind="define"><name>INLINE_ACTION_SENDER</name></member>
+    <member refid="group__action_ga7c267f408db88d60ce0a5c74845596ee_1ga7c267f408db88d60ce0a5c74845596ee" kind="define"><name>SEND_INLINE_ACTION</name></member>
+  </compound>
+  <compound refid="asset_8hpp" kind="file"><name>asset.hpp</name>
+  </compound>
+  <compound refid="chain_8h" kind="file"><name>chain.h</name>
+    <member refid="group__chain_gafb1878d4d55d275a1729f44ecc72848a_1gafb1878d4d55d275a1729f44ecc72848a" kind="function"><name>get_active_producers</name></member>
+  </compound>
+  <compound refid="compiler__builtins_8h" kind="file"><name>compiler_builtins.h</name>
+    <member refid="group__compiler__builtins_gaa03897335f1fcc54f469e17c32ae9920_1gaa03897335f1fcc54f469e17c32ae9920" kind="function"><name>__multi3</name></member>
+    <member refid="group__compiler__builtins_gadbd9c6953240b4ca52292ea687d64839_1gadbd9c6953240b4ca52292ea687d64839" kind="function"><name>__divti3</name></member>
+    <member refid="group__compiler__builtins_gaed86fd6c88a54c19700f51a3f36890d3_1gaed86fd6c88a54c19700f51a3f36890d3" kind="function"><name>__udivti3</name></member>
+    <member refid="group__compiler__builtins_gacf950a5162ebd45ceec1463d352a42dd_1gacf950a5162ebd45ceec1463d352a42dd" kind="function"><name>__modti3</name></member>
+    <member refid="group__compiler__builtins_ga25eb2263db624647faf0c395b32f2bdb_1ga25eb2263db624647faf0c395b32f2bdb" kind="function"><name>__umodti3</name></member>
+    <member refid="group__compiler__builtins_ga19640af2c08e820f5aa09069b1827c9b_1ga19640af2c08e820f5aa09069b1827c9b" kind="function"><name>__lshlti3</name></member>
+    <member refid="group__compiler__builtins_ga7785ea89d0105220b2e52ecf5f315caa_1ga7785ea89d0105220b2e52ecf5f315caa" kind="function"><name>__lshrti3</name></member>
+    <member refid="group__compiler__builtins_ga2d057451f581f4d1cec929cf76f0d610_1ga2d057451f581f4d1cec929cf76f0d610" kind="function"><name>__ashlti3</name></member>
+    <member refid="group__compiler__builtins_ga54e1751b41448b01e519dfeb63733ab8_1ga54e1751b41448b01e519dfeb63733ab8" kind="function"><name>__ashrti3</name></member>
+    <member refid="group__compiler__builtins_ga873d982bbd7493a9975dd88e923d85ed_1ga873d982bbd7493a9975dd88e923d85ed" kind="function"><name>__addtf3</name></member>
+    <member refid="group__compiler__builtins_ga6f055bf1366a170f3f01b28cc0a723dc_1ga6f055bf1366a170f3f01b28cc0a723dc" kind="function"><name>__subtf3</name></member>
+    <member refid="group__compiler__builtins_ga74a992741c2e037447d9953bb5cce333_1ga74a992741c2e037447d9953bb5cce333" kind="function"><name>__multf3</name></member>
+    <member refid="group__compiler__builtins_gad8133b5d6604ce3bab0adf8e0d44bf5f_1gad8133b5d6604ce3bab0adf8e0d44bf5f" kind="function"><name>__divtf3</name></member>
+    <member refid="group__compiler__builtins_ga11b0c275233be847ecba192c3d4bd50f_1ga11b0c275233be847ecba192c3d4bd50f" kind="function"><name>__eqtf2</name></member>
+    <member refid="group__compiler__builtins_ga01fedff23a9e5324dab56c77a4ce90fa_1ga01fedff23a9e5324dab56c77a4ce90fa" kind="function"><name>__netf2</name></member>
+    <member refid="group__compiler__builtins_gaa4067976976ddf6189ff05068f071421_1gaa4067976976ddf6189ff05068f071421" kind="function"><name>__getf2</name></member>
+    <member refid="group__compiler__builtins_ga22ea3ec1bb3c252037a6d1de080f59ec_1ga22ea3ec1bb3c252037a6d1de080f59ec" kind="function"><name>__gttf2</name></member>
+    <member refid="group__compiler__builtins_ga1c52620ce5caeab3f24d20848de48020_1ga1c52620ce5caeab3f24d20848de48020" kind="function"><name>__letf2</name></member>
+    <member refid="group__compiler__builtins_ga31e5201b17ecf49bf0544d619b3a211e_1ga31e5201b17ecf49bf0544d619b3a211e" kind="function"><name>__lttf2</name></member>
+    <member refid="group__compiler__builtins_ga130b5f6598f3db086bc0767c6be028c0_1ga130b5f6598f3db086bc0767c6be028c0" kind="function"><name>__cmptf2</name></member>
+    <member refid="group__compiler__builtins_ga26cb1a82545578282008ab4dc67cf262_1ga26cb1a82545578282008ab4dc67cf262" kind="function"><name>__unordtf2</name></member>
+    <member refid="group__compiler__builtins_ga3feafc107fc44ac8039a667ee49bcdbf_1ga3feafc107fc44ac8039a667ee49bcdbf" kind="function"><name>__extendsftf2</name></member>
+    <member refid="group__compiler__builtins_gae76415cbe79dbac141141a706158552c_1gae76415cbe79dbac141141a706158552c" kind="function"><name>__extenddftf2</name></member>
+    <member refid="group__compiler__builtins_gafb30709e77efa4ef9eb3bf4d42004ecf_1gafb30709e77efa4ef9eb3bf4d42004ecf" kind="function"><name>__fixtfdi</name></member>
+    <member refid="group__compiler__builtins_gac2669376b81a47fc865f5ba54aea0720_1gac2669376b81a47fc865f5ba54aea0720" kind="function"><name>__fixtfsi</name></member>
+    <member refid="group__compiler__builtins_ga459b47b617b89052f544025349c165f8_1ga459b47b617b89052f544025349c165f8" kind="function"><name>__fixunstfdi</name></member>
+    <member refid="group__compiler__builtins_ga1c62ec774bd084b04118fdb2b019a5c3_1ga1c62ec774bd084b04118fdb2b019a5c3" kind="function"><name>__fixunstfsi</name></member>
+    <member refid="group__compiler__builtins_ga386f6c017043419d3d33f9e96cc4ae4c_1ga386f6c017043419d3d33f9e96cc4ae4c" kind="function"><name>__trunctfdf2</name></member>
+    <member refid="group__compiler__builtins_ga0de0b2a5fe12abf258f7640987807a3a_1ga0de0b2a5fe12abf258f7640987807a3a" kind="function"><name>__trunctfsf2</name></member>
+    <member refid="group__compiler__builtins_ga612b3f8baa213fa0ce573eec10bbad78_1ga612b3f8baa213fa0ce573eec10bbad78" kind="function"><name>__break_point</name></member>
+  </compound>
+  <compound refid="contract_8hpp" kind="file"><name>contract.hpp</name>
+  </compound>
+  <compound refid="crypto_8h" kind="file"><name>crypto.h</name>
+    <member refid="group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb_1ga72b4fe70a6c503bf37ccf7285e03d4bb" kind="function"><name>assert_sha256</name></member>
+    <member refid="group__crypto_gab870a63902f83fcf0c8346206e0e1f4c_1gab870a63902f83fcf0c8346206e0e1f4c" kind="function"><name>assert_sha1</name></member>
+    <member refid="group__crypto_ga11c2f4f3e6b2e0a61d0b40f0e9f29d14_1ga11c2f4f3e6b2e0a61d0b40f0e9f29d14" kind="function"><name>assert_sha512</name></member>
+    <member refid="group__crypto_ga5fa71c353dbb47f9f2068e33a1a79d71_1ga5fa71c353dbb47f9f2068e33a1a79d71" kind="function"><name>assert_ripemd160</name></member>
+    <member refid="group__crypto_ga7e93f6228e21884c348ad6589050b9eb_1ga7e93f6228e21884c348ad6589050b9eb" kind="function"><name>sha256</name></member>
+    <member refid="group__crypto_ga382d8329db6727bd460e81c72bdc926a_1ga382d8329db6727bd460e81c72bdc926a" kind="function"><name>sha1</name></member>
+    <member refid="group__crypto_gace935d4721e179120b86cbfdc86590b9_1gace935d4721e179120b86cbfdc86590b9" kind="function"><name>sha512</name></member>
+    <member refid="group__crypto_ga156b5b599dfafe44c64b2e923e0ad114_1ga156b5b599dfafe44c64b2e923e0ad114" kind="function"><name>ripemd160</name></member>
+    <member refid="group__crypto_gaa9f54e1ba406bdb5a509c8fe91d214c2_1gaa9f54e1ba406bdb5a509c8fe91d214c2" kind="function"><name>recover_key</name></member>
+    <member refid="group__crypto_gacc12ec8a9ab4b0135a4fd743a6d9b4e4_1gacc12ec8a9ab4b0135a4fd743a6d9b4e4" kind="function"><name>assert_recover_key</name></member>
+  </compound>
+  <compound refid="datastream_8hpp" kind="file"><name>datastream.hpp</name>
+  </compound>
+  <compound refid="db_8h" kind="file"><name>db.h</name>
+    <member refid="group__database_ga3f259dd4be6adc25d95e897b7724bbc4_1ga3f259dd4be6adc25d95e897b7724bbc4" kind="function"><name>db_store_i64</name></member>
+    <member refid="group__database_gadfdbc05600fee5ea9d0741fa9ba7cc04_1gadfdbc05600fee5ea9d0741fa9ba7cc04" kind="function"><name>db_update_i64</name></member>
+    <member refid="group__database_ga3b3d2cb9baaffcca277aceafe15f885f_1ga3b3d2cb9baaffcca277aceafe15f885f" kind="function"><name>db_remove_i64</name></member>
+    <member refid="group__database_gae030353968fb545531c5286da8778808_1gae030353968fb545531c5286da8778808" kind="function"><name>db_get_i64</name></member>
+    <member refid="group__database_gab8a30f733c6cd6c9111f25adae685899_1gab8a30f733c6cd6c9111f25adae685899" kind="function"><name>db_next_i64</name></member>
+    <member refid="group__database_ga2ffe62dd0ab43732ccebc441a2186139_1ga2ffe62dd0ab43732ccebc441a2186139" kind="function"><name>db_previous_i64</name></member>
+    <member refid="group__database_gaa1f2c0990c948f52c5d9d2b7ace3e9c5_1gaa1f2c0990c948f52c5d9d2b7ace3e9c5" kind="function"><name>db_find_i64</name></member>
+    <member refid="group__database_ga817277bc1a591237ac20e2c6a64242a4_1ga817277bc1a591237ac20e2c6a64242a4" kind="function"><name>db_lowerbound_i64</name></member>
+    <member refid="group__database_gabca89e9c328d8ee50c35f93c6908cbf0_1gabca89e9c328d8ee50c35f93c6908cbf0" kind="function"><name>db_upperbound_i64</name></member>
+    <member refid="group__database_gab755d000538cddee84abbae2ed06f821_1gab755d000538cddee84abbae2ed06f821" kind="function"><name>db_end_i64</name></member>
+    <member refid="group__database_gaf00f39b0c943e762cd13ae1d73172261_1gaf00f39b0c943e762cd13ae1d73172261" kind="function"><name>db_idx64_store</name></member>
+    <member refid="group__database_ga118d635a2600ed798478ad829f36abac_1ga118d635a2600ed798478ad829f36abac" kind="function"><name>db_idx64_update</name></member>
+    <member refid="group__database_gaae117d50bba68c7a1f3b8f8828dc1699_1gaae117d50bba68c7a1f3b8f8828dc1699" kind="function"><name>db_idx64_remove</name></member>
+    <member refid="group__database_ga5fc70218dc661865823e57055801df24_1ga5fc70218dc661865823e57055801df24" kind="function"><name>db_idx64_next</name></member>
+    <member refid="group__database_ga243746a77546a54ce85345a537872cb7_1ga243746a77546a54ce85345a537872cb7" kind="function"><name>db_idx64_previous</name></member>
+    <member refid="group__database_ga4dcc0485335856945baebf6b5e246c81_1ga4dcc0485335856945baebf6b5e246c81" kind="function"><name>db_idx64_find_primary</name></member>
+    <member refid="group__database_ga87ebf49c63616d8f4db298daea4fb1ec_1ga87ebf49c63616d8f4db298daea4fb1ec" kind="function"><name>db_idx64_find_secondary</name></member>
+    <member refid="group__database_ga6a94c6bbb0cc74ca76c6f0fd56c03e2a_1ga6a94c6bbb0cc74ca76c6f0fd56c03e2a" kind="function"><name>db_idx64_lowerbound</name></member>
+    <member refid="group__database_gacf9f8b130509755bb05cc28b974caca4_1gacf9f8b130509755bb05cc28b974caca4" kind="function"><name>db_idx64_upperbound</name></member>
+    <member refid="group__database_ga9596d2d4adea77798e08e7f3a5ac7586_1ga9596d2d4adea77798e08e7f3a5ac7586" kind="function"><name>db_idx64_end</name></member>
+    <member refid="group__database_ga39cc50eac1593784a3c82a5a54d50d4b_1ga39cc50eac1593784a3c82a5a54d50d4b" kind="function"><name>db_idx128_store</name></member>
+    <member refid="group__database_ga97763f770a398b600a160ea69ed17cc3_1ga97763f770a398b600a160ea69ed17cc3" kind="function"><name>db_idx128_update</name></member>
+    <member refid="group__database_ga60e66048c40043424581fe8e507a353b_1ga60e66048c40043424581fe8e507a353b" kind="function"><name>db_idx128_remove</name></member>
+    <member refid="group__database_gaac074a8b2d42865e7ca1b7932e234655_1gaac074a8b2d42865e7ca1b7932e234655" kind="function"><name>db_idx128_next</name></member>
+    <member refid="group__database_gae56365d133e8c27ba709121ed1ad0db9_1gae56365d133e8c27ba709121ed1ad0db9" kind="function"><name>db_idx128_previous</name></member>
+    <member refid="group__database_ga0c371690e732d2f18e7037e038d4685d_1ga0c371690e732d2f18e7037e038d4685d" kind="function"><name>db_idx128_find_primary</name></member>
+    <member refid="group__database_ga157160bb9692e0f1f6a98337e751f713_1ga157160bb9692e0f1f6a98337e751f713" kind="function"><name>db_idx128_find_secondary</name></member>
+    <member refid="group__database_ga32e8a5092c3ad1b31b512e2b240fc8a8_1ga32e8a5092c3ad1b31b512e2b240fc8a8" kind="function"><name>db_idx128_lowerbound</name></member>
+    <member refid="group__database_ga00bc640a4a60ac49a07d538af3cadfd8_1ga00bc640a4a60ac49a07d538af3cadfd8" kind="function"><name>db_idx128_upperbound</name></member>
+    <member refid="group__database_gad7250e200698d82294588a636356c555_1gad7250e200698d82294588a636356c555" kind="function"><name>db_idx128_end</name></member>
+    <member refid="group__database_ga6e8c05d79f751ca250f454b5211fd149_1ga6e8c05d79f751ca250f454b5211fd149" kind="function"><name>db_idx256_store</name></member>
+    <member refid="group__database_ga68a96c6e3358a8efa1a6c0b1ac57fbb2_1ga68a96c6e3358a8efa1a6c0b1ac57fbb2" kind="function"><name>db_idx256_update</name></member>
+    <member refid="group__database_ga08729f61864b60499a55cc226bf9d51f_1ga08729f61864b60499a55cc226bf9d51f" kind="function"><name>db_idx256_remove</name></member>
+    <member refid="group__database_ga50b09ae563e297d986852b639fc569c4_1ga50b09ae563e297d986852b639fc569c4" kind="function"><name>db_idx256_next</name></member>
+    <member refid="group__database_ga658db41ae01fd5f9350dead6d90c301e_1ga658db41ae01fd5f9350dead6d90c301e" kind="function"><name>db_idx256_previous</name></member>
+    <member refid="group__database_gab3174c648f526d352dcbc013ac9c7df4_1gab3174c648f526d352dcbc013ac9c7df4" kind="function"><name>db_idx256_find_primary</name></member>
+    <member refid="group__database_ga32b944f43d73d2dd8f81d4a8cbf1881a_1ga32b944f43d73d2dd8f81d4a8cbf1881a" kind="function"><name>db_idx256_find_secondary</name></member>
+    <member refid="group__database_gacb2612415bf82cd5c8363ae8d82b19e7_1gacb2612415bf82cd5c8363ae8d82b19e7" kind="function"><name>db_idx256_lowerbound</name></member>
+    <member refid="group__database_ga9be64d138ab8007da86302dc56b54f4b_1ga9be64d138ab8007da86302dc56b54f4b" kind="function"><name>db_idx256_upperbound</name></member>
+    <member refid="group__database_ga6890b5f6167a302e2b1dacdcdac24538_1ga6890b5f6167a302e2b1dacdcdac24538" kind="function"><name>db_idx256_end</name></member>
+    <member refid="group__database_ga0a743bd3d42153ba725f8c7bff79bf2b_1ga0a743bd3d42153ba725f8c7bff79bf2b" kind="function"><name>db_idx_double_store</name></member>
+    <member refid="group__database_ga5652bf74b99632b57e371ba3aaa3e8db_1ga5652bf74b99632b57e371ba3aaa3e8db" kind="function"><name>db_idx_double_update</name></member>
+    <member refid="group__database_ga7879ef20b38df7a936152cd875307002_1ga7879ef20b38df7a936152cd875307002" kind="function"><name>db_idx_double_remove</name></member>
+    <member refid="group__database_ga47f20afce175cd339e73bd124b756c8f_1ga47f20afce175cd339e73bd124b756c8f" kind="function"><name>db_idx_double_next</name></member>
+    <member refid="group__database_ga19bc2a710628fd89639c7ffbb8c63607_1ga19bc2a710628fd89639c7ffbb8c63607" kind="function"><name>db_idx_double_previous</name></member>
+    <member refid="group__database_gaa53fb148f8152067cc849a3b3f660794_1gaa53fb148f8152067cc849a3b3f660794" kind="function"><name>db_idx_double_find_primary</name></member>
+    <member refid="group__database_gab2c538b679cfe4ca8e87cf076beb5f33_1gab2c538b679cfe4ca8e87cf076beb5f33" kind="function"><name>db_idx_double_find_secondary</name></member>
+    <member refid="group__database_gaedc57b6d44b12c4c37f13190fd9b6ef0_1gaedc57b6d44b12c4c37f13190fd9b6ef0" kind="function"><name>db_idx_double_lowerbound</name></member>
+    <member refid="group__database_ga7641eec51617092e0496c9522cbfd00a_1ga7641eec51617092e0496c9522cbfd00a" kind="function"><name>db_idx_double_upperbound</name></member>
+    <member refid="group__database_ga29878ff539946d778ddcdf8191c421b6_1ga29878ff539946d778ddcdf8191c421b6" kind="function"><name>db_idx_double_end</name></member>
+    <member refid="group__database_ga86b5890f0e33b19be05965b49a31ba89_1ga86b5890f0e33b19be05965b49a31ba89" kind="function"><name>db_idx_long_double_store</name></member>
+    <member refid="group__database_gaf38e68c7cf06346f9e9e4d11eb02296c_1gaf38e68c7cf06346f9e9e4d11eb02296c" kind="function"><name>db_idx_long_double_update</name></member>
+    <member refid="group__database_ga758aaa59619b46af51e33f823c19af06_1ga758aaa59619b46af51e33f823c19af06" kind="function"><name>db_idx_long_double_remove</name></member>
+    <member refid="group__database_ga715571a131a495836fff374ad2beffd7_1ga715571a131a495836fff374ad2beffd7" kind="function"><name>db_idx_long_double_next</name></member>
+    <member refid="group__database_gadebcf8cd357d1ff5f42fa06bd44f4733_1gadebcf8cd357d1ff5f42fa06bd44f4733" kind="function"><name>db_idx_long_double_previous</name></member>
+    <member refid="group__database_ga2e60c45b99c33117a86cd36fdb00baac_1ga2e60c45b99c33117a86cd36fdb00baac" kind="function"><name>db_idx_long_double_find_primary</name></member>
+    <member refid="group__database_ga6b090dce51381f87ce9a9b86329d8576_1ga6b090dce51381f87ce9a9b86329d8576" kind="function"><name>db_idx_long_double_find_secondary</name></member>
+    <member refid="group__database_ga3a6943d41bc35b02a9d4565174993cbd_1ga3a6943d41bc35b02a9d4565174993cbd" kind="function"><name>db_idx_long_double_lowerbound</name></member>
+    <member refid="group__database_ga6a3326debe372bc025b3d12ac06e36b1_1ga6a3326debe372bc025b3d12ac06e36b1" kind="function"><name>db_idx_long_double_upperbound</name></member>
+    <member refid="group__database_ga3886b3d6d0ab2ac606c52b58c87d7546_1ga3886b3d6d0ab2ac606c52b58c87d7546" kind="function"><name>db_idx_long_double_end</name></member>
+  </compound>
+  <compound refid="dispatcher_8hpp" kind="file"><name>dispatcher.hpp</name>
+    <member refid="dispatcher_8hpp_a7ed37f17820cc1d5da5e6df2256f9d1a_1a7ed37f17820cc1d5da5e6df2256f9d1a" kind="define"><name>EOSIO_DISPATCH_INTERNAL</name></member>
+    <member refid="dispatcher_8hpp_a7b3b55f3fb95476096563bd498e00a26_1a7b3b55f3fb95476096563bd498e00a26" kind="define"><name>EOSIO_DISPATCH_HELPER</name></member>
+    <member refid="dispatcher_8hpp_a4c40fe6c9aa739424885e20ed613e545_1a4c40fe6c9aa739424885e20ed613e545" kind="define"><name>EOSIO_DISPATCH</name></member>
+  </compound>
+  <compound refid="eosio_8hpp" kind="file"><name>eosio.hpp</name>
+    <member refid="eosio_8hpp_a3dd8a1be2fbf980ee66578476244d85f_1a3dd8a1be2fbf980ee66578476244d85f" kind="define"><name>CONTRACT</name></member>
+    <member refid="eosio_8hpp_abeb73dfe8d6e8c280ebce28d84190c7e_1abeb73dfe8d6e8c280ebce28d84190c7e" kind="define"><name>ACTION</name></member>
+    <member refid="eosio_8hpp_acadaccd8321f8569f31a11bdad1829da_1acadaccd8321f8569f31a11bdad1829da" kind="define"><name>TABLE</name></member>
+  </compound>
+  <compound refid="eosiolib_8cpp" kind="file"><name>eosiolib.cpp</name>
+    <member refid="eosiolib_8cpp_aeda051d5eb402437e0d2289cc6321fcd_1aeda051d5eb402437e0d2289cc6321fcd" kind="function"><name>sbrk</name></member>
+    <member refid="eosiolib_8cpp_a7ac38fce3243a7dcf448301ee9ffd392_1a7ac38fce3243a7dcf448301ee9ffd392" kind="function"><name>malloc</name></member>
+    <member refid="eosiolib_8cpp_add8a2c74f2c5f5e3db163234988f61d6_1add8a2c74f2c5f5e3db163234988f61d6" kind="function"><name>calloc</name></member>
+    <member refid="eosiolib_8cpp_a1a6b5e8d2f1c37e5b43e4345586075be_1a1a6b5e8d2f1c37e5b43e4345586075be" kind="function"><name>realloc</name></member>
+    <member refid="eosiolib_8cpp_afbedc913aa4651b3c3b4b3aecd9b4711_1afbedc913aa4651b3c3b4b3aecd9b4711" kind="function"><name>free</name></member>
+  </compound>
+  <compound refid="fixed__key_8hpp" kind="file"><name>fixed_key.hpp</name>
+  </compound>
+  <compound refid="fixedpoint_8hpp" kind="file"><name>fixedpoint.hpp</name>
+  </compound>
+  <compound refid="ignore_8hpp" kind="file"><name>ignore.hpp</name>
+  </compound>
+  <compound refid="multi__index_8hpp" kind="file"><name>multi_index.hpp</name>
+    <member refid="multi__index_8hpp_a44e11d95000af02139eda2f0dd62f965_1a44e11d95000af02139eda2f0dd62f965" kind="define"><name>WRAP_SECONDARY_SIMPLE_TYPE</name></member>
+    <member refid="multi__index_8hpp_a522b8927626c841da1e6cc3a292d5913_1a522b8927626c841da1e6cc3a292d5913" kind="define"><name>WRAP_SECONDARY_ARRAY_TYPE</name></member>
+    <member refid="multi__index_8hpp_aab2b11a88b267a1ad4009fed8dc5e778_1aab2b11a88b267a1ad4009fed8dc5e778" kind="define"><name>MAKE_TRAITS_FOR_ARITHMETIC_SECONDARY_KEY</name></member>
+  </compound>
+  <compound refid="name_8hpp" kind="file"><name>name.hpp</name>
+    <member refid="name_8hpp_af3b6e026bc7d6c91906c38f47cdc586f_1af3b6e026bc7d6c91906c38f47cdc586f" kind="function"><name>operator&quot;&quot;_n</name></member>
+  </compound>
+  <compound refid="permission_8hpp" kind="file"><name>permission.hpp</name>
+  </compound>
+  <compound refid="print_8hpp" kind="file"><name>print.hpp</name>
+  </compound>
+  <compound refid="privileged_8hpp" kind="file"><name>privileged.hpp</name>
+  </compound>
+  <compound refid="producer__schedule_8hpp" kind="file"><name>producer_schedule.hpp</name>
+  </compound>
+  <compound refid="public__key_8hpp" kind="file"><name>public_key.hpp</name>
+  </compound>
+  <compound refid="singleton_8hpp" kind="file"><name>singleton.hpp</name>
+  </compound>
+  <compound refid="stdlib_8hpp" kind="file"><name>stdlib.hpp</name>
+  </compound>
+  <compound refid="symbol_8hpp" kind="file"><name>symbol.hpp</name>
+  </compound>
+  <compound refid="time_8hpp" kind="file"><name>time.hpp</name>
+  </compound>
+  <compound refid="transaction_8h" kind="file"><name>transaction.h</name>
+    <member refid="group__transaction__c_ga07e6ca6c01d86389ee6a09bbc79d5771_1ga07e6ca6c01d86389ee6a09bbc79d5771" kind="function"><name>send_deferred</name></member>
+    <member refid="group__transaction__c_ga03df5ed306c904081f03601350a81b67_1ga03df5ed306c904081f03601350a81b67" kind="function"><name>cancel_deferred</name></member>
+    <member refid="group__transaction__c_ga73fa4253ae0aec55399c26b740223bc6_1ga73fa4253ae0aec55399c26b740223bc6" kind="function"><name>read_transaction</name></member>
+    <member refid="group__transaction__c_gadfcd2e00f00461eac891ee8433508609_1gadfcd2e00f00461eac891ee8433508609" kind="function"><name>transaction_size</name></member>
+    <member refid="group__transaction__c_gac0b858a766ca73c6415bdb799d6ef45a_1gac0b858a766ca73c6415bdb799d6ef45a" kind="function"><name>tapos_block_num</name></member>
+    <member refid="group__transaction__c_gaef5458ccfe8ca5d6b273e35d04c56371_1gaef5458ccfe8ca5d6b273e35d04c56371" kind="function"><name>tapos_block_prefix</name></member>
+    <member refid="group__transaction__c_ga3843de6e5838982eb47c3806cfd0739a_1ga3843de6e5838982eb47c3806cfd0739a" kind="function"><name>expiration</name></member>
+    <member refid="group__transaction__c_gaf1fe78f3caf24010302e5cac1edad61d_1gaf1fe78f3caf24010302e5cac1edad61d" kind="function"><name>get_action</name></member>
+    <member refid="group__transaction__c_gad0f4f1bd76077b3ee4289aadfb84c2b2_1gad0f4f1bd76077b3ee4289aadfb84c2b2" kind="function"><name>get_context_free_data</name></member>
+  </compound>
+  <compound refid="transaction_8hpp" kind="file"><name>transaction.hpp</name>
+  </compound>
+  <compound refid="types_8h" kind="file"><name>types.h</name>
+    <member refid="types_8h_a9763e79ee25e85ca02c0d05e3aee7135_1a9763e79ee25e85ca02c0d05e3aee7135" kind="define"><name>ALIGNED</name></member>
+    <member refid="types_8h_ad9871b90d15df8db5c660c78569f029f_1ad9871b90d15df8db5c660c78569f029f" kind="typedef"><name>capi_name</name></member>
+    <member refid="types_8h_a3918acf677acc581e7b3827b409a94cf_1a3918acf677acc581e7b3827b409a94cf" kind="function"><name>ALIGNED</name></member>
+    <member refid="types_8h_ae367011e784adcda4a7d890b0f4e477d_1ae367011e784adcda4a7d890b0f4e477d" kind="function"><name>ALIGNED</name></member>
+    <member refid="types_8h_acc94b2dd94dabb8a53ac7f7bb3e3ca54_1acc94b2dd94dabb8a53ac7f7bb3e3ca54" kind="function"><name>ALIGNED</name></member>
+  </compound>
+  <compound refid="varint_8hpp" kind="file"><name>varint.hpp</name>
+  </compound>
+  <compound refid="group__contract" kind="group"><name>contract</name>
+    <member refid="group__contract_ga29c0c98c72ab578a5965d13b00dca0c0_1ga29c0c98c72ab578a5965d13b00dca0c0" kind="variable"><name>_self</name></member>
+    <member refid="group__contract_ga7bcf83f433ecb0b305dfd7d217c2dde8_1ga7bcf83f433ecb0b305dfd7d217c2dde8" kind="variable"><name>_code</name></member>
+    <member refid="group__contract_ga66b526b89bc6d35b63b874615f1d27b8_1ga66b526b89bc6d35b63b874615f1d27b8" kind="variable"><name>_ds</name></member>
+    <member refid="group__contract_ga592e8ee6dabf85e272cc0a833c3fe453_1ga592e8ee6dabf85e272cc0a833c3fe453" kind="function"><name>contract</name></member>
+    <member refid="group__contract_ga7564cad9be4ee5dcaac832511d9a0e05_1ga7564cad9be4ee5dcaac832511d9a0e05" kind="function"><name>get_self</name></member>
+    <member refid="group__contract_ga4efcd5638d26dad3e5dc075bad152d45_1ga4efcd5638d26dad3e5dc075bad152d45" kind="function"><name>get_code</name></member>
+    <member refid="group__contract_ga3bb1107c2675ef69f3eca8e3793701c7_1ga3bb1107c2675ef69f3eca8e3793701c7" kind="function"><name>get_datastream</name></member>
+  </compound>
+  <compound refid="group__fixed__key" kind="group"><name>fixed_key</name>
+    <member refid="group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1_1ga9ae210ffc1e7d1e4f1514431b26aa3d1" kind="typedef"><name>key256</name></member>
+    <member refid="group__fixed__key_gabbac43a956f81fd4bd4379ede0f82dd7_1gabbac43a956f81fd4bd4379ede0f82dd7" kind="function"><name>operator==</name></member>
+    <member refid="group__fixed__key_ga27b953728fd2a29e49f84e35135a70de_1ga27b953728fd2a29e49f84e35135a70de" kind="function"><name>operator!=</name></member>
+    <member refid="group__fixed__key_gada6d080f1501ee085aabf5c7736461ca_1gada6d080f1501ee085aabf5c7736461ca" kind="function"><name>operator&gt;</name></member>
+    <member refid="group__fixed__key_ga0d8567b962caa06cf0994134725e3f8d_1ga0d8567b962caa06cf0994134725e3f8d" kind="function"><name>operator&lt;</name></member>
+  </compound>
+  <compound refid="group__fixed__point" kind="group"><name>fixed_point</name>
+  </compound>
+  <compound refid="group__console" kind="group"><name>console</name>
+    <member refid="group__console_1gaed9b7380e114191d3dac1857b35e3da2" kind="variable"><name>cout</name></member>
+    <member refid="group__console_gaa0a56fe314d032d027a1565d93a68b21_1gaa0a56fe314d032d027a1565d93a68b21" kind="function"><name>print</name></member>
+    <member refid="group__console_gabe1c02d3a4a65108ff3bc59db64485a0_1gabe1c02d3a4a65108ff3bc59db64485a0" kind="function"><name>print</name></member>
+    <member refid="group__console_ga6daff3c05760581064c390a27a79fd30_1ga6daff3c05760581064c390a27a79fd30" kind="function"><name>print</name></member>
+    <member refid="group__console_ga514f168270d72ecae0083dd2968f7329_1ga514f168270d72ecae0083dd2968f7329" kind="function"><name>print</name></member>
+    <member refid="group__console_gad0342d58fa17a7bea359607c6cfcf0cf_1gad0342d58fa17a7bea359607c6cfcf0cf" kind="function"><name>print</name></member>
+    <member refid="group__console_ga4412b37ef401946605e5cef937c3f8dc_1ga4412b37ef401946605e5cef937c3f8dc" kind="function"><name>print</name></member>
+    <member refid="group__console_gaad90d9aa7b7ba103d2e943bf38c91072_1gaad90d9aa7b7ba103d2e943bf38c91072" kind="function"><name>print</name></member>
+    <member refid="group__console_ga3c85835d3c6e556b5da524030e70e971_1ga3c85835d3c6e556b5da524030e70e971" kind="function"><name>print</name></member>
+    <member refid="group__console_ga0c95ab36e2c3f91a627270c09ff9140f_1ga0c95ab36e2c3f91a627270c09ff9140f" kind="function"><name>print</name></member>
+    <member refid="group__console_ga9bdf0bd18006f43820d73ec9f8cc50b8_1ga9bdf0bd18006f43820d73ec9f8cc50b8" kind="function"><name>print</name></member>
+    <member refid="group__console_ga925806f986898c01e8de34234f951bdc_1ga925806f986898c01e8de34234f951bdc" kind="function"><name>print</name></member>
+    <member refid="group__console_gacbb116ac61f216fafa100011bce090ee_1gacbb116ac61f216fafa100011bce090ee" kind="function"><name>print</name></member>
+    <member refid="group__console_ga02d168bc05492d64cefea469dd114c12_1ga02d168bc05492d64cefea469dd114c12" kind="function"><name>print</name></member>
+    <member refid="group__console_ga8753f6a7c7d5c518f6369cfebf5be1bb_1ga8753f6a7c7d5c518f6369cfebf5be1bb" kind="function"><name>print</name></member>
+    <member refid="group__console_ga2a3eea270ff4dbe4a15c2269a5c2cfec_1ga2a3eea270ff4dbe4a15c2269a5c2cfec" kind="function"><name>print</name></member>
+    <member refid="group__console_ga2785282e4babb79499ba03e719e20aa1_1ga2785282e4babb79499ba03e719e20aa1" kind="function"><name>print</name></member>
+    <member refid="group__console_gaa47b5b44cf50be5fe5ca837ef7e6d583_1gaa47b5b44cf50be5fe5ca837ef7e6d583" kind="function"><name>print</name></member>
+    <member refid="group__console_gaddacdc539ef6e6fb4f55bf04d1a0d22c_1gaddacdc539ef6e6fb4f55bf04d1a0d22c" kind="function"><name>print</name></member>
+    <member refid="group__console_gaeb64d709bf057338af83ea1b95a0d16d_1gaeb64d709bf057338af83ea1b95a0d16d" kind="function"><name>print</name></member>
+    <member refid="group__console_ga3b7dd9bbca5a20bad3acb94b6b7354be_1ga3b7dd9bbca5a20bad3acb94b6b7354be" kind="function"><name>print</name></member>
+    <member refid="group__console_gaa09d15641c76813eea61b876d8266400_1gaa09d15641c76813eea61b876d8266400" kind="function"><name>print</name></member>
+    <member refid="group__console_gab9715bf002b919701d38e3ff931feabf_1gab9715bf002b919701d38e3ff931feabf" kind="function"><name>print_f</name></member>
+    <member refid="group__console_gafcfae01c6d714474da8407a1c195c836_1gafcfae01c6d714474da8407a1c195c836" kind="function"><name>print_f</name></member>
+    <member refid="group__console_gab5232cf7452d463948eac1179f31d9f0_1gab5232cf7452d463948eac1179f31d9f0" kind="function"><name>print</name></member>
+    <member refid="group__console_ga827f0aac6315e7963bcd52656cd7eeed_1ga827f0aac6315e7963bcd52656cd7eeed" kind="function"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="group__types" kind="group"><name>types</name>
+  </compound>
+  <compound refid="group__singleton" kind="group"><name>singleton</name>
+  </compound>
+  <compound refid="group__transaction" kind="group"><name>transaction</name>
+    <member refid="group__transaction_gaaf3ea17209c6d47129b2b232aede5439_1gaaf3ea17209c6d47129b2b232aede5439" kind="typedef"><name>extension</name></member>
+    <member refid="group__transaction_ga19c346b66f7145a5336177ac3eb0849e_1ga19c346b66f7145a5336177ac3eb0849e" kind="typedef"><name>extensions_type</name></member>
+    <member refid="group__transaction_ga32a532f21d5a5eeadd892723d9171e05_1ga32a532f21d5a5eeadd892723d9171e05" kind="variable"><name>expiration</name></member>
+    <member refid="group__transaction_ga7bd1f446f3a9a212183787d223d89766_1ga7bd1f446f3a9a212183787d223d89766" kind="variable"><name>ref_block_num</name></member>
+    <member refid="group__transaction_gaed4b528cd8a73ac9fa9cb5b7c429f90c_1gaed4b528cd8a73ac9fa9cb5b7c429f90c" kind="variable"><name>ref_block_prefix</name></member>
+    <member refid="group__transaction_gaad5eeaa9d26473ae8faa0d9c5cf44c0e_1gaad5eeaa9d26473ae8faa0d9c5cf44c0e" kind="variable"><name>max_net_usage_words</name></member>
+    <member refid="group__transaction_ga5fbc5f8eef0093ad65598953156d4359_1ga5fbc5f8eef0093ad65598953156d4359" kind="variable"><name>max_cpu_usage_ms</name></member>
+    <member refid="group__transaction_gadbe5ee5f38a82db68162188c49d62f39_1gadbe5ee5f38a82db68162188c49d62f39" kind="variable"><name>delay_sec</name></member>
+    <member refid="group__transaction_ga38263b68fda9925f2c6472777a04179c_1ga38263b68fda9925f2c6472777a04179c" kind="variable"><name>context_free_actions</name></member>
+    <member refid="group__transaction_gad53cc19e62742bf205934509c1363e42_1gad53cc19e62742bf205934509c1363e42" kind="variable"><name>actions</name></member>
+    <member refid="group__transaction_ga445fd87e3465a1ca647c711c1ac0c711_1ga445fd87e3465a1ca647c711c1ac0c711" kind="variable"><name>transaction_extensions</name></member>
+    <member refid="group__transaction_gae6686bc621795ad87f257d0be72f345c_1gae6686bc621795ad87f257d0be72f345c" kind="variable"><name>sender_id</name></member>
+    <member refid="group__transaction_ga1cae304360f79394762ec5040046887e_1ga1cae304360f79394762ec5040046887e" kind="variable"><name>sent_trx</name></member>
+    <member refid="group__transaction_ga27106464af5cbbfd09b223eeb48d1e37_1ga27106464af5cbbfd09b223eeb48d1e37" kind="function"><name>transaction_header</name></member>
+    <member refid="group__transaction_gad090d569f520dce4919de93bcec2e260_1gad090d569f520dce4919de93bcec2e260" kind="function"><name>transaction</name></member>
+    <member refid="group__transaction_gaff16436e52fff284fabc0b748be342b4_1gaff16436e52fff284fabc0b748be342b4" kind="function"><name>send</name></member>
+    <member refid="group__transaction_gabdf7bc0ef45beae2daf8cf3f08a7cd42_1gabdf7bc0ef45beae2daf8cf3f08a7cd42" kind="function"><name>from_current_action</name></member>
+    <member refid="group__transaction_ga8fe8368f7a3213b5ab0a93407f41cd66_1ga8fe8368f7a3213b5ab0a93407f41cd66" kind="function"><name>unpack_sent_trx</name></member>
+    <member refid="group__transaction_gac01a00482f2dc95bf4850b2e8213ee90_1gac01a00482f2dc95bf4850b2e8213ee90" kind="function"><name>get_action</name></member>
+  </compound>
+  <compound refid="group__action" kind="group"><name>action</name>
+    <member refid="group__action_ga3ce0a297276d44f03c9b5dc17fcd2b31_1ga3ce0a297276d44f03c9b5dc17fcd2b31" kind="function"><name>unpack_action_data</name></member>
+    <member refid="group__action_ga4e1838d05857e38ddf8916e616698460_1ga4e1838d05857e38ddf8916e616698460" kind="function"><name>require_recipient</name></member>
+    <member refid="group__action_gaa61e47227ac315887caf1e028191ff7d_1gaa61e47227ac315887caf1e028191ff7d" kind="function"><name>require_recipient</name></member>
+    <member refid="group__action_ga47b4afe79f1de07376e2ecdd541f92c7_1ga47b4afe79f1de07376e2ecdd541f92c7" kind="function"><name>require_auth</name></member>
+    <member refid="group__action_gaa9c6bd255a286073e7dc8a337f2b11a2_1gaa9c6bd255a286073e7dc8a337f2b11a2" kind="function"><name>require_auth</name></member>
+    <member refid="group__action_ga9e4650a61bbe0809cc62e6b2af8252d3_1ga9e4650a61bbe0809cc62e6b2af8252d3" kind="function"><name>has_auth</name></member>
+    <member refid="group__action_ga887cd0fed2350c5ae52565ba6e290db3_1ga887cd0fed2350c5ae52565ba6e290db3" kind="function"><name>is_account</name></member>
+    <member refid="group__action_ga7c267f408db88d60ce0a5c74845596ee_1ga7c267f408db88d60ce0a5c74845596ee" kind="define"><name>SEND_INLINE_ACTION</name></member>
+  </compound>
+  <compound refid="group__asset" kind="group"><name>asset</name>
+  </compound>
+  <compound refid="group__chain" kind="group"><name>chain</name>
+    <member refid="group__chain_gafb1878d4d55d275a1729f44ecc72848a_1gafb1878d4d55d275a1729f44ecc72848a" kind="function"><name>get_active_producers</name></member>
+  </compound>
+  <compound refid="group__compiler__builtins" kind="group"><name>Compiler_builtins</name>
+    <member refid="group__compiler__builtins_gaa03897335f1fcc54f469e17c32ae9920_1gaa03897335f1fcc54f469e17c32ae9920" kind="function"><name>__multi3</name></member>
+    <member refid="group__compiler__builtins_gadbd9c6953240b4ca52292ea687d64839_1gadbd9c6953240b4ca52292ea687d64839" kind="function"><name>__divti3</name></member>
+    <member refid="group__compiler__builtins_gaed86fd6c88a54c19700f51a3f36890d3_1gaed86fd6c88a54c19700f51a3f36890d3" kind="function"><name>__udivti3</name></member>
+    <member refid="group__compiler__builtins_gacf950a5162ebd45ceec1463d352a42dd_1gacf950a5162ebd45ceec1463d352a42dd" kind="function"><name>__modti3</name></member>
+    <member refid="group__compiler__builtins_ga25eb2263db624647faf0c395b32f2bdb_1ga25eb2263db624647faf0c395b32f2bdb" kind="function"><name>__umodti3</name></member>
+    <member refid="group__compiler__builtins_ga19640af2c08e820f5aa09069b1827c9b_1ga19640af2c08e820f5aa09069b1827c9b" kind="function"><name>__lshlti3</name></member>
+    <member refid="group__compiler__builtins_ga7785ea89d0105220b2e52ecf5f315caa_1ga7785ea89d0105220b2e52ecf5f315caa" kind="function"><name>__lshrti3</name></member>
+    <member refid="group__compiler__builtins_ga2d057451f581f4d1cec929cf76f0d610_1ga2d057451f581f4d1cec929cf76f0d610" kind="function"><name>__ashlti3</name></member>
+    <member refid="group__compiler__builtins_ga54e1751b41448b01e519dfeb63733ab8_1ga54e1751b41448b01e519dfeb63733ab8" kind="function"><name>__ashrti3</name></member>
+    <member refid="group__compiler__builtins_ga873d982bbd7493a9975dd88e923d85ed_1ga873d982bbd7493a9975dd88e923d85ed" kind="function"><name>__addtf3</name></member>
+    <member refid="group__compiler__builtins_ga6f055bf1366a170f3f01b28cc0a723dc_1ga6f055bf1366a170f3f01b28cc0a723dc" kind="function"><name>__subtf3</name></member>
+    <member refid="group__compiler__builtins_ga74a992741c2e037447d9953bb5cce333_1ga74a992741c2e037447d9953bb5cce333" kind="function"><name>__multf3</name></member>
+    <member refid="group__compiler__builtins_gad8133b5d6604ce3bab0adf8e0d44bf5f_1gad8133b5d6604ce3bab0adf8e0d44bf5f" kind="function"><name>__divtf3</name></member>
+    <member refid="group__compiler__builtins_ga11b0c275233be847ecba192c3d4bd50f_1ga11b0c275233be847ecba192c3d4bd50f" kind="function"><name>__eqtf2</name></member>
+    <member refid="group__compiler__builtins_ga01fedff23a9e5324dab56c77a4ce90fa_1ga01fedff23a9e5324dab56c77a4ce90fa" kind="function"><name>__netf2</name></member>
+    <member refid="group__compiler__builtins_gaa4067976976ddf6189ff05068f071421_1gaa4067976976ddf6189ff05068f071421" kind="function"><name>__getf2</name></member>
+    <member refid="group__compiler__builtins_ga22ea3ec1bb3c252037a6d1de080f59ec_1ga22ea3ec1bb3c252037a6d1de080f59ec" kind="function"><name>__gttf2</name></member>
+    <member refid="group__compiler__builtins_ga1c52620ce5caeab3f24d20848de48020_1ga1c52620ce5caeab3f24d20848de48020" kind="function"><name>__letf2</name></member>
+    <member refid="group__compiler__builtins_ga31e5201b17ecf49bf0544d619b3a211e_1ga31e5201b17ecf49bf0544d619b3a211e" kind="function"><name>__lttf2</name></member>
+    <member refid="group__compiler__builtins_ga130b5f6598f3db086bc0767c6be028c0_1ga130b5f6598f3db086bc0767c6be028c0" kind="function"><name>__cmptf2</name></member>
+    <member refid="group__compiler__builtins_ga26cb1a82545578282008ab4dc67cf262_1ga26cb1a82545578282008ab4dc67cf262" kind="function"><name>__unordtf2</name></member>
+    <member refid="group__compiler__builtins_ga3feafc107fc44ac8039a667ee49bcdbf_1ga3feafc107fc44ac8039a667ee49bcdbf" kind="function"><name>__extendsftf2</name></member>
+    <member refid="group__compiler__builtins_gae76415cbe79dbac141141a706158552c_1gae76415cbe79dbac141141a706158552c" kind="function"><name>__extenddftf2</name></member>
+    <member refid="group__compiler__builtins_gafb30709e77efa4ef9eb3bf4d42004ecf_1gafb30709e77efa4ef9eb3bf4d42004ecf" kind="function"><name>__fixtfdi</name></member>
+    <member refid="group__compiler__builtins_gac2669376b81a47fc865f5ba54aea0720_1gac2669376b81a47fc865f5ba54aea0720" kind="function"><name>__fixtfsi</name></member>
+    <member refid="group__compiler__builtins_ga459b47b617b89052f544025349c165f8_1ga459b47b617b89052f544025349c165f8" kind="function"><name>__fixunstfdi</name></member>
+    <member refid="group__compiler__builtins_ga1c62ec774bd084b04118fdb2b019a5c3_1ga1c62ec774bd084b04118fdb2b019a5c3" kind="function"><name>__fixunstfsi</name></member>
+    <member refid="group__compiler__builtins_ga386f6c017043419d3d33f9e96cc4ae4c_1ga386f6c017043419d3d33f9e96cc4ae4c" kind="function"><name>__trunctfdf2</name></member>
+    <member refid="group__compiler__builtins_ga0de0b2a5fe12abf258f7640987807a3a_1ga0de0b2a5fe12abf258f7640987807a3a" kind="function"><name>__trunctfsf2</name></member>
+    <member refid="group__compiler__builtins_ga612b3f8baa213fa0ce573eec10bbad78_1ga612b3f8baa213fa0ce573eec10bbad78" kind="function"><name>__break_point</name></member>
+  </compound>
+  <compound refid="group__crypto" kind="group"><name>crypto</name>
+    <member refid="group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb_1ga72b4fe70a6c503bf37ccf7285e03d4bb" kind="function"><name>assert_sha256</name></member>
+    <member refid="group__crypto_gab870a63902f83fcf0c8346206e0e1f4c_1gab870a63902f83fcf0c8346206e0e1f4c" kind="function"><name>assert_sha1</name></member>
+    <member refid="group__crypto_ga11c2f4f3e6b2e0a61d0b40f0e9f29d14_1ga11c2f4f3e6b2e0a61d0b40f0e9f29d14" kind="function"><name>assert_sha512</name></member>
+    <member refid="group__crypto_ga5fa71c353dbb47f9f2068e33a1a79d71_1ga5fa71c353dbb47f9f2068e33a1a79d71" kind="function"><name>assert_ripemd160</name></member>
+    <member refid="group__crypto_ga7e93f6228e21884c348ad6589050b9eb_1ga7e93f6228e21884c348ad6589050b9eb" kind="function"><name>sha256</name></member>
+    <member refid="group__crypto_ga382d8329db6727bd460e81c72bdc926a_1ga382d8329db6727bd460e81c72bdc926a" kind="function"><name>sha1</name></member>
+    <member refid="group__crypto_gace935d4721e179120b86cbfdc86590b9_1gace935d4721e179120b86cbfdc86590b9" kind="function"><name>sha512</name></member>
+    <member refid="group__crypto_ga156b5b599dfafe44c64b2e923e0ad114_1ga156b5b599dfafe44c64b2e923e0ad114" kind="function"><name>ripemd160</name></member>
+    <member refid="group__crypto_gaa9f54e1ba406bdb5a509c8fe91d214c2_1gaa9f54e1ba406bdb5a509c8fe91d214c2" kind="function"><name>recover_key</name></member>
+    <member refid="group__crypto_gacc12ec8a9ab4b0135a4fd743a6d9b4e4_1gacc12ec8a9ab4b0135a4fd743a6d9b4e4" kind="function"><name>assert_recover_key</name></member>
+  </compound>
+  <compound refid="group__datastream" kind="group"><name>datastream</name>
+    <member refid="group__datastream_ga1e49e445971a761be9607c1a3eb85bde_1ga1e49e445971a761be9607c1a3eb85bde" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga9e230ddd4f3d8ff314410dc9832829fd_1ga9e230ddd4f3d8ff314410dc9832829fd" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga5413cb7eba4e557a70d93ffa9f39b725_1ga5413cb7eba4e557a70d93ffa9f39b725" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga647b59d0f66be8cbb0bac116d7d14a9e_1ga647b59d0f66be8cbb0bac116d7d14a9e" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga4f20e587315c1c625ec8c7092f9d8465_1ga4f20e587315c1c625ec8c7092f9d8465" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga015cd9edd44cc1af80641c39b4816f13_1ga015cd9edd44cc1af80641c39b4816f13" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga344108ff96bcee67d40711dacdd42845_1ga344108ff96bcee67d40711dacdd42845" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga05879a71914d293c8a30b1a6710f8e51_1ga05879a71914d293c8a30b1a6710f8e51" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gafea0491fecd3df192a3f245e8105a026_1gafea0491fecd3df192a3f245e8105a026" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaeb6280d5e7942fcf839024442bc5c814_1gaeb6280d5e7942fcf839024442bc5c814" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga6f1b392200e9452c7f410ffd8fdfafe1_1ga6f1b392200e9452c7f410ffd8fdfafe1" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaed3bc5bd372251b9cb90aff4cf85be5f_1gaed3bc5bd372251b9cb90aff4cf85be5f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga74974be2214a4e50e463ae866f9297d4_1ga74974be2214a4e50e463ae866f9297d4" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga7875cabe436fe6756c4b30eec326fe16_1ga7875cabe436fe6756c4b30eec326fe16" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga860a2cac0f4f00dacdade421c303ea9c_1ga860a2cac0f4f00dacdade421c303ea9c" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga69731c7e836d6521c2aa7d67ad1dbc4d_1ga69731c7e836d6521c2aa7d67ad1dbc4d" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gaf18798375dd9ed43bea5888101883b9c_1gaf18798375dd9ed43bea5888101883b9c" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gab1dffa510122bd62ce3975e7b302c2c1_1gab1dffa510122bd62ce3975e7b302c2c1" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gaa02846796253d9db1064e43fadbecb8e_1gaa02846796253d9db1064e43fadbecb8e" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga86c994b49d0af580c72f4d966baca75b_1ga86c994b49d0af580c72f4d966baca75b" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga60d3eb6bab6da17bd2986a051126d471_1ga60d3eb6bab6da17bd2986a051126d471" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gac4ea18eb72ec93e5d06fff5a83623581_1gac4ea18eb72ec93e5d06fff5a83623581" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga0c8758a01d2cdcd99922c268f2f4e4e9_1ga0c8758a01d2cdcd99922c268f2f4e4e9" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga9ddfcc1002e9cd4c267ca0986753c686_1ga9ddfcc1002e9cd4c267ca0986753c686" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga5cb28ef1142e7ec5ba5c6672265efd47_1ga5cb28ef1142e7ec5ba5c6672265efd47" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga53f4e770b9b3c9f1e92c2fa3fa0ec73a_1ga53f4e770b9b3c9f1e92c2fa3fa0ec73a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gad202e8fcf8f49970c1710410c6059cde_1gad202e8fcf8f49970c1710410c6059cde" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaedee239cff148b596f19a3c2c6c1adf1_1gaedee239cff148b596f19a3c2c6c1adf1" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gaf98424a2563d883b3883a14692aa195a_1gaf98424a2563d883b3883a14692aa195a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gae2a202ccccf405468ad654676bb41d40_1gae2a202ccccf405468ad654676bb41d40" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga0bb2cdf062825f96551ba663f3d74e17_1ga0bb2cdf062825f96551ba663f3d74e17" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga63b7d3e0c99e4f049574fd366a1c528a_1ga63b7d3e0c99e4f049574fd366a1c528a" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gab7049fdaa7895e6c31a482deba846434_1gab7049fdaa7895e6c31a482deba846434" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga5f545f70b39155d1cd1da85f0e00b742_1ga5f545f70b39155d1cd1da85f0e00b742" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga85b47a27bb41a2854d2b8daea9e7b9f0_1ga85b47a27bb41a2854d2b8daea9e7b9f0" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga3b973878181cef2bdad7139958bd6ecf_1ga3b973878181cef2bdad7139958bd6ecf" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga124a00ba4d603044ef25be84a9fade48_1ga124a00ba4d603044ef25be84a9fade48" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_gac2e5487f43a496d7c263071e2502b986_1gac2e5487f43a496d7c263071e2502b986" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga59511f8552dbf4a2aced270041c17f04_1ga59511f8552dbf4a2aced270041c17f04" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga7d64e2f48bca13601cf6606934e6e8e6_1ga7d64e2f48bca13601cf6606934e6e8e6" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_ga2ffaa5bd18836b7d40db601fb20965bb_1ga2ffaa5bd18836b7d40db601fb20965bb" kind="function"><name>unpack</name></member>
+    <member refid="group__datastream_ga666b4d583161e4db595e31565fbb6a3d_1ga666b4d583161e4db595e31565fbb6a3d" kind="function"><name>unpack</name></member>
+    <member refid="group__datastream_ga30aa7d1c92792afc7f78af37372d68b7_1ga30aa7d1c92792afc7f78af37372d68b7" kind="function"><name>pack_size</name></member>
+    <member refid="group__datastream_ga16e657110c5a8e1ac34056bc473460a8_1ga16e657110c5a8e1ac34056bc473460a8" kind="function"><name>pack</name></member>
+    <member refid="group__datastream_gac006ab398b288a0582a2a59b991bf37c_1gac006ab398b288a0582a2a59b991bf37c" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga2cbcd06b5aae0e8ffd8b1550b0f39983_1ga2cbcd06b5aae0e8ffd8b1550b0f39983" kind="function"><name>operator&gt;&gt;</name></member>
+    <member refid="group__datastream_gafd1c5d3fad33115c2ba6a65f8f4b5792_1gafd1c5d3fad33115c2ba6a65f8f4b5792" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="group__datastream_ga14d1988dcb3235cf059d90c01a2b7d74_1ga14d1988dcb3235cf059d90c01a2b7d74" kind="function"><name>operator&gt;&gt;</name></member>
+  </compound>
+  <compound refid="group__database" kind="group"><name>database</name>
+    <member refid="group__database_ga3f259dd4be6adc25d95e897b7724bbc4_1ga3f259dd4be6adc25d95e897b7724bbc4" kind="function"><name>db_store_i64</name></member>
+    <member refid="group__database_gadfdbc05600fee5ea9d0741fa9ba7cc04_1gadfdbc05600fee5ea9d0741fa9ba7cc04" kind="function"><name>db_update_i64</name></member>
+    <member refid="group__database_ga3b3d2cb9baaffcca277aceafe15f885f_1ga3b3d2cb9baaffcca277aceafe15f885f" kind="function"><name>db_remove_i64</name></member>
+    <member refid="group__database_gae030353968fb545531c5286da8778808_1gae030353968fb545531c5286da8778808" kind="function"><name>db_get_i64</name></member>
+    <member refid="group__database_gab8a30f733c6cd6c9111f25adae685899_1gab8a30f733c6cd6c9111f25adae685899" kind="function"><name>db_next_i64</name></member>
+    <member refid="group__database_ga2ffe62dd0ab43732ccebc441a2186139_1ga2ffe62dd0ab43732ccebc441a2186139" kind="function"><name>db_previous_i64</name></member>
+    <member refid="group__database_gaa1f2c0990c948f52c5d9d2b7ace3e9c5_1gaa1f2c0990c948f52c5d9d2b7ace3e9c5" kind="function"><name>db_find_i64</name></member>
+    <member refid="group__database_ga817277bc1a591237ac20e2c6a64242a4_1ga817277bc1a591237ac20e2c6a64242a4" kind="function"><name>db_lowerbound_i64</name></member>
+    <member refid="group__database_gabca89e9c328d8ee50c35f93c6908cbf0_1gabca89e9c328d8ee50c35f93c6908cbf0" kind="function"><name>db_upperbound_i64</name></member>
+    <member refid="group__database_gab755d000538cddee84abbae2ed06f821_1gab755d000538cddee84abbae2ed06f821" kind="function"><name>db_end_i64</name></member>
+    <member refid="group__database_gaf00f39b0c943e762cd13ae1d73172261_1gaf00f39b0c943e762cd13ae1d73172261" kind="function"><name>db_idx64_store</name></member>
+    <member refid="group__database_ga118d635a2600ed798478ad829f36abac_1ga118d635a2600ed798478ad829f36abac" kind="function"><name>db_idx64_update</name></member>
+    <member refid="group__database_gaae117d50bba68c7a1f3b8f8828dc1699_1gaae117d50bba68c7a1f3b8f8828dc1699" kind="function"><name>db_idx64_remove</name></member>
+    <member refid="group__database_ga5fc70218dc661865823e57055801df24_1ga5fc70218dc661865823e57055801df24" kind="function"><name>db_idx64_next</name></member>
+    <member refid="group__database_ga243746a77546a54ce85345a537872cb7_1ga243746a77546a54ce85345a537872cb7" kind="function"><name>db_idx64_previous</name></member>
+    <member refid="group__database_ga4dcc0485335856945baebf6b5e246c81_1ga4dcc0485335856945baebf6b5e246c81" kind="function"><name>db_idx64_find_primary</name></member>
+    <member refid="group__database_ga87ebf49c63616d8f4db298daea4fb1ec_1ga87ebf49c63616d8f4db298daea4fb1ec" kind="function"><name>db_idx64_find_secondary</name></member>
+    <member refid="group__database_ga6a94c6bbb0cc74ca76c6f0fd56c03e2a_1ga6a94c6bbb0cc74ca76c6f0fd56c03e2a" kind="function"><name>db_idx64_lowerbound</name></member>
+    <member refid="group__database_gacf9f8b130509755bb05cc28b974caca4_1gacf9f8b130509755bb05cc28b974caca4" kind="function"><name>db_idx64_upperbound</name></member>
+    <member refid="group__database_ga9596d2d4adea77798e08e7f3a5ac7586_1ga9596d2d4adea77798e08e7f3a5ac7586" kind="function"><name>db_idx64_end</name></member>
+    <member refid="group__database_ga39cc50eac1593784a3c82a5a54d50d4b_1ga39cc50eac1593784a3c82a5a54d50d4b" kind="function"><name>db_idx128_store</name></member>
+    <member refid="group__database_ga97763f770a398b600a160ea69ed17cc3_1ga97763f770a398b600a160ea69ed17cc3" kind="function"><name>db_idx128_update</name></member>
+    <member refid="group__database_ga60e66048c40043424581fe8e507a353b_1ga60e66048c40043424581fe8e507a353b" kind="function"><name>db_idx128_remove</name></member>
+    <member refid="group__database_gaac074a8b2d42865e7ca1b7932e234655_1gaac074a8b2d42865e7ca1b7932e234655" kind="function"><name>db_idx128_next</name></member>
+    <member refid="group__database_gae56365d133e8c27ba709121ed1ad0db9_1gae56365d133e8c27ba709121ed1ad0db9" kind="function"><name>db_idx128_previous</name></member>
+    <member refid="group__database_ga0c371690e732d2f18e7037e038d4685d_1ga0c371690e732d2f18e7037e038d4685d" kind="function"><name>db_idx128_find_primary</name></member>
+    <member refid="group__database_ga157160bb9692e0f1f6a98337e751f713_1ga157160bb9692e0f1f6a98337e751f713" kind="function"><name>db_idx128_find_secondary</name></member>
+    <member refid="group__database_ga32e8a5092c3ad1b31b512e2b240fc8a8_1ga32e8a5092c3ad1b31b512e2b240fc8a8" kind="function"><name>db_idx128_lowerbound</name></member>
+    <member refid="group__database_ga00bc640a4a60ac49a07d538af3cadfd8_1ga00bc640a4a60ac49a07d538af3cadfd8" kind="function"><name>db_idx128_upperbound</name></member>
+    <member refid="group__database_gad7250e200698d82294588a636356c555_1gad7250e200698d82294588a636356c555" kind="function"><name>db_idx128_end</name></member>
+    <member refid="group__database_ga6e8c05d79f751ca250f454b5211fd149_1ga6e8c05d79f751ca250f454b5211fd149" kind="function"><name>db_idx256_store</name></member>
+    <member refid="group__database_ga68a96c6e3358a8efa1a6c0b1ac57fbb2_1ga68a96c6e3358a8efa1a6c0b1ac57fbb2" kind="function"><name>db_idx256_update</name></member>
+    <member refid="group__database_ga08729f61864b60499a55cc226bf9d51f_1ga08729f61864b60499a55cc226bf9d51f" kind="function"><name>db_idx256_remove</name></member>
+    <member refid="group__database_ga50b09ae563e297d986852b639fc569c4_1ga50b09ae563e297d986852b639fc569c4" kind="function"><name>db_idx256_next</name></member>
+    <member refid="group__database_ga658db41ae01fd5f9350dead6d90c301e_1ga658db41ae01fd5f9350dead6d90c301e" kind="function"><name>db_idx256_previous</name></member>
+    <member refid="group__database_gab3174c648f526d352dcbc013ac9c7df4_1gab3174c648f526d352dcbc013ac9c7df4" kind="function"><name>db_idx256_find_primary</name></member>
+    <member refid="group__database_ga32b944f43d73d2dd8f81d4a8cbf1881a_1ga32b944f43d73d2dd8f81d4a8cbf1881a" kind="function"><name>db_idx256_find_secondary</name></member>
+    <member refid="group__database_gacb2612415bf82cd5c8363ae8d82b19e7_1gacb2612415bf82cd5c8363ae8d82b19e7" kind="function"><name>db_idx256_lowerbound</name></member>
+    <member refid="group__database_ga9be64d138ab8007da86302dc56b54f4b_1ga9be64d138ab8007da86302dc56b54f4b" kind="function"><name>db_idx256_upperbound</name></member>
+    <member refid="group__database_ga6890b5f6167a302e2b1dacdcdac24538_1ga6890b5f6167a302e2b1dacdcdac24538" kind="function"><name>db_idx256_end</name></member>
+    <member refid="group__database_ga0a743bd3d42153ba725f8c7bff79bf2b_1ga0a743bd3d42153ba725f8c7bff79bf2b" kind="function"><name>db_idx_double_store</name></member>
+    <member refid="group__database_ga5652bf74b99632b57e371ba3aaa3e8db_1ga5652bf74b99632b57e371ba3aaa3e8db" kind="function"><name>db_idx_double_update</name></member>
+    <member refid="group__database_ga7879ef20b38df7a936152cd875307002_1ga7879ef20b38df7a936152cd875307002" kind="function"><name>db_idx_double_remove</name></member>
+    <member refid="group__database_ga47f20afce175cd339e73bd124b756c8f_1ga47f20afce175cd339e73bd124b756c8f" kind="function"><name>db_idx_double_next</name></member>
+    <member refid="group__database_ga19bc2a710628fd89639c7ffbb8c63607_1ga19bc2a710628fd89639c7ffbb8c63607" kind="function"><name>db_idx_double_previous</name></member>
+    <member refid="group__database_gaa53fb148f8152067cc849a3b3f660794_1gaa53fb148f8152067cc849a3b3f660794" kind="function"><name>db_idx_double_find_primary</name></member>
+    <member refid="group__database_gab2c538b679cfe4ca8e87cf076beb5f33_1gab2c538b679cfe4ca8e87cf076beb5f33" kind="function"><name>db_idx_double_find_secondary</name></member>
+    <member refid="group__database_gaedc57b6d44b12c4c37f13190fd9b6ef0_1gaedc57b6d44b12c4c37f13190fd9b6ef0" kind="function"><name>db_idx_double_lowerbound</name></member>
+    <member refid="group__database_ga7641eec51617092e0496c9522cbfd00a_1ga7641eec51617092e0496c9522cbfd00a" kind="function"><name>db_idx_double_upperbound</name></member>
+    <member refid="group__database_ga29878ff539946d778ddcdf8191c421b6_1ga29878ff539946d778ddcdf8191c421b6" kind="function"><name>db_idx_double_end</name></member>
+    <member refid="group__database_ga86b5890f0e33b19be05965b49a31ba89_1ga86b5890f0e33b19be05965b49a31ba89" kind="function"><name>db_idx_long_double_store</name></member>
+    <member refid="group__database_gaf38e68c7cf06346f9e9e4d11eb02296c_1gaf38e68c7cf06346f9e9e4d11eb02296c" kind="function"><name>db_idx_long_double_update</name></member>
+    <member refid="group__database_ga758aaa59619b46af51e33f823c19af06_1ga758aaa59619b46af51e33f823c19af06" kind="function"><name>db_idx_long_double_remove</name></member>
+    <member refid="group__database_ga715571a131a495836fff374ad2beffd7_1ga715571a131a495836fff374ad2beffd7" kind="function"><name>db_idx_long_double_next</name></member>
+    <member refid="group__database_gadebcf8cd357d1ff5f42fa06bd44f4733_1gadebcf8cd357d1ff5f42fa06bd44f4733" kind="function"><name>db_idx_long_double_previous</name></member>
+    <member refid="group__database_ga2e60c45b99c33117a86cd36fdb00baac_1ga2e60c45b99c33117a86cd36fdb00baac" kind="function"><name>db_idx_long_double_find_primary</name></member>
+    <member refid="group__database_ga6b090dce51381f87ce9a9b86329d8576_1ga6b090dce51381f87ce9a9b86329d8576" kind="function"><name>db_idx_long_double_find_secondary</name></member>
+    <member refid="group__database_ga3a6943d41bc35b02a9d4565174993cbd_1ga3a6943d41bc35b02a9d4565174993cbd" kind="function"><name>db_idx_long_double_lowerbound</name></member>
+    <member refid="group__database_ga6a3326debe372bc025b3d12ac06e36b1_1ga6a3326debe372bc025b3d12ac06e36b1" kind="function"><name>db_idx_long_double_upperbound</name></member>
+    <member refid="group__database_ga3886b3d6d0ab2ac606c52b58c87d7546_1ga3886b3d6d0ab2ac606c52b58c87d7546" kind="function"><name>db_idx_long_double_end</name></member>
+  </compound>
+  <compound refid="group__dispatcher" kind="group"><name>dispatcher</name>
+    <member refid="group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9_1ga8c4928c29096799ef6ddabf148dc9cf9" kind="function"><name>execute_action</name></member>
+  </compound>
+  <compound refid="group__multi__index" kind="group"><name>multi_index</name>
+  </compound>
+  <compound refid="group__privileged" kind="group"><name>privileged</name>
+    <member refid="group__privileged_ga4b6f34ade1f06f6583b4a17738bebe0c_1ga4b6f34ade1f06f6583b4a17738bebe0c" kind="function"><name>set_blockchain_parameters</name></member>
+    <member refid="group__privileged_ga673da670d201ba73461eedd8bd1aec8f_1ga673da670d201ba73461eedd8bd1aec8f" kind="function"><name>get_blockchain_parameters</name></member>
+  </compound>
+  <compound refid="group__symbol" kind="group"><name>symbol</name>
+  </compound>
+  <compound refid="group__time" kind="group"><name>time</name>
+    <member refid="group__time_ga4f8fa835ef0dc341addb6e51d0d840b3_1ga4f8fa835ef0dc341addb6e51d0d840b3" kind="typedef"><name>block_timestamp_type</name></member>
+    <member refid="group__time_gaf7174ec0c48074b993ec6bac37a84682_1gaf7174ec0c48074b993ec6bac37a84682" kind="function"><name>seconds</name></member>
+    <member refid="group__time_ga2b8d5b8f5a1829bd6967c3fe89eea506_1ga2b8d5b8f5a1829bd6967c3fe89eea506" kind="function"><name>milliseconds</name></member>
+    <member refid="group__time_ga29a31fdb3cb6abce3f6abcf6840ea00c_1ga29a31fdb3cb6abce3f6abcf6840ea00c" kind="function"><name>minutes</name></member>
+    <member refid="group__time_ga33b982404d2fd14a2618564ae69db447_1ga33b982404d2fd14a2618564ae69db447" kind="function"><name>hours</name></member>
+    <member refid="group__time_gae1538fa412576d5b367a62c2f0e38730_1gae1538fa412576d5b367a62c2f0e38730" kind="function"><name>days</name></member>
+  </compound>
+  <compound refid="group__transaction__c" kind="group"><name>transaction_c</name>
+    <member refid="group__transaction__c_ga07e6ca6c01d86389ee6a09bbc79d5771_1ga07e6ca6c01d86389ee6a09bbc79d5771" kind="function"><name>send_deferred</name></member>
+    <member refid="group__transaction__c_ga03df5ed306c904081f03601350a81b67_1ga03df5ed306c904081f03601350a81b67" kind="function"><name>cancel_deferred</name></member>
+    <member refid="group__transaction__c_ga73fa4253ae0aec55399c26b740223bc6_1ga73fa4253ae0aec55399c26b740223bc6" kind="function"><name>read_transaction</name></member>
+    <member refid="group__transaction__c_gadfcd2e00f00461eac891ee8433508609_1gadfcd2e00f00461eac891ee8433508609" kind="function"><name>transaction_size</name></member>
+    <member refid="group__transaction__c_gac0b858a766ca73c6415bdb799d6ef45a_1gac0b858a766ca73c6415bdb799d6ef45a" kind="function"><name>tapos_block_num</name></member>
+    <member refid="group__transaction__c_gaef5458ccfe8ca5d6b273e35d04c56371_1gaef5458ccfe8ca5d6b273e35d04c56371" kind="function"><name>tapos_block_prefix</name></member>
+    <member refid="group__transaction__c_ga3843de6e5838982eb47c3806cfd0739a_1ga3843de6e5838982eb47c3806cfd0739a" kind="function"><name>expiration</name></member>
+    <member refid="group__transaction__c_gaf1fe78f3caf24010302e5cac1edad61d_1gaf1fe78f3caf24010302e5cac1edad61d" kind="function"><name>get_action</name></member>
+    <member refid="group__transaction__c_gad0f4f1bd76077b3ee4289aadfb84c2b2_1gad0f4f1bd76077b3ee4289aadfb84c2b2" kind="function"><name>get_context_free_data</name></member>
+  </compound>
+  <compound refid="dir_9e60c71e6dfb8d92b39aded6f4ab9fa8" kind="dir"><name>libraries/eosiolib</name>
+  </compound>
+  <compound refid="dir_bc0718b08fb2015b8e59c47b2805f60c" kind="dir"><name>libraries</name>
+  </compound>
+</doxygenindex>

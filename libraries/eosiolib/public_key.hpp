@@ -1,20 +1,16 @@
-#pragma once 
+#pragma once
 #include <eosiolib/varint.hpp>
 #include <eosiolib/serialize.hpp>
 
 namespace eosio {
 
    /**
-   *  @defgroup publickeytype Public Key Type
-   *  @ingroup types
-   *  @brief Specifies public key type
-   *
+   *  @addtogroup types
    *  @{
    */
-   
+
    /**
-    * EOSIO Public Key
-    * @brief EOSIO Public Key
+    * @details EOSIO Public Key
     */
    struct public_key {
       /**
@@ -25,7 +21,7 @@ namespace eosio {
 
       /**
        * Bytes of the public key
-       * 
+       *
        * @brief Bytes of the public key
        */
       std::array<char,33> data;
@@ -38,7 +34,7 @@ namespace eosio {
       }
       EOSLIB_SERIALIZE( public_key, (type)(data) )
    };
-   
-}
 
-/// @} publickeytype
+   /// @}
+
+}

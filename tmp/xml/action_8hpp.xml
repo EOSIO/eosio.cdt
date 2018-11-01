@@ -1,0 +1,328 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="action_8hpp" kind="file" language="C++">
+    <compoundname>action.hpp</compoundname>
+    <includes local="no">eosiolib/action.h</includes>
+    <includes refid="datastream_8hpp" local="no">eosiolib/datastream.hpp</includes>
+    <includes local="no">eosiolib/serialize.hpp</includes>
+    <includes local="no">boost/preprocessor/variadic/size.hpp</includes>
+    <includes local="no">boost/preprocessor/variadic/to_tuple.hpp</includes>
+    <includes local="no">boost/preprocessor/tuple/enum.hpp</includes>
+    <includes local="no">boost/preprocessor/facilities/overload.hpp</includes>
+    <includedby refid="dispatcher_8hpp" local="no">libraries/eosiolib/dispatcher.hpp</includedby>
+    <includedby refid="eosio_8hpp" local="no">libraries/eosiolib/eosio.hpp</includedby>
+    <includedby refid="transaction_8hpp" local="no">libraries/eosiolib/transaction.hpp</includedby>
+    <incdepgraph>
+      <node id="31">
+        <label>boost/preprocessor/facilities/overload.hpp</label>
+      </node>
+      <node id="12">
+        <label>limits</label>
+      </node>
+      <node id="7">
+        <label>eosiolib/name.hpp</label>
+        <link refid="name_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>eosiolib/ignore.hpp</label>
+        <link refid="ignore_8hpp"/>
+      </node>
+      <node id="9">
+        <label>string</label>
+      </node>
+      <node id="23">
+        <label>map</label>
+      </node>
+      <node id="0">
+        <label>libraries/eosiolib/action.hpp</label>
+        <link refid="action_8hpp"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>boost/preprocessor/tuple/enum.hpp</label>
+      </node>
+      <node id="4">
+        <label>eosiolib/memory.h</label>
+      </node>
+      <node id="26">
+        <label>boost/fusion/include/for_each.hpp</label>
+      </node>
+      <node id="5">
+        <label>eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>eosiolib/serialize.hpp</label>
+      </node>
+      <node id="28">
+        <label>boost/preprocessor/variadic/size.hpp</label>
+      </node>
+      <node id="29">
+        <label>boost/preprocessor/variadic/to_tuple.hpp</label>
+      </node>
+      <node id="10">
+        <label>string_view</label>
+      </node>
+      <node id="18">
+        <label>boost/container/flat_set.hpp</label>
+      </node>
+      <node id="6">
+        <label>eosiolib/print.h</label>
+      </node>
+      <node id="11">
+        <label>tuple</label>
+      </node>
+      <node id="24">
+        <label>optional</label>
+      </node>
+      <node id="21">
+        <label>vector</label>
+      </node>
+      <node id="14">
+        <label>array</label>
+      </node>
+      <node id="2">
+        <label>eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>eosiolib/varint.hpp</label>
+        <link refid="varint_8hpp"/>
+      </node>
+      <node id="27">
+        <label>boost/pfr.hpp</label>
+      </node>
+      <node id="19">
+        <label>boost/container/flat_map.hpp</label>
+      </node>
+      <node id="3">
+        <label>eosiolib/system.h</label>
+      </node>
+      <node id="1">
+        <label>eosiolib/action.h</label>
+      </node>
+      <node id="16">
+        <label>type_traits</label>
+      </node>
+      <node id="22">
+        <label>set</label>
+      </node>
+      <node id="25">
+        <label>boost/fusion/algorithm/iteration/for_each.hpp</label>
+      </node>
+      <node id="15">
+        <label>algorithm</label>
+      </node>
+      <node id="13">
+        <label>eosiolib/fixed_key.hpp</label>
+        <link refid="fixed__key_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="37">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="33">
+        <label>libraries/eosiolib/dispatcher.hpp</label>
+        <link refid="dispatcher_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>libraries/eosiolib/action.hpp</label>
+        <link refid="action_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structeosio_1_1permission__level" prot="public">eosio::permission_level</innerclass>
+    <innerclass refid="structeosio_1_1action" prot="public">eosio::action</innerclass>
+    <innerclass refid="structeosio_1_1inline__dispatcher" prot="public">eosio::inline_dispatcher</innerclass>
+    <innerclass refid="structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4" prot="public">eosio::inline_dispatcher&lt; void(T::*)(Args...), Name &gt;</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="action_8hpp_a20c19e0f931fad16c4db6d29480acddf_1a20c19e0f931fad16c4db6d29480acddf" prot="public" static="no">
+        <name>INLINE_ACTION_SENDER3</name>
+        <param><defname>CONTRACT_CLASS</defname></param>
+        <param><defname>FUNCTION_NAME</defname></param>
+        <param><defname>ACTION_NAME</defname></param>
+        <initializer>::<ref refid="structeosio_1_1inline__dispatcher" kindref="compound">eosio::inline_dispatcher</ref>&lt;decltype(&amp;CONTRACT_CLASS::FUNCTION_NAME), ACTION_NAME&gt;::call</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="314" column="9" bodyfile="libraries/eosiolib/action.hpp" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="action_8hpp_abeecc07548f70308a4aab9fcdb2d22f1_1abeecc07548f70308a4aab9fcdb2d22f1" prot="public" static="no">
+        <name>INLINE_ACTION_SENDER2</name>
+        <param><defname>CONTRACT_CLASS</defname></param>
+        <param><defname>NAME</defname></param>
+        <initializer><ref refid="action_8hpp_a20c19e0f931fad16c4db6d29480acddf_1a20c19e0f931fad16c4db6d29480acddf" kindref="member">INLINE_ACTION_SENDER3</ref>( CONTRACT_CLASS, NAME, ::<ref refid="structeosio_1_1name" kindref="compound">eosio::name</ref>(#NAME) )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="317" column="9" bodyfile="libraries/eosiolib/action.hpp" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="action_8hpp_a1bb288791cd436d07bddf3d43f4740d4_1a1bb288791cd436d07bddf3d43f4740d4" prot="public" static="no">
+        <name>INLINE_ACTION_SENDER</name>
+        <param><defname>...</defname></param>
+        <initializer>BOOST_PP_OVERLOAD(INLINE_ACTION_SENDER,__VA_ARGS__)(__VA_ARGS__)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="320" column="9" bodyfile="libraries/eosiolib/action.hpp" bodystart="320" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__action_ga7c267f408db88d60ce0a5c74845596ee_1ga7c267f408db88d60ce0a5c74845596ee" prot="public" static="no">
+        <name>SEND_INLINE_ACTION</name>
+        <param><defname>CONTRACT</defname></param>
+        <param><defname>NAME</defname></param>
+        <param><defname>...</defname></param>
+        <initializer><ref refid="action_8hpp_a1bb288791cd436d07bddf3d43f4740d4_1a1bb288791cd436d07bddf3d43f4740d4" kindref="member">INLINE_ACTION_SENDER</ref>(std::decay_t&lt;decltype(<ref refid="eosio_8hpp_a3dd8a1be2fbf980ee66578476244d85f_1a3dd8a1be2fbf980ee66578476244d85f" kindref="member">CONTRACT</ref>)&gt;, NAME)( (<ref refid="eosio_8hpp_a3dd8a1be2fbf980ee66578476244d85f_1a3dd8a1be2fbf980ee66578476244d85f" kindref="member">CONTRACT</ref>).get_self(),\
+BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );</initializer>
+        <briefdescription>
+<para>Send inline action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Send inline action</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>CONTRACT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The account this action is intended for </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NAME</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The member of the action specified as (&quot;action_member1_name&quot;, action_member1_value)(&quot;action_member2_name&quot;, action_member2_value) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="335" column="9" bodyfile="libraries/eosiolib/action.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="copyright"><para>defined in eos/LICENSE.txt </para></simplesect>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/action.hpp"/>
+  </compounddef>
+</doxygen>

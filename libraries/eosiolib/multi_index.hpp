@@ -152,8 +152,8 @@ namespace _multi_index_detail {
  *  @tparam Extractor - is a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type. It is recommended to use the `eosio::const_mem_fun` template, which is a type alias to the `boost::multi_index::const_mem_fun`. See the documentation for the Boost `const_mem_fun` key extractor for more details.
  *
  *  Example:
-       *
-*
+ *
+ *
  *  @code
  *  #include <eosiolib/eosio.hpp>
  *  using namespace eosio;
@@ -184,9 +184,8 @@ struct indexed_by {
 };
 
 /**
- *  @defgroup multiindex Multi Index Table
+ *  @addtogroup multi_index Multi Index Table
  *  @brief Defines EOSIO Multi Index Table
- *  @ingroup databasecpp
  *
  *
  *
@@ -2207,4 +2206,4 @@ class multi_index
 
 };
   /// @}
-}  /// eosio
+}

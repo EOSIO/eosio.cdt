@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="group__time" kind="group">
+    <compoundname>time</compoundname>
+    <title>Time</title>
+    <innerclass refid="classeosio_1_1microseconds" prot="public">eosio::microseconds</innerclass>
+    <innerclass refid="classeosio_1_1time__point" prot="public">eosio::time_point</innerclass>
+    <innerclass refid="classeosio_1_1time__point__sec" prot="public">eosio::time_point_sec</innerclass>
+    <innerclass refid="classeosio_1_1block__timestamp" prot="public">eosio::block_timestamp</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__time_1ga4f8fa835ef0dc341addb6e51d0d840b3" prot="public" static="no">
+        <type>block_timestamp</type>
+        <definition>typedef block_timestamp eosio::block_timestamp_type</definition>
+        <argsstring></argsstring>
+        <name>block_timestamp_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="181" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__time_1gaf7174ec0c48074b993ec6bac37a84682" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>microseconds</type>
+        <definition>microseconds eosio::seconds</definition>
+        <argsstring>(int64_t s)</argsstring>
+        <name>seconds</name>
+        <param>
+          <type>int64_t</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="36" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="group__time_1ga2b8d5b8f5a1829bd6967c3fe89eea506" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>microseconds</type>
+        <definition>microseconds eosio::milliseconds</definition>
+        <argsstring>(int64_t s)</argsstring>
+        <name>milliseconds</name>
+        <param>
+          <type>int64_t</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="37" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="group__time_1ga29a31fdb3cb6abce3f6abcf6840ea00c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>microseconds</type>
+        <definition>microseconds eosio::minutes</definition>
+        <argsstring>(int64_t m)</argsstring>
+        <name>minutes</name>
+        <param>
+          <type>int64_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="38" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="group__time_1ga33b982404d2fd14a2618564ae69db447" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>microseconds</type>
+        <definition>microseconds eosio::hours</definition>
+        <argsstring>(int64_t h)</argsstring>
+        <name>hours</name>
+        <param>
+          <type>int64_t</type>
+          <declname>h</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="39" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="group__time_1gae1538fa412576d5b367a62c2f0e38730" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>microseconds</type>
+        <definition>microseconds eosio::days</definition>
+        <argsstring>(int64_t d)</argsstring>
+        <name>days</name>
+        <param>
+          <type>int64_t</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/time.hpp" line="40" column="1" bodyfile="libraries/eosiolib/time.hpp" bodystart="40" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

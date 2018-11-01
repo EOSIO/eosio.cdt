@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1producer__schedule" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::producer_schedule</compoundname>
+    <includes refid="producer__schedule_8hpp" local="no">producer_schedule.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1producer__schedule_a3958be89c877e9249710a8aafa155829_1a3958be89c877e9249710a8aafa155829" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t eosio::producer_schedule::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+<para>Version number of the schedule. </para>        </briefdescription>
+        <detaileddescription>
+<para>Version number of the schedule. It is sequentially incrementing version number </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/producer_schedule.hpp" line="19" column="1" bodyfile="libraries/eosiolib/producer_schedule.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1producer__schedule_a10628b8023f6db90687a54776d15a117_1a10628b8023f6db90687a54776d15a117" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structeosio_1_1producer__key" kindref="compound">producer_key</ref> &gt;</type>
+        <definition>std::vector&lt;producer_key&gt; eosio::producer_schedule::producers</definition>
+        <argsstring></argsstring>
+        <name>producers</name>
+        <briefdescription>
+<para>List of producers for this schedule, including its signing key. </para>        </briefdescription>
+        <detaileddescription>
+<para>List of producers for this schedule, including its signing key </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/producer_schedule.hpp" line="26" column="1" bodyfile="libraries/eosiolib/producer_schedule.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Defines both the order, account name, and signing keys of the active set of producers. </para>    </briefdescription>
+    <detaileddescription>
+<para>Defines both the order, account name, and signing keys of the active set of producers. </para>    </detaileddescription>
+    <location file="libraries/eosiolib/producer_schedule.hpp" line="13" column="1" bodyfile="libraries/eosiolib/producer_schedule.hpp" bodystart="13" bodyend="27"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1producer__schedule_a10628b8023f6db90687a54776d15a117_1a10628b8023f6db90687a54776d15a117" prot="public" virt="non-virtual"><scope>eosio::producer_schedule</scope><name>producers</name></member>
+      <member refid="structeosio_1_1producer__schedule_a3958be89c877e9249710a8aafa155829_1a3958be89c877e9249710a8aafa155829" prot="public" virt="non-virtual"><scope>eosio::producer_schedule</scope><name>version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

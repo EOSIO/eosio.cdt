@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="classeosio_1_1singleton" kind="class" language="C++" prot="public">
+    <compoundname>eosio::singleton</compoundname>
+    <includes refid="singleton_8hpp" local="no">singleton.hpp</includes>
+    <innerclass refid="structeosio_1_1singleton_1_1row" prot="private">eosio::singleton::row</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="structeosio_1_1name_a1d269720fd7434429216833187173656_1a1d269720fd7434429216833187173656" kindref="member">name::raw</ref></type>
+        <declname>SingletonName</declname>
+        <defname>SingletonName</defname>
+      </param>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classeosio_1_1singleton_1a45175cb75e2b2ac6e5b761cf4fa5e010" prot="private" static="no">
+        <type><ref refid="classeosio_1_1multi__index" kindref="compound">eosio::multi_index</ref>&lt; SingletonName, row &gt;</type>
+        <definition>typedef eosio::multi_index&lt;SingletonName, row&gt; eosio::singleton&lt; SingletonName, T &gt;::table</definition>
+        <argsstring></argsstring>
+        <name>table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="54" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classeosio_1_1singleton_1a5e508b3e17337158988d1b90ee3b7e33" prot="private" static="yes" mutable="no">
+        <type>constexpr uint64_t</type>
+        <definition>constexpr uint64_t eosio::singleton&lt; SingletonName, T &gt;::pk_value</definition>
+        <argsstring></argsstring>
+        <name>pk_value</name>
+        <initializer>= static_cast&lt;uint64_t&gt;(SingletonName)</initializer>
+        <briefdescription>
+<para>Primary key of the data singleton table. </para>        </briefdescription>
+        <detaileddescription>
+<para>Primary key of the data inside singleton table </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="28" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classeosio_1_1singleton_1a57b4ca60619672a6bdbc66c04d29b299" prot="private" static="no" mutable="no">
+        <type><ref refid="classeosio_1_1multi__index" kindref="compound">table</ref></type>
+        <definition>table eosio::singleton&lt; SingletonName, T &gt;::_t</definition>
+        <argsstring></argsstring>
+        <name>_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="146" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classeosio_1_1singleton_aacf881ed97b04496be325d74f6b9d25e_1aacf881ed97b04496be325d74f6b9d25e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::singleton&lt; SingletonName, T &gt;::singleton</definition>
+        <argsstring>(name code, uint64_t scope)</argsstring>
+        <name>singleton</name>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>code</declname>
+        </param>
+        <param>
+          <type>uint64_t</type>
+          <declname>scope</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new singleton object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new singleton object given the table&apos;s owner and the scope</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The table&apos;s owner </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scope</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The scope of the table </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="65" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_ae6eed2e5197e5b4216450e5940ab9141_1ae6eed2e5197e5b4216450e5940ab9141" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::singleton&lt; SingletonName, T &gt;::exists</definition>
+        <argsstring>()</argsstring>
+        <name>exists</name>
+        <briefdescription>
+<para>Check if the singleton table exists. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the singleton table exists</para><para><simplesect kind="return"><para>true - if exists </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="74" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="74" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_a53b56e4e8ed2fddd61175285afdf44d4_1a53b56e4e8ed2fddd61175285afdf44d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T eosio::singleton&lt; SingletonName, T &gt;::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the value stored inside the singleton table. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the value stored inside the singleton table. Will throw an exception if it doesn&apos;t exist</para><para><simplesect kind="return"><para>T - The value stored </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="84" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="84" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_a6a252d888f4c0b20bb3045a443267951_1a6a252d888f4c0b20bb3045a443267951" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T eosio::singleton&lt; SingletonName, T &gt;::get_or_default</definition>
+        <argsstring>(const T &amp;def=T())</argsstring>
+        <name>get_or_default</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>def</declname>
+          <defval>T()</defval>
+        </param>
+        <briefdescription>
+<para>Get the value stored inside the singleton table or return the specified default value if it doesn&apos;t exist. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the value stored inside the singleton table. If it doesn&apos;t exist, it will return the specified default value</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>def</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The default value to be returned in case the data doesn&apos;t exist </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>T - The value stored </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="97" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_a7e632785eac3f1d05e08b34c49cb35dc_1a7e632785eac3f1d05e08b34c49cb35dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T eosio::singleton&lt; SingletonName, T &gt;::get_or_create</definition>
+        <argsstring>(name bill_to_account, const T &amp;def=T())</argsstring>
+        <name>get_or_create</name>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>bill_to_account</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>def</declname>
+          <defval>T()</defval>
+        </param>
+        <briefdescription>
+<para>Get the value stored inside the singleton table or create a new one with the specified default value if it doesn&apos;t exist. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the value stored inside the singleton table. If it doesn&apos;t exist, it will create a new one with the specified default value</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bill_to_account</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The account to bill for the newly created data if the data doesn&apos;t exist </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>def</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The default value to be created in case the data doesn&apos;t exist </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>T - The value stored </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="110" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="110" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_aada28dbeaf0961614beff67a38553a3c_1aada28dbeaf0961614beff67a38553a3c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::singleton&lt; SingletonName, T &gt;::set</definition>
+        <argsstring>(const T &amp;value, name bill_to_account)</argsstring>
+        <name>set</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>bill_to_account</declname>
+        </param>
+        <briefdescription>
+<para>Set new value to the singleton table. </para>        </briefdescription>
+        <detaileddescription>
+<para>Set new value to the singleton table</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- New value to be set </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bill_to_account</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Account to pay for the new value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="124" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="124" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classeosio_1_1singleton_afc70106337f2cec280dfd797a1c7920a_1afc70106337f2cec280dfd797a1c7920a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::singleton&lt; SingletonName, T &gt;::remove</definition>
+        <argsstring>()</argsstring>
+        <name>remove</name>
+        <briefdescription>
+<para>Remove the only data inside singleton table. </para>        </briefdescription>
+        <detaileddescription>
+<para>Remove the only data inside singleton table </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/singleton.hpp" line="138" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="138" bodyend="143"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This wrapper uses a single table to store named objects various types.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>SingletonName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the name of this singleton variable </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the type of the singleton </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/singleton.hpp" line="22" column="1" bodyfile="libraries/eosiolib/singleton.hpp" bodystart="21" bodyend="147"/>
+    <listofallmembers>
+      <member refid="classeosio_1_1singleton_1a57b4ca60619672a6bdbc66c04d29b299" prot="private" virt="non-virtual"><scope>eosio::singleton</scope><name>_t</name></member>
+      <member refid="classeosio_1_1singleton_ae6eed2e5197e5b4216450e5940ab9141_1ae6eed2e5197e5b4216450e5940ab9141" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>exists</name></member>
+      <member refid="classeosio_1_1singleton_a53b56e4e8ed2fddd61175285afdf44d4_1a53b56e4e8ed2fddd61175285afdf44d4" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>get</name></member>
+      <member refid="classeosio_1_1singleton_a7e632785eac3f1d05e08b34c49cb35dc_1a7e632785eac3f1d05e08b34c49cb35dc" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>get_or_create</name></member>
+      <member refid="classeosio_1_1singleton_a6a252d888f4c0b20bb3045a443267951_1a6a252d888f4c0b20bb3045a443267951" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>get_or_default</name></member>
+      <member refid="classeosio_1_1singleton_1a5e508b3e17337158988d1b90ee3b7e33" prot="private" virt="non-virtual"><scope>eosio::singleton</scope><name>pk_value</name></member>
+      <member refid="classeosio_1_1singleton_afc70106337f2cec280dfd797a1c7920a_1afc70106337f2cec280dfd797a1c7920a" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>remove</name></member>
+      <member refid="classeosio_1_1singleton_aada28dbeaf0961614beff67a38553a3c_1aada28dbeaf0961614beff67a38553a3c" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>set</name></member>
+      <member refid="classeosio_1_1singleton_aacf881ed97b04496be325d74f6b9d25e_1aacf881ed97b04496be325d74f6b9d25e" prot="public" virt="non-virtual"><scope>eosio::singleton</scope><name>singleton</name></member>
+      <member refid="classeosio_1_1singleton_1a45175cb75e2b2ac6e5b761cf4fa5e010" prot="private" virt="non-virtual"><scope>eosio::singleton</scope><name>table</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

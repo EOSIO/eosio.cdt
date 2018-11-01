@@ -1,0 +1,798 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1asset" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::asset</compoundname>
+    <includes refid="asset_8hpp" local="no">asset.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1asset_ac76c16a58851550706c6709698ed7255_1ac76c16a58851550706c6709698ed7255" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t eosio::asset::amount</definition>
+        <argsstring></argsstring>
+        <name>amount</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>The amount of the asset. </para>        </briefdescription>
+        <detaileddescription>
+<para>The amount of the asset </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="28" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1asset_a374520d98a22f5a89a26025154944756_1a374520d98a22f5a89a26025154944756" prot="public" static="no" mutable="no">
+        <type><ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref></type>
+        <definition>symbol eosio::asset::symbol</definition>
+        <argsstring></argsstring>
+        <name>symbol</name>
+        <briefdescription>
+<para>The symbol name of the asset. </para>        </briefdescription>
+        <detaileddescription>
+<para>The symbol name of the asset </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="35" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structeosio_1_1asset_a478eb6a3bb302652748acfcf85738f5f_1a478eb6a3bb302652748acfcf85738f5f" prot="public" static="yes" mutable="no">
+        <type>constexpr int64_t</type>
+        <definition>constexpr int64_t eosio::asset::max_amount</definition>
+        <argsstring></argsstring>
+        <name>max_amount</name>
+        <initializer>= (1LL &lt;&lt; 62) - 1</initializer>
+        <briefdescription>
+<para>Maximum amount possible for this asset. </para>        </briefdescription>
+        <detaileddescription>
+<para>Maximum amount possible for this asset. It&apos;s capped to 2^62 - 1 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="42" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1asset_abdde8d4b53c1b8f1027ab6cb2b13b845_1abdde8d4b53c1b8f1027ab6cb2b13b845" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::asset::asset</definition>
+        <argsstring>()</argsstring>
+        <name>asset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="44" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="44" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_abb4cf1f370bb101c7d61910ff45d6b55_1abb4cf1f370bb101c7d61910ff45d6b55" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::asset::asset</definition>
+        <argsstring>(int64_t a, class symbol s)</argsstring>
+        <name>asset</name>
+        <param>
+          <type>int64_t</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>class <ref refid="classeosio_1_1symbol" kindref="compound">symbol</ref></type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new asset object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new asset given the symbol name and the amount</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The amount of the asset </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the symbol </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="53" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="53" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a815b58378c8849fbb2a68f288edf5f31_1a815b58378c8849fbb2a68f288edf5f31" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::asset::is_amount_within_range</definition>
+        <argsstring>() const</argsstring>
+        <name>is_amount_within_range</name>
+        <briefdescription>
+<para>Check if the amount doesn&apos;t exceed the max amount. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the amount doesn&apos;t exceed the max amount</para><para><simplesect kind="return"><para>true - if the amount doesn&apos;t exceed the max amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="67" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_aa2e8739bf534ea99199d121143ca7a0a_1aa2e8739bf534ea99199d121143ca7a0a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool eosio::asset::is_valid</definition>
+        <argsstring>() const</argsstring>
+        <name>is_valid</name>
+        <briefdescription>
+<para>Check if the asset is valid. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the asset is valid. A valid asset has its amount &lt;= max_amount and its symbol name valid</para><para><simplesect kind="return"><para>true - if the asset is valid </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="76" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a0b6c8ba10eedc0129364fc910e840d7f_1a0b6c8ba10eedc0129364fc910e840d7f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::asset::set_amount</definition>
+        <argsstring>(int64_t a)</argsstring>
+        <name>set_amount</name>
+        <param>
+          <type>int64_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Set the amount of the asset. </para>        </briefdescription>
+        <detaileddescription>
+<para>Set the amount of the asset</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- New amount for the asset </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="84" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="84" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a16bee92e23903707b37a1e7c91e1a4f1_1a16bee92e23903707b37a1e7c91e1a4f1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset eosio::asset::operator-</definition>
+        <argsstring>() const</argsstring>
+        <name>operator-</name>
+        <briefdescription>
+<para>Unary minus operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Unary minus operator</para><para><simplesect kind="return"><para>asset - New asset with its amount is the negative amount of this asset </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="95" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="95" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_ac34e7c2da42b547142cbc7e7e6348e23_1ac34e7c2da42b547142cbc7e7e6348e23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+        <definition>asset&amp; eosio::asset::operator-=</definition>
+        <argsstring>(const asset &amp;a)</argsstring>
+        <name>operator-=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Subtraction assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Subtraction assignment operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Another asset to subtract this asset with </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset&amp; - Reference to this asset </para></simplesect>
+<simplesect kind="post"><para>The amount of this asset is subtracted by the amount of asset a </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="109" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="109" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_ab94816fdb1ce8d429ccb63d46251e476_1ab94816fdb1ce8d429ccb63d46251e476" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+        <definition>asset&amp; eosio::asset::operator+=</definition>
+        <argsstring>(const asset &amp;a)</argsstring>
+        <name>operator+=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Addition Assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Addition Assignment operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Another asset to subtract this asset with </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset&amp; - Reference to this asset </para></simplesect>
+<simplesect kind="post"><para>The amount of this asset is added with the amount of asset a </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="125" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="125" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a4875ab6d76c75c195bb3fb725407ab30_1a4875ab6d76c75c195bb3fb725407ab30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+        <definition>asset&amp; eosio::asset::operator*=</definition>
+        <argsstring>(int64_t a)</argsstring>
+        <name>operator*=</name>
+        <param>
+          <type>int64_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Multiplication assignment operator, with a number. </para>        </briefdescription>
+        <detaileddescription>
+<para>Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The multiplier for the asset&apos;s amount </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - Reference to this asset </para></simplesect>
+<simplesect kind="post"><para>The amount of this asset is multiplied by a </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="169" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="169" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a5c86834934fe75db077730628608b6d3_1a5c86834934fe75db077730628608b6d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+        <definition>asset&amp; eosio::asset::operator/=</definition>
+        <argsstring>(int64_t a)</argsstring>
+        <name>operator/=</name>
+        <param>
+          <type>int64_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Division assignment operator, with a number. </para>        </briefdescription>
+        <detaileddescription>
+<para>Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The divisor for the asset&apos;s amount </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - Reference to this asset </para></simplesect>
+<simplesect kind="post"><para>The amount of this asset is divided by a </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="214" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="214" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1asset_a111a52097d1761898d5641536c308416_1a111a52097d1761898d5641536c308416" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::asset::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+<para>Print the asset </para>        </briefdescription>
+        <detaileddescription>
+<para>Print the asset </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="344" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="344" bodyend="365"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structeosio_1_1asset_a606c72fe4e28b359ba977a6043f56300_1a606c72fe4e28b359ba977a6043f56300" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset operator+</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Addition operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Addition operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be added </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - New asset as the result of addition </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="141" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="141" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a101f03e631cf8c72d8094b91a5524207_1a101f03e631cf8c72d8094b91a5524207" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset operator-</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Subtraction operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Subtraction operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset to be subtracted </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset used to subtract </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - New asset as the result of subtraction of a with b </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="155" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="155" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_aad999a1c807bf5b87b6af18c7deb7383_1aad999a1c807bf5b87b6af18c7deb7383" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset operator*</definition>
+        <argsstring>(const asset &amp;a, int64_t b)</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Multiplication operator, with a number proceeding. </para>        </briefdescription>
+        <detaileddescription>
+<para>Multiplication operator, with a number proceeding</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset to be multiplied </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The multiplier for the asset&apos;s amount </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - New asset as the result of multiplication </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="185" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="185" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a2680e36287438fb993924afb89203d0f_1a2680e36287438fb993924afb89203d0f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset operator*</definition>
+        <argsstring>(int64_t b, const asset &amp;a)</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>int64_t</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Multiplication operator, with a number preceeding. </para>        </briefdescription>
+        <detaileddescription>
+<para>Multiplication operator, with a number preceeding</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The multiplier for the asset&apos;s amount </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset to be multiplied </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - New asset as the result of multiplication </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="200" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="200" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_ae07741c290b600e5d2891c47cc04d371_1ae07741c290b600e5d2891c47cc04d371" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend <ref refid="structeosio_1_1asset" kindref="compound">asset</ref></type>
+        <definition>asset operator/</definition>
+        <argsstring>(const asset &amp;a, int64_t b)</argsstring>
+        <name>operator/</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Division operator, with a number proceeding. </para>        </briefdescription>
+        <detaileddescription>
+<para>Division operator, with a number proceeding</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset to be divided </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The divisor for the asset&apos;s amount </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>asset - New asset as the result of division </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="229" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="229" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a3ed38863be7162b18973870814c26346_1a3ed38863be7162b18973870814c26346" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend int64_t</type>
+        <definition>int64_t operator/</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator/</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Division operator, with another asset. </para>        </briefdescription>
+        <detaileddescription>
+<para>Division operator, with another asset</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset which amount acts as the dividend </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The asset which amount acts as the divisor </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int64_t - the resulted amount after the division </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="244" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="244" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a8c79ce3d3e367c6345a8c5cb75bab48d_1a8c79ce3d3e367c6345a8c5cb75bab48d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Equality operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Equality operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if both asset has the same amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="260" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="260" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_adb0577649f2f48023169390b0b78e234_1adb0577649f2f48023169390b0b78e234" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Inequality operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Inequality operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if both asset doesn&apos;t have the same amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="275" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="275" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a4c5d8977b23e534426a070f568524d02_1a4c5d8977b23e534426a070f568524d02" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Less than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Less than operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if the first asset&apos;s amount is less than the second asset amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="289" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="289" bodyend="292"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a9d586e9b54232432779a91e2d6d8b78e_1a9d586e9b54232432779a91e2d6d8b78e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;=</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Less or equal to operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Less or equal to operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if the first asset&apos;s amount is less or equal to the second asset amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="304" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="304" bodyend="307"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_a88d1352c1cf2b7377292377449a4ced8_1a88d1352c1cf2b7377292377449a4ced8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Greater than operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Greater than operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if the first asset&apos;s amount is greater than the second asset amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="319" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="319" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1asset_aa5ae6feb2c7097211820fc31cf24b5f5_1aa5ae6feb2c7097211820fc31cf24b5f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;=</definition>
+        <argsstring>(const asset &amp;a, const asset &amp;b)</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1asset" kindref="compound">asset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Greater or equal to operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Greater or equal to operator</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The first asset to be compared </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The second asset to be compared </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if the first asset&apos;s amount is greater or equal to the second asset amount </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+<simplesect kind="pre"><para>Both asset must have the same symbol </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/asset.hpp" line="334" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="334" bodyend="337"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="struct_stores" kindref="compound">Stores</ref> information for owner of asset. </para>    </briefdescription>
+    <detaileddescription>
+<para>/struct <ref refid="struct_stores" kindref="compound">Stores</ref> information for owner of asset </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>eosio::asset</label>
+        <link refid="structeosio_1_1asset"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>symbol</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>eosio::symbol</label>
+        <link refid="classeosio_1_1symbol"/>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/asset.hpp" line="22" column="1" bodyfile="libraries/eosiolib/asset.hpp" bodystart="22" bodyend="368"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1asset_ac76c16a58851550706c6709698ed7255_1ac76c16a58851550706c6709698ed7255" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>amount</name></member>
+      <member refid="structeosio_1_1asset_abdde8d4b53c1b8f1027ab6cb2b13b845_1abdde8d4b53c1b8f1027ab6cb2b13b845" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>asset</name></member>
+      <member refid="structeosio_1_1asset_abb4cf1f370bb101c7d61910ff45d6b55_1abb4cf1f370bb101c7d61910ff45d6b55" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>asset</name></member>
+      <member refid="structeosio_1_1asset_a815b58378c8849fbb2a68f288edf5f31_1a815b58378c8849fbb2a68f288edf5f31" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>is_amount_within_range</name></member>
+      <member refid="structeosio_1_1asset_aa2e8739bf534ea99199d121143ca7a0a_1aa2e8739bf534ea99199d121143ca7a0a" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>is_valid</name></member>
+      <member refid="structeosio_1_1asset_a478eb6a3bb302652748acfcf85738f5f_1a478eb6a3bb302652748acfcf85738f5f" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>max_amount</name></member>
+      <member refid="structeosio_1_1asset_adb0577649f2f48023169390b0b78e234_1adb0577649f2f48023169390b0b78e234" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator!=</name></member>
+      <member refid="structeosio_1_1asset_aad999a1c807bf5b87b6af18c7deb7383_1aad999a1c807bf5b87b6af18c7deb7383" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator*</name></member>
+      <member refid="structeosio_1_1asset_a2680e36287438fb993924afb89203d0f_1a2680e36287438fb993924afb89203d0f" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator*</name></member>
+      <member refid="structeosio_1_1asset_a4875ab6d76c75c195bb3fb725407ab30_1a4875ab6d76c75c195bb3fb725407ab30" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator*=</name></member>
+      <member refid="structeosio_1_1asset_a606c72fe4e28b359ba977a6043f56300_1a606c72fe4e28b359ba977a6043f56300" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator+</name></member>
+      <member refid="structeosio_1_1asset_ab94816fdb1ce8d429ccb63d46251e476_1ab94816fdb1ce8d429ccb63d46251e476" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator+=</name></member>
+      <member refid="structeosio_1_1asset_a16bee92e23903707b37a1e7c91e1a4f1_1a16bee92e23903707b37a1e7c91e1a4f1" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator-</name></member>
+      <member refid="structeosio_1_1asset_a101f03e631cf8c72d8094b91a5524207_1a101f03e631cf8c72d8094b91a5524207" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator-</name></member>
+      <member refid="structeosio_1_1asset_ac34e7c2da42b547142cbc7e7e6348e23_1ac34e7c2da42b547142cbc7e7e6348e23" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator-=</name></member>
+      <member refid="structeosio_1_1asset_ae07741c290b600e5d2891c47cc04d371_1ae07741c290b600e5d2891c47cc04d371" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator/</name></member>
+      <member refid="structeosio_1_1asset_a3ed38863be7162b18973870814c26346_1a3ed38863be7162b18973870814c26346" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator/</name></member>
+      <member refid="structeosio_1_1asset_a5c86834934fe75db077730628608b6d3_1a5c86834934fe75db077730628608b6d3" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator/=</name></member>
+      <member refid="structeosio_1_1asset_a4c5d8977b23e534426a070f568524d02_1a4c5d8977b23e534426a070f568524d02" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator&lt;</name></member>
+      <member refid="structeosio_1_1asset_a9d586e9b54232432779a91e2d6d8b78e_1a9d586e9b54232432779a91e2d6d8b78e" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator&lt;=</name></member>
+      <member refid="structeosio_1_1asset_a8c79ce3d3e367c6345a8c5cb75bab48d_1a8c79ce3d3e367c6345a8c5cb75bab48d" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator==</name></member>
+      <member refid="structeosio_1_1asset_a88d1352c1cf2b7377292377449a4ced8_1a88d1352c1cf2b7377292377449a4ced8" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator&gt;</name></member>
+      <member refid="structeosio_1_1asset_aa5ae6feb2c7097211820fc31cf24b5f5_1aa5ae6feb2c7097211820fc31cf24b5f5" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>operator&gt;=</name></member>
+      <member refid="structeosio_1_1asset_a111a52097d1761898d5641536c308416_1a111a52097d1761898d5641536c308416" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>print</name></member>
+      <member refid="structeosio_1_1asset_a0b6c8ba10eedc0129364fc910e840d7f_1a0b6c8ba10eedc0129364fc910e840d7f" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>set_amount</name></member>
+      <member refid="structeosio_1_1asset_a374520d98a22f5a89a26025154944756_1a374520d98a22f5a89a26025154944756" prot="public" virt="non-virtual"><scope>eosio::asset</scope><name>symbol</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

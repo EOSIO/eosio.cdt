@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="contract_8hpp" kind="file" language="C++">
+    <compoundname>contract.hpp</compoundname>
+    <includes refid="name_8hpp" local="no">eosiolib/name.hpp</includes>
+    <includes refid="datastream_8hpp" local="no">eosiolib/datastream.hpp</includes>
+    <includedby refid="eosio_8hpp" local="no">libraries/eosiolib/eosio.hpp</includedby>
+    <incdepgraph>
+      <node id="74">
+        <label>limits</label>
+      </node>
+      <node id="64">
+        <label>eosiolib/name.hpp</label>
+        <link refid="name_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>eosiolib/ignore.hpp</label>
+        <link refid="ignore_8hpp"/>
+      </node>
+      <node id="67">
+        <label>string</label>
+      </node>
+      <node id="85">
+        <label>map</label>
+      </node>
+      <node id="70">
+        <label>eosiolib/memory.h</label>
+      </node>
+      <node id="88">
+        <label>boost/fusion/include/for_each.hpp</label>
+      </node>
+      <node id="71">
+        <label>eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>eosiolib/serialize.hpp</label>
+      </node>
+      <node id="68">
+        <label>string_view</label>
+      </node>
+      <node id="80">
+        <label>boost/container/flat_set.hpp</label>
+      </node>
+      <node id="72">
+        <label>eosiolib/print.h</label>
+      </node>
+      <node id="73">
+        <label>tuple</label>
+      </node>
+      <node id="86">
+        <label>optional</label>
+      </node>
+      <node id="83">
+        <label>vector</label>
+      </node>
+      <node id="76">
+        <label>array</label>
+      </node>
+      <node id="69">
+        <label>eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+      </node>
+      <node id="82">
+        <label>eosiolib/varint.hpp</label>
+        <link refid="varint_8hpp"/>
+      </node>
+      <node id="63">
+        <label>libraries/eosiolib/contract.hpp</label>
+        <link refid="contract_8hpp"/>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="89">
+        <label>boost/pfr.hpp</label>
+      </node>
+      <node id="81">
+        <label>boost/container/flat_map.hpp</label>
+      </node>
+      <node id="65">
+        <label>eosiolib/system.h</label>
+      </node>
+      <node id="78">
+        <label>type_traits</label>
+      </node>
+      <node id="84">
+        <label>set</label>
+      </node>
+      <node id="87">
+        <label>boost/fusion/algorithm/iteration/for_each.hpp</label>
+      </node>
+      <node id="77">
+        <label>algorithm</label>
+      </node>
+      <node id="75">
+        <label>eosiolib/fixed_key.hpp</label>
+        <link refid="fixed__key_8hpp"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="94">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="93">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="94" relation="include">
+        </childnode>
+      </node>
+      <node id="90">
+        <label>libraries/eosiolib/contract.hpp</label>
+        <link refid="contract_8hpp"/>
+        <childnode refid="91" relation="include">
+        </childnode>
+      </node>
+      <node id="92">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="91">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="92" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classeosio_1_1contract" prot="public">eosio::contract</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/contract.hpp"/>
+  </compounddef>
+</doxygen>

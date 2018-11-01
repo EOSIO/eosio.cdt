@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1action" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::action</compoundname>
+    <includes refid="action_8hpp" local="no">action.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structeosio_1_1action_a4fc65ee0b7c184e7fcb8cdf6242220af_1a4fc65ee0b7c184e7fcb8cdf6242220af" prot="public" static="no" mutable="no">
+        <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+        <definition>name eosio::action::account</definition>
+        <argsstring></argsstring>
+        <name>account</name>
+        <briefdescription>
+<para>Name of the account the action is intended for. </para>        </briefdescription>
+        <detaileddescription>
+<para>Name of the account the action is intended for </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="193" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1action_a407ffb98514612d2e9683dd7d88af91a_1a407ffb98514612d2e9683dd7d88af91a" prot="public" static="no" mutable="no">
+        <type><ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+        <definition>name eosio::action::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Name of the action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Name of the action </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="200" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1action_a65851242b65f483e6b84d602d599f4e5_1a65851242b65f483e6b84d602d599f4e5" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structeosio_1_1permission__level" kindref="compound">permission_level</ref> &gt;</type>
+        <definition>std::vector&lt;permission_level&gt; eosio::action::authorization</definition>
+        <argsstring></argsstring>
+        <name>authorization</name>
+        <briefdescription>
+<para>List of permissions that authorize this action. </para>        </briefdescription>
+        <detaileddescription>
+<para>List of permissions that authorize this action </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="207" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1action_a51845c4ffbe1c97fc8d05115d05a3ab1_1a51845c4ffbe1c97fc8d05115d05a3ab1" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; char &gt;</type>
+        <definition>std::vector&lt;char&gt; eosio::action::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Payload data. </para>        </briefdescription>
+        <detaileddescription>
+<para>Payload data </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="214" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1action_aebc29a38547efa71db8ec20cc56d69a4_1aebc29a38547efa71db8ec20cc56d69a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>eosio::action::action</definition>
+        <argsstring>()=default</argsstring>
+        <name>action</name>
+        <briefdescription>
+<para>Construct a new action object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Default Constructor </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="221" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1action_a9ef6c7fc0a06f53c754a1cc8af513d00_1a9ef6c7fc0a06f53c754a1cc8af513d00" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::action::action</definition>
+        <argsstring>(const permission_level &amp;auth, struct name a, struct name n, T &amp;&amp;value)</argsstring>
+        <name>action</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1permission__level" kindref="compound">permission_level</ref> &amp;</type>
+          <declname>auth</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new action object with the given permission, action receiver, action name, action struct. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new action object with the given action struct</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of action struct, must be serializable by <computeroutput>pack(...)</computeroutput> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>auth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The permissions that authorizes this action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the account this action is intended for (action receiver) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The action struct that will be serialized via pack into data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="234" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="234" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1action_aa6b336f4f7a8c61d68e14d99a0a9cd9d_1aa6b336f4f7a8c61d68e14d99a0a9cd9d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>eosio::action::action</definition>
+        <argsstring>(std::vector&lt; permission_level &gt; auths, struct name a, struct name n, T &amp;&amp;value)</argsstring>
+        <name>action</name>
+        <param>
+          <type>std::vector&lt; <ref refid="structeosio_1_1permission__level" kindref="compound">permission_level</ref> &gt;</type>
+          <declname>auths</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structeosio_1_1name" kindref="compound">name</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new action object with the given list of permissions, action receiver, action name, action struct. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new action object with the given action struct</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of action struct, must be serializable by <computeroutput>pack(...)</computeroutput> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>auths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The list of permissions that authorize this action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the account this action is intended for (action receiver) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The name of the action </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The action struct that will be serialized via pack into data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="248" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="248" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1action_a848cfa77395aa8447c5468c619c4a42a_1a848cfa77395aa8447c5468c619c4a42a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::action::EOSLIB_SERIALIZE</definition>
+        <argsstring>(action,(account)(name)(authorization)(data)) void send() const</argsstring>
+        <name>EOSLIB_SERIALIZE</name>
+        <param>
+          <type><ref refid="structeosio_1_1action" kindref="compound">action</ref></type>
+        </param>
+        <param>
+          <type>(<ref refid="structeosio_1_1action_a4fc65ee0b7c184e7fcb8cdf6242220af_1a4fc65ee0b7c184e7fcb8cdf6242220af" kindref="member">account</ref>)(<ref refid="structeosio_1_1name" kindref="compound">name</ref>)(<ref refid="structeosio_1_1action_a65851242b65f483e6b84d602d599f4e5_1a65851242b65f483e6b84d602d599f4e5" kindref="member">authorization</ref>)(<ref refid="structeosio_1_1action_a51845c4ffbe1c97fc8d05115d05a3ab1_1a51845c4ffbe1c97fc8d05115d05a3ab1" kindref="member">data</ref>)</type>
+        </param>
+        <briefdescription>
+<para>Send the action as inline action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Send the action as inline action </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="251" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="251" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1action_a984a41daf2d1c4d6506cac0c98ac7a2a_1a984a41daf2d1c4d6506cac0c98ac7a2a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eosio::action::send_context_free</definition>
+        <argsstring>() const</argsstring>
+        <name>send_context_free</name>
+        <briefdescription>
+<para>Send the action as inline context free action. </para>        </briefdescription>
+        <detaileddescription>
+<para>Send the action as inline context free action</para><para><simplesect kind="pre"><para>This action should not contain any authorizations </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="269" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="269" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1action_ab10f4621dd9e24a33642d8fb240b1a01_1ab10f4621dd9e24a33642d8fb240b1a01" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T eosio::action::data_as</definition>
+        <argsstring>()</argsstring>
+        <name>data_as</name>
+        <briefdescription>
+<para>Retrieve the unpacked data as T. </para>        </briefdescription>
+        <detaileddescription>
+<para>Retrieve the unpacked data as T</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>expected type of data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the action data </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/action.hpp" line="283" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="283" bodyend="285"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Packed representation of an action. </para>    </briefdescription>
+    <detaileddescription>
+<para>This is the packed representation of an action along with meta-data about the authorization levels. </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>eosio::action</label>
+        <link refid="structeosio_1_1action"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>name</edgelabel>
+          <edgelabel>account</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>eosio::name</label>
+        <link refid="structeosio_1_1name"/>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/action.hpp" line="187" column="1" bodyfile="libraries/eosiolib/action.hpp" bodystart="187" bodyend="287"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1action_a4fc65ee0b7c184e7fcb8cdf6242220af_1a4fc65ee0b7c184e7fcb8cdf6242220af" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>account</name></member>
+      <member refid="structeosio_1_1action_aebc29a38547efa71db8ec20cc56d69a4_1aebc29a38547efa71db8ec20cc56d69a4" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>action</name></member>
+      <member refid="structeosio_1_1action_a9ef6c7fc0a06f53c754a1cc8af513d00_1a9ef6c7fc0a06f53c754a1cc8af513d00" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>action</name></member>
+      <member refid="structeosio_1_1action_aa6b336f4f7a8c61d68e14d99a0a9cd9d_1aa6b336f4f7a8c61d68e14d99a0a9cd9d" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>action</name></member>
+      <member refid="structeosio_1_1action_a65851242b65f483e6b84d602d599f4e5_1a65851242b65f483e6b84d602d599f4e5" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>authorization</name></member>
+      <member refid="structeosio_1_1action_a51845c4ffbe1c97fc8d05115d05a3ab1_1a51845c4ffbe1c97fc8d05115d05a3ab1" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>data</name></member>
+      <member refid="structeosio_1_1action_ab10f4621dd9e24a33642d8fb240b1a01_1ab10f4621dd9e24a33642d8fb240b1a01" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>data_as</name></member>
+      <member refid="structeosio_1_1action_a848cfa77395aa8447c5468c619c4a42a_1a848cfa77395aa8447c5468c619c4a42a" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>EOSLIB_SERIALIZE</name></member>
+      <member refid="structeosio_1_1action_a407ffb98514612d2e9683dd7d88af91a_1a407ffb98514612d2e9683dd7d88af91a" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>name</name></member>
+      <member refid="structeosio_1_1action_a984a41daf2d1c4d6506cac0c98ac7a2a_1a984a41daf2d1c4d6506cac0c98ac7a2a" prot="public" virt="non-virtual"><scope>eosio::action</scope><name>send_context_free</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

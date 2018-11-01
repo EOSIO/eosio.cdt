@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structeosio_1_1multi__index_1_1const__iterator" kind="struct" language="C++" prot="public">
+    <compoundname>eosio::multi_index::const_iterator</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::iterator&lt; std::bidirectional_iterator_tag, const T &gt;</basecompoundref>
+    <includes refid="multi__index_8hpp" local="no">multi_index.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1const__iterator_1aa042e4b8058f024f220cee9d6c9a5f96" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *</type>
+        <definition>const multi_index* eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::_multidx</definition>
+        <argsstring></argsstring>
+        <name>_multidx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="802" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="802" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structeosio_1_1multi__index_1_1const__iterator_1a624b7d8c5704d52d7bb8a6fde140a2b0" prot="private" static="no" mutable="no">
+        <type>const item *</type>
+        <definition>const item* eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::_item</definition>
+        <argsstring></argsstring>
+        <name>_item</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="803" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="803" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structeosio_1_1multi__index_1_1const__iterator_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>friend class</type>
+        <definition>friend class multi_index</definition>
+        <argsstring></argsstring>
+        <name>multi_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="804" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="804" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1multi__index_1_1const__iterator_ab0ac7de651351823aece097eb3be1cfb_1ab0ac7de651351823aece097eb3be1cfb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const const_iterator &amp;a, const const_iterator &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="747" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="747" bodyend="749"/>
+      </memberdef>
+      <memberdef kind="friend" id="structeosio_1_1multi__index_1_1const__iterator_a5fbca5b71055f2b793ae1607239b13a0_1a5fbca5b71055f2b793ae1607239b13a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const const_iterator &amp;a, const const_iterator &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="750" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="750" bodyend="752"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a41b221797d68b605c8811c21249c37f7_1a41b221797d68b605c8811c21249c37f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T &amp;</type>
+        <definition>const T&amp; eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="754" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="754" bodyend="754"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a24a83ecc4a2288ac35afb785b64dff12_1a24a83ecc4a2288ac35afb785b64dff12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T *</type>
+        <definition>const T* eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator-&gt;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator-&gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="755" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="755" bodyend="755"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a751d1e7eedadb5b3033cedc6f8e8078e_1a751d1e7eedadb5b3033cedc6f8e8078e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator++</definition>
+        <argsstring>(int)</argsstring>
+        <name>operator++</name>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="757" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="757" bodyend="761"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a3a0faabfa94970b0d94d9b2977c69f43_1a3a0faabfa94970b0d94d9b2977c69f43" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator--</definition>
+        <argsstring>(int)</argsstring>
+        <name>operator--</name>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="763" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="763" bodyend="767"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_aaec476e83abc7018972986594509a477_1aaec476e83abc7018972986594509a477" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+        <definition>const_iterator&amp; eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="769" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="769" bodyend="779"/>
+      </memberdef>
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_a3f5b8d0651cef32ef99565be6fc1de23_1a3f5b8d0651cef32ef99565be6fc1de23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structeosio_1_1multi__index_1_1const__iterator" kindref="compound">const_iterator</ref> &amp;</type>
+        <definition>const_iterator&amp; eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::operator--</definition>
+        <argsstring>()</argsstring>
+        <name>operator--</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="780" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="780" bodyend="796"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="structeosio_1_1multi__index_1_1const__iterator_1a217070802ce241355cfdb4b13ae2a89c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator::const_iterator</definition>
+        <argsstring>(const multi_index *mi, const item *i=nullptr)</argsstring>
+        <name>const_iterator</name>
+        <param>
+          <type>const <ref refid="classeosio_1_1multi__index" kindref="compound">multi_index</ref> *</type>
+          <declname>mi</declname>
+        </param>
+        <param>
+          <type>const item *</type>
+          <declname>i</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/multi_index.hpp" line="799" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="799" bodyend="800"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="23">
+        <label>std::iterator&lt; std::bidirectional_iterator_tag, const T &gt;</label>
+      </node>
+      <node id="22">
+        <label>eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator</label>
+        <link refid="structeosio_1_1multi__index_1_1const__iterator"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="25">
+        <label>std::iterator&lt; std::bidirectional_iterator_tag, const T &gt;</label>
+      </node>
+      <node id="24">
+        <label>eosio::multi_index&lt; TableName, T, Indices &gt;::const_iterator</label>
+        <link refid="structeosio_1_1multi__index_1_1const__iterator"/>
+        <childnode refid="25" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="libraries/eosiolib/multi_index.hpp" line="746" column="1" bodyfile="libraries/eosiolib/multi_index.hpp" bodystart="746" bodyend="805"/>
+    <listofallmembers>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_1a624b7d8c5704d52d7bb8a6fde140a2b0" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>_item</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_1aa042e4b8058f024f220cee9d6c9a5f96" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>_multidx</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_1a217070802ce241355cfdb4b13ae2a89c" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>const_iterator</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a474ad2ee1333aa717a29bb55a9d5fc44_1a474ad2ee1333aa717a29bb55a9d5fc44" prot="private" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>multi_index</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a5fbca5b71055f2b793ae1607239b13a0_1a5fbca5b71055f2b793ae1607239b13a0" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator!=</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a41b221797d68b605c8811c21249c37f7_1a41b221797d68b605c8811c21249c37f7" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator*</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a751d1e7eedadb5b3033cedc6f8e8078e_1a751d1e7eedadb5b3033cedc6f8e8078e" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator++</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_aaec476e83abc7018972986594509a477_1aaec476e83abc7018972986594509a477" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator++</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a3a0faabfa94970b0d94d9b2977c69f43_1a3a0faabfa94970b0d94d9b2977c69f43" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator--</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a3f5b8d0651cef32ef99565be6fc1de23_1a3f5b8d0651cef32ef99565be6fc1de23" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator--</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_a24a83ecc4a2288ac35afb785b64dff12_1a24a83ecc4a2288ac35afb785b64dff12" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator-&gt;</name></member>
+      <member refid="structeosio_1_1multi__index_1_1const__iterator_ab0ac7de651351823aece097eb3be1cfb_1ab0ac7de651351823aece097eb3be1cfb" prot="public" virt="non-virtual"><scope>eosio::multi_index::const_iterator</scope><name>operator==</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

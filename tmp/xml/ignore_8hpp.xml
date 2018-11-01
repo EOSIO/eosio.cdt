@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="ignore_8hpp" kind="file" language="C++">
+    <compoundname>ignore.hpp</compoundname>
+    <includedby refid="datastream_8hpp" local="no">libraries/eosiolib/datastream.hpp</includedby>
+    <invincdepgraph>
+      <node id="326">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="328">
+        <label>libraries/eosiolib/eosiolib.cpp</label>
+        <link refid="eosiolib_8cpp"/>
+      </node>
+      <node id="319">
+        <label>libraries/eosiolib/ignore.hpp</label>
+        <link refid="ignore_8hpp"/>
+        <childnode refid="320" relation="include">
+        </childnode>
+      </node>
+      <node id="322">
+        <label>libraries/eosiolib/dispatcher.hpp</label>
+        <link refid="dispatcher_8hpp"/>
+        <childnode refid="323" relation="include">
+        </childnode>
+      </node>
+      <node id="321">
+        <label>libraries/eosiolib/action.hpp</label>
+        <link refid="action_8hpp"/>
+        <childnode refid="322" relation="include">
+        </childnode>
+        <childnode refid="323" relation="include">
+        </childnode>
+        <childnode refid="325" relation="include">
+        </childnode>
+      </node>
+      <node id="329">
+        <label>libraries/eosiolib/multi_index.hpp</label>
+        <link refid="multi__index_8hpp"/>
+        <childnode refid="323" relation="include">
+        </childnode>
+        <childnode refid="330" relation="include">
+        </childnode>
+      </node>
+      <node id="325">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="326" relation="include">
+        </childnode>
+      </node>
+      <node id="320">
+        <label>libraries/eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="321" relation="include">
+        </childnode>
+        <childnode refid="327" relation="include">
+        </childnode>
+        <childnode refid="328" relation="include">
+        </childnode>
+        <childnode refid="329" relation="include">
+        </childnode>
+      </node>
+      <node id="330">
+        <label>libraries/eosiolib/singleton.hpp</label>
+        <link refid="singleton_8hpp"/>
+      </node>
+      <node id="327">
+        <label>libraries/eosiolib/contract.hpp</label>
+        <link refid="contract_8hpp"/>
+        <childnode refid="323" relation="include">
+        </childnode>
+      </node>
+      <node id="324">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="325" relation="include">
+        </childnode>
+      </node>
+      <node id="323">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="324" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structeosio_1_1ignore" prot="public">eosio::ignore</innerclass>
+    <innerclass refid="structeosio_1_1ignore__wrapper" prot="public">eosio::ignore_wrapper</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/ignore.hpp"/>
+  </compounddef>
+</doxygen>

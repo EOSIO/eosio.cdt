@@ -6,19 +6,9 @@
 #include <eosiolib/types.h>
 
 extern "C" {
-
    /**
-    * @defgroup systemapi System API
-    * @ingroup contractdev
+    * @addtogroup system
     * @brief Defines API for interacting with system level intrinsics
-    *
-    */
-
-   /**
-    * @defgroup systemcapi System C API
-    * @ingroup systemapi
-    * @brief Defines API for interacting with system level intrinsics
-    *
     * @{
     */
 
@@ -86,7 +76,7 @@ extern "C" {
    inline uint32_t  now() {
       return (uint32_t)( current_time() / 1000000 );
    }
-   ///@ } systemcapi
 
+   ///@}
 
 }

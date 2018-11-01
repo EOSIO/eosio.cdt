@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="singleton_8hpp" kind="file" language="C++">
+    <compoundname>singleton.hpp</compoundname>
+    <includes refid="multi__index_8hpp" local="no">eosiolib/multi_index.hpp</includes>
+    <includes local="no">eosiolib/system.h</includes>
+    <incdepgraph>
+      <node id="505">
+        <label>functional</label>
+      </node>
+      <node id="509">
+        <label>limits</label>
+      </node>
+      <node id="508">
+        <label>iterator</label>
+      </node>
+      <node id="513">
+        <label>eosiolib/name.hpp</label>
+        <link refid="name_8hpp"/>
+        <childnode refid="514" relation="include">
+        </childnode>
+        <childnode refid="515" relation="include">
+        </childnode>
+        <childnode refid="516" relation="include">
+        </childnode>
+        <childnode refid="517" relation="include">
+        </childnode>
+      </node>
+      <node id="536">
+        <label>stdint.h</label>
+      </node>
+      <node id="524">
+        <label>eosiolib/ignore.hpp</label>
+        <link refid="ignore_8hpp"/>
+      </node>
+      <node id="535">
+        <label>eosiolib/types.h</label>
+        <link refid="types_8h"/>
+        <childnode refid="536" relation="include">
+        </childnode>
+        <childnode refid="537" relation="include">
+        </childnode>
+      </node>
+      <node id="516">
+        <label>string</label>
+      </node>
+      <node id="529">
+        <label>map</label>
+      </node>
+      <node id="504">
+        <label>boost/hana.hpp</label>
+      </node>
+      <node id="519">
+        <label>eosiolib/memory.h</label>
+      </node>
+      <node id="532">
+        <label>boost/fusion/include/for_each.hpp</label>
+      </node>
+      <node id="520">
+        <label>eosiolib/symbol.hpp</label>
+        <link refid="symbol_8hpp"/>
+        <childnode refid="514" relation="include">
+        </childnode>
+        <childnode refid="521" relation="include">
+        </childnode>
+        <childnode refid="513" relation="include">
+        </childnode>
+        <childnode refid="515" relation="include">
+        </childnode>
+        <childnode refid="503" relation="include">
+        </childnode>
+        <childnode refid="509" relation="include">
+        </childnode>
+        <childnode refid="517" relation="include">
+        </childnode>
+      </node>
+      <node id="515">
+        <label>eosiolib/serialize.hpp</label>
+      </node>
+      <node id="517">
+        <label>string_view</label>
+      </node>
+      <node id="537">
+        <label>wchar.h</label>
+      </node>
+      <node id="501">
+        <label>eosiolib/multi_index.hpp</label>
+        <link refid="multi__index_8hpp"/>
+        <childnode refid="502" relation="include">
+        </childnode>
+        <childnode refid="503" relation="include">
+        </childnode>
+        <childnode refid="504" relation="include">
+        </childnode>
+        <childnode refid="505" relation="include">
+        </childnode>
+        <childnode refid="506" relation="include">
+        </childnode>
+        <childnode refid="507" relation="include">
+        </childnode>
+        <childnode refid="508" relation="include">
+        </childnode>
+        <childnode refid="509" relation="include">
+        </childnode>
+        <childnode refid="510" relation="include">
+        </childnode>
+        <childnode refid="511" relation="include">
+        </childnode>
+        <childnode refid="512" relation="include">
+        </childnode>
+        <childnode refid="513" relation="include">
+        </childnode>
+        <childnode refid="515" relation="include">
+        </childnode>
+        <childnode refid="518" relation="include">
+        </childnode>
+        <childnode refid="534" relation="include">
+        </childnode>
+        <childnode refid="522" relation="include">
+        </childnode>
+      </node>
+      <node id="525">
+        <label>boost/container/flat_set.hpp</label>
+      </node>
+      <node id="521">
+        <label>eosiolib/print.h</label>
+      </node>
+      <node id="503">
+        <label>tuple</label>
+      </node>
+      <node id="530">
+        <label>optional</label>
+      </node>
+      <node id="502">
+        <label>vector</label>
+      </node>
+      <node id="506">
+        <label>utility</label>
+      </node>
+      <node id="523">
+        <label>array</label>
+      </node>
+      <node id="534">
+        <label>eosiolib/db.h</label>
+        <link refid="db_8h"/>
+        <childnode refid="535" relation="include">
+        </childnode>
+      </node>
+      <node id="518">
+        <label>eosiolib/datastream.hpp</label>
+        <link refid="datastream_8hpp"/>
+        <childnode refid="514" relation="include">
+        </childnode>
+        <childnode refid="519" relation="include">
+        </childnode>
+        <childnode refid="520" relation="include">
+        </childnode>
+        <childnode refid="522" relation="include">
+        </childnode>
+        <childnode refid="524" relation="include">
+        </childnode>
+        <childnode refid="525" relation="include">
+        </childnode>
+        <childnode refid="526" relation="include">
+        </childnode>
+        <childnode refid="527" relation="include">
+        </childnode>
+        <childnode refid="502" relation="include">
+        </childnode>
+        <childnode refid="523" relation="include">
+        </childnode>
+        <childnode refid="528" relation="include">
+        </childnode>
+        <childnode refid="529" relation="include">
+        </childnode>
+        <childnode refid="516" relation="include">
+        </childnode>
+        <childnode refid="530" relation="include">
+        </childnode>
+        <childnode refid="531" relation="include">
+        </childnode>
+        <childnode refid="532" relation="include">
+        </childnode>
+        <childnode refid="533" relation="include">
+        </childnode>
+      </node>
+      <node id="527">
+        <label>eosiolib/varint.hpp</label>
+        <link refid="varint_8hpp"/>
+      </node>
+      <node id="500">
+        <label>libraries/eosiolib/singleton.hpp</label>
+        <link refid="singleton_8hpp"/>
+        <childnode refid="501" relation="include">
+        </childnode>
+        <childnode refid="514" relation="include">
+        </childnode>
+      </node>
+      <node id="533">
+        <label>boost/pfr.hpp</label>
+      </node>
+      <node id="526">
+        <label>boost/container/flat_map.hpp</label>
+      </node>
+      <node id="514">
+        <label>eosiolib/system.h</label>
+      </node>
+      <node id="512">
+        <label>eosiolib/action.h</label>
+      </node>
+      <node id="507">
+        <label>type_traits</label>
+      </node>
+      <node id="528">
+        <label>set</label>
+      </node>
+      <node id="531">
+        <label>boost/fusion/algorithm/iteration/for_each.hpp</label>
+      </node>
+      <node id="510">
+        <label>algorithm</label>
+      </node>
+      <node id="522">
+        <label>eosiolib/fixed_key.hpp</label>
+        <link refid="fixed__key_8hpp"/>
+        <childnode refid="523" relation="include">
+        </childnode>
+        <childnode refid="510" relation="include">
+        </childnode>
+        <childnode refid="507" relation="include">
+        </childnode>
+        <childnode refid="514" relation="include">
+        </childnode>
+      </node>
+      <node id="511">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classeosio_1_1singleton" prot="public">eosio::singleton</innerclass>
+    <innerclass refid="structeosio_1_1singleton_1_1row" prot="private">eosio::singleton::row</innerclass>
+    <innernamespace refid="namespaceeosio">eosio</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="libraries/eosiolib/singleton.hpp"/>
+  </compounddef>
+</doxygen>

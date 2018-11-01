@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="types_8h" kind="file" language="C++">
+    <compoundname>types.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">wchar.h</includes>
+    <includedby refid="chain_8h" local="no">libraries/eosiolib/chain.h</includedby>
+    <includedby refid="crypto_8h" local="no">libraries/eosiolib/crypto.h</includedby>
+    <includedby refid="db_8h" local="no">libraries/eosiolib/db.h</includedby>
+    <includedby refid="fixedpoint_8hpp" local="no">libraries/eosiolib/fixedpoint.hpp</includedby>
+    <includedby refid="transaction_8h" local="no">libraries/eosiolib/transaction.h</includedby>
+    <incdepgraph>
+      <node id="683">
+        <label>stdint.h</label>
+      </node>
+      <node id="682">
+        <label>libraries/eosiolib/types.h</label>
+        <link refid="types_8h"/>
+        <childnode refid="683" relation="include">
+        </childnode>
+        <childnode refid="684" relation="include">
+        </childnode>
+      </node>
+      <node id="684">
+        <label>wchar.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="693">
+        <label>libraries/eosiolib/permission.hpp</label>
+        <link refid="permission_8hpp"/>
+      </node>
+      <node id="695">
+        <label>libraries/eosiolib/fixedpoint.hpp</label>
+        <link refid="fixedpoint_8hpp"/>
+      </node>
+      <node id="687">
+        <label>libraries/eosiolib/crypto.h</label>
+        <link refid="crypto_8h"/>
+      </node>
+      <node id="685">
+        <label>libraries/eosiolib/types.h</label>
+        <link refid="types_8h"/>
+        <childnode refid="686" relation="include">
+        </childnode>
+        <childnode refid="687" relation="include">
+        </childnode>
+        <childnode refid="688" relation="include">
+        </childnode>
+        <childnode refid="695" relation="include">
+        </childnode>
+        <childnode refid="696" relation="include">
+        </childnode>
+      </node>
+      <node id="689">
+        <label>libraries/eosiolib/multi_index.hpp</label>
+        <link refid="multi__index_8hpp"/>
+        <childnode refid="690" relation="include">
+        </childnode>
+        <childnode refid="694" relation="include">
+        </childnode>
+      </node>
+      <node id="692">
+        <label>libraries/eosiolib/transaction.hpp</label>
+        <link refid="transaction_8hpp"/>
+        <childnode refid="693" relation="include">
+        </childnode>
+      </node>
+      <node id="688">
+        <label>libraries/eosiolib/db.h</label>
+        <link refid="db_8h"/>
+        <childnode refid="689" relation="include">
+        </childnode>
+      </node>
+      <node id="694">
+        <label>libraries/eosiolib/singleton.hpp</label>
+        <link refid="singleton_8hpp"/>
+      </node>
+      <node id="691">
+        <label>libraries/eosiolib/time.hpp</label>
+        <link refid="time_8hpp"/>
+        <childnode refid="692" relation="include">
+        </childnode>
+      </node>
+      <node id="696">
+        <label>libraries/eosiolib/transaction.h</label>
+        <link refid="transaction_8h"/>
+        <childnode refid="692" relation="include">
+        </childnode>
+      </node>
+      <node id="690">
+        <label>libraries/eosiolib/eosio.hpp</label>
+        <link refid="eosio_8hpp"/>
+        <childnode refid="691" relation="include">
+        </childnode>
+      </node>
+      <node id="686">
+        <label>libraries/eosiolib/chain.h</label>
+        <link refid="chain_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structcapi__public__key" prot="public">capi_public_key</innerclass>
+    <innerclass refid="structcapi__signature" prot="public">capi_signature</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="types_8h_a9763e79ee25e85ca02c0d05e3aee7135_1a9763e79ee25e85ca02c0d05e3aee7135" prot="public" static="no">
+        <name>ALIGNED</name>
+        <param><defname>X</defname></param>
+        <initializer>__attribute__ ((aligned (16))) X</initializer>
+        <briefdescription>
+<para>Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned. </para>        </briefdescription>
+        <detaileddescription>
+<para>Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/types.h" line="25" column="9" bodyfile="libraries/eosiolib/types.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="types_8h_ad9871b90d15df8db5c660c78569f029f_1ad9871b90d15df8db5c660c78569f029f" prot="public" static="no">
+        <type>uint64_t</type>
+        <definition>typedef uint64_t capi_name</definition>
+        <argsstring></argsstring>
+        <name>capi_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/types.h" line="27" column="1" bodyfile="libraries/eosiolib/types.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="types_8h_a3918acf677acc581e7b3827b409a94cf_1a3918acf677acc581e7b3827b409a94cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct</type>
+        <definition>struct ALIGNED</definition>
+        <argsstring>(capi_checksum256)</argsstring>
+        <name>ALIGNED</name>
+        <param>
+          <type>capi_checksum256</type>
+        </param>
+        <briefdescription>
+<para>256-bit hash </para>        </briefdescription>
+        <detaileddescription>
+<para>256-bit hash </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/types.h" line="27" column="1" bodyfile="libraries/eosiolib/types.h" bodystart="49" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="types_8h_ae367011e784adcda4a7d890b0f4e477d_1ae367011e784adcda4a7d890b0f4e477d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct</type>
+        <definition>struct ALIGNED</definition>
+        <argsstring>(capi_checksum160)</argsstring>
+        <name>ALIGNED</name>
+        <param>
+          <type>capi_checksum160</type>
+        </param>
+        <briefdescription>
+<para>160-bit hash </para>        </briefdescription>
+        <detaileddescription>
+<para>160-bit hash </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/types.h" line="27" column="1" bodyfile="libraries/eosiolib/types.h" bodystart="57" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="types_8h_acc94b2dd94dabb8a53ac7f7bb3e3ca54_1acc94b2dd94dabb8a53ac7f7bb3e3ca54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct</type>
+        <definition>struct ALIGNED</definition>
+        <argsstring>(capi_checksum512)</argsstring>
+        <name>ALIGNED</name>
+        <param>
+          <type>capi_checksum512</type>
+        </param>
+        <briefdescription>
+<para>512-bit hash </para>        </briefdescription>
+        <detaileddescription>
+<para>512-bit hash </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/types.h" line="27" column="1" bodyfile="libraries/eosiolib/types.h" bodystart="65" bodyend="67"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="copyright"><para>defined in eos/LICENSE.txt </para></simplesect>
+</para>    </detaileddescription>
+    <location file="libraries/eosiolib/types.h"/>
+  </compounddef>
+</doxygen>

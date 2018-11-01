@@ -7,22 +7,14 @@
 #include <limits>
 
 namespace eosio {
-
   /**
-   *  @defgroup assetapi Asset API
-   *  @brief Defines API for managing assets
-   *  @ingroup contractdev
-   */
-
-  /**
-   *  @defgroup assetcppapi Asset CPP API
+   *  @addtogroup asset Asset CPP API
    *  @brief Defines %CPP API for managing assets
-   *  @ingroup assetapi
    *  @{
    */
 
    /**
-    * \struct Stores information for owner of asset
+    * /struct Stores information for owner of asset
     *
     * @brief Stores information for owner of asset
     */
@@ -517,4 +509,4 @@ namespace eosio {
    };
 
 /// @} asset type
-} /// namespace eosio
+}

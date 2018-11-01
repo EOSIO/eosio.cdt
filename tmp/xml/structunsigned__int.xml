@@ -1,0 +1,726 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.14">
+  <compounddef id="structunsigned__int" kind="struct" language="C++" prot="public">
+    <compoundname>unsigned_int</compoundname>
+    <includes refid="varint_8hpp" local="no">varint.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structunsigned__int_a247200b83e3cb2019efb8569a7e3937a_1a247200b83e3cb2019efb8569a7e3937a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t unsigned_int::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Contained value. </para>        </briefdescription>
+        <detaileddescription>
+<para>Contained value </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="66" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structunsigned__int_aaaeee21167478df0b454f001d0567cd7_1aaaeee21167478df0b454f001d0567cd7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>unsigned_int::unsigned_int</definition>
+        <argsstring>(uint32_t v=0)</argsstring>
+        <name>unsigned_int</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>v</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct a new unsigned int object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new unsigned int object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="27" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="27" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="structunsigned__int_adda0360df1de313f0df5c5570aebdfdd_1adda0360df1de313f0df5c5570aebdfdd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>unsigned_int::unsigned_int</definition>
+        <argsstring>(T v)</argsstring>
+        <name>unsigned_int</name>
+        <param>
+          <type>T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Construct a new unsigned int object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Construct a new unsigned int object from a type that is convertible to uint32_t</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of the source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Source </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="pre"><para>T must be convertible to uint32_t </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="38" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="structunsigned__int_a5627f0b22068d1761f2e416e7ae64a3c_1a5627f0b22068d1761f2e416e7ae64a3c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>unsigned_int::operator T</definition>
+        <argsstring>() const</argsstring>
+        <name>operator T</name>
+        <briefdescription>
+<para>Conversion Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Convert <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> as T <parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Target type of conversion </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>T - Converted target </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="50" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="structunsigned__int_a7d9250cd41ed15bd3b04a1f003f41154_1a7d9250cd41ed15bd3b04a1f003f41154" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+        <definition>unsigned_int&amp; unsigned_int::operator=</definition>
+        <argsstring>(uint32_t v)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Assign 32-bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Soruce </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref>&amp; - Reference to this object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="59" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structunsigned__int_a08687d9bd50d9dec64808a19580f2a47_1a08687d9bd50d9dec64808a19580f2a47" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const unsigned_int &amp;i, const uint32_t &amp;v)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Equality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check equality between a <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object and 32-bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="77" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="77" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a8c6aae02c0e6500d98d56544b4c49da0_1a8c6aae02c0e6500d98d56544b4c49da0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const uint32_t &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Equality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check equality between 32-bit unsigned integer and a <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="88" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_add87b4023be256deec5ac1afe4faf17c_1add87b4023be256deec5ac1afe4faf17c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const unsigned_int &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Equality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check equality between two <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> objects</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- First <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Second <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if equal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="99" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a53410718318d48dd4e6279103b351663_1a53410718318d48dd4e6279103b351663" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const unsigned_int &amp;i, const uint32_t &amp;v)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Inequality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check inequality between a <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object and 32-bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if inequal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="110" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a1f618b0b2975a066c658435fb7eca0f9_1a1f618b0b2975a066c658435fb7eca0f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const uint32_t &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Equality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check inequality between 32-bit unsigned integer and a <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if unequal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="121" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="121" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a897385977d9c06e539a1c19dbdffb5ec_1a897385977d9c06e539a1c19dbdffb5ec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const unsigned_int &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Inequality Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check inequality between two <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> objects</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- First <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Second <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if inequal </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="132" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a1ff316df3fa8ffdc0886d48e4d50e7f2_1a1ff316df3fa8ffdc0886d48e4d50e7f2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const unsigned_int &amp;i, const uint32_t &amp;v)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Less than Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object is less than the given 32-bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i less than v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="143" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="143" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a9672c0a7766d6491003103052ddc692b_1a9672c0a7766d6491003103052ddc692b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const uint32_t &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Less than Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the given 32-bit unsigned integer is less than the given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i less than v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="154" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a5c44ed2d978a1bdaf65166f98592192c_1a5c44ed2d978a1bdaf65166f98592192c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const unsigned_int &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Less than Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the first given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> is less than the second given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- First <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Second <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i less than v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="165" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="165" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_abf1274ffb924723bc12f17544159c799_1abf1274ffb924723bc12f17544159c799" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;=</definition>
+        <argsstring>(const unsigned_int &amp;i, const uint32_t &amp;v)</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Greater or Equal to Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object is greater or equal to the given 32-bit unsigned integer</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i is greater or equal to v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="176" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_ad6f6d75188bb59e24af40ff8aa4de947_1ad6f6d75188bb59e24af40ff8aa4de947" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;=</definition>
+        <argsstring>(const uint32_t &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const uint32_t &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Greater or Equal to Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the given 32-bit unsigned integer is greater or equal to the given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- 32-bit unsigned integer to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i is greater or equal to v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="187" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="187" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_aedda267438195592daa499b41727101a_1aedda267438195592daa499b41727101a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend bool</type>
+        <definition>bool operator&gt;=</definition>
+        <argsstring>(const unsigned_int &amp;i, const unsigned_int &amp;v)</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Greater or Equal to Operator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Check if the first given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> is greater or equal to the second given <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- First <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Second <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object to compare </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true - if i is greater or equal to v </para></simplesect>
+<simplesect kind="return"><para>false - otherwise </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="198" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="198" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a3df4fdc722c22ec765f68db19116266e_1a3df4fdc722c22ec765f68db19116266e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataStream</type>
+          </param>
+        </templateparamlist>
+        <type>friend DataStream &amp;</type>
+        <definition>DataStream&amp; operator&lt;&lt;</definition>
+        <argsstring>(DataStream &amp;ds, const unsigned_int &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>DataStream &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Serialize an <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object with as few bytes as possible. </para>        </briefdescription>
+        <detaileddescription>
+<para>Serialize an <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object with as few bytes as possible</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The stream to write </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The value to serialize </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>DataStream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of datastream </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>DataStream&amp; - Reference to the datastream </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="210" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="210" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="friend" id="structunsigned__int_a63b42b42b55b512f25e5fc9ec6e20787_1a63b42b42b55b512f25e5fc9ec6e20787" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataStream</type>
+          </param>
+        </templateparamlist>
+        <type>friend DataStream &amp;</type>
+        <definition>DataStream&amp; operator&gt;&gt;</definition>
+        <argsstring>(DataStream &amp;ds, unsigned_int &amp;vi)</argsstring>
+        <name>operator&gt;&gt;</name>
+        <param>
+          <type>DataStream &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type><ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> &amp;</type>
+          <declname>vi</declname>
+        </param>
+        <briefdescription>
+<para>Deserialize an <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Deserialize an <ref refid="structunsigned__int" kindref="compound">unsigned_int</ref> object</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The stream to read </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The destination for deserialized value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>DataStream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Type of datastream </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>DataStream&amp; - Reference to the datastream </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="libraries/eosiolib/varint.hpp" line="231" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="231" bodyend="240"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Variable Length Unsigned Integer. </para>    </briefdescription>
+    <detaileddescription>
+<para>Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int. It serialuzes a 32-bit unsigned integer in as few bytes as possible <computeroutput>varuint32</computeroutput> is unsigned and uses <ulink url="https://en.wikipedia.org/wiki/Variable-length_quantity">VLQ or Base-128 encoding</ulink> </para>    </detaileddescription>
+    <location file="libraries/eosiolib/varint.hpp" line="20" column="1" bodyfile="libraries/eosiolib/varint.hpp" bodystart="20" bodyend="241"/>
+    <listofallmembers>
+      <member refid="structunsigned__int_a5627f0b22068d1761f2e416e7ae64a3c_1a5627f0b22068d1761f2e416e7ae64a3c" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator T</name></member>
+      <member refid="structunsigned__int_a53410718318d48dd4e6279103b351663_1a53410718318d48dd4e6279103b351663" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator!=</name></member>
+      <member refid="structunsigned__int_a1f618b0b2975a066c658435fb7eca0f9_1a1f618b0b2975a066c658435fb7eca0f9" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator!=</name></member>
+      <member refid="structunsigned__int_a897385977d9c06e539a1c19dbdffb5ec_1a897385977d9c06e539a1c19dbdffb5ec" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator!=</name></member>
+      <member refid="structunsigned__int_a1ff316df3fa8ffdc0886d48e4d50e7f2_1a1ff316df3fa8ffdc0886d48e4d50e7f2" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&lt;</name></member>
+      <member refid="structunsigned__int_a9672c0a7766d6491003103052ddc692b_1a9672c0a7766d6491003103052ddc692b" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&lt;</name></member>
+      <member refid="structunsigned__int_a5c44ed2d978a1bdaf65166f98592192c_1a5c44ed2d978a1bdaf65166f98592192c" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&lt;</name></member>
+      <member refid="structunsigned__int_a3df4fdc722c22ec765f68db19116266e_1a3df4fdc722c22ec765f68db19116266e" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&lt;&lt;</name></member>
+      <member refid="structunsigned__int_a7d9250cd41ed15bd3b04a1f003f41154_1a7d9250cd41ed15bd3b04a1f003f41154" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator=</name></member>
+      <member refid="structunsigned__int_a08687d9bd50d9dec64808a19580f2a47_1a08687d9bd50d9dec64808a19580f2a47" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator==</name></member>
+      <member refid="structunsigned__int_a8c6aae02c0e6500d98d56544b4c49da0_1a8c6aae02c0e6500d98d56544b4c49da0" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator==</name></member>
+      <member refid="structunsigned__int_add87b4023be256deec5ac1afe4faf17c_1add87b4023be256deec5ac1afe4faf17c" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator==</name></member>
+      <member refid="structunsigned__int_abf1274ffb924723bc12f17544159c799_1abf1274ffb924723bc12f17544159c799" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&gt;=</name></member>
+      <member refid="structunsigned__int_ad6f6d75188bb59e24af40ff8aa4de947_1ad6f6d75188bb59e24af40ff8aa4de947" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&gt;=</name></member>
+      <member refid="structunsigned__int_aedda267438195592daa499b41727101a_1aedda267438195592daa499b41727101a" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&gt;=</name></member>
+      <member refid="structunsigned__int_a63b42b42b55b512f25e5fc9ec6e20787_1a63b42b42b55b512f25e5fc9ec6e20787" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>operator&gt;&gt;</name></member>
+      <member refid="structunsigned__int_aaaeee21167478df0b454f001d0567cd7_1aaaeee21167478df0b454f001d0567cd7" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>unsigned_int</name></member>
+      <member refid="structunsigned__int_adda0360df1de313f0df5c5570aebdfdd_1adda0360df1de313f0df5c5570aebdfdd" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>unsigned_int</name></member>
+      <member refid="structunsigned__int_a247200b83e3cb2019efb8569a7e3937a_1a247200b83e3cb2019efb8569a7e3937a" prot="public" virt="non-virtual"><scope>unsigned_int</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
