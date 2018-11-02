@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [API](/modules.md)
+* [API Reference](/modules.md)
   * [Compiler builtins](/group__compiler__builtins.md)
   * [Action](/group__action.md)
   * [Asset](/group__asset.md)

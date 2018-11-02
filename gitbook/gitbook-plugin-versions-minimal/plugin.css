@@ -1,0 +1,16 @@
+.versions-minimal {
+    display: table;
+    width: 100%;
+    height: 50px;
+    padding: 0px 12px;
+}
+
+.versions-minimal > div {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.versions-minimal select {
+    width: 100%;
+}
