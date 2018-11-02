@@ -11,4 +11,4 @@
 	url = https://github.com/eosio/llvm
 [submodule ".docs"]
 	path = .docs
-	url = /Users/sandwich/Develop/util-docs-cpp
+	url = https://github.com/EOSIO/util-docs-cpp.git
