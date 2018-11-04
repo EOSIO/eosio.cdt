@@ -8,7 +8,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/eosio-cpp.cpp.in ${CMAKE_BINARY_DIR}/
 add_executable(eosio-cc ${CMAKE_BINARY_DIR}/eosio-cc.cpp)
 target_compile_options(eosio-cc PRIVATE -fexceptions -fno-rtti)
 target_include_directories(eosio-cc PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
-
+add_dependencies(eosio-cc EosioClang)
 target_link_libraries(eosio-cc
   clangTooling
   clangBasic
@@ -45,7 +45,7 @@ target_link_libraries(eosio-cc
 add_executable(eosio-cpp ${CMAKE_BINARY_DIR}/eosio-cpp.cpp)
 target_compile_options(eosio-cpp PRIVATE -fexceptions -fno-rtti)
 target_include_directories(eosio-cpp PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
-
+add_dependencies(eosio-cpp EosioClang)
 target_link_libraries(eosio-cpp
   clangTooling
   clangBasic
@@ -78,5 +78,12 @@ target_link_libraries(eosio-cpp
   LLVMSupport
   LLVMDemangle
 )
+
+add_custom_command( TARGET eosio-cc POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+add_custom_command( TARGET eosio-cc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio-cc> ${CMAKE_BINARY_DIR}/bin/ )
+
+add_custom_command( TARGET eosio-cpp POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+add_custom_command( TARGET eosio-cpp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio-cpp> ${CMAKE_BINARY_DIR}/bin/ )
+
 install(FILES ${CMAKE_BINARY_DIR}/bin/eosio-cpp DESTINATION ${CMAKE_INSTALL_BINDIR} PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 install(FILES ${CMAKE_BINARY_DIR}/bin/eosio-cc DESTINATION ${CMAKE_INSTALL_BINDIR} PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

@@ -72,7 +72,13 @@ static cl::list<std::string> input_filename_opt(
 /// End of ld options
 
 #ifndef ONLY_LD
-/// begin c/c++ options
+/// begin c/c++ options/
+static cl::list<std::string> resources(
+     "R",
+     cl::Prefix,
+     cl::desc("Add a resource path for inclusion"),
+     cl::ZeroOrMore,
+     cl::cat(EosioCompilerToolCategory));
 static cl::opt<bool> abigen_opt(
     "abigen",
     cl::desc("Generate ABI"),
@@ -275,6 +281,7 @@ struct Options {
    std::vector<std::string> comp_options;
    std::vector<std::string> ld_options;
    std::vector<std::string> abigen_options;
+   std::vector<std::string> abigen_resources;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -319,6 +326,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 static Options CreateOptions(bool add_defaults=true) {
    std::string output_fn;
    std::stringstream abigen_inputs;
+   std::vector<std::string> agresources;
    std::vector<std::string> copts;
    std::vector<std::string> ldopts;
    std::vector<std::string> agopts;
@@ -584,9 +592,12 @@ static Options CreateOptions(bool add_defaults=true) {
    else
       abigen_contract = output_fn.substr(0, output_fn.rfind(".wasm"));
 
+   for ( auto resource : resources ) {
+      agresources.emplace_back(std::string("-R")+resource);
+   }
+
 #else
    ldopts.emplace_back("-lc++ -lc -leosio");
 #endif
-      
-   return {output_fn, abigen_inputs.str(), link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts};
+   return {output_fn, abigen_inputs.str(), link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources};
 }
