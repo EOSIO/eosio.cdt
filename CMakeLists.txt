@@ -17,6 +17,7 @@ include(GNUInstallDirs)
 include(ClangExternalProject.txt)
 
 add_subdirectory(external)
+add_subdirectory(tools)
 
 set(WASM_SDK_BUILD true)
 

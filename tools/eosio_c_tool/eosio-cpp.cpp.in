@@ -1,0 +1,52 @@
+// Declares clang::SyntaxOnlyAction.
+#include "clang/Frontend/FrontendActions.h"
+#include "clang/Tooling/CommonOptionsParser.h"
+#include "clang/Tooling/Tooling.h"
+#include <iostream>
+#include <sstream>
+
+// Declares llvm::cl::extrahelp.
+#include "llvm/Support/CommandLine.h"
+#include "llvm/Support/FileSystem.h"
+
+using namespace clang::tooling;
+using namespace llvm;
+
+#define CPP_COMP 1
+#define COMPILER_NAME "eosio-cpp"
+#include <compiler_options.hpp>
+
+int main(int argc, const char **argv) {
+
+  cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+        os << COMPILER_NAME << " version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+  });
+  cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
+  Options opts = CreateOptions();
+   if (!eosio::cdt::environment::exec_subprogram("clang-7", opts.comp_options))
+     return -1;
+
+  if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
+     return -1;
+  }
+  // then link
+  if (opts.link) {
+     if (!eosio::cdt::environment::exec_subprogram("eosio-ld", opts.ld_options))
+        return -1;
+
+     if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
+        return -1;
+     }
+  }
+  if (opts.abigen) {
+      opts.abigen_options.emplace(opts.abigen_options.begin(), "-- -Wno-unused-command-line-argument");
+      opts.abigen_options.emplace(opts.abigen_options.begin(), "-contract="+opts.abigen_contract);
+      std::string abigen_output = opts.abigen_output.empty() ? opts.output_fn.substr(0, opts.output_fn.rfind(".wasm"))+".abi" : opts.abigen_output;
+      opts.abigen_options.emplace(opts.abigen_options.begin(), "-output="+abigen_output);
+      opts.abigen_options.insert(opts.abigen_options.begin(), opts.abigen_inputs);
+      if (!eosio::cdt::environment::exec_subprogram("eosio-abigen", opts.abigen_options))
+         return -1;
+  }
+  
+  return 0;
+}
