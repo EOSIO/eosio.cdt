@@ -8,39 +8,39 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**fixed\_point64**](structeosio_1_1fixed__point64.md)
 
 
-64 bits representation of Fixed Point class. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|
 |-----|-----|
-|int64\_t|[**val**](structeosio_1_1fixed__point64_adf1b4e4d25279c532d9ac3ff56d9af21.md#1adf1b4e4d25279c532d9ac3ff56d9af21)<br>Value of the fixed point represented as int64\_t. |
+|int64\_t|[**val**](structeosio_1_1fixed__point64_adf1b4e4d25279c532d9ac3ff56d9af21.md#1adf1b4e4d25279c532d9ac3ff56d9af21)|
 
 
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
-||[**fixed\_point64**](structeosio_1_1fixed__point64_ab9f53ce12bd0a23708ec0b67ec7848cb.md#1ab9f53ce12bd0a23708ec0b67ec7848cb) (int64\_t v = 0) <br>Construct a new fixed point64 object. |
-||[**fixed\_point64**](structeosio_1_1fixed__point64_a0fcb07196ce3b1ee19897d2edd1f362b.md#1a0fcb07196ce3b1ee19897d2edd1f362b) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) <br>Construct a new fixed point64 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
-||[**fixed\_point64**](structeosio_1_1fixed__point64_a02a221576feae394dc006a6f65ba66c2.md#1a02a221576feae394dc006a6f65ba66c2) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< QR > & r) <br>Construct a new fixed point64 object from another **[fixed\_point32](structeosio_1_1fixed__point32.md)**. |
-|int64\_t|[**int\_part**](structeosio_1_1fixed__point64_a713dad1088c1c4a95ed446e055f0a523.md#1a713dad1088c1c4a95ed446e055f0a523) () const <br>To get the integer part of the fixed number. |
-|uint64\_t|[**frac\_part**](structeosio_1_1fixed__point64_a616163b00e9c4ff8e237139bb96ad6b1.md#1a616163b00e9c4ff8e237139bb96ad6b1) () const <br>To get the decimal part of the fixed number. |
+||[**fixed\_point64**](structeosio_1_1fixed__point64_ab9f53ce12bd0a23708ec0b67ec7848cb.md#1ab9f53ce12bd0a23708ec0b67ec7848cb) (int64\_t v = 0) |
+||[**fixed\_point64**](structeosio_1_1fixed__point64_a0fcb07196ce3b1ee19897d2edd1f362b.md#1a0fcb07196ce3b1ee19897d2edd1f362b) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) |
+||[**fixed\_point64**](structeosio_1_1fixed__point64_a02a221576feae394dc006a6f65ba66c2.md#1a02a221576feae394dc006a6f65ba66c2) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< QR > & r) |
+|int64\_t|[**int\_part**](structeosio_1_1fixed__point64_a713dad1088c1c4a95ed446e055f0a523.md#1a713dad1088c1c4a95ed446e055f0a523) () const |
+|uint64\_t|[**frac\_part**](structeosio_1_1fixed__point64_a616163b00e9c4ff8e237139bb96ad6b1.md#1a616163b00e9c4ff8e237139bb96ad6b1) () const |
 |void|[**print**](structeosio_1_1fixed__point64_a85bae51f6eb5071be1e0388e8f0c44af.md#1a85bae51f6eb5071be1e0388e8f0c44af) () const <br>Prints the fixed point value. |
-|**[fixed\_point64](structeosio_1_1fixed__point64.md)** &|[**operator=**](structeosio_1_1fixed__point64_a36ebd8f73c42839443039dbef6462ff4.md#1a36ebd8f73c42839443039dbef6462ff4) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< QR > & r) <br>Assignment operator. |
-|**[fixed\_point64](structeosio_1_1fixed__point64.md)** &|[**operator=**](structeosio_1_1fixed__point64_a4f8cc600e51217711153481052e0002c.md#1a4f8cc600e51217711153481052e0002c) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) <br>Assignment operator. |
-|**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator+**](structeosio_1_1fixed__point64_a91f5e8b0aad593b8f92d8ed9b8f287d0.md#1a91f5e8b0aad593b8f92d8ed9b8f287d0) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const <br>Addition operator. |
-|**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator-**](structeosio_1_1fixed__point64_a9b0a83b256f3a7c2dac7a2ba838d8397.md#1a9b0a83b256f3a7c2dac7a2ba838d8397) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const <br>Subtraction operator. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q+QR >|[**operator\***](structeosio_1_1fixed__point64_af88630db8a6e5f2f026abe4b6fc953dc.md#1af88630db8a6e5f2f026abe4b6fc953dc) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const <br>Multiplication operator. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q+64-QR >|[**operator/**](structeosio_1_1fixed__point64_a810e2397dd4645ec575430ffd54b5d3f.md#1a810e2397dd4645ec575430ffd54b5d3f) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const <br>Division operator. |
-|bool|[**operator==**](structeosio_1_1fixed__point64_ad2fb0230d48ccc90795e278e1ef12df6.md#1ad2fb0230d48ccc90795e278e1ef12df6) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) <br>Equality operator. |
-|bool|[**operator>**](structeosio_1_1fixed__point64_a63ee72acb0a3307d54283dba95dc623b.md#1a63ee72acb0a3307d54283dba95dc623b) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) <br>Greater than operator. |
-|bool|[**operator<**](structeosio_1_1fixed__point64_a2c28bc89073dfa8c6f81ee2594a3272c.md#1a2c28bc89073dfa8c6f81ee2594a3272c) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) <br>Less than operator. |
+|**[fixed\_point64](structeosio_1_1fixed__point64.md)** &|[**operator=**](structeosio_1_1fixed__point64_a36ebd8f73c42839443039dbef6462ff4.md#1a36ebd8f73c42839443039dbef6462ff4) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< QR > & r) |
+|**[fixed\_point64](structeosio_1_1fixed__point64.md)** &|[**operator=**](structeosio_1_1fixed__point64_a4f8cc600e51217711153481052e0002c.md#1a4f8cc600e51217711153481052e0002c) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) |
+|**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator+**](structeosio_1_1fixed__point64_a91f5e8b0aad593b8f92d8ed9b8f287d0.md#1a91f5e8b0aad593b8f92d8ed9b8f287d0) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const |
+|**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator-**](structeosio_1_1fixed__point64_a9b0a83b256f3a7c2dac7a2ba838d8397.md#1a9b0a83b256f3a7c2dac7a2ba838d8397) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q+QR >|[**operator\***](structeosio_1_1fixed__point64_af88630db8a6e5f2f026abe4b6fc953dc.md#1af88630db8a6e5f2f026abe4b6fc953dc) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const <br>Multiplication operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**. The result goes to **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q+64-QR >|[**operator/**](structeosio_1_1fixed__point64_a810e2397dd4645ec575430ffd54b5d3f.md#1a810e2397dd4645ec575430ffd54b5d3f) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) const |
+|bool|[**operator==**](structeosio_1_1fixed__point64_ad2fb0230d48ccc90795e278e1ef12df6.md#1ad2fb0230d48ccc90795e278e1ef12df6) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) |
+|bool|[**operator>**](structeosio_1_1fixed__point64_a63ee72acb0a3307d54283dba95dc623b.md#1a63ee72acb0a3307d54283dba95dc623b) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) |
+|bool|[**operator<**](structeosio_1_1fixed__point64_a2c28bc89073dfa8c6f81ee2594a3272c.md#1a2c28bc89073dfa8c6f81ee2594a3272c) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & r) |
 |**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator+**](structeosio_1_1fixed__point64_a949ad7f0149535736353c9283797468b.md#1a949ad7f0149535736353c9283797468b) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & rhs) const <br>Addition between two **[fixed\_point64](structeosio_1_1fixed__point64.md)** variables and the result goes to **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
 |**[fixed\_point64](structeosio_1_1fixed__point64.md)**<(Q >QR)?Q:QR >|[**operator-**](structeosio_1_1fixed__point64_a49301a70e323c7b6fa7e8b4d4cd1cce2.md#1a49301a70e323c7b6fa7e8b4d4cd1cce2) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< QR > & rhs) const <br>Subtraction between two **[fixed\_point64](structeosio_1_1fixed__point64.md)** variables and the result goes to **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
 
 
 ## Detailed Description
 
+64 bits representation of Fixed Point class.
 Example: 
 ```cpp
 fixed_point64<6> a(123232.455667233)
@@ -59,7 +59,6 @@ fixed_point64<24> e = b/a;
 int64_t eosio::fixed_point64< Q >::val;
 ```
 
-Value of the fixed point represented as int64\_t. 
 
 Value of the fixed point represented as int64\_t 
 
@@ -73,7 +72,6 @@ eosio::fixed_point64::fixed_point64 (
 )
 ```
 
-Construct a new fixed point64 object. 
 
 Construct a new fixed point64 object from int64\_t
 
@@ -93,7 +91,6 @@ eosio::fixed_point64::fixed_point64 (
 )
 ```
 
-Construct a new fixed point64 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**. 
 
 Construct a new fixed point64 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**
 
@@ -113,7 +110,6 @@ eosio::fixed_point64::fixed_point64 (
 )
 ```
 
-Construct a new fixed point64 object from another **[fixed\_point32](structeosio_1_1fixed__point32.md)**. 
 
 Construct a new fixed point64 object from another **[fixed\_point32](structeosio_1_1fixed__point32.md)**
 
@@ -131,9 +127,9 @@ Construct a new fixed point64 object from another **[fixed\_point32](structeosio
 int64_t eosio::fixed_point64::int_part () const
 ```
 
-To get the integer part of the fixed number. 
 
-Get the integer part of the 64 bit fixed number 
+Get the integer part of the 64 bit fixed number
+
 
 **Returns:**
 
@@ -154,9 +150,9 @@ std::cout << a.int_part(); // Output: 1234
 uint64_t eosio::fixed_point64::frac_part () const
 ```
 
-To get the decimal part of the fixed number. 
 
-Get the decimal part of the 64 bit fixed number 
+Get the decimal part of the 64 bit fixed number
+
 
 **Returns:**
 
@@ -189,7 +185,6 @@ fixed_point64 & eosio::fixed_point64::operator= (
 )
 ```
 
-Assignment operator. 
 
 Assignment operator. Assign **[fixed\_point32](structeosio_1_1fixed__point32.md)** to **[fixed\_point64](structeosio_1_1fixed__point64.md)**
 
@@ -223,7 +218,6 @@ fixed_point64 & eosio::fixed_point64::operator= (
 )
 ```
 
-Assignment operator. 
 
 Assignment operator. Assign **[fixed\_point64](structeosio_1_1fixed__point64.md)** to **[fixed\_point64](structeosio_1_1fixed__point64.md)**
 
@@ -257,7 +251,6 @@ fixed_point64<(Q >QR)?Q:QR > eosio::fixed_point64::operator+ (
 ) const
 ```
 
-Addition operator. 
 
 Addition operator
 
@@ -291,7 +284,6 @@ fixed_point64<(Q >QR)?Q:QR > eosio::fixed_point64::operator- (
 ) const
 ```
 
-Subtraction operator. 
 
 Subtraction operator
 
@@ -325,9 +317,8 @@ fixed_point128< Q+QR > eosio::fixed_point64::operator* (
 ) const
 ```
 
-Multiplication operator. 
+Multiplication operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**. The result goes to **[fixed\_point64](structeosio_1_1fixed__point64.md)**. 
 
-Multiplication operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**. The result goes to **[fixed\_point64](structeosio_1_1fixed__point64.md)**.
 Multiplication operator
 
 
@@ -350,7 +341,13 @@ Multiplication operator
 - The result of multiplication
 
 
-Multiplication operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**. The result goes to **[fixed\_point128](structeosio_1_1fixed__point128.md)** Number of decimal on result will be sum of number of decimals of lhs and rhs
+Multiplication operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**. The result goes to **[fixed\_point128](structeosio_1_1fixed__point128.md)** 
+
+**Note:**
+
+Number of decimal on result will be sum of number of decimals of lhs and rhs
+
+
 Example: 
 ```cpp
 fixed_point128<33> result = fixed_point64<0>(131313) / fixed_point64<0>(2323)
@@ -366,9 +363,7 @@ fixed_point128< Q+64-QR > eosio::fixed_point64::operator/ (
 ) const
 ```
 
-Division operator. 
 
-Division of two **[fixed\_point64](structeosio_1_1fixed__point64.md)** result will be stored in **[fixed\_point128](structeosio_1_1fixed__point128.md)**.
 Division operator
 
 
@@ -391,7 +386,7 @@ Division operator
 - The result of division
 
 
-Division operator for **[fixed\_point64](structeosio_1_1fixed__point64.md)**
+Division of two **[fixed\_point64](structeosio_1_1fixed__point64.md)** result will be stored in **[fixed\_point128](structeosio_1_1fixed__point128.md)**
 Example: 
 ```cpp
 fixed_point128<33> result = fixed_point64<0>(131313) / fixed_point64<0>(2323)
@@ -407,7 +402,6 @@ bool eosio::fixed_point64::operator== (
 )
 ```
 
-Equality operator. 
 
 Equality operator
 
@@ -448,7 +442,6 @@ bool eosio::fixed_point64::operator> (
 )
 ```
 
-Greater than operator. 
 
 Greater than operator
 
@@ -489,7 +482,6 @@ bool eosio::fixed_point64::operator< (
 )
 ```
 
-Less than operator. 
 
 Less than operator
 

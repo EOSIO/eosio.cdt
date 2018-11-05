@@ -8,31 +8,30 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**fixed\_point128**](structeosio_1_1fixed__point128.md)
 
 
-128 bits representation of Fixed Point class. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|
 |-----|-----|
-|int128\_t|[**val**](structeosio_1_1fixed__point128_aca06ae4275f148e87dcd527cbdaf87c5.md#1aca06ae4275f148e87dcd527cbdaf87c5)<br>Value of the fixed point represented as int128\_t. |
+|int128\_t|[**val**](structeosio_1_1fixed__point128_aca06ae4275f148e87dcd527cbdaf87c5.md#1aca06ae4275f148e87dcd527cbdaf87c5)|
 
 
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
-||[**fixed\_point128**](structeosio_1_1fixed__point128_a35bb5e4ffc953d845551dadf79455ab8.md#1a35bb5e4ffc953d845551dadf79455ab8) (int128\_t v = 0) <br>Various constructors for **[fixed\_point128](structeosio_1_1fixed__point128.md)**. |
-||[**fixed\_point128**](structeosio_1_1fixed__point128_a9a6e26a69471e1d42ca0f6b41b673734.md#1a9a6e26a69471e1d42ca0f6b41b673734) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) <br>Construct a new fixed point128 object from another **[fixed\_point128](structeosio_1_1fixed__point128.md)**. |
-||[**fixed\_point128**](structeosio_1_1fixed__point128_ac03c87c2b4a19daf60e5f9c56c4584f0.md#1ac03c87c2b4a19daf60e5f9c56c4584f0) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< qr > & r) <br>Construct a new fixed point128 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
+||[**fixed\_point128**](structeosio_1_1fixed__point128_a35bb5e4ffc953d845551dadf79455ab8.md#1a35bb5e4ffc953d845551dadf79455ab8) (int128\_t v = 0) |
+||[**fixed\_point128**](structeosio_1_1fixed__point128_a9a6e26a69471e1d42ca0f6b41b673734.md#1a9a6e26a69471e1d42ca0f6b41b673734) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) |
+||[**fixed\_point128**](structeosio_1_1fixed__point128_ac03c87c2b4a19daf60e5f9c56c4584f0.md#1ac03c87c2b4a19daf60e5f9c56c4584f0) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< qr > & r) |
 ||[**fixed\_point128**](structeosio_1_1fixed__point128_ab26dee4e941063197fb98f2d71d9c8ce.md#1ab26dee4e941063197fb98f2d71d9c8ce) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< qr > & r) <br>Construct a new fixed point128 object from another **[fixed\_point32](structeosio_1_1fixed__point32.md)**. |
-|int128\_t|[**int\_part**](structeosio_1_1fixed__point128_a1790a1e9c8858987870440b7d0221702.md#1a1790a1e9c8858987870440b7d0221702) () const <br>To get the integer part of the fixed number. |
-|uint128\_t|[**frac\_part**](structeosio_1_1fixed__point128_a039ff620c0ccbde2438615df5d6d3ab8.md#1a039ff620c0ccbde2438615df5d6d3ab8) () const <br>To get the decimal part of the fixed number. |
-|void|[**print**](structeosio_1_1fixed__point128_ae8064361384dfea9d6d7984719ef4b01.md#1ae8064361384dfea9d6d7984719ef4b01) () const <br>Prints the fixed point value. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_ad93deaa805f79fa8547f76039ef9c24d.md#1ad93deaa805f79fa8547f76039ef9c24d) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< qr > & r) <br>Assignment operator. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_ac6221bff5864db61cce02e21d4fa9159.md#1ac6221bff5864db61cce02e21d4fa9159) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< qr > & r) <br>Assignment operator. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_a30180ac339ef359d5d553c7e5eb1af83.md#1a30180ac339ef359d5d553c7e5eb1af83) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) <br>Assignment operator. |
-|bool|[**operator==**](structeosio_1_1fixed__point128_aec57d31fe7d5ef08eac57ac793aefa83.md#1aec57d31fe7d5ef08eac57ac793aefa83) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) <br>Equality operator. |
-|bool|[**operator>**](structeosio_1_1fixed__point128_a062d76e3f824db70e6007dbe34f24874.md#1a062d76e3f824db70e6007dbe34f24874) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) <br>Greater than operator. |
-|bool|[**operator<**](structeosio_1_1fixed__point128_a0f5ea9645922ee31ea90cc3c9bbb58ae.md#1a0f5ea9645922ee31ea90cc3c9bbb58ae) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) <br>Less than operator. |
+|int128\_t|[**int\_part**](structeosio_1_1fixed__point128_a1790a1e9c8858987870440b7d0221702.md#1a1790a1e9c8858987870440b7d0221702) () const |
+|uint128\_t|[**frac\_part**](structeosio_1_1fixed__point128_a039ff620c0ccbde2438615df5d6d3ab8.md#1a039ff620c0ccbde2438615df5d6d3ab8) () const |
+|void|[**print**](structeosio_1_1fixed__point128_ae8064361384dfea9d6d7984719ef4b01.md#1ae8064361384dfea9d6d7984719ef4b01) () const |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_ad93deaa805f79fa8547f76039ef9c24d.md#1ad93deaa805f79fa8547f76039ef9c24d) (const **[fixed\_point32](structeosio_1_1fixed__point32.md)**< qr > & r) |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_ac6221bff5864db61cce02e21d4fa9159.md#1ac6221bff5864db61cce02e21d4fa9159) (const **[fixed\_point64](structeosio_1_1fixed__point64.md)**< qr > & r) |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)** &|[**operator=**](structeosio_1_1fixed__point128_a30180ac339ef359d5d553c7e5eb1af83.md#1a30180ac339ef359d5d553c7e5eb1af83) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) |
+|bool|[**operator==**](structeosio_1_1fixed__point128_aec57d31fe7d5ef08eac57ac793aefa83.md#1aec57d31fe7d5ef08eac57ac793aefa83) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) |
+|bool|[**operator>**](structeosio_1_1fixed__point128_a062d76e3f824db70e6007dbe34f24874.md#1a062d76e3f824db70e6007dbe34f24874) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) |
+|bool|[**operator<**](structeosio_1_1fixed__point128_a0f5ea9645922ee31ea90cc3c9bbb58ae.md#1a0f5ea9645922ee31ea90cc3c9bbb58ae) (const **[fixed\_point128](structeosio_1_1fixed__point128.md)**< qr > & r) |
 
 
 ## Detailed Description
@@ -56,7 +55,6 @@ fixed_point128<24> e = b/a;
 int128_t eosio::fixed_point128< Q >::val;
 ```
 
-Value of the fixed point represented as int128\_t. 
 
 Value of the fixed point represented as int128\_t 
 
@@ -70,7 +68,6 @@ eosio::fixed_point128::fixed_point128 (
 )
 ```
 
-Various constructors for **[fixed\_point128](structeosio_1_1fixed__point128.md)**. 
 
 Various constructors for **[fixed\_point128](structeosio_1_1fixed__point128.md)**. Can create **[fixed\_point128](structeosio_1_1fixed__point128.md)** instance from an int128\_t, **[fixed\_point128](structeosio_1_1fixed__point128.md)**,64,32 instance
 Example: 
@@ -82,7 +79,7 @@ fixed_point128<5> c(a);
 ```
 
  Construct a new fixed point128 object from int128\_t
-Construct a new fixed point128 object 
+
 
 **Parameters:**
 
@@ -99,7 +96,6 @@ eosio::fixed_point128::fixed_point128 (
 )
 ```
 
-Construct a new fixed point128 object from another **[fixed\_point128](structeosio_1_1fixed__point128.md)**. 
 
 Construct a new fixed point128 object from another **[fixed\_point128](structeosio_1_1fixed__point128.md)**
 
@@ -119,7 +115,6 @@ eosio::fixed_point128::fixed_point128 (
 )
 ```
 
-Construct a new fixed point128 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**. 
 
 Construct a new fixed point128 object from another **[fixed\_point64](structeosio_1_1fixed__point64.md)**
 
@@ -157,7 +152,6 @@ Construct a new fixed point128 object from another **[fixed\_point32](structeosi
 int128_t eosio::fixed_point128::int_part () const
 ```
 
-To get the integer part of the fixed number. 
 
 Get the integer part of the 64 bit fixed number
 
@@ -181,7 +175,6 @@ std::cout << a.int_part(); // Output: 1234
 uint128_t eosio::fixed_point128::frac_part () const
 ```
 
-To get the decimal part of the fixed number. 
 
 Get the decimal part of the 64 bit fixed number
 
@@ -205,7 +198,6 @@ std::cout << a.decimal_part(); // Output: 455
 void eosio::fixed_point128::print () const
 ```
 
-Prints the fixed point value. 
 
 Prints the fixed point value 
 
@@ -217,7 +209,6 @@ fixed_point128 & eosio::fixed_point128::operator= (
 )
 ```
 
-Assignment operator. 
 
 Assignment operator. Assign **[fixed\_point32](structeosio_1_1fixed__point32.md)** to **[fixed\_point128](structeosio_1_1fixed__point128.md)**
 
@@ -251,7 +242,6 @@ fixed_point128 & eosio::fixed_point128::operator= (
 )
 ```
 
-Assignment operator. 
 
 Assignment operator. Assign **[fixed\_point32](structeosio_1_1fixed__point32.md)** to **[fixed\_point64](structeosio_1_1fixed__point64.md)**
 
@@ -285,7 +275,6 @@ fixed_point128 & eosio::fixed_point128::operator= (
 )
 ```
 
-Assignment operator. 
 
 Assignment operator. Assign **[fixed\_point32](structeosio_1_1fixed__point32.md)** to **[fixed\_point32](structeosio_1_1fixed__point32.md)**
 
@@ -319,7 +308,6 @@ bool eosio::fixed_point128::operator== (
 )
 ```
 
-Equality operator. 
 
 Equality operator
 
@@ -360,7 +348,6 @@ bool eosio::fixed_point128::operator> (
 )
 ```
 
-Greater than operator. 
 
 Greater than operator
 
@@ -401,7 +388,6 @@ bool eosio::fixed_point128::operator< (
 )
 ```
 
-Less than operator. 
 
 Less than operator
 

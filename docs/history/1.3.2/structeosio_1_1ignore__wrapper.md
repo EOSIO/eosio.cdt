@@ -8,7 +8,6 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**ignore\_wrapper**](structeosio_1_1ignore__wrapper.md)
 
 
-Wrapper class to allow sending inline actions with the correct payload. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|

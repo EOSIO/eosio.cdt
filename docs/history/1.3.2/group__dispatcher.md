@@ -8,8 +8,14 @@ search:
 Defines C++ functions to dispatch action to proper action handler inside a contract. [More...](#detailed-description)
 ## Detailed Description
 
-Convenient macro to create contract apply handler.
-Convenient macro to create contract apply handler To be able to use this macro, the contract needs to be derived from **[eosio::contract](classeosio_1_1contract.md)**
+Convenient macro to create contract apply handler
+
+
+**Note:**
+
+To be able to use this macro, the contract needs to be derived from **[eosio::contract](classeosio_1_1contract.md)** 
+
+
 
 
 **Parameters:**
@@ -36,7 +42,6 @@ bool dispatcher::execute_action (
 )
 ```
 
-Unpack the received action and execute the correponding action handler. 
 
 Unpack the received action and execute the correponding action handler
 

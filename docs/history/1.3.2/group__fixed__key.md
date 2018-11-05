@@ -34,9 +34,9 @@ bool fixed_key::operator== (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -62,9 +62,9 @@ bool fixed_key::operator!= (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -90,9 +90,9 @@ bool fixed_key::operator> (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -118,9 +118,9 @@ bool fixed_key::operator< (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 

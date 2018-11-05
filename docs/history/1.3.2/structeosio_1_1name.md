@@ -8,7 +8,7 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**name**](structeosio_1_1name.md)
 
 
-wraps a uint64\_t to ensure it is only passed to methods that expect a Name [More...](#detailed-description)
+wraps a uint64\_t to ensure it is only passed to methods that expect a name. Ensures value is only passed to methods that expect a name and that no mathematical operations occur. Also enables specialization of print [More...](#detailed-description)
 ## Public Types
 
 |Type|Name|
@@ -35,7 +35,7 @@ wraps a uint64\_t to ensure it is only passed to methods that expect a Name [Mor
 |constexpr **[name](structeosio_1_1name.md)**|[**suffix**](structeosio_1_1name_a806f77788fe466215adeb2b78553b6f8.md#1a806f77788fe466215adeb2b78553b6f8) () const |
 |constexpr|[**operator raw**](structeosio_1_1name_afd3799cbd1bc276a81dba035599f535c.md#1afd3799cbd1bc276a81dba035599f535c) () const |
 |constexpr|[**operator bool**](structeosio_1_1name_a667462189a277a9f11f66fcd88af05df.md#1a667462189a277a9f11f66fcd88af05df) () const |
-|char \*|[**write\_as\_string**](structeosio_1_1name_adf844a1e7846f23bcf1d2a9ba282f0cb.md#1adf844a1e7846f23bcf1d2a9ba282f0cb) (char \* begin, char \* end) const <br>Writes the name as a string to the provided char buffer. |
+|char \*|[**write\_as\_string**](structeosio_1_1name_adf844a1e7846f23bcf1d2a9ba282f0cb.md#1adf844a1e7846f23bcf1d2a9ba282f0cb) (char \* begin, char \* end) const |
 |std::string|[**to\_string**](structeosio_1_1name_ae9b8c13d32a86f9ff355b6dce3955ab6.md#1ae9b8c13d32a86f9ff355b6dce3955ab6) () const |
 
 
@@ -43,21 +43,21 @@ wraps a uint64\_t to ensure it is only passed to methods that expect a Name [Mor
 
 |Type|Name|
 |-----|-----|
-|static constexpr uint8\_t|[**char\_to\_value**](structeosio_1_1name_a051cf40d16909e5c352cf85edb15fc9c.md#1a051cf40d16909e5c352cf85edb15fc9c) (char c) <br>Converts a (**[eosio::name](structeosio_1_1name.md)** style) Base32 symbol into its corresponding value. |
+|static constexpr uint8\_t|[**char\_to\_value**](structeosio_1_1name_a051cf40d16909e5c352cf85edb15fc9c.md#1a051cf40d16909e5c352cf85edb15fc9c) (char c) |
 
 
 ## Friends
 
 |Type|Name|
 |-----|-----|
-|friend constexpr bool|[**operator==**](structeosio_1_1name_a7815a04748b0d6b1e28f1bb11e668595.md#1a7815a04748b0d6b1e28f1bb11e668595)<br>Equivalency operator. |
-|friend constexpr bool|[**operator!=**](structeosio_1_1name_af1df898dfc723d4873fe9356cc70eacb.md#1af1df898dfc723d4873fe9356cc70eacb)<br>Inverted equivalency operator. |
-|friend constexpr bool|[**operator<**](structeosio_1_1name_a743497f458dd217e1eccf368d060bbd5.md#1a743497f458dd217e1eccf368d060bbd5)<br>Less than operator. |
+|friend constexpr bool|[**operator==**](structeosio_1_1name_a7815a04748b0d6b1e28f1bb11e668595.md#1a7815a04748b0d6b1e28f1bb11e668595)|
+|friend constexpr bool|[**operator!=**](structeosio_1_1name_af1df898dfc723d4873fe9356cc70eacb.md#1af1df898dfc723d4873fe9356cc70eacb)|
+|friend constexpr bool|[**operator<**](structeosio_1_1name_a743497f458dd217e1eccf368d060bbd5.md#1a743497f458dd217e1eccf368d060bbd5)|
 
 
 ## Detailed Description
 
-Wraps a uint64\_t to ensure it is only passed to methods that expect a Name and that no mathematical operations occur. It also enables specialization of print so that it is printed as a base32 string. 
+/\* 
 ## Public Types Documentation
 
 ### enum <a id="1a1d269720fd7434429216833187173656" href="#1a1d269720fd7434429216833187173656">raw</a>
@@ -162,7 +162,6 @@ char * eosio::name::write_as_string (
 ) const
 ```
 
-Writes the name as a string to the provided char buffer. 
 
 Writes the name as a string to the provided char buffer
 
@@ -221,9 +220,8 @@ static constexpr uint8_t eosio::name::char_to_value (
 )
 ```
 
-Converts a (**[eosio::name](structeosio_1_1name.md)** style) Base32 symbol into its corresponding value. 
 
-Converts a (**[eosio::name](structeosio_1_1name.md)** style) Base32 symbol into its corresponding value
+Converts a name Base32 symbol into its corresponding value
 
 
 **Parameters:**
@@ -251,14 +249,13 @@ friend constexpr bool eosio::name::operator== (
 )
 ```
 
-Equivalency operator. 
 
 Equivalency operator. Returns true if a == b (are the same)
 
 
 **Returns:**
 
-boolean - true if both provided names are the same 
+boolean - true if both provided name values are the same 
 
 
 
@@ -272,14 +269,13 @@ friend constexpr bool eosio::name::operator!= (
 )
 ```
 
-Inverted equivalency operator. 
 
 Inverted equivalency operator. Returns true if a != b (are different)
 
 
 **Returns:**
 
-boolean - true if both provided names are not the same 
+boolean - true if both provided name values are not the same 
 
 
 
@@ -293,9 +289,9 @@ friend constexpr bool eosio::name::operator< (
 )
 ```
 
-Less than operator. 
 
-Less than operator. Returns true if a < b. 
+Less than operator. Returns true if a < b.
+
 
 **Returns:**
 

@@ -8,7 +8,6 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**fixed\_key**](classeosio_1_1fixed__key.md)
 
 
-Fixed size key sorted lexicographically for Multi Index Table. [More...](#detailed-description)
 ## Classes
 
 |Type|Name|
@@ -27,7 +26,7 @@ Fixed size key sorted lexicographically for Multi Index Table. [More...](#detail
 
 |Type|Name|
 |-----|-----|
-||[**arr\_itr**](classeosio_1_1fixed__key_a0f8f02c751a182e95804504f1748cadc.md#1a0f8f02c751a182e95804504f1748cadc)<br>Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words. |
+||[**arr\_itr**](classeosio_1_1fixed__key_a0f8f02c751a182e95804504f1748cadc.md#1a0f8f02c751a182e95804504f1748cadc)|
 |return|[**arr**](classeosio_1_1fixed__key_a3dd16555ceab5388156a62fbca11f7af.md#1a3dd16555ceab5388156a62fbca11f7af)|
 
 
@@ -35,31 +34,32 @@ Fixed size key sorted lexicographically for Multi Index Table. [More...](#detail
 
 |Type|Name|
 |-----|-----|
-|static constexpr size\_t|[**num\_words**](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71) () <br>Get number of words contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. |
-|static constexpr size\_t|[**padded\_bytes**](classeosio_1_1fixed__key_afa54ad415d104999704b6278f4701e66.md#1afa54ad415d104999704b6278f4701e66) () <br>Get number of padded bytes contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. |
+|static constexpr size\_t|[**num\_words**](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71) () |
+|static constexpr size\_t|[**padded\_bytes**](classeosio_1_1fixed__key_afa54ad415d104999704b6278f4701e66.md#1afa54ad415d104999704b6278f4701e66) () |
 
 
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
-|constexpr|[**fixed\_key**](classeosio_1_1fixed__key_a892c6c60af975d98d6ff6a8e3bb7c822.md#1a892c6c60af975d98d6ff6a8e3bb7c822) () <br>Default constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object. |
-||[**fixed\_key**](classeosio_1_1fixed__key_a1e21d6bc807df3fe3148e1df7af12472.md#1a1e21d6bc807df3fe3148e1df7af12472) (const std::array< **[word\_t](classeosio_1_1fixed__key_a9a6e8a685e7bafe688fce78adb6b4c43.md#1a9a6e8a685e7bafe688fce78adb6b4c43)**, **[num\_words](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)**()> & arr) <br>Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words. |
+|constexpr|[**fixed\_key**](classeosio_1_1fixed__key_a892c6c60af975d98d6ff6a8e3bb7c822.md#1a892c6c60af975d98d6ff6a8e3bb7c822) () |
+||[**fixed\_key**](classeosio_1_1fixed__key_a1e21d6bc807df3fe3148e1df7af12472.md#1a1e21d6bc807df3fe3148e1df7af12472) (const std::array< **[word\_t](classeosio_1_1fixed__key_a9a6e8a685e7bafe688fce78adb6b4c43.md#1a9a6e8a685e7bafe688fce78adb6b4c43)**, **[num\_words](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)**()> & arr) |
 
 
 ## Friends
 
 |Type|Name|
 |-----|-----|
-|friend bool|[**operator==**](classeosio_1_1fixed__key_a30f70a7e52cc0469c1e48d261fec6f48.md#1a30f70a7e52cc0469c1e48d261fec6f48)<br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|friend bool|[**operator!=**](classeosio_1_1fixed__key_ac19901f66d7942ad087edef0daef485d.md#1ac19901f66d7942ad087edef0daef485d)<br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|friend bool|[**operator>**](classeosio_1_1fixed__key_a0d80d7fcf875276760867c2be8b66438.md#1a0d80d7fcf875276760867c2be8b66438)<br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|friend bool|[**operator<**](classeosio_1_1fixed__key_aed9cc9961cc5c84cdefa193a7baf3f9a.md#1aed9cc9961cc5c84cdefa193a7baf3f9a)<br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
+|friend bool|[**operator==**](classeosio_1_1fixed__key_a30f70a7e52cc0469c1e48d261fec6f48.md#1a30f70a7e52cc0469c1e48d261fec6f48)|
+|friend bool|[**operator!=**](classeosio_1_1fixed__key_ac19901f66d7942ad087edef0daef485d.md#1ac19901f66d7942ad087edef0daef485d)|
+|friend bool|[**operator>**](classeosio_1_1fixed__key_a0d80d7fcf875276760867c2be8b66438.md#1a0d80d7fcf875276760867c2be8b66438)|
+|friend bool|[**operator<**](classeosio_1_1fixed__key_aed9cc9961cc5c84cdefa193a7baf3f9a.md#1aed9cc9961cc5c84cdefa193a7baf3f9a)|
 
 
 ## Detailed Description
 
-Fixed size key sorted lexicographically for Multi Index Table 
+Fixed size key sorted lexicographically for Multi Index Table
+
 
 **Template parameters:**
 
@@ -85,9 +85,9 @@ typedef uint128_t eosio::fixed_key< Size >::word_t;
 eosio::fixed_key< Size >::arr_itr;
 ```
 
-Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words. 
 
-Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words 
+Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words
+
 
 **Parameters:**
 
@@ -112,9 +112,8 @@ return eosio::fixed_key< Size >::arr;
 static constexpr size_t eosio::fixed_key::num_words ()
 ```
 
-Get number of words contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. 
 
-Get number of words contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. A word is defined to be 16 bytes in size 
+Get number of words contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. A word is defined to be 16 bytes in size \ 
 
 ### function <a id="1afa54ad415d104999704b6278f4701e66" href="#1afa54ad415d104999704b6278f4701e66">padded\_bytes</a>
 
@@ -122,9 +121,8 @@ Get number of words contained in this **[fixed\_key](classeosio_1_1fixed__key.md
 static constexpr size_t eosio::fixed_key::padded_bytes ()
 ```
 
-Get number of padded bytes contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. 
 
-Get number of padded bytes contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. Padded bytes are the remaining bytes inside the **[fixed\_key](classeosio_1_1fixed__key.md)** object after all the words are allocated 
+Get number of padded bytes contained in this **[fixed\_key](classeosio_1_1fixed__key.md)** object. Padded bytes are the remaining bytes inside the **[fixed\_key](classeosio_1_1fixed__key.md)** object after all the words are allocated \ 
 
 ## Public Functions Documentation
 
@@ -134,9 +132,8 @@ Get number of padded bytes contained in this **[fixed\_key](classeosio_1_1fixed_
 constexpr eosio::fixed_key::fixed_key ()
 ```
 
-Default constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object. 
 
-Default constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object which initializes all bytes to zero 
+constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object \ 
 
 ### function <a id="1a1e21d6bc807df3fe3148e1df7af12472" href="#1a1e21d6bc807df3fe3148e1df7af12472">fixed\_key (2/2)</a>
 
@@ -146,9 +143,9 @@ eosio::fixed_key::fixed_key (
 )
 ```
 
-Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words. 
 
-Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words 
+Constructor to **[fixed\_key](classeosio_1_1fixed__key.md)** object from std::array of **[num\_words()](classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71)** words
+\ \*
 
 **Parameters:**
 
@@ -168,9 +165,9 @@ friend bool eosio::fixed_key::operator== (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -196,9 +193,9 @@ friend bool eosio::fixed_key::operator!= (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -224,9 +221,9 @@ friend bool eosio::fixed_key::operator> (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -252,9 +249,9 @@ friend bool eosio::fixed_key::operator< (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 

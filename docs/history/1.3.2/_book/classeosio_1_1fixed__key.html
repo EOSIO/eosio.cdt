@@ -2163,7 +2163,6 @@
                                 
                                 <h1 id="class-eosiofixedkey">class eosio::fixed_key</h1>
 <p><a href="annotated.html"><strong>Class List</strong></a> <strong>&gt;</strong> <a href="namespaceeosio.html"><strong>eosio</strong></a> <strong>::</strong> <a href="classeosio_1_1fixed__key.html"><strong>fixed_key</strong></a></p>
-<p>Fixed size key sorted lexicographically for Multi Index Table. <a href="#detailed-description">More...</a></p>
 <h2 id="classes">Classes</h2>
 <table>
 <thead>
@@ -2205,7 +2204,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><a href="classeosio_1_1fixed__key_a0f8f02c751a182e95804504f1748cadc.md#1a0f8f02c751a182e95804504f1748cadc"><strong>arr_itr</strong></a><br>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words.</td>
+<td><a href="classeosio_1_1fixed__key_a0f8f02c751a182e95804504f1748cadc.md#1a0f8f02c751a182e95804504f1748cadc"><strong>arr_itr</strong></a></td>
 </tr>
 <tr>
 <td>return</td>
@@ -2224,11 +2223,11 @@
 <tbody>
 <tr>
 <td>static constexpr size_t</td>
-<td><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71"><strong>num_words</strong></a> () <br>Get number of words contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object.</td>
+<td><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71"><strong>num_words</strong></a> ()</td>
 </tr>
 <tr>
 <td>static constexpr size_t</td>
-<td><a href="classeosio_1_1fixed__key_afa54ad415d104999704b6278f4701e66.md#1afa54ad415d104999704b6278f4701e66"><strong>padded_bytes</strong></a> () <br>Get number of padded bytes contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object.</td>
+<td><a href="classeosio_1_1fixed__key_afa54ad415d104999704b6278f4701e66.md#1afa54ad415d104999704b6278f4701e66"><strong>padded_bytes</strong></a> ()</td>
 </tr>
 </tbody>
 </table>
@@ -2243,11 +2242,11 @@
 <tbody>
 <tr>
 <td>constexpr</td>
-<td><a href="classeosio_1_1fixed__key_a892c6c60af975d98d6ff6a8e3bb7c822.md#1a892c6c60af975d98d6ff6a8e3bb7c822"><strong>fixed_key</strong></a> () <br>Default constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object.</td>
+<td><a href="classeosio_1_1fixed__key_a892c6c60af975d98d6ff6a8e3bb7c822.md#1a892c6c60af975d98d6ff6a8e3bb7c822"><strong>fixed_key</strong></a> ()</td>
 </tr>
 <tr>
 <td></td>
-<td><a href="classeosio_1_1fixed__key_a1e21d6bc807df3fe3148e1df7af12472.md#1a1e21d6bc807df3fe3148e1df7af12472"><strong>fixed_key</strong></a> (const std::array&lt; <strong><a href="classeosio_1_1fixed__key_a9a6e8a685e7bafe688fce78adb6b4c43.md#1a9a6e8a685e7bafe688fce78adb6b4c43">word_t</a></strong>, <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words</a></strong>()&gt; &amp; arr) <br>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words.</td>
+<td><a href="classeosio_1_1fixed__key_a1e21d6bc807df3fe3148e1df7af12472.md#1a1e21d6bc807df3fe3148e1df7af12472"><strong>fixed_key</strong></a> (const std::array&lt; <strong><a href="classeosio_1_1fixed__key_a9a6e8a685e7bafe688fce78adb6b4c43.md#1a9a6e8a685e7bafe688fce78adb6b4c43">word_t</a></strong>, <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words</a></strong>()&gt; &amp; arr)</td>
 </tr>
 </tbody>
 </table>
@@ -2262,24 +2261,24 @@
 <tbody>
 <tr>
 <td>friend bool</td>
-<td><a href="classeosio_1_1fixed__key_a30f70a7e52cc0469c1e48d261fec6f48.md#1a30f70a7e52cc0469c1e48d261fec6f48"><strong>operator==</strong></a><br>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2.</td>
+<td><a href="classeosio_1_1fixed__key_a30f70a7e52cc0469c1e48d261fec6f48.md#1a30f70a7e52cc0469c1e48d261fec6f48"><strong>operator==</strong></a></td>
 </tr>
 <tr>
 <td>friend bool</td>
-<td><a href="classeosio_1_1fixed__key_ac19901f66d7942ad087edef0daef485d.md#1ac19901f66d7942ad087edef0daef485d"><strong>operator!=</strong></a><br>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2.</td>
+<td><a href="classeosio_1_1fixed__key_ac19901f66d7942ad087edef0daef485d.md#1ac19901f66d7942ad087edef0daef485d"><strong>operator!=</strong></a></td>
 </tr>
 <tr>
 <td>friend bool</td>
-<td><a href="classeosio_1_1fixed__key_a0d80d7fcf875276760867c2be8b66438.md#1a0d80d7fcf875276760867c2be8b66438"><strong>operator&gt;</strong></a><br>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2.</td>
+<td><a href="classeosio_1_1fixed__key_a0d80d7fcf875276760867c2be8b66438.md#1a0d80d7fcf875276760867c2be8b66438"><strong>operator&gt;</strong></a></td>
 </tr>
 <tr>
 <td>friend bool</td>
-<td><a href="classeosio_1_1fixed__key_aed9cc9961cc5c84cdefa193a7baf3f9a.md#1aed9cc9961cc5c84cdefa193a7baf3f9a"><strong>operator&lt;</strong></a><br>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2.</td>
+<td><a href="classeosio_1_1fixed__key_aed9cc9961cc5c84cdefa193a7baf3f9a.md#1aed9cc9961cc5c84cdefa193a7baf3f9a"><strong>operator&lt;</strong></a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p>Fixed size key sorted lexicographically for Multi Index Table </p>
+<p>Fixed size key sorted lexicographically for Multi Index Table</p>
 <p><strong>Template parameters:</strong></p>
 <ul>
 <li><strong>Size</strong> - Size of the <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object </li>
@@ -2292,8 +2291,7 @@
 <h3 id="variable-arritr">variable <a id="1a0f8f02c751a182e95804504f1748cadc" href="#1a0f8f02c751a182e95804504f1748cadc">arr_itr</a></h3>
 <pre><code class="lang-cpp">eosio::fixed_key&lt; Size &gt;::arr_itr;
 </code></pre>
-<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words. </p>
-<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words </p>
+<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>arr</strong> - Source data </li>
@@ -2305,26 +2303,23 @@
 <h3 id="function-numwords">function <a id="1aa948895b18141aa14b1fa20326396d71" href="#1aa948895b18141aa14b1fa20326396d71">num_words</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-keyword">size_t</span> eosio::fixed_key::num_words ()
 </code></pre>
-<p>Get number of words contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. </p>
-<p>Get number of words contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. A word is defined to be 16 bytes in size </p>
+<p>Get number of words contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. A word is defined to be 16 bytes in size \ </p>
 <h3 id="function-paddedbytes">function <a id="1afa54ad415d104999704b6278f4701e66" href="#1afa54ad415d104999704b6278f4701e66">padded_bytes</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-keyword">size_t</span> eosio::fixed_key::padded_bytes ()
 </code></pre>
-<p>Get number of padded bytes contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. </p>
-<p>Get number of padded bytes contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. Padded bytes are the remaining bytes inside the <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object after all the words are allocated </p>
+<p>Get number of padded bytes contained in this <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. Padded bytes are the remaining bytes inside the <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object after all the words are allocated \ </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-fixedkey-12">function <a id="1a892c6c60af975d98d6ff6a8e3bb7c822" href="#1a892c6c60af975d98d6ff6a8e3bb7c822">fixed_key (1/2)</a></h3>
 <pre><code class="lang-cpp"><span class="hljs-keyword">constexpr</span> eosio::fixed_key::fixed_key ()
 </code></pre>
-<p>Default constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object. </p>
-<p>Default constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object which initializes all bytes to zero </p>
+<p>constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object \ </p>
 <h3 id="function-fixedkey-22">function <a id="1a1e21d6bc807df3fe3148e1df7af12472" href="#1a1e21d6bc807df3fe3148e1df7af12472">fixed_key (2/2)</a></h3>
 <pre><code class="lang-cpp">eosio::fixed_key::fixed_key (
     <span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">array</span>&lt; <span class="hljs-keyword">word_t</span>, num_words()&gt; &amp; arr
 )
 </code></pre>
-<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words. </p>
-<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words </p>
+<p>Constructor to <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object from std::array of <strong><a href="classeosio_1_1fixed__key_aa948895b18141aa14b1fa20326396d71.md#1aa948895b18141aa14b1fa20326396d71">num_words()</a></strong> words
+\ *</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>arr</strong> data </li>
@@ -2336,8 +2331,7 @@
     <span class="hljs-keyword">const</span> fixed_key&lt; Size &gt; &amp; c2
 )
 </code></pre>
-<p>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2. </p>
-<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2 </p>
+<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>c1</strong> - First <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object to compare </li>
@@ -2351,8 +2345,7 @@
     <span class="hljs-keyword">const</span> fixed_key&lt; Size &gt; &amp; c2
 )
 </code></pre>
-<p>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2. </p>
-<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2 </p>
+<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>c1</strong> - First <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object to compare </li>
@@ -2366,8 +2359,7 @@
     <span class="hljs-keyword">const</span> fixed_key&lt; Size &gt; &amp; c2
 )
 </code></pre>
-<p>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2. </p>
-<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2 </p>
+<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>c1</strong> - First <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object to compare </li>
@@ -2381,8 +2373,7 @@
     <span class="hljs-keyword">const</span> fixed_key&lt; Size &gt; &amp; c2
 )
 </code></pre>
-<p>Compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2. </p>
-<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2 </p>
+<p>Lexicographically compares two <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> variables c1 and c2</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>c1</strong> - First <strong><a href="classeosio_1_1fixed__key.html">fixed_key</a></strong> object to compare </li>
@@ -2435,7 +2426,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"search":{"keywords":["eosio::fixed_key","bool_pack","word_t","arr_itr","arr","num_words","padded_bytes","fixed_key","fixed_key","operator==","operator!=","operator>","operator<"]},"title":"class fixed_key","level":"1.3.5.5.13","depth":4,"next":{"title":"struct bool_pack","level":"1.3.5.5.13.1","depth":5,"path":"structeosio_1_1fixed__key_1_1bool__pack.md","ref":"structeosio_1_1fixed__key_1_1bool__pack.md","articles":[]},"previous":{"title":"class extended_symbol","level":"1.3.5.5.12","depth":4,"path":"classeosio_1_1extended__symbol.md","ref":"classeosio_1_1extended__symbol.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"classeosio_1_1fixed__key.md","mtime":"2018-11-05T08:23:37.868Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T08:23:57.752Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"search":{"keywords":["eosio::fixed_key","bool_pack","word_t","arr_itr","arr","num_words","padded_bytes","fixed_key","fixed_key","operator==","operator!=","operator>","operator<"]},"title":"class fixed_key","level":"1.3.5.5.13","depth":4,"next":{"title":"struct bool_pack","level":"1.3.5.5.13.1","depth":5,"path":"structeosio_1_1fixed__key_1_1bool__pack.md","ref":"structeosio_1_1fixed__key_1_1bool__pack.md","articles":[]},"previous":{"title":"class extended_symbol","level":"1.3.5.5.12","depth":4,"path":"classeosio_1_1extended__symbol.md","ref":"classeosio_1_1extended__symbol.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"classeosio_1_1fixed__key.md","mtime":"2018-11-05T08:46:04.314Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T08:46:53.282Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

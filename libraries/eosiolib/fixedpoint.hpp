@@ -8,7 +8,7 @@ namespace eosio
     * @defgroup fixed_point Fixed Point
     * @brief 32,64,128,256 bits version of fixed point variables
     *
-    * Floating point operations are indeterministic, hence is prevented in smart contract.
+    * @details Floating point operations are indeterministic, hence is prevented in smart contract.
     * The smart contract developers should use the appropriate Fixed_Point template class
     * by passing the number to be represented in integer format and the number of decimals
     * required.
@@ -26,8 +26,6 @@ namespace eosio
     template <uint8_t Q> struct fixed_point256;
     /**
     * Template class for Fixed Point 256 bits representaton
-    * @brief Template param Q is the Q factor i.e. number of decimals
-    *
     */
     template <uint8_t Q>
     struct fixed_point256
@@ -85,8 +83,6 @@ namespace eosio
     /**
     * The template param Q represents the Q Factor i.e number of decimals
     *
-    * @brief 128 bits representation of Fixed Point class.
-    *
     * Example:
     * @code
     * fixed_point128<6> a(123232.455667233)
@@ -102,16 +98,12 @@ namespace eosio
         static_assert(Q < 128, "Maximum number of decimals supported in fixed_point128 is 128 decimals");
 
         /**
-         * @brief Value of the fixed point represented as int128_t
-         *
          * Value of the fixed point represented as int128_t
          */
         int128_t val;
 
         /**
         * Various constructors for fixed_point128. Can create fixed_point128 instance from an int128_t, fixed_point128,64,32 instance
-        *
-        * @brief Various constructors for fixed_point128
         *
         * Example:
         * @code
@@ -125,7 +117,6 @@ namespace eosio
         /**
          * Construct a new fixed point128 object from int128_t
          *
-         * @brief Construct a new fixed point128 object
          * @param v - int128_t representation of the fixed point value
          */
         fixed_point128(int128_t v=0) : val(v) {}
@@ -133,7 +124,6 @@ namespace eosio
          /**
          * Construct a new fixed point128 object from another fixed_point128
          *
-         * @brief Construct a new fixed point128 object from another fixed_point128
          * @param r - Another fixed_point128 as source
          */
         template <uint8_t qr> fixed_point128(const fixed_point128<qr> &r);
@@ -141,7 +131,6 @@ namespace eosio
         /**
          * Construct a new fixed point128 object from another fixed_point64
          *
-         * @brief Construct a new fixed point128 object from another fixed_point64
          * @param r -fixed_point64 as source
          */
         template <uint8_t qr> fixed_point128(const fixed_point64<qr> &r);
@@ -157,7 +146,6 @@ namespace eosio
         /**
         * Get the integer part of the 64 bit fixed number
         *
-        * @brief To get the integer part of the fixed number
         * @return Returns integer part of the fixed number
         *
         * Example:
@@ -173,7 +161,6 @@ namespace eosio
         /**
         * Get the decimal part of the 64 bit fixed number
         *
-        * @brief To get the decimal part of the fixed number
         * @return Returns decimal part of the fixed number
         *
         * Example:
@@ -189,8 +176,6 @@ namespace eosio
 
         /**
          * Prints the fixed point value
-         *
-         * @brief Prints the fixed point value
          */
         void print() const {
            uint128_t ip((uint128_t)int_part());
@@ -204,7 +189,6 @@ namespace eosio
         /**
          * Assignment operator. Assign fixed_point32 to fixed_point128
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point128& - Reference to this object
@@ -213,7 +197,6 @@ namespace eosio
          /**
          * Assignment operator. Assign fixed_point32 to fixed_point64
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point128& - Reference to this object
@@ -222,7 +205,6 @@ namespace eosio
          /**
          * Assignment operator. Assign fixed_point32 to fixed_point32
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point128& - Reference to this object
@@ -233,7 +215,6 @@ namespace eosio
         /**
          * Equality operator
          *
-         * @brief Equality operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -244,7 +225,6 @@ namespace eosio
          /**
          * Greater than operator
          *
-         * @brief Greater than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -255,7 +235,6 @@ namespace eosio
          /**
          * Less than operator
          *
-         * @brief Less than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -266,7 +245,7 @@ namespace eosio
 
 
     /**
-    * @brief 64 bits representation of Fixed Point class.
+    * 64 bits representation of Fixed Point class.
     *
     * Example:
     * @code
@@ -283,8 +262,6 @@ namespace eosio
         static_assert(Q < 128, "Maximum number of decimals supported in fixed_point64 is 128 decimals");
 
         /**
-         * @brief Value of the fixed point represented as int64_t
-         *
          * Value of the fixed point represented as int64_t
          */
         int64_t val;
@@ -292,7 +269,6 @@ namespace eosio
         /**
          * Construct a new fixed point64 object from int64_t
          *
-         * @brief Construct a new fixed point64 object
          * @param v - int64_t representation of the fixed point value
          */
         fixed_point64(int64_t v=0) : val(v) {}
@@ -300,7 +276,6 @@ namespace eosio
         /**
          * Construct a new fixed point64 object from another fixed_point64
          *
-         * @brief Construct a new fixed point64 object from another fixed_point64
          * @param r - Another fixed_point64 as source
          */
         template <uint8_t QR> fixed_point64(const fixed_point64<QR> &r);
@@ -308,14 +283,13 @@ namespace eosio
         /**
          * Construct a new fixed point64 object from another fixed_point32
          *
-         * @brief Construct a new fixed point64 object from another fixed_point32
          * @param r - fixed_point64 as source
          */
         template <uint8_t QR> fixed_point64(const fixed_point32<QR> &r);
 
         /**
         * Get the integer part of the 64 bit fixed number
-        * @brief To get the integer part of the fixed number
+        *
         * @return Returns integer part of the fixed number
         *
         * Example:
@@ -330,7 +304,7 @@ namespace eosio
 
         /**
         * Get the decimal part of the 64 bit fixed number
-        * @brief To get the decimal part of the fixed number
+        *
         * @return Returns decimal part of the fixed number
         *
         * Example:
@@ -355,11 +329,9 @@ namespace eosio
            printi128(frac_part());
         }
 
-        // Various assignment operators
         /**
          * Assignment operator. Assign fixed_point32 to fixed_point64
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point64& - Reference to this object
@@ -369,7 +341,6 @@ namespace eosio
         /**
          * Assignment operator. Assign fixed_point64 to fixed_point64
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point64& - Reference to this object
@@ -380,7 +351,6 @@ namespace eosio
         /**
          * Addition operator
          *
-         * @brief Addition operator
          * @tparam QR - Precision of the second addend
          * @param r - Second addend
          * @return - The result of addition
@@ -390,7 +360,6 @@ namespace eosio
         /**
          * Subtraction operator
          *
-         * @brief Subtraction operator
          * @tparam QR - Precision of the minuend
          * @param r - Minuend
          * @return - The result of subtraction
@@ -402,7 +371,6 @@ namespace eosio
         /**
          * Multiplication operator
          *
-         * @brief Multiplication operator
          * @tparam QR - Precision of the multiplier
          * @param r - Multiplier
          * @return - The result of multiplication
@@ -412,7 +380,6 @@ namespace eosio
         /**
          * Division operator
          *
-         * @brief Division operator
          * @tparam QR - Precision of the divisor
          * @param r - Divisor
          * @return - The result of division
@@ -423,7 +390,6 @@ namespace eosio
         /**
          * Equality operator
          *
-         * @brief Equality operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -434,7 +400,6 @@ namespace eosio
         /**
          * Greater than operator
          *
-         * @brief Greater than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -445,7 +410,6 @@ namespace eosio
         /**
          * Less than operator
          *
-         * @brief Less than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -457,8 +421,7 @@ namespace eosio
     /**
      * @brief 32 bits representation of Fixed Point class.
      *
-     * This class is implemented to to replace the floating point variables
-     * It can resolve floating point undetermenistic related issues
+     * @details This class is implemented to replace the floating point variables and can resolve floating point undetermenistic related issues
      *
      * Example:
      * @code
@@ -477,8 +440,6 @@ namespace eosio
         static_assert(Q < 128, "Maximum number of decimals supported in fixed_point32 is 128 decimals");
 
         /**
-         * @brief Value of the fixed point represented as int32_t
-         *
          * Value of the fixed point represented as int32_t
          */
         int32_t val;
@@ -486,7 +447,6 @@ namespace eosio
         /**
          * Construct a new fixed point32 object from another fixed_point32
          *
-         * @brief Construct a new fixed point32 object from another fixed_point32
          * @param r - Another fixed_point32 as source
          */
         template <uint8_t QR> fixed_point32(const fixed_point32<QR> &r);
@@ -494,7 +454,6 @@ namespace eosio
         /**
          * Construct a new fixed point32 object from another fixed_point64. It will be truncated.
          *
-         * @brief Construct a new fixed point32 object from another fixed_point64
          * @param r - Another fixed_point32 as source
          */
         template <uint8_t QR> fixed_point32(const fixed_point64<QR> &r);
@@ -503,7 +462,6 @@ namespace eosio
         /**
          * Construct a new fixed point32 object from int32_t
          *
-         * @brief Construct a new fixed point32 object
          * @param v - int32_t representation of the fixed point value
          */
         fixed_point32(int32_t param=0) : val(param) {}
@@ -518,7 +476,7 @@ namespace eosio
 
         /**
         * Get the integer part of the 64 bit fixed number
-        * @brief To get the integer part of the fixed number
+        *
         * @return Returns integer part of the fixed number
         *
         * Example:
@@ -537,8 +495,6 @@ namespace eosio
 
         /**
          * Prints the fixed point value
-         *
-         * @brief Prints the fixed point value
          */
         void print() const {
            printi(int_part());
@@ -550,7 +506,6 @@ namespace eosio
         /**
          * Assignment operator. Assign fixed_point32 to fixed_point32
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point32& - Reference to this object
@@ -560,7 +515,6 @@ namespace eosio
         /**
          * Assignment operator. Assign fixed_point64 to fixed_point32
          *
-         * @brief Assignment operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return fixed_point32& - Reference to this object
@@ -570,7 +524,6 @@ namespace eosio
         /**
          * Addition operator
          *
-         * @brief Addition operator
          * @tparam QR - Precision of the second addend
          * @param r - Second addend
          * @return - The result of addition
@@ -580,7 +533,6 @@ namespace eosio
         /**
          * Subtraction operator
          *
-         * @brief Subtraction operator
          * @tparam QR - Precision of the minuend
          * @param r - Minuend
          * @return - The result of subtraction
@@ -591,7 +543,6 @@ namespace eosio
         /**
          * Multiplication operator
          *
-         * @brief Multiplication operator
          * @tparam QR - Precision of the multiplier
          * @param r - Multiplier
          * @return - The result of multiplication
@@ -601,7 +552,6 @@ namespace eosio
         /**
          * Division operator
          *
-         * @brief Division operator
          * @tparam QR - Precision of the divisor
          * @param r - Divisor
          * @return - The result of division
@@ -612,7 +562,6 @@ namespace eosio
         /**
          * Equality operator
          *
-         * @brief Equality operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -623,7 +572,6 @@ namespace eosio
         /**
          * Greater than operator
          *
-         * @brief Greater than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -634,7 +582,6 @@ namespace eosio
         /**
          * Less than operator
          *
-         * @brief Less than operator
          * @tparam qr - Precision of the source
          * @param r - Source
          * @return true - if equal
@@ -749,8 +696,8 @@ namespace eosio
     /**
     * @brief Multiplication operator for fixed_point64. The result goes to fixed_point64
     *
-    * Multiplication operator for fixed_point64. The result goes to fixed_point128
-    * Number of decimal on result will be sum of number of decimals of lhs and rhs
+    * @details Multiplication operator for fixed_point64. The result goes to fixed_point128
+    * @note Number of decimal on result will be sum of number of decimals of lhs and rhs
     *
     * Example:
     * @code
@@ -763,9 +710,7 @@ namespace eosio
     }
 
     /**
-    * @brief Division of two fixed_point64 result will be stored in fixed_point128
-    *
-    * Division operator for fixed_point64
+    * Division of two fixed_point64 result will be stored in fixed_point128
     *
     * Example:
     * @code
@@ -803,10 +748,9 @@ namespace eosio
     }
 
     /**
-    * @brief Addition between two fixed_point32 variables and the result goes to fixed_point32
+    * Addition between two fixed_point32 variables and the result goes to fixed_point32
     *
-    * Addition between two fixed_point32 variables
-    * Number of decimal on result will be max of decimals of lhs and rhs
+    * @note Number of decimal on result will be max of decimals of lhs and rhs
     *
     */
     template<uint8_t Q> template<uint8_t QR>
@@ -824,11 +768,9 @@ namespace eosio
     }
 
     /**
-    * @brief Subtraction between two fixed_point32 variables and the result goes to fixed_point32
+    * Subtraction between two fixed_point32 variables and the result goes to fixed_point32
     *
-    * Subtraction between two fixed_point32 variables
-    * Number of decimal on result will be max of decimals of lhs and rhs
-    *
+    * @note Number of decimal on result will be max of decimals of lhs and rhs
     */
     template<uint8_t Q> template<uint8_t QR>
     fixed_point32< (Q>QR)?Q:QR > fixed_point32<Q>::operator-(const fixed_point32<QR> &rhs) const
@@ -845,10 +787,9 @@ namespace eosio
     }
 
     /**
-    * @brief Multiplication operator for fixed_point32. The result goes to fixed_point64
-    *
     * Multiplication operator for fixed_point32. The result goes to fixed_point64
-    * Number of decimal on result will be sum of number of decimals of lhs and rhs
+    *
+    * @note Number of decimal on result will be sum of number of decimals of lhs and rhs
     *
     * Example:
     * @code
@@ -861,9 +802,7 @@ namespace eosio
     }
 
     /**
-    * @brief Division of two fixed_point32 result will be stored in fixed_point64
-    *
-    * Division operator for fixed_point32
+    * Division of two fixed_point32 result will be stored in fixed_point64
     *
     * Example:
     * @code
@@ -898,7 +837,6 @@ namespace eosio
     }
 
     /**
-    * @brief Wrapper function for dividing two unit64 variable and stores result in fixed_point128
     * Wrapper function for dividing two unit64 variable and stores result in fixed_point128
     *
     * Example:

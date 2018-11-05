@@ -732,7 +732,7 @@ Searches for the `object\_type` with the lowest primary key that is greater than
 **Parameters:**
 
 
-* **primary** - Primary key that establishes the target value for the lower bound search.
+* **primary** - Primary key that establishes the target value for the lower bound search. 
 
 
 
@@ -813,7 +813,7 @@ Searches for the `object\_type` with the highest primary key that is less than o
 **Parameters:**
 
 
-* **primary** - Primary key that establishes the target value for the upper bound search
+* **primary** - Primary key that establishes the target value for the upper bound search 
 
 
 

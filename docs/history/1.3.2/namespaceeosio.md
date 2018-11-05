@@ -129,16 +129,16 @@ search:
 |**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga14d1988dcb3235cf059d90c01a2b7d74.md#ga14d1988dcb3235cf059d90c01a2b7d74) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum512 & cs) <br>Deserialize a capi\_checksum512 type. |
 |bool|[**dispatch**](namespaceeosio_a78b2709044b48bb39105d37d787fefea.md#1a78b2709044b48bb39105d37d787fefea) (uint64\_t code, uint64\_t act) |
 |bool|[**dispatch**](namespaceeosio_a289285490058d17de4a6a052b52dd680.md#1a289285490058d17de4a6a052b52dd680) (uint64\_t code, uint64\_t act) |
-|bool|[**execute\_action**](group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9.md#ga8c4928c29096799ef6ddabf148dc9cf9) (**[name](structeosio_1_1name.md)** self, **[name](structeosio_1_1name.md)** code, void(T::\*)(Args...) func) <br>Unpack the received action and execute the correponding action handler. |
+|bool|[**execute\_action**](group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9.md#ga8c4928c29096799ef6ddabf148dc9cf9) (**[name](structeosio_1_1name.md)** self, **[name](structeosio_1_1name.md)** code, void(T::\*)(Args...) func) |
 |void|[**set\_blockchain\_parameters**](group__privileged_ga4b6f34ade1f06f6583b4a17738bebe0c.md#ga4b6f34ade1f06f6583b4a17738bebe0c) (const **[eosio::blockchain\_parameters](structeosio_1_1blockchain__parameters.md)** & params) <br>Set the blockchain parameters Set the blockchain parameters. |
 |void|[**get\_blockchain\_parameters**](group__privileged_ga673da670d201ba73461eedd8bd1aec8f.md#ga673da670d201ba73461eedd8bd1aec8f) (**[eosio::blockchain\_parameters](structeosio_1_1blockchain__parameters.md)** & params) <br>Retrieve the blolckchain parameters Retrieve the blolckchain parameters. |
-|bool|[**operator==**](group__fixed__key_gabbac43a956f81fd4bd4379ede0f82dd7.md#gabbac43a956f81fd4bd4379ede0f82dd7) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) <br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|bool|[**operator!=**](group__fixed__key_ga27b953728fd2a29e49f84e35135a70de.md#ga27b953728fd2a29e49f84e35135a70de) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) <br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|bool|[**operator>**](group__fixed__key_gada6d080f1501ee085aabf5c7736461ca.md#gada6d080f1501ee085aabf5c7736461ca) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) <br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
-|bool|[**operator<**](group__fixed__key_ga0d8567b962caa06cf0994134725e3f8d.md#ga0d8567b962caa06cf0994134725e3f8d) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) <br>Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. |
+|bool|[**operator==**](group__fixed__key_gabbac43a956f81fd4bd4379ede0f82dd7.md#gabbac43a956f81fd4bd4379ede0f82dd7) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) |
+|bool|[**operator!=**](group__fixed__key_ga27b953728fd2a29e49f84e35135a70de.md#ga27b953728fd2a29e49f84e35135a70de) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) |
+|bool|[**operator>**](group__fixed__key_gada6d080f1501ee085aabf5c7736461ca.md#gada6d080f1501ee085aabf5c7736461ca) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) |
+|bool|[**operator<**](group__fixed__key_ga0d8567b962caa06cf0994134725e3f8d.md#ga0d8567b962caa06cf0994134725e3f8d) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c1, const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & c2) |
 |T|[**assignHelper**](namespaceeosio_a68c90c18b96d6e1789a567b16a7cdf2f.md#1a68c90c18b96d6e1789a567b16a7cdf2f) (T rhs\_val, uint8\_t q, uint8\_t qr) |
 |**[fixed\_point64](structeosio_1_1fixed__point64.md)**< Q >|[**fixed\_divide**](namespaceeosio_a6d31edb37da483459fb277534d74bbf5.md#1a6d31edb37da483459fb277534d74bbf5) (uint32\_t lhs, uint32\_t rhs) <br>Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
-|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q >|[**fixed\_divide**](namespaceeosio_a26f98cb47eae52015cd24d3c104fc50d.md#1a26f98cb47eae52015cd24d3c104fc50d) (uint64\_t lhs, uint64\_t rhs) <br>Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point128](structeosio_1_1fixed__point128.md)** Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point128](structeosio_1_1fixed__point128.md)**. |
+|**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q >|[**fixed\_divide**](namespaceeosio_a26f98cb47eae52015cd24d3c104fc50d.md#1a26f98cb47eae52015cd24d3c104fc50d) (uint64\_t lhs, uint64\_t rhs) |
 |bool|[**check\_transaction\_authorization**](namespaceeosio_ad879334b66c1201b982eda5a4fea9507.md#1ad879334b66c1201b982eda5a4fea9507) (const **[transaction](classeosio_1_1transaction.md)** & trx, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys = std::set< **[public\_key](structeosio_1_1public__key.md)** >()) <br>Checks if a transaction is authorized by a provided set of keys and permissions. |
 |bool|[**check\_permission\_authorization**](namespaceeosio_a2ded7b51e4363cd7634070612add2e99.md#1a2ded7b51e4363cd7634070612add2e99) (**[name](structeosio_1_1name.md)** account, **[name](structeosio_1_1name.md)** permission, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions = std::set< **[permission\_level](structeosio_1_1permission__level.md)** >(), uint64\_t provided\_delay\_us = static\_cast< uint64\_t >(std::numeric\_limits< int64\_t >::max())) <br>Checks if a permission is authorized by a provided delay and a provided set of keys and permissions. |
 |void|[**print**](group__console_gaa0a56fe314d032d027a1565d93a68b21.md#gaa0a56fe314d032d027a1565d93a68b21) (const char \* ptr) <br>Prints string. |
@@ -2206,7 +2206,6 @@ bool eosio::execute_action (
 )
 ```
 
-Unpack the received action and execute the correponding action handler. 
 
 Unpack the received action and execute the correponding action handler
 
@@ -2282,9 +2281,9 @@ bool eosio::operator== (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -2310,9 +2309,9 @@ bool eosio::operator!= (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -2338,9 +2337,9 @@ bool eosio::operator> (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -2366,9 +2365,9 @@ bool eosio::operator< (
 )
 ```
 
-Compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2. 
 
-Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2 
+Lexicographically compares two **[fixed\_key](classeosio_1_1fixed__key.md)** variables c1 and c2
+
 
 **Parameters:**
 
@@ -2425,8 +2424,8 @@ fixed_point128< Q > eosio::fixed_divide (
 )
 ```
 
-Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point128](structeosio_1_1fixed__point128.md)** Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point128](structeosio_1_1fixed__point128.md)**. 
 
+Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point128](structeosio_1_1fixed__point128.md)**
 Example: 
 ```cpp
 fixed_point128<33> result = fixed_divide(131313, 2323)
