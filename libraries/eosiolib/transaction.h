@@ -8,9 +8,9 @@
 extern "C" {
    /**
     * @addtogroup transaction_c Transaction API
-    * @brief Defines API for sending transactions and inline actions
+    * @brief Defines C API for sending transactions and inline actions
     *
-    * Deferred transactions will not be processed until a future block.  They
+    * @details Deferred transactions will not be processed until a future block.  They
     * can therefore have no effect on the success of failure of their parent
     * transaction so long as they appear well formed.  If any other condition
     * causes the parent transaction to be marked as failing, then the deferred
@@ -37,7 +37,6 @@ extern "C" {
     /**
      *  Sends a deferred transaction.
      *
-     *  @brief Sends a deferred transaction.
      *  @param sender_id - ID of sender
      *  @param payer - Account paying for RAM
      *  @param serialized_transaction - Pointer of serialized transaction to be deferred

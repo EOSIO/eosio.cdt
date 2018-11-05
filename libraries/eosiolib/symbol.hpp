@@ -21,7 +21,7 @@ namespace eosio {
    */
 
    /**
-    * \struct Stores the symbol code
+    * @struct Stores the symbol code
     * @brief Stores the symbol code
     */
    class symbol_code {
@@ -155,7 +155,7 @@ namespace eosio {
    };
 
    /**
-    * \struct Stores information about a symbol
+    * @struct Stores information about a symbol
     *
     * @brief Stores information about a symbol
     */
@@ -245,7 +245,7 @@ namespace eosio {
    };
 
    /**
-    * \struct Extended asset which stores the information of the owner of the symbol
+    * @struct Extended asset which stores the information of the owner of the symbol
     *
     */
    class extended_symbol

@@ -7,12 +7,12 @@ namespace eosio {
 
   /**
    * @addtogroup privileged Privileged C++ API
-   * @details Defines C++ Privileged API
+   * Defines C++ Privileged API
    * @{
    */
 
    /**
-    * @details Tunable blockchain configuration that can be changed via consensus
+    * Tunable blockchain configuration that can be changed via consensus
     */
    struct blockchain_parameters {
 
@@ -23,7 +23,7 @@ namespace eosio {
       uint32_t max_transaction_net_usage;
 
       /**
-       * @details The base amount of net usage billed for a transaction to cover incidentals
+       * The base amount of net usage billed for a transaction to cover incidentals
        */
       uint32_t base_per_transaction_net_usage;
 
@@ -42,7 +42,7 @@ namespace eosio {
       uint32_t min_transaction_cpu_usage;
 
       /**
-       * @details Maximum lifetime of a transacton
+       * Maximum lifetime of a transacton
        */
       uint32_t max_transaction_lifetime;
 
@@ -51,17 +51,17 @@ namespace eosio {
       uint32_t max_transaction_delay;
 
       /**
-       * @details Maximum size of inline action
+       * Maximum size of inline action
        */
       uint32_t max_inline_action_size;
 
       /**
-       * @details Maximum depth of inline action
+       * Maximum depth of inline action
        */
       uint16_t max_inline_action_depth;
 
       /**
-       * @details Maximum authority depth
+       * Maximum authority depth
        */
       uint16_t max_authority_depth;
 
