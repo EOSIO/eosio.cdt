@@ -13,19 +13,19 @@ search:
 |Type|Name|
 |-----|-----|
 |**[asset](structeosio_1_1asset.md)**|[**quantity**](structeosio_1_1extended__asset_aacd83a028c55e22db2e8f14027827ad7.md#1aacd83a028c55e22db2e8f14027827ad7)|
-|**[name](structeosio_1_1name.md)**|[**contract**](structeosio_1_1extended__asset_acac503620c8c59864b065360fb50868b.md#1acac503620c8c59864b065360fb50868b)<br>The owner of the asset. |
+|**[name](structeosio_1_1name.md)**|[**contract**](structeosio_1_1extended__asset_acac503620c8c59864b065360fb50868b.md#1acac503620c8c59864b065360fb50868b)|
 
 
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
-|**[extended\_symbol](classeosio_1_1extended__symbol.md)**|[**get\_extended\_symbol**](structeosio_1_1extended__asset_a7604109863c6d45bc54347c27bd632a4.md#1a7604109863c6d45bc54347c27bd632a4) () const <br>Get the extended symbol of the asset. |
-||[**extended\_asset**](structeosio_1_1extended__asset_a7747448ddea804e84fe72decd40ee3a2.md#1a7747448ddea804e84fe72decd40ee3a2) () = default <br>Construct a new extended asset object. |
-||[**extended\_asset**](structeosio_1_1extended__asset_a831a169f25c972af14a01e0305ab8d74.md#1a831a169f25c972af14a01e0305ab8d74) (int64\_t v, **[extended\_symbol](classeosio_1_1extended__symbol.md)** s) <br>Construct a new extended asset object. |
-||[**extended\_asset**](structeosio_1_1extended__asset_a29f3c5f054f754ab4fac481cce633682.md#1a29f3c5f054f754ab4fac481cce633682) (**[asset](structeosio_1_1asset.md)** a, **[name](structeosio_1_1name.md)** c) <br>Construct a new extended asset object. |
-|void|[**print**](structeosio_1_1extended__asset_af5993cb01622505de48870ba728cec3b.md#1af5993cb01622505de48870ba728cec3b) () const <br>Print the extended asset |
-|**[extended\_asset](structeosio_1_1extended__asset.md)**|[**operator-**](structeosio_1_1extended__asset_a6ed16665f2ef5843b3dea2e2429f7147.md#1a6ed16665f2ef5843b3dea2e2429f7147) () const <br>Unary minus operator. |
+|**[extended\_symbol](classeosio_1_1extended__symbol.md)**|[**get\_extended\_symbol**](structeosio_1_1extended__asset_a7604109863c6d45bc54347c27bd632a4.md#1a7604109863c6d45bc54347c27bd632a4) () const |
+||[**extended\_asset**](structeosio_1_1extended__asset_a7747448ddea804e84fe72decd40ee3a2.md#1a7747448ddea804e84fe72decd40ee3a2) () = default |
+||[**extended\_asset**](structeosio_1_1extended__asset_a831a169f25c972af14a01e0305ab8d74.md#1a831a169f25c972af14a01e0305ab8d74) (int64\_t v, **[extended\_symbol](classeosio_1_1extended__symbol.md)** s) |
+||[**extended\_asset**](structeosio_1_1extended__asset_a29f3c5f054f754ab4fac481cce633682.md#1a29f3c5f054f754ab4fac481cce633682) (**[asset](structeosio_1_1asset.md)** a, **[name](structeosio_1_1name.md)** c) |
+|void|[**print**](structeosio_1_1extended__asset_af5993cb01622505de48870ba728cec3b.md#1af5993cb01622505de48870ba728cec3b) () const |
+|**[extended\_asset](structeosio_1_1extended__asset.md)**|[**operator-**](structeosio_1_1extended__asset_a6ed16665f2ef5843b3dea2e2429f7147.md#1a6ed16665f2ef5843b3dea2e2429f7147) () const |
 
 
 ## Friends
@@ -60,7 +60,6 @@ The asset
 name eosio::extended_asset::contract;
 ```
 
-The owner of the asset. 
 
 The owner of the asset 
 
@@ -72,7 +71,6 @@ The owner of the asset
 extended_symbol eosio::extended_asset::get_extended_symbol () const
 ```
 
-Get the extended symbol of the asset. 
 
 Get the extended symbol of the asset
 
@@ -90,7 +88,6 @@ Get the extended symbol of the asset
 eosio::extended_asset::extended_asset () = default
 ```
 
-Construct a new extended asset object. 
 
 Default constructor 
 
@@ -103,7 +100,6 @@ eosio::extended_asset::extended_asset (
 )
 ```
 
-Construct a new extended asset object. 
 
 Construct a new extended asset given the amount and extended symbol 
 
@@ -116,7 +112,6 @@ eosio::extended_asset::extended_asset (
 )
 ```
 
-Construct a new extended asset object. 
 
 Construct a new extended asset given the asset and owner name 
 
@@ -126,7 +121,6 @@ Construct a new extended asset given the asset and owner name
 void eosio::extended_asset::print () const
 ```
 
-Print the extended asset 
 
 Print the extended asset 
 
@@ -136,7 +130,6 @@ Print the extended asset
 extended_asset eosio::extended_asset::operator- () const
 ```
 
-Unary minus operator. 
 
 Unary minus operator
 
@@ -161,8 +154,7 @@ friend extended_asset eosio::extended_asset::operator- (
 
 Subtraction operator. 
 
-Subtraction operator. This subtracts the amount of the extended asset.
-
+Subtraction operator. This subtracts the amount of the extended asset. 
 
 **Parameters:**
 
@@ -197,8 +189,7 @@ friend extended_asset eosio::extended_asset::operator+ (
 
 Addition operator. 
 
-Addition operator. This adds the amount of the extended asset.
-
+Addition operator. This adds the amount of the extended asset. 
 
 **Parameters:**
 

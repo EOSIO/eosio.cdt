@@ -15,7 +15,6 @@
 extern "C" {
     /**
      *  Gets the set of active producers.
-     *  @brief Gets the set of active producers.
      *
      *  @param producers - Pointer to a buffer of account names
      *  @param datalen - Byte length of buffer, when passed 0 will return the size required to store full output.

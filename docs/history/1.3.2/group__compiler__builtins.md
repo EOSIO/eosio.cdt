@@ -20,7 +20,7 @@ void Compiler_builtins::__multi3 (
 )
 ```
 
-Multiply two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers. 
+Multiply two 128 unsigned bit integers. 
 
 Multiply two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -63,7 +63,7 @@ void Compiler_builtins::__divti3 (
 )
 ```
 
-Divide two 128 bit integers (which are represented as two 64 bit unsigned integers) 
+Divide two 128 bit integers. 
 
 Divide two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -106,7 +106,7 @@ void Compiler_builtins::__udivti3 (
 )
 ```
 
-Divide two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) 
+Divide two 128 unsigned bit integers. 
 
 Divide two 128 bit unsigned integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -142,7 +142,7 @@ void Compiler_builtins::__modti3 (
 )
 ```
 
-Perform modular arithmetic on two 128 bit integers (which are represented as two 64 bit unsigned integers) 
+Perform modular arithmetic on two 128 bit integers. 
 
 Perform modular arithmetic on two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -185,7 +185,7 @@ void Compiler_builtins::__umodti3 (
 )
 ```
 
-Perform modular arithmetic on two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) 
+Perform modular arithmetic on two 128 unsigned bit integers. 
 
 Perform modular arithmetic on two 128 unsigned bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -227,7 +227,7 @@ void Compiler_builtins::__lshlti3 (
 )
 ```
 
-Perform logical shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform logical shift left on a 128 bit integer. 
 
 Perform logical shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -267,7 +267,7 @@ void Compiler_builtins::__lshrti3 (
 )
 ```
 
-Perform logical shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform logical shift right on a 128 bit integer. 
 
 Perform logical shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -307,7 +307,7 @@ void Compiler_builtins::__ashlti3 (
 )
 ```
 
-Perform arithmetic shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform arithmetic shift left on a 128 bit integer. 
 
 Perform arithmetic shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -347,7 +347,7 @@ void Compiler_builtins::__ashrti3 (
 )
 ```
 
-Perform arithmetic shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform arithmetic shift right on a 128 bit integer. 
 
 Perform arithmetic shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -388,7 +388,7 @@ void Compiler_builtins::__addtf3 (
 )
 ```
 
-Add two long doubles (which are represented as two 64 bit unsigned integers) 
+Add two long doubles. 
 
 Add two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -422,7 +422,7 @@ void Compiler_builtins::__subtf3 (
 )
 ```
 
-Subtract two long doubles (which are represented as two 64 bit unsigned integers) 
+Subtract two long doubles. 
 
 Subtract two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -456,7 +456,7 @@ void Compiler_builtins::__multf3 (
 )
 ```
 
-Multiply two long doubles (which are represented as two 64 bit unsigned integers) 
+Multiply two long doubles. 
 
 Multiply two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -490,7 +490,7 @@ void Compiler_builtins::__divtf3 (
 )
 ```
 
-Divide two long doubles (which are represented as two 64 bit unsigned integers) 
+Divide two long doubles. 
 
 Divide two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -523,7 +523,7 @@ int Compiler_builtins::__eqtf2 (
 )
 ```
 
-Check equality between two doubles (which are represented as two 64 bit unsigned integers) 
+Check equality between two doubles. 
 
 Check equality between two doubles split as two 64 bit unsigned integers 
 
@@ -577,7 +577,7 @@ int Compiler_builtins::__netf2 (
 )
 ```
 
-Check inequality between two doubles (which are represented as two 64 bit unsigned integers) 
+Check inequality between two doubles. 
 
 Check inequality between two doubles split as two 64 bit unsigned integers 
 
@@ -624,7 +624,7 @@ int Compiler_builtins::__getf2 (
 )
 ```
 
-Check if the first double is greater or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is greater or equal to the second double. 
 
 Check if the first double is greater or equal to the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -678,7 +678,7 @@ int Compiler_builtins::__gttf2 (
 )
 ```
 
-Check if the first double is greater than the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is greater than the second double,. 
 
 Check if the first double is greater than the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -732,7 +732,7 @@ int Compiler_builtins::__letf2 (
 )
 ```
 
-Check if the first double is less or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is less or equal to the second double. 
 
 Check if the first double is less or equal to the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -786,7 +786,7 @@ int Compiler_builtins::__lttf2 (
 )
 ```
 
-Check if the first double is less than the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is less than the second double. 
 
 Check if the first double is less than the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -840,7 +840,7 @@ int Compiler_builtins::__cmptf2 (
 )
 ```
 
-Compare two doubles (the doubles are represented as two 64 bit unsigned integers) 
+Compare two doubles. 
 
 Compare two doubles which are split as two 64 bit unsigned integers 
 
@@ -894,7 +894,7 @@ int Compiler_builtins::__unordtf2 (
 )
 ```
 
-Check if either of the doubles is NaN, (the doubles are represented as two 64 bit unsigned integers) 
+Check if either of the doubles is NaN. 
 
 Check if either of the doubles is NaN, the doubles are split as two 64 bit unsigned integers 
 
@@ -932,9 +932,9 @@ void Compiler_builtins::__extendsftf2 (
 )
 ```
 
-Extend float to long double. 
 
-Extend float to long double 
+Extend float to long double
+
 
 **Parameters:**
 
@@ -960,9 +960,9 @@ void Compiler_builtins::__extenddftf2 (
 )
 ```
 
-Extend float to long double. 
 
-Extend double to long double 
+Extend double to long double
+
 
 **Parameters:**
 
@@ -988,7 +988,7 @@ int64_t Compiler_builtins::__fixtfdi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer. 
+Convert long double into 64 bit integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer 
 
@@ -1016,7 +1016,7 @@ int32_t Compiler_builtins::__fixtfsi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer. 
+Convert long double into 32 bit integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer 
 
@@ -1044,7 +1044,7 @@ uint64_t Compiler_builtins::__fixunstfdi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer. 
+Convert long double into 64 bit unsigned integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer 
 
@@ -1072,7 +1072,7 @@ uint32_t Compiler_builtins::__fixunstfsi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer. 
+Convert long double into 32 bit unsigned integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer 
 
@@ -1100,7 +1100,7 @@ double Compiler_builtins::__trunctfdf2 (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into double. 
+Convert long double into double. 
 
 Truncate long double (which are split as two 64 bit unsigned integers) into double 
 
@@ -1128,7 +1128,7 @@ float Compiler_builtins::__trunctfsf2 (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into float. 
+Convert long double into float. 
 
 Truncate long double (which are split as two 64 bit unsigned integers) into float 
 

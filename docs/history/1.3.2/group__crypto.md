@@ -18,9 +18,9 @@ void crypto::assert_sha256 (
 )
 ```
 
-Tests if the sha256 hash generated from data matches the provided checksum. 
 
-Tests if the sha256 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha256 hash generated from data matches the provided checksum.
+
 
 **Parameters:**
 
@@ -41,6 +41,13 @@ Tests if the sha256 hash generated from data matches the provided checksum. This
 **Post**
 
 Executes next statement. If was not `true`, hard return.
+
+
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode.
 
 
 Example:
@@ -66,9 +73,16 @@ void crypto::assert_sha1 (
 )
 ```
 
-Tests if the sha1 hash generated from data matches the provided checksum. 
 
-Tests if the sha1 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha1 hash generated from data matches the provided checksum.
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode. 
+
+
+
 
 **Parameters:**
 
@@ -114,9 +128,16 @@ void crypto::assert_sha512 (
 )
 ```
 
-Tests if the sha512 hash generated from data matches the provided checksum. 
 
-Tests if the sha512 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha512 hash generated from data matches the provided checksum.
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode. 
+
+
+
 
 **Parameters:**
 
@@ -162,9 +183,9 @@ void crypto::assert_ripemd160 (
 )
 ```
 
-Tests if the ripemod160 hash generated from data matches the provided checksum. 
 
-Tests if the ripemod160 hash generated from data matches the provided checksum. 
+Tests if the ripemod160 hash generated from data matches the provided checksum.
+
 
 **Parameters:**
 
@@ -210,9 +231,9 @@ void crypto::sha256 (
 )
 ```
 
-Hashes `data` using `sha256` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha256` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha256` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -241,9 +262,9 @@ void crypto::sha1 (
 )
 ```
 
-Hashes `data` using `sha1` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha1` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha1` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -272,9 +293,9 @@ void crypto::sha512 (
 )
 ```
 
-Hashes `data` using `sha512` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha512` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha512` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -303,9 +324,9 @@ void crypto::ripemd160 (
 )
 ```
 
-Hashes `data` using `ripemod160` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `ripemod160` and stores result in memory pointed to by hash. 
+Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -336,9 +357,9 @@ int crypto::recover_key (
 )
 ```
 
-Calculates the public key used for a given signature and hash used to create a message. 
 
-Calculates the public key used for a given signature and hash used to create a message. 
+Calculates the public key used for a given signature and hash used to create a message.
+
 
 **Parameters:**
 
@@ -368,9 +389,9 @@ void crypto::assert_recover_key (
 )
 ```
 
-Tests a given public key with the generated key from digest and the signature. 
 
-Tests a given public key with the generated key from digest and the signature. 
+Tests a given public key with the generated key from digest and the signature.
+
 
 **Parameters:**
 

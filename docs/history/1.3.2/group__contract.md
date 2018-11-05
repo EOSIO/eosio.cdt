@@ -23,7 +23,6 @@ Defines contract type which is base class for every EOSIO contract.
 name eosio::contract::_self;
 ```
 
-The name of this contract. 
 
 The name of this contract 
 
@@ -33,7 +32,6 @@ The name of this contract
 name eosio::contract::_code;
 ```
 
-The code name of the action this contract is processing. 
 
 The code name of the action this contract is processing. 
 
@@ -44,7 +42,7 @@ datastream<const char*> eosio::contract::_ds;
 ```
 
 
-The datastream for this contract @ The datastream for this contract 
+The datastream for this contract 
 
 ## Functions Documentation
 
@@ -58,7 +56,6 @@ contract::contract (
 )
 ```
 
-Construct a new contract object. 
 
 Construct a new contract given the contract name
 
@@ -78,7 +75,6 @@ Construct a new contract given the contract name
 name contract::get_self () const
 ```
 
-Get this contract name. 
 
 Get this contract name
 
@@ -96,9 +92,9 @@ name - The name of this contract
 name contract::get_code () const
 ```
 
-The code name of the action this contract is processing. 
 
-The code name of the action this contract is processing. 
+The code name of the action this contract is processing.
+
 
 **Returns:**
 
@@ -113,9 +109,9 @@ name - The code name of the action this contract is processing.
 datastream< const char * > contract::get_datastream () const
 ```
 
-Get the datastream for this contract. 
 
-Get the datastream for this contract 
+Get the datastream for this contract
+
 
 **Returns:**
 

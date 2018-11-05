@@ -2171,8 +2171,7 @@
     <span class="hljs-keyword">const</span> capi_checksum256 * hash
 )
 </code></pre>
-<p>Tests if the sha256 hash generated from data matches the provided checksum. </p>
-<p>Tests if the sha256 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. </p>
+<p>Tests if the sha256 hash generated from data matches the provided checksum.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2183,6 +2182,8 @@
 <p><strong>assert256 hash</strong> of <code>data</code> equals provided <code>hash</code> parameter. </p>
 <p><strong>Post</strong></p>
 <p>Executes next statement. If was not <code>true</code>, hard return.</p>
+<p><strong>Note:</strong></p>
+<p>This method is optimized to a NO-OP when in fast evaluation mode.</p>
 <p>Example:</p>
 <pre><code class="lang-cpp">checksum hash;
 <span class="hljs-keyword">char</span> data;
@@ -2198,8 +2199,9 @@ eosio::print(<span class="hljs-string">&quot;sha256 hash generated from data equ
     <span class="hljs-keyword">const</span> capi_checksum160 * hash
 )
 </code></pre>
-<p>Tests if the sha1 hash generated from data matches the provided checksum. </p>
-<p>Tests if the sha1 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. </p>
+<p>Tests if the sha1 hash generated from data matches the provided checksum.</p>
+<p><strong>Note:</strong></p>
+<p>This method is optimized to a NO-OP when in fast evaluation mode. </p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2225,8 +2227,9 @@ eosio::print(<span class="hljs-string">&quot;sha1 hash generated from data equal
     <span class="hljs-keyword">const</span> capi_checksum512 * hash
 )
 </code></pre>
-<p>Tests if the sha512 hash generated from data matches the provided checksum. </p>
-<p>Tests if the sha512 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. </p>
+<p>Tests if the sha512 hash generated from data matches the provided checksum.</p>
+<p><strong>Note:</strong></p>
+<p>This method is optimized to a NO-OP when in fast evaluation mode. </p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2252,8 +2255,7 @@ eosio::print(<span class="hljs-string">&quot;sha512 hash generated from data equ
     <span class="hljs-keyword">const</span> capi_checksum160 * hash
 )
 </code></pre>
-<p>Tests if the ripemod160 hash generated from data matches the provided checksum. </p>
-<p>Tests if the ripemod160 hash generated from data matches the provided checksum. </p>
+<p>Tests if the ripemod160 hash generated from data matches the provided checksum.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2279,8 +2281,7 @@ eosio::print(<span class="hljs-string">&quot;ripemod160 hash generated from data
     capi_checksum256 * hash
 )
 </code></pre>
-<p>Hashes <code>data</code> using <code>sha256</code> and stores result in memory pointed to by hash. </p>
-<p>Hashes <code>data</code> using <code>sha256</code> and stores result in memory pointed to by hash. </p>
+<p>Hashes <code>data</code> using <code>sha256</code> and stores result in memory pointed to by hash.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2299,8 +2300,7 @@ eos_assert( calc_hash == hash, <span class="hljs-string">&quot;invalid hash&quot
     capi_checksum160 * hash
 )
 </code></pre>
-<p>Hashes <code>data</code> using <code>sha1</code> and stores result in memory pointed to by hash. </p>
-<p>Hashes <code>data</code> using <code>sha1</code> and stores result in memory pointed to by hash. </p>
+<p>Hashes <code>data</code> using <code>sha1</code> and stores result in memory pointed to by hash.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2319,8 +2319,7 @@ eos_assert( calc_hash == hash, <span class="hljs-string">&quot;invalid hash&quot
     capi_checksum512 * hash
 )
 </code></pre>
-<p>Hashes <code>data</code> using <code>sha512</code> and stores result in memory pointed to by hash. </p>
-<p>Hashes <code>data</code> using <code>sha512</code> and stores result in memory pointed to by hash. </p>
+<p>Hashes <code>data</code> using <code>sha512</code> and stores result in memory pointed to by hash.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2339,8 +2338,7 @@ eos_assert( calc_hash == hash, <span class="hljs-string">&quot;invalid hash&quot
     capi_checksum160 * hash
 )
 </code></pre>
-<p>Hashes <code>data</code> using <code>ripemod160</code> and stores result in memory pointed to by hash. </p>
-<p>Hashes <code>data</code> using <code>ripemod160</code> and stores result in memory pointed to by hash. </p>
+<p>Hashes <code>data</code> using <code>ripemod160</code> and stores result in memory pointed to by hash.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>data</strong> - Data you want to hash </li>
@@ -2361,8 +2359,7 @@ eos_assert( calc_hash == hash, <span class="hljs-string">&quot;invalid hash&quot
     <span class="hljs-keyword">size_t</span> publen
 )
 </code></pre>
-<p>Calculates the public key used for a given signature and hash used to create a message. </p>
-<p>Calculates the public key used for a given signature and hash used to create a message. </p>
+<p>Calculates the public key used for a given signature and hash used to create a message.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>digest</strong> - Hash used to create a message </li>
@@ -2387,8 +2384,7 @@ eos_assert( calc_hash == hash, <span class="hljs-string">&quot;invalid hash&quot
     <span class="hljs-keyword">size_t</span> publen
 )
 </code></pre>
-<p>Tests a given public key with the generated key from digest and the signature. </p>
-<p>Tests a given public key with the generated key from digest and the signature. </p>
+<p>Tests a given public key with the generated key from digest and the signature.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li><strong>digest</strong> - What the key will be generated from </li>
@@ -2454,7 +2450,7 @@ eosio::print(<span class="hljs-string">&quot;pub key matches the pub key generat
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"search":{"keywords":["crypto","assert_sha256","assert_sha1","assert_sha512","assert_ripemd160","sha256","sha1","sha512","ripemd160","recover_key","assert_recover_key"]},"title":"Crypto","level":"1.2.7","depth":2,"next":{"title":"Database","level":"1.2.8","depth":2,"path":"group__database.md","ref":"group__database.md","articles":[]},"previous":{"title":"Contract","level":"1.2.6","depth":2,"path":"group__contract.md","ref":"group__contract.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"group__crypto.md","mtime":"2018-11-05T07:36:06.051Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T07:33:11.956Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"search":{"keywords":["crypto","assert_sha256","assert_sha1","assert_sha512","assert_ripemd160","sha256","sha1","sha512","ripemd160","recover_key","assert_recover_key"]},"title":"Crypto","level":"1.2.7","depth":2,"next":{"title":"Database","level":"1.2.8","depth":2,"path":"group__database.md","ref":"group__database.md","articles":[]},"previous":{"title":"Contract","level":"1.2.6","depth":2,"path":"group__contract.md","ref":"group__contract.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"group__crypto.md","mtime":"2018-11-05T08:23:37.870Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T08:23:57.752Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

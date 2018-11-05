@@ -8,35 +8,35 @@ search:
 **[Go to the source code of this file.](compiler__builtins_8h_source.md)**
 |Type|Name|
 |-----|-----|
-|void|[**\_\_multi3**](group__compiler__builtins_gaa03897335f1fcc54f469e17c32ae9920.md#gaa03897335f1fcc54f469e17c32ae9920) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Multiply two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers. |
-|void|[**\_\_divti3**](group__compiler__builtins_gadbd9c6953240b4ca52292ea687d64839.md#gadbd9c6953240b4ca52292ea687d64839) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two 128 bit integers (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_udivti3**](group__compiler__builtins_gaed86fd6c88a54c19700f51a3f36890d3.md#gaed86fd6c88a54c19700f51a3f36890d3) (unsigned \_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_modti3**](group__compiler__builtins_gacf950a5162ebd45ceec1463d352a42dd.md#gacf950a5162ebd45ceec1463d352a42dd) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Perform modular arithmetic on two 128 bit integers (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_umodti3**](group__compiler__builtins_ga25eb2263db624647faf0c395b32f2bdb.md#ga25eb2263db624647faf0c395b32f2bdb) (unsigned \_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Perform modular arithmetic on two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_lshlti3**](group__compiler__builtins_ga19640af2c08e820f5aa09069b1827c9b.md#ga19640af2c08e820f5aa09069b1827c9b) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform logical shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) |
-|void|[**\_\_lshrti3**](group__compiler__builtins_ga7785ea89d0105220b2e52ecf5f315caa.md#ga7785ea89d0105220b2e52ecf5f315caa) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform logical shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) |
-|void|[**\_\_ashlti3**](group__compiler__builtins_ga2d057451f581f4d1cec929cf76f0d610.md#ga2d057451f581f4d1cec929cf76f0d610) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform arithmetic shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) |
-|void|[**\_\_ashrti3**](group__compiler__builtins_ga54e1751b41448b01e519dfeb63733ab8.md#ga54e1751b41448b01e519dfeb63733ab8) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform arithmetic shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) |
-|void|[**\_\_addtf3**](group__compiler__builtins_ga873d982bbd7493a9975dd88e923d85ed.md#ga873d982bbd7493a9975dd88e923d85ed) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Add two long doubles (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_subtf3**](group__compiler__builtins_ga6f055bf1366a170f3f01b28cc0a723dc.md#ga6f055bf1366a170f3f01b28cc0a723dc) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Subtract two long doubles (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_multf3**](group__compiler__builtins_ga74a992741c2e037447d9953bb5cce333.md#ga74a992741c2e037447d9953bb5cce333) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Multiply two long doubles (which are represented as two 64 bit unsigned integers) |
-|void|[**\_\_divtf3**](group__compiler__builtins_gad8133b5d6604ce3bab0adf8e0d44bf5f.md#gad8133b5d6604ce3bab0adf8e0d44bf5f) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two long doubles (which are represented as two 64 bit unsigned integers) |
-|int|[**\_\_eqtf2**](group__compiler__builtins_ga11b0c275233be847ecba192c3d4bd50f.md#ga11b0c275233be847ecba192c3d4bd50f) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check equality between two doubles (which are represented as two 64 bit unsigned integers) |
-|int|[**\_\_netf2**](group__compiler__builtins_ga01fedff23a9e5324dab56c77a4ce90fa.md#ga01fedff23a9e5324dab56c77a4ce90fa) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check inequality between two doubles (which are represented as two 64 bit unsigned integers) |
-|int|[**\_\_getf2**](group__compiler__builtins_gaa4067976976ddf6189ff05068f071421.md#gaa4067976976ddf6189ff05068f071421) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is greater or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) |
-|int|[**\_\_gttf2**](group__compiler__builtins_ga22ea3ec1bb3c252037a6d1de080f59ec.md#ga22ea3ec1bb3c252037a6d1de080f59ec) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is greater than the second double, (the doubles are represented as two 64 bit unsigned integers) |
-|int|[**\_\_letf2**](group__compiler__builtins_ga1c52620ce5caeab3f24d20848de48020.md#ga1c52620ce5caeab3f24d20848de48020) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is less or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) |
-|int|[**\_\_lttf2**](group__compiler__builtins_ga31e5201b17ecf49bf0544d619b3a211e.md#ga31e5201b17ecf49bf0544d619b3a211e) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is less than the second double, (the doubles are represented as two 64 bit unsigned integers) |
-|int|[**\_\_cmptf2**](group__compiler__builtins_ga130b5f6598f3db086bc0767c6be028c0.md#ga130b5f6598f3db086bc0767c6be028c0) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Compare two doubles (the doubles are represented as two 64 bit unsigned integers) |
-|int|[**\_\_unordtf2**](group__compiler__builtins_ga26cb1a82545578282008ab4dc67cf262.md#ga26cb1a82545578282008ab4dc67cf262) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if either of the doubles is NaN, (the doubles are represented as two 64 bit unsigned integers) |
-|void|[**\_\_extendsftf2**](group__compiler__builtins_ga3feafc107fc44ac8039a667ee49bcdbf.md#ga3feafc107fc44ac8039a667ee49bcdbf) (long double & ret, float f) <br>Extend float to long double. |
-|void|[**\_\_extenddftf2**](group__compiler__builtins_gae76415cbe79dbac141141a706158552c.md#gae76415cbe79dbac141141a706158552c) (long double & ret, double f) <br>Extend float to long double. |
-|int64\_t|[**\_\_fixtfdi**](group__compiler__builtins_gafb30709e77efa4ef9eb3bf4d42004ecf.md#gafb30709e77efa4ef9eb3bf4d42004ecf) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer. |
-|int32\_t|[**\_\_fixtfsi**](group__compiler__builtins_gac2669376b81a47fc865f5ba54aea0720.md#gac2669376b81a47fc865f5ba54aea0720) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer. |
-|uint64\_t|[**\_\_fixunstfdi**](group__compiler__builtins_ga459b47b617b89052f544025349c165f8.md#ga459b47b617b89052f544025349c165f8) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer. |
-|uint32\_t|[**\_\_fixunstfsi**](group__compiler__builtins_ga1c62ec774bd084b04118fdb2b019a5c3.md#ga1c62ec774bd084b04118fdb2b019a5c3) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer. |
-|double|[**\_\_trunctfdf2**](group__compiler__builtins_ga386f6c017043419d3d33f9e96cc4ae4c.md#ga386f6c017043419d3d33f9e96cc4ae4c) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into double. |
-|float|[**\_\_trunctfsf2**](group__compiler__builtins_ga0de0b2a5fe12abf258f7640987807a3a.md#ga0de0b2a5fe12abf258f7640987807a3a) (uint64\_t l, uint64\_t h) <br>Convert long double (which are split as two 64 bit unsigned integers) into float. |
+|void|[**\_\_multi3**](group__compiler__builtins_gaa03897335f1fcc54f469e17c32ae9920.md#gaa03897335f1fcc54f469e17c32ae9920) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Multiply two 128 unsigned bit integers. |
+|void|[**\_\_divti3**](group__compiler__builtins_gadbd9c6953240b4ca52292ea687d64839.md#gadbd9c6953240b4ca52292ea687d64839) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two 128 bit integers. |
+|void|[**\_\_udivti3**](group__compiler__builtins_gaed86fd6c88a54c19700f51a3f36890d3.md#gaed86fd6c88a54c19700f51a3f36890d3) (unsigned \_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two 128 unsigned bit integers. |
+|void|[**\_\_modti3**](group__compiler__builtins_gacf950a5162ebd45ceec1463d352a42dd.md#gacf950a5162ebd45ceec1463d352a42dd) (\_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Perform modular arithmetic on two 128 bit integers. |
+|void|[**\_\_umodti3**](group__compiler__builtins_ga25eb2263db624647faf0c395b32f2bdb.md#ga25eb2263db624647faf0c395b32f2bdb) (unsigned \_\_int128 & res, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Perform modular arithmetic on two 128 unsigned bit integers. |
+|void|[**\_\_lshlti3**](group__compiler__builtins_ga19640af2c08e820f5aa09069b1827c9b.md#ga19640af2c08e820f5aa09069b1827c9b) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform logical shift left on a 128 bit integer. |
+|void|[**\_\_lshrti3**](group__compiler__builtins_ga7785ea89d0105220b2e52ecf5f315caa.md#ga7785ea89d0105220b2e52ecf5f315caa) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform logical shift right on a 128 bit integer. |
+|void|[**\_\_ashlti3**](group__compiler__builtins_ga2d057451f581f4d1cec929cf76f0d610.md#ga2d057451f581f4d1cec929cf76f0d610) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform arithmetic shift left on a 128 bit integer. |
+|void|[**\_\_ashrti3**](group__compiler__builtins_ga54e1751b41448b01e519dfeb63733ab8.md#ga54e1751b41448b01e519dfeb63733ab8) (\_\_int128 & res, uint64\_t lo, uint64\_t hi, uint32\_t shift) <br>Perform arithmetic shift right on a 128 bit integer. |
+|void|[**\_\_addtf3**](group__compiler__builtins_ga873d982bbd7493a9975dd88e923d85ed.md#ga873d982bbd7493a9975dd88e923d85ed) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Add two long doubles. |
+|void|[**\_\_subtf3**](group__compiler__builtins_ga6f055bf1366a170f3f01b28cc0a723dc.md#ga6f055bf1366a170f3f01b28cc0a723dc) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Subtract two long doubles. |
+|void|[**\_\_multf3**](group__compiler__builtins_ga74a992741c2e037447d9953bb5cce333.md#ga74a992741c2e037447d9953bb5cce333) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Multiply two long doubles. |
+|void|[**\_\_divtf3**](group__compiler__builtins_gad8133b5d6604ce3bab0adf8e0d44bf5f.md#gad8133b5d6604ce3bab0adf8e0d44bf5f) (long double & ret, uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Divide two long doubles. |
+|int|[**\_\_eqtf2**](group__compiler__builtins_ga11b0c275233be847ecba192c3d4bd50f.md#ga11b0c275233be847ecba192c3d4bd50f) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check equality between two doubles. |
+|int|[**\_\_netf2**](group__compiler__builtins_ga01fedff23a9e5324dab56c77a4ce90fa.md#ga01fedff23a9e5324dab56c77a4ce90fa) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check inequality between two doubles. |
+|int|[**\_\_getf2**](group__compiler__builtins_gaa4067976976ddf6189ff05068f071421.md#gaa4067976976ddf6189ff05068f071421) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is greater or equal to the second double. |
+|int|[**\_\_gttf2**](group__compiler__builtins_ga22ea3ec1bb3c252037a6d1de080f59ec.md#ga22ea3ec1bb3c252037a6d1de080f59ec) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is greater than the second double,. |
+|int|[**\_\_letf2**](group__compiler__builtins_ga1c52620ce5caeab3f24d20848de48020.md#ga1c52620ce5caeab3f24d20848de48020) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is less or equal to the second double. |
+|int|[**\_\_lttf2**](group__compiler__builtins_ga31e5201b17ecf49bf0544d619b3a211e.md#ga31e5201b17ecf49bf0544d619b3a211e) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if the first double is less than the second double. |
+|int|[**\_\_cmptf2**](group__compiler__builtins_ga130b5f6598f3db086bc0767c6be028c0.md#ga130b5f6598f3db086bc0767c6be028c0) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Compare two doubles. |
+|int|[**\_\_unordtf2**](group__compiler__builtins_ga26cb1a82545578282008ab4dc67cf262.md#ga26cb1a82545578282008ab4dc67cf262) (uint64\_t la, uint64\_t ha, uint64\_t lb, uint64\_t hb) <br>Check if either of the doubles is NaN. |
+|void|[**\_\_extendsftf2**](group__compiler__builtins_ga3feafc107fc44ac8039a667ee49bcdbf.md#ga3feafc107fc44ac8039a667ee49bcdbf) (long double & ret, float f) |
+|void|[**\_\_extenddftf2**](group__compiler__builtins_gae76415cbe79dbac141141a706158552c.md#gae76415cbe79dbac141141a706158552c) (long double & ret, double f) |
+|int64\_t|[**\_\_fixtfdi**](group__compiler__builtins_gafb30709e77efa4ef9eb3bf4d42004ecf.md#gafb30709e77efa4ef9eb3bf4d42004ecf) (uint64\_t l, uint64\_t h) <br>Convert long double into 64 bit integer. |
+|int32\_t|[**\_\_fixtfsi**](group__compiler__builtins_gac2669376b81a47fc865f5ba54aea0720.md#gac2669376b81a47fc865f5ba54aea0720) (uint64\_t l, uint64\_t h) <br>Convert long double into 32 bit integer. |
+|uint64\_t|[**\_\_fixunstfdi**](group__compiler__builtins_ga459b47b617b89052f544025349c165f8.md#ga459b47b617b89052f544025349c165f8) (uint64\_t l, uint64\_t h) <br>Convert long double into 64 bit unsigned integer. |
+|uint32\_t|[**\_\_fixunstfsi**](group__compiler__builtins_ga1c62ec774bd084b04118fdb2b019a5c3.md#ga1c62ec774bd084b04118fdb2b019a5c3) (uint64\_t l, uint64\_t h) <br>Convert long double into 32 bit unsigned integer. |
+|double|[**\_\_trunctfdf2**](group__compiler__builtins_ga386f6c017043419d3d33f9e96cc4ae4c.md#ga386f6c017043419d3d33f9e96cc4ae4c) (uint64\_t l, uint64\_t h) <br>Convert long double into double. |
+|float|[**\_\_trunctfsf2**](group__compiler__builtins_ga0de0b2a5fe12abf258f7640987807a3a.md#ga0de0b2a5fe12abf258f7640987807a3a) (uint64\_t l, uint64\_t h) <br>Convert long double into float. |
 |void|[**\_\_break\_point**](group__compiler__builtins_ga612b3f8baa213fa0ce573eec10bbad78.md#ga612b3f8baa213fa0ce573eec10bbad78) () |
 
 
@@ -64,7 +64,7 @@ void compiler_builtins.h::__multi3 (
 )
 ```
 
-Multiply two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers. 
+Multiply two 128 unsigned bit integers. 
 
 Multiply two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -107,7 +107,7 @@ void compiler_builtins.h::__divti3 (
 )
 ```
 
-Divide two 128 bit integers (which are represented as two 64 bit unsigned integers) 
+Divide two 128 bit integers. 
 
 Divide two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -150,7 +150,7 @@ void compiler_builtins.h::__udivti3 (
 )
 ```
 
-Divide two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) 
+Divide two 128 unsigned bit integers. 
 
 Divide two 128 bit unsigned integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -186,7 +186,7 @@ void compiler_builtins.h::__modti3 (
 )
 ```
 
-Perform modular arithmetic on two 128 bit integers (which are represented as two 64 bit unsigned integers) 
+Perform modular arithmetic on two 128 bit integers. 
 
 Perform modular arithmetic on two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -229,7 +229,7 @@ void compiler_builtins.h::__umodti3 (
 )
 ```
 
-Perform modular arithmetic on two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers) 
+Perform modular arithmetic on two 128 unsigned bit integers. 
 
 Perform modular arithmetic on two 128 unsigned bit integers split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -271,7 +271,7 @@ void compiler_builtins.h::__lshlti3 (
 )
 ```
 
-Perform logical shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform logical shift left on a 128 bit integer. 
 
 Perform logical shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -311,7 +311,7 @@ void compiler_builtins.h::__lshrti3 (
 )
 ```
 
-Perform logical shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform logical shift right on a 128 bit integer. 
 
 Perform logical shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -351,7 +351,7 @@ void compiler_builtins.h::__ashlti3 (
 )
 ```
 
-Perform arithmetic shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform arithmetic shift left on a 128 bit integer. 
 
 Perform arithmetic shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -391,7 +391,7 @@ void compiler_builtins.h::__ashrti3 (
 )
 ```
 
-Perform arithmetic shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers) 
+Perform arithmetic shift right on a 128 bit integer. 
 
 Perform arithmetic shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -432,7 +432,7 @@ void compiler_builtins.h::__addtf3 (
 )
 ```
 
-Add two long doubles (which are represented as two 64 bit unsigned integers) 
+Add two long doubles. 
 
 Add two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -466,7 +466,7 @@ void compiler_builtins.h::__subtf3 (
 )
 ```
 
-Subtract two long doubles (which are represented as two 64 bit unsigned integers) 
+Subtract two long doubles. 
 
 Subtract two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -500,7 +500,7 @@ void compiler_builtins.h::__multf3 (
 )
 ```
 
-Multiply two long doubles (which are represented as two 64 bit unsigned integers) 
+Multiply two long doubles. 
 
 Multiply two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -534,7 +534,7 @@ void compiler_builtins.h::__divtf3 (
 )
 ```
 
-Divide two long doubles (which are represented as two 64 bit unsigned integers) 
+Divide two long doubles. 
 
 Divide two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter. 
 
@@ -567,7 +567,7 @@ int compiler_builtins.h::__eqtf2 (
 )
 ```
 
-Check equality between two doubles (which are represented as two 64 bit unsigned integers) 
+Check equality between two doubles. 
 
 Check equality between two doubles split as two 64 bit unsigned integers 
 
@@ -621,7 +621,7 @@ int compiler_builtins.h::__netf2 (
 )
 ```
 
-Check inequality between two doubles (which are represented as two 64 bit unsigned integers) 
+Check inequality between two doubles. 
 
 Check inequality between two doubles split as two 64 bit unsigned integers 
 
@@ -668,7 +668,7 @@ int compiler_builtins.h::__getf2 (
 )
 ```
 
-Check if the first double is greater or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is greater or equal to the second double. 
 
 Check if the first double is greater or equal to the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -722,7 +722,7 @@ int compiler_builtins.h::__gttf2 (
 )
 ```
 
-Check if the first double is greater than the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is greater than the second double,. 
 
 Check if the first double is greater than the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -776,7 +776,7 @@ int compiler_builtins.h::__letf2 (
 )
 ```
 
-Check if the first double is less or equal to the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is less or equal to the second double. 
 
 Check if the first double is less or equal to the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -830,7 +830,7 @@ int compiler_builtins.h::__lttf2 (
 )
 ```
 
-Check if the first double is less than the second double, (the doubles are represented as two 64 bit unsigned integers) 
+Check if the first double is less than the second double. 
 
 Check if the first double is less than the second double, the doubles are split as two 64 bit unsigned integers 
 
@@ -884,7 +884,7 @@ int compiler_builtins.h::__cmptf2 (
 )
 ```
 
-Compare two doubles (the doubles are represented as two 64 bit unsigned integers) 
+Compare two doubles. 
 
 Compare two doubles which are split as two 64 bit unsigned integers 
 
@@ -938,7 +938,7 @@ int compiler_builtins.h::__unordtf2 (
 )
 ```
 
-Check if either of the doubles is NaN, (the doubles are represented as two 64 bit unsigned integers) 
+Check if either of the doubles is NaN. 
 
 Check if either of the doubles is NaN, the doubles are split as two 64 bit unsigned integers 
 
@@ -976,9 +976,9 @@ void compiler_builtins.h::__extendsftf2 (
 )
 ```
 
-Extend float to long double. 
 
-Extend float to long double 
+Extend float to long double
+
 
 **Parameters:**
 
@@ -1004,9 +1004,9 @@ void compiler_builtins.h::__extenddftf2 (
 )
 ```
 
-Extend float to long double. 
 
-Extend double to long double 
+Extend double to long double
+
 
 **Parameters:**
 
@@ -1032,7 +1032,7 @@ int64_t compiler_builtins.h::__fixtfdi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer. 
+Convert long double into 64 bit integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer 
 
@@ -1060,7 +1060,7 @@ int32_t compiler_builtins.h::__fixtfsi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer. 
+Convert long double into 32 bit integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer 
 
@@ -1088,7 +1088,7 @@ uint64_t compiler_builtins.h::__fixunstfdi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer. 
+Convert long double into 64 bit unsigned integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer 
 
@@ -1116,7 +1116,7 @@ uint32_t compiler_builtins.h::__fixunstfsi (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer. 
+Convert long double into 32 bit unsigned integer. 
 
 Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer 
 
@@ -1144,7 +1144,7 @@ double compiler_builtins.h::__trunctfdf2 (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into double. 
+Convert long double into double. 
 
 Truncate long double (which are split as two 64 bit unsigned integers) into double 
 
@@ -1172,7 +1172,7 @@ float compiler_builtins.h::__trunctfsf2 (
 )
 ```
 
-Convert long double (which are split as two 64 bit unsigned integers) into float. 
+Convert long double into float. 
 
 Truncate long double (which are split as two 64 bit unsigned integers) into float 
 

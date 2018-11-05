@@ -2183,17 +2183,15 @@
 <h3 id="variable-self">variable <a id="ga29c0c98c72ab578a5965d13b00dca0c0" href="#ga29c0c98c72ab578a5965d13b00dca0c0">_self</a></h3>
 <pre><code class="lang-cpp">name eosio::contract::_self;
 </code></pre>
-<p>The name of this contract. </p>
 <p>The name of this contract </p>
 <h3 id="variable-code">variable <a id="ga7bcf83f433ecb0b305dfd7d217c2dde8" href="#ga7bcf83f433ecb0b305dfd7d217c2dde8">_code</a></h3>
 <pre><code class="lang-cpp">name eosio::contract::_code;
 </code></pre>
 <p>The code name of the action this contract is processing. </p>
-<p>The code name of the action this contract is processing. </p>
 <h3 id="variable-ds">variable <a id="ga66b526b89bc6d35b63b874615f1d27b8" href="#ga66b526b89bc6d35b63b874615f1d27b8">_ds</a></h3>
 <pre><code class="lang-cpp">datastream&lt;<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>*&gt; eosio::contract::_ds;
 </code></pre>
-<p>The datastream for this contract @ The datastream for this contract </p>
+<p>The datastream for this contract </p>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-contract">function <a id="ga592e8ee6dabf85e272cc0a833c3fe453" href="#ga592e8ee6dabf85e272cc0a833c3fe453">contract</a></h3>
 <pre><code class="lang-cpp">contract::contract (
@@ -2202,7 +2200,6 @@
     datastream&lt; <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *&gt; ds
 )
 </code></pre>
-<p>Construct a new contract object. </p>
 <p>Construct a new contract given the contract name</p>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -2213,22 +2210,19 @@
 <h3 id="function-getself">function <a id="ga7564cad9be4ee5dcaac832511d9a0e05" href="#ga7564cad9be4ee5dcaac832511d9a0e05">get_self</a></h3>
 <pre><code class="lang-cpp">name contract::get_self () <span class="hljs-keyword">const</span>
 </code></pre>
-<p>Get this contract name. </p>
 <p>Get this contract name</p>
 <p><strong>Returns:</strong></p>
 <p>name - The name of this contract </p>
 <h3 id="function-getcode">function <a id="ga4efcd5638d26dad3e5dc075bad152d45" href="#ga4efcd5638d26dad3e5dc075bad152d45">get_code</a></h3>
 <pre><code class="lang-cpp">name contract::get_code () <span class="hljs-keyword">const</span>
 </code></pre>
-<p>The code name of the action this contract is processing. </p>
-<p>The code name of the action this contract is processing. </p>
+<p>The code name of the action this contract is processing.</p>
 <p><strong>Returns:</strong></p>
 <p>name - The code name of the action this contract is processing. </p>
 <h3 id="function-getdatastream">function <a id="ga3bb1107c2675ef69f3eca8e3793701c7" href="#ga3bb1107c2675ef69f3eca8e3793701c7">get_datastream</a></h3>
 <pre><code class="lang-cpp">datastream&lt; <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * &gt; contract::get_datastream () <span class="hljs-keyword">const</span>
 </code></pre>
-<p>Get the datastream for this contract. </p>
-<p>Get the datastream for this contract </p>
+<p>Get the datastream for this contract</p>
 <p><strong>Returns:</strong></p>
 <p>datastream<const char\*=""> - The datastream for this contract </const></p>
 
@@ -2274,7 +2268,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"search":{"keywords":["contract","eosio::contract","_self","_code","_ds","contract","get_self","get_code","get_datastream"]},"title":"Contract","level":"1.2.6","depth":2,"next":{"title":"Crypto","level":"1.2.7","depth":2,"path":"group__crypto.md","ref":"group__crypto.md","articles":[]},"previous":{"title":"Console","level":"1.2.5","depth":2,"path":"group__console.md","ref":"group__console.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"group__contract.md","mtime":"2018-11-05T07:36:06.043Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T07:33:11.956Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"search":{"keywords":["contract","eosio::contract","_self","_code","_ds","contract","get_self","get_code","get_datastream"]},"title":"Contract","level":"1.2.6","depth":2,"next":{"title":"Crypto","level":"1.2.7","depth":2,"path":"group__crypto.md","ref":"group__crypto.md","articles":[]},"previous":{"title":"Console","level":"1.2.5","depth":2,"path":"group__console.md","ref":"group__console.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["page-toc","custom-header-next@git+https://github.com/dskvr/gitbook-plugin-custom-header-next.git","versions-minimal@git+https://github.com/dskvr/gitbook-plugin-versions-minimal.git","favicon","toggle-chapters","livereload"],"pluginsConfig":{"livereload":{},"search":{},"page-toc":{"position":"before-first","selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4","showByDefault":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"versions-minimal":{"type":"branches","gitbookConfigURL":"/versions.json"},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"favicon":{"shortcut":"images/favicon.ico","bookmark":"images/favicon.ico"},"custom-header-next":{"logo":"/eosio.cdt/images/logo.png","logo_alt":"EOSIO","base_path":"/eosio.cdt","text":"eosio.cdt","navigations":[]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"toggle-chapters":{}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"group__contract.md","mtime":"2018-11-05T08:23:37.863Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T08:23:57.752Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

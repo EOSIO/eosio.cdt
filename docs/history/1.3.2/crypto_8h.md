@@ -8,16 +8,16 @@ search:
 **[Go to the source code of this file.](crypto_8h_source.md)**
 |Type|Name|
 |-----|-----|
-|void|[**assert\_sha256**](group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb.md#ga72b4fe70a6c503bf37ccf7285e03d4bb) (const char \* data, uint32\_t length, const capi\_checksum256 \* hash) <br>Tests if the sha256 hash generated from data matches the provided checksum. |
-|void|[**assert\_sha1**](group__crypto_gab870a63902f83fcf0c8346206e0e1f4c.md#gab870a63902f83fcf0c8346206e0e1f4c) (const char \* data, uint32\_t length, const capi\_checksum160 \* hash) <br>Tests if the sha1 hash generated from data matches the provided checksum. |
-|void|[**assert\_sha512**](group__crypto_ga11c2f4f3e6b2e0a61d0b40f0e9f29d14.md#ga11c2f4f3e6b2e0a61d0b40f0e9f29d14) (const char \* data, uint32\_t length, const capi\_checksum512 \* hash) <br>Tests if the sha512 hash generated from data matches the provided checksum. |
-|void|[**assert\_ripemd160**](group__crypto_ga5fa71c353dbb47f9f2068e33a1a79d71.md#ga5fa71c353dbb47f9f2068e33a1a79d71) (const char \* data, uint32\_t length, const capi\_checksum160 \* hash) <br>Tests if the ripemod160 hash generated from data matches the provided checksum. |
-|void|[**sha256**](group__crypto_ga7e93f6228e21884c348ad6589050b9eb.md#ga7e93f6228e21884c348ad6589050b9eb) (const char \* data, uint32\_t length, capi\_checksum256 \* hash) <br>Hashes `data` using `sha256` and stores result in memory pointed to by hash. |
-|void|[**sha1**](group__crypto_ga382d8329db6727bd460e81c72bdc926a.md#ga382d8329db6727bd460e81c72bdc926a) (const char \* data, uint32\_t length, capi\_checksum160 \* hash) <br>Hashes `data` using `sha1` and stores result in memory pointed to by hash. |
-|void|[**sha512**](group__crypto_gace935d4721e179120b86cbfdc86590b9.md#gace935d4721e179120b86cbfdc86590b9) (const char \* data, uint32\_t length, capi\_checksum512 \* hash) <br>Hashes `data` using `sha512` and stores result in memory pointed to by hash. |
-|void|[**ripemd160**](group__crypto_ga156b5b599dfafe44c64b2e923e0ad114.md#ga156b5b599dfafe44c64b2e923e0ad114) (const char \* data, uint32\_t length, capi\_checksum160 \* hash) <br>Hashes `data` using `ripemod160` and stores result in memory pointed to by hash. |
-|int|[**recover\_key**](group__crypto_gaa9f54e1ba406bdb5a509c8fe91d214c2.md#gaa9f54e1ba406bdb5a509c8fe91d214c2) (const capi\_checksum256 \* digest, const char \* sig, size\_t siglen, char \* pub, size\_t publen) <br>Calculates the public key used for a given signature and hash used to create a message. |
-|void|[**assert\_recover\_key**](group__crypto_gacc12ec8a9ab4b0135a4fd743a6d9b4e4.md#gacc12ec8a9ab4b0135a4fd743a6d9b4e4) (const capi\_checksum256 \* digest, const char \* sig, size\_t siglen, const char \* pub, size\_t publen) <br>Tests a given public key with the generated key from digest and the signature. |
+|void|[**assert\_sha256**](group__crypto_ga72b4fe70a6c503bf37ccf7285e03d4bb.md#ga72b4fe70a6c503bf37ccf7285e03d4bb) (const char \* data, uint32\_t length, const capi\_checksum256 \* hash) |
+|void|[**assert\_sha1**](group__crypto_gab870a63902f83fcf0c8346206e0e1f4c.md#gab870a63902f83fcf0c8346206e0e1f4c) (const char \* data, uint32\_t length, const capi\_checksum160 \* hash) |
+|void|[**assert\_sha512**](group__crypto_ga11c2f4f3e6b2e0a61d0b40f0e9f29d14.md#ga11c2f4f3e6b2e0a61d0b40f0e9f29d14) (const char \* data, uint32\_t length, const capi\_checksum512 \* hash) |
+|void|[**assert\_ripemd160**](group__crypto_ga5fa71c353dbb47f9f2068e33a1a79d71.md#ga5fa71c353dbb47f9f2068e33a1a79d71) (const char \* data, uint32\_t length, const capi\_checksum160 \* hash) |
+|void|[**sha256**](group__crypto_ga7e93f6228e21884c348ad6589050b9eb.md#ga7e93f6228e21884c348ad6589050b9eb) (const char \* data, uint32\_t length, capi\_checksum256 \* hash) |
+|void|[**sha1**](group__crypto_ga382d8329db6727bd460e81c72bdc926a.md#ga382d8329db6727bd460e81c72bdc926a) (const char \* data, uint32\_t length, capi\_checksum160 \* hash) |
+|void|[**sha512**](group__crypto_gace935d4721e179120b86cbfdc86590b9.md#gace935d4721e179120b86cbfdc86590b9) (const char \* data, uint32\_t length, capi\_checksum512 \* hash) |
+|void|[**ripemd160**](group__crypto_ga156b5b599dfafe44c64b2e923e0ad114.md#ga156b5b599dfafe44c64b2e923e0ad114) (const char \* data, uint32\_t length, capi\_checksum160 \* hash) |
+|int|[**recover\_key**](group__crypto_gaa9f54e1ba406bdb5a509c8fe91d214c2.md#gaa9f54e1ba406bdb5a509c8fe91d214c2) (const capi\_checksum256 \* digest, const char \* sig, size\_t siglen, char \* pub, size\_t publen) |
+|void|[**assert\_recover\_key**](group__crypto_gacc12ec8a9ab4b0135a4fd743a6d9b4e4.md#gacc12ec8a9ab4b0135a4fd743a6d9b4e4) (const capi\_checksum256 \* digest, const char \* sig, size\_t siglen, const char \* pub, size\_t publen) |
 
 
 ## Detailed Description
@@ -42,9 +42,9 @@ void crypto.h::assert_sha256 (
 )
 ```
 
-Tests if the sha256 hash generated from data matches the provided checksum. 
 
-Tests if the sha256 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha256 hash generated from data matches the provided checksum.
+
 
 **Parameters:**
 
@@ -65,6 +65,13 @@ Tests if the sha256 hash generated from data matches the provided checksum. This
 **Post**
 
 Executes next statement. If was not `true`, hard return.
+
+
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode.
 
 
 Example:
@@ -90,9 +97,16 @@ void crypto.h::assert_sha1 (
 )
 ```
 
-Tests if the sha1 hash generated from data matches the provided checksum. 
 
-Tests if the sha1 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha1 hash generated from data matches the provided checksum.
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode. 
+
+
+
 
 **Parameters:**
 
@@ -138,9 +152,16 @@ void crypto.h::assert_sha512 (
 )
 ```
 
-Tests if the sha512 hash generated from data matches the provided checksum. 
 
-Tests if the sha512 hash generated from data matches the provided checksum. This method is optimized to a NO-OP when in fast evaluation mode. 
+Tests if the sha512 hash generated from data matches the provided checksum.
+
+
+**Note:**
+
+This method is optimized to a NO-OP when in fast evaluation mode. 
+
+
+
 
 **Parameters:**
 
@@ -186,9 +207,9 @@ void crypto.h::assert_ripemd160 (
 )
 ```
 
-Tests if the ripemod160 hash generated from data matches the provided checksum. 
 
-Tests if the ripemod160 hash generated from data matches the provided checksum. 
+Tests if the ripemod160 hash generated from data matches the provided checksum.
+
 
 **Parameters:**
 
@@ -234,9 +255,9 @@ void crypto.h::sha256 (
 )
 ```
 
-Hashes `data` using `sha256` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha256` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha256` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -265,9 +286,9 @@ void crypto.h::sha1 (
 )
 ```
 
-Hashes `data` using `sha1` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha1` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha1` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -296,9 +317,9 @@ void crypto.h::sha512 (
 )
 ```
 
-Hashes `data` using `sha512` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `sha512` and stores result in memory pointed to by hash. 
+Hashes `data` using `sha512` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -327,9 +348,9 @@ void crypto.h::ripemd160 (
 )
 ```
 
-Hashes `data` using `ripemod160` and stores result in memory pointed to by hash. 
 
-Hashes `data` using `ripemod160` and stores result in memory pointed to by hash. 
+Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
+
 
 **Parameters:**
 
@@ -360,9 +381,9 @@ int crypto.h::recover_key (
 )
 ```
 
-Calculates the public key used for a given signature and hash used to create a message. 
 
-Calculates the public key used for a given signature and hash used to create a message. 
+Calculates the public key used for a given signature and hash used to create a message.
+
 
 **Parameters:**
 
@@ -392,9 +413,9 @@ void crypto.h::assert_recover_key (
 )
 ```
 
-Tests a given public key with the generated key from digest and the signature. 
 
-Tests a given public key with the generated key from digest and the signature. 
+Tests a given public key with the generated key from digest and the signature.
+
 
 **Parameters:**
 

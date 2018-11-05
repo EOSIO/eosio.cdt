@@ -24,8 +24,6 @@ namespace eosio {
 
    /**
     *
-    *  This method unpacks the current action at type T.
-    *
     *  @brief Interpret the action body as type T.
     *  @return Unpacked action data casted as T.
     *

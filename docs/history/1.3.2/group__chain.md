@@ -17,9 +17,9 @@ uint32_t chain::get_active_producers (
 )
 ```
 
-Gets the set of active producers. 
 
-Gets the set of active producers. 
+Gets the set of active producers.
+
 
 **Parameters:**
 

@@ -8,20 +8,19 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**asset**](structeosio_1_1asset.md)
 
 
-**[Stores](struct_stores.md)** information for owner of asset. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|
 |-----|-----|
-|int64\_t|[**amount**](structeosio_1_1asset_ac76c16a58851550706c6709698ed7255.md#1ac76c16a58851550706c6709698ed7255)<br>The amount of the asset. |
-|**[symbol](classeosio_1_1symbol.md)**|[**symbol**](structeosio_1_1asset_a374520d98a22f5a89a26025154944756.md#1a374520d98a22f5a89a26025154944756)<br>The symbol name of the asset. |
+|int64\_t|[**amount**](structeosio_1_1asset_ac76c16a58851550706c6709698ed7255.md#1ac76c16a58851550706c6709698ed7255)|
+|**[symbol](classeosio_1_1symbol.md)**|[**symbol**](structeosio_1_1asset_a374520d98a22f5a89a26025154944756.md#1a374520d98a22f5a89a26025154944756)|
 
 
 ## Public Static Attributes
 
 |Type|Name|
 |-----|-----|
-|static constexpr int64\_t|[**max\_amount**](structeosio_1_1asset_a478eb6a3bb302652748acfcf85738f5f.md#1a478eb6a3bb302652748acfcf85738f5f)<br>Maximum amount possible for this asset. |
+|static constexpr int64\_t|[**max\_amount**](structeosio_1_1asset_a478eb6a3bb302652748acfcf85738f5f.md#1a478eb6a3bb302652748acfcf85738f5f)|
 
 
 ## Public Functions
@@ -29,39 +28,36 @@ search:
 |Type|Name|
 |-----|-----|
 ||[**asset**](structeosio_1_1asset_abdde8d4b53c1b8f1027ab6cb2b13b845.md#1abdde8d4b53c1b8f1027ab6cb2b13b845) () |
-||[**asset**](structeosio_1_1asset_abb4cf1f370bb101c7d61910ff45d6b55.md#1abb4cf1f370bb101c7d61910ff45d6b55) (int64\_t a, class **[symbol](classeosio_1_1symbol.md)** s) <br>Construct a new asset object. |
-|bool|[**is\_amount\_within\_range**](structeosio_1_1asset_a815b58378c8849fbb2a68f288edf5f31.md#1a815b58378c8849fbb2a68f288edf5f31) () const <br>Check if the amount doesn't exceed the max amount. |
-|bool|[**is\_valid**](structeosio_1_1asset_aa2e8739bf534ea99199d121143ca7a0a.md#1aa2e8739bf534ea99199d121143ca7a0a) () const <br>Check if the asset is valid. |
-|void|[**set\_amount**](structeosio_1_1asset_a0b6c8ba10eedc0129364fc910e840d7f.md#1a0b6c8ba10eedc0129364fc910e840d7f) (int64\_t a) <br>Set the amount of the asset. |
-|**[asset](structeosio_1_1asset.md)**|[**operator-**](structeosio_1_1asset_a16bee92e23903707b37a1e7c91e1a4f1.md#1a16bee92e23903707b37a1e7c91e1a4f1) () const <br>Unary minus operator. |
-|**[asset](structeosio_1_1asset.md)** &|[**operator-=**](structeosio_1_1asset_ac34e7c2da42b547142cbc7e7e6348e23.md#1ac34e7c2da42b547142cbc7e7e6348e23) (const **[asset](structeosio_1_1asset.md)** & a) <br>Subtraction assignment operator. |
-|**[asset](structeosio_1_1asset.md)** &|[**operator+=**](structeosio_1_1asset_ab94816fdb1ce8d429ccb63d46251e476.md#1ab94816fdb1ce8d429ccb63d46251e476) (const **[asset](structeosio_1_1asset.md)** & a) <br>Addition Assignment operator. |
+||[**asset**](structeosio_1_1asset_abb4cf1f370bb101c7d61910ff45d6b55.md#1abb4cf1f370bb101c7d61910ff45d6b55) (int64\_t a, class **[symbol](classeosio_1_1symbol.md)** s) |
+|bool|[**is\_amount\_within\_range**](structeosio_1_1asset_a815b58378c8849fbb2a68f288edf5f31.md#1a815b58378c8849fbb2a68f288edf5f31) () const |
+|bool|[**is\_valid**](structeosio_1_1asset_aa2e8739bf534ea99199d121143ca7a0a.md#1aa2e8739bf534ea99199d121143ca7a0a) () const |
+|void|[**set\_amount**](structeosio_1_1asset_a0b6c8ba10eedc0129364fc910e840d7f.md#1a0b6c8ba10eedc0129364fc910e840d7f) (int64\_t a) |
+|**[asset](structeosio_1_1asset.md)**|[**operator-**](structeosio_1_1asset_a16bee92e23903707b37a1e7c91e1a4f1.md#1a16bee92e23903707b37a1e7c91e1a4f1) () const |
+|**[asset](structeosio_1_1asset.md)** &|[**operator-=**](structeosio_1_1asset_ac34e7c2da42b547142cbc7e7e6348e23.md#1ac34e7c2da42b547142cbc7e7e6348e23) (const **[asset](structeosio_1_1asset.md)** & a) |
+|**[asset](structeosio_1_1asset.md)** &|[**operator+=**](structeosio_1_1asset_ab94816fdb1ce8d429ccb63d46251e476.md#1ab94816fdb1ce8d429ccb63d46251e476) (const **[asset](structeosio_1_1asset.md)** & a) |
 |**[asset](structeosio_1_1asset.md)** &|[**operator\*=**](structeosio_1_1asset_a4875ab6d76c75c195bb3fb725407ab30.md#1a4875ab6d76c75c195bb3fb725407ab30) (int64\_t a) <br>Multiplication assignment operator, with a number. |
 |**[asset](structeosio_1_1asset.md)** &|[**operator/=**](structeosio_1_1asset_a5c86834934fe75db077730628608b6d3.md#1a5c86834934fe75db077730628608b6d3) (int64\_t a) <br>Division assignment operator, with a number. |
-|void|[**print**](structeosio_1_1asset_a111a52097d1761898d5641536c308416.md#1a111a52097d1761898d5641536c308416) () const <br>Print the asset |
+|void|[**print**](structeosio_1_1asset_a111a52097d1761898d5641536c308416.md#1a111a52097d1761898d5641536c308416) () const |
 
 
 ## Friends
 
 |Type|Name|
 |-----|-----|
-|friend **[asset](structeosio_1_1asset.md)**|[**operator+**](structeosio_1_1asset_a606c72fe4e28b359ba977a6043f56300.md#1a606c72fe4e28b359ba977a6043f56300)<br>Addition operator. |
-|friend **[asset](structeosio_1_1asset.md)**|[**operator-**](structeosio_1_1asset_a101f03e631cf8c72d8094b91a5524207.md#1a101f03e631cf8c72d8094b91a5524207)<br>Subtraction operator. |
+|friend **[asset](structeosio_1_1asset.md)**|[**operator+**](structeosio_1_1asset_a606c72fe4e28b359ba977a6043f56300.md#1a606c72fe4e28b359ba977a6043f56300)|
+|friend **[asset](structeosio_1_1asset.md)**|[**operator-**](structeosio_1_1asset_a101f03e631cf8c72d8094b91a5524207.md#1a101f03e631cf8c72d8094b91a5524207)|
 |friend **[asset](structeosio_1_1asset.md)**|[**operator\***](structeosio_1_1asset_aad999a1c807bf5b87b6af18c7deb7383.md#1aad999a1c807bf5b87b6af18c7deb7383)<br>Multiplication operator, with a number proceeding. |
-|friend **[asset](structeosio_1_1asset.md)**|[**operator\***](structeosio_1_1asset_a2680e36287438fb993924afb89203d0f.md#1a2680e36287438fb993924afb89203d0f)<br>Multiplication operator, with a number preceeding. |
-|friend **[asset](structeosio_1_1asset.md)**|[**operator/**](structeosio_1_1asset_ae07741c290b600e5d2891c47cc04d371.md#1ae07741c290b600e5d2891c47cc04d371)<br>Division operator, with a number proceeding. |
-|friend int64\_t|[**operator/**](structeosio_1_1asset_a3ed38863be7162b18973870814c26346.md#1a3ed38863be7162b18973870814c26346)<br>Division operator, with another asset. |
-|friend bool|[**operator==**](structeosio_1_1asset_a8c79ce3d3e367c6345a8c5cb75bab48d.md#1a8c79ce3d3e367c6345a8c5cb75bab48d)<br>Equality operator. |
-|friend bool|[**operator!=**](structeosio_1_1asset_adb0577649f2f48023169390b0b78e234.md#1adb0577649f2f48023169390b0b78e234)<br>Inequality operator. |
-|friend bool|[**operator<**](structeosio_1_1asset_a4c5d8977b23e534426a070f568524d02.md#1a4c5d8977b23e534426a070f568524d02)<br>Less than operator. |
-|friend bool|[**operator<=**](structeosio_1_1asset_a9d586e9b54232432779a91e2d6d8b78e.md#1a9d586e9b54232432779a91e2d6d8b78e)<br>Less or equal to operator. |
-|friend bool|[**operator>**](structeosio_1_1asset_a88d1352c1cf2b7377292377449a4ced8.md#1a88d1352c1cf2b7377292377449a4ced8)<br>Greater than operator. |
-|friend bool|[**operator>=**](structeosio_1_1asset_aa5ae6feb2c7097211820fc31cf24b5f5.md#1aa5ae6feb2c7097211820fc31cf24b5f5)<br>Greater or equal to operator. |
+|friend **[asset](structeosio_1_1asset.md)**|[**operator\***](structeosio_1_1asset_a2680e36287438fb993924afb89203d0f.md#1a2680e36287438fb993924afb89203d0f)|
+|friend **[asset](structeosio_1_1asset.md)**|[**operator/**](structeosio_1_1asset_ae07741c290b600e5d2891c47cc04d371.md#1ae07741c290b600e5d2891c47cc04d371)|
+|friend int64\_t|[**operator/**](structeosio_1_1asset_a3ed38863be7162b18973870814c26346.md#1a3ed38863be7162b18973870814c26346)|
+|friend bool|[**operator==**](structeosio_1_1asset_a8c79ce3d3e367c6345a8c5cb75bab48d.md#1a8c79ce3d3e367c6345a8c5cb75bab48d)|
+|friend bool|[**operator!=**](structeosio_1_1asset_adb0577649f2f48023169390b0b78e234.md#1adb0577649f2f48023169390b0b78e234)|
+|friend bool|[**operator<**](structeosio_1_1asset_a4c5d8977b23e534426a070f568524d02.md#1a4c5d8977b23e534426a070f568524d02)|
+|friend bool|[**operator<=**](structeosio_1_1asset_a9d586e9b54232432779a91e2d6d8b78e.md#1a9d586e9b54232432779a91e2d6d8b78e)|
+|friend bool|[**operator>**](structeosio_1_1asset_a88d1352c1cf2b7377292377449a4ced8.md#1a88d1352c1cf2b7377292377449a4ced8)|
+|friend bool|[**operator>=**](structeosio_1_1asset_aa5ae6feb2c7097211820fc31cf24b5f5.md#1aa5ae6feb2c7097211820fc31cf24b5f5)|
 
 
-## Detailed Description
-
-/struct **[Stores](struct_stores.md)** information for owner of asset 
 ## Public Attributes Documentation
 
 ### variable <a id="1ac76c16a58851550706c6709698ed7255" href="#1ac76c16a58851550706c6709698ed7255">amount</a>
@@ -70,7 +66,6 @@ search:
 int64_t eosio::asset::amount;
 ```
 
-The amount of the asset. 
 
 The amount of the asset 
 
@@ -80,7 +75,6 @@ The amount of the asset
 symbol eosio::asset::symbol;
 ```
 
-The symbol name of the asset. 
 
 The symbol name of the asset 
 
@@ -92,7 +86,6 @@ The symbol name of the asset
 constexpr int64_t eosio::asset::max_amount;
 ```
 
-Maximum amount possible for this asset. 
 
 Maximum amount possible for this asset. It's capped to 2^62 - 1 
 
@@ -115,7 +108,6 @@ eosio::asset::asset (
 )
 ```
 
-Construct a new asset object. 
 
 Construct a new asset given the symbol name and the amount
 
@@ -134,7 +126,6 @@ Construct a new asset given the symbol name and the amount
 bool eosio::asset::is_amount_within_range () const
 ```
 
-Check if the amount doesn't exceed the max amount. 
 
 Check if the amount doesn't exceed the max amount
 
@@ -159,7 +150,6 @@ false - otherwise
 bool eosio::asset::is_valid () const
 ```
 
-Check if the asset is valid. 
 
 Check if the asset is valid. A valid asset has its amount <= max\_amount and its symbol name valid
 
@@ -186,7 +176,6 @@ void eosio::asset::set_amount (
 )
 ```
 
-Set the amount of the asset. 
 
 Set the amount of the asset
 
@@ -204,7 +193,6 @@ Set the amount of the asset
 asset eosio::asset::operator- () const
 ```
 
-Unary minus operator. 
 
 Unary minus operator
 
@@ -224,7 +212,6 @@ asset & eosio::asset::operator-= (
 )
 ```
 
-Subtraction assignment operator. 
 
 Subtraction assignment operator
 
@@ -258,7 +245,6 @@ asset & eosio::asset::operator+= (
 )
 ```
 
-Addition Assignment operator. 
 
 Addition Assignment operator
 
@@ -294,8 +280,7 @@ asset & eosio::asset::operator*= (
 
 Multiplication assignment operator, with a number. 
 
-Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
-
+Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself. 
 
 **Parameters:**
 
@@ -328,8 +313,7 @@ asset & eosio::asset::operator/= (
 
 Division assignment operator, with a number. 
 
-Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.
-
+Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself. 
 
 **Parameters:**
 
@@ -358,7 +342,6 @@ The amount of this asset is divided by a
 void eosio::asset::print () const
 ```
 
-Print the asset 
 
 Print the asset 
 
@@ -373,7 +356,6 @@ friend asset eosio::asset::operator+ (
 )
 ```
 
-Addition operator. 
 
 Addition operator
 
@@ -402,7 +384,6 @@ friend asset eosio::asset::operator- (
 )
 ```
 
-Subtraction operator. 
 
 Subtraction operator
 
@@ -460,7 +441,6 @@ friend asset eosio::asset::operator* (
 )
 ```
 
-Multiplication operator, with a number preceeding. 
 
 Multiplication operator, with a number preceeding
 
@@ -489,7 +469,6 @@ friend asset eosio::asset::operator/ (
 )
 ```
 
-Division operator, with a number proceeding. 
 
 Division operator, with a number proceeding
 
@@ -518,7 +497,6 @@ friend int64_t eosio::asset::operator/ (
 )
 ```
 
-Division operator, with another asset. 
 
 Division operator, with another asset
 
@@ -554,7 +532,6 @@ friend bool eosio::asset::operator== (
 )
 ```
 
-Equality operator. 
 
 Equality operator
 
@@ -597,7 +574,6 @@ friend bool eosio::asset::operator!= (
 )
 ```
 
-Inequality operator. 
 
 Inequality operator
 
@@ -640,7 +616,6 @@ friend bool eosio::asset::operator< (
 )
 ```
 
-Less than operator. 
 
 Less than operator
 
@@ -683,7 +658,6 @@ friend bool eosio::asset::operator<= (
 )
 ```
 
-Less or equal to operator. 
 
 Less or equal to operator
 
@@ -726,7 +700,6 @@ friend bool eosio::asset::operator> (
 )
 ```
 
-Greater than operator. 
 
 Greater than operator
 
@@ -769,7 +742,6 @@ friend bool eosio::asset::operator>= (
 )
 ```
 
-Greater or equal to operator. 
 
 Greater or equal to operator
 

@@ -5,7 +5,6 @@ search:
 
 # group datastream
 
-Defines data stream for reading and writing data in the form of bytes. 
 ## Classes
 
 |Type|Name|
@@ -14,6 +13,9 @@ Defines data stream for reading and writing data in the form of bytes.
 |class|[**eosio::datastream< size\_t >**](classeosio_1_1datastream_3_01size__t_01_4.md)|
 
 
+## Detailed Description
+
+Defines data stream for reading and writing data in the form of bytes 
 ## Functions Documentation
 
 ### function <a id="ga1e49e445971a761be9607c1a3eb85bde" href="#ga1e49e445971a761be9607c1a3eb85bde">operator<<</a>

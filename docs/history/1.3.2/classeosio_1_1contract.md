@@ -13,8 +13,8 @@ Base class for EOSIO contract. [More...](#detailed-description)
 
 |Type|Name|
 |-----|-----|
-|**[name](structeosio_1_1name.md)**|[**\_self**](group__contract_ga29c0c98c72ab578a5965d13b00dca0c0.md#ga29c0c98c72ab578a5965d13b00dca0c0)<br>The name of this contract. |
-|**[name](structeosio_1_1name.md)**|[**\_code**](group__contract_ga7bcf83f433ecb0b305dfd7d217c2dde8.md#ga7bcf83f433ecb0b305dfd7d217c2dde8)<br>The code name of the action this contract is processing. |
+|**[name](structeosio_1_1name.md)**|[**\_self**](group__contract_ga29c0c98c72ab578a5965d13b00dca0c0.md#ga29c0c98c72ab578a5965d13b00dca0c0)|
+|**[name](structeosio_1_1name.md)**|[**\_code**](group__contract_ga7bcf83f433ecb0b305dfd7d217c2dde8.md#ga7bcf83f433ecb0b305dfd7d217c2dde8)|
 |**[datastream](classeosio_1_1datastream.md)**< const char \* >|[**\_ds**](group__contract_ga66b526b89bc6d35b63b874615f1d27b8.md#ga66b526b89bc6d35b63b874615f1d27b8)|
 
 
@@ -22,10 +22,10 @@ Base class for EOSIO contract. [More...](#detailed-description)
 
 |Type|Name|
 |-----|-----|
-||[**contract**](group__contract_ga592e8ee6dabf85e272cc0a833c3fe453.md#ga592e8ee6dabf85e272cc0a833c3fe453) (**[name](structeosio_1_1name.md)** receiver, **[name](structeosio_1_1name.md)** code, **[datastream](classeosio_1_1datastream.md)**< const char \*> ds) <br>Construct a new contract object. |
-|**[name](structeosio_1_1name.md)**|[**get\_self**](group__contract_ga7564cad9be4ee5dcaac832511d9a0e05.md#ga7564cad9be4ee5dcaac832511d9a0e05) () const <br>Get this contract name. |
-|**[name](structeosio_1_1name.md)**|[**get\_code**](group__contract_ga4efcd5638d26dad3e5dc075bad152d45.md#ga4efcd5638d26dad3e5dc075bad152d45) () const <br>The code name of the action this contract is processing. |
-|**[datastream](classeosio_1_1datastream.md)**< const char \* >|[**get\_datastream**](group__contract_ga3bb1107c2675ef69f3eca8e3793701c7.md#ga3bb1107c2675ef69f3eca8e3793701c7) () const <br>Get the datastream for this contract. |
+||[**contract**](group__contract_ga592e8ee6dabf85e272cc0a833c3fe453.md#ga592e8ee6dabf85e272cc0a833c3fe453) (**[name](structeosio_1_1name.md)** receiver, **[name](structeosio_1_1name.md)** code, **[datastream](classeosio_1_1datastream.md)**< const char \*> ds) |
+|**[name](structeosio_1_1name.md)**|[**get\_self**](group__contract_ga7564cad9be4ee5dcaac832511d9a0e05.md#ga7564cad9be4ee5dcaac832511d9a0e05) () const |
+|**[name](structeosio_1_1name.md)**|[**get\_code**](group__contract_ga4efcd5638d26dad3e5dc075bad152d45.md#ga4efcd5638d26dad3e5dc075bad152d45) () const |
+|**[datastream](classeosio_1_1datastream.md)**< const char \* >|[**get\_datastream**](group__contract_ga3bb1107c2675ef69f3eca8e3793701c7.md#ga3bb1107c2675ef69f3eca8e3793701c7) () const |
 
 
 ## Detailed Description
@@ -39,7 +39,6 @@ Base class for EOSIO contract. A new contract should derive from this class, so 
 name eosio::contract::_self;
 ```
 
-The name of this contract. 
 
 The name of this contract 
 
@@ -49,7 +48,6 @@ The name of this contract
 name eosio::contract::_code;
 ```
 
-The code name of the action this contract is processing. 
 
 The code name of the action this contract is processing. 
 
@@ -60,7 +58,7 @@ datastream<const char*> eosio::contract::_ds;
 ```
 
 
-The datastream for this contract @ The datastream for this contract 
+The datastream for this contract 
 
 ## Public Functions Documentation
 
@@ -74,7 +72,6 @@ eosio::contract::contract (
 )
 ```
 
-Construct a new contract object. 
 
 Construct a new contract given the contract name
 
@@ -94,7 +91,6 @@ Construct a new contract given the contract name
 name eosio::contract::get_self () const
 ```
 
-Get this contract name. 
 
 Get this contract name
 
@@ -112,9 +108,9 @@ name - The name of this contract
 name eosio::contract::get_code () const
 ```
 
-The code name of the action this contract is processing. 
 
-The code name of the action this contract is processing. 
+The code name of the action this contract is processing.
+
 
 **Returns:**
 
@@ -129,9 +125,9 @@ name - The code name of the action this contract is processing.
 datastream< const char * > eosio::contract::get_datastream () const
 ```
 
-Get the datastream for this contract. 
 
-Get the datastream for this contract 
+Get the datastream for this contract
+
 
 **Returns:**
 

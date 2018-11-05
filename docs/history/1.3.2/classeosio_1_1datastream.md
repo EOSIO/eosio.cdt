@@ -8,15 +8,14 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**datastream**](classeosio_1_1datastream.md)
 
 
-A data stream for reading and writing data in the form of bytes. [More...](#detailed-description)
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
 ||[**datastream**](classeosio_1_1datastream_a72befc5c1f51a601ad07e7c8e61856f4.md#1a72befc5c1f51a601ad07e7c8e61856f4) (T start, size\_t s) <br>Construct a new datastream object. |
-|void|[**skip**](classeosio_1_1datastream_a928fbd3301caee3c64ea620442fb0e64.md#1a928fbd3301caee3c64ea620442fb0e64) (size\_t s) <br>Skips a specific number of bytes from this stream. |
-|bool|[**read**](classeosio_1_1datastream_ae1d8d46d5cf80745bbb00a6b8fee243a.md#1ae1d8d46d5cf80745bbb00a6b8fee243a) (char \* d, size\_t s) <br>Reads a specified number of bytes from this stream into a buffer. |
-|bool|[**write**](classeosio_1_1datastream_a1e42133f6f57a8c89e1db04abe44b342.md#1a1e42133f6f57a8c89e1db04abe44b342) (const char \* d, size\_t s) <br>Writes a specified number of bytes into the stream from a buffer. |
+|void|[**skip**](classeosio_1_1datastream_a928fbd3301caee3c64ea620442fb0e64.md#1a928fbd3301caee3c64ea620442fb0e64) (size\_t s) |
+|bool|[**read**](classeosio_1_1datastream_ae1d8d46d5cf80745bbb00a6b8fee243a.md#1ae1d8d46d5cf80745bbb00a6b8fee243a) (char \* d, size\_t s) |
+|bool|[**write**](classeosio_1_1datastream_a1e42133f6f57a8c89e1db04abe44b342.md#1a1e42133f6f57a8c89e1db04abe44b342) (const char \* d, size\_t s) |
 |bool|[**put**](classeosio_1_1datastream_ad0a23aa024810028ce8669627577859d.md#1ad0a23aa024810028ce8669627577859d) (char c) <br>Writes a byte into the stream. |
 |bool|[**get**](classeosio_1_1datastream_a001047d70942ab5beb836e498d9f9eab.md#1a001047d70942ab5beb836e498d9f9eab) (unsigned char & c) <br>Reads a byte from the stream. |
 |bool|[**get**](classeosio_1_1datastream_a10ab58b7cc695366b42957f4b8ff56eb.md#1a10ab58b7cc695366b42957f4b8ff56eb) (char & c) <br>Reads a byte from the stream. |
@@ -29,7 +28,8 @@ A data stream for reading and writing data in the form of bytes. [More...](#deta
 
 ## Detailed Description
 
-A data stream for reading and writing data in the form of bytes 
+A data stream for reading and writing data in the form of bytes
+
 
 **Template parameters:**
 
@@ -50,8 +50,7 @@ eosio::datastream::datastream (
 
 Construct a new datastream object. 
 
-Construct a new datastream object given the size of the buffer and start position of the buffer
-
+Construct a new datastream object given the size of the buffer and start position of the buffer 
 
 **Parameters:**
 
@@ -69,7 +68,6 @@ void eosio::datastream::skip (
 )
 ```
 
-Skips a specific number of bytes from this stream. 
 
 Skips a specified number of bytes from this stream
 
@@ -90,7 +88,6 @@ bool eosio::datastream::read (
 )
 ```
 
-Reads a specified number of bytes from this stream into a buffer. 
 
 Reads a specified number of bytes from the stream into a buffer
 
@@ -119,7 +116,6 @@ bool eosio::datastream::write (
 )
 ```
 
-Writes a specified number of bytes into the stream from a buffer. 
 
 Writes a specified number of bytes into the stream from a buffer
 
