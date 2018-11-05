@@ -47,7 +47,6 @@ namespace eosio {
    /**
     * Unpack the received action and execute the correponding action handler
     *
-    * @brief Unpack the received action and execute the correponding action handler
     * @tparam T - The contract class that has the correponding action handler, this contract should be derived from eosio::contract
     * @tparam Q - The namespace of the action handler function
     * @tparam Args - The arguments that the action handler accepts, i.e. members of the action
@@ -103,9 +102,8 @@ namespace eosio {
 /**
  * @addtogroup dispatcher
  * Convenient macro to create contract apply handler
- * To be able to use this macro, the contract needs to be derived from eosio::contract
  *
- * @brief Convenient macro to create contract apply handler
+ * @note To be able to use this macro, the contract needs to be derived from eosio::contract
  * @param TYPE - The class name of the contract
  * @param MEMBERS - The sequence of available actions supported by this contract
  *
