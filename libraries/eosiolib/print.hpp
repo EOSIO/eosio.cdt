@@ -10,6 +10,29 @@
 #include <utility>
 #include <string>
 
+/**
+   *  @defgroup console Console C++ API
+   *  @brief Defines C++ wrapper to log/print text messages
+   *
+   *  This API uses C++ variadic templates and type detection to
+   *  make it easy to print any native type. You can even overload
+   *  the `print()` method for your own custom types.
+   *
+   *  **Example:**
+   *  ```
+   *     print( "hello world, this is a number: ", 5 );
+   *  ```
+   *
+   *  @section override Overriding Print for your Types
+   *
+   *  There are two ways to overload print:
+   *  1. implement void print( const T& )
+   *  2. implement T::print()const
+   *
+   *  @{
+   */
+
+
 namespace eosio {
 
    static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
@@ -222,30 +245,6 @@ namespace eosio {
    inline void print_f( const char* s ) {
       prints(s);
    }
-
- /**
-    *  @defgroup consolecppapi Console C++ API
-    *  @ingroup consoleapi
-    *  @brief Defines C++ wrapper to log/print text messages
-    *
-    *  This API uses C++ variadic templates and type detection to
-    *  make it easy to print any native type. You can even overload
-    *  the `print()` method for your own custom types.
-    *
-    *  **Example:**
-    *  ```
-    *     print( "hello world, this is a number: ", 5 );
-    *  ```
-    *
-    *  @section override Overriding Print for your Types
-    *
-    *  There are two ways to overload print:
-    *  1. implement void print( const T& )
-    *  2. implement T::print()const
-    *
-    *  @{
-    */
-
 
    /**
     * Prints formatted string. It behaves similar to C printf/

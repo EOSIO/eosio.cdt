@@ -42,6 +42,7 @@ namespace eosio {
     *  dummy_action msg = unpack_action_data<dummy_action>();
     *  @endcode
     */
+
    template<typename T>
    T unpack_action_data() {
       constexpr size_t max_stack_buffer_size = 512;

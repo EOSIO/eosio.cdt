@@ -23,19 +23,15 @@
 
 #include <boost/pfr.hpp>
 
-
 namespace eosio {
-
-/**
- * @defgroup datastream Data Stream
- * @brief Defines data stream for reading and writing data in the form of bytes
- * @ingroup serialize
- * @{
- */
+  /**
+   * @addtogroup datastream Data Stream
+   * @brief Defines data stream for reading and writing data in the form of bytes
+   * @{
+   */
 
 /**
  *  %A data stream for reading and writing data in the form of bytes
- *
  *  @brief %A data stream for reading and writing data in the form of bytes.
  *  @tparam T - Type of the datastream buffer
  */
@@ -1171,5 +1167,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, capi_checksum512& 
    ds.read((char*)&cs.hash[0], sizeof(cs.hash));
    return ds;
 }
-/// @} datastream
+
+///@}
+
 }

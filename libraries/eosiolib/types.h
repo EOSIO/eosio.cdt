@@ -12,11 +12,8 @@ extern "C" {
 #endif
 
 /**
- *  @defgroup types Builtin Types
- *  @ingroup contractdev
+ *  @addtogroup types
  *  @brief Specifies builtin types, typedefs and aliases
- *
- *  @{
  */
 
 /**
@@ -72,4 +69,3 @@ struct ALIGNED(capi_checksum512) {
 #ifdef __cplusplus
 } /// extern "C"
 #endif
-/// @}

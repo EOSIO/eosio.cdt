@@ -27,19 +27,16 @@ namespace eosio {
    template<size_t Size>
    bool operator<(const fixed_key<Size> &c1, const fixed_key<Size> &c2);
 
-    /**
-    *  @defgroup fixed_key Fixed Size Key
-    *  @brief Fixed size key sorted lexicographically for Multi Index Table
-    *  @ingroup types
-    *  @{
-    */
+   /**
+   *  @defgroup fixed_key Fixed Size Key
+   *  @brief Fixed size key sorted lexicographically for Multi Index Table
+   *  @{
+   */
 
    /**
     *  Fixed size key sorted lexicographically for Multi Index Table
-    * 
     *  @brief Fixed size key sorted lexicographically for Multi Index Table
     *  @tparam Size - Size of the fixed_key object
-    *  @ingroup types
     */
    template<size_t Size>
    class fixed_key {
@@ -83,10 +80,10 @@ namespace eosio {
       public:
 
          typedef uint128_t word_t;
-         
+
          /**
           * Get number of words contained in this fixed_key object. A word is defined to be 16 bytes in size
-          * 
+          *
           * @brief Get number of words contained in this fixed_key object
           */
 
@@ -95,7 +92,7 @@ namespace eosio {
          /**
           * Get number of padded bytes contained in this fixed_key object. Padded bytes are the remaining bytes
           * inside the fixed_key object after all the words are allocated
-          * 
+          *
           * @brief Get number of padded bytes contained in this fixed_key object
           */
          static constexpr size_t padded_bytes() { return num_words() * sizeof(word_t) - Size; }
@@ -285,7 +282,7 @@ namespace eosio {
    bool operator<(const fixed_key<Size> &c1, const fixed_key<Size> &c2) {
       return c1._data < c2._data;
    }
-   /// @} fixed_key
-
+   
    typedef fixed_key<32> key256;
+   ///@}
 }

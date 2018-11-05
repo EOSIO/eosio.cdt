@@ -4,20 +4,14 @@
  */
 #pragma once
 #include <eosiolib/types.h>
-extern "C" {
 
 /**
- *  @defgroup cryptoapi Chain API
- *  @brief Defines API for calculating and checking hash
- *  @ingroup contractdev
- */
-
-/**
- *  @defgroup cryptocapi Chain C API
+ *  @addtogroup crypto Crypto
  *  @brief Defines %C API for calculating and checking hash
- *  @ingroup chainapi
  *  @{
  */
+
+extern "C" {
 
 /**
  *  Tests if the sha256 hash generated from data matches the provided checksum.
@@ -235,6 +229,6 @@ int recover_key( const capi_checksum256* digest, const char* sig, size_t siglen,
  */
 void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t siglen, const char* pub, size_t publen );
 
-/// }@cryptocapi
+/// @}
 
 }

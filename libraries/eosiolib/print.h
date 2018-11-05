@@ -6,22 +6,15 @@
 
 #include <eosiolib/types.h>
 
+/**
+ *  @defgroup consolecapi Console C API
+ *  @brief Defnes %C API to log/print text messages
+ *  @{
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-   /**
-    *  @defgroup consoleapi Console API
-    *  @brief Defines APIs to log/print text messages
-    *  @ingroup contractdev
-    *
-    */
-
-   /**
-    *  @defgroup consolecapi Console C API
-    *  @brief Defnes %C API to log/print text messages
-    *  @ingroup consoleapi
-    *  @{
-    */
 
    /**
     *  Prints string
