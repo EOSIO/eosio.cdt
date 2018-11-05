@@ -24,12 +24,6 @@
 #include <boost/pfr.hpp>
 
 namespace eosio {
-  /**
-   * Defines data stream for reading and writing data in the form of bytes
-   *
-   * @addtogroup datastream Data Stream
-   * @{
-   */
 
 /**
  *  A data stream for reading and writing data in the form of bytes
@@ -42,7 +36,7 @@ class datastream {
       /**
        * @brief Construct a new datastream object
        *
-       * @detailed Construct a new datastream object given the size of the buffer and start position of the buffer
+       * @details Construct a new datastream object given the size of the buffer and start position of the buffer
        * @param start - The start position of the buffer
        * @param s - The size of the buffer
        */
@@ -1044,6 +1038,13 @@ DataStream& operator>>( DataStream& ds, T& v ) {
 }
 
 /**
+ * Defines data stream for reading and writing data in the form of bytes
+ *
+ * @addtogroup datastream Data Stream
+ * @{
+ */
+
+/**
  * Unpack data inside a fixed size buffer as T
  *
  * @brief Unpack data inside a fixed size buffer as T
@@ -1106,6 +1107,8 @@ std::vector<char> pack( const T& value ) {
   return result;
 }
 
+///@}
+
 /**
  *  Serialize a capi_checksum160 type
  *
@@ -1166,6 +1169,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, capi_checksum512& 
    return ds;
 }
 
-///@}
+
 
 }
