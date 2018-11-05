@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [API Reference](/modules.md)
+* [Smart Contract API](/modules.md)
   * [Compiler builtins](/group__compiler__builtins.md)
   * [Action](/group__action.md)
   * [Asset](/group__asset.md)
