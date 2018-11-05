@@ -18,7 +18,7 @@ Here is a list of all modules:
 * **[dispatcher](group__dispatcher.md)** Defines C++ functions to dispatch action to proper action handler inside a contract. 
 * **[fixed\_key](group__fixed__key.md)** Fixed size key sorted lexicographically for Multi Index Table. 
 * **[fixed\_point](group__fixed__point.md)** 32,64,128,256 bits version of fixed point variables 
-* **[multiindex](group__multiindex.md)** Defines EOSIO Multi Index Table. 
+* **[multiindex](group__multiindex.md)** Defines EOSIO Multi Index TableEOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container. EOSIO Multi-Index table requires exactly a uint64\_t primary key. For the table to be able to retrieve the primary key, the object stored inside the table is required to have a const member function called primary\_key() that returns uint64\_t. EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of: 
 * **[privileged](group__privileged.md)** 
 * **[singleton](group__singleton.md)** Defines EOSIO Singleton Table. 
 * **[symbol](group__symbol.md)** Defines CPP API for managing symbols. 

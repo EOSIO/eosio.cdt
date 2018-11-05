@@ -244,7 +244,6 @@ T eosio::unpack_action_data ()
 
 Interpret the action body as type T. 
 
-This method unpacks the current action at type T.
 
 
 **Returns:**
