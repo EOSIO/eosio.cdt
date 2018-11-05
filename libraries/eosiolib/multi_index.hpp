@@ -188,9 +188,7 @@ struct indexed_by {
  *  @brief Defines EOSIO Multi Index Table
  *  @ingroup databasecpp
  *
- *
- *
- *  EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
+ *  @detailed EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
  *  EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,
  *  the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t.
  *  EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
@@ -672,7 +670,6 @@ class multi_index
 
       /**
        *  Returns the `code` member property.
-       *  @brief Returns the `code` member property.
        *
        *  @return Account name of the Code that owns the Primary Table.
        *
@@ -707,7 +704,6 @@ class multi_index
 
       /**
        *  Returns the `scope` member property.
-       *  @brief Returns the `scope` member property.
        *
        *  @return Scope id of the Scope within the Code of the Current Receiver under which the desired Primary Table instance can be found.
        *
@@ -805,7 +801,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
@@ -852,7 +847,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
@@ -897,7 +891,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -942,7 +935,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -987,7 +979,6 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1042,7 +1033,6 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1097,7 +1087,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
@@ -1153,7 +1142,6 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
@@ -1209,7 +1197,6 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
-       *  @brief Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the lower bound search.
        *
@@ -1279,7 +1266,6 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
-       *  @brief Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
        *
@@ -1348,7 +1334,6 @@ class multi_index
 
       /**
        *  Returns an available primary key.
-       *  @brief Returns an available primary key.
        *
        *  @return An available (unused) primary key value.
        *
@@ -1412,7 +1397,6 @@ class multi_index
 
       /**
        *  Returns an appropriately typed Secondary Index.
-       *  @brief Returns an appropriately typed Secondary Index.
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1475,7 +1459,6 @@ class multi_index
 
       /**
        *  Returns an appropriately typed Secondary Index.
-       *  @brief Returns an appropriately typed Secondary Index.
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1549,7 +1532,6 @@ class multi_index
 
       /**
        *  Returns an iterator to the given object in a Multi-Index table.
-       *  @brief Returns an iterator to the given object in a Multi-Index table.
        *
        *  @param obj - A reference to the desired object
        *
@@ -1612,7 +1594,6 @@ class multi_index
       }
       /**
        *  Adds a new object (i.e., row) to the table.
-       *  @brief Adds a new object (i.e., row) to the table.
        *
        *  @param payer - Account name of the payer for the Storage usage of the new object
        *  @param constructor - Lambda function that does an in-place initialization of the object to be created in the table
@@ -1708,7 +1689,6 @@ class multi_index
 
       /**
        *  Modifies an existing object in a table.
-       *  @brief Modifies an existing object in a table.
        *
        *  @param itr - an iterator pointing to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1776,7 +1756,6 @@ class multi_index
 
       /**
        *  Modifies an existing object in a table.
-       *  @brief Modifies an existing object in a table.
        *
        *  @param obj - a reference to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1894,7 +1873,6 @@ class multi_index
 
       /**
        *  Retrieves an existing object from a table using its primary key.
-       *  @brief Retrieves an existing object from a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @return A constant reference to the object containing the specified primary key.
@@ -1946,7 +1924,6 @@ class multi_index
 
       /**
        *  Search for an existing object in a table using its primary key.
-       *  @brief Search for an existing object in a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @return An iterator to the found object which has a primary key equal to `primary` OR the `end` iterator of the referenced table if an object with primary key `primary` is not found.
@@ -2004,7 +1981,6 @@ class multi_index
 
       /**
        *  Search for an existing object in a table using its primary key.
-       *  @brief Search for an existing object in a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @param error_msg - error message if an object with primary key `primary` is not found.
@@ -2027,7 +2003,6 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
-       *  @brief Remove an existing object from a table using its primary key.
        *
        *  @param itr - An iterator pointing to the object to be removed
        *
@@ -2095,7 +2070,6 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
-       *  @brief Remove an existing object from a table using its primary key.
        *
        *  @param obj - Object to be removed
        *

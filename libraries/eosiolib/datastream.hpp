@@ -25,23 +25,24 @@
 
 namespace eosio {
   /**
+   * Defines data stream for reading and writing data in the form of bytes
+   *
    * @addtogroup datastream Data Stream
-   * @brief Defines data stream for reading and writing data in the form of bytes
    * @{
    */
 
 /**
- *  %A data stream for reading and writing data in the form of bytes
- *  @brief %A data stream for reading and writing data in the form of bytes.
+ *  A data stream for reading and writing data in the form of bytes
+ *
  *  @tparam T - Type of the datastream buffer
  */
 template<typename T>
 class datastream {
    public:
       /**
-       * Construct a new datastream object given the size of the buffer and start position of the buffer
-       *
        * @brief Construct a new datastream object
+       *
+       * @detailed Construct a new datastream object given the size of the buffer and start position of the buffer
        * @param start - The start position of the buffer
        * @param s - The size of the buffer
        */
@@ -51,7 +52,6 @@ class datastream {
      /**
       *  Skips a specified number of bytes from this stream
       *
-      *  @brief Skips a specific number of bytes from this stream
       *  @param s - The number of bytes to skip
       */
       inline void skip( size_t s ){ _pos += s; }
@@ -59,7 +59,6 @@ class datastream {
      /**
       *  Reads a specified number of bytes from the stream into a buffer
       *
-      *  @brief Reads a specified number of bytes from this stream into a buffer
       *  @param d - The pointer to the destination buffer
       *  @param s - the number of bytes to read
       *  @return true
@@ -74,7 +73,6 @@ class datastream {
      /**
       *  Writes a specified number of bytes into the stream from a buffer
       *
-      *  @brief Writes a specified number of bytes into the stream from a buffer
       *  @param d - The pointer to the source buffer
       *  @param s - The number of bytes to write
       *  @return true

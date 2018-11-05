@@ -8,36 +8,28 @@
 
 namespace eosio {
   /**
+   *  Defines %CPP API for managing assets
    *  @addtogroup asset Asset CPP API
-   *  @brief Defines %CPP API for managing assets
    *  @{
    */
 
    /**
     * \struct Stores information for owner of asset
-    *
-    * @brief Stores information for owner of asset
     */
 
    struct asset {
       /**
        * The amount of the asset
-       *
-       * @brief The amount of the asset
        */
       int64_t      amount = 0;
 
       /**
        * The symbol name of the asset
-       *
-       * @brief The symbol name of the asset
        */
       symbol  symbol;
 
       /**
        * Maximum amount possible for this asset. It's capped to 2^62 - 1
-       *
-       * @brief Maximum amount possible for this asset
        */
       static constexpr int64_t max_amount    = (1LL << 62) - 1;
 
@@ -46,7 +38,6 @@ namespace eosio {
       /**
        * Construct a new asset given the symbol name and the amount
        *
-       * @brief Construct a new asset object
        * @param a - The amount of the asset
        * @param s - The name of the symbol
        */
@@ -60,7 +51,6 @@ namespace eosio {
       /**
        * Check if the amount doesn't exceed the max amount
        *
-       * @brief Check if the amount doesn't exceed the max amount
        * @return true - if the amount doesn't exceed the max amount
        * @return false - otherwise
        */
@@ -69,7 +59,6 @@ namespace eosio {
       /**
        * Check if the asset is valid. %A valid asset has its amount <= max_amount and its symbol name valid
        *
-       * @brief Check if the asset is valid
        * @return true - if the asset is valid
        * @return false - otherwise
        */
@@ -78,7 +67,6 @@ namespace eosio {
       /**
        * Set the amount of the asset
        *
-       * @brief Set the amount of the asset
        * @param a - New amount for the asset
        */
       void set_amount( int64_t a ) {
@@ -89,7 +77,6 @@ namespace eosio {
       /**
        * Unary minus operator
        *
-       * @brief Unary minus operator
        * @return asset - New asset with its amount is the negative amount of this asset
        */
       asset operator-()const {
@@ -101,7 +88,6 @@ namespace eosio {
       /**
        * Subtraction assignment operator
        *
-       * @brief Subtraction assignment operator
        * @param a - Another asset to subtract this asset with
        * @return asset& - Reference to this asset
        * @post The amount of this asset is subtracted by the amount of asset a
@@ -117,7 +103,6 @@ namespace eosio {
       /**
        * Addition Assignment  operator
        *
-       * @brief Addition Assignment operator
        * @param a - Another asset to subtract this asset with
        * @return asset& - Reference to this asset
        * @post The amount of this asset is added with the amount of asset a
@@ -133,7 +118,6 @@ namespace eosio {
       /**
        * Addition operator
        *
-       * @brief Addition operator
        * @param a - The first asset to be added
        * @param b - The second asset to be added
        * @return asset - New asset as the result of addition
@@ -147,7 +131,6 @@ namespace eosio {
       /**
        * Subtraction operator
        *
-       * @brief Subtraction operator
        * @param a - The asset to be subtracted
        * @param b - The asset used to subtract
        * @return asset - New asset as the result of subtraction of a with b
@@ -159,9 +142,9 @@ namespace eosio {
       }
 
       /**
-       * Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
-       *
        * @brief Multiplication assignment operator, with a number
+       *
+       * @detailed Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
        * @param a - The multiplier for the asset's amount
        * @return asset - Reference to this asset
        * @post The amount of this asset is multiplied by a
@@ -192,7 +175,6 @@ namespace eosio {
       /**
        * Multiplication operator, with a number preceeding
        *
-       * @brief Multiplication operator, with a number preceeding
        * @param a - The multiplier for the asset's amount
        * @param b - The asset to be multiplied
        * @return asset - New asset as the result of multiplication
@@ -204,9 +186,9 @@ namespace eosio {
       }
 
       /**
-       * Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.
-       *
        * @brief Division assignment operator, with a number
+       *
+       * @detailed Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.
        * @param a - The divisor for the asset's amount
        * @return asset - Reference to this asset
        * @post The amount of this asset is divided by a
@@ -221,7 +203,6 @@ namespace eosio {
       /**
        * Division operator, with a number proceeding
        *
-       * @brief Division operator, with a number proceeding
        * @param a - The asset to be divided
        * @param b - The divisor for the asset's amount
        * @return asset - New asset as the result of division
@@ -235,7 +216,6 @@ namespace eosio {
       /**
        * Division operator, with another asset
        *
-       * @brief Division operator, with another asset
        * @param a - The asset which amount acts as the dividend
        * @param b - The asset which amount acts as the divisor
        * @return int64_t - the resulted amount after the division
@@ -250,7 +230,6 @@ namespace eosio {
       /**
        * Equality operator
        *
-       * @brief Equality operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if both asset has the same amount
@@ -265,7 +244,6 @@ namespace eosio {
       /**
        * Inequality operator
        *
-       * @brief Inequality operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if both asset doesn't have the same amount
@@ -279,7 +257,6 @@ namespace eosio {
       /**
        * Less than operator
        *
-       * @brief Less than operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if the first asset's amount is less than the second asset amount
@@ -294,7 +271,6 @@ namespace eosio {
       /**
        * Less or equal to operator
        *
-       * @brief Less or equal to operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if the first asset's amount is less or equal to the second asset amount
@@ -309,7 +285,6 @@ namespace eosio {
       /**
        * Greater than operator
        *
-       * @brief Greater than operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if the first asset's amount is greater than the second asset amount
@@ -324,7 +299,6 @@ namespace eosio {
       /**
        * Greater or equal to operator
        *
-       * @brief Greater or equal to operator
        * @param a - The first asset to be compared
        * @param b - The second asset to be compared
        * @return true - if the first asset's amount is greater or equal to the second asset amount
@@ -338,8 +312,6 @@ namespace eosio {
 
       /**
        * %Print the asset
-       *
-       * @brief %Print the asset
        */
       void print()const {
          int64_t p = (int64_t)symbol.precision();
@@ -369,8 +341,6 @@ namespace eosio {
 
   /**
    * \struct Extended asset which stores the information of the owner of the asset
-   *
-   * @brief Extended asset which stores the information of the owner of the asset
    */
    struct extended_asset {
       /**
@@ -380,43 +350,32 @@ namespace eosio {
 
       /**
        * The owner of the asset
-       *
-       * @brief The owner of the asset
        */
       name contract;
 
       /**
        * Get the extended symbol of the asset
        *
-       * @brief Get the extended symbol of the asset
        * @return extended_symbol - The extended symbol of the asset
        */
       extended_symbol get_extended_symbol()const { return extended_symbol{ quantity.symbol, contract }; }
 
       /**
        * Default constructor
-       *
-       * @brief Construct a new extended asset object
        */
       extended_asset() = default;
 
        /**
        * Construct a new extended asset given the amount and extended symbol
-       *
-       * @brief Construct a new extended asset object
        */
       extended_asset( int64_t v, extended_symbol s ):quantity(v,s.get_symbol()),contract(s.get_contract()){}
       /**
        * Construct a new extended asset given the asset and owner name
-       *
-       * @brief Construct a new extended asset object
        */
       extended_asset( asset a, name c ):quantity(a),contract(c){}
 
       /**
        * %Print the extended asset
-       *
-       * @brief %Print the extended asset
        */
       void print()const {
          quantity.print();
@@ -427,7 +386,6 @@ namespace eosio {
        /**
        *  Unary minus operator
        *
-       *  @brief Unary minus operator
        *  @return extended_asset - New extended asset with its amount is the negative amount of this extended asset
        */
       extended_asset operator-()const {
@@ -435,9 +393,9 @@ namespace eosio {
       }
 
       /**
-       * Subtraction operator. This subtracts the amount of the extended asset.
-       *
        * @brief Subtraction operator
+       *
+       * @detailed Subtraction operator. This subtracts the amount of the extended asset.
        * @param a - The extended asset to be subtracted
        * @param b - The extended asset used to subtract
        * @return extended_asset - New extended asset as the result of subtraction
@@ -449,9 +407,9 @@ namespace eosio {
       }
 
       /**
-       * Addition operator. This adds the amount of the extended asset.
-       *
        * @brief Addition operator
+       *
+       * @detailed Addition operator. This adds the amount of the extended asset.
        * @param a - The extended asset to be added
        * @param b - The extended asset to be added
        * @return extended_asset - New extended asset as the result of addition

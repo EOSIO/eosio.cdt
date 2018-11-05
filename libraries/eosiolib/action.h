@@ -10,7 +10,7 @@ extern "C" {
     *  @addtogroup action
     *  @brief Defines API for querying action and sending action
     *
-    *  A EOS.IO action has the following abstract structure:
+    *  @detailed A EOS.IO action has the following abstract structure:
     *
     *  ```
     *    struct action {
