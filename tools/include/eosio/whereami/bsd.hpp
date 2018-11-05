@@ -6,7 +6,7 @@
 #include <dlfcn.h>
 
 template <uint8_t OS>
-int _getExecutablePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::bsd, int>::type = 0) {
+int _getExecutablePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_bsd, int>::type = 0) {
   char buffer1[PATH_MAX];
   char buffer2[PATH_MAX];
   char* path = buffer1;
@@ -55,7 +55,7 @@ int _getExecutablePath(char* out, int capacity, int* dirname_length, typename st
 }
 
 template <uint8_t OS>
-int _getModulePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::bsd, int>::type = 0) {
+int _getModulePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_bsd, int>::type = 0) {
   char buffer[PATH_MAX];
   char* resolved = NULL;
   int length = -1;

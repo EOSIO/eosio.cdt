@@ -10,7 +10,7 @@
 #endif
 
 template <uint8_t OS>
-int _getModulePath(HMODULE module, char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::windows, int>::type = 0) {
+int _getModulePath(HMODULE module, char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_win, int>::type = 0) {
    wchar_t buffer1[MAX_PATH];
    wchar_t buffer2[MAX_PATH];
    wchar_t* path = NULL;
@@ -83,7 +83,7 @@ int _getModulePath(HMODULE module, char* out, int capacity, int* dirname_length,
    }
 
 template <uint8_t OS>
-int _getExecutablePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::windows, int>::type = 0) {
+int _getExecutablePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_win, int>::type = 0) {
    return _getModulePath(NULL, out, capacity, dirname_length);
 }
 

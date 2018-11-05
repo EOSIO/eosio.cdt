@@ -421,7 +421,9 @@ struct generation_utils {
    }
 
    inline std::string translate_type( const clang::QualType& type ) {
-      if ( is_template_specialization( type, {"binary_extension"} ) ) {
+      if ( is_template_specialization( type, {"ignore"} ) )
+         return _translate_type(get_template_argument( type ) );
+      else if ( is_template_specialization( type, {"binary_extension"} ) ) {
          auto t = _translate_type(get_template_argument( type ));
          return t+"$";
       }

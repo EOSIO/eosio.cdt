@@ -8,8 +8,8 @@
 #include "clang/AST/DeclTemplate.h"
 #include "clang/AST/Expr.h"
 #include "clang/Basic/Builtins.h"
-#include "clang/Rewrite/Rewriter.h"
-#include "clang/Rewrite/Rewriters.h"
+#include "clang/Rewrite/Core/Rewriter.h"
+#include "clang/Rewrite/Frontend/Rewriters.h"
 #include "llvm/Support/FileSystem.h"
 #include <eosio/utils.hpp>
 #include <eosio/gen.hpp>

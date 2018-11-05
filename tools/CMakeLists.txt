@@ -21,6 +21,7 @@ macro (add_tool name)
    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${name}.cpp.in ${CMAKE_BINARY_DIR}/${name}.cpp)
 
    add_executable(${name} ${CMAKE_BINARY_DIR}/${name}.cpp)
+   set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
    target_include_directories(${name} PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
    add_dependencies(${name} EosioClang)
