@@ -15,13 +15,11 @@
 namespace eosio {
 
    /**
-    * @defgroup actioncppapi Action C++ API
-    * @ingroup actionapi
-    * @brief Defines type-safe C++ wrapers for querying action and sending action
+    *  @addtogroup action Action C++ API
+    *  @brief Defines type-safe C++ wrapers for querying action and sending action
     *
-    * @note There are some methods from the @ref actioncapi that can be used directly from C++
-    *
-    * @{
+    *  @note There are some methods from the @ref action that can be used directly from C++
+    *  @{
     */
 
    /**
@@ -321,8 +319,7 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define INLINE_ACTION_SENDER(...) BOOST_PP_OVERLOAD(INLINE_ACTION_SENDER,__VA_ARGS__)(__VA_ARGS__)
 
 /**
- * @addtogroup actioncppapi
- * Additional documentation for group
+ * @addtogroup action
  * @{
  */
 
