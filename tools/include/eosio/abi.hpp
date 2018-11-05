@@ -44,6 +44,12 @@ struct abi_ricardian_clause_pair {
    std::string body;
 };
 
+struct abi_variant {
+   std::string name;
+   std::vector<std::string> types;
+   bool operator<(const abi_variant& t) const { return name < t.name; }
+};
+
 struct abi_error_message {
    uint64_t    error_code;
    std::string error_msg;
@@ -51,11 +57,12 @@ struct abi_error_message {
 
 /// From eosio libraries/chain/include/eosio/chain/abi_def.hpp
 struct abi {
-   std::string version = "eosio::abi/1.0";
+   std::string version = "eosio::abi/1.1";
    std::set<abi_struct>  structs;
    std::set<abi_typedef> typedefs;
    std::set<abi_action>  actions;
    std::set<abi_table>   tables;
+   std::set<abi_variant> variants;
    std::vector<abi_ricardian_clause_pair>   ricardian_clauses;
    std::vector<abi_error_message> error_messages;
 };

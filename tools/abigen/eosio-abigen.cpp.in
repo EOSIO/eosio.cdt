@@ -8,10 +8,13 @@
 #include "clang/AST/DeclTemplate.h"
 #include "clang/AST/Expr.h"
 #include "clang/Basic/Builtins.h"
+#include "clang/Rewrite/Rewriter.h"
+#include "clang/Rewrite/Rewriters.h"
 #include "llvm/Support/FileSystem.h"
-#include "eosio/utils.hpp"
-#include "eosio/gen.hpp"
-#include "eosio/whereami/whereami.hpp"
+#include <eosio/utils.hpp>
+#include <eosio/gen.hpp>
+#include <eosio/whereami/whereami.hpp>
+#include <eosio/abi.hpp>
 
 #include <exception>
 #include <iostream>
@@ -23,7 +26,6 @@
 #include <chrono>
 #include <ctime>
 
-#include "abi.hpp"
 #include <jsoncons/json.hpp>
 
 // Declares llvm::cl::extrahelp.
@@ -65,16 +67,10 @@ class abigen : public generation_utils {
       abi_action ret;
       auto action_name = decl->getEosioActionAttr()->getName();
 
-      std::string rc = "";
-      if (has_eosio_ricardian(decl)) {
-         rc = read_file(get_eosio_ricardian(decl));
-      } else {
-         rc = get_ricardian_contract(decl);
-      }
-      if (rc.empty())
+      if (rcs[get_action_name(decl)].empty())
          std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
-      ret.ricardian_contract = rc;
+      ret.ricardian_contract = rcs[get_action_name(decl)];
 
       if (action_name.empty()) {
          try {
@@ -103,16 +99,10 @@ class abigen : public generation_utils {
 
       auto action_name = decl->getEosioActionAttr()->getName();
 
-      std::string rc = "";
-      if (has_eosio_ricardian(decl)) {
-         rc = read_file(get_eosio_ricardian(decl));
-      } else {
-         rc = get_ricardian_contract(decl);
-      }
-      if (rc.empty())
+      if (rcs[get_action_name(decl)].empty())
          std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
-      ret.ricardian_contract = rc;
+      ret.ricardian_contract = rcs[get_action_name(decl)];
 
       if (action_name.empty()) {
          try {
@@ -253,6 +243,20 @@ class abigen : public generation_utils {
          _abi.ricardian_clauses.push_back({std::get<0>(clp), std::get<1>(clp)});
       }
    }
+   
+   void add_contracts( const std::map<std::string, std::string>& rc ) {
+      rcs = rc;
+   }
+
+   void add_variant( const clang::QualType& t ) {
+      abi_variant var;
+      auto pt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr());
+      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+      var.name = get_type(t);
+      for (int i=0; i < tst->getNumArgs(); ++i)
+         var.types.push_back(translate_type(get_template_argument( t, i )));
+      _abi.variants.insert(var); 
+   }
 
    void add_type( const clang::QualType& t ) {
       clang::QualType type(t);
@@ -260,7 +264,7 @@ class abigen : public generation_utils {
       if (!is_builtin_type(type)) {
          if (is_aliasing(type))
             add_typedef(type);
-         else if (is_template_specialization(type, {"vector", "set", "optional"}))
+         else if (is_template_specialization(type, {"vector", "set", "optional", "binary_extension"}))
                add_type(get_template_argument(type));
          else if (is_template_specialization(type, {"map"}))
             add_map(type);
@@ -268,6 +272,8 @@ class abigen : public generation_utils {
             add_pair(type);
          else if (is_template_specialization(type, {"tuple"}))
             add_tuple(type);
+         else if (is_template_specialization(type, {"variant"}))
+            add_variant(type);
          else if (is_template_specialization(type, {})) {
             add_struct(type.getTypePtr()->getAsCXXRecordDecl(), get_template_name(type));
          }
@@ -296,6 +302,16 @@ class abigen : public generation_utils {
          f["name"] = field.name;
          f["type"] = field.type;
          o["fields"].push_back(f);
+      }
+      return o;
+   }
+
+   ojson variant_to_json( const abi_variant& v ) {
+      ojson o;
+      o["name"] = v.name;
+      o["types"] = ojson::array();
+      for ( auto ty : v.types ) {
+         o["types"].push_back( ty );
       }
       return o;
    }
@@ -340,7 +356,7 @@ class abigen : public generation_utils {
       auto remove_suffix = [&]( std::string name ) {
          int i = name.length()-1;
          for (; i >= 0; i--) 
-            if ( name[i] != '[' && name[i] != ']' && name[i] != '?' )
+            if ( name[i] != '[' && name[i] != ']' && name[i] != '?' && name[i] != '$' )
                break;
          return name.substr(0,i+1);
       };
@@ -427,6 +443,10 @@ class abigen : public generation_utils {
       for ( auto rc : _abi.ricardian_clauses ) {
          o["ricardian_clauses"].push_back(clause_to_json( rc ));
       }
+      o["variants"]   = ojson::array();
+      for ( auto v : _abi.variants ) {
+         o["variants"].push_back(variant_to_json( v ));
+      }
       o["abi_extensions"]     = ojson::array();
       return o;
    }
@@ -438,6 +458,7 @@ class abigen : public generation_utils {
       abi                                   _abi;
       std::set<const clang::CXXRecordDecl*> tables;
       std::set<abi_table>                   ctables;
+      std::map<std::string, std::string>    rcs;
 };
 
 abigen& get_abigen_ref() {
@@ -467,11 +488,9 @@ class EosioRecordMatcher : public MatchFinder::MatchCallback {
       bool has_added_clauses = false;
       virtual void run( const MatchFinder::MatchResult& res ) {
          if (const clang::CXXRecordDecl* decl = res.Nodes.getNodeAs<clang::CXXRecordDecl>("eosio_abis")) {
-            if (abigen::has_eosio_ricardian(decl)) {
-               get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses(get_abigen_ref().read_file(abigen::get_eosio_ricardian(decl))));
-               has_added_clauses = true;
-            } else if (!has_added_clauses) {
-               get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses(get_abigen_ref().read_file(get_abigen_ref().get_clauses_filename())));
+            if (!has_added_clauses) {
+               get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses());
+               get_abigen_ref().add_contracts(get_abigen_ref().parse_contracts());
                has_added_clauses = true;
             }
             if (decl->isEosioAction() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {

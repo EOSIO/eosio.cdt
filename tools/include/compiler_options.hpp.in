@@ -273,6 +273,7 @@ static cl::opt<bool> fcoroutine_ts_opt(
 struct Options {
    std::string output_fn;
    std::string abigen_inputs;
+   std::vector<std::string> inputs;
    bool link;
    bool abigen;
    std::string eosio_pp_dir;
@@ -326,6 +327,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 static Options CreateOptions(bool add_defaults=true) {
    std::string output_fn;
    std::stringstream abigen_inputs;
+   std::vector<std::string> inputs;
    std::vector<std::string> agresources;
    std::vector<std::string> copts;
    std::vector<std::string> ldopts;
@@ -372,6 +374,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.push_back(input_filename);
 #else
       copts.push_back(input_filename);
+      inputs.push_back(input_filename);
       abigen_inputs << input_filename << " ";
 #endif
    }
@@ -540,6 +543,7 @@ static Options CreateOptions(bool add_defaults=true) {
    else {
       copts.emplace_back("-o "+o_opt);
 #ifndef ONLY_LD
+      if (!inputs.empty())
       ldopts.push_back(o_opt);
 #endif
       ldopts.emplace_back("-o "+o_opt);
@@ -599,5 +603,5 @@ static Options CreateOptions(bool add_defaults=true) {
 #else
    ldopts.emplace_back("-lc++ -lc -leosio");
 #endif
-   return {output_fn, abigen_inputs.str(), link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources};
+   return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources};
 }

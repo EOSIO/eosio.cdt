@@ -8,15 +8,17 @@
 #include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
 #include <eosiolib/ignore.hpp>
+#include <eosiolib/varint.hpp>
+#include <eosiolib/binary_extension.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
-#include <eosiolib/varint.hpp>
 #include <vector>
 #include <array>
 #include <set>
 #include <map>
 #include <string>
 #include <optional>
+#include <variant>
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -266,6 +268,88 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize a binary_extension into a stream
+ *
+ *  @brief Serialize a binary_extension
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binary_extension<T>& be) {
+  ds << be.value_or();
+  return ds;
+}
+
+ /**
+ *  Deserialize a binary_extension from a stream
+ *
+ *  @brief Deserialize a binary_extension
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_extension<T>& be) {
+  if ( ds.remaining() >= sizeof(T) ) {
+     T val;
+     ds >> val;
+     be.set(val);
+  }
+  return ds;
+}
+
+/**
+ *  Serialize an std::variant into a stream
+ *
+ *  @brief Serialize an std::variant
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename... Ts>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::variant<Ts...>& var) {
+  ds << unsigned_int{var.index()};
+  ds << std::get<index>(var);
+  return ds;
+}
+
+template<int I, typename Stream, typename... Ts>
+void deserialize(datastream<Stream>& ds, std::variant<Ts...>& var, int i) {
+   if constexpr (I < std::variant_size_v<std::variant<Ts...>>) {
+      if (i == I) {
+         std::variant_alternative_t<I, std::variant<Ts...>> tmp;
+         ds >> tmp;
+         var = std::move(tmp);
+      } else {
+         deserialize<I+1>(ds,var,i);
+      }
+   } else {
+      eosio_assert(false, "invalid variant index");
+   }
+}
+
+/**
+ *  Deserialize an std::variant from a stream
+ *
+ *  @brief Deserialize an std::variant
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename... Ts>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::variant<Ts...>& var) {
+  unsigned_int index;
+  ds >> index;
+  deserialize<0>(ds,var,index);
+  return ds;
+}
+
+/**
  *  Serialize an optional into a stream
  *
  *  @brief Serialize an optional
@@ -281,6 +365,43 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optiona
   if (valid)
      ds << *opt;
   return ds;
+}
+
+/**
+ *  Serialize an std::pair
+ *
+ *  @brief Serialize an std::pair 
+ *  @param ds - The stream to write
+ *  @param t - The value to serialize
+ *  @tparam DataStream - Type of datastream
+ *  @tparam Args - Type of the objects contained in the tuple
+ *  @return DataStream& - Reference to the datastream
+ */
+template<typename DataStream, typename T1, typename T2>
+DataStream& operator<<( DataStream& ds, const std::pair<T1, T2>& t ) {
+   ds << std::get<0>(t);
+   ds << std::get<1>(t);
+   return ds;
+}
+
+/**
+ *  Deserialize an std::pair
+ *
+ *  @brief Deserialize an std::pair
+ *  @param ds - The stream to read
+ *  @param t - The destination for deserialized value
+ *  @tparam DataStream - Type of datastream
+ *  @tparam Args - Type of the objects contained in the tuple
+ *  @return DataStream& - Reference to the datastream
+ */
+template<typename DataStream, typename T1, typename T2>
+DataStream& operator>>( DataStream& ds, std::pair<T1, T2>& t ) {
+   T1 t1;
+   T2 t2;
+   ds >> t1;
+   ds >> t2;
+   t = std::pair<T1, T2>{t1, t2};
+   return ds;
 }
 
 /**

@@ -9,11 +9,96 @@
 #include <functional>
 #include <vector>
 #include <string>
+#include <map>
 #include <utility>
 #include <regex>
 #include <eosio/utils.hpp>
 
 namespace eosio { namespace cdt {
+
+struct simple_ricardian_tokenizer {
+   simple_ricardian_tokenizer( const std::string& src ) : source(src), index(0) {}
+   int eat_ws(int i) {
+      if (source[i] != ' ' && source[i] != '\n' && source[i] != '\r' && source[i] != '\t')
+         return 0;
+      for (; i < source.size(); i++) {
+         if (source[i] != ' ' && source[i] != '\n' && source[i] != '\r' && source[i] != '\t')
+            break;
+      }
+      return i - index;
+   }
+
+   bool check(const std::string& sub) {
+      int i = index;
+      int j = 0;
+      for (; j < sub.size(); i++, j++) {
+         i += eat_ws(i);
+         if (sub[j] != source[i])
+            return false;
+      }
+      index = i;
+      index += eat_ws(index);
+      return true;
+   }
+
+   bool is_decl(std::string type) {
+      return check("<") && check("h1") && check("class") && check("=") 
+            && check('\"'+type+'\"') && check(">");
+   }
+
+   std::vector<std::string> get_decl(std::string type) {
+      if (is_decl(type)) {
+         int before, after;
+         before = after = index;
+         int ws = 0;
+         for (; after < source.size(); after++) {
+            if (source[after] == '<')
+               break;
+            if (source[after] != ' ' && source[after] != '\n' && source[after] != '\r' && source[after] != '\t')
+               ws = 0;
+            else
+               ws++;
+         }
+         index = after; 
+         if (check("<") && check("/h1") && check(">"))
+            return {source.substr(before, after-before-ws)};
+      }
+      return {};
+   }
+   std::string get_body(const std::string& type) {
+      int i, before;
+      i = before = index;
+      int ws = 0; 
+      for (; i < source.size(); i++) {
+         index = i;
+         if (is_decl(type))
+            break;
+         if (source[i] != ' ' && source[i] != '\n' && source[i] != '\r' && source[i] != '\t')
+            ws = 0;
+         else
+            ws++;
+      }
+      index = i;
+      return source.substr(before, index-before-ws);
+   }
+
+   std::vector<std::pair<std::string, std::string>> parse(const std::string& type) {
+      std::vector<std::pair<std::string, std::string>> ret;
+      while (index < source.size()) {
+         std::vector<std::string> decl = get_decl(type);
+         if (!decl.empty()) {
+            std::string body = get_body(type);
+            ret.push_back(std::make_pair(decl[0], body));
+         }
+         else
+            return {};
+      }
+      return ret;
+   }
+
+   std::string source;
+   size_t      index;
+};
 
 struct generation_utils {
    std::function<void()> error_handler;
@@ -104,11 +189,8 @@ struct generation_utils {
          return tmp;
       return decl->getName();
    }
-   inline std::string get_rc_filename( const std::string& contract, const std::string& action ) {
-      return contract+".rc."+action+".md";
-   }
-   inline std::string get_clauses_filename( const std::string& contract ) {
-      return contract+".clauses.md";
+   inline std::string get_rc_filename() {
+      return contract_name+".contracts.md";
    }
    inline std::string get_clauses_filename() {
       return contract_name+".clauses.md";
@@ -130,55 +212,42 @@ struct generation_utils {
       return {};
    }
 
-   inline std::string get_ricardian_contract( const clang::CXXMethodDecl* decl ) {
-      return read_file(get_rc_filename(contract_name, get_action_name(decl)));
-   }
-   inline std::string get_ricardian_contract( const clang::CXXRecordDecl* decl ) {
-      return read_file(get_rc_filename(contract_name, get_action_name(decl)));
-   }
    inline std::string get_ricardian_clauses() {
-      return read_file(get_clauses_filename(contract_name));
+      return read_file(get_clauses_filename());
    }
-   inline std::string get_clause_decl( std::string line ) {
-      std::smatch match;
-      if ( std::regex_match( line, match, std::regex("([ ]*<h1[ ]+class[ ]*=[ ]*\"clause\"[ ]*>)(.*)(<[ ]*\/h1[ ]*)>", std::regex_constants::ECMAScript) ) ) {
-         return match[2].str();
+   inline std::string get_ricardian_contracts() {
+      return read_file(get_rc_filename());
+   }
+
+   inline std::map<std::string, std::string> parse_contracts() {
+      std::string contracts = get_ricardian_contracts();
+      std::map<std::string, std::string> rcs;
+      simple_ricardian_tokenizer srt(contracts); 
+      if (contracts.empty()) {
+         std::cout << "Warning, empty ricardian clause file\n";
+         return rcs;
       }
-      return "";
-   }
 
-   inline std::vector<std::pair<std::string, std::string>> parse_clauses( const std::string& clauses ) {
+      auto parsed = srt.parse("contract"); 
+      for (auto cl : parsed) {
+         rcs.emplace(std::get<0>(cl), std::get<1>(cl));
+      }
+      return rcs;
+   }  
+  
+   inline std::vector<std::pair<std::string, std::string>> parse_clauses() {
+      std::string clauses = get_ricardian_clauses();
       std::vector<std::pair<std::string, std::string>> clause_pairs;
-      std::istringstream ss;
-      ss.str(clauses);
-
-      std::string id;
-      std::string body;
-      std::string line;
-     
-     if (clauses.empty()) {
+      simple_ricardian_tokenizer srt(clauses); 
+      if (clauses.empty()) {
          std::cout << "Warning, empty ricardian clause file\n";
          return clause_pairs;
-     }
+      }
 
-      std::getline(ss, line);
-      auto _id = get_clause_decl(line);
-      if (_id.empty()) {
-         std::cout << "Error, invalid ricardian clause, must start with a clause id\n";
-         error_handler();
+      auto parsed = srt.parse("clause"); 
+      for (auto cl : parsed) {
+         clause_pairs.emplace_back(std::get<0>(cl), std::get<1>(cl));
       }
-      id = _id; 
-      for (; std::getline(ss, line);) {
-         auto _id = get_clause_decl(line); 
-         if ( !_id.empty() ) {
-            clause_pairs.emplace_back(id, body);
-            body = "";
-            id = _id;
-         } else {
-            body += line;
-         }
-      }
-      clause_pairs.emplace_back(id, body);
       return clause_pairs;
    }  
 
@@ -352,7 +421,11 @@ struct generation_utils {
    }
 
    inline std::string translate_type( const clang::QualType& type ) {
-      if ( is_template_specialization( type, {"vector", "set"} ) ) {
+      if ( is_template_specialization( type, {"binary_extension"} ) ) {
+         auto t = _translate_type(get_template_argument( type ));
+         return t+"$";
+      }
+      else if ( is_template_specialization( type, {"vector", "set"} ) ) {
          auto t =_translate_type(get_template_argument( type ));
          return t=="int8" ? "bytes" : t+"[]";
       }
