@@ -14,7 +14,7 @@ namespace eosio {
    */
 
    /**
-    * \struct Stores information for owner of asset
+    * @struct Stores information for owner of asset
     */
 
    struct asset {
@@ -340,7 +340,7 @@ namespace eosio {
    };
 
   /**
-   * \struct Extended asset which stores the information of the owner of the asset
+   * @struct Extended asset which stores the information of the owner of the asset
    */
    struct extended_asset {
       /**

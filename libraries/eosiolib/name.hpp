@@ -13,10 +13,13 @@ namespace eosio {
 
    /**
     * @ingroup types
+    * @brief EOSIO Types
     * @{
 
     /*
-    * @brief wraps a %uint64_t to ensure it is only passed to methods that expect a %name. Ensures value is only passed to methods that expect a %name and that no mathematical operations occur.  Also enables specialization of print
+    * Wraps a %uint64_t to ensure it is only passed to methods that expect a %name.
+    * Ensures value is only passed to methods that expect a %name and that no mathematical
+    * operations occur.  Also enables specialization of print
     */
    struct name {
    public:

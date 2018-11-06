@@ -21,7 +21,6 @@ struct unsigned_int {
     /**
      * Construct a new unsigned int object
      *
-     * @brief Construct a new unsigned int object
      * @param v - Source
      */
     unsigned_int( uint32_t v = 0 ):value(v){}
@@ -29,7 +28,6 @@ struct unsigned_int {
     /**
      * Construct a new unsigned int object from a type that is convertible to uint32_t
      *
-     * @brief Construct a new unsigned int object
      * @tparam T - Type of the source
      * @param v - Source
      * @pre T must be convertible to uint32_t
@@ -42,7 +40,7 @@ struct unsigned_int {
 
     /**
      * Convert unsigned_int as T
-     * @brief Conversion Operator
+     * 
      * @tparam T - Target type of conversion
      * @return T - Converted target
      */
@@ -60,15 +58,12 @@ struct unsigned_int {
 
     /**
      * Contained value
-     *
-     * @brief Contained value
      */
     uint32_t value;
 
     /**
      * Check equality between a unsigned_int object and 32-bit unsigned integer
      *
-     * @brief Equality Operator
      * @param i - unsigned_int object to compare
      * @param v - 32-bit unsigned integer to compare
      * @return true - if equal
@@ -79,7 +74,6 @@ struct unsigned_int {
     /**
      * Check equality between 32-bit unsigned integer and  a unsigned_int object
      *
-     * @brief Equality Operator
      * @param i - 32-bit unsigned integer to compare
      * @param v - unsigned_int object to compare
      * @return true - if equal
@@ -90,7 +84,6 @@ struct unsigned_int {
     /**
      * Check equality between two unsigned_int objects
      *
-     * @brief Equality Operator
      * @param i - First unsigned_int object to compare
      * @param v - Second unsigned_int object to compare
      * @return true - if equal
@@ -101,7 +94,6 @@ struct unsigned_int {
     /**
      * Check inequality between a unsigned_int object and 32-bit unsigned integer
      *
-     * @brief Inequality Operator
      * @param i - unsigned_int object to compare
      * @param v - 32-bit unsigned integer to compare
      * @return true - if inequal
@@ -112,7 +104,6 @@ struct unsigned_int {
     /**
      * Check inequality between 32-bit unsigned integer and  a unsigned_int object
      *
-     * @brief Equality Operator
      * @param i - 32-bit unsigned integer to compare
      * @param v - unsigned_int object to compare
      * @return true - if unequal
@@ -123,7 +114,6 @@ struct unsigned_int {
     /**
      * Check inequality between two unsigned_int objects
      *
-     * @brief Inequality Operator
      * @param i - First unsigned_int object to compare
      * @param v - Second unsigned_int object to compare
      * @return true - if inequal
@@ -134,7 +124,6 @@ struct unsigned_int {
     /**
      * Check if the given unsigned_int object is less than the given 32-bit unsigned integer
      *
-     * @brief Less than Operator
      * @param i - unsigned_int object to compare
      * @param v - 32-bit unsigned integer to compare
      * @return true - if i less than v
@@ -145,7 +134,6 @@ struct unsigned_int {
     /**
      * Check if the given 32-bit unsigned integer is less than the given unsigned_int object
      *
-     * @brief Less than Operator
      * @param i - 32-bit unsigned integer to compare
      * @param v - unsigned_int object to compare
      * @return true -  if i less than v
@@ -156,7 +144,6 @@ struct unsigned_int {
     /**
      * Check if the first given unsigned_int is less than the second given unsigned_int object
      *
-     * @brief Less than Operator
      * @param i - First unsigned_int object to compare
      * @param v - Second unsigned_int object to compare
      * @return true -  if i less than v
@@ -167,7 +154,6 @@ struct unsigned_int {
     /**
      * Check if the given unsigned_int object is greater or equal to the given 32-bit unsigned integer
      *
-     * @brief Greater or Equal to Operator
      * @param i - unsigned_int object to compare
      * @param v - 32-bit unsigned integer to compare
      * @return true - if i is greater or equal to v
@@ -178,7 +164,6 @@ struct unsigned_int {
     /**
      * Check if the given 32-bit unsigned integer is greater or equal to the given unsigned_int object
      *
-     * @brief Greater or Equal to Operator
      * @param i - 32-bit unsigned integer to compare
      * @param v - unsigned_int object to compare
      * @return true -  if i is greater or equal to v
@@ -189,7 +174,6 @@ struct unsigned_int {
     /**
      * Check if the first given unsigned_int is greater or equal to the second given unsigned_int object
      *
-     * @brief Greater or Equal to Operator
      * @param i - First unsigned_int object to compare
      * @param v - Second unsigned_int object to compare
      * @return true -  if i is greater or equal to v
@@ -200,7 +184,6 @@ struct unsigned_int {
     /**
      *  Serialize an unsigned_int object with as few bytes as possible
      *
-     *  @brief Serialize an unsigned_int object with as few bytes as possible
      *  @param ds - The stream to write
      *  @param v - The value to serialize
      *  @tparam DataStream - Type of datastream
@@ -221,7 +204,6 @@ struct unsigned_int {
     /**
      *  Deserialize an unsigned_int object
      *
-     *  @brief Deserialize an unsigned_int object
      *  @param ds - The stream to read
      *  @param vi - The destination for deserialized value
      *  @tparam DataStream - Type of datastream
@@ -243,22 +225,19 @@ struct unsigned_int {
 /**
  * Variable Length Signed Integer. This provides more efficient serialization of 32-bit signed int.
  * It serializes a 32-bit signed integer in as few bytes as possible.
- * `varint32' is signed and uses [Zig-Zag encoding](https://developers.google.com/protocol-buffers/docs/encoding#signed-integers)
  *
- * @brief Variable Length Signed Integer
+ * @note `varint32' is signed and uses [Zig-Zag encoding](https://developers.google.com/protocol-buffers/docs/encoding#signed-integers)
  */
 struct signed_int {
     /**
      * Construct a new signed int object
      *
-     * @brief Construct a new signed int object
      * @param v - Source
      */
     signed_int( int32_t v = 0 ):value(v){}
 
     /**
      * Convert signed_int to primitive 32-bit signed integer
-     * @brief Conversion operator
      *
      * @return int32_t - The converted result
      */
@@ -268,7 +247,6 @@ struct signed_int {
     /**
      * Assign an object that is convertible to int32_t
      *
-     * @brief Assignment operator
      * @tparam T - Type of the assignment object
      * @param v - Source
      * @return unsigned_int& - Reference to this object
@@ -279,7 +257,6 @@ struct signed_int {
     /**
      * Increment operator
      *
-     * @brief Increment operator
      * @return signed_int - New signed_int with value incremented from the current object's value
      */
     signed_int operator++(int) { return value++; }
@@ -287,22 +264,18 @@ struct signed_int {
     /**
      * Increment operator
      *
-     * @brief Increment operator
      * @return signed_int - Reference to current object
      */
     signed_int& operator++(){ ++value; return *this; }
 
     /**
      * Contained value
-     *
-     * @brief Contained value
      */
     int32_t value;
 
     /**
      * Check equality between a signed_int object and 32-bit integer
      *
-     * @brief Equality Operator
      * @param i - signed_int object to compare
      * @param v - 32-bit integer to compare
      * @return true - if equal
@@ -313,7 +286,6 @@ struct signed_int {
     /**
      * Check equality between 32-bit integer and  a signed_int object
      *
-     * @brief Equality Operator
      * @param i - 32-bit integer to compare
      * @param v - signed_int object to compare
      * @return true - if equal
@@ -324,7 +296,6 @@ struct signed_int {
     /**
      * Check equality between two signed_int objects
      *
-     * @brief Equality Operator
      * @param i - First signed_int object to compare
      * @param v - Second signed_int object to compare
      * @return true - if equal
@@ -336,7 +307,6 @@ struct signed_int {
     /**
      * Check inequality between a signed_int object and 32-bit integer
      *
-     * @brief Inequality Operator
      * @param i - signed_int object to compare
      * @param v - 32-bit integer to compare
      * @return true - if inequal
@@ -347,7 +317,6 @@ struct signed_int {
     /**
      * Check inequality between 32-bit integer and  a signed_int object
      *
-     * @brief Equality Operator
      * @param i - 32-bit integer to compare
      * @param v - signed_int object to compare
      * @return true - if unequal
@@ -358,7 +327,6 @@ struct signed_int {
     /**
      * Check inequality between two signed_int objects
      *
-     * @brief Inequality Operator
      * @param i - First signed_int object to compare
      * @param v - Second signed_int object to compare
      * @return true - if inequal
@@ -369,7 +337,6 @@ struct signed_int {
     /**
      * Check if the given signed_int object is less than the given 32-bit integer
      *
-     * @brief Less than Operator
      * @param i - signed_int object to compare
      * @param v - 32-bit integer to compare
      * @return true - if i less than v
@@ -380,7 +347,6 @@ struct signed_int {
     /**
      * Check if the given 32-bit integer is less than the given signed_int object
      *
-     * @brief Less than Operator
      * @param i - 32-bit integer to compare
      * @param v - signed_int object to compare
      * @return true -  if i less than v
@@ -391,7 +357,6 @@ struct signed_int {
     /**
      * Check if the first given signed_int is less than the second given signed_int object
      *
-     * @brief Less than Operator
      * @param i - First signed_int object to compare
      * @param v - Second signed_int object to compare
      * @return true -  if i less than v
@@ -403,7 +368,6 @@ struct signed_int {
     /**
      * Check if the given signed_int object is greater or equal to the given 32-bit integer
      *
-     * @brief Greater or Equal to Operator
      * @param i - signed_int object to compare
      * @param v - 32-bit integer to compare
      * @return true - if i is greater or equal to v
@@ -414,7 +378,6 @@ struct signed_int {
     /**
      * Check if the given 32-bit integer is greater or equal to the given signed_int object
      *
-     * @brief Greater or Equal to Operator
      * @param i - 32-bit integer to compare
      * @param v - signed_int object to compare
      * @return true -  if i is greater or equal to v
@@ -425,7 +388,6 @@ struct signed_int {
     /**
      * Check if the first given signed_int is greater or equal to the second given signed_int object
      *
-     * @brief Greater or Equal to Operator
      * @param i - First signed_int object to compare
      * @param v - Second signed_int object to compare
      * @return true -  if i is greater or equal to v
@@ -437,7 +399,6 @@ struct signed_int {
     /**
      *  Serialize an signed_int object with as few bytes as possible
      *
-     *  @brief Serialize an signed_int object with as few bytes as possible
      *  @param ds - The stream to write
      *  @param v - The value to serialize
      *  @tparam DataStream - Type of datastream
@@ -458,7 +419,6 @@ struct signed_int {
     /**
      *  Deserialize an signed_int object
      *
-     *  @brief Deserialize an signed_int object
      *  @param ds - The stream to read
      *  @param vi - The destination for deserialized value
      *  @tparam DataStream - Type of datastream

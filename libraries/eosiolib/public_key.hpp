@@ -10,19 +10,16 @@ namespace eosio {
    */
 
    /**
-    * @details EOSIO Public Key
+    * @struct EOSIO Public Key
     */
    struct public_key {
       /**
        * Type of the public key, could be either K1 or R1
-       * @brief Type of the public key
        */
       unsigned_int        type;
 
       /**
        * Bytes of the public key
-       *
-       * @brief Bytes of the public key
        */
       std::array<char,33> data;
 
