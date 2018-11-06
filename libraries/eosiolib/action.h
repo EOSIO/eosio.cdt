@@ -53,6 +53,7 @@ extern "C" {
     * uint32_t msgsize = action_size();
     * print(msgsize); // Output: size of the above action's data field
     *
+
     * require_recipient("initc"_n); // initc account will be notified for this action
     *
     * require_auth("inita"_n); // Do nothing since inita exists in the auth list
@@ -119,6 +120,12 @@ extern "C" {
     */
    void require_auth2( capi_name name, capi_name permission );
 
+   /**
+    *  Verifies that @ref name is an existing account.
+    *
+    *  @brief Verifies that @ref name is an existing account.
+    *  @param name - name of the account to check
+    */
    bool is_account( capi_name name );
 
    /**
