@@ -78,7 +78,7 @@ namespace eosio {
     *  Example:
     *
     *  @code
-    *  require_recipient(N(Account1), N(Account2), N(Account3)); // throws exception if any of them not in set.
+    *  require_recipient("Account1"_n, "Account2"_n, "Account3"_n); // throws exception if any of them not in set.
     *  @endcode
     */
    template<typename... accounts>
