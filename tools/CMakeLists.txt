@@ -65,7 +65,6 @@ macro (add_tool name)
 endmacro()
 
 add_subdirectory(abigen)
-add_subdirectory(abimerge)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
