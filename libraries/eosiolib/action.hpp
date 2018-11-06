@@ -320,7 +320,7 @@ namespace eosio {
 
       template <>
       struct convert<char*> { typedef std::string type; };
-      
+
       template <typename T, typename U>
       struct is_same { static constexpr bool value = std::is_convertible<T,U>::value; };
 
@@ -329,7 +329,7 @@ namespace eosio {
 
       template <typename T>
       struct is_same<T,bool> { static constexpr bool value = std::is_integral<T>::value; };
-      
+
       template <size_t N, size_t I, auto Arg, auto... Args>
       struct get_nth_impl { static constexpr auto value  = get_nth_impl<N,I+1,Args...>::value; };
 
@@ -350,7 +350,7 @@ namespace eosio {
          static_assert(detail::is_same<typename convert<T>::type, typename convert<typename std::tuple_element<I, deduced<Action>>::type>::type>::value);
          static constexpr bool value = true;
       };
-      
+
       template <auto Action, typename... Ts>
       constexpr bool type_check() {
          static_assert(sizeof...(Ts) == std::tuple_size<deduced<Action>>::value);
@@ -361,31 +361,34 @@ namespace eosio {
    template <eosio::name::raw Name, auto Action>
    struct action_wrapper {
       template <typename Code>
-      constexpr action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms) 
+      constexpr action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
          : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
 
       template <typename Code>
-      constexpr action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms) 
+      constexpr action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms)
          : code_name(std::forward<Code>(code)), permissions(perms) {}
 
       template <typename Code>
-      constexpr action_wrapper(Code&& code, eosio::permission_level&& perm) 
+      constexpr action_wrapper(Code&& code, eosio::permission_level&& perm)
          : code_name(std::forward<Code>(code)), permissions({1, std::move(perm)}) {}
 
       template <typename Code>
-      constexpr action_wrapper(Code&& code, const eosio::permission_level& perm) 
+      constexpr action_wrapper(Code&& code, const eosio::permission_level& perm)
          : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
 
       static constexpr eosio::name action_name = eosio::name(Name);
       eosio::name code_name;
       std::vector<eosio::permission_level> permissions;
-      using deduced_arg_ts = detail::deduced<Action>;
-      
+
+      static constexpr auto get_mem_ptr() {
+         return Action;
+      }
+
       template <typename... Args>
       action to_action(Args&&... args)const {
          static_assert(detail::type_check<Action, Args...>());
-         return action(permissions, code_name, action_name, deduced_arg_ts{std::forward<Args>(args)...});
-      }     
+         return action(permissions, code_name, action_name, detail::deduced<Action>{std::forward<Args>(args)...});
+      }
       template <typename... Args>
       void send(Args&&... args)const {
          to_action(std::forward<Args>(args)...).send();
@@ -401,19 +404,19 @@ namespace eosio {
    template <eosio::name::raw Name, auto... Actions>
    struct variant_action_wrapper {
       template <typename Code>
-      constexpr variant_action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms) 
+      constexpr variant_action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
          : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
 
       template <typename Code>
-      constexpr variant_action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms) 
+      constexpr variant_action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms)
          : code_name(std::forward<Code>(code)), permissions(perms) {}
 
       template <typename Code>
-      constexpr variant_action_wrapper(Code&& code, eosio::permission_level&& perm) 
+      constexpr variant_action_wrapper(Code&& code, eosio::permission_level&& perm)
          : code_name(std::forward<Code>(code)), permissions({1, std::move(perm)}) {}
 
       template <typename Code>
-      constexpr variant_action_wrapper(Code&& code, const eosio::permission_level& perm) 
+      constexpr variant_action_wrapper(Code&& code, const eosio::permission_level& perm)
          : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
 
       static constexpr eosio::name action_name = eosio::name(Name);
@@ -425,15 +428,12 @@ namespace eosio {
          return detail::get_nth<Variant, Actions...>::value;
       }
 
-      template <size_t Variant>
-      using args_tuple = detail::deduced_nounwrap<detail::get_nth<Variant, Actions...>::value>;
-      
       template <size_t Variant, typename... Args>
       action to_action(Args&&... args)const {
          static_assert(detail::type_check<detail::get_nth<Variant, Actions...>::value, Args...>());
          unsigned_int var = Variant;
          return action(permissions, code_name, action_name, std::tuple_cat(std::make_tuple(var), detail::deduced<detail::get_nth<Variant, Actions...>::value>{std::forward<Args>(args)...}));
-      }     
+      }
 
       template <size_t Variant, typename... Args>
       void send(Args&&... args)const {
