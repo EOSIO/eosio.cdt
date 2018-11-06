@@ -7,6 +7,7 @@
 #include <eosiolib/name.hpp>
 #include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
+#include <eosiolib/fixed_bytes.hpp>
 #include <utility>
 #include <string>
 
@@ -165,6 +166,30 @@ namespace eosio {
    template<size_t Size>
    inline void print( fixed_key<Size>& val ) {
       print(static_cast<const fixed_key<Size>&>(val));
+   }
+
+   /**
+    * Prints fixed_bytes as a hexidecimal string
+    *
+    * @brief Prints fixed_bytes as a hexidecimal string
+    * @param val to be printed
+    */
+   template<size_t Size>
+   inline void print( const fixed_bytes<Size>& val ) {
+      auto arr = val.extract_as_byte_array();
+      prints("0x");
+      printhex(static_cast<const void*>(arr.data()), arr.size());
+   }
+
+  /**
+    * Prints fixed_bytes as a hexidecimal string
+    *
+    * @brief Prints fixed_bytes as a hexidecimal string
+    * @param val to be printed
+    */
+   template<size_t Size>
+   inline void print( fixed_bytes<Size>& val ) {
+      print(static_cast<const fixed_bytes<Size>&>(val));
    }
 
    /**

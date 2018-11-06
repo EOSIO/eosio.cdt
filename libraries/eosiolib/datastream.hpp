@@ -7,6 +7,8 @@
 #include <eosiolib/memory.h>
 #include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
+#include <eosiolib/fixed_bytes.hpp>
+#include <eosiolib/public_key.hpp>
 #include <eosiolib/ignore.hpp>
 #include <eosiolib/varint.hpp>
 #include <eosiolib/binary_extension.hpp>
@@ -545,7 +547,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore<T>
  *  @return datastream<Stream>& - Reference to the datastream
  */
 template<typename Stream>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const capi_public_key pubkey) {
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const capi_public_key& pubkey) {
   ds.write( (const char*)&pubkey, sizeof(pubkey));
   return ds;
 }
@@ -563,6 +565,38 @@ template<typename Stream>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, capi_public_key& pubkey) {
   ds.read((char*)&pubkey, sizeof(pubkey));
   return ds;
+}
+
+/**
+ *  Serialize an eosio::public_key into a stream
+ *
+ *  @brief Serialize an eosio::public_key
+ *  @param ds - The stream to write
+ *  @param pubkey - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::public_key& pubkey) {
+   ds << pubkey.type;
+   ds.write( pubkey.data.data(), pubkey.data.size() );
+   return ds;
+}
+
+/**
+ *  Deserialize an eosio::public_key from a stream
+ *
+ *  @brief Deserialize an eosio::public_key
+ *  @param ds - The stream to read
+ *  @param pubkey - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::public_key& pubkey) {
+   ds >> pubkey.type;
+   ds.read( pubkey.data.data(), pubkey.data.size() );
+   return ds;
 }
 
 /**
@@ -593,6 +627,39 @@ template<typename Stream>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, key256& d) {
   ds.read((char*)d.data(), d.size() );
   return ds;
+}
+
+/**
+ *  Serialize a fixed_bytes into a stream
+ *
+ *  @brief Serialize a fixed_bytes
+ *  @param ds - The stream to write
+ *  @param d - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, size_t Size>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const fixed_bytes<Size>& d) {
+   auto arr = d.extract_as_byte_array();
+   ds.write( (const char*)arr.data(), arr.size() );
+   return ds;
+}
+
+/**
+ *  Deserialize a fixed_bytes from a stream
+ *
+ *  @brief Deserialize a fixed_bytes
+ *  @param ds - The stream to read
+ *  @param d - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, size_t Size>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, fixed_bytes<Size>& d) {
+   std::array<uint8_t, Size> arr;
+   ds.read( (char*)arr.data(), arr.size() );
+   d = fixed_bytes<Size>( arr );
+   return ds;
 }
 
 /**
@@ -694,9 +761,9 @@ DataStream& operator >> ( DataStream& ds, std::string& v ) {
 }
 
 /**
- *  Serialize a fixed size array into a stream
+ *  Serialize a fixed size std::array
  *
- *  @brief Serialize a fixed size array
+ *  @brief Serialize a fixed size std::array
  *  @param ds - The stream to write
  *  @param v - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -713,9 +780,9 @@ DataStream& operator << ( DataStream& ds, const std::array<T,N>& v ) {
 
 
 /**
- *  Deserialize a fixed size array from a stream
+ *  Deserialize a fixed size std::array
  *
- *  @brief Deserialize a fixed size array
+ *  @brief Deserialize a fixed size std::array
  *  @param ds - The stream to read
  *  @param v - The destination for deserialized value
  *  @tparam DataStream - Type of datastream
@@ -778,9 +845,9 @@ DataStream& operator >> ( DataStream& ds, T ) {
 }
 
 /**
- *  Serialize a fixed size array of non-primitive and non-pointer type
+ *  Serialize a fixed size C array of non-primitive and non-pointer type
  *
- *  @brief Serialize a fixed size array of non-primitive and non-pointer type
+ *  @brief Serialize a fixed size C array of non-primitive and non-pointer type
  *  @param ds - The stream to write
  *  @param v - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -798,9 +865,9 @@ DataStream& operator << ( DataStream& ds, const T (&v)[N] ) {
 }
 
 /**
- *  Serialize a fixed size array of non-primitive type
+ *  Serialize a fixed size C array of primitive type
  *
- *  @brief Serialize a fixed size array of non-primitive type
+ *  @brief Serialize a fixed size C array of primitive type
  *  @param ds - The stream to write
  *  @param v - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -816,9 +883,9 @@ DataStream& operator << ( DataStream& ds, const T (&v)[N] ) {
 }
 
 /**
- *  Deserialize a fixed size array of non-primitive and non-pointer type
+ *  Deserialize a fixed size C array of non-primitive and non-pointer type
  *
- *  @brief Deserialize a fixed size array of non-primitive and non-pointer type
+ *  @brief Deserialize a fixed size C array of non-primitive and non-pointer type
  *  @param ds - The stream to read
  *  @param v - The destination for deserialized value
  *  @tparam T - Type of the object contained in the array
@@ -839,9 +906,9 @@ DataStream& operator >> ( DataStream& ds, T (&v)[N] ) {
 }
 
 /**
- *  Deserialize a fixed size array of non-primitive type
+ *  Deserialize a fixed size C array of primitive type
  *
- *  @brief Deserialize a fixed size array of non-primitive type
+ *  @brief Deserialize a fixed size C array of primitive type
  *  @param ds - The stream to read
  *  @param v - The destination for deserialized value
  *  @tparam T - Type of the object contained in the array
