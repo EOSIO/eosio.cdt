@@ -53,10 +53,11 @@ extern "C" {
     * uint32_t msgsize = action_size();
     * print(msgsize); // Output: size of the above action's data field
     *
-    * require_recipient(name("initc")); // initc account will be notified for this action
+
+    * require_recipient("initc"_n); // initc account will be notified for this action
     *
-    * require_auth(name("inita")); // Do nothing since inita exists in the auth list
-    * require_auth(name("initb")); // Throws an exception
+    * require_auth("inita"_n); // Do nothing since inita exists in the auth list
+    * require_auth("initb"_n); // Throws an exception
     *
     * print(current_time()); // Output: timestamp (in microseconds since 1970) of current block
     *
