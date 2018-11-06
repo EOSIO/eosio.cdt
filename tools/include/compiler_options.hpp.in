@@ -457,6 +457,7 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-emit-llvm");
    }
    if (E_opt) {
+      link = false;
       copts.emplace_back("-E");
    }
    if (color_diag_opt) {
