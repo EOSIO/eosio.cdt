@@ -1,13 +1,13 @@
-set(CLANG_BINDIR ${CMAKE_BINARY_DIR}/EosioClang-prefix/src/EosioClang-build)
-set(LLVM_DIR ${CLANG_BINDIR}/lib/cmake/llvm)
-
+cmake_minimum_required(VERSION 3.5)
 find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 include_directories(${LLVM_INCLUDE_DIRS})
-include_directories(${CLANG_BINDIR}/tools/clang/include)
-include_directories(${CLANG_BINDIR}/include)
+include_directories(${LLVM_SRCDIR}/tools/clang/include)
+include_directories(${LLVM_BINDIR}/tools/clang/include)
+include_directories(${LLVM_SRCDIR}/include)
+include_directories(${LLVM_BINDIR}/include)
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -24,7 +24,6 @@ macro (add_tool name)
    set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
    target_include_directories(${name} PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
-   add_dependencies(${name} EosioClang)
    target_link_libraries(${name}
      clangTooling
      clangBasic
@@ -65,7 +64,6 @@ macro (add_tool name)
 endmacro()
 
 add_subdirectory(abigen)
-add_subdirectory(abimerge)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
