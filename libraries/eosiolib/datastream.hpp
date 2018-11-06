@@ -293,7 +293,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binar
  */
 template<typename Stream, typename T>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_extension<T>& be) {
-  if ( ds.remaining() >= sizeof(T) ) {
+  if( ds.remaining() ) {
      T val;
      ds >> val;
      be.set(val);
@@ -312,7 +312,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_exte
  */
 template<typename Stream, typename... Ts>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::variant<Ts...>& var) {
-  unsigned int index = var.index();
+  unsigned_int index = var.index();
   ds << index;
   std::visit([&ds](auto& val){ ds << val; }, var);
   return ds;
@@ -351,27 +351,9 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::variant<Ts...
 }
 
 /**
- *  Serialize an optional into a stream
- *
- *  @brief Serialize an optional
- *  @param ds - The stream to write
- *  @param opt - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename T>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optional<T>& opt) {
-  char valid = opt.has_value();
-  ds << valid;
-  if (valid)
-     ds << *opt;
-  return ds;
-}
-
-/**
  *  Serialize an std::pair
  *
- *  @brief Serialize an std::pair 
+ *  @brief Serialize an std::pair
  *  @param ds - The stream to write
  *  @param t - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -403,6 +385,24 @@ DataStream& operator>>( DataStream& ds, std::pair<T1, T2>& t ) {
    ds >> t2;
    t = std::pair<T1, T2>{t1, t2};
    return ds;
+}
+
+/**
+ *  Serialize an optional into a stream
+ *
+ *  @brief Serialize an optional
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optional<T>& opt) {
+  char valid = opt.has_value();
+  ds << valid;
+  if (valid)
+     ds << *opt;
+  return ds;
 }
 
 /**
