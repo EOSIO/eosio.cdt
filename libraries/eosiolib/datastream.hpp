@@ -293,7 +293,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binar
  */
 template<typename Stream, typename T>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_extension<T>& be) {
-  if ( ds.remaining() >= sizeof(T) ) {
+  if( ds.remaining() ) {
      T val;
      ds >> val;
      be.set(val);
