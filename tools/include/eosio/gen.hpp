@@ -108,9 +108,6 @@ struct generation_utils {
    generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
    generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
    
-   static inline bool is_tuple( const clang::QualType& type ) {
-   }
-
    static inline bool is_ignorable( const clang::QualType& type ) {
       auto check = [&](const clang::Type* pt) {
         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
@@ -179,13 +176,15 @@ struct generation_utils {
    
    static inline std::string get_action_name( const clang::CXXMethodDecl* decl ) {
       std::string action_name = "";
-      if (auto tmp = decl->getEosioActionAttr()->getName(); !tmp.empty())
+      auto tmp = decl->getEosioActionAttr()->getName();
+      if (!tmp.empty())
          return tmp;
       return decl->getNameAsString();
    }
    static inline std::string get_action_name( const clang::CXXRecordDecl* decl ) {
       std::string action_name = "";
-      if (auto tmp = decl->getEosioActionAttr()->getName().str(); !tmp.empty())
+      auto tmp = decl->getEosioActionAttr()->getName();
+      if (!tmp.empty())
          return tmp;
       return decl->getName();
    }
@@ -305,10 +304,12 @@ struct generation_utils {
    }
    inline clang::QualType get_template_argument( const clang::QualType& type, int index = 0 ) {
       auto ret = [&](const clang::Type* t) {
-         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(t))
+         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(t);
+         if (tst)
             return tst->getArg(index).getAsType();
          std::cout << "Internal error, wrong type of template specialization\n";
          error_handler();
+         return tst->getArg(index).getAsType();
       };
       if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()))
          return ret(pt->desugar().getTypePtr());
@@ -468,17 +469,6 @@ struct generation_utils {
       return _translate_type( type );
    }
 
-
-   inline bool is_name_type( const std::string& t ) {
-      static const std::set<std::string> name_types = { "name", 
-                                                        "account_name",
-                                                        "permission_name",
-                                                        "table_name",
-                                                        "scope_name",
-                                                        "action_name" };
-      return name_types.count(t) >= 1;
-   }
-   
    inline bool is_builtin_type( const std::string& t ) {
       static const std::set<std::string> builtins =
       {
@@ -525,7 +515,7 @@ struct generation_utils {
    
    inline bool is_builtin_type( const clang::QualType& t ) {
       std::string nt = translate_type(t);
-      return is_builtin_type(nt) || is_name_type(nt); // || is_template_specialization(t, {"optional"});
+      return is_builtin_type(nt);
    } 
 
    inline bool is_cxx_record( const clang::QualType& t ) {
@@ -537,8 +527,6 @@ struct generation_utils {
    }
 
    inline std::string get_type_alias_string( const clang::QualType& t ) {
-      if (is_name_type(get_base_type_name(t)))
-         return "name";
       if (auto dt = llvm::dyn_cast<clang::TypedefType>(t.getTypePtr()))
          return get_type(dt->desugar());
       return get_type(t);
@@ -553,8 +541,6 @@ struct generation_utils {
    inline bool is_aliasing( const clang::QualType& t ) {
       if (is_builtin_type(t))
          return false;
-      if (is_name_type(get_base_type_name(t)))
-         return true;
       if (get_base_type_name(t).find("<") != std::string::npos) return false;
       return get_base_type_name(t).compare(get_type_alias_string(t)) != 0;
    }
