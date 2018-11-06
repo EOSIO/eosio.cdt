@@ -13,16 +13,16 @@ Variable Length Unsigned Integer. [More...](#detailed-description)
 
 |Type|Name|
 |-----|-----|
-|uint32\_t|[**value**](structunsigned__int_a247200b83e3cb2019efb8569a7e3937a.md#1a247200b83e3cb2019efb8569a7e3937a)<br>Contained value. |
+|uint32\_t|[**value**](structunsigned__int_a247200b83e3cb2019efb8569a7e3937a.md#1a247200b83e3cb2019efb8569a7e3937a)|
 
 
 ## Public Functions
 
 |Type|Name|
 |-----|-----|
-||[**unsigned\_int**](structunsigned__int_aaaeee21167478df0b454f001d0567cd7.md#1aaaeee21167478df0b454f001d0567cd7) (uint32\_t v = 0) <br>Construct a new unsigned int object. |
-||[**unsigned\_int**](structunsigned__int_adda0360df1de313f0df5c5570aebdfdd.md#1adda0360df1de313f0df5c5570aebdfdd) (T v) <br>Construct a new unsigned int object. |
-||[**operator T**](structunsigned__int_a5627f0b22068d1761f2e416e7ae64a3c.md#1a5627f0b22068d1761f2e416e7ae64a3c) () const <br>Conversion Operator. |
+||[**unsigned\_int**](structunsigned__int_aaaeee21167478df0b454f001d0567cd7.md#1aaaeee21167478df0b454f001d0567cd7) (uint32\_t v = 0) |
+||[**unsigned\_int**](structunsigned__int_adda0360df1de313f0df5c5570aebdfdd.md#1adda0360df1de313f0df5c5570aebdfdd) (T v) |
+||[**operator T**](structunsigned__int_a5627f0b22068d1761f2e416e7ae64a3c.md#1a5627f0b22068d1761f2e416e7ae64a3c) () const |
 |**[unsigned\_int](structunsigned__int.md)** &|[**operator=**](structunsigned__int_a7d9250cd41ed15bd3b04a1f003f41154.md#1a7d9250cd41ed15bd3b04a1f003f41154) (uint32\_t v) <br>Assignment operator. |
 
 
@@ -30,20 +30,20 @@ Variable Length Unsigned Integer. [More...](#detailed-description)
 
 |Type|Name|
 |-----|-----|
-|friend bool|[**operator==**](structunsigned__int_a08687d9bd50d9dec64808a19580f2a47.md#1a08687d9bd50d9dec64808a19580f2a47)<br>Equality Operator. |
-|friend bool|[**operator==**](structunsigned__int_a8c6aae02c0e6500d98d56544b4c49da0.md#1a8c6aae02c0e6500d98d56544b4c49da0)<br>Equality Operator. |
-|friend bool|[**operator==**](structunsigned__int_add87b4023be256deec5ac1afe4faf17c.md#1add87b4023be256deec5ac1afe4faf17c)<br>Equality Operator. |
-|friend bool|[**operator!=**](structunsigned__int_a53410718318d48dd4e6279103b351663.md#1a53410718318d48dd4e6279103b351663)<br>Inequality Operator. |
-|friend bool|[**operator!=**](structunsigned__int_a1f618b0b2975a066c658435fb7eca0f9.md#1a1f618b0b2975a066c658435fb7eca0f9)<br>Equality Operator. |
-|friend bool|[**operator!=**](structunsigned__int_a897385977d9c06e539a1c19dbdffb5ec.md#1a897385977d9c06e539a1c19dbdffb5ec)<br>Inequality Operator. |
-|friend bool|[**operator<**](structunsigned__int_a1ff316df3fa8ffdc0886d48e4d50e7f2.md#1a1ff316df3fa8ffdc0886d48e4d50e7f2)<br>Less than Operator. |
-|friend bool|[**operator<**](structunsigned__int_a9672c0a7766d6491003103052ddc692b.md#1a9672c0a7766d6491003103052ddc692b)<br>Less than Operator. |
-|friend bool|[**operator<**](structunsigned__int_a5c44ed2d978a1bdaf65166f98592192c.md#1a5c44ed2d978a1bdaf65166f98592192c)<br>Less than Operator. |
-|friend bool|[**operator>=**](structunsigned__int_abf1274ffb924723bc12f17544159c799.md#1abf1274ffb924723bc12f17544159c799)<br>Greater or Equal to Operator. |
-|friend bool|[**operator>=**](structunsigned__int_ad6f6d75188bb59e24af40ff8aa4de947.md#1ad6f6d75188bb59e24af40ff8aa4de947)<br>Greater or Equal to Operator. |
-|friend bool|[**operator>=**](structunsigned__int_aedda267438195592daa499b41727101a.md#1aedda267438195592daa499b41727101a)<br>Greater or Equal to Operator. |
-|friend DataStream &|[**operator<<**](structunsigned__int_a3df4fdc722c22ec765f68db19116266e.md#1a3df4fdc722c22ec765f68db19116266e)<br>Serialize an **[unsigned\_int](structunsigned__int.md)** object with as few bytes as possible. |
-|friend DataStream &|[**operator>>**](structunsigned__int_a63b42b42b55b512f25e5fc9ec6e20787.md#1a63b42b42b55b512f25e5fc9ec6e20787)<br>Deserialize an **[unsigned\_int](structunsigned__int.md)** object. |
+|friend bool|[**operator==**](structunsigned__int_a08687d9bd50d9dec64808a19580f2a47.md#1a08687d9bd50d9dec64808a19580f2a47)|
+|friend bool|[**operator==**](structunsigned__int_a8c6aae02c0e6500d98d56544b4c49da0.md#1a8c6aae02c0e6500d98d56544b4c49da0)|
+|friend bool|[**operator==**](structunsigned__int_add87b4023be256deec5ac1afe4faf17c.md#1add87b4023be256deec5ac1afe4faf17c)|
+|friend bool|[**operator!=**](structunsigned__int_a53410718318d48dd4e6279103b351663.md#1a53410718318d48dd4e6279103b351663)|
+|friend bool|[**operator!=**](structunsigned__int_a1f618b0b2975a066c658435fb7eca0f9.md#1a1f618b0b2975a066c658435fb7eca0f9)|
+|friend bool|[**operator!=**](structunsigned__int_a897385977d9c06e539a1c19dbdffb5ec.md#1a897385977d9c06e539a1c19dbdffb5ec)|
+|friend bool|[**operator<**](structunsigned__int_a1ff316df3fa8ffdc0886d48e4d50e7f2.md#1a1ff316df3fa8ffdc0886d48e4d50e7f2)|
+|friend bool|[**operator<**](structunsigned__int_a9672c0a7766d6491003103052ddc692b.md#1a9672c0a7766d6491003103052ddc692b)|
+|friend bool|[**operator<**](structunsigned__int_a5c44ed2d978a1bdaf65166f98592192c.md#1a5c44ed2d978a1bdaf65166f98592192c)|
+|friend bool|[**operator>=**](structunsigned__int_abf1274ffb924723bc12f17544159c799.md#1abf1274ffb924723bc12f17544159c799)|
+|friend bool|[**operator>=**](structunsigned__int_ad6f6d75188bb59e24af40ff8aa4de947.md#1ad6f6d75188bb59e24af40ff8aa4de947)|
+|friend bool|[**operator>=**](structunsigned__int_aedda267438195592daa499b41727101a.md#1aedda267438195592daa499b41727101a)|
+|friend DataStream &|[**operator<<**](structunsigned__int_a3df4fdc722c22ec765f68db19116266e.md#1a3df4fdc722c22ec765f68db19116266e)|
+|friend DataStream &|[**operator>>**](structunsigned__int_a63b42b42b55b512f25e5fc9ec6e20787.md#1a63b42b42b55b512f25e5fc9ec6e20787)|
 
 
 ## Detailed Description
@@ -57,7 +57,6 @@ Variable Length Unsigned Integer. This provides more efficient serialization of 
 uint32_t unsigned_int::value;
 ```
 
-Contained value. 
 
 Contained value 
 
@@ -71,7 +70,6 @@ unsigned_int::unsigned_int (
 )
 ```
 
-Construct a new unsigned int object. 
 
 Construct a new unsigned int object
 
@@ -91,7 +89,6 @@ unsigned_int::unsigned_int (
 )
 ```
 
-Construct a new unsigned int object. 
 
 Construct a new unsigned int object from a type that is convertible to uint32\_t
 
@@ -123,9 +120,9 @@ T must be convertible to uint32\_t
 unsigned_int::operator T () const
 ```
 
-Conversion Operator. 
 
-Convert **[unsigned\_int](structunsigned__int.md)** as T 
+Convert **[unsigned\_int](structunsigned__int.md)** as T
+
 
 **Template parameters:**
 
@@ -179,7 +176,6 @@ friend bool unsigned_int::operator== (
 )
 ```
 
-Equality Operator. 
 
 Check equality between a **[unsigned\_int](structunsigned__int.md)** object and 32-bit unsigned integer
 
@@ -215,7 +211,6 @@ friend bool unsigned_int::operator== (
 )
 ```
 
-Equality Operator. 
 
 Check equality between 32-bit unsigned integer and a **[unsigned\_int](structunsigned__int.md)** object
 
@@ -251,7 +246,6 @@ friend bool unsigned_int::operator== (
 )
 ```
 
-Equality Operator. 
 
 Check equality between two **[unsigned\_int](structunsigned__int.md)** objects
 
@@ -287,7 +281,6 @@ friend bool unsigned_int::operator!= (
 )
 ```
 
-Inequality Operator. 
 
 Check inequality between a **[unsigned\_int](structunsigned__int.md)** object and 32-bit unsigned integer
 
@@ -323,7 +316,6 @@ friend bool unsigned_int::operator!= (
 )
 ```
 
-Equality Operator. 
 
 Check inequality between 32-bit unsigned integer and a **[unsigned\_int](structunsigned__int.md)** object
 
@@ -359,7 +351,6 @@ friend bool unsigned_int::operator!= (
 )
 ```
 
-Inequality Operator. 
 
 Check inequality between two **[unsigned\_int](structunsigned__int.md)** objects
 
@@ -395,7 +386,6 @@ friend bool unsigned_int::operator< (
 )
 ```
 
-Less than Operator. 
 
 Check if the given **[unsigned\_int](structunsigned__int.md)** object is less than the given 32-bit unsigned integer
 
@@ -431,7 +421,6 @@ friend bool unsigned_int::operator< (
 )
 ```
 
-Less than Operator. 
 
 Check if the given 32-bit unsigned integer is less than the given **[unsigned\_int](structunsigned__int.md)** object
 
@@ -467,7 +456,6 @@ friend bool unsigned_int::operator< (
 )
 ```
 
-Less than Operator. 
 
 Check if the first given **[unsigned\_int](structunsigned__int.md)** is less than the second given **[unsigned\_int](structunsigned__int.md)** object
 
@@ -503,7 +491,6 @@ friend bool unsigned_int::operator>= (
 )
 ```
 
-Greater or Equal to Operator. 
 
 Check if the given **[unsigned\_int](structunsigned__int.md)** object is greater or equal to the given 32-bit unsigned integer
 
@@ -539,7 +526,6 @@ friend bool unsigned_int::operator>= (
 )
 ```
 
-Greater or Equal to Operator. 
 
 Check if the given 32-bit unsigned integer is greater or equal to the given **[unsigned\_int](structunsigned__int.md)** object
 
@@ -575,7 +561,6 @@ friend bool unsigned_int::operator>= (
 )
 ```
 
-Greater or Equal to Operator. 
 
 Check if the first given **[unsigned\_int](structunsigned__int.md)** is greater or equal to the second given **[unsigned\_int](structunsigned__int.md)** object
 
@@ -611,7 +596,6 @@ friend DataStream & unsigned_int::operator<< (
 )
 ```
 
-Serialize an **[unsigned\_int](structunsigned__int.md)** object with as few bytes as possible. 
 
 Serialize an **[unsigned\_int](structunsigned__int.md)** object with as few bytes as possible
 
@@ -647,7 +631,6 @@ friend DataStream & unsigned_int::operator>> (
 )
 ```
 
-Deserialize an **[unsigned\_int](structunsigned__int.md)** object. 
 
 Deserialize an **[unsigned\_int](structunsigned__int.md)** object
 

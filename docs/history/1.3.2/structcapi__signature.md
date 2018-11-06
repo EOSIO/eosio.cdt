@@ -8,7 +8,6 @@ search:
 [**Class List**](annotated.md) **>** [**capi\_signature**](structcapi__signature.md)
 
 
-EOSIO Signature. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|
@@ -18,7 +17,7 @@ EOSIO Signature. [More...](#detailed-description)
 
 ## Detailed Description
 
-EOSIO Signature. It is 66 bytes. 
+**[EOSIO](struct_e_o_s_i_o.md)** Signature. It is 66 bytes. 
 ## Public Attributes Documentation
 
 ### variable <a id="1aabc3369de2ee49fe73865d3399794b65" href="#1aabc3369de2ee49fe73865d3399794b65">data</a>

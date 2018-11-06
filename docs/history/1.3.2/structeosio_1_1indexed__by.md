@@ -8,7 +8,7 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**indexed\_by**](structeosio_1_1indexed__by.md)
 
 
-The **[indexed\_by](structeosio_1_1indexed__by.md)** struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified. [More...](#detailed-description)
+The **[indexed\_by](structeosio_1_1indexed__by.md)** struct is used to instantiate the indices for the Multi-Index table. In **[EOSIO](struct_e_o_s_i_o.md)**, up to 16 secondary indices can be specified. [More...](#detailed-description)
 ## Public Types
 
 |Type|Name|
@@ -19,12 +19,12 @@ The **[indexed\_by](structeosio_1_1indexed__by.md)** struct is used to instantia
 
 ## Detailed Description
 
-The **[indexed\_by](structeosio_1_1indexed__by.md)** struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified. 
+The **[indexed\_by](structeosio_1_1indexed__by.md)** struct is used to instantiate the indices for the Multi-Index table. In **[EOSIO](struct_e_o_s_i_o.md)**, up to 16 secondary indices can be specified. 
 
 **Template parameters:**
 
 
-* **IndexName** - is the name of the index. The name must be provided as an EOSIO base32 encoded 64-bit integer and must conform to the EOSIO naming requirements of a maximum of 13 characters, the first twelve from the lowercase characters a-z, digits 0-5, and ".", and if there is a 13th character, it is restricted to lowercase characters a-p and ".". 
+* **IndexName** - is the name of the index. The name must be provided as an **[EOSIO](struct_e_o_s_i_o.md)** base32 encoded 64-bit integer and must conform to the **[EOSIO](struct_e_o_s_i_o.md)** naming requirements of a maximum of 13 characters, the first twelve from the lowercase characters a-z, digits 0-5, and ".", and if there is a 13th character, it is restricted to lowercase characters a-p and ".". 
 * **Extractor** - is a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type. It is recommended to use the `` template, which is a type alias to the `boost::multi\_index::const\_mem\_fun`. See the documentation for the Boost `` key extractor for more details.
 
 Example:

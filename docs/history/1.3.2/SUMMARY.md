@@ -28,6 +28,7 @@
   * [Variable Index](/variables.md)
   * [Enumeration Index](/enumerations.md)
   * [Class List](/annotated.md)
+    * [struct EOSIO](/struct_e_o_s_i_o.md)
     * [struct Extended](/struct_extended.md)
     * [struct Stores](/struct_stores.md)
     * [struct capi_public_key](/structcapi__public__key.md)

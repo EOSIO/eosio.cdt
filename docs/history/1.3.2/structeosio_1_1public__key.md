@@ -12,8 +12,8 @@ search:
 
 |Type|Name|
 |-----|-----|
-|**[unsigned\_int](structunsigned__int.md)**|[**type**](structeosio_1_1public__key_aaba0301ecc27240508120958503b2361.md#1aaba0301ecc27240508120958503b2361)<br>Type of the public key. |
-|std::array< char, 33 >|[**data**](structeosio_1_1public__key_af05e926b56c5f221dc502a6f68dbba58.md#1af05e926b56c5f221dc502a6f68dbba58)<br>Bytes of the public key. |
+|**[unsigned\_int](structunsigned__int.md)**|[**type**](structeosio_1_1public__key_aaba0301ecc27240508120958503b2361.md#1aaba0301ecc27240508120958503b2361)|
+|std::array< char, 33 >|[**data**](structeosio_1_1public__key_af05e926b56c5f221dc502a6f68dbba58.md#1af05e926b56c5f221dc502a6f68dbba58)|
 
 
 ## Friends
@@ -24,9 +24,6 @@ search:
 |friend bool|[**operator!=**](structeosio_1_1public__key_a5faa639eb95ed12c1be5d8ae65c7cb54.md#1a5faa639eb95ed12c1be5d8ae65c7cb54)|
 
 
-## Detailed Description
-
-EOSIO Public Key 
 ## Public Attributes Documentation
 
 ### variable <a id="1aaba0301ecc27240508120958503b2361" href="#1aaba0301ecc27240508120958503b2361">type</a>
@@ -35,7 +32,6 @@ EOSIO Public Key
 unsigned_int eosio::public_key::type;
 ```
 
-Type of the public key. 
 
 Type of the public key, could be either K1 or R1 
 
@@ -45,7 +41,6 @@ Type of the public key, could be either K1 or R1
 std::array<char,33> eosio::public_key::data;
 ```
 
-Bytes of the public key. 
 
 Bytes of the public key 
 

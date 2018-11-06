@@ -79,54 +79,54 @@ search:
 |bool|[**has\_auth**](group__action_ga9e4650a61bbe0809cc62e6b2af8252d3.md#ga9e4650a61bbe0809cc62e6b2af8252d3) (**[name](structeosio_1_1name.md)** n) <br>Verifies that n has auth. |
 |bool|[**is\_account**](group__action_ga887cd0fed2350c5ae52565ba6e290db3.md#ga887cd0fed2350c5ae52565ba6e290db3) (**[name](structeosio_1_1name.md)** n) <br>Verifies that n is an existing account. |
 |void|[**dispatch\_inline**](namespaceeosio_a0917f40ecb384d7934f7983351b397ce.md#1a0917f40ecb384d7934f7983351b397ce) (**[name](structeosio_1_1name.md)** code, **[name](structeosio_1_1name.md)** act, std::vector< **[permission\_level](structeosio_1_1permission__level.md)** > perms, std::tuple< Args... > args) |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga1e49e445971a761be9607c1a3eb85bde.md#ga1e49e445971a761be9607c1a3eb85bde) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const std::optional< T > & opt) <br>Serialize an optional. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga9e230ddd4f3d8ff314410dc9832829fd.md#ga9e230ddd4f3d8ff314410dc9832829fd) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, std::optional< T > & opt) <br>Deserialize an optional. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga5413cb7eba4e557a70d93ffa9f39b725.md#ga5413cb7eba4e557a70d93ffa9f39b725) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[eosio::symbol\_code](classeosio_1_1symbol__code.md)** sym\_code) <br>Serialize a **[symbol\_code](classeosio_1_1symbol__code.md)**. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga647b59d0f66be8cbb0bac116d7d14a9e.md#ga647b59d0f66be8cbb0bac116d7d14a9e) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[eosio::symbol\_code](classeosio_1_1symbol__code.md)** & sym\_code) <br>Deserialize a **[symbol\_code](classeosio_1_1symbol__code.md)**. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga4f20e587315c1c625ec8c7092f9d8465.md#ga4f20e587315c1c625ec8c7092f9d8465) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[eosio::symbol](classeosio_1_1symbol.md)** sym) <br>Serialize a symbol. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga015cd9edd44cc1af80641c39b4816f13.md#ga015cd9edd44cc1af80641c39b4816f13) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[eosio::symbol](classeosio_1_1symbol.md)** & sym) <br>Deserialize a symbol. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga344108ff96bcee67d40711dacdd42845.md#ga344108ff96bcee67d40711dacdd42845) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const ::**[eosio::ignore\_wrapper](structeosio_1_1ignore__wrapper.md)**< T > & val) <br>Serialize ignored\_wrapper<T>'s T value. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga05879a71914d293c8a30b1a6710f8e51.md#ga05879a71914d293c8a30b1a6710f8e51) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const ::**[eosio::ignore](structeosio_1_1ignore.md)**< T > & val) <br>Serialize an ignored type. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_gafea0491fecd3df192a3f245e8105a026.md#gafea0491fecd3df192a3f245e8105a026) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, ::**[eosio::ignore](structeosio_1_1ignore.md)**< T >) <br>Deserialize an ignored type. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_gaeb6280d5e7942fcf839024442bc5c814.md#gaeb6280d5e7942fcf839024442bc5c814) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[capi\_public\_key](structcapi__public__key.md)** pubkey) <br>Serialize a **[public\_key](structeosio_1_1public__key.md)**. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga6f1b392200e9452c7f410ffd8fdfafe1.md#ga6f1b392200e9452c7f410ffd8fdfafe1) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[capi\_public\_key](structcapi__public__key.md)** & pubkey) <br>Deserialize a **[public\_key](structeosio_1_1public__key.md)**. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_gaed3bc5bd372251b9cb90aff4cf85be5f.md#gaed3bc5bd372251b9cb90aff4cf85be5f) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[key256](group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1.md#ga9ae210ffc1e7d1e4f1514431b26aa3d1)** & d) <br>Serialize a key256. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga74974be2214a4e50e463ae866f9297d4.md#ga74974be2214a4e50e463ae866f9297d4) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[key256](group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1.md#ga9ae210ffc1e7d1e4f1514431b26aa3d1)** & d) <br>Deserialize a key256. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga7875cabe436fe6756c4b30eec326fe16.md#ga7875cabe436fe6756c4b30eec326fe16) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const bool & d) <br>Serialize a bool into a stream. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga860a2cac0f4f00dacdade421c303ea9c.md#ga860a2cac0f4f00dacdade421c303ea9c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, bool & d) <br>Deserialize a bool. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_ga69731c7e836d6521c2aa7d67ad1dbc4d.md#ga69731c7e836d6521c2aa7d67ad1dbc4d) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum256 & d) <br>Serialize a checksum256. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_gaf18798375dd9ed43bea5888101883b9c.md#gaf18798375dd9ed43bea5888101883b9c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum256 & d) <br>Deserialize a checksum256. |
-|DataStream &|[**operator<<**](group__datastream_gab1dffa510122bd62ce3975e7b302c2c1.md#gab1dffa510122bd62ce3975e7b302c2c1) (DataStream & ds, const std::string & v) <br>Serialize a string. |
-|DataStream &|[**operator>>**](group__datastream_gaa02846796253d9db1064e43fadbecb8e.md#gaa02846796253d9db1064e43fadbecb8e) (DataStream & ds, std::string & v) <br>Deserialize a string. |
-|DataStream &|[**operator<<**](group__datastream_ga86c994b49d0af580c72f4d966baca75b.md#ga86c994b49d0af580c72f4d966baca75b) (DataStream & ds, const std::array< T, N > & v) <br>Serialize a fixed size array. |
-|DataStream &|[**operator>>**](group__datastream_ga60d3eb6bab6da17bd2986a051126d471.md#ga60d3eb6bab6da17bd2986a051126d471) (DataStream & ds, std::array< T, N > & v) <br>Deserialize a fixed size array. |
-|DataStream &|[**operator>>**](group__datastream_gac4ea18eb72ec93e5d06fff5a83623581.md#gac4ea18eb72ec93e5d06fff5a83623581) (DataStream & ds, T) <br>Deserialize a a pointer. |
-|DataStream &|[**operator<<**](group__datastream_ga0c8758a01d2cdcd99922c268f2f4e4e9.md#ga0c8758a01d2cdcd99922c268f2f4e4e9) (DataStream & ds, const T(&) v) <br>Serialize a fixed size array of non-primitive and non-pointer type. |
-|DataStream &|[**operator>>**](group__datastream_ga9ddfcc1002e9cd4c267ca0986753c686.md#ga9ddfcc1002e9cd4c267ca0986753c686) (DataStream & ds, T(&) v) <br>Deserialize a fixed size array of non-primitive and non-pointer type. |
-|DataStream &|[**operator<<**](group__datastream_ga5cb28ef1142e7ec5ba5c6672265efd47.md#ga5cb28ef1142e7ec5ba5c6672265efd47) (DataStream & ds, const std::vector< char > & v) <br>Serialize a vector of char. |
-|DataStream &|[**operator<<**](group__datastream_ga53f4e770b9b3c9f1e92c2fa3fa0ec73a.md#ga53f4e770b9b3c9f1e92c2fa3fa0ec73a) (DataStream & ds, const std::vector< T > & v) <br>Serialize a vector. |
-|DataStream &|[**operator>>**](group__datastream_gad202e8fcf8f49970c1710410c6059cde.md#gad202e8fcf8f49970c1710410c6059cde) (DataStream & ds, std::vector< char > & v) <br>Deserialize a vector of char. |
-|DataStream &|[**operator>>**](group__datastream_gaedee239cff148b596f19a3c2c6c1adf1.md#gaedee239cff148b596f19a3c2c6c1adf1) (DataStream & ds, std::vector< T > & v) <br>Deserialize a vector. |
-|DataStream &|[**operator<<**](group__datastream_gaf98424a2563d883b3883a14692aa195a.md#gaf98424a2563d883b3883a14692aa195a) (DataStream & ds, const std::set< T > & s) |
-|DataStream &|[**operator>>**](group__datastream_gae2a202ccccf405468ad654676bb41d40.md#gae2a202ccccf405468ad654676bb41d40) (DataStream & ds, std::set< T > & s) |
-|DataStream &|[**operator<<**](group__datastream_ga0bb2cdf062825f96551ba663f3d74e17.md#ga0bb2cdf062825f96551ba663f3d74e17) (DataStream & ds, const std::map< K, V > & m) <br>Serialize a map. |
-|DataStream &|[**operator>>**](group__datastream_ga63b7d3e0c99e4f049574fd366a1c528a.md#ga63b7d3e0c99e4f049574fd366a1c528a) (DataStream & ds, std::map< K, V > & m) <br>Deserialize a map. |
-|DataStream &|[**operator<<**](group__datastream_gab7049fdaa7895e6c31a482deba846434.md#gab7049fdaa7895e6c31a482deba846434) (DataStream & ds, const boost::container::flat\_set< T > & s) |
-|DataStream &|[**operator>>**](group__datastream_ga5f545f70b39155d1cd1da85f0e00b742.md#ga5f545f70b39155d1cd1da85f0e00b742) (DataStream & ds, boost::container::flat\_set< T > & s) |
-|DataStream &|[**operator<<**](group__datastream_ga85b47a27bb41a2854d2b8daea9e7b9f0.md#ga85b47a27bb41a2854d2b8daea9e7b9f0) (DataStream & ds, const boost::container::flat\_map< K, V > & m) <br>Serialize a flat map. |
-|DataStream &|[**operator>>**](group__datastream_ga3b973878181cef2bdad7139958bd6ecf.md#ga3b973878181cef2bdad7139958bd6ecf) (DataStream & ds, boost::container::flat\_map< K, V > & m) <br>Deserialize a flat map. |
-|DataStream &|[**operator<<**](group__datastream_ga124a00ba4d603044ef25be84a9fade48.md#ga124a00ba4d603044ef25be84a9fade48) (DataStream & ds, const std::tuple< Args... > & t) <br>Serialize a tuple. |
-|DataStream &|[**operator>>**](group__datastream_gac2e5487f43a496d7c263071e2502b986.md#gac2e5487f43a496d7c263071e2502b986) (DataStream & ds, std::tuple< Args... > & t) <br>Deserialize a tuple. |
-|DataStream &|[**operator<<**](group__datastream_ga59511f8552dbf4a2aced270041c17f04.md#ga59511f8552dbf4a2aced270041c17f04) (DataStream & ds, const T & v) <br>Serialize a class. |
-|DataStream &|[**operator>>**](group__datastream_ga7d64e2f48bca13601cf6606934e6e8e6.md#ga7d64e2f48bca13601cf6606934e6e8e6) (DataStream & ds, T & v) <br>Deserialize a class. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a1e49e445971a761be9607c1a3eb85bde.md#1a1e49e445971a761be9607c1a3eb85bde) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const std::optional< T > & opt) <br>Serialize an optional. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a9e230ddd4f3d8ff314410dc9832829fd.md#1a9e230ddd4f3d8ff314410dc9832829fd) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, std::optional< T > & opt) <br>Deserialize an optional. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a5413cb7eba4e557a70d93ffa9f39b725.md#1a5413cb7eba4e557a70d93ffa9f39b725) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[eosio::symbol\_code](classeosio_1_1symbol__code.md)** sym\_code) <br>Serialize a **[symbol\_code](classeosio_1_1symbol__code.md)**. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a647b59d0f66be8cbb0bac116d7d14a9e.md#1a647b59d0f66be8cbb0bac116d7d14a9e) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[eosio::symbol\_code](classeosio_1_1symbol__code.md)** & sym\_code) <br>Deserialize a **[symbol\_code](classeosio_1_1symbol__code.md)**. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a4f20e587315c1c625ec8c7092f9d8465.md#1a4f20e587315c1c625ec8c7092f9d8465) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[eosio::symbol](classeosio_1_1symbol.md)** sym) <br>Serialize a symbol. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a015cd9edd44cc1af80641c39b4816f13.md#1a015cd9edd44cc1af80641c39b4816f13) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[eosio::symbol](classeosio_1_1symbol.md)** & sym) <br>Deserialize a symbol. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a344108ff96bcee67d40711dacdd42845.md#1a344108ff96bcee67d40711dacdd42845) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const ::**[eosio::ignore\_wrapper](structeosio_1_1ignore__wrapper.md)**< T > & val) <br>Serialize ignored\_wrapper<T>'s T value. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a05879a71914d293c8a30b1a6710f8e51.md#1a05879a71914d293c8a30b1a6710f8e51) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const ::**[eosio::ignore](structeosio_1_1ignore.md)**< T > & val) <br>Serialize an ignored type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_afea0491fecd3df192a3f245e8105a026.md#1afea0491fecd3df192a3f245e8105a026) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, ::**[eosio::ignore](structeosio_1_1ignore.md)**< T >) <br>Deserialize an ignored type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_aeb6280d5e7942fcf839024442bc5c814.md#1aeb6280d5e7942fcf839024442bc5c814) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[capi\_public\_key](structcapi__public__key.md)** pubkey) <br>Serialize a **[public\_key](structeosio_1_1public__key.md)**. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a6f1b392200e9452c7f410ffd8fdfafe1.md#1a6f1b392200e9452c7f410ffd8fdfafe1) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[capi\_public\_key](structcapi__public__key.md)** & pubkey) <br>Deserialize a **[public\_key](structeosio_1_1public__key.md)**. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_aed3bc5bd372251b9cb90aff4cf85be5f.md#1aed3bc5bd372251b9cb90aff4cf85be5f) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const **[key256](group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1.md#ga9ae210ffc1e7d1e4f1514431b26aa3d1)** & d) <br>Serialize a key256. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a74974be2214a4e50e463ae866f9297d4.md#1a74974be2214a4e50e463ae866f9297d4) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, **[key256](group__fixed__key_ga9ae210ffc1e7d1e4f1514431b26aa3d1.md#ga9ae210ffc1e7d1e4f1514431b26aa3d1)** & d) <br>Deserialize a key256. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a7875cabe436fe6756c4b30eec326fe16.md#1a7875cabe436fe6756c4b30eec326fe16) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const bool & d) <br>Serialize a bool into a stream. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a860a2cac0f4f00dacdade421c303ea9c.md#1a860a2cac0f4f00dacdade421c303ea9c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, bool & d) <br>Deserialize a bool. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_a69731c7e836d6521c2aa7d67ad1dbc4d.md#1a69731c7e836d6521c2aa7d67ad1dbc4d) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum256 & d) <br>Serialize a checksum256. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_af18798375dd9ed43bea5888101883b9c.md#1af18798375dd9ed43bea5888101883b9c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum256 & d) <br>Deserialize a checksum256. |
+|DataStream &|[**operator<<**](namespaceeosio_ab1dffa510122bd62ce3975e7b302c2c1.md#1ab1dffa510122bd62ce3975e7b302c2c1) (DataStream & ds, const std::string & v) <br>Serialize a string. |
+|DataStream &|[**operator>>**](namespaceeosio_aa02846796253d9db1064e43fadbecb8e.md#1aa02846796253d9db1064e43fadbecb8e) (DataStream & ds, std::string & v) <br>Deserialize a string. |
+|DataStream &|[**operator<<**](namespaceeosio_a86c994b49d0af580c72f4d966baca75b.md#1a86c994b49d0af580c72f4d966baca75b) (DataStream & ds, const std::array< T, N > & v) <br>Serialize a fixed size array. |
+|DataStream &|[**operator>>**](namespaceeosio_a60d3eb6bab6da17bd2986a051126d471.md#1a60d3eb6bab6da17bd2986a051126d471) (DataStream & ds, std::array< T, N > & v) <br>Deserialize a fixed size array. |
+|DataStream &|[**operator>>**](namespaceeosio_ac4ea18eb72ec93e5d06fff5a83623581.md#1ac4ea18eb72ec93e5d06fff5a83623581) (DataStream & ds, T) <br>Deserialize a a pointer. |
+|DataStream &|[**operator<<**](namespaceeosio_a0c8758a01d2cdcd99922c268f2f4e4e9.md#1a0c8758a01d2cdcd99922c268f2f4e4e9) (DataStream & ds, const T(&) v) <br>Serialize a fixed size array of non-primitive and non-pointer type. |
+|DataStream &|[**operator>>**](namespaceeosio_a9ddfcc1002e9cd4c267ca0986753c686.md#1a9ddfcc1002e9cd4c267ca0986753c686) (DataStream & ds, T(&) v) <br>Deserialize a fixed size array of non-primitive and non-pointer type. |
+|DataStream &|[**operator<<**](namespaceeosio_a5cb28ef1142e7ec5ba5c6672265efd47.md#1a5cb28ef1142e7ec5ba5c6672265efd47) (DataStream & ds, const std::vector< char > & v) <br>Serialize a vector of char. |
+|DataStream &|[**operator<<**](namespaceeosio_a53f4e770b9b3c9f1e92c2fa3fa0ec73a.md#1a53f4e770b9b3c9f1e92c2fa3fa0ec73a) (DataStream & ds, const std::vector< T > & v) <br>Serialize a vector. |
+|DataStream &|[**operator>>**](namespaceeosio_ad202e8fcf8f49970c1710410c6059cde.md#1ad202e8fcf8f49970c1710410c6059cde) (DataStream & ds, std::vector< char > & v) <br>Deserialize a vector of char. |
+|DataStream &|[**operator>>**](namespaceeosio_aedee239cff148b596f19a3c2c6c1adf1.md#1aedee239cff148b596f19a3c2c6c1adf1) (DataStream & ds, std::vector< T > & v) <br>Deserialize a vector. |
+|DataStream &|[**operator<<**](namespaceeosio_af98424a2563d883b3883a14692aa195a.md#1af98424a2563d883b3883a14692aa195a) (DataStream & ds, const std::set< T > & s) |
+|DataStream &|[**operator>>**](namespaceeosio_ae2a202ccccf405468ad654676bb41d40.md#1ae2a202ccccf405468ad654676bb41d40) (DataStream & ds, std::set< T > & s) |
+|DataStream &|[**operator<<**](namespaceeosio_a0bb2cdf062825f96551ba663f3d74e17.md#1a0bb2cdf062825f96551ba663f3d74e17) (DataStream & ds, const std::map< K, V > & m) <br>Serialize a map. |
+|DataStream &|[**operator>>**](namespaceeosio_a63b7d3e0c99e4f049574fd366a1c528a.md#1a63b7d3e0c99e4f049574fd366a1c528a) (DataStream & ds, std::map< K, V > & m) <br>Deserialize a map. |
+|DataStream &|[**operator<<**](namespaceeosio_ab7049fdaa7895e6c31a482deba846434.md#1ab7049fdaa7895e6c31a482deba846434) (DataStream & ds, const boost::container::flat\_set< T > & s) |
+|DataStream &|[**operator>>**](namespaceeosio_a5f545f70b39155d1cd1da85f0e00b742.md#1a5f545f70b39155d1cd1da85f0e00b742) (DataStream & ds, boost::container::flat\_set< T > & s) |
+|DataStream &|[**operator<<**](namespaceeosio_a85b47a27bb41a2854d2b8daea9e7b9f0.md#1a85b47a27bb41a2854d2b8daea9e7b9f0) (DataStream & ds, const boost::container::flat\_map< K, V > & m) <br>Serialize a flat map. |
+|DataStream &|[**operator>>**](namespaceeosio_a3b973878181cef2bdad7139958bd6ecf.md#1a3b973878181cef2bdad7139958bd6ecf) (DataStream & ds, boost::container::flat\_map< K, V > & m) <br>Deserialize a flat map. |
+|DataStream &|[**operator<<**](namespaceeosio_a124a00ba4d603044ef25be84a9fade48.md#1a124a00ba4d603044ef25be84a9fade48) (DataStream & ds, const std::tuple< Args... > & t) <br>Serialize a tuple. |
+|DataStream &|[**operator>>**](namespaceeosio_ac2e5487f43a496d7c263071e2502b986.md#1ac2e5487f43a496d7c263071e2502b986) (DataStream & ds, std::tuple< Args... > & t) <br>Deserialize a tuple. |
+|DataStream &|[**operator<<**](namespaceeosio_a59511f8552dbf4a2aced270041c17f04.md#1a59511f8552dbf4a2aced270041c17f04) (DataStream & ds, const T & v) <br>Serialize a class. |
+|DataStream &|[**operator>>**](namespaceeosio_a7d64e2f48bca13601cf6606934e6e8e6.md#1a7d64e2f48bca13601cf6606934e6e8e6) (DataStream & ds, T & v) <br>Deserialize a class. |
 |T|[**unpack**](group__datastream_ga2ffaa5bd18836b7d40db601fb20965bb.md#ga2ffaa5bd18836b7d40db601fb20965bb) (const char \* buffer, size\_t len) <br>Unpack data inside a fixed size buffer as T. |
 |T|[**unpack**](group__datastream_ga666b4d583161e4db595e31565fbb6a3d.md#ga666b4d583161e4db595e31565fbb6a3d) (const std::vector< char > & bytes) <br>Unpack data inside a variable size buffer as T. |
 |size\_t|[**pack\_size**](group__datastream_ga30aa7d1c92792afc7f78af37372d68b7.md#ga30aa7d1c92792afc7f78af37372d68b7) (const T & value) <br>Get the size of the packed data. |
 |std::vector< char >|[**pack**](group__datastream_ga16e657110c5a8e1ac34056bc473460a8.md#ga16e657110c5a8e1ac34056bc473460a8) (const T & value) <br>Get packed data. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_gac006ab398b288a0582a2a59b991bf37c.md#gac006ab398b288a0582a2a59b991bf37c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum160 & cs) <br>Serializea capi\_checksum160 type. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga2cbcd06b5aae0e8ffd8b1550b0f39983.md#ga2cbcd06b5aae0e8ffd8b1550b0f39983) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum160 & cs) <br>Deserialize a capi\_checksum160 type. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](group__datastream_gafd1c5d3fad33115c2ba6a65f8f4b5792.md#gafd1c5d3fad33115c2ba6a65f8f4b5792) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum512 & cs) <br>Serialize a capi\_checksum512 type. |
-|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](group__datastream_ga14d1988dcb3235cf059d90c01a2b7d74.md#ga14d1988dcb3235cf059d90c01a2b7d74) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum512 & cs) <br>Deserialize a capi\_checksum512 type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_ac006ab398b288a0582a2a59b991bf37c.md#1ac006ab398b288a0582a2a59b991bf37c) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum160 & cs) <br>Serializea capi\_checksum160 type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a2cbcd06b5aae0e8ffd8b1550b0f39983.md#1a2cbcd06b5aae0e8ffd8b1550b0f39983) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum160 & cs) <br>Deserialize a capi\_checksum160 type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator<<**](namespaceeosio_afd1c5d3fad33115c2ba6a65f8f4b5792.md#1afd1c5d3fad33115c2ba6a65f8f4b5792) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, const capi\_checksum512 & cs) <br>Serialize a capi\_checksum512 type. |
+|**[datastream](classeosio_1_1datastream.md)**< Stream > &|[**operator>>**](namespaceeosio_a14d1988dcb3235cf059d90c01a2b7d74.md#1a14d1988dcb3235cf059d90c01a2b7d74) (**[datastream](classeosio_1_1datastream.md)**< Stream > & ds, capi\_checksum512 & cs) <br>Deserialize a capi\_checksum512 type. |
 |bool|[**dispatch**](namespaceeosio_a78b2709044b48bb39105d37d787fefea.md#1a78b2709044b48bb39105d37d787fefea) (uint64\_t code, uint64\_t act) |
 |bool|[**dispatch**](namespaceeosio_a289285490058d17de4a6a052b52dd680.md#1a289285490058d17de4a6a052b52dd680) (uint64\_t code, uint64\_t act) |
 |bool|[**execute\_action**](group__dispatcher_ga8c4928c29096799ef6ddabf148dc9cf9.md#ga8c4928c29096799ef6ddabf148dc9cf9) (**[name](structeosio_1_1name.md)** self, **[name](structeosio_1_1name.md)** code, void(T::\*)(Args...) func) |
@@ -139,33 +139,33 @@ search:
 |T|[**assignHelper**](namespaceeosio_a68c90c18b96d6e1789a567b16a7cdf2f.md#1a68c90c18b96d6e1789a567b16a7cdf2f) (T rhs\_val, uint8\_t q, uint8\_t qr) |
 |**[fixed\_point64](structeosio_1_1fixed__point64.md)**< Q >|[**fixed\_divide**](namespaceeosio_a6d31edb37da483459fb277534d74bbf5.md#1a6d31edb37da483459fb277534d74bbf5) (uint32\_t lhs, uint32\_t rhs) <br>Wrapper function for dividing two unit64 variable and stores result in **[fixed\_point64](structeosio_1_1fixed__point64.md)**. |
 |**[fixed\_point128](structeosio_1_1fixed__point128.md)**< Q >|[**fixed\_divide**](namespaceeosio_a26f98cb47eae52015cd24d3c104fc50d.md#1a26f98cb47eae52015cd24d3c104fc50d) (uint64\_t lhs, uint64\_t rhs) |
-|bool|[**check\_transaction\_authorization**](namespaceeosio_ad879334b66c1201b982eda5a4fea9507.md#1ad879334b66c1201b982eda5a4fea9507) (const **[transaction](classeosio_1_1transaction.md)** & trx, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys = std::set< **[public\_key](structeosio_1_1public__key.md)** >()) <br>Checks if a transaction is authorized by a provided set of keys and permissions. |
-|bool|[**check\_permission\_authorization**](namespaceeosio_a2ded7b51e4363cd7634070612add2e99.md#1a2ded7b51e4363cd7634070612add2e99) (**[name](structeosio_1_1name.md)** account, **[name](structeosio_1_1name.md)** permission, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions = std::set< **[permission\_level](structeosio_1_1permission__level.md)** >(), uint64\_t provided\_delay\_us = static\_cast< uint64\_t >(std::numeric\_limits< int64\_t >::max())) <br>Checks if a permission is authorized by a provided delay and a provided set of keys and permissions. |
-|void|[**print**](group__console_gaa0a56fe314d032d027a1565d93a68b21.md#gaa0a56fe314d032d027a1565d93a68b21) (const char \* ptr) <br>Prints string. |
+|bool|[**check\_transaction\_authorization**](namespaceeosio_ad879334b66c1201b982eda5a4fea9507.md#1ad879334b66c1201b982eda5a4fea9507) (const **[transaction](classeosio_1_1transaction.md)** & trx, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys = std::set< **[public\_key](structeosio_1_1public__key.md)** >()) |
+|bool|[**check\_permission\_authorization**](namespaceeosio_a2ded7b51e4363cd7634070612add2e99.md#1a2ded7b51e4363cd7634070612add2e99) (**[name](structeosio_1_1name.md)** account, **[name](structeosio_1_1name.md)** permission, const std::set< **[public\_key](structeosio_1_1public__key.md)** > & provided\_keys, const std::set< **[permission\_level](structeosio_1_1permission__level.md)** > & provided\_permissions = std::set< **[permission\_level](structeosio_1_1permission__level.md)** >(), uint64\_t provided\_delay\_us = static\_cast< uint64\_t >(std::numeric\_limits< int64\_t >::max())) |
+|void|[**print**](group__console_gaa0a56fe314d032d027a1565d93a68b21.md#gaa0a56fe314d032d027a1565d93a68b21) (const char \* ptr) |
 |void|[**print**](group__console_gabe1c02d3a4a65108ff3bc59db64485a0.md#gabe1c02d3a4a65108ff3bc59db64485a0) (const std::string & s) |
 |void|[**print**](group__console_ga6daff3c05760581064c390a27a79fd30.md#ga6daff3c05760581064c390a27a79fd30) (std::string & s) |
 |void|[**print**](group__console_ga514f168270d72ecae0083dd2968f7329.md#ga514f168270d72ecae0083dd2968f7329) (const char c) |
-|void|[**print**](group__console_gad0342d58fa17a7bea359607c6cfcf0cf.md#gad0342d58fa17a7bea359607c6cfcf0cf) (int num) <br>Prints signed integer as a 64 bit signed integer. |
-|void|[**print**](group__console_ga4412b37ef401946605e5cef937c3f8dc.md#ga4412b37ef401946605e5cef937c3f8dc) (int32\_t num) <br>Prints 32 bit signed integer as a 64 bit signed integer. |
-|void|[**print**](group__console_gaad90d9aa7b7ba103d2e943bf38c91072.md#gaad90d9aa7b7ba103d2e943bf38c91072) (int64\_t num) <br>Prints 64 bit signed integer as a 64 bit signed integer. |
-|void|[**print**](group__console_ga3c85835d3c6e556b5da524030e70e971.md#ga3c85835d3c6e556b5da524030e70e971) (unsigned int num) <br>Prints unsigned integer as a 64 bit unsigned integer. |
-|void|[**print**](group__console_ga0c95ab36e2c3f91a627270c09ff9140f.md#ga0c95ab36e2c3f91a627270c09ff9140f) (uint32\_t num) <br>Prints 32 bit unsigned integer as a 64 bit unsigned integer. |
-|void|[**print**](group__console_ga9bdf0bd18006f43820d73ec9f8cc50b8.md#ga9bdf0bd18006f43820d73ec9f8cc50b8) (uint64\_t num) <br>Prints 64 bit unsigned integer as a 64 bit unsigned integer. |
-|void|[**print**](group__console_ga925806f986898c01e8de34234f951bdc.md#ga925806f986898c01e8de34234f951bdc) (int128\_t num) <br>Prints 128 bit signed integer. |
-|void|[**print**](group__console_gacbb116ac61f216fafa100011bce090ee.md#gacbb116ac61f216fafa100011bce090ee) (uint128\_t num) <br>Prints 128 bit unsigned integer. |
-|void|[**print**](group__console_ga02d168bc05492d64cefea469dd114c12.md#ga02d168bc05492d64cefea469dd114c12) (float num) <br>Prints single-precision floating point number (i.e. float) |
-|void|[**print**](group__console_ga8753f6a7c7d5c518f6369cfebf5be1bb.md#ga8753f6a7c7d5c518f6369cfebf5be1bb) (double num) <br>Prints double-precision floating point number (i.e. double) |
-|void|[**print**](group__console_ga2a3eea270ff4dbe4a15c2269a5c2cfec.md#ga2a3eea270ff4dbe4a15c2269a5c2cfec) (long double num) <br>Prints quadruple-precision floating point number (i.e. long double) |
-|void|[**print**](group__console_ga2785282e4babb79499ba03e719e20aa1.md#ga2785282e4babb79499ba03e719e20aa1) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & val) <br>Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. |
-|void|[**print**](group__console_gaa47b5b44cf50be5fe5ca837ef7e6d583.md#gaa47b5b44cf50be5fe5ca837ef7e6d583) (**[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & val) <br>Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. |
-|void|[**print**](group__console_gaddacdc539ef6e6fb4f55bf04d1a0d22c.md#gaddacdc539ef6e6fb4f55bf04d1a0d22c) (**[name](structeosio_1_1name.md)** name) <br>Prints a 64 bit names as base32 encoded string. |
-|void|[**print**](group__console_gaeb64d709bf057338af83ea1b95a0d16d.md#gaeb64d709bf057338af83ea1b95a0d16d) (**[eosio::symbol\_code](classeosio_1_1symbol__code.md)** sym\_code) <br>Prints a **[symbol\_code](classeosio_1_1symbol__code.md)**. |
-|void|[**print**](group__console_ga3b7dd9bbca5a20bad3acb94b6b7354be.md#ga3b7dd9bbca5a20bad3acb94b6b7354be) (bool val) <br>Prints bool. |
-|void|[**print**](group__console_gaa09d15641c76813eea61b876d8266400.md#gaa09d15641c76813eea61b876d8266400) (T && t) <br>Prints class object. |
-|void|[**print\_f**](group__console_gab9715bf002b919701d38e3ff931feabf.md#gab9715bf002b919701d38e3ff931feabf) (const char \* s) <br>Prints null terminated string. |
-|void|[**print\_f**](group__console_gafcfae01c6d714474da8407a1c195c836.md#gafcfae01c6d714474da8407a1c195c836) (const char \* s, Arg val, Args... rest) <br>Prints formatted string. |
-|void|[**print**](group__console_gab5232cf7452d463948eac1179f31d9f0.md#gab5232cf7452d463948eac1179f31d9f0) (Arg && a, Args &&... args) <br>Print out value / list of values. |
-|**[iostream](classeosio_1_1iostream.md)** &|[**operator<<**](group__console_ga827f0aac6315e7963bcd52656cd7eeed.md#ga827f0aac6315e7963bcd52656cd7eeed) (**[iostream](classeosio_1_1iostream.md)** & out, const T & v) <br>Overload c++ iostream. |
+|void|[**print**](group__console_gad0342d58fa17a7bea359607c6cfcf0cf.md#gad0342d58fa17a7bea359607c6cfcf0cf) (int num) |
+|void|[**print**](group__console_ga4412b37ef401946605e5cef937c3f8dc.md#ga4412b37ef401946605e5cef937c3f8dc) (int32\_t num) |
+|void|[**print**](group__console_gaad90d9aa7b7ba103d2e943bf38c91072.md#gaad90d9aa7b7ba103d2e943bf38c91072) (int64\_t num) |
+|void|[**print**](group__console_ga3c85835d3c6e556b5da524030e70e971.md#ga3c85835d3c6e556b5da524030e70e971) (unsigned int num) |
+|void|[**print**](group__console_ga0c95ab36e2c3f91a627270c09ff9140f.md#ga0c95ab36e2c3f91a627270c09ff9140f) (uint32\_t num) |
+|void|[**print**](group__console_ga9bdf0bd18006f43820d73ec9f8cc50b8.md#ga9bdf0bd18006f43820d73ec9f8cc50b8) (uint64\_t num) |
+|void|[**print**](group__console_ga925806f986898c01e8de34234f951bdc.md#ga925806f986898c01e8de34234f951bdc) (int128\_t num) |
+|void|[**print**](group__console_gacbb116ac61f216fafa100011bce090ee.md#gacbb116ac61f216fafa100011bce090ee) (uint128\_t num) |
+|void|[**print**](group__console_ga02d168bc05492d64cefea469dd114c12.md#ga02d168bc05492d64cefea469dd114c12) (float num) |
+|void|[**print**](group__console_ga8753f6a7c7d5c518f6369cfebf5be1bb.md#ga8753f6a7c7d5c518f6369cfebf5be1bb) (double num) |
+|void|[**print**](group__console_ga2a3eea270ff4dbe4a15c2269a5c2cfec.md#ga2a3eea270ff4dbe4a15c2269a5c2cfec) (long double num) |
+|void|[**print**](group__console_ga2785282e4babb79499ba03e719e20aa1.md#ga2785282e4babb79499ba03e719e20aa1) (const **[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & val) |
+|void|[**print**](group__console_gaa47b5b44cf50be5fe5ca837ef7e6d583.md#gaa47b5b44cf50be5fe5ca837ef7e6d583) (**[fixed\_key](classeosio_1_1fixed__key.md)**< Size > & val) |
+|void|[**print**](group__console_gaddacdc539ef6e6fb4f55bf04d1a0d22c.md#gaddacdc539ef6e6fb4f55bf04d1a0d22c) (**[name](structeosio_1_1name.md)** name) |
+|void|[**print**](group__console_gaeb64d709bf057338af83ea1b95a0d16d.md#gaeb64d709bf057338af83ea1b95a0d16d) (**[eosio::symbol\_code](classeosio_1_1symbol__code.md)** sym\_code) |
+|void|[**print**](group__console_ga3b7dd9bbca5a20bad3acb94b6b7354be.md#ga3b7dd9bbca5a20bad3acb94b6b7354be) (bool val) |
+|void|[**print**](group__console_gaa09d15641c76813eea61b876d8266400.md#gaa09d15641c76813eea61b876d8266400) (T && t) |
+|void|[**print\_f**](group__console_gab9715bf002b919701d38e3ff931feabf.md#gab9715bf002b919701d38e3ff931feabf) (const char \* s) |
+|void|[**print\_f**](group__console_gafcfae01c6d714474da8407a1c195c836.md#gafcfae01c6d714474da8407a1c195c836) (const char \* s, Arg val, Args... rest) |
+|void|[**print**](group__console_gab5232cf7452d463948eac1179f31d9f0.md#gab5232cf7452d463948eac1179f31d9f0) (Arg && a, Args &&... args) |
+|**[iostream](classeosio_1_1iostream.md)** &|[**operator<<**](group__console_ga827f0aac6315e7963bcd52656cd7eeed.md#ga827f0aac6315e7963bcd52656cd7eeed) (**[iostream](classeosio_1_1iostream.md)** & out, const T & v) |
 |**[microseconds](classeosio_1_1microseconds.md)**|[**seconds**](group__time_gaf7174ec0c48074b993ec6bac37a84682.md#gaf7174ec0c48074b993ec6bac37a84682) (int64\_t s) |
 |**[microseconds](classeosio_1_1microseconds.md)**|[**milliseconds**](group__time_ga2b8d5b8f5a1829bd6967c3fe89eea506.md#ga2b8d5b8f5a1829bd6967c3fe89eea506) (int64\_t s) |
 |**[microseconds](classeosio_1_1microseconds.md)**|[**minutes**](group__time_ga29a31fdb3cb6abce3f6abcf6840ea00c.md#ga29a31fdb3cb6abce3f6abcf6840ea00c) (int64\_t m) |
@@ -415,7 +415,7 @@ void eosio::dispatch_inline (
 
 
 
-### function <a id="ga1e49e445971a761be9607c1a3eb85bde" href="#ga1e49e445971a761be9607c1a3eb85bde">operator<< (1/23)</a>
+### function <a id="1a1e49e445971a761be9607c1a3eb85bde" href="#1a1e49e445971a761be9607c1a3eb85bde">operator<< (1/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -451,7 +451,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga9e230ddd4f3d8ff314410dc9832829fd" href="#ga9e230ddd4f3d8ff314410dc9832829fd">operator>> (1/22)</a>
+### function <a id="1a9e230ddd4f3d8ff314410dc9832829fd" href="#1a9e230ddd4f3d8ff314410dc9832829fd">operator>> (1/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -487,7 +487,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga5413cb7eba4e557a70d93ffa9f39b725" href="#ga5413cb7eba4e557a70d93ffa9f39b725">operator<< (2/23)</a>
+### function <a id="1a5413cb7eba4e557a70d93ffa9f39b725" href="#1a5413cb7eba4e557a70d93ffa9f39b725">operator<< (2/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -523,7 +523,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga647b59d0f66be8cbb0bac116d7d14a9e" href="#ga647b59d0f66be8cbb0bac116d7d14a9e">operator>> (2/22)</a>
+### function <a id="1a647b59d0f66be8cbb0bac116d7d14a9e" href="#1a647b59d0f66be8cbb0bac116d7d14a9e">operator>> (2/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -559,7 +559,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga4f20e587315c1c625ec8c7092f9d8465" href="#ga4f20e587315c1c625ec8c7092f9d8465">operator<< (3/23)</a>
+### function <a id="1a4f20e587315c1c625ec8c7092f9d8465" href="#1a4f20e587315c1c625ec8c7092f9d8465">operator<< (3/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -595,7 +595,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga015cd9edd44cc1af80641c39b4816f13" href="#ga015cd9edd44cc1af80641c39b4816f13">operator>> (3/22)</a>
+### function <a id="1a015cd9edd44cc1af80641c39b4816f13" href="#1a015cd9edd44cc1af80641c39b4816f13">operator>> (3/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -631,7 +631,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga344108ff96bcee67d40711dacdd42845" href="#ga344108ff96bcee67d40711dacdd42845">operator<< (4/23)</a>
+### function <a id="1a344108ff96bcee67d40711dacdd42845" href="#1a344108ff96bcee67d40711dacdd42845">operator<< (4/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -667,7 +667,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga05879a71914d293c8a30b1a6710f8e51" href="#ga05879a71914d293c8a30b1a6710f8e51">operator<< (5/23)</a>
+### function <a id="1a05879a71914d293c8a30b1a6710f8e51" href="#1a05879a71914d293c8a30b1a6710f8e51">operator<< (5/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -703,7 +703,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gafea0491fecd3df192a3f245e8105a026" href="#gafea0491fecd3df192a3f245e8105a026">operator>> (4/22)</a>
+### function <a id="1afea0491fecd3df192a3f245e8105a026" href="#1afea0491fecd3df192a3f245e8105a026">operator>> (4/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -739,7 +739,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gaeb6280d5e7942fcf839024442bc5c814" href="#gaeb6280d5e7942fcf839024442bc5c814">operator<< (6/23)</a>
+### function <a id="1aeb6280d5e7942fcf839024442bc5c814" href="#1aeb6280d5e7942fcf839024442bc5c814">operator<< (6/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -775,7 +775,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga6f1b392200e9452c7f410ffd8fdfafe1" href="#ga6f1b392200e9452c7f410ffd8fdfafe1">operator>> (5/22)</a>
+### function <a id="1a6f1b392200e9452c7f410ffd8fdfafe1" href="#1a6f1b392200e9452c7f410ffd8fdfafe1">operator>> (5/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -811,7 +811,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gaed3bc5bd372251b9cb90aff4cf85be5f" href="#gaed3bc5bd372251b9cb90aff4cf85be5f">operator<< (7/23)</a>
+### function <a id="1aed3bc5bd372251b9cb90aff4cf85be5f" href="#1aed3bc5bd372251b9cb90aff4cf85be5f">operator<< (7/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -847,7 +847,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga74974be2214a4e50e463ae866f9297d4" href="#ga74974be2214a4e50e463ae866f9297d4">operator>> (6/22)</a>
+### function <a id="1a74974be2214a4e50e463ae866f9297d4" href="#1a74974be2214a4e50e463ae866f9297d4">operator>> (6/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -883,7 +883,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga7875cabe436fe6756c4b30eec326fe16" href="#ga7875cabe436fe6756c4b30eec326fe16">operator<< (8/23)</a>
+### function <a id="1a7875cabe436fe6756c4b30eec326fe16" href="#1a7875cabe436fe6756c4b30eec326fe16">operator<< (8/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -919,7 +919,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga860a2cac0f4f00dacdade421c303ea9c" href="#ga860a2cac0f4f00dacdade421c303ea9c">operator>> (7/22)</a>
+### function <a id="1a860a2cac0f4f00dacdade421c303ea9c" href="#1a860a2cac0f4f00dacdade421c303ea9c">operator>> (7/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -955,7 +955,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga69731c7e836d6521c2aa7d67ad1dbc4d" href="#ga69731c7e836d6521c2aa7d67ad1dbc4d">operator<< (9/23)</a>
+### function <a id="1a69731c7e836d6521c2aa7d67ad1dbc4d" href="#1a69731c7e836d6521c2aa7d67ad1dbc4d">operator<< (9/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -991,7 +991,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gaf18798375dd9ed43bea5888101883b9c" href="#gaf18798375dd9ed43bea5888101883b9c">operator>> (8/22)</a>
+### function <a id="1af18798375dd9ed43bea5888101883b9c" href="#1af18798375dd9ed43bea5888101883b9c">operator>> (8/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -1027,7 +1027,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gab1dffa510122bd62ce3975e7b302c2c1" href="#gab1dffa510122bd62ce3975e7b302c2c1">operator<< (10/23)</a>
+### function <a id="1ab1dffa510122bd62ce3975e7b302c2c1" href="#1ab1dffa510122bd62ce3975e7b302c2c1">operator<< (10/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1063,7 +1063,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gaa02846796253d9db1064e43fadbecb8e" href="#gaa02846796253d9db1064e43fadbecb8e">operator>> (9/22)</a>
+### function <a id="1aa02846796253d9db1064e43fadbecb8e" href="#1aa02846796253d9db1064e43fadbecb8e">operator>> (9/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1099,7 +1099,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga86c994b49d0af580c72f4d966baca75b" href="#ga86c994b49d0af580c72f4d966baca75b">operator<< (11/23)</a>
+### function <a id="1a86c994b49d0af580c72f4d966baca75b" href="#1a86c994b49d0af580c72f4d966baca75b">operator<< (11/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1137,7 +1137,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga60d3eb6bab6da17bd2986a051126d471" href="#ga60d3eb6bab6da17bd2986a051126d471">operator>> (10/22)</a>
+### function <a id="1a60d3eb6bab6da17bd2986a051126d471" href="#1a60d3eb6bab6da17bd2986a051126d471">operator>> (10/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1175,7 +1175,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gac4ea18eb72ec93e5d06fff5a83623581" href="#gac4ea18eb72ec93e5d06fff5a83623581">operator>> (11/22)</a>
+### function <a id="1ac4ea18eb72ec93e5d06fff5a83623581" href="#1ac4ea18eb72ec93e5d06fff5a83623581">operator>> (11/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1218,7 +1218,7 @@ Throw an exception if it is a pointer
 
 
 
-### function <a id="ga0c8758a01d2cdcd99922c268f2f4e4e9" href="#ga0c8758a01d2cdcd99922c268f2f4e4e9">operator<< (12/23)</a>
+### function <a id="1a0c8758a01d2cdcd99922c268f2f4e4e9" href="#1a0c8758a01d2cdcd99922c268f2f4e4e9">operator<< (12/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1280,7 +1280,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga9ddfcc1002e9cd4c267ca0986753c686" href="#ga9ddfcc1002e9cd4c267ca0986753c686">operator>> (12/22)</a>
+### function <a id="1a9ddfcc1002e9cd4c267ca0986753c686" href="#1a9ddfcc1002e9cd4c267ca0986753c686">operator>> (12/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1344,7 +1344,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga5cb28ef1142e7ec5ba5c6672265efd47" href="#ga5cb28ef1142e7ec5ba5c6672265efd47">operator<< (13/23)</a>
+### function <a id="1a5cb28ef1142e7ec5ba5c6672265efd47" href="#1a5cb28ef1142e7ec5ba5c6672265efd47">operator<< (13/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1380,7 +1380,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga53f4e770b9b3c9f1e92c2fa3fa0ec73a" href="#ga53f4e770b9b3c9f1e92c2fa3fa0ec73a">operator<< (14/23)</a>
+### function <a id="1a53f4e770b9b3c9f1e92c2fa3fa0ec73a" href="#1a53f4e770b9b3c9f1e92c2fa3fa0ec73a">operator<< (14/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1417,7 +1417,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gad202e8fcf8f49970c1710410c6059cde" href="#gad202e8fcf8f49970c1710410c6059cde">operator>> (13/22)</a>
+### function <a id="1ad202e8fcf8f49970c1710410c6059cde" href="#1ad202e8fcf8f49970c1710410c6059cde">operator>> (13/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1453,7 +1453,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gaedee239cff148b596f19a3c2c6c1adf1" href="#gaedee239cff148b596f19a3c2c6c1adf1">operator>> (14/22)</a>
+### function <a id="1aedee239cff148b596f19a3c2c6c1adf1" href="#1aedee239cff148b596f19a3c2c6c1adf1">operator>> (14/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1490,7 +1490,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gaf98424a2563d883b3883a14692aa195a" href="#gaf98424a2563d883b3883a14692aa195a">operator<< (15/23)</a>
+### function <a id="1af98424a2563d883b3883a14692aa195a" href="#1af98424a2563d883b3883a14692aa195a">operator<< (15/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1501,7 +1501,7 @@ DataStream & eosio::operator<< (
 
 
 
-### function <a id="gae2a202ccccf405468ad654676bb41d40" href="#gae2a202ccccf405468ad654676bb41d40">operator>> (15/22)</a>
+### function <a id="1ae2a202ccccf405468ad654676bb41d40" href="#1ae2a202ccccf405468ad654676bb41d40">operator>> (15/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1512,7 +1512,7 @@ DataStream & eosio::operator>> (
 
 
 
-### function <a id="ga0bb2cdf062825f96551ba663f3d74e17" href="#ga0bb2cdf062825f96551ba663f3d74e17">operator<< (16/23)</a>
+### function <a id="1a0bb2cdf062825f96551ba663f3d74e17" href="#1a0bb2cdf062825f96551ba663f3d74e17">operator<< (16/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1550,7 +1550,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga63b7d3e0c99e4f049574fd366a1c528a" href="#ga63b7d3e0c99e4f049574fd366a1c528a">operator>> (16/22)</a>
+### function <a id="1a63b7d3e0c99e4f049574fd366a1c528a" href="#1a63b7d3e0c99e4f049574fd366a1c528a">operator>> (16/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1588,7 +1588,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gab7049fdaa7895e6c31a482deba846434" href="#gab7049fdaa7895e6c31a482deba846434">operator<< (17/23)</a>
+### function <a id="1ab7049fdaa7895e6c31a482deba846434" href="#1ab7049fdaa7895e6c31a482deba846434">operator<< (17/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1599,7 +1599,7 @@ DataStream & eosio::operator<< (
 
 
 
-### function <a id="ga5f545f70b39155d1cd1da85f0e00b742" href="#ga5f545f70b39155d1cd1da85f0e00b742">operator>> (17/22)</a>
+### function <a id="1a5f545f70b39155d1cd1da85f0e00b742" href="#1a5f545f70b39155d1cd1da85f0e00b742">operator>> (17/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1610,7 +1610,7 @@ DataStream & eosio::operator>> (
 
 
 
-### function <a id="ga85b47a27bb41a2854d2b8daea9e7b9f0" href="#ga85b47a27bb41a2854d2b8daea9e7b9f0">operator<< (18/23)</a>
+### function <a id="1a85b47a27bb41a2854d2b8daea9e7b9f0" href="#1a85b47a27bb41a2854d2b8daea9e7b9f0">operator<< (18/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1648,7 +1648,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga3b973878181cef2bdad7139958bd6ecf" href="#ga3b973878181cef2bdad7139958bd6ecf">operator>> (18/22)</a>
+### function <a id="1a3b973878181cef2bdad7139958bd6ecf" href="#1a3b973878181cef2bdad7139958bd6ecf">operator>> (18/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1686,7 +1686,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga124a00ba4d603044ef25be84a9fade48" href="#ga124a00ba4d603044ef25be84a9fade48">operator<< (19/23)</a>
+### function <a id="1a124a00ba4d603044ef25be84a9fade48" href="#1a124a00ba4d603044ef25be84a9fade48">operator<< (19/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1723,7 +1723,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="gac2e5487f43a496d7c263071e2502b986" href="#gac2e5487f43a496d7c263071e2502b986">operator>> (19/22)</a>
+### function <a id="1ac2e5487f43a496d7c263071e2502b986" href="#1ac2e5487f43a496d7c263071e2502b986">operator>> (19/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -1760,7 +1760,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga59511f8552dbf4a2aced270041c17f04" href="#ga59511f8552dbf4a2aced270041c17f04">operator<< (20/23)</a>
+### function <a id="1a59511f8552dbf4a2aced270041c17f04" href="#1a59511f8552dbf4a2aced270041c17f04">operator<< (20/23)</a>
 
 ```cpp
 DataStream & eosio::operator<< (
@@ -1822,7 +1822,7 @@ DataStream& - Reference to the datastream
 
 
 
-### function <a id="ga7d64e2f48bca13601cf6606934e6e8e6" href="#ga7d64e2f48bca13601cf6606934e6e8e6">operator>> (20/22)</a>
+### function <a id="1a7d64e2f48bca13601cf6606934e6e8e6" href="#1a7d64e2f48bca13601cf6606934e6e8e6">operator>> (20/22)</a>
 
 ```cpp
 DataStream & eosio::operator>> (
@@ -2022,7 +2022,7 @@ bytes - The packed data
 
 
 
-### function <a id="gac006ab398b288a0582a2a59b991bf37c" href="#gac006ab398b288a0582a2a59b991bf37c">operator<< (21/23)</a>
+### function <a id="1ac006ab398b288a0582a2a59b991bf37c" href="#1ac006ab398b288a0582a2a59b991bf37c">operator<< (21/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -2058,7 +2058,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga2cbcd06b5aae0e8ffd8b1550b0f39983" href="#ga2cbcd06b5aae0e8ffd8b1550b0f39983">operator>> (21/22)</a>
+### function <a id="1a2cbcd06b5aae0e8ffd8b1550b0f39983" href="#1a2cbcd06b5aae0e8ffd8b1550b0f39983">operator>> (21/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -2094,7 +2094,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="gafd1c5d3fad33115c2ba6a65f8f4b5792" href="#gafd1c5d3fad33115c2ba6a65f8f4b5792">operator<< (22/23)</a>
+### function <a id="1afd1c5d3fad33115c2ba6a65f8f4b5792" href="#1afd1c5d3fad33115c2ba6a65f8f4b5792">operator<< (22/23)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator<< (
@@ -2130,7 +2130,7 @@ datastream<Stream>& - Reference to the datastream
 
 
 
-### function <a id="ga14d1988dcb3235cf059d90c01a2b7d74" href="#ga14d1988dcb3235cf059d90c01a2b7d74">operator>> (22/22)</a>
+### function <a id="1a14d1988dcb3235cf059d90c01a2b7d74" href="#1a14d1988dcb3235cf059d90c01a2b7d74">operator>> (22/22)</a>
 
 ```cpp
 datastream< Stream > & eosio::operator>> (
@@ -2443,8 +2443,8 @@ bool eosio::check_transaction_authorization (
 )
 ```
 
-Checks if a transaction is authorized by a provided set of keys and permissions. 
 
+Checks if a transaction is authorized by a provided set of keys and permissions
 
 
 **Parameters:**
@@ -2475,8 +2475,8 @@ bool eosio::check_permission_authorization (
 )
 ```
 
-Checks if a permission is authorized by a provided delay and a provided set of keys and permissions. 
 
+Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
 
 
 **Parameters:**
@@ -2505,7 +2505,6 @@ void eosio::print (
 )
 ```
 
-Prints string. 
 
 Prints string
 
@@ -2555,9 +2554,8 @@ void eosio::print (
 )
 ```
 
-Prints signed integer as a 64 bit signed integer. 
 
-Prints signed integer
+Prints signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -2575,9 +2573,8 @@ void eosio::print (
 )
 ```
 
-Prints 32 bit signed integer as a 64 bit signed integer. 
 
-Prints 32 bit signed integer
+Prints 32 bit signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -2595,9 +2592,8 @@ void eosio::print (
 )
 ```
 
-Prints 64 bit signed integer as a 64 bit signed integer. 
 
-Prints 64 bit signed integer
+Prints 64 bit signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -2615,9 +2611,8 @@ void eosio::print (
 )
 ```
 
-Prints unsigned integer as a 64 bit unsigned integer. 
 
-Prints unsigned integer
+Prints unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -2635,9 +2630,8 @@ void eosio::print (
 )
 ```
 
-Prints 32 bit unsigned integer as a 64 bit unsigned integer. 
 
-Prints 32 bit unsigned integer
+Prints 32 bit unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -2655,9 +2649,8 @@ void eosio::print (
 )
 ```
 
-Prints 64 bit unsigned integer as a 64 bit unsigned integer. 
 
-Prints 64 bit unsigned integer
+Prints 64 bit unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -2675,7 +2668,6 @@ void eosio::print (
 )
 ```
 
-Prints 128 bit signed integer. 
 
 Prints 128 bit signed integer
 
@@ -2695,7 +2687,6 @@ void eosio::print (
 )
 ```
 
-Prints 128 bit unsigned integer. 
 
 Prints 128 bit unsigned integer
 
@@ -2715,9 +2706,8 @@ void eosio::print (
 )
 ```
 
-Prints single-precision floating point number (i.e. float) 
 
-Prints single-precision floating point number
+Prints single-precision floating point number (i.e. float)
 
 
 **Parameters:**
@@ -2735,9 +2725,8 @@ void eosio::print (
 )
 ```
 
-Prints double-precision floating point number (i.e. double) 
 
-Prints double-precision floating point number
+Prints double-precision floating point number (i.e. double)
 
 
 **Parameters:**
@@ -2755,9 +2744,8 @@ void eosio::print (
 )
 ```
 
-Prints quadruple-precision floating point number (i.e. long double) 
 
-Prints quadruple-precision floating point number
+Prints quadruple-precision floating point number (i.e. long double)
 
 
 **Parameters:**
@@ -2775,7 +2763,6 @@ void eosio::print (
 )
 ```
 
-Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. 
 
 Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string
 
@@ -2795,7 +2782,6 @@ void eosio::print (
 )
 ```
 
-Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. 
 
 Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string
 
@@ -2815,7 +2801,6 @@ void eosio::print (
 )
 ```
 
-Prints a 64 bit names as base32 encoded string. 
 
 Prints a 64 bit names as base32 encoded string
 
@@ -2835,7 +2820,6 @@ void eosio::print (
 )
 ```
 
-Prints a **[symbol\_code](classeosio_1_1symbol__code.md)**. 
 
 Prints a **[symbol\_code](classeosio_1_1symbol__code.md)**
 
@@ -2855,7 +2839,6 @@ void eosio::print (
 )
 ```
 
-Prints bool. 
 
 Prints bool
 
@@ -2875,7 +2858,6 @@ void eosio::print (
 )
 ```
 
-Prints class object. 
 
 Prints class object
 
@@ -2902,7 +2884,6 @@ void eosio::print_f (
 )
 ```
 
-Prints null terminated string. 
 
 Prints null terminated string
 
@@ -2924,7 +2905,6 @@ void eosio::print_f (
 )
 ```
 
-Prints formatted string. 
 
 Prints formatted string. It behaves similar to C printf/
 
@@ -2960,9 +2940,17 @@ void eosio::print (
 )
 ```
 
-Print out value / list of values. 
 
-Print out value / list of values 
+Print out value / list of values
+
+
+**Template parameters:**
+
+
+* **Arg** - Type of the value used to replace the format specifier 
+* **Args** - Type of the value used to replace the format specifier 
+
+
 
 **Parameters:**
 
@@ -2992,9 +2980,17 @@ iostream & eosio::operator<< (
 )
 ```
 
-Overload c++ iostream. 
 
-Overload c++ iostream 
+Overload c++ iostream
+
+
+**Template parameters:**
+
+
+* **Arg** - Type of the value used to replace the format specifier 
+* **Args** - Type of the value used to replace the format specifier 
+
+
 
 **Parameters:**
 
@@ -3082,7 +3078,8 @@ action eosio::get_action (
 ```
 
 
-Retrieve the indicated action from the active transaction. 
+Retrieve the indicated action from the active transaction.
+
 
 **Parameters:**
 

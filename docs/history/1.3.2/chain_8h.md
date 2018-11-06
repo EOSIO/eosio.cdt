@@ -8,7 +8,7 @@ search:
 **[Go to the source code of this file.](chain_8h_source.md)**
 |Type|Name|
 |-----|-----|
-|uint32\_t|[**get\_active\_producers**](group__chain_gafb1878d4d55d275a1729f44ecc72848a.md#gafb1878d4d55d275a1729f44ecc72848a) (**[capi\_name](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)** \* producers, uint32\_t datalen) |
+|uint32\_t|[**get\_active\_producers**](group__chain_gafb1878d4d55d275a1729f44ecc72848a.md#gafb1878d4d55d275a1729f44ecc72848a) (**[capi\_name](group__types_gad9871b90d15df8db5c660c78569f029f.md#gad9871b90d15df8db5c660c78569f029f)** \* producers, uint32\_t datalen) |
 
 
 ## Detailed Description

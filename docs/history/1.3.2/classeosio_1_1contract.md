@@ -8,7 +8,7 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**contract**](classeosio_1_1contract.md)
 
 
-Base class for EOSIO contract. [More...](#detailed-description)
+Base class for **[EOSIO](struct_e_o_s_i_o.md)** contract. [More...](#detailed-description)
 ## Protected Attributes
 
 |Type|Name|
@@ -30,7 +30,7 @@ Base class for EOSIO contract. [More...](#detailed-description)
 
 ## Detailed Description
 
-Base class for EOSIO contract. A new contract should derive from this class, so it can make use of EOSIO\_ABI macro. 
+Base class for **[EOSIO](struct_e_o_s_i_o.md)** contract. A new contract should derive from this class, so it can make use of EOSIO\_ABI macro. 
 ## Protected Attributes Documentation
 
 ### variable <a id="ga29c0c98c72ab578a5965d13b00dca0c0" href="#ga29c0c98c72ab578a5965d13b00dca0c0">\_self</a>

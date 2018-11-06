@@ -8,7 +8,7 @@ search:
 Defines C APIs for interfacing with the database. [More...](#detailed-description)
 ## Detailed Description
 
-Database C API provides low level interface to EOSIO database.
+Database C API provides low level interface to **[EOSIO](struct_e_o_s_i_o.md)** database.
 ## Functions Documentation
 
 ### function <a id="ga3f259dd4be6adc25d95e897b7724bbc4" href="#ga3f259dd4be6adc25d95e897b7724bbc4">db\_store\_i64</a>

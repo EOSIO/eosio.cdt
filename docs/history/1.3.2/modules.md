@@ -11,18 +11,18 @@ Here is a list of all modules:
 * **[asset](group__asset.md)** 
 * **[chain](group__chain.md)** Defines C API for querying internal chain state. 
 * **[console](group__console.md)** Defines C++ wrapper to log/print text messages. 
-* **[contract](group__contract.md)** Defines contract type which is base class for every EOSIO contract. 
+* **[contract](group__contract.md)** Defines contract type which is base class for every **[EOSIO](struct_e_o_s_i_o.md)** contract. 
 * **[crypto](group__crypto.md)** Defines C API for calculating and checking hash. 
 * **[database](group__database.md)** Defines C APIs for interfacing with the database. 
 * **[datastream](group__datastream.md)** 
 * **[dispatcher](group__dispatcher.md)** Defines C++ functions to dispatch action to proper action handler inside a contract. 
 * **[fixed\_key](group__fixed__key.md)** Fixed size key sorted lexicographically for Multi Index Table. 
 * **[fixed\_point](group__fixed__point.md)** 32,64,128,256 bits version of fixed point variables 
-* **[multiindex](group__multiindex.md)** Defines EOSIO Multi Index Table. 
+* **[multiindex](group__multiindex.md)** Defines **[EOSIO](struct_e_o_s_i_o.md)** Multi Index Table. 
 * **[privileged](group__privileged.md)** 
-* **[singleton](group__singleton.md)** Defines EOSIO Singleton Table. 
+* **[singleton](group__singleton.md)** Defines **[EOSIO](struct_e_o_s_i_o.md)** Singleton Table used with multiindex. 
 * **[symbol](group__symbol.md)** Defines CPP API for managing symbols. 
 * **[time](group__time.md)** 
 * **[transaction](group__transaction.md)** Type-safe C++ wrappers for transaction C API. 
-* **[transaction\_c](group__transaction__c.md)** Defines API for sending transactions and inline actions. 
+* **[transaction\_c](group__transaction__c.md)** Defines C API for sending transactions and inline actions. 
 * **[types](group__types.md)** Specifies builtin types, typedefs and aliases. 

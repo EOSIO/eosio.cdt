@@ -5,7 +5,7 @@ search:
 
 # group multiindex
 
-Defines EOSIO Multi Index Table. [More...](#detailed-description)
+Defines **[EOSIO](struct_e_o_s_i_o.md)** Multi Index Table. [More...](#detailed-description)
 ## Classes
 
 |Type|Name|
@@ -15,7 +15,7 @@ Defines EOSIO Multi Index Table. [More...](#detailed-description)
 
 ## Detailed Description
 
-EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container. EOSIO Multi-Index table requires exactly a uint64\_t primary key. For the table to be able to retrieve the primary key, the object stored inside the table is required to have a const member function called primary\_key() that returns uint64\_t. EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
+**[EOSIO](struct_e_o_s_i_o.md)** Multi-Index API provides a C++ interface to the **[EOSIO](struct_e_o_s_i_o.md)** database. It is patterned after Boost Multi Index Container. **[EOSIO](struct_e_o_s_i_o.md)** Multi-Index table requires exactly a uint64\_t primary key. For the table to be able to retrieve the primary key, the object stored inside the table is required to have a const member function called primary\_key() that returns uint64\_t. **[EOSIO](struct_e_o_s_i_o.md)** Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
 * uint64\_t
 * uint128\_t
 * uint256\_t

@@ -8,7 +8,7 @@ search:
 **[Go to the source code of this file.](transaction_8h_source.md)**
 |Type|Name|
 |-----|-----|
-|void|[**send\_deferred**](group__transaction__c_ga07e6ca6c01d86389ee6a09bbc79d5771.md#ga07e6ca6c01d86389ee6a09bbc79d5771) (const uint128\_t & sender\_id, **[capi\_name](types_8h_ad9871b90d15df8db5c660c78569f029f.md#1ad9871b90d15df8db5c660c78569f029f)** payer, const char \* serialized\_transaction, size\_t size, uint32\_t replace\_existing = 0) <br>Sends a deferred transaction. |
+|void|[**send\_deferred**](group__transaction__c_ga07e6ca6c01d86389ee6a09bbc79d5771.md#ga07e6ca6c01d86389ee6a09bbc79d5771) (const uint128\_t & sender\_id, **[capi\_name](group__types_gad9871b90d15df8db5c660c78569f029f.md#gad9871b90d15df8db5c660c78569f029f)** payer, const char \* serialized\_transaction, size\_t size, uint32\_t replace\_existing = 0) |
 |int|[**cancel\_deferred**](group__transaction__c_ga03df5ed306c904081f03601350a81b67.md#ga03df5ed306c904081f03601350a81b67) (const uint128\_t & sender\_id) <br>Cancels a deferred transaction. |
 |size\_t|[**read\_transaction**](group__transaction__c_ga73fa4253ae0aec55399c26b740223bc6.md#ga73fa4253ae0aec55399c26b740223bc6) (char \* buffer, size\_t size) <br>Access a copy of the currently executing transaction. |
 |size\_t|[**transaction\_size**](group__transaction__c_gadfcd2e00f00461eac891ee8433508609.md#gadfcd2e00f00461eac891ee8433508609) () <br>Gets the size of the currently executing transaction. |
@@ -43,7 +43,6 @@ void transaction.h::send_deferred (
 )
 ```
 
-Sends a deferred transaction. 
 
 Sends a deferred transaction.
 

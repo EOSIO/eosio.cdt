@@ -5,7 +5,7 @@ search:
 
 # group contract
 
-Defines contract type which is base class for every EOSIO contract. 
+Defines contract type which is base class for every **[EOSIO](struct_e_o_s_i_o.md)** contract. 
 ## Classes
 
 |Type|Name|

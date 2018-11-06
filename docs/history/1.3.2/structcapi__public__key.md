@@ -8,7 +8,6 @@ search:
 [**Class List**](annotated.md) **>** [**capi\_public\_key**](structcapi__public__key.md)
 
 
-EOSIO Public Key. [More...](#detailed-description)
 ## Public Attributes
 
 |Type|Name|
@@ -18,7 +17,7 @@ EOSIO Public Key. [More...](#detailed-description)
 
 ## Detailed Description
 
-EOSIO Public Key. It is 34 bytes. 
+**[EOSIO](struct_e_o_s_i_o.md)** Public Key. It is 34 bytes. 
 ## Public Attributes Documentation
 
 ### variable <a id="1ab4fb9fec8d0d6cc076baf49bba28e176" href="#1ab4fb9fec8d0d6cc076baf49bba28e176">data</a>

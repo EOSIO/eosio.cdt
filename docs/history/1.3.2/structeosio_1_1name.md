@@ -8,7 +8,7 @@ search:
 [**Class List**](annotated.md) **>** [**eosio**](namespaceeosio.md) **::** [**name**](structeosio_1_1name.md)
 
 
-wraps a uint64\_t to ensure it is only passed to methods that expect a name. Ensures value is only passed to methods that expect a name and that no mathematical operations occur. Also enables specialization of print [More...](#detailed-description)
+**[EOSIO](struct_e_o_s_i_o.md)** Types. [More...](#detailed-description)
 ## Public Types
 
 |Type|Name|
@@ -57,7 +57,7 @@ wraps a uint64\_t to ensure it is only passed to methods that expect a name. Ens
 
 ## Detailed Description
 
-/\* 
+/\* Wraps a uint64\_t to ensure it is only passed to methods that expect a name. Ensures value is only passed to methods that expect a name and that no mathematical operations occur. Also enables specialization of print 
 ## Public Types Documentation
 
 ### enum <a id="1a1d269720fd7434429216833187173656" href="#1a1d269720fd7434429216833187173656">raw</a>

@@ -49,7 +49,6 @@ void console::print (
 )
 ```
 
-Prints string. 
 
 Prints string
 
@@ -99,9 +98,8 @@ void console::print (
 )
 ```
 
-Prints signed integer as a 64 bit signed integer. 
 
-Prints signed integer
+Prints signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -119,9 +117,8 @@ void console::print (
 )
 ```
 
-Prints 32 bit signed integer as a 64 bit signed integer. 
 
-Prints 32 bit signed integer
+Prints 32 bit signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -139,9 +136,8 @@ void console::print (
 )
 ```
 
-Prints 64 bit signed integer as a 64 bit signed integer. 
 
-Prints 64 bit signed integer
+Prints 64 bit signed integer as a 64 bit signed integer
 
 
 **Parameters:**
@@ -159,9 +155,8 @@ void console::print (
 )
 ```
 
-Prints unsigned integer as a 64 bit unsigned integer. 
 
-Prints unsigned integer
+Prints unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -179,9 +174,8 @@ void console::print (
 )
 ```
 
-Prints 32 bit unsigned integer as a 64 bit unsigned integer. 
 
-Prints 32 bit unsigned integer
+Prints 32 bit unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -199,9 +193,8 @@ void console::print (
 )
 ```
 
-Prints 64 bit unsigned integer as a 64 bit unsigned integer. 
 
-Prints 64 bit unsigned integer
+Prints 64 bit unsigned integer as a 64 bit unsigned integer
 
 
 **Parameters:**
@@ -219,7 +212,6 @@ void console::print (
 )
 ```
 
-Prints 128 bit signed integer. 
 
 Prints 128 bit signed integer
 
@@ -239,7 +231,6 @@ void console::print (
 )
 ```
 
-Prints 128 bit unsigned integer. 
 
 Prints 128 bit unsigned integer
 
@@ -259,9 +250,8 @@ void console::print (
 )
 ```
 
-Prints single-precision floating point number (i.e. float) 
 
-Prints single-precision floating point number
+Prints single-precision floating point number (i.e. float)
 
 
 **Parameters:**
@@ -279,9 +269,8 @@ void console::print (
 )
 ```
 
-Prints double-precision floating point number (i.e. double) 
 
-Prints double-precision floating point number
+Prints double-precision floating point number (i.e. double)
 
 
 **Parameters:**
@@ -299,9 +288,8 @@ void console::print (
 )
 ```
 
-Prints quadruple-precision floating point number (i.e. long double) 
 
-Prints quadruple-precision floating point number
+Prints quadruple-precision floating point number (i.e. long double)
 
 
 **Parameters:**
@@ -319,7 +307,6 @@ void console::print (
 )
 ```
 
-Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. 
 
 Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string
 
@@ -339,7 +326,6 @@ void console::print (
 )
 ```
 
-Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string. 
 
 Prints **[fixed\_key](classeosio_1_1fixed__key.md)** as a hexidecimal string
 
@@ -359,7 +345,6 @@ void console::print (
 )
 ```
 
-Prints a 64 bit names as base32 encoded string. 
 
 Prints a 64 bit names as base32 encoded string
 
@@ -379,7 +364,6 @@ void console::print (
 )
 ```
 
-Prints a **[symbol\_code](classeosio_1_1symbol__code.md)**. 
 
 Prints a **[symbol\_code](classeosio_1_1symbol__code.md)**
 
@@ -399,7 +383,6 @@ void console::print (
 )
 ```
 
-Prints bool. 
 
 Prints bool
 
@@ -419,7 +402,6 @@ void console::print (
 )
 ```
 
-Prints class object. 
 
 Prints class object
 
@@ -446,7 +428,6 @@ void console::print_f (
 )
 ```
 
-Prints null terminated string. 
 
 Prints null terminated string
 
@@ -468,7 +449,6 @@ void console::print_f (
 )
 ```
 
-Prints formatted string. 
 
 Prints formatted string. It behaves similar to C printf/
 
@@ -504,9 +484,17 @@ void console::print (
 )
 ```
 
-Print out value / list of values. 
 
-Print out value / list of values 
+Print out value / list of values
+
+
+**Template parameters:**
+
+
+* **Arg** - Type of the value used to replace the format specifier 
+* **Args** - Type of the value used to replace the format specifier 
+
+
 
 **Parameters:**
 
@@ -536,9 +524,17 @@ iostream & console::operator<< (
 )
 ```
 
-Overload c++ iostream. 
 
-Overload c++ iostream 
+Overload c++ iostream
+
+
+**Template parameters:**
+
+
+* **Arg** - Type of the value used to replace the format specifier 
+* **Args** - Type of the value used to replace the format specifier 
+
+
 
 **Parameters:**
 

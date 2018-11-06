@@ -5,7 +5,7 @@ search:
 
 # group transaction\_c
 
-Defines API for sending transactions and inline actions. [More...](#detailed-description)
+Defines C API for sending transactions and inline actions. [More...](#detailed-description)
 ## Detailed Description
 
 Deferred transactions will not be processed until a future block. They can therefore have no effect on the success of failure of their parent transaction so long as they appear well formed. If any other condition causes the parent transaction to be marked as failing, then the deferred transaction will never be processed.
@@ -26,7 +26,6 @@ void transaction_c::send_deferred (
 )
 ```
 
-Sends a deferred transaction. 
 
 Sends a deferred transaction.
 

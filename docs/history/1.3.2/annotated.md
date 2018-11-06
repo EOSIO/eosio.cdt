@@ -1,11 +1,12 @@
 ---
 search:
-    keywords: ['Extended', 'Stores', 'capi_public_key', 'capi_signature', 'eosio', '_datastream_detail', '_multi_index_detail', 'secondary_index_db_functions', 'secondary_key_traits', 'secondary_key_traits< key256 >', 'action', 'asset', 'block_timestamp', 'blockchain_parameters', 'const_mem_fun', 'contract', 'datastream', 'datastream< size_t >', 'extended_asset', 'extended_symbol', 'fixed_key', 'bool_pack', 'fixed_point128', 'fixed_point32', 'fixed_point64', 'ignore', 'ignore_wrapper', 'indexed_by', 'inline_dispatcher', 'inline_dispatcher< void(T::*)(Args...), Name >', 'iostream', 'memory_manager', 'memory', 'buffer_ptr', 'microseconds', 'multi_index', 'const_iterator', 'index', 'const_iterator', 'intc', 'item', 'item_ptr', 'name', 'onerror', 'permission_level', 'producer_key', 'producer_schedule', 'public_key', 'singleton', 'row', 'symbol', 'symbol_code', 'time_point', 'time_point_sec', 'transaction', 'transaction_header', 'signed_int', 'unsigned_int']
+    keywords: ['EOSIO', 'Extended', 'Stores', 'capi_public_key', 'capi_signature', 'eosio', '_datastream_detail', '_multi_index_detail', 'secondary_index_db_functions', 'secondary_key_traits', 'secondary_key_traits< key256 >', 'action', 'asset', 'block_timestamp', 'blockchain_parameters', 'const_mem_fun', 'contract', 'datastream', 'datastream< size_t >', 'extended_asset', 'extended_symbol', 'fixed_key', 'bool_pack', 'fixed_point128', 'fixed_point32', 'fixed_point64', 'ignore', 'ignore_wrapper', 'indexed_by', 'inline_dispatcher', 'inline_dispatcher< void(T::*)(Args...), Name >', 'iostream', 'memory_manager', 'memory', 'buffer_ptr', 'microseconds', 'multi_index', 'const_iterator', 'index', 'const_iterator', 'intc', 'item', 'item_ptr', 'name', 'onerror', 'permission_level', 'producer_key', 'producer_schedule', 'public_key', 'singleton', 'row', 'symbol', 'symbol_code', 'time_point', 'time_point_sec', 'transaction', 'transaction_header', 'signed_int', 'unsigned_int']
 ---
 
 # Class List
 
 Here are the classes, structs, unions and interfaces with brief descriptions:
+* struct [**EOSIO**](struct_e_o_s_i_o.md)
 * struct [**Extended**](struct_extended.md)
 * struct [**Stores**](struct_stores.md)
 * struct [**capi\_public\_key**](structcapi__public__key.md)

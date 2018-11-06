@@ -5,7 +5,7 @@ search:
 
 # group singleton
 
-Defines EOSIO Singleton Table. 
+Defines **[EOSIO](struct_e_o_s_i_o.md)** Singleton Table used with multiindex. 
 ## Classes
 
 |Type|Name|

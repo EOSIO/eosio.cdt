@@ -1,6 +1,6 @@
 ---
 search:
-    keywords: ['action', 'asset', 'block_timestamp', 'blockchain_parameters', 'fixed_key::bool_pack', 'memory_manager::memory::buffer_ptr', 'capi_public_key', 'capi_signature', 'const_mem_fun', 'contract', 'multi_index::const_iterator', 'multi_index::index::const_iterator', 'datastream', 'datastream< size_t >', 'Extended', 'extended_asset', 'extended_symbol', 'fixed_key', 'fixed_point128', 'fixed_point32', 'fixed_point64', 'ignore', 'ignore_wrapper', 'indexed_by', 'inline_dispatcher', 'inline_dispatcher< void(T::*)(Args...), Name >', 'iostream', 'multi_index::index', 'multi_index::intc', 'multi_index::item', 'multi_index::item_ptr', 'memory_manager', 'memory_manager::memory', 'microseconds', 'multi_index', 'name', 'onerror', 'permission_level', 'producer_key', 'producer_schedule', 'public_key', 'singleton::row', 'Stores', 'secondary_index_db_functions', 'secondary_key_traits', 'secondary_key_traits< key256 >', 'singleton', 'symbol', 'symbol_code', 'signed_int', 'time_point', 'time_point_sec', 'transaction', 'transaction_header', 'unsigned_int']
+    keywords: ['action', 'asset', 'block_timestamp', 'blockchain_parameters', 'fixed_key::bool_pack', 'memory_manager::memory::buffer_ptr', 'capi_public_key', 'capi_signature', 'const_mem_fun', 'contract', 'multi_index::const_iterator', 'multi_index::index::const_iterator', 'datastream', 'datastream< size_t >', 'EOSIO', 'Extended', 'extended_asset', 'extended_symbol', 'fixed_key', 'fixed_point128', 'fixed_point32', 'fixed_point64', 'ignore', 'ignore_wrapper', 'indexed_by', 'inline_dispatcher', 'inline_dispatcher< void(T::*)(Args...), Name >', 'iostream', 'multi_index::index', 'multi_index::intc', 'multi_index::item', 'multi_index::item_ptr', 'memory_manager', 'memory_manager::memory', 'microseconds', 'multi_index', 'name', 'onerror', 'permission_level', 'producer_key', 'producer_schedule', 'public_key', 'singleton::row', 'Stores', 'secondary_index_db_functions', 'secondary_key_traits', 'secondary_key_traits< key256 >', 'singleton', 'symbol', 'symbol_code', 'signed_int', 'time_point', 'time_point_sec', 'transaction', 'transaction_header', 'unsigned_int']
 ---
 
 # Class Index
@@ -37,6 +37,7 @@ search:
 
 ## E
 
+* [**EOSIO**](struct_e_o_s_i_o.md)
 * [**Extended**](struct_extended.md)
 * [**extended\_asset**](structeosio_1_1extended__asset.md) ([**eosio**](namespaceeosio.md))
 * [**extended\_symbol**](classeosio_1_1extended__symbol.md) ([**eosio**](namespaceeosio.md))
