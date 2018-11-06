@@ -73,6 +73,22 @@ static cl::list<std::string> input_filename_opt(
 
 #ifndef ONLY_LD
 /// begin c/c++ options/
+static cl::opt<std::string> MF_opt(
+    "MF",
+    cl::desc("Write depfile output"),
+    cl::cat(EosioCompilerToolCategory));
+static cl::opt<std::string> MT_opt(
+    "MT",
+    cl::desc("Specify name of main file output in depfile"),
+    cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> MD_opt(
+    "MD",
+    cl::desc("Write depfile containing user and system headers"),
+    cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> MMD_opt(
+    "MMD",
+    cl::desc("Write depfile containing user"),
+    cl::cat(EosioCompilerToolCategory));
 static cl::list<std::string> resources(
      "R",
      cl::Prefix,
@@ -446,6 +462,18 @@ static Options CreateOptions(bool add_defaults=true) {
    if (color_diag_opt) {
       copts.emplace_back("-fcolor-diagnostics");
    }
+   if (!MF_opt.empty()) {
+      copts.emplace_back("-MF "+MF_opt);
+   }
+   if (MD_opt) {
+      copts.emplace_back("-MD");
+   }
+   if (MMD_opt) {
+      copts.emplace_back("-MMD");
+   }
+   if (!MT_opt.empty()) {
+      copts.emplace_back("-MT "+MT_opt);
+   }
    if (finline_functions_opt) {
       copts.emplace_back("-finline-functions");
    }
@@ -509,7 +537,7 @@ static Options CreateOptions(bool add_defaults=true) {
          std::cerr << "Warning : lto disabled but lto optimization level given\n";
    }
    else if (!lto_opt_opt.empty()) {
-      ldopts.emplace_back("--lto"+lto_opt_opt);
+      ldopts.emplace_back("--lto-"+lto_opt_opt);
    }
    else {
       ldopts.emplace_back("--lto-O3");
