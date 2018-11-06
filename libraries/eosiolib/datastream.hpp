@@ -312,8 +312,9 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_exte
  */
 template<typename Stream, typename... Ts>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::variant<Ts...>& var) {
-  ds << unsigned_int{var.index()};
-  ds << std::get<index>(var);
+  unsigned int index = var.index();
+  ds << index;
+  std::visit([&ds](auto& val){ ds << val; }, var);
   return ds;
 }
 

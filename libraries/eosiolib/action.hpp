@@ -433,7 +433,6 @@ namespace eosio {
          static_assert(detail::type_check<detail::get_nth<Variant, Actions...>::value, Args...>());
          unsigned_int var = Variant;
          return action(permissions, code_name, action_name, std::tuple_cat(std::make_tuple(var), detail::deduced<detail::get_nth<Variant, Actions...>::value>{std::forward<Args>(args)...}));
-         //return action(permissions, code_name, action_name, detail::deduced<detail::get_nth<Variant, Actions...>::value>{std::forward<Args>(args)...});
       }     
 
       template <size_t Variant, typename... Args>
@@ -447,6 +446,7 @@ namespace eosio {
       }
 
    };
+
    template<typename... Args>
    void dispatch_inline( name code, name act,
                          std::vector<permission_level> perms,
