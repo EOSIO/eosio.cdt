@@ -298,7 +298,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_exte
   if( ds.remaining() ) {
      T val;
      ds >> val;
-     be.set(val);
+     be.emplace(val);
   }
   return ds;
 }
