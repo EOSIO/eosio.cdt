@@ -56,12 +56,13 @@ class abigen : public generation_utils {
    void add_typedef( const clang::QualType& t ) {
       abi_typedef ret;
       ret.new_type_name = get_base_type_name( t );
-      ret.type = get_type_alias_string( t );
-      _abi.typedefs.insert(ret);
       auto td = get_type_alias(t);
-      if (!td.empty()) {
+      if (td.empty())
+         return;
+      ret.type = translate_type(td[0]);
+      if(!is_builtin_type(td[0]))
          add_type(td[0]);
-      }
+      _abi.typedefs.insert(ret);
    }
    
    void add_action( const clang::CXXRecordDecl* decl ) {
@@ -133,7 +134,7 @@ class abigen : public generation_utils {
       abi_struct tup;
       tup.name = get_type(type);
       for (int i = 0; i < tst->getNumArgs(); ++i) {
-         clang::QualType ftype = get_template_argument(type, i);
+         clang::QualType ftype = get_template_argument(type, i).getAsType();
          add_type(ftype);
          tup.fields.push_back( {"field_"+std::to_string(i),
                translate_type(ftype)} );
@@ -143,28 +144,28 @@ class abigen : public generation_utils {
    
    void add_pair(const clang::QualType& type) {
       for (int i = 0; i < 2; ++i) {
-         clang::QualType ftype = get_template_argument(type, i);
+         clang::QualType ftype = get_template_argument(type, i).getAsType();
          std::string ty = translate_type(ftype);
          add_type(ftype);
       }
       abi_struct pair;
       pair.name = get_type(type);
-      pair.fields.push_back( {"first", translate_type(get_template_argument(type))} );
-      pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1))} );   
+      pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
+      pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );   
       _abi.structs.insert(pair);
    } 
 
    void add_map(const clang::QualType& type) {
       for (int i = 0; i < 2; ++i) {
-         clang::QualType ftype = get_template_argument(type, i);
+         clang::QualType ftype = get_template_argument(type, i).getAsType();
          std::string ty = translate_type(ftype);
          add_type(ftype);
       }
       abi_struct kv;
       std::string name = get_type(type);
       kv.name = name.substr(0, name.length() - 2);
-      kv.fields.push_back( {"key", translate_type(get_template_argument(type))} );
-      kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1))} );   
+      kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
+      kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );   
       _abi.structs.insert(kv);
    }
 
@@ -255,17 +256,17 @@ class abigen : public generation_utils {
       auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
       var.name = get_type(t);
       for (int i=0; i < tst->getNumArgs(); ++i)
-         var.types.push_back(translate_type(get_template_argument( t, i )));
+         var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
       _abi.variants.insert(var); 
    }
 
    void add_type( const clang::QualType& t ) {
       auto type = get_ignored_type(t);
-      if (!is_builtin_type(type)) {
+      if (!is_builtin_type(translate_type(type))) {
          if (is_aliasing(type))
             add_typedef(type);
          else if (is_template_specialization(type, {"vector", "set", "optional", "binary_extension", "ignore"})) {
-            add_type(get_template_argument(type));
+            add_type(get_template_argument(type).getAsType());
          }
          else if (is_template_specialization(type, {"map"}))
             add_map(type);
@@ -380,26 +381,26 @@ class abigen : public generation_utils {
       }
       
       auto validate_struct = [&]( abi_struct as ) {
-         if ( is_builtin_type(as.name) )
+         if ( is_builtin_type(_translate_type(as.name)) )
             return false;
          for ( auto s : _abi.structs ) {
             for ( auto f : s.fields ) {
-               if (as.name == remove_suffix(f.type))
+               if (as.name == _translate_type(remove_suffix(f.type)))
                   return true;
             }
-            if ( s.base == as.name )
+            if (s.base == as.name)
                return true;
          }
          for ( auto a : _abi.actions ) {
-            if ( as.name == a.type )
+            if (as.name == _translate_type(a.type))
                return true;
          }
          for( auto t : set_of_tables ) {
-            if (as.name == t.type)
+            if (as.name == _translate_type(t.type))
                return true;
          }
          for( auto td : _abi.typedefs ) {
-            if (as.name == remove_suffix(td.type))
+            if (as.name == _translate_type(remove_suffix(td.type)))
                return true;
          }
          return false;

@@ -302,11 +302,13 @@ struct generation_utils {
 
       return is_specialization;
    }
-   inline clang::QualType get_template_argument( const clang::QualType& type, int index = 0 ) {
+   inline clang::TemplateArgument get_template_argument( const clang::QualType& type, int index = 0 ) {
       auto ret = [&](const clang::Type* t) {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(t);
-         if (tst)
-            return tst->getArg(index).getAsType();
+         if (tst) {
+            auto arg = tst->getArg(index);
+            return arg.getAsType();
+         }
          std::cout << "Internal error, wrong type of template specialization\n";
          error_handler();
          return tst->getArg(index).getAsType();
@@ -319,6 +321,10 @@ struct generation_utils {
    std::string get_base_type_name( const clang::QualType& type ) {
       clang::QualType newType = type;
       std::string type_str = newType.getNonReferenceType().getAsString();
+      return get_base_type_name(type_str);
+   }
+
+   std::string get_base_type_name( const std::string& type_str ) {
       int i = type_str.length()-1;
       int template_nested = 0;
       for (; i > 0; i--) {
@@ -345,7 +351,13 @@ struct generation_utils {
       return type_str;
    }
 
-   std::string _translate_type( const clang::QualType& t ) {
+   std::string _translate_type( const clang::QualType& type ) {
+      clang::QualType newType = type;
+      std::string type_str = newType.getNonReferenceType().getAsString();
+      return _translate_type(get_base_type_name(type_str));
+   }
+
+   std::string _translate_type( const std::string& t ) {
       static std::map<std::string, std::string> translation_table =
       {
          {"unsigned __int128", "uint128"},
@@ -390,15 +402,19 @@ struct generation_utils {
          {"capi_signature", "signature"},
          {"capi_checksum160", "checksum160"},
          {"capi_checksum256", "checksum256"},
-         {"capi_checksum512", "checksum512"}
+         {"capi_checksum512", "checksum512"},
+         {"fixed_bytes_20", "checksum160"},
+         {"fixed_bytes_32", "checksum256"},
+         {"fixed_bytes_64", "checksum512"}
       };
+      
+      auto ret = translation_table[t];
 
-      std::string base_name = get_base_type_name(t);
-      auto ret = translation_table[get_base_type_name(t)];
       if (ret == "")
-         return base_name;
+         return t;
       return ret;
    }
+
    inline std::string replace_in_name( std::string name ) {
       std::string ret = name;
       std::replace(ret.begin(), ret.end(), '<', '_');
@@ -411,45 +427,57 @@ struct generation_utils {
 
    inline std::string get_template_name( const clang::QualType& type ) {
       auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
-      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr());
       std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
       for (int i=0; i < tst->getNumArgs(); ++i) {
-         ret += _translate_type(get_template_argument( type, i ));
-         if ( i < tst->getNumArgs()-1 )
-            ret += "_";
+         auto arg = get_template_argument(type,i);
+         if (arg.getAsExpr()) {
+            auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
+            if (ce) { 
+               auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
+               ret += std::to_string(il->getValue().getLimitedValue());
+               if ( i < tst->getNumArgs()-1 )
+                  ret += "_";
+            }
+         }
+         else {
+            ret += _translate_type(get_template_argument( type, i ).getAsType());
+            if ( i < tst->getNumArgs()-1 )
+               ret += "_";
+         }
       }
-      return replace_in_name(ret);
+      return _translate_type(replace_in_name(ret));
    }
 
    inline std::string translate_type( const clang::QualType& type ) {
       if ( is_template_specialization( type, {"ignore"} ) )
-         return _translate_type(get_template_argument( type ) );
+         return _translate_type(get_template_argument( type ).getAsType() );
       else if ( is_template_specialization( type, {"binary_extension"} ) ) {
-         auto t = _translate_type(get_template_argument( type ));
+         auto t = _translate_type(get_template_argument( type ).getAsType());
          return t+"$";
       }
       else if ( is_template_specialization( type, {"vector", "set"} ) ) {
-         auto t =_translate_type(get_template_argument( type ));
+         auto t =_translate_type(get_template_argument( type ).getAsType());
          return t=="int8" ? "bytes" : t+"[]";
       }
       else if ( is_template_specialization( type, {"optional"} ) )
-         return _translate_type(get_template_argument( type ))+"?";
+         return _translate_type(get_template_argument( type ).getAsType())+"?";
       else if ( is_template_specialization( type, {"map"} )) {
-         auto t0 = _translate_type(get_template_argument( type ));
-         auto t1 = _translate_type(get_template_argument( type, 1));
+         auto t0 = _translate_type(get_template_argument( type ).getAsType());
+         auto t1 = _translate_type(get_template_argument( type, 1).getAsType());
          return replace_in_name("pair_" + t0 + "_" + t1 + "[]");
       }
       else if ( is_template_specialization( type, {"pair"} )) {
-         auto t0 = _translate_type(get_template_argument( type ));
-         auto t1 = _translate_type(get_template_argument( type, 1));
+         auto t0 = _translate_type(get_template_argument( type ).getAsType());
+         auto t1 = _translate_type(get_template_argument( type, 1).getAsType());
          return replace_in_name("pair_" + t0 + "_" + t1);
       }
       else if ( is_template_specialization( type, {"tuple"} )) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
-         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>( pt ? pt->desugar().getTypePtr() : type.getTypePtr() );
          std::string ret = "tuple_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            ret += _translate_type(get_template_argument( type, i ));
+            ret += _translate_type(get_template_argument( type, i ).getAsType());
             if ( i < tst->getNumArgs()-1 )
                ret += "_";
          }
@@ -457,14 +485,26 @@ struct generation_utils {
       }
       else if ( is_template_specialization( type, {} )) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
-         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr() );
          std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            ret += _translate_type(get_template_argument( type, i ));
-            if ( i < tst->getNumArgs()-1 )
-               ret += "_";
+            auto arg = get_template_argument(type,i);
+            if (arg.getAsExpr()) {
+               auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
+               if (ce) { 
+                  auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
+                  ret += std::to_string(il->getValue().getLimitedValue());
+                  if ( i < tst->getNumArgs()-1 )
+                     ret += "_";
+               }
+            }
+            else {
+               ret += _translate_type(get_template_argument( type, i ).getAsType());
+               if ( i < tst->getNumArgs()-1 )
+                  ret += "_";
+            }
          }
-         return replace_in_name(ret);
+         return _translate_type(replace_in_name(ret));
       }
       return _translate_type( type );
    }
@@ -494,12 +534,12 @@ struct generation_utils {
          "bytes",
          "string",
          "block_timestamp_type",
-         "capi_name",
-         "capi_checksum160",
-         "capi_checksum256",
-         "capi_checksum512",
-         "capi_public_key",
-         "capi_signature",
+         "name",
+         "checksum160",
+         "checksum256",
+         "checksum512",
+         "public_key",
+         "signature",
          "public_key",
          "signature",
          "symbol",
@@ -507,7 +547,7 @@ struct generation_utils {
          "asset",
          "extended_asset"
       };
-      return builtins.count(t) >= 1;
+      return builtins.count(_translate_type(t)) >= 1;
    }
 
    inline bool is_builtin_type( const clang::QualType& t ) {
