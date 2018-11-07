@@ -435,6 +435,7 @@ namespace eosio {
          return action(permissions, code_name, action_name, std::tuple_cat(std::make_tuple(var), detail::deduced<detail::get_nth<Variant, Actions...>::value>{std::forward<Args>(args)...}));
       }
 
+
       template <size_t Variant, typename... Args>
       void send(Args&&... args)const {
          to_action<Variant>(std::forward<Args>(args)...).send();

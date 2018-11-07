@@ -202,7 +202,13 @@ namespace eosio {
 
       EOSLIB_SERIALIZE( name, (value) )
    };
-
+   
+   namespace detail {
+      template <char... Str>
+      struct to_const_char_arr {
+         static constexpr const char value[] = {Str...};
+      };
+   } /// namespace detail
 } /// namespace eosio
 
 /**
@@ -210,6 +216,7 @@ namespace eosio {
  *
  * @brief "foo"_n is a shortcut for name{"foo"}
  */
-inline constexpr eosio::name operator""_n(const char* s, std::size_t) {
-   return eosio::name{s};
+template <typename T, T... Str>
+inline constexpr eosio::name operator""_n() {
+   return eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
 }
