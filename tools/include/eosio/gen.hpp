@@ -534,21 +534,12 @@ struct generation_utils {
          "bytes",
          "string",
          "block_timestamp_type",
-<<<<<<< HEAD
          "name",
          "checksum160",
          "checksum256",
          "checksum512",
          "public_key",
          "signature",
-=======
-         "capi_name",
-         "capi_checksum160",
-         "capi_checksum256",
-         "capi_checksum512",
-         "capi_public_key",
-         "capi_signature",
->>>>>>> develop
          "public_key",
          "signature",
          "symbol",
