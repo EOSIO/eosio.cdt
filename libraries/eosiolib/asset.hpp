@@ -375,7 +375,7 @@ namespace eosio {
             change /= 10;
          }
          char str[p+32];
-         const char* fmt = negative ? "-%lld.%s %s" : "%s%lld.%s %s";
+         const char* fmt = negative ? "-%lld.%s %s" : "%lld.%s %s";
          snprintf(str, sizeof(str), fmt,
                (int64_t)(amount/p10), fraction, symbol.code().to_string().c_str());
          return {str};
