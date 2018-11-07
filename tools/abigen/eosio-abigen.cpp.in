@@ -58,7 +58,8 @@ class abigen : public generation_utils {
       ret.new_type_name = get_base_type_name( t );
       ret.type = get_type_alias_string( t );
       _abi.typedefs.insert(ret);
-      if (auto td = get_type_alias(t); !td.empty()) {
+      auto td = get_type_alias(t);
+      if (!td.empty()) {
          add_type(td[0]);
       }
    }
