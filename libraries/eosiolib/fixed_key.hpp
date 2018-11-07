@@ -232,10 +232,15 @@ namespace eosio {
             for( size_t counter = _data.size(); counter > 0; --counter, ++data_itr ) {
                size_t sub_words_left = num_sub_words;
 
+               auto temp_word = *data_itr;
                if( counter == 1 ) { // If last word in _data array...
                   sub_words_left -= padded_bytes();
+                  //temp_word >>= 8*padded_bytes();
+                  // Without the commented line above, fixed_key<Size>::extract_as_byte_array() is buggy for Size % 16 != 0.
+                  // Cannot fix the bug for fixed_key without changing the behavior of extract_as_byte_array.
+                  // fixed_key is deprecated. Instead use fixed_bytes which has fixed this bug and also has correct serialization behavior.
                }
-               auto temp_word = *data_itr;
+
                for( ; sub_words_left > 0; --sub_words_left ) {
                   *(arr_itr + sub_words_left - 1) = static_cast<uint8_t>(temp_word & 0xFF);
                   temp_word >>= 8;

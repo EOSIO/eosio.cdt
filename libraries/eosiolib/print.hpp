@@ -177,7 +177,6 @@ namespace eosio {
    template<size_t Size>
    inline void print( const fixed_bytes<Size>& val ) {
       auto arr = val.extract_as_byte_array();
-      prints("0x");
       printhex(static_cast<const void*>(arr.data()), arr.size());
    }
 
