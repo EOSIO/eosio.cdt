@@ -8,7 +8,7 @@
 #include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
 #include <eosiolib/fixed_bytes.hpp>
-#include <eosiolib/public_key.hpp>
+#include <eosiolib/crypto.hpp>
 #include <eosiolib/ignore.hpp>
 #include <eosiolib/varint.hpp>
 #include <eosiolib/binary_extension.hpp>
@@ -596,6 +596,38 @@ template<typename Stream>
 inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::public_key& pubkey) {
    ds >> pubkey.type;
    ds.read( pubkey.data.data(), pubkey.data.size() );
+   return ds;
+}
+
+/**
+ *  Serialize an eosio::signature into a stream
+ *
+ *  @brief Serialize an eosio::signature
+ *  @param ds - The stream to write
+ *  @param sig - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::signature& sig) {
+   ds << sig.type;
+   ds.write( sig.data.data(), sig.data.size() );
+   return ds;
+}
+
+/**
+ *  Deserialize an eosio::signature from a stream
+ *
+ *  @brief Deserialize an eosio::signature
+ *  @param ds - The stream to read
+ *  @param sig - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::signature& sig) {
+   ds >> sig.type;
+   ds.read( sig.data.data(), sig.data.size() );
    return ds;
 }
 
