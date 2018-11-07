@@ -526,7 +526,7 @@ struct generation_utils {
    }
 
    inline std::string get_type( const clang::QualType& t ) {
-      return translate_type(t);
+      return translate_type(get_ignored_type(t));
    }
 
    inline std::string get_type_alias_string( const clang::QualType& t ) {

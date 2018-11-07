@@ -260,13 +260,13 @@ class abigen : public generation_utils {
    }
 
    void add_type( const clang::QualType& t ) {
-      clang::QualType type(t);
-      type = get_ignored_type(type);
+      auto type = get_ignored_type(t);
       if (!is_builtin_type(type)) {
          if (is_aliasing(type))
             add_typedef(type);
-         else if (is_template_specialization(type, {"vector", "set", "optional", "binary_extension"}))
-               add_type(get_template_argument(type));
+         else if (is_template_specialization(type, {"vector", "set", "optional", "binary_extension", "ignore"})) {
+            add_type(get_template_argument(type));
+         }
          else if (is_template_specialization(type, {"map"}))
             add_map(type);
          else if (is_template_specialization(type, {"pair"}))
