@@ -42,7 +42,7 @@ struct simple_ricardian_tokenizer {
    }
 
    bool is_decl(std::string type) {
-      return check("<") && check("h1") && check("class") && check("=") 
+      return check("<") && check("h1") && check("class") && check("=")
             && check('\"'+type+'\"') && check(">");
    }
 
@@ -59,7 +59,7 @@ struct simple_ricardian_tokenizer {
             else
                ws++;
          }
-         index = after; 
+         index = after;
          if (check("<") && check("/h1") && check(">"))
             return {source.substr(before, after-before-ws)};
       }
@@ -68,7 +68,7 @@ struct simple_ricardian_tokenizer {
    std::string get_body(const std::string& type) {
       int i, before;
       i = before = index;
-      int ws = 0; 
+      int ws = 0;
       for (; i < source.size(); i++) {
          index = i;
          if (is_decl(type))
@@ -104,10 +104,10 @@ struct generation_utils {
    std::function<void()> error_handler;
    std::vector<std::string> resource_dirs;
    std::string contract_name;
-  
+
    generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
    generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
-   
+
    static inline bool is_tuple( const clang::QualType& type ) {
    }
 
@@ -127,7 +127,7 @@ struct generation_utils {
          is_ignore = check(type.getTypePtr());
       return is_ignore;
    }
-   
+
    static inline clang::QualType get_ignored_type( const clang::QualType& type ) {
       if ( !is_ignorable(type) )
          return type;
@@ -137,7 +137,7 @@ struct generation_utils {
                return decl->getDecl()->isEosioIgnore() ? tst->getArg(0).getAsType() : type;
          return type;
       };
-      
+
       const clang::Type* t;
       if ( auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()) ) {
          t = pt->desugar().getTypePtr();
@@ -146,11 +146,11 @@ struct generation_utils {
          t = type.getTypePtr();
       return get(t);
    }
-    
+
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
-   inline void set_resource_dirs( const llvm::cl::list<std::string>& rd ) { 
+   inline void set_resource_dirs( const llvm::cl::list<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
       if (!has_real_path)
@@ -162,7 +162,7 @@ struct generation_utils {
             resource_dirs.push_back(rp.str());
       }
    }
-  
+
    static inline bool has_eosio_ricardian( const clang::CXXMethodDecl* decl ) {
       return decl->hasEosioRicardian();
    }
@@ -176,7 +176,7 @@ struct generation_utils {
    static inline std::string get_eosio_ricardian( const clang::CXXRecordDecl* decl ) {
       return decl->getEosioRicardianAttr()->getName();
    }
-   
+
    static inline std::string get_action_name( const clang::CXXMethodDecl* decl ) {
       std::string action_name = "";
       if (auto tmp = decl->getEosioActionAttr()->getName(); !tmp.empty())
@@ -222,34 +222,34 @@ struct generation_utils {
    inline std::map<std::string, std::string> parse_contracts() {
       std::string contracts = get_ricardian_contracts();
       std::map<std::string, std::string> rcs;
-      simple_ricardian_tokenizer srt(contracts); 
+      simple_ricardian_tokenizer srt(contracts);
       if (contracts.empty()) {
          std::cout << "Warning, empty ricardian clause file\n";
          return rcs;
       }
 
-      auto parsed = srt.parse("contract"); 
+      auto parsed = srt.parse("contract");
       for (auto cl : parsed) {
          rcs.emplace(std::get<0>(cl), std::get<1>(cl));
       }
       return rcs;
-   }  
-  
+   }
+
    inline std::vector<std::pair<std::string, std::string>> parse_clauses() {
       std::string clauses = get_ricardian_clauses();
       std::vector<std::pair<std::string, std::string>> clause_pairs;
-      simple_ricardian_tokenizer srt(clauses); 
+      simple_ricardian_tokenizer srt(clauses);
       if (clauses.empty()) {
          std::cout << "Warning, empty ricardian clause file\n";
          return clause_pairs;
       }
 
-      auto parsed = srt.parse("clause"); 
+      auto parsed = srt.parse("clause");
       for (auto cl : parsed) {
          clause_pairs.emplace_back(std::get<0>(cl), std::get<1>(cl));
       }
       return clause_pairs;
-   }  
+   }
 
    static inline bool is_eosio_contract( const clang::CXXMethodDecl* decl, const std::string& cn ) {
       std::string name = "";
@@ -260,7 +260,7 @@ struct generation_utils {
       if (name.empty()) {
          name = decl->getParent()->getName().str();
       }
-      return name == cn; 
+      return name == cn;
    }
 
    static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
@@ -324,7 +324,7 @@ struct generation_utils {
          if (type_str[i] == '>') ++template_nested;
          if (type_str[i] == '<') --template_nested;
          if (type_str[i] == ':' && template_nested == 0) {
-            return type_str.substr(i+1); 
+            return type_str.substr(i+1);
          }
          if (type_str[i] == ' ' && template_nested == 0) {
             static const std::string valid_prefixs[] = {"long", "signed", "unsigned" };
@@ -332,13 +332,13 @@ struct generation_utils {
             for (auto &s : valid_prefixs) {
                if (i >= s.length() && type_str.substr(i - s.length(), s.length()) == s &&
                    (i - s.length() == 0 || type_str[i - s.length() - 1] == ' ')) {
-                  valid = true; 
+                  valid = true;
                   i -= s.length();
                   break;
                }
             }
             if (valid) continue;
-            return type_str.substr(i+1); 
+            return type_str.substr(i+1);
          }
       }
       return type_str;
@@ -379,18 +379,21 @@ struct generation_utils {
          {"float",  "float32"},
          {"double", "float64"},
          {"long double", "float128"},
-         
+
          {"unsigned_int", "varuint32"},
-         {"signed_int",   "varint32"}, 
-         
+         {"signed_int",   "varint32"},
+
          {"block_timestamp", "block_timestamp_type"},
          {"capi_name",    "name"},
          {"capi_public_key", "public_key"},
          {"capi_signature", "signature"},
          {"capi_checksum160", "checksum160"},
          {"capi_checksum256", "checksum256"},
-         {"capi_checksum512", "checksum512"}
-      }; 
+         {"capi_checksum512", "checksum512"},
+         {"digest160", "checksum160"},
+         {"digest256", "checksum256"},
+         {"digest512", "checksum512"}
+      };
 
       std::string base_name = get_base_type_name(t);
       auto ret = translation_table[get_base_type_name(t)];
@@ -408,13 +411,13 @@ struct generation_utils {
       return ret;
    }
 
-   inline std::string get_template_name( const clang::QualType& type ) { 
+   inline std::string get_template_name( const clang::QualType& type ) {
       auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
       auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
       std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
       for (int i=0; i < tst->getNumArgs(); ++i) {
          ret += _translate_type(get_template_argument( type, i ));
-         if ( i < tst->getNumArgs()-1 ) 
+         if ( i < tst->getNumArgs()-1 )
             ret += "_";
       }
       return replace_in_name(ret);
@@ -449,7 +452,7 @@ struct generation_utils {
          std::string ret = "tuple_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
             ret += _translate_type(get_template_argument( type, i ));
-            if ( i < tst->getNumArgs()-1 ) 
+            if ( i < tst->getNumArgs()-1 )
                ret += "_";
          }
          return replace_in_name(ret);
@@ -460,7 +463,7 @@ struct generation_utils {
          std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
             ret += _translate_type(get_template_argument( type, i ));
-            if ( i < tst->getNumArgs()-1 ) 
+            if ( i < tst->getNumArgs()-1 )
                ret += "_";
          }
          return replace_in_name(ret);
@@ -470,7 +473,7 @@ struct generation_utils {
 
 
    inline bool is_name_type( const std::string& t ) {
-      static const std::set<std::string> name_types = { "name", 
+      static const std::set<std::string> name_types = { "name",
                                                         "account_name",
                                                         "permission_name",
                                                         "table_name",
@@ -478,7 +481,7 @@ struct generation_utils {
                                                         "action_name" };
       return name_types.count(t) >= 1;
    }
-   
+
    inline bool is_builtin_type( const std::string& t ) {
       static const std::set<std::string> builtins =
       {
@@ -510,9 +513,9 @@ struct generation_utils {
          "capi_checksum512",
          "capi_public_key",
          "capi_signature",
-         "checksum160",
-         "checksum256",
-         "checksum512",
+         "digest160",
+         "digest256",
+         "digest512",
          "public_key",
          "signature",
          "symbol",
@@ -522,18 +525,18 @@ struct generation_utils {
       };
       return builtins.count(t) >= 1;
    }
-   
+
    inline bool is_builtin_type( const clang::QualType& t ) {
       std::string nt = translate_type(t);
       return is_builtin_type(nt) || is_name_type(nt); // || is_template_specialization(t, {"optional"});
-   } 
+   }
 
    inline bool is_cxx_record( const clang::QualType& t ) {
       return t.getTypePtr()->isRecordType();
    }
 
    inline std::string get_type( const clang::QualType& t ) {
-      return translate_type(t); 
+      return translate_type(t);
    }
 
    inline std::string get_type_alias_string( const clang::QualType& t ) {
