@@ -12,12 +12,14 @@
 namespace eosio {
 
    /**
-    *  Wraps a uint64_t to ensure it is only passed to methods that expect a Name and
-    *  that no mathematical operations occur.  It also enables specialization of print
-    *  so that it is printed as a base32 string.
-    *
-    *  @brief wraps a uint64_t to ensure it is only passed to methods that expect a Name
-    *  @ingroup types
+    * @ingroup types
+    * @brief EOSIO Types
+    * @{
+
+    /*
+    * Wraps a %uint64_t to ensure it is only passed to methods that expect a %name.
+    * Ensures value is only passed to methods that expect a %name and that no mathematical
+    * operations occur.  Also enables specialization of print
     */
    struct name {
    public:
@@ -83,9 +85,8 @@ namespace eosio {
       }
 
       /**
-       *  Converts a (eosio::name style) Base32 symbol into its corresponding value
+       *  Converts a %name Base32 symbol into its corresponding value
        *
-       *  @brief Converts a (eosio::name style) Base32 symbol into its corresponding value
        *  @param c - Character to be converted
        *  @return constexpr char - Converted value
        */
@@ -103,7 +104,7 @@ namespace eosio {
       }
 
       /**
-       *  Returns the length of the name
+       *  Returns the length of the %name
        */
       constexpr uint8_t length()const {
          constexpr uint64_t mask = 0xF800000000000000ull;
@@ -123,7 +124,7 @@ namespace eosio {
       }
 
       /**
-       *  Returns the suffix of the name
+       *  Returns the suffix of the %name
        */
       constexpr name suffix()const {
          uint32_t remaining_bits_after_last_actual_dot = 0;
@@ -143,7 +144,7 @@ namespace eosio {
             remaining_bits_after_last_actual_dot = tmp;
          }
 
-         if( remaining_bits_after_last_actual_dot == 0 ) // there is no actual dot in the name other than potentially leading dots
+         if( remaining_bits_after_last_actual_dot == 0 ) // there is no actual dot in the %name other than potentially leading dots
             return name{value};
 
          // At this point remaining_bits_after_last_actual_dot has to be within the range of 4 to 59 (and restricted to increments of 5).
@@ -170,16 +171,14 @@ namespace eosio {
       constexpr explicit operator bool()const { return value != 0; }
 
       /**
-       *  Writes the name as a string to the provided char buffer
+       *  Writes the %name as a string to the provided char buffer
        *
-       *
-       *  @brief Writes the name as a string to the provided char buffer
        *  @pre Appropriate Size Precondition: (begin + 13) <= end and (begin + 13) does not overflow
        *  @pre Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to.
        *  @param begin - The start of the char buffer
        *  @param end - Just past the end of the char buffer
        *  @return char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied)
-       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the name.
+       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the %name.
        */
       char* write_as_string( char* begin, char* end )const {
          static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
@@ -213,8 +212,7 @@ namespace eosio {
       /**
        * Equivalency operator. Returns true if a == b (are the same)
        *
-       * @brief Equivalency operator
-       * @return boolean - true if both provided names are the same
+       * @return boolean - true if both provided %name values are the same
        */
       friend constexpr bool operator == ( const name& a, const name& b ) {
          return a.value == b.value;
@@ -223,8 +221,7 @@ namespace eosio {
       /**
        * Inverted equivalency operator. Returns true if a != b (are different)
        *
-       * @brief Inverted equivalency operator
-       * @return boolean - true if both provided names are not the same
+       * @return boolean - true if both provided %name values are not the same
        */
       friend constexpr bool operator != ( const name& a, const name& b ) {
          return a.value != b.value;
@@ -232,8 +229,8 @@ namespace eosio {
 
       /**
        * Less than operator. Returns true if a < b.
-       * @brief Less than operator
-       * @return boolean - true if name `a` is less than `b`
+       *
+       * @return boolean - true if %name `a` is less than `b`
        */
       friend constexpr bool operator < ( const name& a, const name& b ) {
          return a.value < b.value;
@@ -248,7 +245,7 @@ namespace eosio {
 } /// namespace eosio
 
 /**
- * name literal operator
+ * %name literal operator
  *
  * @brief "foo"_n is a shortcut for name("foo")
  */

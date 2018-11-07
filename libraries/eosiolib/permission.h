@@ -7,7 +7,7 @@
 
 extern "C" {
    /**
-    *  @brief Checks if a transaction is authorized by a provided set of keys and permissions
+    *  Checks if a transaction is authorized by a provided set of keys and permissions
     *
     *  @param trx_data - pointer to the start of the serialized transaction
     *  @param trx_size - size (in bytes) of the serialized transaction
@@ -25,7 +25,7 @@ extern "C" {
                                   );
 
    /**
-    *  @brief Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
+    *  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
     *
     *  @param account    - the account owner of the permission
     *  @param permission - the name of the permission to check for authorization
@@ -46,7 +46,7 @@ extern "C" {
                                  );
 
    /**
-    *  @brief Returns the last used time of a permission
+    *  Returns the last used time of a permission
     *
     *  @param account    - the account owner of the permission
     *  @param permission - the name of the permission
@@ -57,7 +57,7 @@ extern "C" {
 
 
    /**
-    *  @brief Returns the creation time of an account
+    *  Returns the creation time of an account
     *
     *  @param account    - the account
     *

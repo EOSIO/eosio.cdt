@@ -7,70 +7,59 @@
 
 extern "C" {
    /**
-    * @defgroup actionapi Action API
-    * @ingroup contractdev
-    * @brief Defines API for  for querying action and sending action
+    *  @addtogroup action
+    *  @brief Defines API for querying action and sending action
     *
+    *  @detailed A EOS.IO action has the following abstract structure:
+    *
+    *  ```
+    *    struct action {
+    *      capi_name  account_name; // the contract defining the primary code to execute for code/type
+    *      capi_name  action_name; // the action to be taken
+    *      permission_level[] authorization; // the accounts and permission levels provided
+    *      bytes data; // opaque data processed by code
+    *    };
+    *  ```
+    *
+    *  This API enables your contract to inspect the fields on the current action and act accordingly.
+    *
+    *  Example:
+    *  @code
+    *  // Assume this action is used for the following examples:
+    *  // {
+    *  //  "code": "eos",
+    *  //  "type": "transfer",
+    *  //  "authorization": [{ "account": "inita", "permission": "active" }],
+    *  //  "data": {
+    *  //    "from": "inita",
+    *  //    "to": "initb",
+    *  //    "amount": 1000
+    *  //  }
+    *  // }
+    *
+    *  char buffer[128];
+    *  uint32_t total = read_action(buffer, 5); // buffer contains the content of the action up to 5 bytes
+    *  print(total); // Output: 5
+    *
+    *  uint32_t msgsize = action_size();
+    *  print(msgsize); // Output: size of the above action's data field
+    *
+    *  require_recipient(N(initc)); // initc account will be notified for this action
+    *
+    *  require_auth(N(inita)); // Do nothing since inita exists in the auth list
+    *  require_auth(N(initb)); // Throws an exception
+    *
+    *  print(current_time()); // Output: timestamp (in microseconds since 1970) of current block
+    *
+    *  @endcode
+    *  @{
     */
 
    /**
-    * @defgroup actioncapi Action C API
-    * @ingroup actionapi
-    * @brief Defines API for querying action and sending action
-    *
-    *
-    * A EOS.IO action has the following abstract structure:
-    *
-    * ```
-    *   struct action {
-    *     capi_name  account_name; // the contract defining the primary code to execute for code/type
-    *     capi_name  action_name; // the action to be taken
-    *     permission_level[] authorization; // the accounts and permission levels provided
-    *     bytes data; // opaque data processed by code
-    *   };
-    * ```
-    *
-    * This API enables your contract to inspect the fields on the current action and act accordingly.
-    *
-    * Example:
-    * @code
-    * // Assume this action is used for the following examples:
-    * // {
-    * //  "code": "eos",
-    * //  "type": "transfer",
-    * //  "authorization": [{ "account": "inita", "permission": "active" }],
-    * //  "data": {
-    * //    "from": "inita",
-    * //    "to": "initb",
-    * //    "amount": 1000
-    * //  }
-    * // }
-    *
-    * char buffer[128];
-    * uint32_t total = read_action(buffer, 5); // buffer contains the content of the action up to 5 bytes
-    * print(total); // Output: 5
-    *
-    * uint32_t msgsize = action_size();
-    * print(msgsize); // Output: size of the above action's data field
-    *
-    * require_recipient(N(initc)); // initc account will be notified for this action
-    *
-    * require_auth(N(inita)); // Do nothing since inita exists in the auth list
-    * require_auth(N(initb)); // Throws an exception
-    *
-    * print(current_time()); // Output: timestamp (in microseconds since 1970) of current block
-    *
-    * @endcode
-    *
-    *
-    * @{
-    */
-
-   /**
-    *  Copy up to @ref len bytes of current action data to the specified location
+    *  Copy up to length bytes of current action data to the specified location
     *
     *  @brief Copy current action data to the specified location
-    *  @param msg - a pointer where up to @ref len bytes of the current action data will be copied
+    *  @param msg - a pointer where up to length bytes of the current action data will be copied
     *  @param len - len of the current action data to be copied, 0 to report required size
     *  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
     *  @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
@@ -95,7 +84,7 @@ extern "C" {
    void require_recipient( capi_name name );
 
    /**
-    *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    *  Verifies that name exists in the set of provided auths on a action. Throws if not found.
     *
     *  @brief Verify specified account exists in the set of provided auths
     *  @param name - name of the account to be verified
@@ -103,15 +92,15 @@ extern "C" {
    void require_auth( capi_name name );
 
     /**
-    *  Verifies that @ref name has auth.
+    *  Verifies that name has auth.
     *
-    *  @brief Verifies that @ref name has auth.
+    *  @brief Verifies that name has auth.
     *  @param name - name of the account to be verified
     */
    bool has_auth( capi_name name );
 
    /**
-    *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    *  Verifies that name exists in the set of provided auths on a action. Throws if not found.
     *
     *  @brief Verify specified account exists in the set of provided auths
     *  @param name - name of the account to be verified
@@ -137,6 +126,7 @@ extern "C" {
    void send_inline(char *serialized_action, size_t size);
 
    /**
+    * /function
     *  Send an inline context free action in the context of this action's parent transaction
     *
     *  @param serialized_action - serialized action
@@ -158,5 +148,6 @@ extern "C" {
     *  @return the account which specifies the current receiver of the action
     */
    capi_name current_receiver();
-   ///@ } actioncapi
+
+   /// @} action
 }

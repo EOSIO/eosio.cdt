@@ -10,8 +10,29 @@
 #include <vector>
 
 namespace eosio {
+
+  /**
+   * @defgroup transaction Transaction C++ API
+   * @brief Type-safe C++ wrappers for transaction C API
+   *
+   * @details An inline message allows one contract to send another contract a message
+   * which is processed immediately after the current message's processing
+   * ends such that the success or failure of the parent transaction is
+   * dependent on the success of the message. If an inline message fails in
+   * processing then the whole tree of transactions and actions rooted in the
+   * block will me marked as failing and none of effects on the database will
+   * persist.
+   *
+   * Inline actions and Deferred transactions must adhere to the permissions
+   * available to the parent transaction or, in the future, delegated to the
+   * contract account for future use.
+
+   * @note There are some methods from the @ref transactioncapi that can be used directly from C++
+   * @{
+   */
    typedef std::tuple<uint16_t, std::vector<char>> extension;
    typedef std::vector<extension> extensions_type;
+
 
    /**
     * @defgroup transactioncppapi Transaction C++ API
@@ -27,6 +48,7 @@ namespace eosio {
     * Class transaction_header contains details about the transaction
     * @brief Contains details about the transaction
     */
+
    class transaction_header {
    public:
 
@@ -112,6 +134,7 @@ namespace eosio {
 
    /**
     * Retrieve the indicated action from the active transaction.
+    * 
     * @param type - 0 for context free action, 1 for action
     * @param index - the index of the requested action
     * @return the indicated action
@@ -127,6 +150,5 @@ namespace eosio {
       return eosio::unpack<eosio::action>( buffer, size );
    }
 
-   ///@} transactioncpp api
-
-} // namespace eos
+   ///}@
+}

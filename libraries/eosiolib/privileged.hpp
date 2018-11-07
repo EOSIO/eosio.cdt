@@ -5,18 +5,14 @@
 
 namespace eosio {
 
-   /**
-    * @defgroup privilegedcppapi Privileged C++ API
-    * @ingroup privilegedapi
-    * @brief Defines C++ Privileged API
-    *
-    * @{
-    */
+  /**
+   * @addtogroup privileged Privileged C++ API
+   * Defines C++ Privileged API
+   * @{
+   */
 
    /**
     * Tunable blockchain configuration that can be changed via consensus
-    *
-    * @brief Tunable blockchain configuration that can be changed via consensus
     */
    struct blockchain_parameters {
 
@@ -40,7 +36,6 @@ namespace eosio {
 
       /**
        * The base amount of net usage billed for a transaction to cover incidentals
-       * @brief The base amount of net usage billed for a transaction to cover incidentals
        */
       uint32_t base_per_transaction_net_usage;
 
@@ -151,13 +146,10 @@ namespace eosio {
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
 
-   ///@} priviledgedcppapi
+   ///@}
 
    /**
-   *  @defgroup producertype Producer Type
-   *  @ingroup types
-   *  @brief Defines producer type
-   *
+   *  @defgroup types
    *  @{
    */
 
@@ -188,4 +180,8 @@ namespace eosio {
 
       EOSLIB_SERIALIZE( producer_key, (producer_name)(block_signing_key) )
    };
+
+   ///@}
+
+
 }
