@@ -83,14 +83,26 @@
                return _get();
             return def;
          }
-         constexpr T&& value_or() {
+         constexpr T&& value_or()&& {
             if (!_has_value)
                return std::move(T());
+            _has_value = false;
+            return std::move(_get());
+         }
+         constexpr const T&& value_or()const&& {
+            if (!_has_value)
+               return std::move(T());
+            _has_value = false;
+            return std::move(_get());
+         }
+         constexpr T value_or()& {
+            if (!_has_value)
+               return {};
             return _get();
          }
-         constexpr T const& value_or()const {
+         constexpr T value_or()const& {
             if (!_has_value)
-               return std::move(T());
+               return {};
             return _get();
          }
 
@@ -104,24 +116,26 @@
          constexpr T& operator*()& {
             return _get();
          }
-          constexpr const T& operator*()const& {
+         constexpr const T& operator*()const& {
             return _get();
          }
-          constexpr const T&& operator*()const&& {
+         constexpr const T&& operator*()const&& {
             return std::move(_get());
          }
-          constexpr T&& operator*()&& {
+         constexpr T&& operator*()&& {
             return std::move(_get());
          }
 
          template<typename ...Args>
-         T& emplace(Args&& ... args) {
-           if (_has_value) {
-              reset();
-           }
+         T& emplace(Args&& ... args)& {
+            if (_has_value) {
+               reset();
+            }
 
-           ::new (&_data) T( std::forward<Args>(args)... );
-           _has_value = true;
+            ::new (&_data) T( std::forward<Args>(args)... );
+            _has_value = true;
+
+            return _get();
          }
 
          void reset() {
@@ -135,8 +149,12 @@
          bool _has_value = false;
          typename std::aligned_storage<sizeof(T), alignof(T)>::type _data;
 
-         constexpr T& _get() { return *reinterpret_cast<T*>(&_data); }
+         constexpr T& _get() {
+            return *reinterpret_cast<T*>(&_data);
+         }
 
-         constexpr const T& _get()const { return *reinterpret_cast<const T*>(&_data); }
+         constexpr const T& _get()const {
+            return *reinterpret_cast<const T*>(&_data);
+         }
    };
 } // namespace eosio
