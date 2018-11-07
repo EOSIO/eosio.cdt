@@ -340,12 +340,12 @@ namespace eosio {
     */
    template<size_t Size>
    bool operator <=(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2) {
-      return c1._data < c2._data;
+      return c1._data <= c2._data;
    }
 
    /// @} fixed_bytes
 
-   using digest160 = fixed_bytes<20>;
-   using digest256 = fixed_bytes<32>;
-   using digest512 = fixed_bytes<64>;
+   using checksum160 = fixed_bytes<20>;
+   using checksum256 = fixed_bytes<32>;
+   using checksum512 = fixed_bytes<64>;
 }

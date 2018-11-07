@@ -344,7 +344,7 @@ namespace eosio {
     */
    template<size_t Size>
    bool operator <=(const fixed_key<Size> &c1, const fixed_key<Size> &c2) {
-      return c1._data < c2._data;
+      return c1._data <= c2._data;
    }
 
    /// @} fixed_key
