@@ -6,7 +6,7 @@
 
 #include <eosiolib/permission.h>
 #include <eosiolib/transaction.hpp>
-#include <eosiolib/public_key.hpp>
+#include <eosiolib/crypto.hpp>
 
 #include <set>
 #include <limits>

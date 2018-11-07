@@ -143,10 +143,10 @@ namespace _multi_index_detail {
       static constexpr eosio::key256 lowest() { return eosio::key256(); }
    };
 
-   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::digest256)
+   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>)
    template<>
-   struct secondary_key_traits<eosio::digest256> {
-      static constexpr eosio::digest256 lowest() { return eosio::digest256(); }
+   struct secondary_key_traits<eosio::fixed_bytes<32>> {
+      static constexpr eosio::fixed_bytes<32> lowest() { return eosio::fixed_bytes<32>(); }
    };
 
 }

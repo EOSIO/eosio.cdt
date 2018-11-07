@@ -390,10 +390,7 @@ struct generation_utils {
          {"capi_signature", "signature"},
          {"capi_checksum160", "checksum160"},
          {"capi_checksum256", "checksum256"},
-         {"capi_checksum512", "checksum512"},
-         {"digest160", "checksum160"},
-         {"digest256", "checksum256"},
-         {"digest512", "checksum512"}
+         {"capi_checksum512", "checksum512"}
       };
 
       std::string base_name = get_base_type_name(t);
@@ -503,9 +500,6 @@ struct generation_utils {
          "capi_checksum512",
          "capi_public_key",
          "capi_signature",
-         "digest160",
-         "digest256",
-         "digest512",
          "public_key",
          "signature",
          "symbol",
@@ -519,7 +513,7 @@ struct generation_utils {
    inline bool is_builtin_type( const clang::QualType& t ) {
       std::string nt = translate_type(t);
       return is_builtin_type(nt);
-   } 
+   }
 
    inline bool is_cxx_record( const clang::QualType& t ) {
       return t.getTypePtr()->isRecordType();

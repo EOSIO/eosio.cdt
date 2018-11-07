@@ -345,7 +345,7 @@ namespace eosio {
 
    /// @} fixed_bytes
 
-   using digest160 = fixed_bytes<20>;
-   using digest256 = fixed_bytes<32>;
-   using digest512 = fixed_bytes<64>;
+   using checksum160 = fixed_bytes<20>;
+   using checksum256 = fixed_bytes<32>;
+   using checksum512 = fixed_bytes<64>;
 }
