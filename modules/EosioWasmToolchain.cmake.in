@@ -37,7 +37,6 @@ include_directories(
 macro(add_contract CONTRACT_NAME TARGET)
    add_executable( ${TARGET}.wasm ${ARGN} )
    target_compile_options( ${TARGET}.wasm PUBLIC -abigen )
-   set_target_properties( ${TARGET}.wasm PROPERTIES LINKER_LANGUAGE C )
    get_target_property(BINOUTPUT ${TARGET}.wasm BINARY_DIR)
    target_compile_options( ${TARGET}.wasm PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
    target_compile_options( ${TARGET}.wasm PUBLIC -contract ${CONTRACT_NAME} )
