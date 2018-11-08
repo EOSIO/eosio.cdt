@@ -1,7 +1,6 @@
-# CONTRACT FOR hello::hi
-
-## ACTION NAME: hi
-
+<h1 class="contract">
+   hi
+</h1>
 ### Parameters
 Input parameters:
 
