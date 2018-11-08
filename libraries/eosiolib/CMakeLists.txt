@@ -3,6 +3,7 @@ file(GLOB HEADERS "*.hpp"
 
 add_library(eosio
             eosiolib.cpp
+            crypto.cpp
             ${HEADERS})
 
 target_include_directories(eosio PUBLIC

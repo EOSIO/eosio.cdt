@@ -17,7 +17,7 @@ namespace eosio {
    /**
     * @defgroup actioncppapi Action C++ API
     * @ingroup actionapi
-    * @brief Defines type-safe C++ wrapers for querying action and sending action
+    * @brief Defines type-safe C++ wrappers for querying action and sending action
     *
     * @note There are some methods from the @ref actioncapi that can be used directly from C++
     *
@@ -78,7 +78,7 @@ namespace eosio {
     *  Example:
     *
     *  @code
-    *  require_recipient(N(Account1), N(Account2), N(Account3)); // throws exception if any of them not in set.
+    *  require_recipient("Account1"_n, "Account2"_n, "Account3"_n); // throws exception if any of them not in set.
     *  @endcode
     */
    template<typename... accounts>
@@ -288,6 +288,165 @@ namespace eosio {
    };
 
    ///@} actioncpp api
+   //
+   namespace detail {
+      template <typename T>
+      struct unwrap { typedef T type; };
+
+      template <typename T>
+      struct unwrap<ignore<T>> { typedef T type; };
+
+      template <typename R, typename Act, typename... Args>
+      auto get_args(R(Act::*p)(Args...)) {
+         return std::tuple<std::decay_t<typename unwrap<Args>::type>...>{};
+      }
+
+      template <typename R, typename Act, typename... Args>
+      auto get_args_nounwrap(R(Act::*p)(Args...)) {
+         return std::tuple<std::decay_t<Args>...>{};
+      }
+
+      template <auto Action>
+      using deduced = decltype(get_args(Action));
+
+      template <auto Action>
+      using deduced_nounwrap = decltype(get_args_nounwrap(Action));
+
+      template <typename T>
+      struct convert { typedef T type; };
+
+      template <>
+      struct convert<const char*> { typedef std::string type; };
+
+      template <>
+      struct convert<char*> { typedef std::string type; };
+
+      template <typename T, typename U>
+      struct is_same { static constexpr bool value = std::is_convertible<T,U>::value; };
+
+      template <typename U>
+      struct is_same<bool,U> { static constexpr bool value = std::is_integral<U>::value; };
+
+      template <typename T>
+      struct is_same<T,bool> { static constexpr bool value = std::is_integral<T>::value; };
+
+      template <size_t N, size_t I, auto Arg, auto... Args>
+      struct get_nth_impl { static constexpr auto value  = get_nth_impl<N,I+1,Args...>::value; };
+
+      template <size_t N, auto Arg, auto... Args>
+      struct get_nth_impl<N, N, Arg, Args...> { static constexpr auto value = Arg; };
+
+      template <size_t N, auto... Args>
+      struct get_nth { static constexpr auto value  = get_nth_impl<N,0,Args...>::value; };
+
+      template <auto Action, size_t I, typename T, typename... Rest>
+      struct check_types {
+         static_assert(detail::is_same<typename convert<T>::type, typename convert<typename std::tuple_element<I, deduced<Action>>::type>::type>::value);
+         using type = check_types<Action, I+1, Rest...>;
+         static constexpr bool value = true;
+      };
+      template <auto Action, size_t I, typename T>
+      struct check_types<Action, I, T> {
+         static_assert(detail::is_same<typename convert<T>::type, typename convert<typename std::tuple_element<I, deduced<Action>>::type>::type>::value);
+         static constexpr bool value = true;
+      };
+
+      template <auto Action, typename... Ts>
+      constexpr bool type_check() {
+         static_assert(sizeof...(Ts) == std::tuple_size<deduced<Action>>::value);
+         return check_types<Action, 0, Ts...>::value;
+      }
+   }
+
+   template <eosio::name::raw Name, auto Action>
+   struct action_wrapper {
+      template <typename Code>
+      constexpr action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
+         : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
+
+      template <typename Code>
+      constexpr action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms)
+         : code_name(std::forward<Code>(code)), permissions(perms) {}
+
+      template <typename Code>
+      constexpr action_wrapper(Code&& code, eosio::permission_level&& perm)
+         : code_name(std::forward<Code>(code)), permissions({1, std::move(perm)}) {}
+
+      template <typename Code>
+      constexpr action_wrapper(Code&& code, const eosio::permission_level& perm)
+         : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
+
+      static constexpr eosio::name action_name = eosio::name(Name);
+      eosio::name code_name;
+      std::vector<eosio::permission_level> permissions;
+
+      static constexpr auto get_mem_ptr() {
+         return Action;
+      }
+
+      template <typename... Args>
+      action to_action(Args&&... args)const {
+         static_assert(detail::type_check<Action, Args...>());
+         return action(permissions, code_name, action_name, detail::deduced<Action>{std::forward<Args>(args)...});
+      }
+      template <typename... Args>
+      void send(Args&&... args)const {
+         to_action(std::forward<Args>(args)...).send();
+      }
+
+      template <typename... Args>
+      void send_context_free(Args&&... args)const {
+         to_action(std::forward<Args>(args)...).send_context_free();
+      }
+
+   };
+
+   template <eosio::name::raw Name, auto... Actions>
+   struct variant_action_wrapper {
+      template <typename Code>
+      constexpr variant_action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
+         : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
+
+      template <typename Code>
+      constexpr variant_action_wrapper(Code&& code, const std::vector<eosio::permission_level>& perms)
+         : code_name(std::forward<Code>(code)), permissions(perms) {}
+
+      template <typename Code>
+      constexpr variant_action_wrapper(Code&& code, eosio::permission_level&& perm)
+         : code_name(std::forward<Code>(code)), permissions({1, std::move(perm)}) {}
+
+      template <typename Code>
+      constexpr variant_action_wrapper(Code&& code, const eosio::permission_level& perm)
+         : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
+
+      static constexpr eosio::name action_name = eosio::name(Name);
+      eosio::name code_name;
+      std::vector<eosio::permission_level> permissions;
+
+      template <size_t Variant>
+      static constexpr auto get_mem_ptr() {
+         return detail::get_nth<Variant, Actions...>::value;
+      }
+
+      template <size_t Variant, typename... Args>
+      action to_action(Args&&... args)const {
+         static_assert(detail::type_check<detail::get_nth<Variant, Actions...>::value, Args...>());
+         unsigned_int var = Variant;
+         return action(permissions, code_name, action_name, std::tuple_cat(std::make_tuple(var), detail::deduced<detail::get_nth<Variant, Actions...>::value>{std::forward<Args>(args)...}));
+      }
+
+
+      template <size_t Variant, typename... Args>
+      void send(Args&&... args)const {
+         to_action<Variant>(std::forward<Args>(args)...).send();
+      }
+
+      template <size_t Variant, typename... Args>
+      void send_context_free(Args&&... args) const {
+         to_action<Variant>(std::forward<Args>(args)...).send_context_free();
+      }
+
+   };
 
    template<typename... Args>
    void dispatch_inline( name code, name act,
