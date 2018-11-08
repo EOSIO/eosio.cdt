@@ -42,10 +42,6 @@ namespace eosio {
    /**
     *  Fixed size key sorted lexicographically for Multi Index Table
     *
-<<<<<<< HEAD
-=======
-    *  @brief Fixed size key sorted lexicographically for Multi Index Table
->>>>>>> origin/develop
     *  @tparam Size - Size of the fixed_key object
     */
    template<size_t Size>
@@ -93,44 +89,25 @@ namespace eosio {
 
          /**
           * Get number of words contained in this fixed_key object. A word is defined to be 16 bytes in size
-<<<<<<< HEAD
-\\          */
-=======
-          *
-          * @brief Get number of words contained in this fixed_key object
           */
->>>>>>> origin/develop
 
          static constexpr size_t num_words() { return (Size + sizeof(word_t) - 1) / sizeof(word_t); }
 
          /**
           * Get number of padded bytes contained in this fixed_key object. Padded bytes are the remaining bytes
           * inside the fixed_key object after all the words are allocated
-<<<<<<< HEAD
-\\          */
-=======
-          *
-          * @brief Get number of padded bytes contained in this fixed_key object
           */
->>>>>>> origin/develop
          static constexpr size_t padded_bytes() { return num_words() * sizeof(word_t) - Size; }
 
          /**
          * \Default constructor to fixed_key object
-\\         */
+         */
          constexpr fixed_key() : _data() {}
 
          /**
-<<<<<<< HEAD
          * Constructor to fixed_key object from std::array of num_words() words
          *
-\        * @param arr    data
-=======
-         * @brief Constructor to fixed_key object from std::array of num_words() word_t types
-         *
-         * @details Constructor to fixed_key object from std::array of num_words() word_t types
          * @param arr    data
->>>>>>> origin/develop
          */
          fixed_key(const std::array<word_t, num_words()>& arr)
          {
@@ -138,14 +115,8 @@ namespace eosio {
          }
 
          /**
-<<<<<<< HEAD
          * Constructor to fixed_key object from std::array of num_words() words
          *
-=======
-         * @brief Constructor to fixed_key object from std::array of Word types smaller in size than word_t
-         *
-         * @details Constructor to fixed_key object from std::array of Word types smaller in size than word_t
->>>>>>> origin/develop
          * @param arr - Source data
          */
          template<typename Word, size_t NumWords,
@@ -329,11 +300,9 @@ namespace eosio {
    bool operator <(const fixed_key<Size> &c1, const fixed_key<Size> &c2) {
       return c1._data < c2._data;
    }
-<<<<<<< HEAD
-=======
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Compares two fixed_key variables c1 and c2
     *
     * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
@@ -346,7 +315,7 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Compares two fixed_key variables c1 and c2
     *
     * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
@@ -359,7 +328,6 @@ namespace eosio {
    }
 
    /// @} fixed_key
->>>>>>> origin/develop
 
    typedef fixed_key<32> key256;
    ///@}

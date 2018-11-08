@@ -311,13 +311,9 @@ namespace eosio {
       }
 
       /**
-<<<<<<< HEAD
-       * %Print the asset
-=======
        * %asset to std::string
        *
        * @brief %asset to std::string
->>>>>>> origin/develop
        */
       std::string to_string()const {
          int64_t p = (int64_t)symbol.precision();
