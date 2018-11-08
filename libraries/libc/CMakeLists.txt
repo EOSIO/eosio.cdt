@@ -44,7 +44,7 @@ add_library(c
             "musl/src/malloc/memalign.c"
             ${HEADERS})
 
-add_dependencies(c EosioClang)
+add_dependencies(c EosioTools)
 target_include_directories(c 
                            PUBLIC 
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/musl/include;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt;${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos;${CMAKE_CURRENT_SOURCE_DIR}/../>"

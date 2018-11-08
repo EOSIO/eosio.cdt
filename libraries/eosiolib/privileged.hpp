@@ -1,7 +1,7 @@
 #pragma once
 #include "privileged.h"
 #include "serialize.hpp"
-#include "public_key.hpp"
+#include "crypto.hpp"
 
 namespace eosio {
 

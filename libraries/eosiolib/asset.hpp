@@ -311,11 +311,20 @@ namespace eosio {
       }
 
       /**
+<<<<<<< HEAD
        * %Print the asset
+=======
+       * %asset to std::string
+       *
+       * @brief %asset to std::string
+>>>>>>> origin/develop
        */
-      void print()const {
+      std::string to_string()const {
          int64_t p = (int64_t)symbol.precision();
          int64_t p10 = 1;
+         bool negative = false;
+         int64_t invert = 1;
+
          while( p > 0  ) {
             p10 *= 10; --p;
          }
@@ -323,17 +332,32 @@ namespace eosio {
 
          char fraction[p+1];
          fraction[p] = '\0';
-         auto change = amount % p10;
+
+         if (amount < 0) {
+            invert = -1;
+            negative = true;
+         }
+
+         auto change = (amount % p10) * invert;
 
          for( int64_t i = p -1; i >= 0; --i ) {
             fraction[i] = (change % 10) + '0';
             change /= 10;
          }
-         printi( amount / p10 );
-         prints(".");
-         prints_l( fraction, uint32_t(p) );
-         prints(" ");
-         symbol.print(false);
+         char str[p+32];
+         const char* fmt = negative ? "-%lld.%s %s" : "%lld.%s %s";
+         snprintf(str, sizeof(str), fmt,
+               (int64_t)(amount/p10), fraction, symbol.code().to_string().c_str());
+         return {str};
+      }
+
+      /**
+       * %Print the asset
+       *
+       * @brief %Print the asset
+       */
+      void print()const {
+         eosio::print(to_string());
       }
 
       EOSLIB_SERIALIZE( asset, (amount)(symbol) )

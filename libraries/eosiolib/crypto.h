@@ -185,6 +185,7 @@ void ripemd160( const char* data, uint32_t length, capi_checksum160* hash );
  *  @param siglen - Signature length
  *  @param pub - Public key
  *  @param publen - Public key length
+*   @return int - number of bytes written to pub
  *
  *  Example:
 *

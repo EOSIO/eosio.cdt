@@ -147,7 +147,7 @@ extern "C" {
     *
     * Example:
     * @code
-    * printn(N(abcde)); // Output: abcde
+    * printn("abcde"_n); // Output: abcde
     * @endcode
     */
    void printn( uint64_t name );

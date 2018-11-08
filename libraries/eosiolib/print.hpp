@@ -7,6 +7,7 @@
 #include <eosiolib/name.hpp>
 #include <eosiolib/symbol.hpp>
 #include <eosiolib/fixed_key.hpp>
+#include <eosiolib/fixed_bytes.hpp>
 #include <utility>
 #include <string>
 
@@ -50,7 +51,7 @@ namespace eosio {
       prints_l( s.c_str(), s.size() );
    }
 
-   inline void print( std::string& s) {
+   inline void print( std::string&& s) {
       prints_l( s.c_str(), s.size() );
    }
 
@@ -177,6 +178,29 @@ namespace eosio {
    }
 
    /**
+    * Prints fixed_bytes as a hexidecimal string
+    *
+    * @brief Prints fixed_bytes as a hexidecimal string
+    * @param val to be printed
+    */
+   template<size_t Size>
+   inline void print( const fixed_bytes<Size>& val ) {
+      auto arr = val.extract_as_byte_array();
+      printhex(static_cast<const void*>(arr.data()), arr.size());
+   }
+
+  /**
+    * Prints fixed_bytes as a hexidecimal string
+    *
+    * @brief Prints fixed_bytes as a hexidecimal string
+    * @param val to be printed
+    */
+   template<size_t Size>
+   inline void print( fixed_bytes<Size>& val ) {
+      print(static_cast<const fixed_bytes<Size>&>(val));
+   }
+
+   /**
     * Prints a 64 bit names as base32 encoded string
     *
     * @param name 64 bit name to be printed
@@ -268,7 +292,7 @@ namespace eosio {
      *  const char *s = "Hello World!";
      *  uint64_t unsigned_64_bit_int = 1e+18;
      *  uint128_t unsigned_128_bit_int (87654323456);
-     *  uint64_t string_as_unsigned_64_bit = N(abcde);
+     *  uint64_t string_as_unsigned_64_bit = "abcde"_n;
      *  print(s , unsigned_64_bit_int, unsigned_128_bit_int, string_as_unsigned_64_bit);
      *  // Ouput: Hello World!100000000000000000087654323456abcde
      *  @endcode
@@ -299,7 +323,7 @@ namespace eosio {
     *  const char *s = "Hello World!";
     *  uint64_t unsigned_64_bit_int = 1e+18;
     *  uint128_t unsigned_128_bit_int (87654323456);
-    *  uint64_t string_as_unsigned_64_bit = N(abcde);
+    *  uint64_t string_as_unsigned_64_bit = "abcde"_n;
     *  std::out << s << " " << unsigned_64_bit_int << " "  << unsigned_128_bit_int << " " << string_as_unsigned_64_bit;
     *  // Output: Hello World! 1000000000000000000 87654323456 abcde
     *  @endcode
