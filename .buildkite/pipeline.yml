@@ -19,6 +19,7 @@ steps:
     label: ":ubuntu: 16.04 Build"
     agents:
       role: "automation-builder-fleet"
+      aws:instance-type: "m5d.2xlarge"
     plugins:
       docker#v1.4.0:
         image: "eosio/ci:ubuntu"
@@ -34,6 +35,7 @@ steps:
     label: ":ubuntu: 18.04 Build"
     agents:
       role: "automation-builder-fleet"
+      aws:instance-type: "m5d.2xlarge"
     plugins:
       docker#v1.4.0:
         image: "eosio/ci:ubuntu18"
@@ -49,6 +51,7 @@ steps:
     label: ":fedora: Build"
     agents:
       role: "automation-builder-fleet"
+      aws:instance-type: "m5d.2xlarge"
     plugins:
       docker#v1.4.0:
         image: "eosio/ci:fedora"
@@ -64,6 +67,7 @@ steps:
     label: ":centos: Build"
     agents:
       role: "automation-builder-fleet"
+      aws:instance-type: "m5d.2xlarge"
     plugins:
       docker#v1.4.0:
         image: "eosio/ci:centos"
@@ -79,6 +83,7 @@ steps:
     label: ":aws: Build"
     agents:
       role: "automation-builder-fleet"
+      aws:instance-type: "m5d.2xlarge"
     plugins:
       docker#v1.4.0:
         image: "eosio/ci:amazonlinux"
@@ -96,6 +101,7 @@ steps:
   #   label: ":ubuntu: 16.04 Package builder"
   #   agents:
   #     role: "automation-builder-fleet"
+  #     aws:instance-type: "m5d.2xlarge"
   #   artifact_paths:
   #     - "build/packages/*.deb"
   #   plugins:
