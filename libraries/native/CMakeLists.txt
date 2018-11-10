@@ -1,32 +1,18 @@
 file(GLOB HEADERS "*.hpp"
                   "*.h")
 
-add_library(eosio
+add_library(native_eosio
             eosiolib.cpp
             crypto.cpp
             ${HEADERS})
-
-add_native_library(native_eosio
-                   eosiolib.cpp
-                   crypto.cpp
-                   ${HEADERS})
 
 target_include_directories(eosio PUBLIC
                                  "$<BUILD_INTERFACE:${STANDARD_INCLUDES}>"
                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
 
-target_include_directories(native_eosio PUBLIC
-                                 "$<BUILD_INTERFACE:${STANDARD_INCLUDES}>"
-                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
-
 target_link_libraries( eosio c c++ )
-target_link_libraries( native_eosio native_c native_c++ )
 
 install(TARGETS eosio EXPORT EosioLib
-   LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-
-install(TARGETS native_eosio EXPORT EosioLib
    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 

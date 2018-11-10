@@ -65,6 +65,7 @@ add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
+add_subdirectory(native_tester)
 
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/compiler_options.hpp.in ${CMAKE_BINARY_DIR}/compiler_options.hpp)

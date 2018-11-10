@@ -9,3 +9,6 @@
 [submodule "eosio_llvm"]
 	path = eosio_llvm
 	url = https://github.com/eosio/llvm
+[submodule "tools/native_tester/Catch2"]
+	path = tools/native_tester/Catch2
+	url = https://github.com/catchorg/Catch2

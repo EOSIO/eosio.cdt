@@ -16,6 +16,7 @@ include(GNUInstallDirs)
 
 include(ClangExternalProject.txt)
 include(ToolsExternalProject.txt)
+include(${CMAKE_SOURCE_DIR}/modules/EosioCDTNative.cmake)
 
 add_subdirectory(external)
 
@@ -40,6 +41,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt")
 include(EosioWasmToolchain)
 
 add_subdirectory(libraries)
+add_subdirectory(tests)
 
 include(InstallClang.txt)
 
