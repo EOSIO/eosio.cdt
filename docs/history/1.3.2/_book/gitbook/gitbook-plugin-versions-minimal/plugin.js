@@ -1,83 +1,61 @@
-
 require(['gitbook', 'jQuery'], function (gitbook, $) {
-    var versions = [],
-        current  = undefined,
-        pluginConfig = {};
+  var versions = [];
+  var current;
+  var pluginConfig = {};
 
-    // Update the select with a list of versions
-    function updateVersions(_versions) {
-        versions = _versions || versions;
-        current  = $('.versions-select select').val() || current;
+  // Update the select with a list of versions
+  function updateVersions(_versions) {
+    versions = _versions || versions;
+    current = $('.versions-minimal select').val() || current;
 
-        // Cleanup existing selector
-        $('.versions-select').remove();
+    // Cleanup existing selector
+    $('.versions-minimal').remove();
 
-        if (versions.length == 0) return;
+    if (versions.length === 0) return;
 
-        var $li = $('<li>', {
-            'class': 'versions-select',
-            'html': '<div><select></select></div>'
-        });
-        var $select = $li.find('select');
+    var $li = $('<li>', {
+      'class': 'versions-minimal',
+      'html': '<div><select></select></div>'
+    });
+    var $select = $li.find('select');
 
-        $.each(versions, function(i, version) {
-            var $option = $('<option>', {
-                'selected': (current === undefined ? version.selected : (current === version.value)),
-                'value': version.value,
-                'text': version.text
-            });
+    $.each(versions, function(i, version) {
+      var $option = $('<option>', {
+        'selected': window.location.href.indexOf(version.value) !== -1,
+        'value': version.value,
+        'text': version.value
+      });
 
-            $option.appendTo($select);
-        });
+      $option.appendTo($select);
+    });
 
-        $select.change(function() {
-            var filtered = $.grep(versions, function(v) {
-                return v.value === $select.val();
-            });
+    $select.change(function() {
+      var filtered = $.grep(versions, function(v) {
+        return v.value === $select.val();
+      });
             // Get actual version Object from array
-            var version = filtered[0];
+      var version = filtered[0];
 
-            var filePath = location.href.replace(gitbook.state.bookRoot, '');
-            window.location.href = version.includeFilepath? (version.value + filePath) : version.value;
-        });
+      var filePath = window.location.href.replace(gitbook.state.bookRoot, '');
+      window.location.href = version.includeFilepath ? (version.value + filePath) : version.value;
+    });
 
-        $li.prependTo('.book-summary ul.summary');
-    }
+    $li.prependTo('.book-summary ul.summary');
+  }
 
     // Fetch version from book.json (legacy plugin)
-    function fetchBookOptionsVersions(gitbookConfigURL) {
-        $.getJSON(gitbookConfigURL, function (bookConfig) {
-            console.log(bookConfig);
-            versions = bookConfig;
-            var options = bookConfig.pluginsConfig.versions.options;
-            updateVersions(options);
-        });
-    }
-
-    // Fetch gitbook.com versions
-    function fetchBookVersions(type) {
-        $.getJSON(gitbook.state.bookRoot+'gitbook/api/versions/'+type, function (versions) {
-            updateVersions($.map(versions, function(v) {
-                return {
-                    text: v.name,
-                    value: v.urls.website,
-                    selected: v.current,
-                    includeFilepath: pluginConfig.includeFilepath !== false && type !== 'languages'
-                };
-            }));
-        });
-    }
-
-    gitbook.events.bind('start', function (e, config) {
-        pluginConfig = config.versions || {};
-        // if (pluginConfig.options) fetchBookOptionsVersions();
-
-        // Make sure we have a current book.json
-        if (pluginConfig.gitbookConfigURL)  fetchBookOptionsVersions(pluginConfig.gitbookConfigURL);
-        // else fetchBookVersions(pluginConfig.type || 'branches');
+  function fetchVersions(gitbookConfigURL) {
+    $.getJSON(gitbookConfigURL, function (bookConfig) {
+      updateVersions(bookConfig);
     });
+  }
 
-    gitbook.events.bind('page.change', function () {
-        updateVersions();
-    });
+  gitbook.events.bind('start', function (e, config) {
+    pluginConfig = config.versions || {};
+    fetchVersions(pluginConfig.gitbookConfigURL);
+  });
+
+  gitbook.events.bind('page.change', function () {
+    updateVersions();
+  });
 });
