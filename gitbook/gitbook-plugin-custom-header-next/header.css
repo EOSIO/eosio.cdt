@@ -197,3 +197,14 @@ header#main .inner header#mainer_sub_title {
         color: red;
     }
 }
+
+header#main .inner .top_nav {
+    display: inline-block;
+    margin: 0;
+    float:right;
+}
+
+header#main .inner .top_nav a {
+  color: #f0f0f0;
+  font-size:10pt;
+}

@@ -25,7 +25,7 @@ require(["gitbook", "jQuery"], function (gitbook, $) {
         `;
         let activeIndex = 0
         if (_configs.navigations && _configs.navigations.length > 0) {//添加导航
-            $head += '<div class="header_ctrls"><ul class="top_nav">'
+            $head += '<ul class="top_nav">'
             $head_small += '<div class="swiper-wrapper">'
             let isSelected = ''
             const curPath = window.location.href
@@ -47,7 +47,7 @@ require(["gitbook", "jQuery"], function (gitbook, $) {
                         <a href="${_item.link}">${_item.title}</a>
                     </div>`
             }
-            $head += '<ul></div>';
+            $head += '<ul>';
             $head_small += '</div>';
         }
         $head += '</div></header>';
