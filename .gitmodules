@@ -12,3 +12,6 @@
 [submodule "tools/native_tester/Catch2"]
 	path = tools/native_tester/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "libraries/catch2/upstream"]
+	path = libraries/catch2/upstream
+	url = https://github.com/catchorg/Catch2.git

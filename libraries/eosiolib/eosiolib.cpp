@@ -2,6 +2,13 @@
 #include "memory.hpp"
 #include "privileged.hpp"
 
+#ifdef EOSIO_NATIVE
+extern "C" {
+   size_t __builtin_wasm_current_memory();
+   size_t __builtin_wasm_grow_memory(size_t);
+}
+#endif
+
 void* sbrk(size_t num_bytes) {
       constexpr uint32_t NBPPL2  = 16U;
       constexpr uint32_t NBBP    = 65536U;

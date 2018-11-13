@@ -40,7 +40,7 @@ namespace eosio {
             eosio_assert( false, "string is too long to be a valid name" );
          }
 
-         auto n = std::min( str.size(), 12u );
+         auto n = std::min( (uint32_t)str.size(), (uint32_t)12u );
          for( decltype(n) i = 0; i < n; ++i ) {
             value <<= 5;
             value |= char_to_value( str[i] );

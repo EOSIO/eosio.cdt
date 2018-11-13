@@ -9,6 +9,10 @@
 #include <eosiolib/dispatcher.hpp>
 #include <eosiolib/contract.hpp>
 
+#ifndef EOSIO_NATIVE
+static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
+#endif
+
 /**
  * Helper macros to reduce the verbosity for common contracts
  */

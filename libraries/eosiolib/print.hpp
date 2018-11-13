@@ -13,8 +13,6 @@
 
 namespace eosio {
 
-   static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
-
    /**
     *  Prints string
     *

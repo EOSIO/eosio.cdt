@@ -69,9 +69,15 @@ static cl::list<std::string> input_filename_opt(
       cl::desc("<input file> ..."), 
       cl::cat(LD_CAT),
       cl::OneOrMore);
+static cl::opt<bool> fasm_opt(
+    "fasm",
+    cl::desc("Assemble file for x86-64"),
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 static cl::opt<bool> fnative_opt(
     "fnative",
     cl::desc("Compile and link for x86-64"),
+    cl::ZeroOrMore,
     cl::cat(LD_CAT));
 static cl::opt<bool> fuse_main_opt(
     "fuse-main",
@@ -314,33 +320,45 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
    
-   if (!fnative_opt)
+   if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
-   else
-      copts.emplace_back("--target=x86_64-unknown-darwin-macho");
-   copts.emplace_back("-nostdlib");
-   if (!fnative_opt)
       copts.emplace_back("-ffreestanding");
-   copts.emplace_back("-fno-builtin");
-   copts.emplace_back("-fno-threadsafe-statics");
-#ifdef CPP_COMP
-   copts.emplace_back("-fno-rtti");
-   copts.emplace_back("-fno-exceptions");
+   } else {
+#ifdef __APPLE__
+      copts.emplace_back("--target=x86_64-unknown-darwin-macho");
+#else
+      copts.emplace_back("--target=x86_64-unknown-linux-gnu");
+      copts.emplace_back("-m64");
 #endif
-   copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
-   copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
-   copts.emplace_back("-Xclang");
-   copts.emplace_back("-load");
-   copts.emplace_back("-Xclang");
-   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff))
-      copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
-   else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
-      copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
+      if (!fasm_opt) {
+         copts.emplace_back("-DEOSIO_NATIVE");
+         copts.emplace_back("-DLP64");
+      }
+   }
+   copts.emplace_back("-nostdlib");
 
-   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff))
-      copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff);
-   else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff))
-      copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff);
+   if (!fasm_opt) {
+      copts.emplace_back("-fno-builtin");
+      copts.emplace_back("-fno-threadsafe-statics");
+#ifdef CPP_COMP
+      copts.emplace_back("-fno-rtti");
+      copts.emplace_back("-fno-exceptions");
+#endif
+      copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
+      copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
+      copts.emplace_back("-Xclang");
+      copts.emplace_back("-load");
+      copts.emplace_back("-Xclang");
+      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff))
+         copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
+      else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
+         copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
+
+      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff))
+         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff);
+      else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff))
+         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff);
+   }
 }
 
 #ifdef ONLY_LD
@@ -482,6 +500,10 @@ static Options CreateOptions(bool add_defaults=true) {
    if (E_opt) {
       link = false;
       copts.emplace_back("-E");
+   }
+   if (fnative_opt) {
+      if(g_opt)
+         copts.emplace_back("-g");
    }
    if (color_diag_opt) {
       copts.emplace_back("-fcolor-diagnostics");
@@ -660,7 +682,10 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #else
-   ldopts.emplace_back("-lc++ -lc -leosio");
+   if (fnative_opt)
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lcrt");
+   else
+      ldopts.emplace_back("-lc++ -lc -leosio");
 #endif
    return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }
