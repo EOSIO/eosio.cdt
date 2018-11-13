@@ -12,7 +12,6 @@ steps:
 
   - command: |
         echo "+++ :hammer: Building" && \
-        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -29,7 +28,6 @@ steps:
     
   - command: |
         echo "+++ :hammer: Building" && \
-        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -46,7 +44,6 @@ steps:
 
   - command: |
         echo "+++ :hammer: Building" && \
-        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -63,7 +60,6 @@ steps:
 
   - command: |
         echo "+++ :hammer: Building" && \
-        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -80,7 +76,6 @@ steps:
   
   - command: |
         echo "+++ :hammer: Building" && \
-        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
