@@ -8,10 +8,11 @@ steps:
     label: ":darwin: Build"
     agents:
       role: "macos-builder"
-    timeout: 120
+    timeout: 60
 
   - command: |
         echo "+++ :hammer: Building" && \
+        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -21,13 +22,14 @@ steps:
       role: "automation-builder-fleet"
       aws:instance-type: "m5d.2xlarge"
     plugins:
-      docker#v1.4.0:
+      docker#v2.0.0:
         image: "eosio/ci:ubuntu"
         workdir: /data/job
-    timeout: 120
+    timeout: 60
     
   - command: |
         echo "+++ :hammer: Building" && \
+        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -37,13 +39,14 @@ steps:
       role: "automation-builder-fleet"
       aws:instance-type: "m5d.2xlarge"
     plugins:
-      docker#v1.4.0:
+      docker#v2.0.0:
         image: "eosio/ci:ubuntu18"
         workdir: /data/job
-    timeout: 120
+    timeout: 60
 
   - command: |
         echo "+++ :hammer: Building" && \
+        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -53,13 +56,14 @@ steps:
       role: "automation-builder-fleet"
       aws:instance-type: "m5d.2xlarge"
     plugins:
-      docker#v1.4.0:
+      docker#v2.0.0:
         image: "eosio/ci:fedora"
         workdir: /data/job
-    timeout: 120
+    timeout: 60
 
   - command: |
         echo "+++ :hammer: Building" && \
+        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -69,13 +73,14 @@ steps:
       role: "automation-builder-fleet"
       aws:instance-type: "m5d.2xlarge"
     plugins:
-      docker#v1.4.0:
+      docker#v2.0.0:
         image: "eosio/ci:centos"
         workdir: /data/job
-    timeout: 120
+    timeout: 60
   
   - command: |
         echo "+++ :hammer: Building" && \
+        docker stats && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
@@ -85,10 +90,10 @@ steps:
       role: "automation-builder-fleet"
       aws:instance-type: "m5d.2xlarge"
     plugins:
-      docker#v1.4.0:
+      docker#v2.0.0:
         image: "eosio/ci:amazonlinux"
         workdir: /data/job
-    timeout: 120
+    timeout: 60
 
   # - wait
 
@@ -105,7 +110,7 @@ steps:
   #   artifact_paths:
   #     - "build/packages/*.deb"
   #   plugins:
-  #     docker#v1.4.0:
+  #     docker#v2.0.0:
   #       image: "eosio/ci:ubuntu"
   #       workdir: /data/job
   #   timeout: 60
