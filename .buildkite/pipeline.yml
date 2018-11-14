@@ -23,20 +23,20 @@ steps:
       os: "mojave"
     timeout: 60
 
-  - command: |
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":ubuntu: 16.04 Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:ubuntu"
-        workdir: /data/job
-    timeout: 60
+  # - command: |
+  #       echo "+++ :hammer: Building" && \
+  #       echo 1 | ./build.sh && \
+  #       echo "--- Compressing build directory :compression:" && \
+  #       tar -pczf build.tar.gz build/
+  #   artifact_paths: "build.tar.gz"
+  #   label: ":ubuntu: 16.04 Build"
+  #   agents:
+  #     queue: "automation-large-builder-fleet"
+  #   plugins:
+  #     docker#v2.0.0:
+  #       image: "eosio/ci:ubuntu"
+  #       workdir: /data/job
+  #   timeout: 60
     
   - command: |
         echo "+++ :hammer: Building" && \
@@ -68,20 +68,20 @@ steps:
         workdir: /data/job
     timeout: 60
 
-  - command: |
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":centos: Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:centos"
-        workdir: /data/job
-    timeout: 60
+  # - command: |
+  #       echo "+++ :hammer: Building" && \
+  #       echo 1 | ./build.sh && \
+  #       echo "--- Compressing build directory :compression:" && \
+  #       tar -pczf build.tar.gz build/
+  #   artifact_paths: "build.tar.gz"
+  #   label: ":centos: Build"
+  #   agents:
+  #     queue: "automation-large-builder-fleet"
+  #   plugins:
+  #     docker#v2.0.0:
+  #       image: "eosio/ci:centos"
+  #       workdir: /data/job
+  #   timeout: 60
   
   - command: |
         echo "+++ :hammer: Building" && \
@@ -128,25 +128,25 @@ steps:
       - "build/packages/*.tar.gz"
     timeout: 60
 
-  - command: |
-        echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 16.04 Build" && \
-        tar -zxf build.tar.gz && \
-        echo "+++ :microscope: Starting package build" && \
-        cd /data/job/build/packages && bash generate_package.sh deb
-    label: ":ubuntu: Package builder"
-    agents:
-      queue: "automation-large-builder-fleet"
-    artifact_paths:
-      - "build/packages/*.deb"
-    plugins:
-      docker#v1.4.0:
-        image: "eosio/ci:ubuntu"
-        workdir: /data/job
-    env:
-      OS: "ubuntu-16.04"
-      PKGTYPE: "deb"
-    timeout: 60
+  # - command: |
+  #       echo "--- :arrow_down: Downloading build directory" && \
+  #       buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 16.04 Build" && \
+  #       tar -zxf build.tar.gz && \
+  #       echo "+++ :microscope: Starting package build" && \
+  #       cd /data/job/build/packages && bash generate_package.sh deb
+  #   label: ":ubuntu: Package builder"
+  #   agents:
+  #     queue: "automation-large-builder-fleet"
+  #   artifact_paths:
+  #     - "build/packages/*.deb"
+  #   plugins:
+  #     docker#v1.4.0:
+  #       image: "eosio/ci:ubuntu"
+  #       workdir: /data/job
+  #   env:
+  #     OS: "ubuntu-16.04"
+  #     PKGTYPE: "deb"
+  #   timeout: 60
 
   - command: |
         echo "--- :arrow_down: Downloading build directory" && \
@@ -195,29 +195,29 @@ steps:
       PKGTYPE: "rpm"
     timeout: 60
 
-  - command: |
-        echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
-        tar -zxf build.tar.gz && \
-        echo "+++ :microscope: Starting package build" && \
-        yum install -y rpm-build && \
-        mkdir -p /root/rpmbuild/BUILD && \
-        mkdir -p /root/rpmbuild/BUILDROOT && \
-        mkdir -p /root/rpmbuild/RPMS && \
-        mkdir -p /root/rpmbuild/SOURCES && \
-        mkdir -p /root/rpmbuild/SPECS && \
-        mkdir -p /root/rpmbuild/SRPMS && \
-        cd /data/job/build/packages && bash generate_package.sh rpm
-    label: ":centos: Package builder"
-    agents:
-      queue: "automation-large-builder-fleet"
-    artifact_paths:
-      - "build/packages/x86_64/*.rpm"
-    plugins:
-      docker#v1.4.0:
-        image: "eosio/ci:centos"
-        workdir: /data/job
-    env:
-      OS: "centos"
-      PKGTYPE: "rpm"
-    timeout: 60
+  # - command: |
+  #       echo "--- :arrow_down: Downloading build directory" && \
+  #       buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
+  #       tar -zxf build.tar.gz && \
+  #       echo "+++ :microscope: Starting package build" && \
+  #       yum install -y rpm-build && \
+  #       mkdir -p /root/rpmbuild/BUILD && \
+  #       mkdir -p /root/rpmbuild/BUILDROOT && \
+  #       mkdir -p /root/rpmbuild/RPMS && \
+  #       mkdir -p /root/rpmbuild/SOURCES && \
+  #       mkdir -p /root/rpmbuild/SPECS && \
+  #       mkdir -p /root/rpmbuild/SRPMS && \
+  #       cd /data/job/build/packages && bash generate_package.sh rpm
+  #   label: ":centos: Package builder"
+  #   agents:
+  #     queue: "automation-large-builder-fleet"
+  #   artifact_paths:
+  #     - "build/packages/x86_64/*.rpm"
+  #   plugins:
+  #     docker#v1.4.0:
+  #       image: "eosio/ci:centos"
+  #       workdir: /data/job
+  #   env:
+  #     OS: "centos"
+  #     PKGTYPE: "rpm"
+  #   timeout: 60
