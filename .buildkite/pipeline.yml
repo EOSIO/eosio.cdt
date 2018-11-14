@@ -5,7 +5,7 @@ steps:
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":highsierra: Build"
+    label: ":darwin: High Sierra Build"
     agents:
       role: "macos-builder"
       os: "high-sierra"
@@ -17,7 +17,7 @@ steps:
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":mojave: Build"
+    label: ":darwin: Mojave Build"
     agents:
       role: "builder"
       os: "mojave"
@@ -102,11 +102,11 @@ steps:
 
   - command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":highsierra: Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :microscope: Starting package build" && \
         ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
-    label: ":highsierra: Package Builder"
+    label: ":darwin: High Sierra Package Builder"
     agents:
       role: "macos-builder"
       os: "high-sierra"
@@ -116,11 +116,11 @@ steps:
 
   - command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":mojave: Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :microscope: Starting package build" && \
         ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
-    label: ":mojave: Package Builder"
+    label: ":darwin: Mojave Package Builder"
     agents:
       role: "builder"
       os: "mojave"
