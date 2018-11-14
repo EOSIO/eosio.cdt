@@ -30,13 +30,24 @@ $ sudo apt install ./eosio.cdt-1.4.1.x86_64.deb
 $ sudo apt remove eosio.cdt
 ```
 
-#### RPM Package Install
+#### Fedora RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.4.1/eosio.cdt-1.4.1.x86_64-0.x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.4.1.x86_64-0.x86_64.rpm
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.4.1/eosio.cdt-fedora-1.4.1.x86_64-0.x86_64.rpm
+$ sudo yum install ./eosio.cdt-fedora-1.4.1.x86_64-0.x86_64.rpm
 ```
 
-#### RPM Package Uninstall
+#### Fedora RPM Package Uninstall
+```sh
+$ sudo yum remove eosio.cdt
+```
+
+#### Centos RPM Package Install
+```sh
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.4.1/eosio.cdt-centos-1.4.1.x86_64-0.x86_64.rpm
+$ sudo yum install ./eosio.cdt-centos-1.4.1.x86_64-0.x86_64.rpm
+```
+
+#### Centos RPM Package Uninstall
 ```sh
 $ sudo yum remove eosio.cdt
 ```
