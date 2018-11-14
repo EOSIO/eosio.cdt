@@ -1,29 +1,29 @@
 steps:
-  # - command: |
-  #     echo "+++ :hammer: Building" && \
-  #     echo 1 | ./build.sh && \
-  #     echo "--- Compressing build directory :compression:" && \
-  #     tar -pczf build.tar.gz build/
-  #   artifact_paths: "build.tar.gz"
-  #   label: ":darwin: Build"
-  #   agents:
-  #     role: "macos-builder"
-  #   timeout: 60
+  - command: |
+      echo "+++ :hammer: Building" && \
+      echo 1 | ./build.sh && \
+      echo "--- Compressing build directory :compression:" && \
+      tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":darwin: Build"
+    agents:
+      role: "macos-builder"
+    timeout: 60
 
-  # - command: |
-  #       echo "+++ :hammer: Building" && \
-  #       echo 1 | ./build.sh && \
-  #       echo "--- Compressing build directory :compression:" && \
-  #       tar -pczf build.tar.gz build/
-  #   artifact_paths: "build.tar.gz"
-  #   label: ":ubuntu: 16.04 Build"
-  #   agents:
-  #     queue: "automation-large-builder-fleet"
-  #   plugins:
-  #     docker#v2.0.0:
-  #       image: "eosio/ci:ubuntu"
-  #       workdir: /data/job
-  #   timeout: 60
+  - command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":ubuntu: 16.04 Build"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:ubuntu"
+        workdir: /data/job
+    timeout: 60
     
   - command: |
         echo "+++ :hammer: Building" && \
@@ -40,50 +40,50 @@ steps:
         workdir: /data/job
     timeout: 60
 
-  # - command: |
-  #       echo "+++ :hammer: Building" && \
-  #       echo 1 | ./build.sh && \
-  #       echo "--- Compressing build directory :compression:" && \
-  #       tar -pczf build.tar.gz build/
-  #   artifact_paths: "build.tar.gz"
-  #   label: ":fedora: Build"
-  #   agents:
-  #     queue: "automation-large-builder-fleet"
-  #   plugins:
-  #     docker#v2.0.0:
-  #       image: "eosio/ci:fedora"
-  #       workdir: /data/job
-  #   timeout: 60
+  - command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":fedora: Build"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:fedora"
+        workdir: /data/job
+    timeout: 60
 
-  # - command: |
-  #       echo "+++ :hammer: Building" && \
-  #       echo 1 | ./build.sh && \
-  #       echo "--- Compressing build directory :compression:" && \
-  #       tar -pczf build.tar.gz build/
-  #   artifact_paths: "build.tar.gz"
-  #   label: ":centos: Build"
-  #   agents:
-  #     queue: "automation-large-builder-fleet"
-  #   plugins:
-  #     docker#v2.0.0:
-  #       image: "eosio/ci:centos"
-  #       workdir: /data/job
-  #   timeout: 60
+  - command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":centos: Build"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:centos"
+        workdir: /data/job
+    timeout: 60
   
-  # - command: |
-  #       echo "+++ :hammer: Building" && \
-  #       echo 1 | ./build.sh && \
-  #       echo "--- Compressing build directory :compression:" && \
-  #       tar -pczf build.tar.gz build/
-  #   artifact_paths: "build.tar.gz"
-  #   label: ":aws: Build"
-  #   agents:
-  #     queue: "automation-large-builder-fleet"
-  #   plugins:
-  #     docker#v2.0.0:
-  #       image: "eosio/ci:amazonlinux"
-  #       workdir: /data/job
-  #   timeout: 60
+  - command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":aws: Build"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:amazonlinux"
+        workdir: /data/job
+    timeout: 60
 
   # - wait
 
