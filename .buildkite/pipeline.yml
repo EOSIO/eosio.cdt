@@ -100,7 +100,7 @@ steps:
 
   - wait
 
-- command: |
+  - command: |
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":highsierra: Build" && \
         tar -zxf build.tar.gz && \
