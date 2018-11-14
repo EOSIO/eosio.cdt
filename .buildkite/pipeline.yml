@@ -130,7 +130,7 @@ steps:
 
   - command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 16.04 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :microscope: Starting package build" && \
         cd /data/job/build/packages && bash generate_package.sh deb
