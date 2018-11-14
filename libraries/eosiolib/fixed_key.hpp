@@ -63,7 +63,7 @@ namespace eosio {
             const size_t sub_word_shift = 8 * sizeof(Word);
             const size_t num_sub_words = sizeof(word_t) / sizeof(Word);
             auto sub_words_left = num_sub_words;
-            for( Word w_itr = arr_begin; w_itr != arr_end; ++w_itr ) {
+            for( auto w_itr = arr_begin; w_itr != arr_end; ++w_itr ) {
                if( sub_words_left > 1 ) {
                    temp_word |= static_cast<word_t>(*w_itr);
                    temp_word <<= sub_word_shift;
