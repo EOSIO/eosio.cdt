@@ -10,7 +10,7 @@ ENDFOREACH(FN)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything")
 
-add_library(c++
+add_wasm_cxx_library(c++
             ${SRC_FILES})
 
 target_include_directories(c++
@@ -20,12 +20,6 @@ target_include_directories(c++
 
 target_link_libraries(c++ c)
 
-install(TARGETS c++ EXPORT EosioLib
-   LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} 
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-
 add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${CMAKE_BINARY_DIR}/lib )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libcxx)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_BINARY_DIR}/include/libcxx)
-

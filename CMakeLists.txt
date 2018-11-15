@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(eosio_cdt)
 
+find_program(CCACHE_FOUND ccache)
+if (CCACHE_FOUND)
+   message(STATUS "Using ccache")
+   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+   set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
+
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 4)
 set(VERSION_PATCH 1)
@@ -16,8 +23,6 @@ include(GNUInstallDirs)
 
 include(ClangExternalProject.txt)
 include(ToolsExternalProject.txt)
-
-add_subdirectory(external)
 
 set(WASM_SDK_BUILD true)
 
@@ -36,12 +41,9 @@ set(CDT_ROOT_DIR "_PREFIX_")
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt")
-include(EosioWasmToolchain)
+include(InstallCDT.cmake)
 
-add_subdirectory(libraries)
-
-include(InstallClang.txt)
+include(LibrariesExternalProject.txt)
 
 configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -63,6 +65,6 @@ configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh ${CMAKE_BINARY_DI
 # add licenses
 configure_file(${CMAKE_SOURCE_DIR}/eosio_llvm/LICENSE.TXT ${CMAKE_BINARY_DIR}/licenses/llvm.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_DIR}/licenses/boost.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/eosio.cdt.license COPYONLY)

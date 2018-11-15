@@ -33,6 +33,14 @@ macro( eosio_tool_install_and_symlink file symlink )
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endmacro( eosio_tool_install_and_symlink )
 
+macro( eosio_libraries_install file )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/EosioWasmLibraries-prefix/src/EosioWasmLibraries-build/bin)
+   add_custom_command( TARGET EosioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( eosio_tool_install )
+
 
 eosio_clang_install_and_symlink(llvm-ranlib eosio-ranlib)
 eosio_clang_install_and_symlink(llvm-ar eosio-ar)
@@ -47,6 +55,9 @@ eosio_clang_install(llc)
 eosio_clang_install(lld)
 eosio_clang_install(clang-7)
 eosio_clang_install(wasm-ld)
+eosio_tool_install(eosio-pp)
+eosio_tool_install(eosio-wast2wasm)
+eosio_tool_install(eosio-wasm2wast)
 eosio_tool_install(eosio-cc)
 eosio_tool_install(eosio-cpp)
 eosio_tool_install(eosio-ld)

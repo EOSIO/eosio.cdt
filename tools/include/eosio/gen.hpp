@@ -451,25 +451,25 @@ struct generation_utils {
 
    inline std::string translate_type( const clang::QualType& type ) {
       if ( is_template_specialization( type, {"ignore"} ) )
-         return _translate_type(get_template_argument( type ).getAsType() );
+         return translate_type(get_template_argument( type ).getAsType() );
       else if ( is_template_specialization( type, {"binary_extension"} ) ) {
-         auto t = _translate_type(get_template_argument( type ).getAsType());
+         auto t = translate_type(get_template_argument( type ).getAsType());
          return t+"$";
       }
-      else if ( is_template_specialization( type, {"vector", "set"} ) ) {
-         auto t =_translate_type(get_template_argument( type ).getAsType());
+      else if ( is_template_specialization( type, {"vector", "set", "deque", "list"} ) ) {
+         auto t =translate_type(get_template_argument( type ).getAsType());
          return t=="int8" ? "bytes" : t+"[]";
       }
       else if ( is_template_specialization( type, {"optional"} ) )
-         return _translate_type(get_template_argument( type ).getAsType())+"?";
+         return translate_type(get_template_argument( type ).getAsType())+"?";
       else if ( is_template_specialization( type, {"map"} )) {
-         auto t0 = _translate_type(get_template_argument( type ).getAsType());
-         auto t1 = _translate_type(get_template_argument( type, 1).getAsType());
+         auto t0 = translate_type(get_template_argument( type ).getAsType());
+         auto t1 = translate_type(get_template_argument( type, 1).getAsType());
          return replace_in_name("pair_" + t0 + "_" + t1 + "[]");
       }
       else if ( is_template_specialization( type, {"pair"} )) {
-         auto t0 = _translate_type(get_template_argument( type ).getAsType());
-         auto t1 = _translate_type(get_template_argument( type, 1).getAsType());
+         auto t0 = translate_type(get_template_argument( type ).getAsType());
+         auto t1 = translate_type(get_template_argument( type, 1).getAsType());
          return replace_in_name("pair_" + t0 + "_" + t1);
       }
       else if ( is_template_specialization( type, {"tuple"} )) {
@@ -499,7 +499,7 @@ struct generation_utils {
                }
             }
             else {
-               ret += _translate_type(get_template_argument( type, i ).getAsType());
+               ret += translate_type(get_template_argument( type, i ).getAsType());
                if ( i < tst->getNumArgs()-1 )
                   ret += "_";
             }

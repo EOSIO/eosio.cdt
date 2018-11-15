@@ -22,9 +22,14 @@ set(CMAKE_AR "@CDT_ROOT_DIR@/bin/eosio-ar" CACHE PATH "ar" FORCE)
 set(CMAKE_RANLIB "@CDT_ROOT_DIR@/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
 set(ABIGEN "@CDT_ROOT_DIR@/bin/eosio-abigen")
 
+set(CMAKE_C_CREATE_STATIC_LIBRARY "${CMAKE_AR} qc <TARGET> <LINK_FLAGS> <OBJECTS> "
+                                  "${CMAKE_RANLIB} <TARGET>")
+set(CMAKE_CXX_CREATE_STATIC_LIBRARY "${CMAKE_AR} qc <TARGET> <LINK_FLAGS> <OBJECTS> "
+                                    "${CMAKE_RANLIB} <TARGET>")
+
 # hack for CMake on Linux
-set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
-set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
+#set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
+#set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 
 # hack for OSX
 set(CMAKE_OSX_SYSROOT="@SYSROOT_DIR@")
@@ -40,4 +45,14 @@ macro(add_contract CONTRACT_NAME TARGET)
    get_target_property(BINOUTPUT ${TARGET}.wasm BINARY_DIR)
    target_compile_options( ${TARGET}.wasm PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
    target_compile_options( ${TARGET}.wasm PUBLIC -contract ${CONTRACT_NAME} )
+endmacro()
+
+macro(add_wasm_c_library TARGET)
+   add_library( ${TARGET} ${ARGN} )
+   set_target_properties(${TARGET} PROPERTIES LINKER_LANGUAGE C)
+endmacro()
+
+macro(add_wasm_cxx_library TARGET)
+   add_library( ${TARGET} ${ARGN} )
+   set_target_properties(${TARGET} PROPERTIES LINKER_LANGUAGE CXX)
 endmacro()
