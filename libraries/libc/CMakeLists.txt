@@ -20,10 +20,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything")
 
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/musl/include/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/*.h"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h"
-)
+                  "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h")
 
-add_wasm_c_library(c 
+add_library(c 
             ${CRYPT_SOURCES} 
             ${CTYPE_SOURCES}
             ${ENV_SOURCES}
@@ -46,8 +45,11 @@ add_wasm_c_library(c
 
 target_include_directories(c 
                            PUBLIC 
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/musl/include;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt;${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos;${CMAKE_CURRENT_SOURCE_DIR}/../>"
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
+                           ${CMAKE_SOURCE_DIR})
 
 add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${CMAKE_BINARY_DIR}/lib )
 

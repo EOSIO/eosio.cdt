@@ -10,13 +10,12 @@ ENDFOREACH(FN)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything")
 
-add_wasm_cxx_library(c++
+add_library(c++
             ${SRC_FILES})
 
 target_include_directories(c++
                            PUBLIC 
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include>
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
+                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
 target_link_libraries(c++ c)
 

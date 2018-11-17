@@ -41,9 +41,9 @@ set(CDT_ROOT_DIR "_PREFIX_")
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
 
-include(InstallCDT.cmake)
-
 include(LibrariesExternalProject.txt)
+
+include(InstallCDT.cmake)
 
 configure_file(${CMAKE_SOURCE_DIR}/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -51,6 +51,7 @@ install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREF
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CMAKE_INSTALL_PREFIX}/scripts)
 
+# section for package construction
 set(VENDOR "block.one")
 set(PROJECT_NAME "eosio.cdt")
 set(DESC "Toolchain and supporting tools for the EOS.IO platform")

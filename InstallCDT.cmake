@@ -33,14 +33,13 @@ macro( eosio_tool_install_and_symlink file symlink )
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endmacro( eosio_tool_install_and_symlink )
 
-macro( eosio_libraries_install file )
-   set(BINARY_DIR ${CMAKE_BINARY_DIR}/EosioWasmLibraries-prefix/src/EosioWasmLibraries-build/bin)
-   add_custom_command( TARGET EosioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   install(FILES ${BINARY_DIR}/${file}
-      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endmacro( eosio_tool_install )
-
+macro( eosio_libraries_install)
+   set(BIN_DIR ${CMAKE_BINARY_DIR}/EosioWasmLibraries-prefix/src/EosioWasmLibraries-build/)
+   add_custom_command( TARGET EosioWasmLibraries POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${BIN_DIR}/lib ${CMAKE_BINARY_DIR}/lib/ )
+   add_custom_command( TARGET EosioWasmLibraries POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${BIN_DIR}/include ${CMAKE_BINARY_DIR}/include )
+   install(DIRECTORY ${BIN_DIR}/lib/ DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+   install(DIRECTORY ${BIN_DIR}/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+endmacro( eosio_libraries_install )
 
 eosio_clang_install_and_symlink(llvm-ranlib eosio-ranlib)
 eosio_clang_install_and_symlink(llvm-ar eosio-ar)
@@ -65,3 +64,4 @@ eosio_tool_install(eosio-abigen)
 eosio_tool_install(eosio-abidiff)
 eosio_clang_install(../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
 eosio_clang_install(../lib/eosio_plugin${CMAKE_SHARED_LIBRARY_SUFFIX})
+eosio_libraries_install()

@@ -5,7 +5,8 @@ include(GNUInstallDirs)
 ExternalProject_Add(
   EosioWasmLibraries
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/libraries"
-  CMAKE_ARGS -DCMAKE_FRAMEWORK_PATH=${CMAKE_BINARY_DIR}
+  #CMAKE_ARGS -DCMAKE_FRAMEWORK_PATH=${CMAKE_BINARY_DIR}
+  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake
   UPDATE_COMMAND ""
   PATCH_COMMAND  ""
   TEST_COMMAND   ""

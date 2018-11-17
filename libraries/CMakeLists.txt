@@ -1,6 +1,4 @@
-project(eosio_libraries NONE)
-
-find_package(eosio.cdt)
+project(eosio_libraries)
 
 set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -O3 -Wall ")
 set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -O3 -Wall ")
