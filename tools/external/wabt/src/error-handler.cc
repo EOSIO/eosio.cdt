@@ -117,8 +117,7 @@ void ErrorHandlerFile::PrintErrorHeader() {
 
     case PrintHeader::Once:
       print_header_ = PrintHeader::Never;
-    // Fallthrough.
-
+      [[fallthrough]];
     case PrintHeader::Always:
       fprintf(file_, "%s:\n", header_.c_str());
       break;
