@@ -400,9 +400,9 @@ if (NOT EMSCRIPTEN)
 
   # install
   #install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
-  install(TARGETS eosio-wast2wasm DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-  install(TARGETS eosio-wasm2wast DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-  install(TARGETS eosio-pp DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  #install(TARGETS eosio-wast2wasm DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  #install(TARGETS eosio-wasm2wast DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  #install(TARGETS eosio-pp DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 
 else ()
   # emscripten stuff

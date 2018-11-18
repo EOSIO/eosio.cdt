@@ -3,6 +3,13 @@ find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
+find_program(CCACHE_FOUND ccache)
+if (CCACHE_FOUND)
+   message(STATUS "Using ccache")
+   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+   set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
+
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${LLVM_SRCDIR}/tools/clang/include)
 include_directories(${LLVM_BINDIR}/tools/clang/include)
@@ -65,6 +72,7 @@ add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
+add_subdirectory(external)
 
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/compiler_options.hpp.in ${CMAKE_BINARY_DIR}/compiler_options.hpp)
