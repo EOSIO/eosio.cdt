@@ -3,11 +3,11 @@
 .global _mmap
 .global setjmp
 .global longjmp
-.type _start,@function
-.type ___putc,@function
-.type _mmap,@function
-.type setjmp,@function
-.type longjmp,@function
+#.type _start,@function
+#.type ___putc,@function
+#.type _mmap,@function
+#.type setjmp,@function
+#.type longjmp,@function
 
 _start:
    mov %rsp, %rbp

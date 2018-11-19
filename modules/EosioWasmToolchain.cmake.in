@@ -31,6 +31,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 # hack for OSX
 set(CMAKE_OSX_SYSROOT="@SYSROOT_DIR@")
 set(CMAKE_OSX_DEPLOYMENT_TARGET="")
+
 include_directories(
       @CDT_ROOT_DIR@/eosio.cdt/include/libcxx
       @CDT_ROOT_DIR@/eosio.cdt/include/libc

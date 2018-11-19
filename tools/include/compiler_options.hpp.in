@@ -326,6 +326,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
    } else {
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
+      copts.emplace_back("-mmacosx-version-min=10.13");
 #else
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
       copts.emplace_back("-m64");
