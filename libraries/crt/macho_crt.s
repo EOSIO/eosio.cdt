@@ -1,13 +1,8 @@
 .global _start
-.global ___putc
-.global _mmap
+.global ____putc
+.global __mmap
 .global setjmp
 .global longjmp
-#.type _start,@function
-#.type ___putc,@function
-#.type _mmap,@function
-#.type setjmp,@function
-#.type longjmp,@function
 
 _start:
    mov %rsp, %rbp
@@ -15,28 +10,28 @@ _start:
    lea 8(%rbp), %rsi
    call __wrap_main
    mov %rax, %rdi
-   mov $60, %rax
+   mov $0x200003C, %rax # exit syscall 0x3C or 60
    syscall
 
-___putc:
+____putc:
    dec %rsp
    mov %rbx, %r8
    mov %rdi, %rax
    mov %al, 0(%rsp)
-   mov $1, %edi
-   mov %rsp, %rsi
-   mov $1, %edx
-   mov $1, %eax
+   mov $1, %edi    # using stdout
+   mov %rsp, %rsi  # point to the buffer
+   mov $1, %edx    # buffer is only 1 char
+   mov $0x2000004, %eax    # write syscall 0x4
    syscall
    inc %rsp
    mov %r8, %rbx
    ret
   
-_mmap:
-   mov $9, %eax
-   mov $0, %rdi
-   mov $0x6400000, %rsi # 100Mb
-   mov $3, %rdx
+__mmap:
+   mov $0x20000C5, %eax # mmap syscall 0xC5 or 197
+   mov $0, %rdi          # don't map
+   mov $0x6400000, %rsi  # size 100Mb 
+   mov $3, %rdx         
    mov $0x22, %r10
    mov $-1, %r8
    mov $0, %r9

@@ -502,10 +502,8 @@ static Options CreateOptions(bool add_defaults=true) {
       link = false;
       copts.emplace_back("-E");
    }
-   if (fnative_opt) {
-      if(g_opt)
-         copts.emplace_back("-g");
-   }
+   if(g_opt)
+      copts.emplace_back("-g");
    if (color_diag_opt) {
       copts.emplace_back("-fcolor-diagnostics");
    }

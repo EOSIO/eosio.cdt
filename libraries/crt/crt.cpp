@@ -6,7 +6,7 @@
 extern "C" {
    int main(int, char**);
    char* _mmap();
-
+   
    static jmp_buf ___env;
    static int ___jmp_ret;
    char* ___heap;
@@ -60,9 +60,6 @@ extern "C" {
    }
    
    void printhex(const void* data, uint32_t len) {
-      char* tmp = (char*)data;
-      for (int i=0; i < len; i++) {
-      }
    }
 
    void* memset ( void* ptr, int value, size_t num ) {
@@ -110,9 +107,12 @@ extern "C" {
       }
    }
    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-noreturn" 
    void abort() {
       eosio_assert(false, "abort");
    }
+#pragma clang diagnostic pop
 
    void set_blockchain_parameters_packed( char* data, uint32_t datalen ){}
    void get_blockchain_parameters_packed( char* data, uint32_t datalen ){}
@@ -128,7 +128,7 @@ extern "C" {
       return (size_t)___heap_ptr;
    }
 
-   int __wrap_main(int argc, char** argv) {
+   int _wrap_main(int argc, char** argv) {
       int ret_val = 0;
       ___heap = _mmap();
       ___heap_ptr = ___heap;

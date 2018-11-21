@@ -216,7 +216,11 @@ namespace eosio {
  *
  * @brief "foo"_n is a shortcut for name{"foo"}
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-string-literal-operator-template"
 template <typename T, T... Str>
 inline constexpr eosio::name operator""_n() {
-   return eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
+   constexpr auto x = eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
+   return x;
 }
+#pragma clang diagnostic pop
