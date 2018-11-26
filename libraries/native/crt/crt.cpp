@@ -12,7 +12,6 @@ extern "C" {
    char* ___heap;
    char* ___heap_ptr;
    void ___putc(char c);
-   
    void prints_l(const char* cstr, uint32_t len) {
       for (int i=0; i < len; i++)
          ___putc(cstr[i]);
@@ -80,6 +79,17 @@ extern "C" {
       return (void*)dest;
    }
 
+   void* memmove ( void* destination, const void* source, size_t num ) {
+      char tmp_buf[num];
+      char* dest = (char*)destination;
+      char* src = (char*)source;
+      for (int i=0; i < num; i++)
+         tmp_buf[i] = src[i];
+      for (int i=0; i < num; i++)
+         dest[i] = tmp_buf[i];
+      return (void*)dest;
+   }
+
    void eosio_assert(uint32_t test, const char* msg) {
       if (test == 0) {
          prints("asserted with message [");
@@ -135,8 +145,9 @@ extern "C" {
       ___jmp_ret = setjmp(___env); 
       if (___jmp_ret == 0) {
          ret_val = main(argc, argv);
-      } else {
+      } else if (___jmp_ret == 1){
          ret_val = -1;
+         longjmp(___env,2);
       }
       return ret_val;
    }

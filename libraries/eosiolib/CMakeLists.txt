@@ -32,7 +32,7 @@ target_include_directories(native_eosio PUBLIC
 target_link_libraries( eosio c c++ )
 target_link_libraries( native_eosio native_c native_c++ )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/preinclude/eosiolib FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/preinclude FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )

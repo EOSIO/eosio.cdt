@@ -1,24 +1,24 @@
 .global _start
-.global ____putc
-.global __mmap
+.global ___putc
+.global _mmap
 .global setjmp
 .global longjmp
-#.type _start,@function
-#.type ___putc,@function
-#.type _mmap,@function
-#.type setjmp,@function
-#.type longjmp,@function
+.type _start,@function
+.type ___putc,@function
+.type _mmap,@function
+.type setjmp,@function
+.type longjmp,@function
 
 _start:
    mov %rsp, %rbp
    mov 0(%rbp), %rdi
    lea 8(%rbp), %rsi
-   call __wrap_main
+   call _wrap_main
    mov %rax, %rdi
    mov $60, %rax
    syscall
 
-____putc:
+___putc:
    dec %rsp
    mov %rbx, %r8
    mov %rdi, %rax
@@ -32,7 +32,7 @@ ____putc:
    mov %r8, %rbx
    ret
   
-__mmap:
+_mmap:
    mov $9, %eax
    mov $0, %rdi
    mov $0x6400000, %rsi # 100Mb

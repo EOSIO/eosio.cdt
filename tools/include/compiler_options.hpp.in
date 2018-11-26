@@ -354,7 +354,15 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
          copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
-
+      if (true || fnative_opt) {
+         copts.emplace_back("-Xclang");
+         copts.emplace_back("-load");
+         copts.emplace_back("-Xclang");
+         if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+eosio_apply_suff))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+eosio_apply_suff);
+         else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff);
+      }
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff))
          copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff))
@@ -682,7 +690,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #else
    if (fnative_opt)
-      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lcrt");
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative_crt -lnative_softfloat");
    else
       ldopts.emplace_back("-lc++ -lc -leosio");
 #endif
