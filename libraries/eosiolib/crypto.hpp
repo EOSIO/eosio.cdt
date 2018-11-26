@@ -203,7 +203,6 @@ namespace eosio {
     *  @param pubkey - Public key
     */
    void assert_recover_key( const eosio::checksum256& digest, const eosio::signature& sig, const eosio::public_key& pubkey );
-
    /// }@cryptocppapi
    /// }@cryptoapi
 }

@@ -24,9 +24,6 @@ using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
 
-void test() {
-   std::cout << "Test\n";
-}
 namespace eosio { namespace cdt {
    DeclarationMatcher function_decl_matcher = cxxMethodDecl().bind("eosio_tool");
    DeclarationMatcher record_decl_matcher   = cxxRecordDecl().bind("eosio_tool");
@@ -176,7 +173,6 @@ int main(int argc, const char **argv) {
 
    int tool_run = -1;
    try {
-      test();
       tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
       for (auto fi : codegen_rewritten) {
          auto& RewriteBuf =
