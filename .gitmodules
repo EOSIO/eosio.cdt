@@ -9,9 +9,6 @@
 [submodule "eosio_llvm"]
 	path = eosio_llvm
 	url = https://github.com/eosio/llvm
-[submodule "tools/native_tester/Catch2"]
-	path = tools/native_tester/Catch2
-	url = https://github.com/catchorg/Catch2
-[submodule "libraries/catch2/upstream"]
-	path = libraries/catch2/upstream
-	url = https://github.com/catchorg/Catch2.git
+[submodule "libraries/native/softfloat"]
+	path = libraries/native/softfloat
+	url = https://github.com/EOSIO/berkeley-softfloat-3.git
