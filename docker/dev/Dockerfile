@@ -5,6 +5,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install openssl 
 
 # Install CDT from deb package
 ADD *.deb /
-RUN for filename in $(ls builder/packages/*.deb); do /usr/bin/dpkg -i "$filename" && rm -f "$filename"; done
+RUN for filename in $(ls build/packages/*.deb); do /usr/bin/dpkg -i "$filename" && rm -f "$filename"; done
 
 USER root
