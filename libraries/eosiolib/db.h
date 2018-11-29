@@ -7,7 +7,8 @@
 #include <eosiolib/types.h>
 
 /**
- *  @addtogroup database Database C API
+ *  @addtogroup database_c_api Database C API
+ *  @ingroup database
  *  @brief Defines %C APIs for interfacing with the database.
  *  @details Database C API provides low level interface to EOSIO database.
  *
@@ -918,5 +919,5 @@ int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name 
   */
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
-///@} 
+///@}
 }

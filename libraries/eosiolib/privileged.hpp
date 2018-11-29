@@ -7,6 +7,7 @@ namespace eosio {
 
   /**
    * @addtogroup privileged Privileged C++ API
+   * @ingroup types
    * Defines C++ Privileged API
    * @{
    */

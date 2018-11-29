@@ -144,7 +144,7 @@ namespace eosio {
       /**
        * @brief Multiplication assignment operator, with a number
        *
-       * @detailed Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
+       * @details Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
        * @param a - The multiplier for the asset's amount
        * @return asset - Reference to this asset
        * @post The amount of this asset is multiplied by a
@@ -188,7 +188,7 @@ namespace eosio {
       /**
        * @brief Division assignment operator, with a number
        *
-       * @detailed Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.
+       * @details Division assignment operator. Divide the amount of this asset with a number and then assign the value to itself.
        * @param a - The divisor for the asset's amount
        * @return asset - Reference to this asset
        * @post The amount of this asset is divided by a
@@ -415,7 +415,7 @@ namespace eosio {
       /**
        * @brief Subtraction operator
        *
-       * @detailed Subtraction operator. This subtracts the amount of the extended asset.
+       * @details Subtraction operator. This subtracts the amount of the extended asset.
        * @param a - The extended asset to be subtracted
        * @param b - The extended asset used to subtract
        * @return extended_asset - New extended asset as the result of subtraction
@@ -429,7 +429,7 @@ namespace eosio {
       /**
        * @brief Addition operator
        *
-       * @detailed Addition operator. This adds the amount of the extended asset.
+       * @details Addition operator. This adds the amount of the extended asset.
        * @param a - The extended asset to be added
        * @param b - The extended asset to be added
        * @return extended_asset - New extended asset as the result of addition

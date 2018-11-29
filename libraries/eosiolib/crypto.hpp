@@ -51,7 +51,7 @@ namespace eosio {
    /// @} publickeytype
 
    /**
-   *  @defgroup signaturetype Public Key Type
+   *  @defgroup signature Public Key Type
    *  @ingroup types
    *  @brief Specifies signature type
    *
@@ -88,16 +88,8 @@ namespace eosio {
    /// @} signaturetype
 
    /**
-    *  @defgroup cryptoapi Chain API
+    *  @defgroup crypto Chain API
     *  @brief Defines API for calculating and checking hashes
-    *  @ingroup contractdev
-    *  @{
-    */
-
-   /**
-    *  @defgroup cryptocppapi Chain C API
-    *  @brief Defines type-safe C++ wrapers for calculating and checking hashes
-    *  @ingroup chainapi
     *  @{
     */
 
@@ -204,6 +196,5 @@ namespace eosio {
     */
    void assert_recover_key( const eosio::checksum256& digest, const eosio::signature& sig, const eosio::public_key& pubkey );
 
-   /// }@cryptocppapi
    /// }@cryptoapi
 }

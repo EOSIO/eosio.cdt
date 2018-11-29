@@ -215,5 +215,6 @@ namespace eosio {
  */
 template <typename T, T... Str>
 inline constexpr eosio::name operator""_n() {
-   return eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
+   constexpr auto x = eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
+   return x;
 }

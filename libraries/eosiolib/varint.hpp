@@ -6,10 +6,11 @@
 
 
 /**
- * @addtogroup types
- * @{
+ * @defgroup varint Variable Length Integer Type
+ * @brief Defines variable length integer type which provides more efficient serialization
+ * @ingroup types
+ * @{/
  */
-
 /**
  * Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int.
  * It serialuzes a 32-bit unsigned integer in as few bytes as possible
@@ -40,7 +41,7 @@ struct unsigned_int {
 
     /**
      * Convert unsigned_int as T
-     * 
+     *
      * @tparam T - Target type of conversion
      * @return T - Converted target
      */
@@ -50,7 +51,6 @@ struct unsigned_int {
     /**
      * Assign 32-bit unsigned integer
      *
-     * @brief Assignment operator
      * @param v - Soruce
      * @return unsigned_int& - Reference to this object
      */

@@ -6,6 +6,7 @@ namespace  eosio {
 
    /**
     *  @defgroup singleton Singleton Table
+    *  @ingroup database
     *  @brief Defines EOSIO Singleton Table used with %multiindex
     *  @{
     */
