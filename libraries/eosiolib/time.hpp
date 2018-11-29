@@ -6,6 +6,7 @@
 namespace eosio {
   /**
    * @addtogroup time
+   * @ingroup cpp_api
    * @{
    */
   class microseconds {

@@ -8,7 +8,7 @@
 
 /**
  *  @addtogroup database_c_api Database C API
- *  @ingroup database
+ *  @ingroup c_api
  *  @brief Defines %C APIs for interfacing with the database.
  *  @details Database C API provides low level interface to EOSIO database.
  *

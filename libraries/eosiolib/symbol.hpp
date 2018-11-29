@@ -16,6 +16,7 @@ namespace eosio {
 
   /**
    *  @addtogroup symbol Symbol CPP API
+   *  @ingroup cpp_api
    *  @brief Defines %CPP API for managing symbols
    *  @{
    */
@@ -33,7 +34,7 @@ namespace eosio {
        *
        * @brief Construct a new symbol_code object defaulting to a value of 0
        *
-       */    
+       */
       constexpr symbol_code() : value(0) {}
 
       /**
@@ -115,7 +116,7 @@ namespace eosio {
       /**
        * Explicit cast to bool of the symbol_code
        *
-       * @return Returns true if the symbol_code is set to the default value of 0 else true. 
+       * @return Returns true if the symbol_code is set to the default value of 0 else true.
        */
       constexpr explicit operator bool()const { return value != 0; }
 
@@ -149,7 +150,7 @@ namespace eosio {
 
       /**
        *  Returns the symbol_code as a string.
-       * 
+       *
        *  @brief Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
        */
       std::string to_string()const {
@@ -203,7 +204,7 @@ namespace eosio {
        *
        * @brief Construct a new symbol object defaulting to a value of 0
        *
-       */    
+       */
       constexpr symbol() : value(0) {}
 
       /**
@@ -323,7 +324,7 @@ namespace eosio {
        *
        * @brief Construct a new empty extended_symbol object
        *
-       */        
+       */
       constexpr extended_symbol() {}
 
       /**
@@ -331,7 +332,7 @@ namespace eosio {
        *
        * @brief Construct a new symbol_code object initialising symbol and contract with the passed in symbol and name
        * @param sym - The symbol
-       * @param con - The name of the contract       
+       * @param con - The name of the contract
        *
        */
       constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}

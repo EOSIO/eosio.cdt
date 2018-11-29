@@ -13,6 +13,7 @@ namespace eosio {
 
   /**
    * @defgroup transaction Transaction C++ API
+   * @ingroup cpp_api
    * @brief Type-safe C++ wrappers for transaction C API
    *
    * @details An inline message allows one contract to send another contract a message
@@ -56,7 +57,7 @@ namespace eosio {
        * Construct a new transaction_header with an expiration of now + 60 seconds.
        *
        * @brief Construct a new transaction_header object initialising the transaction header expiration to now + 60 seconds
-       */    
+       */
       transaction_header( time_point_sec exp = time_point_sec(now() + 60) )
          :expiration(exp)
       {}
@@ -82,7 +83,7 @@ namespace eosio {
        * Construct a new transaction with an expiration of now + 60 seconds.
        *
        * @brief Construct a new transaction object initialising the transaction header expiration to now + 60 seconds
-       */    
+       */
       transaction(time_point_sec exp = time_point_sec(now() + 60)) : transaction_header( exp ) {}
 
       /**
@@ -134,7 +135,7 @@ namespace eosio {
 
    /**
     * Retrieve the indicated action from the active transaction.
-    * 
+    *
     * @param type - 0 for context free action, 1 for action
     * @param index - the index of the requested action
     * @return the indicated action

@@ -8,6 +8,7 @@
 extern "C" {
    /**
     * @addtogroup system
+    * @ingroup c_api
     * @brief Defines API for interacting with system level intrinsics
     * @{
     */
@@ -39,7 +40,7 @@ extern "C" {
 
    /**
     *  Aborts processing of this action and unwinds all pending changes if the test condition is true
-    * 
+    *
     *  @brief Aborts processing of this action and unwinds all pending changes
     *  @param test - 0 to abort, 1 to ignore
     *  @param code - the error code

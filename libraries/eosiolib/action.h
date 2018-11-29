@@ -8,6 +8,7 @@
 extern "C" {
    /**
     *  @addtogroup action
+    *  @ingroup c_api
     *  @brief Defines API for querying action and sending action
     *
     *  @details A EOS.IO action has the following abstract structure:

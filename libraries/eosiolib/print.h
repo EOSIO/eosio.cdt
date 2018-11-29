@@ -7,7 +7,8 @@
 #include <eosiolib/types.h>
 
 /**
- *  @defgroup consolecapi Console C API
+ *  @defgroup console_c Console C API
+ *  @ingroup c_api
  *  @brief Defnes %C API to log/print text messages
  *  @{
  */
@@ -167,7 +168,7 @@ extern "C" {
     * @code
     * unsigned char rawData[9] = {0x49 0x20 0x6C 0x6F 0x76 0x65 0x20 0x62 0x6D};
     * printhex(&rawData, 9);
-    * @endcode    
+    * @endcode
     */
     void printhex( const void* data, uint32_t datalen );
 

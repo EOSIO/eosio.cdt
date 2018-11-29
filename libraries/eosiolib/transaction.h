@@ -8,6 +8,7 @@
 extern "C" {
    /**
     * @addtogroup transaction_c Transaction API
+    * @ingroup c_api
     * @brief Defines C API for sending transactions and inline actions
     *
     * @details Deferred transactions will not be processed until a future block.  They

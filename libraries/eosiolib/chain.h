@@ -8,6 +8,7 @@
 
 /**
  *  @addtogroup chain
+ *  @ingroup c_api
  *  @brief Defines %C API for querying internal chain state
  *  @{
  */

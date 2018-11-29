@@ -5,6 +5,7 @@
     *  Container to hold a binary payload for an extension
     *
     *  @defgroup binary_extension Binary Extension
+    *  @ingroup cpp_api
     *  @ingroup types
     *  @{
     */

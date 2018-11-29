@@ -40,6 +40,7 @@ namespace eosio {
 
    /**
     * @addtogroup dispatcher Dispatcher C++ API
+    * @ingroup cpp_api
     * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
     * @{
     */

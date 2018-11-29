@@ -13,6 +13,7 @@
 
 /**
    *  @defgroup console Console C++ API
+   *  @ingroup cpp_api
    *  @brief Defines C++ wrapper to log/print text messages
    *
    *  @details This API uses C++ variadic templates and type detection to

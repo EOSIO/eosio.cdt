@@ -12,6 +12,7 @@
 namespace eosio {
 
    /**
+    * @defgroup name
     * @ingroup types
     * @brief EOSIO Types
     * @{
@@ -166,7 +167,7 @@ namespace eosio {
       /**
        * Explicit cast to bool of the uint64_t value of the name
        *
-       * @return Returns true if the name is set to the default value of 0 else true. 
+       * @return Returns true if the name is set to the default value of 0 else true.
        */
       constexpr explicit operator bool()const { return value != 0; }
 
@@ -200,7 +201,7 @@ namespace eosio {
 
       /**
        *  Returns the name as a string.
-       * 
+       *
        *  @brief Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
        */
       std::string to_string()const {
@@ -241,7 +242,7 @@ namespace eosio {
 
       EOSLIB_SERIALIZE( name, (value) )
    };
-   
+
    namespace detail {
       template <char... Str>
       struct to_const_char_arr {
