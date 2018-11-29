@@ -324,6 +324,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
    } else {
+      copts.emplace_back("-msoft-float");
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
@@ -344,6 +345,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef CPP_COMP
       copts.emplace_back("-fno-rtti");
       copts.emplace_back("-fno-exceptions");
+      copts.emplace_back("-fmodules-ts");
 #endif
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
@@ -354,7 +356,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
          copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
-      if (true || fnative_opt) {
+      if (false && fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
          copts.emplace_back("-Xclang");
@@ -384,7 +386,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
    } else {
 #ifdef __APPLE__
       ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System -static");
-#else
+      ldopts.emplace_back("-e __wrap_main");
 #endif
    }
 }

@@ -7,6 +7,10 @@
 #include <eosiolib/memory.h>
 #include <eosiolib/print.hpp>
 
+#ifdef EOSIO_NATIVE
+extern "C" void* alloca(size_t);
+#endif
+
 void* sbrk(size_t num_bytes);
 
   /**

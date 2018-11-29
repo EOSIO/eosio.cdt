@@ -72,7 +72,6 @@ add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
-add_subdirectory(native_tester)
 add_subdirectory(external)
 
 

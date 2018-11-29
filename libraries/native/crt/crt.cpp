@@ -1,14 +1,23 @@
 #include <eosiolib/name.hpp>
+#include <eosiolib/action.hpp>
+#include "../intrinsics.hpp"
 #include <cstdint>
+#include <functional>
 #include <stdio.h>
 #include <setjmp.h>
+
+eosio::native::intrinsics __intrins;
 
 extern "C" {
    int main(int, char**);
    char* _mmap();
    
    static jmp_buf ___env;
+   static jmp_buf ___test_env;
    static int ___jmp_ret;
+   static int ___test_ret;
+   jmp_buf* ___test_env_ptr = &___test_env;
+   int*     ___test_ret_ptr = &___test_ret;
    char* ___heap;
    char* ___heap_ptr;
    void ___putc(char c);
@@ -35,7 +44,7 @@ extern "C" {
       printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
    }
 
-    void printui128(const int128_t* value) {
+    void printui128(const uint128_t* value) {
       int* tmp = (int*)value;
       printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
    }
@@ -92,27 +101,27 @@ extern "C" {
 
    void eosio_assert(uint32_t test, const char* msg) {
       if (test == 0) {
-         prints("asserted with message [");
+         //prints("asserted with message [");
          prints(msg);
-         prints_l("]\n", 2);
+         prints_l("\n", 1);
          longjmp(___env, 1);
       }
    }
 
    void eosio_assert_message(uint32_t test, const char* msg, uint32_t len) {
       if (test == 0) {
-         prints("asserted with message [");
+         //prints("asserted with message [");
          prints_l(msg, len);
-         prints_l("]\n", 2);
+         prints_l("\n", 1);
          longjmp(___env, 1);
       }
    }
 
    void eosio_assert_code(uint32_t test, uint64_t code) {
       if (test == 0) {
-         prints("asserted with code [");
+         //prints("asserted with code [");
          printui(code);
-         prints_l("]\n", 2);
+         prints_l("\n", 1);
          longjmp(___env, 1);
       }
    }
@@ -123,7 +132,10 @@ extern "C" {
       eosio_assert(false, "abort");
    }
 #pragma clang diagnostic pop
-
+   
+   bool is_feature_active( int64_t feature ) {
+      return __intrins.call<eosio::native::intrinsic_is_feature_active>(feature);
+   }
    void set_blockchain_parameters_packed( char* data, uint32_t datalen ){}
    void get_blockchain_parameters_packed( char* data, uint32_t datalen ){}
 
@@ -142,12 +154,15 @@ extern "C" {
       int ret_val = 0;
       ___heap = _mmap();
       ___heap_ptr = ___heap;
+      ___test_ret = 1;
       ___jmp_ret = setjmp(___env); 
       if (___jmp_ret == 0) {
          ret_val = main(argc, argv);
       } else if (___jmp_ret == 1){
+         if (___test_ret == 0)
+            longjmp(___test_env,1);
          ret_val = -1;
-         longjmp(___env,2);
+         //longjmp(___env,2);
       }
       return ret_val;
    }

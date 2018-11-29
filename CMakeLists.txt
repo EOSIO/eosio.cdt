@@ -55,6 +55,7 @@ configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINAR
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
 
 include(modules/LibrariesExternalProject.txt)
+#include(modules/CompilerRTExternalProject.txt)
 
 include(modules/InstallCDT.cmake)
 

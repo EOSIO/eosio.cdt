@@ -1,4 +1,3 @@
-call_depth_assert
 __ashlti3
 __ashrti3
 __lshlti3
@@ -51,7 +50,6 @@ get_blockchain_parameters_packed
 set_blockchain_parameters_packed
 is_privileged
 set_privileged
-checktime
 get_active_producers
 db_idx64_store
 db_idx64_remove
