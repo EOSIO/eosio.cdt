@@ -25,16 +25,43 @@ namespace eosio {
    public:
       enum class raw : uint64_t {};
 
+      /**
+       * Construct a new name
+       *
+       * @brief Construct a new name object defaulting to a value of 0
+       *
+       */
       constexpr name() : value(0) {}
 
+      /**
+       * Construct a new name given a unit64_t value
+       *
+       * @brief Construct a new name object initialising value with v
+       * @param v - The unit64_t value
+       *
+       */
       constexpr explicit name( uint64_t v )
       :value(v)
       {}
 
+      /**
+       * Construct a new name given a scoped enumerated type of raw (uint64_t).
+       *
+       * @brief Construct a new name object initialising value with r
+       * @param r - The raw value which is a scoped enumerated type of unit64_t
+       *
+       */
       constexpr explicit name( name::raw r )
       :value(static_cast<uint64_t>(r))
       {}
 
+      /**
+       * Construct a new name given an string.
+       *
+       * @brief Construct a new name object initialising value with str
+       * @param str - The string value which validated then converted to unit64_t
+       *
+       */
       constexpr explicit name( std::string_view str )
       :value(0)
       {
@@ -129,8 +156,18 @@ namespace eosio {
          return name{ ((value & mask) << shift) + (thirteenth_character << (shift-1)) };
       }
 
+      /**
+       * Casts a name to raw
+       *
+       * @return Returns an instance of raw based on the value of a name
+       */
       constexpr operator raw()const { return raw(value); }
 
+      /**
+       * Explicit cast to bool of the uint64_t value of the name
+       *
+       * @return Returns true if the name is set to the default value of 0 else true. 
+       */
       constexpr explicit operator bool()const { return value != 0; }
 
       /**
@@ -161,6 +198,11 @@ namespace eosio {
          return begin;
       }
 
+      /**
+       *  Returns the name as a string.
+       * 
+       *  @brief Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
+       */
       std::string to_string()const {
          char buffer[13];
          auto end = write_as_string( buffer, buffer + sizeof(buffer) );
@@ -211,7 +253,7 @@ namespace eosio {
 /**
  * %name literal operator
  *
- * @brief "foo"_n is a shortcut for name{"foo"}
+ * @brief "foo"_n is a shortcut for name("foo")
  */
 template <typename T, T... Str>
 inline constexpr eosio::name operator""_n() {

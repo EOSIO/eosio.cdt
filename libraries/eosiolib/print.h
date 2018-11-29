@@ -147,14 +147,29 @@ extern "C" {
     *
     * Example:
     * @code
+<<<<<<< HEAD
     * printn("abcde"_n); // Output: abcde
+=======
+    * printn(name("abcde")); // Output: abcde
+>>>>>>> 7341c1959d07db58234dd0712ef747fd661fa50b
     * @endcode
     */
    void printn( uint64_t name );
 
-   /**
+    /**
+    * Prints hexidecimal data of length datalen
+    *
+    * @brief Prints hexidecimal data of length datalen
+    * @param data to be printed
+    * @param datalen length of the data to be printed
+    *
+    * Example
+    * @code
+    * unsigned char rawData[9] = {0x49 0x20 0x6C 0x6F 0x76 0x65 0x20 0x62 0x6D};
+    * printhex(&rawData, 9);
+    * @endcode    
     */
-   void printhex( const void* data, uint32_t datalen );
+    void printhex( const void* data, uint32_t datalen );
 
    /// @}
 #ifdef __cplusplus

@@ -47,14 +47,29 @@ namespace eosio {
       prints(ptr);
    }
 
+   /**
+    *  Prints string
+    *
+    *  @param s - a const std::string
+    */
    inline void print( const std::string& s) {
       prints_l( s.c_str(), s.size() );
    }
 
+  /**
+   *  Prints string
+   *
+   *  @param s - a std::string
+   */
    inline void print( std::string&& s) {
       prints_l( s.c_str(), s.size() );
    }
 
+   /**
+    *  Prints string
+    *
+    *  @param c - a const char
+    */
    inline void print( const char c ) {
       prints_l( &c, 1 );
    }

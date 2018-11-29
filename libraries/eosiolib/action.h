@@ -109,8 +109,10 @@ extern "C" {
    void require_auth2( capi_name name, capi_name permission );
 
    /**
-    *  @details Checks if the provided name is an account
-    *  @param name - name of the account to be verified
+    *  Verifies that @ref name is an existing account.
+    *
+    *  @brief Verifies that @ref name is an existing account.
+    *  @param name - name of the account to check
     */
    bool is_account( capi_name name );
 
