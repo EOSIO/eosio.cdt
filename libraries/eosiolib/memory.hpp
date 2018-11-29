@@ -10,7 +10,7 @@
 void* sbrk(size_t num_bytes);
 
   /**
-   *  @defgroup memorycppapi Memory C++ API
+   *  @defgroup memory Memory C++ API
    *  @ingroup cpp_api
    *  @brief Defines common memory functions
    *

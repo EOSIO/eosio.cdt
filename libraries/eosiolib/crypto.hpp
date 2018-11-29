@@ -89,6 +89,7 @@ namespace eosio {
 
    /**
     *  @defgroup crypto Chain API
+    *  @ingroup cpp_api
     *  @brief Defines API for calculating and checking hashes
     *  @{
     */

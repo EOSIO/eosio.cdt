@@ -1304,6 +1304,7 @@ DataStream& operator>>( DataStream& ds, T& v ) {
  * Defines data stream for reading and writing data in the form of bytes
  *
  * @addtogroup datastream Data Stream
+ * @ingroup cpp_api
  * @{
  */
 
