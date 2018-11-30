@@ -62,9 +62,9 @@ $ sudo ./install.sh
 
 ### Installed Tools
 ---
-* [eosio-cpp](#eosio-cpp)
-* [eosio-cc](#eosio-cc)
-* [eosio-ld](#eosio-ld)
+* eosio-cpp
+* eosio-cc
+* eosio-ld
 * eosio-abigen
 * eosio-pp (post processing pass for WASM, automatically runs with eosio-cpp and eosio-ld)
 * eosio-wasm2wast
