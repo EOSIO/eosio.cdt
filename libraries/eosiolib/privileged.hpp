@@ -7,7 +7,7 @@ namespace eosio {
 
   /**
    * @addtogroup privileged Privileged C++ API
-   * @ingroup types
+   * @ingroup cpp_api
    * Defines C++ Privileged API
    * @{
    */
@@ -94,7 +94,7 @@ namespace eosio {
       */
       uint32_t deferred_trx_expiration_window;
 
-      
+
       /**
       * The maximum number of seconds that can be imposed as a delay requirement by authorization checks
       * @brief The maximum number of seconds that can be imposed as a delay requirement by authorization checks

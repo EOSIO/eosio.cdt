@@ -6,6 +6,15 @@
 #include <eosiolib/types.h>
 
 extern "C" {
+
+  /**
+  * @defgroup permission_c Permissions C API
+  * @ingroup c_api
+  *
+  * @brief Methods for testing against transactions, delays, keys and permissions
+  * @{
+  */
+
    /**
     *  Checks if a transaction is authorized by a provided set of keys and permissions
     *
@@ -27,7 +36,7 @@ extern "C" {
    /**
     *  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
     *
-    *  @param account    - the account owner of the permission
+    *  @param account - the account owner of the permission
     *  @param permission - the name of the permission to check for authorization
     *  @param pubkeys_data - pointer to the start of the serialized vector of provided public keys
     *  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
@@ -59,10 +68,12 @@ extern "C" {
    /**
     *  Returns the creation time of an account
     *
-    *  @param account    - the account
+    *  @param account - the account
     *
     *  @return the creation time (in microseconds since Unix epoch) of the account
     */
    int64_t get_account_creation_time( capi_name account );
+
+   ///@}
 
 }

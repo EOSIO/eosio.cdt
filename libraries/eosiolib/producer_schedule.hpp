@@ -6,8 +6,12 @@
 namespace eosio {
 
    /**
-    *  Defines both the order, account name, and signing keys of the active set of producers.
-    */
+   *  @defgroup producer_schedule
+   *  @brief Defines both the order, account name, and signing keys of the active set of producers.
+   *  @ingroup types
+   *
+   *  @{
+   */
    struct producer_schedule {
       /**
        * Version number of the schedule. It is sequentially incrementing version number
