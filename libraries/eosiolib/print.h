@@ -148,11 +148,7 @@ extern "C" {
     *
     * Example:
     * @code
-<<<<<<< HEAD
     * printn("abcde"_n); // Output: abcde
-=======
-    * printn(name("abcde")); // Output: abcde
->>>>>>> 7341c1959d07db58234dd0712ef747fd661fa50b
     * @endcode
     */
    void printn( uint64_t name );
