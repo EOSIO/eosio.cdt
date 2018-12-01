@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-eosio::native::intrinsics __intrins;
-
 extern "C" {
    int main(int, char**);
    char* _mmap();
@@ -134,10 +132,12 @@ extern "C" {
 #pragma clang diagnostic pop
    
    bool is_feature_active( int64_t feature ) {
-      return __intrins.call<eosio::native::intrinsic_is_feature_active>(feature);
+      using namespace eosio::native;
+      //return intrinsics::get().call<intrinsics::is_feature_active>(feature);
    }
+
    void set_blockchain_parameters_packed( char* data, uint32_t datalen ){}
-   void get_blockchain_parameters_packed( char* data, uint32_t datalen ){}
+   uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen ){}
 
    size_t __builtin_wasm_current_memory() {
       return (size_t)___heap_ptr;
@@ -187,7 +187,8 @@ extern "C" {
       eosio_assert(false, "unsupported");
    }
    bool is_account( capi_name name ) {
-      eosio_assert(false, "unsupported");
+      using namespace eosio::native;
+      return intrinsics::get().call<intrinsics::is_account>(name);
    }
    void send_inline(char *serialized_action, size_t size) {
       eosio_assert(false, "unsupported");
