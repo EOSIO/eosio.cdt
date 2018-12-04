@@ -160,6 +160,7 @@ int main(int argc, const char **argv) {
 
    CommonOptionsParser opts( size, new_argv, cat, 0 );
    ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
+
    get_abigen_ref().set_contract_name(contract_name);
    get_abigen_ref().set_resource_dirs(resource_paths);
 
@@ -173,6 +174,7 @@ int main(int argc, const char **argv) {
 
    int tool_run = -1;
    try {
+      codegen::get().set_sources(ctool.getSourcePaths());
       tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
       for (auto fi : codegen_rewritten) {
          auto& RewriteBuf =
