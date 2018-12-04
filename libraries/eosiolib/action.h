@@ -25,7 +25,7 @@ extern "C" {
     *   struct action {
     *     capi_name  account_name; // the contract defining the primary code to execute for code/type
     *     capi_name  action_name; // the action to be taken
-    *     permission_level[] authorization; // the accounts and permission levels provided
+    *     permission_level authorization; // the accounts and permission levels provided
     *     bytes data; // opaque data processed by code
     *   };
     * ```

@@ -356,7 +356,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
          copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
-      if (false && fnative_opt) {
+      if (fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
          copts.emplace_back("-Xclang");
@@ -692,7 +692,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #else
    if (fnative_opt)
-      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative_crt -lnative_softfloat");
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
    else
       ldopts.emplace_back("-lc++ -lc -leosio");
 #endif

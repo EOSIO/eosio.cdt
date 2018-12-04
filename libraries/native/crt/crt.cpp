@@ -6,6 +6,20 @@
 #include <stdio.h>
 #include <setjmp.h>
 
+namespace eosio { namespace cdt {
+   enum output_stream_kind {
+      std_out,
+      std_err
+   };
+   struct output_stream {
+      char output[1024*2];
+      size_t index = 0;
+      std::string to_string()const { return std::string((const char*)output, index); }
+      void push(char c) { output[index++] = c; }
+      void flush() { index = 0; }
+   };
+}} //ns eosio::cdt
+
 extern "C" {
    int main(int, char**);
    char* _mmap();
@@ -19,14 +33,35 @@ extern "C" {
    char* ___heap;
    char* ___heap_ptr;
    void ___putc(char c);
-   void prints_l(const char* cstr, uint32_t len) {
-      for (int i=0; i < len; i++)
+   eosio::cdt::output_stream std_out;
+   eosio::cdt::output_stream std_err;
+
+   void _prints_l(const char* cstr, uint32_t len, uint8_t which) {
+      for (int i=0; i < len; i++) {
+         if (which == eosio::cdt::output_stream_kind::std_out)
+            std_out.push(cstr[i]);
+         else
+            std_err.push(cstr[i]);
          ___putc(cstr[i]);
+      }
+   }
+
+   void _prints(const char* cstr, uint8_t which) {
+      for (int i=0; cstr[i] != '\0'; i++) {
+         if (which == eosio::cdt::output_stream_kind::std_out)
+            std_out.push(cstr[i]);
+         else
+            std_err.push(cstr[i]);
+         ___putc(cstr[i]);
+      }
+   }
+
+   void prints_l(const char* cstr, uint32_t len) {
+      _prints_l(cstr, len, eosio::cdt::output_stream_kind::std_out);
    }
 
    void prints(const char* cstr) {
-      for (int i=0; cstr[i] != '\0'; i++)
-         ___putc(cstr[i]);
+      _prints(cstr, eosio::cdt::output_stream_kind::std_out);
    }
 
    void printi(int64_t value) {
@@ -76,7 +111,18 @@ extern "C" {
       }
       return (void*)_ptr;
    }
-
+   int memcmp(const void* _s1, const void* _s2, size_t len) {
+      uint8_t u1, u2;
+      char* s1 = (char*)_s1;
+      char* s2 = (char*)_s2;
+      for (; len--; s1++, s2++) {
+         u1 = *(uint8_t*)s1;
+         u2 = *(uint8_t*)s2;
+         if (u1 != u2)
+            return (u1-u2);
+      }
+      return 0;
+   }
    void* memcpy ( void* destination, const void* source, size_t num ) {
       char* dest = (char*)destination;
       char* src = (char*)source;
@@ -96,12 +142,12 @@ extern "C" {
          dest[i] = tmp_buf[i];
       return (void*)dest;
    }
-
+   
    void eosio_assert(uint32_t test, const char* msg) {
       if (test == 0) {
          //prints("asserted with message [");
-         prints(msg);
-         prints_l("\n", 1);
+         _prints(msg, eosio::cdt::output_stream_kind::std_err);
+         _prints_l("\n", 1, eosio::cdt::output_stream_kind::std_err);
          longjmp(___env, 1);
       }
    }
@@ -109,8 +155,8 @@ extern "C" {
    void eosio_assert_message(uint32_t test, const char* msg, uint32_t len) {
       if (test == 0) {
          //prints("asserted with message [");
-         prints_l(msg, len);
-         prints_l("\n", 1);
+         _prints_l(msg, len, eosio::cdt::output_stream_kind::std_err);
+         _prints_l("\n", 1, eosio::cdt::output_stream_kind::std_err);
          longjmp(___env, 1);
       }
    }
@@ -118,8 +164,10 @@ extern "C" {
    void eosio_assert_code(uint32_t test, uint64_t code) {
       if (test == 0) {
          //prints("asserted with code [");
-         printui(code);
-         prints_l("\n", 1);
+         char buff[32];
+         snprintf(buff, 32, "%llu\n", code);
+         _prints(buff, eosio::cdt::output_stream_kind::std_err);
+         _prints_l("\n", 1, eosio::cdt::output_stream_kind::std_err);
          longjmp(___env, 1);
       }
    }
@@ -131,14 +179,6 @@ extern "C" {
    }
 #pragma clang diagnostic pop
    
-   bool is_feature_active( int64_t feature ) {
-      using namespace eosio::native;
-      //return intrinsics::get().call<intrinsics::is_feature_active>(feature);
-   }
-
-   void set_blockchain_parameters_packed( char* data, uint32_t datalen ){}
-   uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen ){}
-
    size_t __builtin_wasm_current_memory() {
       return (size_t)___heap_ptr;
    }
@@ -165,46 +205,5 @@ extern "C" {
          //longjmp(___env,2);
       }
       return ret_val;
-   }
-
-   // action.h
-   uint32_t read_action_data( void* msg, uint32_t len ) {
-      eosio_assert(false, "unsupported");
-   }
-   uint32_t action_data_size() {
-      eosio_assert(false, "unsupported");
-   }
-   void require_recipient( capi_name name ) {
-      eosio_assert(false, "unsupported");
-   }
-   void require_auth( capi_name name ) {
-      eosio_assert(false, "unsupported");
-   }
-   bool has_auth( capi_name name ) {
-      eosio_assert(false, "unsupported");
-   }
-   void require_auth2( capi_name name, capi_name permission ) {
-      eosio_assert(false, "unsupported");
-   }
-   bool is_account( capi_name name ) {
-      using namespace eosio::native;
-      return intrinsics::get().call<intrinsics::is_account>(name);
-   }
-   void send_inline(char *serialized_action, size_t size) {
-      eosio_assert(false, "unsupported");
-   }
-   void send_context_free_inline(char *serialized_action, size_t size) {
-      eosio_assert(false, "unsupported");
-   }
-   uint64_t  publication_time() {
-      eosio_assert(false, "unsupported");
-   }
-   capi_name current_receiver() {
-      eosio_assert(false, "unsupported");
-   }
-   
-   // chain.h
-   uint32_t get_active_producers( capi_name* producers, uint32_t datalen ) {
-      eosio_assert(false, "unsupported");
    }
 }

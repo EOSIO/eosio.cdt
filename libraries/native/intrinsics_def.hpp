@@ -1,4 +1,5 @@
 #pragma once
+
 #include <eosiolib/action.h>
 #include <eosiolib/chain.h>
 #include <eosiolib/crypto.h>
@@ -154,7 +155,7 @@ intrinsic_macro(send_inline) \
 intrinsic_macro(send_context_free_inline) \
 intrinsic_macro(send_deferred) \
 intrinsic_macro(cancel_deferred) \
-intrinsic_macro(get_context_free_data) \
+intrinsic_macro(get_context_free_data) 
 
 #define CREATE_ENUM(name) \
    name,
