@@ -32,6 +32,7 @@ include(GNUInstallDirs)
 include(modules/ClangExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 include(modules/EosioCDTNative.cmake)
+#include(modules/CompilerRTExternalProject.txt)
 
 set(WASM_SDK_BUILD true)
 

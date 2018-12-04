@@ -325,6 +325,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-ffreestanding");
    } else {
       copts.emplace_back("-msoft-float");
+      copts.emplace_back("-mno-implicit-float");
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
@@ -337,10 +338,9 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back("-DLP64");
       }
    }
-   copts.emplace_back("-nostdlib");
+   //copts.emplace_back("-nostdlib");
 
    if (!fasm_opt) {
-      copts.emplace_back("-fno-builtin");
       copts.emplace_back("-fno-threadsafe-statics");
 #ifdef CPP_COMP
       copts.emplace_back("-fno-rtti");
@@ -356,7 +356,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
          copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
-      if (fnative_opt) {
+      if (false && fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
          copts.emplace_back("-Xclang");
@@ -561,10 +561,10 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-I"+inc_dir);
       agopts.emplace_back("-I"+inc_dir);
    }
-   if (O_opt.empty()) {
+   if (O_opt.empty() && !g_opt) {
       copts.emplace_back("-O3");
    }
-   else {
+   else if (!O_opt.empty() && !g_opt) {
       copts.emplace_back("-O"+O_opt);
    }
    if (S_opt) {

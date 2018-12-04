@@ -1,24 +1,14 @@
 #include <eosiolib/name.hpp>
 #include <eosiolib/action.hpp>
 #include "../intrinsics.hpp"
+#include "crt.hpp"
 #include <cstdint>
 #include <functional>
 #include <stdio.h>
 #include <setjmp.h>
 
-namespace eosio { namespace cdt {
-   enum output_stream_kind {
-      std_out,
-      std_err
-   };
-   struct output_stream {
-      char output[1024*2];
-      size_t index = 0;
-      std::string to_string()const { return std::string((const char*)output, index); }
-      void push(char c) { output[index++] = c; }
-      void flush() { index = 0; }
-   };
-}} //ns eosio::cdt
+eosio::cdt::output_stream std_out;
+eosio::cdt::output_stream std_err;
 
 extern "C" {
    int main(int, char**);
@@ -33,8 +23,6 @@ extern "C" {
    char* ___heap;
    char* ___heap_ptr;
    void ___putc(char c);
-   eosio::cdt::output_stream std_out;
-   eosio::cdt::output_stream std_err;
 
    void _prints_l(const char* cstr, uint32_t len, uint8_t which) {
       for (int i=0; i < len; i++) {

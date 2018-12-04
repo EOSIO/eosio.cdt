@@ -10,7 +10,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything")
 
 file(GLOB HEADERS "*.hpp"
                   "*.h")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../native DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 # Softfloat
 # generate compile command database for external tools
@@ -332,8 +331,7 @@ list( APPEND softfloat_sources ${softfloat_headers} )
 add_native_library ( native STATIC ${softfloat_sources} intrinsics.cpp crt/crt.cpp crt/${CRT_ASM} )
 target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" crt ${CMAKE_SOURCE_DIR})
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include DESTINATION ${BASE_BINARY_DIR}/include/native FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${BASE_BINARY_DIR}/include/native FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 add_dependencies(native native_eosio)
 

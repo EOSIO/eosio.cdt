@@ -13,6 +13,8 @@ add_native_library(native_crt
                    crt.cpp
                    softfloat.cpp)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../crt DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
 target_include_directories(native_crt PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../softfloat/source/include)
 add_dependencies(native_crt native_eosio)
 
