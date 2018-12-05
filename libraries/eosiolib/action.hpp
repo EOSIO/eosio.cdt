@@ -6,6 +6,7 @@
 #include <eosiolib/action.h>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/serialize.hpp>
+#include <eosiolib/memory.hpp>
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
