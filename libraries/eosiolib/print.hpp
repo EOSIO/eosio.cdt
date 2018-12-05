@@ -10,7 +10,12 @@
 #include <utility>
 #include <string>
 
-/**
+
+
+
+namespace eosio {
+
+  /**
    *  @defgroup console Console C++ API
    *  @brief Defines C++ wrapper to log/print text messages
    *
@@ -31,9 +36,6 @@
    *
    *  @{
    */
-
-
-namespace eosio {
 
    static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 

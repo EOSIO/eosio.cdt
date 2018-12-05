@@ -10,7 +10,7 @@ namespace eosio {
    */
 
    /**
-    * @struct EOSIO Public Key
+    * EOSIO Public Key
     */
    struct public_key {
       /**

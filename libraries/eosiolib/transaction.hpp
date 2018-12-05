@@ -104,5 +104,5 @@ namespace eosio {
       return eosio::unpack<eosio::action>( buffer, size );
    }
 
-   ///}@
+   ///@}
 }

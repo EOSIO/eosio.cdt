@@ -246,8 +246,6 @@ namespace eosio {
       action( std::vector<permission_level> auths, struct name a, struct name n, T&& value )
       :account(a), name(n), authorization(std::move(auths)), data(pack(std::forward<T>(value))) {}
 
-      EOSLIB_SERIALIZE( action, (account)(name)(authorization)(data) )
-
       /**
        * Send the action as inline action
        *
@@ -282,6 +280,8 @@ namespace eosio {
          return unpack<T>( &data[0], data.size() );
       }
 
+      EOSLIB_SERIALIZE( action, (account)(name)(authorization)(data) )
+      
    };
 
    ///@} actioncpp api
