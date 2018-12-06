@@ -4,5 +4,6 @@
  */
 #pragma once
 
+#include "types.h"
+
 #include <string.h>
-#include <eosiolib/types.h>

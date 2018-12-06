@@ -3,8 +3,8 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 
-#include <eosiolib/crypto.hpp>
-#include <eosiolib/datastream.hpp>
+#include "crypto.hpp"
+#include "datastream.hpp"
 
 namespace eosio {
 

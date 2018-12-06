@@ -4,8 +4,7 @@
  */
 #pragma once
 
-#include <eosiolib/memory.h>
-#include <eosiolib/print.hpp>
+#include "memory.h"
 
 #ifdef EOSIO_NATIVE
 extern "C" void* alloca(size_t);

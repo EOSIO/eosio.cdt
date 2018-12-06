@@ -4,6 +4,13 @@
  */
 #pragma once
 
+#include "action.h"
+#include "name.hpp"
+#include "serialize.hpp"
+#include "datastream.hpp"
+#include "db.h"
+#include "fixed_bytes.hpp"
+
 #include <vector>
 #include <tuple>
 #include <boost/hana.hpp>
@@ -14,14 +21,6 @@
 #include <limits>
 #include <algorithm>
 #include <memory>
-
-#include <eosiolib/action.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/serialize.hpp>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/db.h>
-#include <eosiolib/fixed_key.hpp>
-#include <eosiolib/fixed_bytes.hpp>
 
 namespace eosio {
 

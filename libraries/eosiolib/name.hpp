@@ -4,8 +4,9 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
-#include <eosiolib/serialize.hpp>
+#include "system.h"
+#include "serialize.hpp"
+
 #include <string>
 #include <string_view>
 

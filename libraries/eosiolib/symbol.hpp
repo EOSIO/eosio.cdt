@@ -4,10 +4,11 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
-#include <eosiolib/print.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/serialize.hpp>
+#include "system.h"
+#include "print.h"
+#include "name.hpp"
+#include "serialize.hpp"
+
 #include <tuple>
 #include <limits>
 #include <string_view>

@@ -32,7 +32,6 @@ include(GNUInstallDirs)
 include(modules/ClangExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 include(modules/EosioCDTNative.cmake)
-#include(modules/CompilerRTExternalProject.txt)
 
 set(WASM_SDK_BUILD true)
 
@@ -84,3 +83,6 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_
 configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/eosio.cdt.license COPYONLY)
+
+include(modules/TestsExternalProject.txt)
+add_subdirectory(tests)

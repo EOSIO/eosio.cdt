@@ -1,5 +1,6 @@
 #pragma once
- #include <eosiolib/print.hpp>
+#include "print.hpp"
+
  namespace eosio {
     /**
     *  @defgroup binary_extension Binary Extension

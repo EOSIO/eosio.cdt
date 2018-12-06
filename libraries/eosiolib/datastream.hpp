@@ -3,15 +3,16 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 #pragma once
-#include <eosiolib/system.h>
-#include <eosiolib/memory.h>
-#include <eosiolib/symbol.hpp>
-#include <eosiolib/fixed_key.hpp>
-#include <eosiolib/fixed_bytes.hpp>
-#include <eosiolib/crypto.hpp>
-#include <eosiolib/ignore.hpp>
-#include <eosiolib/varint.hpp>
-#include <eosiolib/binary_extension.hpp>
+#include "system.h"
+#include "memory.h"
+#include "symbol.hpp"
+#include "fixed_bytes.hpp"
+#include "fixed_key.hpp"
+#include "crypto.hpp"
+#include "ignore.hpp"
+#include "varint.hpp"
+#include "binary_extension.hpp"
+
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 #include <list>

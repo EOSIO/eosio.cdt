@@ -1,8 +1,3 @@
-include_directories(
-      @CDT_ROOT_DIR@/eosio.cdt/include/libcxx
-      @CDT_ROOT_DIR@/eosio.cdt/include/libc
-      @CDT_ROOT_DIR@/eosio.cdt/include/)
-
 if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "On")
     macro(add_contract CONTRACT_NAME TARGET)
         add_executable( ${TARGET} ${ARGN} )

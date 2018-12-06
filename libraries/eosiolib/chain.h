@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <eosiolib/types.h>
+#include "types.h"
 
 /**
  *  @defgroup chainapi Chain API
