@@ -70,6 +70,9 @@ public:
       // Add the specified account to set of accounts to be notified
       require_recipient( to );
 
+      // print for debugging
+      eosio::print("sha: ", msg_sha, "\n");
+
       // message_index is typedef of our multi_index over table address
       // message table is auto "created" if needed
       message_index messages( _self, _self.value ); // code, scope
