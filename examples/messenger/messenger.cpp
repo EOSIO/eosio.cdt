@@ -278,7 +278,7 @@ public:
       }
       {
          eosio::transaction out;
-         out.actions.emplace_back( eosio::permission_level{_self, "active"_n}, to, "spam"_n,
+         out.actions.emplace_back( eosio::permission_level{_self, "active"_n}, _self, "spam"_n,
                                    std::make_tuple( from, to, ++msg_id, msg_str, delay_sec ));
          out.delay_sec = delay_sec;
          out.send( msg_id, _self );
