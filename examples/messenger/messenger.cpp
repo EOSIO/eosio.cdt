@@ -28,7 +28,7 @@ public:
       checksum256 cs = eosio::sha256( msg_str.c_str(), msg_str.size() );
 
       // print for debugging
-      printhex(&cs, sizeof(cs));
+      eosio::print("sha: ", cs, "\n");
 
       // message_index is typedef of our multi_index over table address
       // message table is auto "created" if needed
@@ -53,8 +53,12 @@ public:
       } );
 
       // send msgnotify to 'to' account
-      eosio::action( eosio::permission_level{from, "active"_n},
+      eosio::action( eosio::permission_level{_self, "active"_n},
                      to, "msgnotify"_n, std::make_tuple( from, msg_id, cs) ).send();
+
+      // alternative if action_wrapper is used
+      // constructor takes two arguments (the code the contract is deployed on and the set of permissions)
+      messenger::msgnotify_action(to, {_self, "active"_n}).send(from, msg_id, cs);
    }
 
    [[eosio::action]]
@@ -89,7 +93,7 @@ public:
       } );
 
       // send msgnotify to 'to' account
-      eosio::action( eosio::permission_level{from, "active"_n},
+      eosio::action( eosio::permission_level{_self, "active"_n},
                      to, "msgnotify"_n, std::make_tuple( from, msg_id, msg_sha) ).send();
    }
 
@@ -109,7 +113,7 @@ public:
       // verify correct to
       if( itr->to != to ) {
          std::string err = "Message with id " + std::to_string(msg_id) + " is to: " +
-               eosio::name{itr->to}.to_string() + " not: " + eosio::name{to}.to_string();
+               itr->to.to_string() + " not: " + to.to_string();
          eosio_assert( false, err.c_str() );
       }
 
@@ -125,7 +129,7 @@ public:
       auto index = messages.get_index<"msgsha"_n>();
       auto itr = index.find( msg_sha );
       if( itr == index.end() ) { // verify already exist
-         printhex(&msg_sha, sizeof(msg_sha));
+         eosio::print("sha: ", msg_sha, "\n");
          eosio_assert( false, "Unable to find msg sha" );
       }
 
@@ -137,7 +141,7 @@ public:
       message_index messages( other, other.value ); // code, scope
 
       for (auto& msg : messages) {
-         eosio::print("from: ", eosio::name{msg.from}, ", to: ", eosio::name{msg.to}, "\n");
+         eosio::print("from: ", msg.from, ", to: ", msg.to, "\n");
       }
    }
 
@@ -169,7 +173,7 @@ public:
 
       auto itr = groups.find( group_name.value );
       if( itr == groups.end() ) {
-         std::string err = "group does not exist: " + eosio::name{group_name}.to_string();
+         std::string err = "group does not exist: " + group_name.to_string();
          eosio_assert( false, err.c_str() );
       }
 
@@ -186,7 +190,7 @@ public:
       checksum256 cs = eosio::sha256( msg_str.c_str(), msg_str.size() );
 
       // print for debugging
-      printhex(&cs, sizeof(cs));
+      eosio::print("sha: ", cs, "\n");
 
       // message_index is typedef of our multi_index over table address
       // message table is auto "created" if needed
@@ -215,11 +219,11 @@ public:
          for (auto& a : itr->accounts ) {
 
             // send msgnotify to 'to' account
-            eosio::action( eosio::permission_level{from, "active"_n},
+            eosio::action( eosio::permission_level{_self, "active"_n},
                            a, "msgnotify"_n, std::make_tuple( from, msg_id, cs) ).send();
          }
       } else {
-         std::string err = "group does not exist: " + eosio::name{group_name}.to_string();
+         std::string err = "group does not exist: " + group_name.to_string();
          eosio_assert( false, err.c_str() );
       }
    }
@@ -264,14 +268,14 @@ public:
 
       {
          eosio::transaction out;
-         out.actions.emplace_back( eosio::permission_level{from, "active"_n}, to, "sendmsg"_n,
+         out.actions.emplace_back( eosio::permission_level{_self, "active"_n}, to, "sendmsg"_n,
                                    std::make_tuple( from, to, ++msg_id, msg_str ));
          out.delay_sec = delay_sec;
          out.send( msg_id, _self );
       }
       {
          eosio::transaction out;
-         out.actions.emplace_back( eosio::permission_level{from, "active"_n}, to, "spam"_n,
+         out.actions.emplace_back( eosio::permission_level{_self, "active"_n}, to, "spam"_n,
                                    std::make_tuple( from, to, ++msg_id, msg_str, delay_sec ));
          out.delay_sec = delay_sec;
          out.send( msg_id, _self );
@@ -290,6 +294,8 @@ public:
       }
    }
 
+   using msgnotify_action = eosio::action_wrapper<"msgnotify"_n, &messenger::msgnotify>;
+
 private:
 
    struct [[eosio::table]] message {
@@ -301,10 +307,12 @@ private:
       uint64_t primary_key() const { return msg_id; }
 
       const checksum256& by_msg_sha() const { return msg_sha; }
+      uint64_t by_from() const { return from.value; }
    };
 
    typedef eosio::multi_index<"message"_n, message,
-         indexed_by<"msgsha"_n, const_mem_fun<message, const checksum256&, &message::by_msg_sha> >
+         indexed_by<"msgsha"_n, const_mem_fun<message, const checksum256&, &message::by_msg_sha>>,
+         indexed_by<"from"_n, const_mem_fun<message, uint64_t, &message::by_from>>
    > message_index;
 
 
