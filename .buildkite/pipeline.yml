@@ -1,5 +1,5 @@
 steps:
-    
+
  # - command: |
  #       echo "+++ :hammer: Building" && \
  #       echo 1 | ./build.sh && \
@@ -23,8 +23,11 @@ steps:
    artifact_paths: "build.tar.gz"
    label: ":ubuntu: 16.04 Build"
    agents:
-     queue: "automation-large-builder-fleet"
+     queue: "default"
    plugins:
+     ecr#v1.1.4:
+       login: true
+       account_ids: "436617320021"
      docker#v2.0.0:
        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu16"
        workdir: /data/job
