@@ -10,6 +10,9 @@ steps:
     agents:
       queue: "default"
     plugins:
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
       docker#v2.0.0:
         image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
         workdir: /data/job
