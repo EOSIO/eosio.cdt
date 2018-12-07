@@ -1,37 +1,64 @@
 steps:
 
+  - command: |
+      echo "+++ :hammer: Building" && \
+      echo 1 | ./build.sh && \
+      echo "--- Compressing build directory :compression:" && \
+      tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    label: ":centos: Build"
+    agents:
+      queue: "default"
+    plugins:
+      docker#v2.0.0:
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
+        workdir: /data/job
+        timeout: 120
+
+  - command: |
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :package: Starting package build" && \
+      yum install -y rpm-build && \
+      mkdir -p /root/rpmbuild/BUILD && \
+      mkdir -p /root/rpmbuild/BUILDROOT && \
+      mkdir -p /root/rpmbuild/RPMS && \
+      mkdir -p /root/rpmbuild/SOURCES && \
+      mkdir -p /root/rpmbuild/SPECS && \
+      mkdir -p /root/rpmbuild/SRPMS && \
+      cd /data/job/build/packages && bash generate_package.sh rpm
+    label: ":centos: Package builder"
+    agents:
+      queue: "default"
+    artifact_paths:
+      - "build/packages/x86_64/*.rpm"
+    plugins:
+      docker#v2.0.0:
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
+        workdir: /data/job
+    env:
+      OS: "centos"
+      PKGTYPE: "rpm"
+    timeout: 15
+
  # - command: |
  #       echo "+++ :hammer: Building" && \
  #       echo 1 | ./build.sh && \
  #       echo "--- Compressing build directory :compression:" && \
  #       tar -pczf build.tar.gz build/
  #   artifact_paths: "build.tar.gz"
- #   label: ":centos: Build"
+ #   label: ":ubuntu: 16.04 Build"
  #   agents:
- #     queue: "automation-large-builder-fleet"
+ #     queue: "default"
  #   plugins:
+ #     ecr#v1.1.4:
+ #       login: true
+ #       account_ids: "436617320021"
  #     docker#v2.0.0:
- #       image: "eosio/ci:centos-v2"
+ #       image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu16"
  #       workdir: /data/job
  #   timeout: 120
-
- - command: |
-       echo "+++ :hammer: Building" && \
-       echo 1 | ./build.sh && \
-       echo "--- Compressing build directory :compression:" && \
-       tar -pczf build.tar.gz build/
-   artifact_paths: "build.tar.gz"
-   label: ":ubuntu: 16.04 Build"
-   agents:
-     queue: "default"
-   plugins:
-     ecr#v1.1.4:
-       login: true
-       account_ids: "436617320021"
-     docker#v2.0.0:
-       image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu16"
-       workdir: /data/job
-   timeout: 120
 
 #  - command: |
 #      echo "+++ :hammer: Building" && \
@@ -179,32 +206,6 @@ steps:
 #      PKGTYPE: "rpm"
 #    timeout: 15
 
-#  - command: |
-#        echo "--- :arrow_down: Downloading build directory" && \
-#        buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
-#        tar -zxf build.tar.gz && \
-#        echo "+++ :package: Starting package build" && \
-#        yum install -y rpm-build && \
-#        mkdir -p /root/rpmbuild/BUILD && \
-#        mkdir -p /root/rpmbuild/BUILDROOT && \
-#        mkdir -p /root/rpmbuild/RPMS && \
-#       mkdir -p /root/rpmbuild/SOURCES && \
-#       mkdir -p /root/rpmbuild/SPECS && \
-#       mkdir -p /root/rpmbuild/SRPMS && \
-#       cd /data/job/build/packages && bash generate_package.sh rpm
-#   label: ":centos: Package builder"
-#   agents:
-#     queue: "automation-large-builder-fleet"
-#   artifact_paths:
-#     - "build/packages/x86_64/*.rpm"
-#   plugins:
-#     docker#v1.4.0:
-#       image: "eosio/ci:centos"
-#       workdir: /data/job
-#   env:
-#     OS: "centos"
-#     PKGTYPE: "rpm"
-#   timeout: 15
 
 # - wait
 
