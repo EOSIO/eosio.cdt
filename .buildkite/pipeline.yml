@@ -8,7 +8,7 @@ steps:
     artifact_paths: "build.tar.gz"
     label: ":centos: Build"
     agents:
-      queue: "default"
+      queue: "automation-large-builder-fleet"
     plugins:
       ecr#v1.1.4:
         login: false
