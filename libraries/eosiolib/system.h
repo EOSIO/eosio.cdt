@@ -5,8 +5,10 @@
 #pragma once
 #include <eosiolib/types.h>
 
+#ifdef __cplusplus
 extern "C" {
-
+#endif
+   
    /**
     * @defgroup systemapi System API
     * @ingroup contractdev
@@ -68,7 +70,10 @@ extern "C" {
     *  eosio_exit(3);
     *  @endcode
     */
-   [[noreturn]] void  eosio_exit( int32_t code );
+#ifdef __cplusplus
+   [[noreturn]]
+#endif
+   void  eosio_exit( int32_t code );
 
 
    /**
@@ -88,5 +93,7 @@ extern "C" {
    }
    ///@ } systemcapi
 
-
+#ifdef __cplusplus
 }
+#endif
+
