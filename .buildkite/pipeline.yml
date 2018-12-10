@@ -14,7 +14,7 @@ steps:
         login: true
         account_ids: "436617320021"
         no-include-email: true
-      docker#v2.0.0:
+      docker#v2.1.0:
         debug: true
         image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
         workdir: /data/job
