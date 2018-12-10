@@ -1,5 +1,5 @@
 #include <eosiolib/action.hpp>
-#include <native/intrinsics_def.hpp>
+#include "intrinsics_def.hpp"
 
 #pragma once
 

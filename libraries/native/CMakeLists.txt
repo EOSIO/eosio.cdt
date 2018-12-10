@@ -328,11 +328,11 @@ file ( GLOB softfloat_headers "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/incl
                               "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE/specialize.h" )
 list( APPEND softfloat_sources ${softfloat_headers} )
 
-add_native_library ( native STATIC ${softfloat_sources} intrinsics.cpp crt/crt.cpp crt/${CRT_ASM} )
-target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" crt ${CMAKE_SOURCE_DIR})
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+add_native_library ( native STATIC ${softfloat_sources} intrinsics.cpp crt.cpp ${CRT_ASM} )
+target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR})
 
 add_dependencies(native native_eosio)
 
 add_custom_command( TARGET native POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native> ${BASE_BINARY_DIR}/lib )
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${BASE_BINARY_DIR}/include/eosio FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "softfloat" EXCLUDE)

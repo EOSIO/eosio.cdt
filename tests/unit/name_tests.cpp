@@ -1,5 +1,5 @@
 #include <eosiolib/eosio.hpp>
-#include <native/tester.hpp>
+#include <eosio/native/tester.hpp>
 
 using namespace eosio::native;
 

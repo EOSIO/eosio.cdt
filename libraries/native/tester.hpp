@@ -1,7 +1,7 @@
 #pragma once
 #include <eosiolib/eosio.hpp>
-#include <native/crt/crt.hpp>
-#include <native/intrinsics.hpp>
+#include "crt.hpp"
+#include "intrinsics.hpp"
 #include <setjmp.h>
 #include <vector>
 
