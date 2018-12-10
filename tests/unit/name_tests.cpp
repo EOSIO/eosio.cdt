@@ -9,16 +9,15 @@ EOSIO_TEST_BEGIN(name_test)
    eosio_assert( eosio::name{0}.value == 0, "eosio::name != 0" );
    eosio_assert( eosio::name{"aa11"}.value == "aa11"_n.value, "eosio::name != aa11" );
    eosio_assert( eosio::name{"z11"}.value == "z11"_n.value, "eosio::name != z11" );
-
-   expect_assert("bb != aa", [](){
-         eosio_assert( eosio::name{"bb"}.value == "aa"_n.value, "bb != aa" );
-         return 0;
-      }
-   );
-   expect_assert("character is not in allowed character set for names",
-         []() {
+   
+   auto testa = []() {
+      eosio_assert( eosio::name{"bb"}.value == "aa"_n.value, "bb != aa" );
+   };
+   REQUIRE_ASSERT("bb != aa", testa);
+   REQUIRE_ASSERT("character is not in allowed character set for names",
+         ([]() {
             eosio::name{"!"}.value;
-         });
+         }));
    silence_output(false);
 EOSIO_TEST_END
 
@@ -30,11 +29,15 @@ EOSIO_TEST_BEGIN(is_account_test)
             return true;
          return false;
          });
-   eosio_assert(is_account(3), "3 should be an account");
-   eosio_assert(is_account(4), "4 should be an account");
-   expect_assert("5 is not an account", []() {
-      eosio_assert(is_account(5), "5 is not an account");
-      });
+
+   CHECK_ASSERT("is not an account", ([]() {
+      eosio_assert(is_account(5), "is not an account");
+      }));
+   CHECK_EQUAL(is_account(3), true);
+   CHECK_EQUAL(is_account(4), true);
+   CHECK_EQUAL(is_account(6), true);
+   REQUIRE_EQUAL(is_account(7), true);
+
 EOSIO_TEST_END
 
 int main(int argc, char** argv) {

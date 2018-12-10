@@ -13,7 +13,7 @@ namespace eosio { namespace cdt {
       std::string to_string()const { return std::string((const char*)output, index); }
       const char* get()const { return output; }
       void push(char c) { output[index++] = c; }
-      void flush() { index = 0; }
+      void clear() { index = 0; }
    };
 }} //ns eosio::cdt
 

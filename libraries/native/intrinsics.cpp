@@ -777,50 +777,47 @@ extern "C" {
    }
 
    void prints_l(const char* cstr, uint32_t len) {
-      _prints_l(cstr, len, eosio::cdt::output_stream_kind::std_out);
+      return intrinsics::get().call<intrinsics::prints_l>(cstr, len);
    }
 
    void prints(const char* cstr) {
-      _prints(cstr, eosio::cdt::output_stream_kind::std_out);
+      return intrinsics::get().call<intrinsics::prints>(cstr);
    }
 
    void printi(int64_t value) {
-      printf("%lli\n", value);
+      return intrinsics::get().call<intrinsics::printi>(value);
    }
 
    void printui(uint64_t value) {
-      printf("%llu\n", value);
+      return intrinsics::get().call<intrinsics::printui>(value);
    }
    
    void printi128(const int128_t* value) {
-      int* tmp = (int*)value;
-      printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+      return intrinsics::get().call<intrinsics::printi128>(value);
    }
 
     void printui128(const uint128_t* value) {
-      int* tmp = (int*)value;
-      printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+      return intrinsics::get().call<intrinsics::printui128>(value);
    }
   
    void printsf(float value) {
-      printf("%f\n", value);
+      return intrinsics::get().call<intrinsics::printsf>(value);
    }
 
    void printdf(double value) {
-      printf("%f\n", value);
+      return intrinsics::get().call<intrinsics::printdf>(value);
    }
 
    void printqf(const long double* value) {
-      int* tmp = (int*)value;
-      printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+      return intrinsics::get().call<intrinsics::printqf>(value);
    }
    
    void printn(uint64_t nm) {
-      std::string s = eosio::name(nm).to_string();
-      prints_l(s.c_str(), s.length());
+      return intrinsics::get().call<intrinsics::printn>(nm);
    }
    
    void printhex(const void* data, uint32_t len) {
+      return intrinsics::get().call<intrinsics::printhex>(data, len);
    }
 
    void* memset ( void* ptr, int value, size_t num ) {
