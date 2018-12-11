@@ -6,9 +6,9 @@ list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt)
 if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "Off")
     set(EOSIO_WASM_OLD_BEHAVIOR "On")
     include(EosioWasmToolchain)
-else()
-    include(EosioCDTMacros)
 endif()
+
+include(EosioCDTMacros)
   
 
 function(EXTRACT_MAJOR_MINOR_FROM_VERSION version success major minor)
