@@ -13,6 +13,21 @@
 	DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 	DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
+	CMAKE_VERSION_MAJOR=3
+	CMAKE_VERSION_MINOR=10
+	CMAKE_VERSION_PATCH=2
+	CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
+	MONGODB_VERSION=3.6.3
+	MONGO_C_DRIVER_VERSION=1.9.3
+	MONGO_CXX_DRIVER_VERSION=3.2
+	SRC_LOCATION=/usr/local/src
+	BOOST_VERSION_MAJOR=1
+	BOOST_VERSION_MINOR=66
+	BOOST_VERSION_PATCH=0
+	BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
+	LLVM_CLANG_VERSION=release_40
+	TINI_VERSION=0.18.0
+
 	printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
 	printf "\\tOS Version: %s\\n" "${OS_VER}"
 	printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
@@ -121,9 +136,10 @@
 
 
 	printf "\\n\\tChecking YUM for installed dependencies...\\n\\n"
-	DEP_ARRAY=( git autoconf automake bzip2 libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
-	libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
-	python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64)
+	DEP_ARRAY=( git autoconf automake libtool make bzip2 \
+                bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
+                ocaml.x86_64 doxygen libicu-devel.x86_64 python-devel.x86_64 \
+                gettext-devel.x86_64 file gcc-c++)
 	COUNT=1
 	DISPLAY=""
 	DEP=""
@@ -164,126 +180,18 @@
 		printf "\\n\\tNo required YUM dependencies to install.\\n"
 	fi
 
-	if [ "${ENABLE_COVERAGE_TESTING}" = true ]; then
-
-		printf "\\n\\tChecking perl installation...\\n"
-		if [ -z "$(command -v perl 2>/dev/null)" ]; then
-			printf "\\n\\tInstalling perl.\\n"
-			if ! sudo "${YUM}" -y install perl
-			then
-				printf "\\n\\tUnable to install perl at this time.\\n"
-				printf "\\n\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-		else
-			printf "\\tPerl installation found at %s.\\n" "${perl_bin}"
-		fi
-		
-		printf "\\n\\tChecking LCOV installation...\\n"
-		if [ -z  "$(command -v lcov 2>/dev/null)" ]; then
-			printf "\\n\\tLCOV installation not found.\\n"
-			printf "\\tInstalling LCOV.\\n"
-			if ! cd "${TEMP_DIR}"
-			then
-				printf "\\tUnable to enter directory %s.\\n" "${TEMP_DIR}"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! git clone https://github.com/linux-test-project/lcov.git
-			then
-				printf "\\tUnable to clone LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! cd "${TEMP_DIR}/lcov"
-			then
-				printf "\\tUnable to enter directory %s/lcov.\\n" "${TEMP_DIR}"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! sudo make install
-			then
-				printf "\\tUnable to install LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! cd "${CWD}"
-			then
-				printf "\\tUnable to enter directory %s.\\n" "${CWD}"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! rm -rf "${TEMP_DIR}/lcov"
-			then
-				printf "\\tUnable to remove directory %s/lcov.\\n" "${TEMP_DIR}"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			printf "\\n\\tSuccessfully installed LCOV.\\n"
-		else
-			printf "\\tLCOV installation found @ %s.\\n" "${lcov}"
-		fi
-	fi
 
 	printf "\\n\\tChecking CMAKE installation...\\n"
     if [ -z "$(command -v cmake 2>/dev/null)" ]; then
 		printf "\\tInstalling CMAKE...\\n"
-		if [ ! -d "${HOME}/opt" ]; then
-			if ! mkdir "${HOME}/opt"
-			then
-				printf "\\tUnable to create directory %s/opt.\\n" "${HOME}"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-		fi
-		if ! cd "${HOME}/opt"
-		then
-			printf "\\tUnable to enter directory %s/opt.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		STATUS=$(curl -LO -w '%{http_code}' --connect-timeout 30 https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz)
-		if [ "${STATUS}" -ne 200 ]; then
-			printf "\\tUnable to download CMAKE at this time.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! tar xf "${HOME}/opt/cmake-3.10.2.tar.gz"
-		then
-			printf "\\tUnable to unarchive %s/opt/cmake-3.10.2.tar.gz.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! rm -f "${HOME}/opt/cmake-3.10.2.tar.gz"
-		then
-			printf "\\tUnable to remove %s/opt/cmake-3.10.2.tar.gz.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! ln -s "${HOME}/opt/cmake-3.10.2/" "${HOME}/opt/cmake"
-		then
-			printf "\\tUnable to symlink %s/opt/cmake-3.10.2 to %s/opt/cmake-3.10.2/cmake.\\n" "${HOME}" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! cd "${HOME}/opt/cmake"
-		then
-			printf "\\tUnable to enter directory %s/opt/cmake.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! ./bootstrap
-		then
-			printf "\\tError running bootstrap for CMAKE.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! make -j"${JOBS}"
-		then
-			printf "\\tCompiling CMAKE has exited with the above error.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
+		curl -LO https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}.tar.gz \
+    	&& tar xf cmake-${CMAKE_VERSION}.tar.gz \
+    	&& cd cmake-${CMAKE_VERSION} \
+    	&& ./bootstrap \
+    	&& make -j$( nproc ) \
+    	&& make install \
+    	&& cd .. \
+    	&& rm -f cmake-${CMAKE_VERSION}.tar.gz
 		printf "\\tCMAKE successfully installed @ %s.\\n\\n" "${CMAKE}"
 	else
 		printf "\\tCMAKE found @ %s.\\n" "${CMAKE}"
