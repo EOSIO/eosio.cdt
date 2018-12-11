@@ -37,14 +37,6 @@ struct project {
    bool        bare;
 
    project( const std::string& pn, const std::string& p, bool b ) : project_name(pn), path(p), bare(b) {
-      if (path.empty())
-         path = "./";
-         path += "/";
-
-      llvm::SmallString<128> rp;
-      llvm::sys::fs::real_path(path, rp, false);
-      path = rp.str();
-      path += "/"+pn;
       llvm::sys::fs::create_directory(path);
       if (!bare) {
          llvm::sys::fs::create_directory(path+"/src");
@@ -84,7 +76,7 @@ struct project {
    const std::string cmake_extern = "include(ExternalProject)\n"
                                     "# if no cdt root is given use default path\n"
                                     "if(EOSIO_CDT_ROOT STREQUAL \"\" OR NOT EOSIO_CDT_ROOT)\n"
-                                    "   set(EOSIO_CDT_ROOT %/eosio.cdt)\n"
+                                    "   find_package(eosio.cdt)\n"
                                     "endif()\n\n"
                                     "ExternalProject_Add(\n"
                                     "   @_project\n"
@@ -214,7 +206,19 @@ int main(int argc, const char **argv) {
 
    cl::ParseCommandLineOptions(argc, argv, std::string("eosio-proj"));
    try {
-      project proj(project_name, output_dir, bare_opt);
+      llvm::SmallString<128> rp;
+      std::string path = output_dir;
+      if (path.empty())
+         path = ".";
+      llvm::sys::fs::real_path(path, rp, false);
+      path = rp.str();
+      if (path.empty()) {
+         llvm::outs() << output_dir+" path not found\n";
+         return -1;
+      }
+      path += "/"+project_name;
+
+      project proj(project_name, path, bare_opt);
       proj.write_hpp();
       proj.write_cpp();
       proj.write_cmake();
