@@ -14,7 +14,7 @@ steps:
         login: true
         account_ids: "436617320021"
         no-include-email: true
-        region: us-west-2
+        region: "us-west-2"
       - docker#v2.1.0:
         debug: true
         image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
