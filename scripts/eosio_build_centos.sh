@@ -41,25 +41,22 @@
 	fi
 
 	printf "\\n\\tChecking Yum installation\\n"
-	if ! YUM=$( command -v yum 2>/dev/null )
-	then
+	if ! YUM=$( command -v yum 2>/dev/null ); then
 		printf "\\n\\tYum must be installed to compile EOS.IO.\\n"
 		printf "\\tExiting now.\\n\\n"
 		exit 1;
-	fi
-	
-	printf "\\tYum installation found at %s.\\n" "${YUM}"
-	printf "\\n\\tChecking installation of Centos Software Collections Repository.\\n"
-	
-	SCL=$( command -v scl 2>/dev/null )
-	if [ -z "${SCL}" ]; then
+	fi printf "\\tYum installation found at %s.\\n" "${YUM}"
+
+
+	printf "\\n\\tChecking installation of Centos Software Collections Repository...\\n"
+	if [ -z "$(command -v scl 2>/dev/null)" ]; then
 		printf "\\n\\tThe Centos Software Collections Repository, devtoolset-7 and Python3 are required to install EOSIO.\\n"
 		printf "\\tDo you wish to install and enable this repository, devtoolset-7 and Python3 packages?\\n"
 		select yn in "Yes" "No"; do
 			case $yn in
 				[Yy]* ) 
 					printf "\\n\\n\\tInstalling SCL.\\n\\n"
-					if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl 2>/dev/null
+					if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl
 					then
 						printf "\\n\\tCentos Software Collections Repository installation failed.\\n"
 						printf "\\n\\tExiting now.\\n\\n"
@@ -68,7 +65,7 @@
 						printf "\\n\\tCentos Software Collections Repository installed successfully.\\n"
 					fi
 					printf "\\n\\n\\tInstalling devtoolset-7.\\n\\n"
-					if ! sudo "${YUM}" install -y devtoolset-7 2>/dev/null
+					if ! sudo "${YUM}" install -y devtoolset-7
 					then
 						printf "\\n\\tCentos devtoolset-7 installation failed.\\n"
 						printf "\\n\\tExiting now.\\n\\n"
@@ -77,7 +74,7 @@
 						printf "\\n\\tCentos devtoolset installed successfully.\\n"
 					fi
 					printf "\\n\\n\\tInstalling Python3.\\n\\n"
-					if ! sudo "${YUM}" install -y python33.x86_64 2>/dev/null
+					if ! sudo "${YUM}" install -y python33.x86_64
 					then
 						printf "\\n\\tCentos Python3 installation failed.\\n"
 						printf "\\n\\tExiting now.\\n\\n"
@@ -93,49 +90,44 @@
 	else 
 		printf "\\tCentos Software Collections Repository found.\\n\\n"
 	fi
-
-	printf "\\n\\tEnabling Centos devtoolset-7.\\n"
-# shellcheck disable=SC1091
-	if ! source "/opt/rh/devtoolset-7/enable" 2>/dev/null
+	printf "\\n\\tEnabling Centos devtoolset-7...\\n"
+	# shellcheck disable=SC1091
+	if ! source "/opt/rh/devtoolset-7/enable"
 	then
 		printf "\\n\\tUnable to enable Centos devtoolset-7 at this time.\\n"
 		printf "\\n\\tExiting now.\\n\\n"
 		exit 1;
-	fi
-	printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
+	fi printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
 
-# 	printf "\\n\\tEnabling Centos python3 installation.\\n"
-# shellcheck disable=SC1091
-# 	if ! source /opt/rh/python33/enable
-# 	then
-# 		printf "\\n\\tUnable to enable Centos python3 at this time.\\n"
-# 		printf "\\n\\tExiting now.\\n\\n"
-# 		exit 1;
-# 	fi
-# 	printf "\\tCentos python3 successfully enabled.\\n"
+
+	# 	printf "\\n\\tEnabling Centos python3 installation.\\n"
+	# shellcheck disable=SC1091
+	# 	if ! source /opt/rh/python33/enable
+	# 	then
+	# 		printf "\\n\\tUnable to enable Centos python3 at this time.\\n"
+	# 		printf "\\n\\tExiting now.\\n\\n"
+	# 		exit 1;
+	# 	fi
+	# 	printf "\\tCentos python3 successfully enabled.\\n"
 	
-	printf "\\n\\tUpdating YUM repository.\\n\\n"
 
-	if ! sudo "${YUM}" -y update 2>/dev/null
+	printf "\\n\\tUpdating YUM repository...\\n\\n"
+	if ! sudo "${YUM}" -y update
 	then
 		printf "\\n\\tYUM update failed.\\n"
 		printf "\\n\\tExiting now.\\n\\n"
 		exit 1;
-	fi
+	fi printf "\\n\\tYUM repository successfully updated.\\n\\n"
 
-	printf "\\n\\tYUM repository successfully updated.\\n\\n"
 
+	printf "\\n\\tChecking YUM for installed dependencies...\\n\\n"
 	DEP_ARRAY=( git autoconf automake bzip2 libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
 	libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
 	python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64)
 	COUNT=1
 	DISPLAY=""
 	DEP=""
-
-	printf "\\n\\tChecking YUM for installed dependencies.\\n\\n"
-
-	for (( i=0; i<${#DEP_ARRAY[@]}; i++ ));
-	do
+	for (( i=0; i<${#DEP_ARRAY[@]}; i++ )); do
 		pkg=$( "${YUM}" info "${DEP_ARRAY[$i]}" 2>/dev/null | grep Repo | tr -s ' ' | cut -d: -f2 | sed 's/ //g' )
 		if [ "$pkg" != "installed" ]; then
 			DEP=$DEP" ${DEP_ARRAY[$i]} "
@@ -146,8 +138,7 @@
 			printf "\\tPackage %s found.\\n" "${DEP_ARRAY[$i]}"
 			continue
 		fi
-	done		
-
+	done
 	if [ "${COUNT}" -gt 1 ]; then
 		printf "\\n\\tThe following dependencies are required to install EOSIO.\\n"
 		printf "\\n\\t${DISPLAY}\\n\\n"
@@ -174,9 +165,9 @@
 	fi
 
 	if [ "${ENABLE_COVERAGE_TESTING}" = true ]; then
-		printf "\\n\\tChecking perl installation.\\n"
-		perl_bin=$( command -v perl 2>/dev/null )
-		if [ -z "${perl_bin}" ]; then
+
+		printf "\\n\\tChecking perl installation...\\n"
+		if [ -z "$(command -v perl 2>/dev/null)" ]; then
 			printf "\\n\\tInstalling perl.\\n"
 			if ! sudo "${YUM}" -y install perl
 			then
@@ -187,9 +178,9 @@
 		else
 			printf "\\tPerl installation found at %s.\\n" "${perl_bin}"
 		fi
-		printf "\\n\\tChecking LCOV installation.\\n"
-		lcov=$( command -v lcov 2>/dev/null )
-		if [ -z  "${lcov}" ]; then
+		
+		printf "\\n\\tChecking LCOV installation...\\n"
+		if [ -z  "$(command -v lcov 2>/dev/null)" ]; then
 			printf "\\n\\tLCOV installation not found.\\n"
 			printf "\\tInstalling LCOV.\\n"
 			if ! cd "${TEMP_DIR}"
@@ -234,9 +225,9 @@
 		fi
 	fi
 
-	printf "\\n\\tChecking CMAKE installation.\\n"
-    if [ ! -e "${CMAKE}" ]; then
-		printf "\\tInstalling CMAKE\\n"
+	printf "\\n\\tChecking CMAKE installation...\\n"
+    if [ -z "$(command -v cmake 2>/dev/null)" ]; then
+		printf "\\tInstalling CMAKE...\\n"
 		if [ ! -d "${HOME}/opt" ]; then
 			if ! mkdir "${HOME}/opt"
 			then

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 printf "\t=========== Building eosio.cdt ===========\n\n"
 
