@@ -15,3 +15,13 @@
 #define CONTRACT class [[eosio::contract]]
 #define ACTION   [[eosio::action]] void
 #define TABLE struct [[eosio::table]]
+
+/**
+ * @defgroup c_api C API
+ * @brief C++ API for writing ESIO Smart Contracts
+ */
+
+ /**
+  * @defgroup cpp_api C++ API
+  * @brief C++ API for writing ESIO Smart Contracts
+  */

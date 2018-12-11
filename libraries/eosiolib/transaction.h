@@ -7,12 +7,11 @@
 
 extern "C" {
    /**
-    * @defgroup transactionapi Transaction API
-    * @ingroup contractdev
-    * @brief Defines API for sending transactions and inline actions
+    * @addtogroup transaction_c Transaction API
+    * @ingroup c_api
+    * @brief Defines C API for sending transactions and inline actions
     *
-    *
-    * Deferred transactions will not be processed until a future block.  They
+    * @details Deferred transactions will not be processed until a future block.  They
     * can therefore have no effect on the success of failure of their parent
     * transaction so long as they appear well formed.  If any other condition
     * causes the parent transaction to be marked as failing, then the deferred
@@ -33,20 +32,12 @@ extern "C" {
     * Inline actions and Deferred transactions must adhere to the permissions
     * available to the parent transaction or, in the future, delegated to the
     * contract account for future use.
-    */
-
-   /**
-    * @defgroup transactioncapi Transaction C API
-    * @ingroup transactionapi
-    * @brief Defines API for sending transactions
-    *
     * @{
     */
 
     /**
      *  Sends a deferred transaction.
      *
-     *  @brief Sends a deferred transaction.
      *  @param sender_id - ID of sender
      *  @param payer - Account paying for RAM
      *  @param serialized_transaction - Pointer of serialized transaction to be deferred
@@ -154,5 +145,5 @@ extern "C" {
     */
    int get_context_free_data( uint32_t index, char* buff, size_t size );
 
-   ///@ } transactioncapi
+   ///}@
 }

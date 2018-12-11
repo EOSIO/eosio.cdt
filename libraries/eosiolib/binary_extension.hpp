@@ -2,8 +2,10 @@
  #include <eosiolib/print.hpp>
  namespace eosio {
     /**
+    *  Container to hold a binary payload for an extension
+    *
     *  @defgroup binary_extension Binary Extension
-    *  @brief container to hold a binary payload for an extension
+    *  @ingroup cpp_api
     *  @ingroup types
     *  @{
     */
