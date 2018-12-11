@@ -15,6 +15,21 @@
 	DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 	DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
+	CMAKE_VERSION_MAJOR=3
+	CMAKE_VERSION_MINOR=10
+	CMAKE_VERSION_PATCH=2
+	CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
+	MONGODB_VERSION=3.6.3
+	MONGO_C_DRIVER_VERSION=1.9.3
+	MONGO_CXX_DRIVER_VERSION=3.2
+	SRC_LOCATION=/usr/local/src
+	BOOST_VERSION_MAJOR=1
+	BOOST_VERSION_MINOR=66
+	BOOST_VERSION_PATCH=0
+	BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
+	LLVM_CLANG_VERSION=release_40
+	TINI_VERSION=0.18.0
+
 	printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
 	printf "\\tOS Version: %s\\n" "${OS_VER}"
 	printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
@@ -53,9 +68,9 @@
 		exit 1
 	fi
 
-	DEP_ARRAY=(clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
-	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
-    autoconf libtool curl zlib1g-dev doxygen graphviz)
+	DEP_ARRAY=( git python3 python3-dev clang-4.0 lldb-4.0 libclang-4.0-dev cmake make libbz2-dev \
+				libssl-dev libgmp3-dev autotools-dev build-essential libbz2-dev libicu-dev \
+				python-dev autoconf libtool curl mongodb doxygen graphviz libsoci-dev )
 	COUNT=1
 	DISPLAY=""
 	DEP=""

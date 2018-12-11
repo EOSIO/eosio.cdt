@@ -60,7 +60,8 @@
 		printf "\\n\\tYum must be installed to compile EOS.IO.\\n"
 		printf "\\tExiting now.\\n\\n"
 		exit 1;
-	fi printf "\\tYum installation found at %s.\\n" "${YUM}"
+	fi 
+	printf "\\tYum installation found at %s.\\n" "${YUM}"
 
 
 	printf "\\n\\tChecking installation of Centos Software Collections Repository...\\n"
@@ -112,7 +113,8 @@
 		printf "\\n\\tUnable to enable Centos devtoolset-7 at this time.\\n"
 		printf "\\n\\tExiting now.\\n\\n"
 		exit 1;
-	fi printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
+	fi 
+	printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
 
 
 	# 	printf "\\n\\tEnabling Centos python3 installation.\\n"
@@ -132,7 +134,8 @@
 		printf "\\n\\tYUM update failed.\\n"
 		printf "\\n\\tExiting now.\\n\\n"
 		exit 1;
-	fi printf "\\n\\tYUM repository successfully updated.\\n\\n"
+	fi 
+	printf "\\n\\tYUM repository successfully updated.\\n\\n"
 
 
 	printf "\\n\\tChecking YUM for installed dependencies...\\n\\n"
