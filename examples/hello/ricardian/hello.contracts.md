@@ -1,7 +1,6 @@
-<h1 class="contract">
-   hi
-</h1>
-### Parameters
+<h1 class="contract"> hi </h1>
+
+Stub for hi action's ricardian contractrameters
 Input parameters:
 
 * `user` (string to include in the output)
