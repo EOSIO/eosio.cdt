@@ -3,57 +3,68 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 #pragma once
-#include <eosiolib/system.h>
+#include "system.h"
 
 extern "C" {
    /**
-    *  @addtogroup action
-    *  @ingroup c_api
-    *  @brief Defines API for querying action and sending action
+    * @defgroup actionapi Action API
+    * @ingroup contractdev
+    * @brief Defines API for  for querying action and sending action
     *
-    *  @details A EOS.IO action has the following abstract structure:
+    */
+
+   /**
+    * @defgroup actioncapi Action C API
+    * @ingroup actionapi
+    * @brief Defines API for querying action and sending action
     *
-    *  ```
-    *    struct action {
-    *      capi_name  account_name; // the contract defining the primary code to execute for code/type
-    *      capi_name  action_name; // the action to be taken
-    *      permission_level[] authorization; // the accounts and permission levels provided
-    *      bytes data; // opaque data processed by code
-    *    };
-    *  ```
     *
-    *  This API enables your contract to inspect the fields on the current action and act accordingly.
+    * A EOS.IO action has the following abstract structure:
     *
-    *  Example:
-    *  @code
-    *  // Assume this action is used for the following examples:
-    *  // {
-    *  //  "code": "eos",
-    *  //  "type": "transfer",
-    *  //  "authorization": [{ "account": "inita", "permission": "active" }],
-    *  //  "data": {
-    *  //    "from": "inita",
-    *  //    "to": "initb",
-    *  //    "amount": 1000
-    *  //  }
-    *  // }
+    * ```
+    *   struct action {
+    *     capi_name  account_name; // the contract defining the primary code to execute for code/type
+    *     capi_name  action_name; // the action to be taken
+    *     permission_level authorization; // the accounts and permission levels provided
+    *     bytes data; // opaque data processed by code
+    *   };
+    * ```
     *
-    *  char buffer[128];
-    *  uint32_t total = read_action(buffer, 5); // buffer contains the content of the action up to 5 bytes
-    *  print(total); // Output: 5
+    * This API enables your contract to inspect the fields on the current action and act accordingly.
     *
-    *  uint32_t msgsize = action_size();
-    *  print(msgsize); // Output: size of the above action's data field
+    * Example:
+    * @code
+    * // Assume this action is used for the following examples:
+    * // {
+    * //  "code": "eos",
+    * //  "type": "transfer",
+    * //  "authorization": [{ "account": "inita", "permission": "active" }],
+    * //  "data": {
+    * //    "from": "inita",
+    * //    "to": "initb",
+    * //    "amount": 1000
+    * //  }
+    * // }
     *
-    *  require_recipient(N(initc)); // initc account will be notified for this action
+    * char buffer[128];
+    * uint32_t total = read_action(buffer, 5); // buffer contains the content of the action up to 5 bytes
+    * print(total); // Output: 5
     *
-    *  require_auth(N(inita)); // Do nothing since inita exists in the auth list
-    *  require_auth(N(initb)); // Throws an exception
+    * uint32_t msgsize = action_size();
+    * print(msgsize); // Output: size of the above action's data field
     *
-    *  print(current_time()); // Output: timestamp (in microseconds since 1970) of current block
+
+    * require_recipient("initc"_n); // initc account will be notified for this action
     *
-    *  @endcode
-    *  @{
+    * require_auth("inita"_n); // Do nothing since inita exists in the auth list
+    * require_auth("initb"_n); // Throws an exception
+    *
+    * print(current_time()); // Output: timestamp (in microseconds since 1970) of current block
+    *
+    * @endcode
+    *
+    *
+    * @{
     */
 
    /**

@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
+#include "system.h"
 
 /**
  *  @addtogroup compiler_builtins

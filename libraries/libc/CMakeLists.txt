@@ -43,6 +43,27 @@ add_library(c
             "musl/src/malloc/memalign.c"
             ${HEADERS})
 
+add_native_library(native_c 
+            ${CRYPT_SOURCES} 
+            ${CTYPE_SOURCES}
+            ${ENV_SOURCES}
+            ${ERRNO_SOURCES}
+            ${EXIT_SOURCES}
+            ${INTERNAL_SOURCES}
+            ${LOCALE_SOURCES}
+            ${MATH_SOURCES}
+            ${MBYTE_SOURCES}
+            ${MISC_SOURCES}
+            ${SEARCH_SOURCES}
+            ${STDIO_SOURCES}
+            ${STDLIB_SOURCES}
+            ${STRING_SOURCES}
+            ${TIME_SOURCES}
+            ${THREAD_SOURCES}
+            "musl/src/malloc/posix_memalign.c"
+            "musl/src/malloc/memalign.c"
+            ${HEADERS})
+
 target_include_directories(c 
                            PUBLIC 
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
@@ -51,8 +72,17 @@ target_include_directories(c
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
                            ${CMAKE_SOURCE_DIR})
 
-add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${CMAKE_BINARY_DIR}/lib )
+target_include_directories(native_c 
+                           PUBLIC 
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
+                           ${CMAKE_SOURCE_DIR})
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
+add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)

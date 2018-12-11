@@ -4,9 +4,9 @@
  */
 #pragma once
 
-#include <eosiolib/permission.h>
-#include <eosiolib/transaction.hpp>
-#include <eosiolib/crypto.hpp>
+#include "permission.h"
+#include "transaction.hpp"
+#include "crypto.hpp"
 
 #include <set>
 #include <limits>

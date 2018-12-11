@@ -1,0 +1,15 @@
+include(ExternalProject)
+find_package(Git REQUIRED)
+include(GNUInstallDirs)
+
+ExternalProject_Add(
+  EosioWasmTests
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/unit"
+  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/ -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR} -D__APPLE=${APPLE}
+  UPDATE_COMMAND ""
+  PATCH_COMMAND  ""
+  TEST_COMMAND   ""
+  INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
+  DEPENDS EosioWasmLibraries
+)

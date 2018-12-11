@@ -4,8 +4,9 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
-#include <eosiolib/serialize.hpp>
+#include "system.h"
+#include "serialize.hpp"
+
 #include <string>
 #include <string_view>
 
@@ -70,7 +71,7 @@ namespace eosio {
             eosio_assert( false, "string is too long to be a valid name" );
          }
 
-         auto n = std::min( str.size(), 12u );
+         auto n = std::min( (uint32_t)str.size(), (uint32_t)12u );
          for( decltype(n) i = 0; i < n; ++i ) {
             value <<= 5;
             value |= char_to_value( str[i] );
@@ -256,8 +257,11 @@ namespace eosio {
  *
  * @brief "foo"_n is a shortcut for name("foo")
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-string-literal-operator-template"
 template <typename T, T... Str>
 inline constexpr eosio::name operator""_n() {
    constexpr auto x = eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
    return x;
 }
+#pragma clang diagnostic pop

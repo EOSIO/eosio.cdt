@@ -3,11 +3,11 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 #pragma once
-#include <eosiolib/print.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/symbol.hpp>
-#include <eosiolib/fixed_key.hpp>
-#include <eosiolib/fixed_bytes.hpp>
+#include "print.h"
+#include "name.hpp"
+#include "symbol.hpp"
+#include "fixed_bytes.hpp"
+
 #include <utility>
 #include <string>
 
@@ -37,8 +37,6 @@
 
 namespace eosio {
 
-   static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
-
    /**
     *  Prints string
     *
@@ -51,16 +49,16 @@ namespace eosio {
    /**
     *  Prints string
     *
-    *  @param s - a const std::string
+    *  @param s - an std::string
     */
-   inline void print( const std::string& s) {
+   inline void print( std::string& s) {
       prints_l( s.c_str(), s.size() );
    }
 
   /**
    *  Prints string
    *
-   *  @param s - a std::string
+   *  @param s - an std::string
    */
    inline void print( std::string&& s) {
       prints_l( s.c_str(), s.size() );

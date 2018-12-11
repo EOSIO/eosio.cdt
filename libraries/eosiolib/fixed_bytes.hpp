@@ -4,11 +4,11 @@
  */
 #pragma once
 
+#include "system.h"
+
 #include <array>
 #include <algorithm>
 #include <type_traits>
-
-#include <eosiolib/system.h>
 
 namespace eosio {
 

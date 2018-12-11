@@ -1,7 +1,8 @@
 #pragma once
+#include "eosio.hpp"
+
 #include <stdint.h>
 #include <string>
-#include <eosiolib/eosio.hpp>
 
 namespace eosio {
   /**

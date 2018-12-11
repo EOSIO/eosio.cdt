@@ -24,9 +24,7 @@ macro (add_tool name)
    set(LLVM_LINK_COMPONENTS support)
 
    include_directories(include)
-
-   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${name}.cpp.in ${CMAKE_BINARY_DIR}/${name}.cpp)
-
+   
    add_executable(${name} ${CMAKE_BINARY_DIR}/${name}.cpp)
    set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
@@ -72,7 +70,7 @@ add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
+add_subdirectory(proj)
 add_subdirectory(external)
-
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/compiler_options.hpp.in ${CMAKE_BINARY_DIR}/compiler_options.hpp)
