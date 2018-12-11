@@ -29,7 +29,6 @@ else
          ;;
       "CentOS Linux")
          export ARCH="Centos"
-         export CMAKE=${HOME}/opt/cmake/bin/cmake
          bash ./scripts/eosio_build_centos.sh
          ;;
       "elementary OS")
