@@ -14,6 +14,8 @@
 #include <eosiolib/binary_extension.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
+#include <list>
+#include <queue>
 #include <vector>
 #include <array>
 #include <set>
@@ -258,6 +260,78 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize an std::list into a stream
+ *
+ *  @brief Serialize an std::list 
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::list<T>& l) {
+   ds << unsigned_int( l.size() );
+   for ( auto elem : l )
+      ds << elem;
+  return ds;
+}
+
+/**
+ *  Deserialize an std::list from a stream
+ *
+ *  @brief Deserialize an std::list
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::list<T>& l) {
+   unsigned_int s;
+   ds >> s;
+   l.resize(s.value);
+   for( auto& i : l )
+      ds >> i;
+   return ds;
+}
+
+/**
+ *  Serialize an std::deque into a stream
+ *
+ *  @brief Serialize an std::queue 
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::deque<T>& d) {
+   ds << unsigned_int( d.size() );
+   for ( auto elem : d )
+      ds << elem;
+  return ds;
+}
+
+/**
+ *  Deserialize an std::deque from a stream
+ *
+ *  @brief Deserialize an std::deque
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::deque<T>& d) {
+   unsigned_int s;
+   ds >> s;
+   d.resize(s.value);
+   for( auto& i : d )
+      ds >> i;
+   return ds;
+}
+
+/**
  *  Serialize a binary_extension into a stream
  *
  *  @brief Serialize a binary_extension
@@ -272,7 +346,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binar
   return ds;
 }
 
- /**
+/**
  *  Deserialize a binary_extension from a stream
  *
  *  @brief Deserialize a binary_extension
