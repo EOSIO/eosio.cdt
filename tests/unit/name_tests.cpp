@@ -4,7 +4,7 @@
 using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(name_test)
-   silence_output(true);
+   //silence_output(true);
    eosio_assert( eosio::name{"azaa34"}.value == "azaa34"_n.value, "eosio::name != azaa34" );
    eosio_assert( eosio::name{0}.value == 0, "eosio::name != 0" );
    eosio_assert( eosio::name{"aa11"}.value == "aa11"_n.value, "eosio::name != aa11" );

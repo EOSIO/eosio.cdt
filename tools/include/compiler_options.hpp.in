@@ -385,7 +385,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--merge-data-segments");
    } else {
 #ifdef __APPLE__
-      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System -static");
+      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System ");
       ldopts.emplace_back("-e __wrap_main");
 #endif
    }
@@ -449,7 +449,9 @@ static Options CreateOptions(bool add_defaults=true) {
    
 #ifdef ONLY_LD
    ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
+#ifndef __APPLE__
    ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
+#endif
 #endif   
 #ifndef ONLY_LD
    if (!sysroot_opt.empty()) {
@@ -460,7 +462,9 @@ static Options CreateOptions(bool add_defaults=true) {
       agopts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
       agopts.emplace_back("-I"+sysroot_opt+"/include/libc");
       ldopts.emplace_back("-L"+sysroot_opt+"/lib");
+#ifndef __APPLE__
       ldopts.emplace_back("-L"+sysroot_opt+"/lib64");
+#endif
    }
    else {
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
@@ -472,7 +476,9 @@ static Options CreateOptions(bool add_defaults=true) {
       agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
       agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
+#ifndef __APPLE__
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
+#endif
    }
 
    if (!isystem_opt.empty()) {

@@ -24,9 +24,7 @@ int main(int argc, const char **argv) {
   std::string line;
   if (opts.native) {
 #ifdef __APPLE__
-     opts.ld_options.push_back("-arch x86_64");
-     opts.ld_options.push_back("-macosx_version_min 10.13");
-     if (!eosio::cdt::environment::exec_subprogram("ld64.lld", opts.ld_options))
+     if (!eosio::cdt::environment::exec_subprogram("ld", opts.ld_options, true))
 #else
      if (!eosio::cdt::environment::exec_subprogram("ld.lld", opts.ld_options))
 #endif
