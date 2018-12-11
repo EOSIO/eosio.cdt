@@ -187,7 +187,7 @@ This will generate one file:
 
 #### eosiolib/permission.hpp
  - The optional provided_keys argument of the function `eosio::check_transaction_authorization` is now of the type `std::set<eosio::public_key>` rather than the type `std::set<capi_public_key>`. C++ contract code should most likely be using the `eosio::public_key` struct (defined in "eosiolib/public_key.hpp") if they need to deal with EOSIO-compatible public keys rather than the `capi_public_key` struct (now renamed from its original name of `::public_key`) from the eosiolib C API. Note that existing contract code that just referred to the type `public_key` without namespace qualification may have accidentally been using the `capi_public_key` struct and therefore should ideally be modified to use the `eosio::public_key` C++ type.
- - The `account` and `permission` arguments of `eosio::check_transaction_authorization` are both `eosio::name` now instead of `uint64_t`.
+ - The `account` and `permission` arguments of `eosio::check_permission_authorization` are both `eosio::name` now instead of `uint64_t`.
 
 #### eosiolib/ignore.hpp
 - Added new type `ignore`:
