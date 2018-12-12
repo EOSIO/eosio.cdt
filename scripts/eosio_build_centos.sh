@@ -128,15 +128,23 @@
 	# 	printf "\\tCentos python3 successfully enabled.\\n"
 	
 
-	printf "\\n\\tUpdating YUM repository...\\n\\n"
-	if ! sudo "${YUM}" -y update
-	then
-		printf "\\n\\tYUM update failed.\\n"
-		printf "\\n\\tExiting now.\\n\\n"
-		exit 1;
-	fi 
-	printf "\\n\\tYUM repository successfully updated.\\n\\n"
-
+	printf "\\n\\tDo you wish to update YUM repositories?\\n\\n"
+	select yn in "Yes" "No"; do
+		case $yn in
+			[Yy]* ) 
+				printf "\\n\\n\\tUpdating...\\n\\n"
+				if ! sudo "${YUM}" -y update; then
+					printf "\\n\\tYUM update failed.\\n"
+					printf "\\n\\tExiting now.\\n\\n"
+					exit 1;
+				else
+					printf "\\n\\tYUM update complete.\\n"
+				fi
+			break;;
+			[Nn]* ) echo "Proceeding without update!";;
+			* ) echo "Please type 1 for yes or 2 for no.";;
+		esac
+	done
 
 	printf "\\n\\tChecking YUM for installed dependencies...\\n\\n"
 	DEP_ARRAY=( git autoconf automake libtool make bzip2 \
