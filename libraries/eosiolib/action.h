@@ -111,7 +111,7 @@ extern "C" {
     *  @brief Verifies that @ref name has auth.
     *  @param name - name of the account to be verified
     */
-#ifdef _cplusplus
+#ifdef __cplusplus
    bool 
 #else
    _Bool
@@ -172,6 +172,6 @@ extern "C" {
     */
    capi_name current_receiver( void );
    ///@ } actioncapi
-#ifdef _cplusplus
+#ifdef __cplusplus
 }
 #endif
