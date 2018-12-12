@@ -6,7 +6,9 @@
 
 #include <eosiolib/system.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
   /**
    *  @defgroup compilerbuiltinsapi Compiler Builtins API
    *  @ingroup mathapi
@@ -428,4 +430,7 @@ extern "C" {
   void __break_point();
 
 /// @}
+#ifdef __cplusplus
 } // extern "C"
+#endif
+
