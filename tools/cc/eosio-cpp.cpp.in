@@ -27,7 +27,7 @@ int main(int argc, const char **argv) {
   }
 
   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << COMPILER_NAME << " version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
   });
   cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
   Options opts = CreateOptions();

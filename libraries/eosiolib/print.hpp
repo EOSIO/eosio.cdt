@@ -152,28 +152,6 @@ namespace eosio {
 
 
    /**
-    * Prints fixed_key as a hexidecimal string
-    *
-    * @param val to be printed
-    */
-   template<size_t Size>
-   inline void print( const fixed_key<Size>& val ) {
-      auto arr = val.extract_as_byte_array();
-      prints("0x");
-      printhex(static_cast<const void*>(arr.data()), arr.size());
-   }
-
-  /**
-    * Prints fixed_key as a hexidecimal string
-    *
-    * @param val to be printed
-    */
-   template<size_t Size>
-   inline void print( fixed_key<Size>& val ) {
-      print(static_cast<const fixed_key<Size>&>(val));
-   }
-
-   /**
     * Prints fixed_bytes as a hexidecimal string
     *
     * @brief Prints fixed_bytes as a hexidecimal string

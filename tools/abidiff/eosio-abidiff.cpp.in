@@ -269,7 +269,7 @@ class abidiff {
 int main(int argc, const char **argv) {
 
    cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-abidiff version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << "eosio-abidiff version " << "${VERSION_FULL}" << "\n";
   });
    cl::OptionCategory cat("eosio-abidiff", "generates an abi from C++ project input");
 
