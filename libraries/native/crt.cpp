@@ -63,42 +63,60 @@ extern "C" {
       // preset the print functions
       intrinsics::set_intrinsic<intrinsics::prints_l>([](const char* cs, uint32_t l) {
             _prints_l(cs, l, eosio::cdt::output_stream_kind::std_out);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::prints>([](const char* cs) {
             _prints(cs, eosio::cdt::output_stream_kind::std_out);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printi>([](int64_t v) {
             printf("%lli\n", v);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printui>([](uint64_t v) {
             printf("%llu\n", v);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printi128>([](const int128_t* v) {
             int* tmp = (int*)v;
             printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printui128>([](const uint128_t* v) {
             int* tmp = (int*)v;
             printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printsf>([](float v) {
-            prints("What?\n");
-            printi(*(int*)&v);
-            prints("\n");
-            _prints(std::to_string(v).c_str(), eosio::cdt::output_stream_kind::std_out);
-            //printf("%f\n", v);
-            });
+            char buff[512] = {0};
+            std::string ret = std::to_string((int)v);
+            memcpy(buff, ret.c_str(), ret.size());
+            v -= (int)v;
+            buff[ret.size()] = '.';
+            size_t size = ret.size(); 
+            for (size_t i=size+1; i < size+10; i++) {
+               v *= 10; 
+               buff[i] = ((int)v)+'0';
+               v -= (int)v;
+            }
+            prints(buff);
+         });
       intrinsics::set_intrinsic<intrinsics::printdf>([](double v) {
-            printf("%f\n", v);
-            });
+            char buff[512] = {0};
+            std::string ret = std::to_string((long)v);
+            memcpy(buff, ret.c_str(), ret.size());
+            v -= (long)v;
+            buff[ret.size()] = '.';
+            size_t size = ret.size(); 
+            for (size_t i=size+1; i < size+10; i++) {
+               v *= 10; 
+               buff[i] = ((int)v)+'0';
+               v -= (int)v;
+            }
+            prints(buff);
+         });
       intrinsics::set_intrinsic<intrinsics::printqf>([](const long double* v) {
             int* tmp = (int*)v;
             printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
-            });
+         });
       intrinsics::set_intrinsic<intrinsics::printn>([](uint64_t nm) {
             std::string s = eosio::name(nm).to_string();
             prints_l(s.c_str(), s.length());
-            });
+         });
 
       jmp_ret = setjmp(env); 
       if (jmp_ret == 0) {
