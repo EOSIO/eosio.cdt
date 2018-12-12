@@ -62,7 +62,12 @@ extern "C" {
     * @return true if the account is privileged
     * @return false if the account is not privileged
     */
-   bool is_privileged( capi_name account );
+#ifdef __cplusplus
+   bool
+#else
+   _Bool
+#endif
+        is_privileged( capi_name account );
 
    /**
     * @brief Set the privileged status of an account
