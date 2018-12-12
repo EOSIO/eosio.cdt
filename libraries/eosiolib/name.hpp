@@ -1,6 +1,6 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
@@ -69,6 +69,9 @@ namespace eosio {
       {
          if( str.size() > 13 ) {
             eosio_assert( false, "string is too long to be a valid name" );
+         }
+         if( str.empty() ) {
+            return;
          }
 
          auto n = std::min( (uint32_t)str.size(), (uint32_t)12u );
