@@ -205,7 +205,7 @@
     	&& rm -f cmake-${CMAKE_VERSION}.tar.gz
 		printf "\\tCMAKE successfully installed @ %s.\\n\\n" "${CMAKE}"
 	else
-		printf "\\tCMAKE found @ %s.\\n" "${CMAKE}"
+		printf "\\tCMAKE found @ $(command -v cmake 2>/dev/null).\\n" "${CMAKE}"
 	fi
 
 	function print_instructions()
