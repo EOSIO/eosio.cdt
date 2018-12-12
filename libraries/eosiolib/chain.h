@@ -19,7 +19,9 @@
  *  @{
  */
 
+#ifdef __cplusplus
 extern "C" {
+#endif
     /**
      *  Gets the set of active producers.
      *  @brief Gets the set of active producers.
@@ -42,4 +44,7 @@ extern "C" {
     uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
 
    ///@ } chaincapi
+#ifdef __cplusplus
 }
+#endif
+
