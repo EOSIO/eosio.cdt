@@ -5,7 +5,9 @@
 #pragma once
 #include <eosiolib/system.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
    /**
     * @defgroup actionapi Action API
     * @ingroup contractdev
@@ -85,7 +87,7 @@ extern "C" {
     * @brief Get the length of current action's data field
     * @return the length of the current action's data field
     */
-   uint32_t action_data_size();
+   uint32_t action_data_size( void );
 
    /**
     *  Add the specified account to set of accounts to be notified
@@ -109,7 +111,12 @@ extern "C" {
     *  @brief Verifies that @ref name has auth.
     *  @param name - name of the account to be verified
     */
-   bool has_auth( capi_name name );
+#ifdef _cplusplus
+   bool 
+#else
+   _Bool
+#endif
+      has_auth( capi_name name );
 
    /**
     *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
@@ -126,7 +133,12 @@ extern "C" {
     *  @brief Verifies that @ref name is an existing account.
     *  @param name - name of the account to check
     */
-   bool is_account( capi_name name );
+#ifdef _cplusplus
+   bool 
+#else
+   _Bool
+#endif
+        is_account( capi_name name );
 
    /**
     *  Send an inline action in the context of this action's parent transaction
@@ -151,13 +163,15 @@ extern "C" {
     *  @brief Get the publication time
     *  @return the time in microseconds from 1970 of the publication_time
     */
-   uint64_t  publication_time();
+   uint64_t  publication_time( void );
 
    /**
     *  Get the current receiver of the action
     *  @brief Get the current receiver of the action
     *  @return the account which specifies the current receiver of the action
     */
-   capi_name current_receiver();
+   capi_name current_receiver( void );
    ///@ } actioncapi
+#ifdef _cplusplus
 }
+#endif
