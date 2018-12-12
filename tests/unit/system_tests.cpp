@@ -5,8 +5,6 @@ using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(system_test)
    //silence_output(true);
-   char* ss = "tests\n";
-   eosio::print(ss); 
    auto test_check1 = [](bool b) { eosio::check(b, "asserted"); }; 
    test_check1(true);
    REQUIRE_ASSERT("asserted", test_check1, false);

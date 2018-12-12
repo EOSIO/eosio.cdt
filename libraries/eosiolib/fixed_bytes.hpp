@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "system.h"
+#include "system.hpp"
 
 #include <array>
 #include <algorithm>
@@ -72,7 +72,7 @@ namespace eosio {
                    continue;
                }
 
-               eosio_assert( sub_words_left == 1, "unexpected error in fixed_bytes constructor" );
+               eosio::check( sub_words_left == 1, "unexpected error in fixed_bytes constructor" );
                temp_word |= static_cast<word_t>(*w_itr);
                sub_words_left = num_sub_words;
 

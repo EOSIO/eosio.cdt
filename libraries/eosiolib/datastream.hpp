@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 #pragma once
-#include "system.h"
+#include "system.hpp"
 #include "types.h"
 #include "symbol.hpp"
 #include "fixed_bytes.hpp"
@@ -65,7 +65,7 @@ class datastream {
       *  @return true
       */
       inline bool read( char* d, size_t s ) {
-        eosio_assert( size_t(_end - _pos) >= (size_t)s, "read" );
+        eosio::check( size_t(_end - _pos) >= (size_t)s, "read" );
         memcpy( d, _pos, s );
         _pos += s;
         return true;
@@ -79,7 +79,7 @@ class datastream {
       *  @return true
       */
       inline bool write( const char* d, size_t s ) {
-        eosio_assert( _end - _pos >= (int32_t)s, "write" );
+        eosio::check( _end - _pos >= (int32_t)s, "write" );
         memcpy( (void*)_pos, d, s );
         _pos += s;
         return true;
@@ -93,7 +93,7 @@ class datastream {
       *  @return true
       */
       inline bool put(char c) {
-        eosio_assert( _pos < _end, "put" );
+        eosio::check( _pos < _end, "put" );
         *_pos = c;
         ++_pos;
         return true;
@@ -117,7 +117,7 @@ class datastream {
       */
       inline bool get( char& c )
       {
-        eosio_assert( _pos < _end, "get" );
+        eosio::check( _pos < _end, "get" );
         c = *_pos;
         ++_pos;
         return true;
@@ -394,7 +394,7 @@ void deserialize(datastream<Stream>& ds, std::variant<Ts...>& var, int i) {
          deserialize<I+1>(ds,var,i);
       }
    } else {
-      eosio_assert(false, "invalid variant index");
+      eosio::check(false, "invalid variant index");
    }
 }
 
@@ -994,7 +994,7 @@ template<typename DataStream, typename T, std::size_t N,
 DataStream& operator >> ( DataStream& ds, T (&v)[N] ) {
    unsigned_int s;
    ds >> s;
-   eosio_assert( N == s.value, "T[] size and unpacked size don't match");
+   eosio::check( N == s.value, "T[] size and unpacked size don't match");
    for( uint32_t i = 0; i < N; ++i )
       ds >> v[i];
    return ds;
@@ -1016,7 +1016,7 @@ template<typename DataStream, typename T, std::size_t N,
 DataStream& operator >> ( DataStream& ds, T (&v)[N] ) {
    unsigned_int s;
    ds >> s;
-   eosio_assert( N == s.value, "T[] size and unpacked size don't match");
+   eosio::check( N == s.value, "T[] size and unpacked size don't match");
    ds.read((char*)&v[0], sizeof(v));
    return ds;
 }

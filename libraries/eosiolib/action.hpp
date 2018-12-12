@@ -267,7 +267,7 @@ namespace eosio {
        * @pre This action should not contain any authorizations
        */
       void send_context_free() const {
-         eosio_assert( authorization.size() == 0, "context free actions cannot have authorizations");
+         eosio::check( authorization.size() == 0, "context free actions cannot have authorizations");
          auto serialize = pack(*this);
          ::send_context_free_inline(serialize.data(), serialize.size());
       }

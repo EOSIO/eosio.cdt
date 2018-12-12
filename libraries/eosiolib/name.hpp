@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "system.h"
+#include "system.hpp"
 #include "serialize.hpp"
 
 #include <string>
@@ -68,7 +68,7 @@ namespace eosio {
       :value(0)
       {
          if( str.size() > 13 ) {
-            eosio_assert( false, "string is too long to be a valid name" );
+            eosio::check( false, "string is too long to be a valid name" );
          }
 
          auto n = std::min( (uint32_t)str.size(), (uint32_t)12u );
@@ -80,7 +80,7 @@ namespace eosio {
          if( str.size() == 13 ) {
             uint64_t v = char_to_value( str[12] );
             if( v > 0x0Full ) {
-               eosio_assert(false, "thirteenth character in name cannot be a letter that comes after j");
+               eosio::check(false, "thirteenth character in name cannot be a letter that comes after j");
             }
             value |= v;
          }
@@ -100,7 +100,7 @@ namespace eosio {
          else if( c >= 'a' && c <= 'z' )
             return (c - 'a') + 6;
          else
-            eosio_assert( false, "character is not in allowed character set for names" );
+            eosio::check( false, "character is not in allowed character set for names" );
 
          return 0; // control flow will never reach here; just added to suppress warning
       }

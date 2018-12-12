@@ -4,8 +4,6 @@
  */
 #pragma once
 
-#include "system.h"
-
 /**
  *  @addtogroup compiler_builtins
  *  @ingroup c_api

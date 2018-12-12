@@ -1,6 +1,6 @@
 #pragma once
 #include "multi_index.hpp"
-#include "system.h"
+#include "system.hpp"
 
 namespace  eosio {
 
@@ -74,7 +74,7 @@ namespace  eosio {
           */
          T get() {
             auto itr = _t.find( pk_value );
-            eosio_assert( itr != _t.end(), "singleton does not exist" );
+            eosio::check( itr != _t.end(), "singleton does not exist" );
             return itr->value;
          }
 

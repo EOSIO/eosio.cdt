@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE.txt
  */
 #pragma once
-#include "system.h"
+#include "system.hpp"
 
 extern "C" {
    /**

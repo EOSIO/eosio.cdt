@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "system.h"
+#include "system.hpp"
 #include "print.h"
 #include "name.hpp"
 #include "serialize.hpp"
@@ -59,11 +59,11 @@ namespace eosio {
       :value(0)
       {
          if( str.size() > 7 ) {
-            eosio_assert( false, "string is too long to be a valid symbol_code" );
+            eosio::check( false, "string is too long to be a valid symbol_code" );
          }
          for( auto itr = str.rbegin(); itr != str.rend(); ++itr ) {
             if( *itr < 'A' || *itr > 'Z') {
-               eosio_assert( false, "only uppercase letters allowed in symbol_code string" );
+               eosio::check( false, "only uppercase letters allowed in symbol_code string" );
             }
             value <<= 8;
             value |= *itr;
