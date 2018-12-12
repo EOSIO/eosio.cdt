@@ -1,6 +1,6 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
@@ -14,7 +14,7 @@
 namespace eosio {
 
    /**
-    *  @brief Checks if a transaction is authorized by a provided set of keys and permissions
+    *  Checks if a transaction is authorized by a provided set of keys and permissions
     *
     *  @param trx - the transaction for which to check authorizations
     *  @param provided_permissions - the set of permissions which have authorized the transaction (empty permission name acts as wildcard)
@@ -54,7 +54,7 @@ namespace eosio {
    }
 
    /**
-    *  @brief Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
+    *  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
     *
     *  @param account    - the account owner of the permission
     *  @param permission - the permission name to check for authorization

@@ -39,22 +39,15 @@ namespace eosio {
    }
 
    /**
-    * @defgroup dispatcher Dispatcher API
-    * @brief Defines functions to dispatch action to proper action handler inside a contract
-    * @ingroup contractdev
-    */
-
-   /**
-    * @defgroup dispatchercpp Dispatcher C++ API
+    * @addtogroup dispatcher Dispatcher C++ API
+    * @ingroup cpp_api
     * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
-    * @ingroup dispatcher
     * @{
     */
 
    /**
     * Unpack the received action and execute the correponding action handler
     *
-    * @brief Unpack the received action and execute the correponding action handler
     * @tparam T - The contract class that has the correponding action handler, this contract should be derived from eosio::contract
     * @tparam Q - The namespace of the action handler function
     * @tparam Args - The arguments that the action handler accepts, i.e. members of the action
@@ -73,11 +66,11 @@ namespace eosio {
          buffer = max_stack_buffer_size < size ? malloc(size) : alloca(size);
          read_action_data( buffer, size );
       }
-      
+
       std::tuple<std::decay_t<Args>...> args;
       datastream<const char*> ds((char*)buffer, size);
       ds >> args;
-      
+
       T inst(self, code, ds);
 
       auto f2 = [&]( auto... a ){
@@ -90,28 +83,28 @@ namespace eosio {
       }
       return true;
    }
- /// @}  dispatcher
 
-// Helper macro for EOSIO_DISPATCH_INTERNAL
-#define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
-   case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
-      eosio::execute_action( eosio::name(receiver), eosio::name(code), &OP::elem ); \
-      break;
+/// @}
 
-// Helper macro for EOSIO_DISPATCH
-#define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
-   BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
+
+
+ // Helper macro for EOSIO_DISPATCH_INTERNAL
+ #define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
+    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
+       eosio::execute_action( eosio::name(receiver), eosio::name(code), &OP::elem ); \
+       break;
+
+ // Helper macro for EOSIO_DISPATCH
+ #define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
+    BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
+
+
 
 /**
  * @addtogroup dispatcher
- * @{
- */
-
-/**
  * Convenient macro to create contract apply handler
- * To be able to use this macro, the contract needs to be derived from eosio::contract
  *
- * @brief Convenient macro to create contract apply handler
+ * @note To be able to use this macro, the contract needs to be derived from eosio::contract
  * @param TYPE - The class name of the contract
  * @param MEMBERS - The sequence of available actions supported by this contract
  *
@@ -131,6 +124,5 @@ extern "C" { \
       } \
    } \
 } \
- /// @}  dispatcher
 
 }

@@ -1,6 +1,6 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
@@ -35,6 +35,7 @@ namespace eosio {
 
     /**
     *  @defgroup fixed_bytes Fixed Size Byte Array
+    *  @ingroup types
     *  @brief Fixed size array of bytes sorted lexicographically
     *  @ingroup types
     *  @{

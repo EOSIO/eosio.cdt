@@ -15,17 +15,10 @@ add_library(c++
 
 target_include_directories(c++
                            PUBLIC 
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include>
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
+                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
 target_link_libraries(c++ c)
 
-install(TARGETS c++ EXPORT EosioLib
-   LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} 
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-
 add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${CMAKE_BINARY_DIR}/lib )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libcxx)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${CMAKE_BINARY_DIR}/include/libcxx)
-

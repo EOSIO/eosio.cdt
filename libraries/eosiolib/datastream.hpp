@@ -1,6 +1,6 @@
 /**
  *  @file datastream.hpp
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 #include <eosiolib/system.h>
@@ -14,6 +14,8 @@
 #include <eosiolib/binary_extension.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
+#include <list>
+#include <queue>
 #include <vector>
 #include <array>
 #include <set>
@@ -27,29 +29,20 @@
 
 #include <boost/pfr.hpp>
 
-
 namespace eosio {
 
 /**
- * @defgroup datastream Data Stream
- * @brief Defines data stream for reading and writing data in the form of bytes
- * @ingroup serialize
- * @{
- */
-
-/**
- *  %A data stream for reading and writing data in the form of bytes
+ *  A data stream for reading and writing data in the form of bytes
  *
- *  @brief %A data stream for reading and writing data in the form of bytes.
  *  @tparam T - Type of the datastream buffer
  */
 template<typename T>
 class datastream {
    public:
       /**
-       * Construct a new datastream object given the size of the buffer and start position of the buffer
-       *
        * @brief Construct a new datastream object
+       *
+       * @details Construct a new datastream object given the size of the buffer and start position of the buffer
        * @param start - The start position of the buffer
        * @param s - The size of the buffer
        */
@@ -59,7 +52,6 @@ class datastream {
      /**
       *  Skips a specified number of bytes from this stream
       *
-      *  @brief Skips a specific number of bytes from this stream
       *  @param s - The number of bytes to skip
       */
       inline void skip( size_t s ){ _pos += s; }
@@ -67,7 +59,6 @@ class datastream {
      /**
       *  Reads a specified number of bytes from the stream into a buffer
       *
-      *  @brief Reads a specified number of bytes from this stream into a buffer
       *  @param d - The pointer to the destination buffer
       *  @param s - the number of bytes to read
       *  @return true
@@ -82,7 +73,6 @@ class datastream {
      /**
       *  Writes a specified number of bytes into the stream from a buffer
       *
-      *  @brief Writes a specified number of bytes into the stream from a buffer
       *  @param d - The pointer to the source buffer
       *  @param s - The number of bytes to write
       *  @return true
@@ -270,6 +260,78 @@ class datastream<size_t> {
 };
 
 /**
+ *  Serialize an std::list into a stream
+ *
+ *  @brief Serialize an std::list 
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::list<T>& l) {
+   ds << unsigned_int( l.size() );
+   for ( auto elem : l )
+      ds << elem;
+  return ds;
+}
+
+/**
+ *  Deserialize an std::list from a stream
+ *
+ *  @brief Deserialize an std::list
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::list<T>& l) {
+   unsigned_int s;
+   ds >> s;
+   l.resize(s.value);
+   for( auto& i : l )
+      ds >> i;
+   return ds;
+}
+
+/**
+ *  Serialize an std::deque into a stream
+ *
+ *  @brief Serialize an std::queue 
+ *  @param ds - The stream to write
+ *  @param opt - The value to serialize
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::deque<T>& d) {
+   ds << unsigned_int( d.size() );
+   for ( auto elem : d )
+      ds << elem;
+  return ds;
+}
+
+/**
+ *  Deserialize an std::deque from a stream
+ *
+ *  @brief Deserialize an std::deque
+ *  @param ds - The stream to read
+ *  @param opt - The destination for deserialized value
+ *  @tparam Stream - Type of datastream buffer
+ *  @return datastream<Stream>& - Reference to the datastream
+ */
+template<typename Stream, typename T>
+inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::deque<T>& d) {
+   unsigned_int s;
+   ds >> s;
+   d.resize(s.value);
+   for( auto& i : d )
+      ds >> i;
+   return ds;
+}
+
+/**
  *  Serialize a binary_extension into a stream
  *
  *  @brief Serialize a binary_extension
@@ -284,7 +346,7 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binar
   return ds;
 }
 
- /**
+/**
  *  Deserialize a binary_extension from a stream
  *
  *  @brief Deserialize a binary_extension
@@ -1313,6 +1375,14 @@ DataStream& operator>>( DataStream& ds, T& v ) {
 }
 
 /**
+ * Defines data stream for reading and writing data in the form of bytes
+ *
+ * @addtogroup datastream Data Stream
+ * @ingroup cpp_api
+ * @{
+ */
+
+/**
  * Unpack data inside a fixed size buffer as T
  *
  * @brief Unpack data inside a fixed size buffer as T
@@ -1375,6 +1445,8 @@ std::vector<char> pack( const T& value ) {
   return result;
 }
 
+///@}
+
 /**
  *  Serialize a capi_checksum160 type
  *
@@ -1434,5 +1506,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, capi_checksum512& 
    ds.read((char*)&cs.hash[0], sizeof(cs.hash));
    return ds;
 }
-/// @} datastream
+
+
+
 }

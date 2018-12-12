@@ -1,6 +1,6 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 #include <eosiolib/print.h>
@@ -11,6 +11,30 @@
 #include <utility>
 #include <string>
 
+/**
+   *  @defgroup console Console C++ API
+   *  @ingroup cpp_api
+   *  @brief Defines C++ wrapper to log/print text messages
+   *
+   *  @details This API uses C++ variadic templates and type detection to
+   *  make it easy to print any native type. You can even overload
+   *  the `print()` method for your own custom types.
+   *
+   *  **Example:**
+   *  ```
+   *     print( "hello world, this is a number: ", 5 );
+   *  ```
+   *
+   *  @section override Overriding Print for your Types
+   *
+   *  There are two ways to overload print:
+   *  1. implement void print( const T& )
+   *  2. implement T::print()const
+   *
+   *  @{
+   */
+
+
 namespace eosio {
 
    static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
@@ -18,29 +42,42 @@ namespace eosio {
    /**
     *  Prints string
     *
-    *  @brief Prints string
     *  @param ptr - a null terminated string
     */
    inline void print( const char* ptr ) {
       prints(ptr);
    }
 
+   /**
+    *  Prints string
+    *
+    *  @param s - a const std::string
+    */
    inline void print( const std::string& s) {
       prints_l( s.c_str(), s.size() );
    }
 
+  /**
+   *  Prints string
+   *
+   *  @param s - a std::string
+   */
    inline void print( std::string&& s) {
       prints_l( s.c_str(), s.size() );
    }
 
+   /**
+    *  Prints string
+    *
+    *  @param c - a const char
+    */
    inline void print( const char c ) {
       prints_l( &c, 1 );
    }
 
    /**
-    * Prints signed integer
+    * Prints signed integer as a 64 bit signed integer
     *
-    * @brief Prints signed integer as a 64 bit signed integer
     * @param num to be printed
     */
    inline void print( int num ) {
@@ -48,9 +85,8 @@ namespace eosio {
    }
 
    /**
-    * Prints 32 bit signed integer
+    * Prints 32 bit signed integer as a 64 bit signed integer
     *
-    * @brief Prints 32 bit signed integer as a 64 bit signed integer
     * @param num to be printed
     */
    inline void print( int32_t num ) {
@@ -58,9 +94,8 @@ namespace eosio {
    }
 
    /**
-    * Prints 64 bit signed integer
+    * Prints 64 bit signed integer as a 64 bit signed integer
     *
-    * @brief Prints 64 bit signed integer as a 64 bit signed integer
     * @param num to be printed
     */
    inline void print( int64_t num ) {
@@ -69,9 +104,8 @@ namespace eosio {
 
 
    /**
-    * Prints unsigned integer
+    * Prints unsigned integer as a 64 bit unsigned integer
     *
-    * @brief Prints unsigned integer as a 64 bit unsigned integer
     * @param num to be printed
     */
    inline void print( unsigned int num ) {
@@ -79,9 +113,8 @@ namespace eosio {
    }
 
    /**
-    * Prints 32 bit unsigned integer
+    * Prints 32 bit unsigned integer as a 64 bit unsigned integer
     *
-    * @brief Prints 32 bit unsigned integer as a 64 bit unsigned integer
     * @param num to be printed
     */
    inline void print( uint32_t num ) {
@@ -89,9 +122,8 @@ namespace eosio {
    }
 
    /**
-    * Prints 64 bit unsigned integer
+    * Prints 64 bit unsigned integer as a 64 bit unsigned integer
     *
-    * @brief Prints 64 bit unsigned integer as a 64 bit unsigned integer
     * @param num to be printed
     */
    inline void print( uint64_t num ) {
@@ -101,7 +133,6 @@ namespace eosio {
    /**
     * Prints 128 bit signed integer
     *
-    * @brief Prints 128 bit signed integer
     * @param num to be printed
     */
    inline void print( int128_t num ) {
@@ -111,7 +142,6 @@ namespace eosio {
    /**
     * Prints 128 bit unsigned integer
     *
-    * @brief Prints 128 bit unsigned integer
     * @param num to be printed
     */
    inline void print( uint128_t num ) {
@@ -120,25 +150,22 @@ namespace eosio {
 
 
    /**
-    * Prints single-precision floating point number
+    * Prints single-precision floating point number (i.e. float)
     *
-    * @brief Prints single-precision floating point number (i.e. float)
     * @param num to be printed
     */
    inline void print( float num ) { printsf( num ); }
 
    /**
-    * Prints double-precision floating point number
+    * Prints double-precision floating point number (i.e. double)
     *
-    * @brief Prints double-precision floating point number (i.e. double)
     * @param num to be printed
     */
    inline void print( double num ) { printdf( num ); }
 
    /**
-    * Prints quadruple-precision floating point number
+    * Prints quadruple-precision floating point number (i.e. long double)
     *
-    * @brief Prints quadruple-precision floating point number (i.e. long double)
     * @param num to be printed
     */
    inline void print( long double num ) { printqf( &num ); }
@@ -147,7 +174,6 @@ namespace eosio {
    /**
     * Prints fixed_key as a hexidecimal string
     *
-    * @brief Prints fixed_key as a hexidecimal string
     * @param val to be printed
     */
    template<size_t Size>
@@ -160,7 +186,6 @@ namespace eosio {
   /**
     * Prints fixed_key as a hexidecimal string
     *
-    * @brief Prints fixed_key as a hexidecimal string
     * @param val to be printed
     */
    template<size_t Size>
@@ -194,7 +219,6 @@ namespace eosio {
    /**
     * Prints a 64 bit names as base32 encoded string
     *
-    * @brief Prints a 64 bit names as base32 encoded string
     * @param name 64 bit name to be printed
     */
    inline void print( name name ) {
@@ -204,7 +228,6 @@ namespace eosio {
    /**
     * Prints a symbol_code
     *
-    * @brief Prints a symbol_code
     * @param sym_code symbol code to be printed
     */
    inline void print( eosio::symbol_code sym_code ) {
@@ -217,7 +240,6 @@ namespace eosio {
   /**
     * Prints bool
     *
-    * @brief Prints bool
     * @param val to be printed
     */
    inline void print( bool val ) {
@@ -228,7 +250,6 @@ namespace eosio {
   /**
     * Prints class object
     *
-    * @brief Prints class object
     * @param t to be printed
     * @pre T must implements print() function
     */
@@ -240,41 +261,15 @@ namespace eosio {
    /**
     * Prints null terminated string
     *
-    * @brief Prints null terminated string
     * @param s null terminated string to be printed
     */
    inline void print_f( const char* s ) {
       prints(s);
    }
 
- /**
-    *  @defgroup consolecppapi Console C++ API
-    *  @ingroup consoleapi
-    *  @brief Defines C++ wrapper to log/print text messages
-    *
-    *  This API uses C++ variadic templates and type detection to
-    *  make it easy to print any native type. You can even overload
-    *  the `print()` method for your own custom types.
-    *
-    *  **Example:**
-    *  ```
-    *     print( "hello world, this is a number: ", 5 );
-    *  ```
-    *
-    *  @section override Overriding Print for your Types
-    *
-    *  There are two ways to overload print:
-    *  1. implement void print( const T& )
-    *  2. implement T::print()const
-    *
-    *  @{
-    */
-
-
    /**
     * Prints formatted string. It behaves similar to C printf/
     *
-    * @brief Prints formatted string
     * @tparam Arg - Type of the value used to replace the format specifier
     * @tparam Args - Type of the value used to replace the format specifier
     * @param s - Null terminated string with to be printed (it can contains format specifier)
@@ -301,12 +296,14 @@ namespace eosio {
 
     /**
      *  Print out value / list of values
-     *  @brief Print out value  / list of values
+     *
+     *  @tparam Arg - Type of the value used to replace the format specifier
+     *  @tparam Args - Type of the value used to replace the format specifier
      *  @param a - The value to be printed
      *  @param args - The other values to be printed
      *
      *  Example:
-*
+     *
      *  @code
      *  const char *s = "Hello World!";
      *  uint64_t unsigned_64_bit_int = 1e+18;
@@ -329,13 +326,15 @@ namespace eosio {
 
    /**
     *  Overload c++ iostream
-    *  @brief Overload c++ iostream
+    *
+    *  @tparam Arg - Type of the value used to replace the format specifier
+    *  @tparam Args - Type of the value used to replace the format specifier
     *  @param out - Output strem
     *  @param v - The value to be printed
     *  @return iostream& - Reference to the input output stream
     *
     *  Example:
-*
+    *
     *  @code
     *  const char *s = "Hello World!";
     *  uint64_t unsigned_64_bit_int = 1e+18;
