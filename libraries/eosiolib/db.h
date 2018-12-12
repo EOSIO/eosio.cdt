@@ -6,7 +6,9 @@
 #pragma once
 
 #include <eosiolib/types.h>
+#ifdef __cplusplus
 extern "C" {
+#endif
 /**
  *  @defgroup database Database API
  *  @brief Defines APIs that store and retrieve data on the blockchain
@@ -937,4 +939,6 @@ int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name 
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@} databasec
+#ifdef __cplusplus
 }
+#endif
