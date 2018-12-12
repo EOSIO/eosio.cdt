@@ -75,7 +75,11 @@ extern "C" {
     * @param account - name of the account whose privileged account to be set
     * @param is_priv - privileged status
     */
+#ifdef __cplusplus
    void set_privileged( capi_name account, bool is_priv );
+#else
+   void set_privileged( capi_name account, _Bool is_priv );
+#endif
 
    /**
     * @brief Set the blockchain parameters

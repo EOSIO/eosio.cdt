@@ -53,6 +53,10 @@ struct ALIGNED(capi_checksum256) {
    uint8_t hash[32];
 };
 
+#ifndef __cplusplus
+typedef struct capi_checksum256 capi_checksum256;
+#endif
+
 /**
  * @brief 160-bit hash
  * @details 160-bit hash
@@ -61,6 +65,10 @@ struct ALIGNED(capi_checksum160) {
    uint8_t hash[20];
 };
 
+#ifndef __cplusplus
+typedef struct capi_checksum160 capi_checksum160;
+#endif
+
 /**
  * @brief 512-bit hash
  * @details 512-bit hash
@@ -68,6 +76,10 @@ struct ALIGNED(capi_checksum160) {
 struct ALIGNED(capi_checksum512) {
    uint8_t hash[64];
 };
+
+#ifndef __cplusplus
+typedef struct capi_checksum512 capi_checksum512;
+#endif
 
 #ifdef __cplusplus
 } /// extern "C"

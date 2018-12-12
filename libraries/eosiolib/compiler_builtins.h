@@ -35,8 +35,11 @@ extern "C" {
   * printi128(&res); // Output: 10000
   * @endcode
   */
+#ifdef __cplusplus
   void __multi3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
-
+#else
+  void __multi3(__int128* res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
+#endif
  /**
   * Divide two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Divide two 128 bit integers (which are represented as two 64 bit unsigned integers)
@@ -55,8 +58,11 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+#ifdef __cplusplus
   void __divti3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
-
+#else
+  void __divti3(__int128* res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
+#endif
  /**
   * Divide two 128 bit unsigned integers split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Divide two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers)
@@ -74,8 +80,11 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+#ifdef __cplusplus
   void __udivti3(unsigned __int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
-
+#else
+  void __udivti3(unsigned __int128* res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
+#endif
  /**
   * Perform modular arithmetic on two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform modular arithmetic on two 128 bit integers (which are represented as two 64 bit unsigned integers)
@@ -94,8 +103,11 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+#ifdef __cplusplus
   void __modti3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
-
+#else
+  void __modti3(__int128* res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
+#endif
  /**
   * Perform modular arithmetic on two 128 unsigned bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform modular arithmetic on two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers)
@@ -114,8 +126,11 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+#ifdef __cplusplus
   void __umodti3(unsigned __int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
-
+#else
+  void __umodti3(unsigned __int128* res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
+#endif
 /**
   * Perform logical shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform logical shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers)
@@ -132,8 +147,11 @@ extern "C" {
   * printi128(&res); // Output: 16
   * @endcode
   */
+#ifdef __cplusplus
   void __lshlti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
-
+#else
+  void __lshlti3(__int128* res, uint64_t lo, uint64_t hi, uint32_t shift);
+#endif
  /**
   * Perform logical shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform logical shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers)
@@ -150,8 +168,11 @@ extern "C" {
   * printi128(&res); // Output: 4
   * @endcode
   */
+#ifdef __cplusplus
   void __lshrti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
-
+#else
+  void __lshrti3(__int128* res, uint64_t lo, uint64_t hi, uint32_t shift);
+#endif
 /**
   * Perform arithmetic shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform arithmetic shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers)
@@ -168,8 +189,11 @@ extern "C" {
   * printi128(&res); // Output: 16
   * @endcode
   */
+#ifdef __cplusplus
   void __ashlti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
-
+#else
+  void __ashlti3(__int128* res, uint64_t lo, uint64_t hi, uint32_t shift);
+#endif
  /**
   * Perform arithmetic shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Perform arithmetic shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers)
@@ -186,8 +210,11 @@ extern "C" {
   * printi128(&res); // Output: -4
   * @endcode
   */
+#ifdef __cplusplus
   void __ashrti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
-
+#else
+  void __ashrti3(__int128* res, uint64_t lo, uint64_t hi, uint32_t shift);
+#endif
  /**
   * Add two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Add two long doubles (which are represented as two 64 bit unsigned integers)
@@ -198,8 +225,11 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+#ifdef __cplusplus
   void __addtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
-
+#else
+  void __addtf3( long double* ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
+#endif
  /**
   * Subtract two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Subtract two long doubles (which are represented as two 64 bit unsigned integers)
@@ -210,8 +240,11 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+#ifdef __cplusplus
   void __subtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ); 
-
+#else
+  void __subtf3( long double* ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
+#endif
  /**
   * Multiply two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Multiply two long doubles (which are represented as two 64 bit unsigned integers)
@@ -222,8 +255,11 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+#ifdef __cplusplus
   void __multf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ); 
-
+#else
+  void __multf3( long double* ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
+#endif
  /**
   * Divide two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
   * @brief Divide two long doubles (which are represented as two 64 bit unsigned integers)
@@ -234,8 +270,11 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+#ifdef __cplusplus
   void __divtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ); 
-
+#else
+  void __divtf3( long double* ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
+#endif
  /**
   * Check equality between two doubles split as two 64 bit unsigned integers
   * @brief Check equality between two doubles (which are represented as two 64 bit unsigned integers)
@@ -362,8 +401,11 @@ extern "C" {
   * @param f    Input float to be extended
   * @post `ret` is replaced with the extended float
   */
+#ifdef __cplusplus
   void __extendsftf2( long double& ret, float f ); 
-
+#else
+  void __extendsftf2( long double* ret, float f );
+#endif
  /**
   * Extend double to long double
   * @brief Extend float to long double
@@ -371,8 +413,11 @@ extern "C" {
   * @param f    Input float to be extended
   * @post `ret` is replaced with the extended float
   */
+#ifdef __cplusplus
   void __extenddftf2( long double& ret, double f ); 
-
+#else
+  void __extenddftf2( long double* ret, double f );
+#endif
  /**
   * Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer
   * @brief Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer
