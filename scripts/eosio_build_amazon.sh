@@ -9,6 +9,21 @@
 	DISK_TOTAL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f2 | sed 's/[^0-9]//' )
 	DISK_AVAIL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f4 | sed 's/[^0-9]//' )
 
+	CMAKE_VERSION_MAJOR=3
+	CMAKE_VERSION_MINOR=10
+	CMAKE_VERSION_PATCH=2
+	CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
+	MONGODB_VERSION=3.6.3
+	MONGO_C_DRIVER_VERSION=1.9.3
+	MONGO_CXX_DRIVER_VERSION=3.2
+	SRC_LOCATION=/usr/local/src
+	BOOST_VERSION_MAJOR=1
+	BOOST_VERSION_MINOR=66
+	BOOST_VERSION_PATCH=0
+	BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
+	LLVM_CLANG_VERSION=release_40
+	TINI_VERSION=0.18.0
+
 	printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
 	printf "\\tOS Version: %s\\n" "${OS_VER}"
 	printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
@@ -42,17 +57,28 @@
 		printf "\\n\\tExiting now.\\n"
 		exit 1
 	fi
-	
 	printf "\\tYum installation found at %s.\\n" "${YUM}"
-	printf "\\tUpdating YUM.\\n"
-	if ! UPDATE=$( sudo "$YUM" -y update )
-	then
-		printf "\\n\\tYUM update failed.\\n"
-		printf "\\n\\tExiting now.\\n"
-		exit 1
-	fi
-	printf "\\t%s\\n" "${UPDATE}"
 
+
+	printf "\\n\\tDo you wish to update YUM repositories?\\n\\n"
+	select yn in "Yes" "No"; do
+		case $yn in
+			[Yy]* ) 
+				printf "\\n\\n\\tUpdating...\\n\\n"
+				if ! sudo "${YUM}" -y update; then
+					printf "\\n\\tYUM update failed.\\n"
+					printf "\\n\\tExiting now.\\n\\n"
+					exit 1;
+				else
+					printf "\\n\\tYUM update complete.\\n"
+				fi
+			break;;
+			[Nn]* ) echo "Proceeding without update!";;
+			* ) echo "Please type 1 for yes or 2 for no.";;
+		esac
+	done
+
+	
 	DEP_ARRAY=( git gcc72.x86_64 gcc72-c++.x86_64 autoconf automake libtool make bzip2 \
 	bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 libstdc++72.x86_64 \
 	python27.x86_64 python36-devel.x86_64 libedit-devel.x86_64 doxygen.x86_64 graphviz.x86_64)
@@ -75,8 +101,7 @@
 			printf "\\tPackage %s found.\\n" "${DEP_ARRAY[$i]}"
 			continue
 		fi
-	done		
-
+	done
 	if [ "${COUNT}" -gt 1 ]; then
 		printf "\\n\\tThe following dependencies are required to install EOSIO.\\n"
 		printf "\\n\\t${DISPLAY}\\n\\n"
@@ -102,130 +127,21 @@
 		printf "\\n\\tNo required YUM dependencies to install.\\n"
 	fi
 
-	if [ "${ENABLE_COVERAGE_TESTING}" = true ]; then
-		printf "\\n\\tChecking perl installation.\\n"
-		perl_bin=$( command -v perl 2>/dev/null )
-		if [ -z "${perl_bin}" ]; then
-			printf "\\n\\tInstalling perl.\\n"
-			if ! sudo "${YUM}" -y install perl
-			then
-				printf "\\n\\tUnable to install perl at this time.\\n"
-				printf "\\n\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-		else
-			printf "\\tPerl installation found at %s.\\n" "${perl_bin}"
-		fi
-		printf "\\n\\tChecking LCOV installation.\\n"
-		if [ ! -e "/usr/local/bin/lcov" ]; then
-			printf "\\n\\tLCOV installation not found.\\n"
-			printf "\\tInstalling LCOV.\\n"
-			if ! cd "${TEMP_DIR}"
-			then
-				printf "\\n\\tUnable to enter %s. Exiting now.\\n" "${TEMP_DIR}"
-				exit 1;
-			fi
-			if ! git clone "https://github.com/linux-test-project/lcov.git"
-			then
-				printf "\\n\\tUnable to clone LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! cd "${TEMP_DIR}/lcov"
-			then
-				printf "\\n\\tUnable to enter %s/lcov. Exiting now.\\n" "${TEMP_DIR}"
-				exit 1;
-			fi
-			if ! sudo make install
-			then
-				printf "\\n\\tUnable to install LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			rm -rf "${TEMP_DIR}/lcov"
-			printf "\\n\\tSuccessfully installed LCOV.\\n\\n"
-		else
-			printf "\\n\\tLCOV installation found @ /usr/local/bin.\\n"
-		fi
-	fi
 
-	printf "\\n\\tChecking CMAKE installation.\\n"
-    if [ ! -e "${CMAKE}" ]; then
-		printf "\\tInstalling CMAKE.\\n"
-		if ! mkdir -p "${HOME}/opt/" 2>/dev/null
-		then
-			printf "\\n\\tUnable to create directory %s/opt.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! cd "${HOME}/opt"
-		then
-			printf "\\n\\tUnable to enter directory %s/opt.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		STATUS=$( curl -LO -w '%{http_code}' --connect-timeout 30 "https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz" )
-		if [ "${STATUS}" -ne 200 ]; then
-			printf "\\tUnable to clone CMAKE repo.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! tar xf "${HOME}/opt/cmake-3.10.2.tar.gz"
-		then
-			printf "\\tUnable to unarchive file %s/opt/cmake-3.10.2.tar.gz at this time.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! rm -f "${HOME}/opt/cmake-3.10.2.tar.gz"
-		then
-			printf "\\tUnable to remove file %s/opt/cmake-3.10.2.tar.gz.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! ln -s "${HOME}/opt/cmake-3.10.2/" "${HOME}/opt/cmake"
-		then
-			printf "\\tUnable to symlink directory %s/opt/cmake-3.10.2/ to %s/opt/cmake at this time.\\n" "${HOME}" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! cd "${HOME}/opt/cmake/"
-		then
-			printf "\\n\\tUnable to change directory into %s/opt/cmake.\\n" "${HOME}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! ./bootstrap
-		then
-			printf "\\tRunning bootstrap for CMAKE exited with the above error.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		if ! make -j"${JOBS}"
-		then
-			printf "\\tError compiling CMAKE.\\n"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-		fi
-		printf "\\tCMAKE successfully installed @ %s.\\n" "${CMAKE}"
+	printf "\\n\\tChecking CMAKE installation...\\n"
+    if [ -z "$(command -v cmake 2>/dev/null)" ]; then
+		printf "\\tInstalling CMAKE...\\n"
+		curl -LO https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}.tar.gz \
+    	&& tar xf cmake-${CMAKE_VERSION}.tar.gz \
+    	&& cd cmake-${CMAKE_VERSION} \
+    	&& ./bootstrap \
+    	&& make -j$( nproc ) \
+    	&& make install \
+    	&& cd .. \
+    	&& rm -f cmake-${CMAKE_VERSION}.tar.gz
+		printf "\\tCMAKE successfully installed @ %s.\\n\\n" "${CMAKE}"
 	else
-		printf "\\tCMAKE found @ %s.\\n" "${CMAKE}"
-	fi
-
-	if [ -d "${HOME}/opt/boost_1_67_0" ]; then
-		if ! mv "${HOME}/opt/boost_1_67_0" "$BOOST_ROOT"
-		then
-			printf "\\n\\tUnable to move directory %s/opt/boost_1_67_0 to %s.\\n" "${HOME}" "${BOOST_ROOT}"
-			printf "\\n\\tExiting now.\\n"
-			exit 1
-		fi
-		if [ -d "$BUILD_DIR" ]; then
-			if ! rm -rf "$BUILD_DIR"
-			then
-			printf "\\tUnable to remove directory %s. Please remove this directory and run this script %s again. 0\\n" "$BUILD_DIR" "${BASH_SOURCE[0]}"
-			printf "\\tExiting now.\\n\\n"
-			exit 1;
-			fi
-		fi
+		printf "\\tCMAKE found @ $(command -v cmake 2>/dev/null).\\n" "${CMAKE}"
 	fi
 
 	function print_instructions()
