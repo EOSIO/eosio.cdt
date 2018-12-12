@@ -1,11 +1,14 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 #include "types.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
+
    /**
     * @addtogroup system
     * @ingroup c_api
@@ -60,7 +63,10 @@ extern "C" {
     *  eosio_exit(3);
     *  @endcode
     */
-   [[noreturn]] void  eosio_exit( int32_t code );
+#ifdef __cplusplus
+   [[noreturn]]
+#endif
+   void  eosio_exit( int32_t code );
 
 
    /**
@@ -79,6 +85,8 @@ extern "C" {
       return (uint32_t)( current_time() / 1000000 );
    }
 
-   ///@}
-
+#ifdef __cplusplus
 }
+#endif
+  ///@}
+
