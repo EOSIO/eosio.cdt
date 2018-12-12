@@ -4,7 +4,10 @@
  */
 #pragma once
 #include <eosiolib/types.h>
+
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 /**
  *  @defgroup cryptoapi Chain API
@@ -238,4 +241,6 @@ void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t
 
 /// }@cryptocapi
 
+#ifdef __cplusplus
 }
+#endif
