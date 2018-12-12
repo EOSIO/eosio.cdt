@@ -69,6 +69,9 @@ namespace eosio {
          if( str.size() > 13 ) {
             eosio_assert( false, "string is too long to be a valid name" );
          }
+         if( str.empty() ) {
+            return;
+         }
 
          auto n = std::min( str.size(), 12u );
          for( decltype(n) i = 0; i < n; ++i ) {
