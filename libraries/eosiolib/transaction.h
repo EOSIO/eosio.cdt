@@ -5,7 +5,9 @@
 #pragma once
 #include <eosiolib/types.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
    /**
     * @defgroup transactionapi Transaction API
     * @ingroup contractdev
@@ -92,7 +94,7 @@ extern "C" {
     * @brief Gets the size of the currently executing transaction.
     * @return size of the currently executing transaction
     */
-   size_t transaction_size();
+   size_t transaction_size( void );
 
    /**
     * Gets the block number used for TAPOS on the currently executing transaction.
@@ -104,7 +106,7 @@ extern "C" {
     * int tbn = tapos_block_num();
     * @endcode
     */
-   int tapos_block_num();
+   int tapos_block_num( void );
 
    /**
     * Gets the block prefix used for TAPOS on the currently executing transaction.
@@ -116,7 +118,7 @@ extern "C" {
     * int tbp = tapos_block_prefix();
     * @endcode
     */
-   int tapos_block_prefix();
+   int tapos_block_prefix( void );
 
    /**
     * Gets the expiration of the currently executing transaction.
@@ -129,7 +131,7 @@ extern "C" {
     * eosio_print(tm);
     * @endcode
     */
-   uint32_t expiration();
+   uint32_t expiration( void );
 
    /**
     * Retrieves the indicated action from the active transaction.
@@ -155,4 +157,6 @@ extern "C" {
    int get_context_free_data( uint32_t index, char* buff, size_t size );
 
    ///@ } transactioncapi
+#ifdef __cplusplus
 }
+#endif
