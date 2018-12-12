@@ -81,8 +81,10 @@ mkdir -p build
 pushd build &> /dev/null
 
 if [ -z "$CMAKE" ]; then
-  CMAKE=$( command -v cmake )
+  CMAKE=$( command -v cmake 2>/dev/null )
 fi
+
+printf "\\n======================= Starting EOSIO.CDT Build =======================\\n"
 
 "$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt ../
 if [ $? -ne 0 ]; then
