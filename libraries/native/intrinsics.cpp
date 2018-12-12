@@ -16,9 +16,6 @@
 // Boilerplate
 using namespace eosio::native;
 extern "C" {
-   void activate_feature( int64_t f ) {
-      return intrinsics::get().call<intrinsics::activate_feature>(f);
-   }
    void get_resource_limits( capi_name account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight ) {
       return intrinsics::get().call<intrinsics::get_resource_limits>(account, ram_bytes, net_weight, cpu_weight);
    }

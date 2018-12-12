@@ -40,8 +40,6 @@ namespace eosio { namespace native {
    }   
 
 #define INTRINSICS(intrinsic_macro) \
-/*intrinsic_macro(is_feature_active)*/ \
-intrinsic_macro(activate_feature) \
 intrinsic_macro(get_resource_limits) \
 intrinsic_macro(set_resource_limits) \
 intrinsic_macro(set_proposed_producers) \

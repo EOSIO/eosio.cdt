@@ -49,24 +49,6 @@ namespace eosio {
    /**
     *  Prints string
     *
-    *  @param s - an std::string
-    */
-   inline void print( std::string& s) {
-      prints_l( s.c_str(), s.size() );
-   }
-
-  /**
-   *  Prints string
-   *
-   *  @param s - an std::string
-   */
-   inline void print( std::string&& s) {
-      prints_l( s.c_str(), s.size() );
-   }
-
-   /**
-    *  Prints string
-    *
     *  @param c - a const char
     */
    inline void print( const char c ) {
@@ -253,7 +235,12 @@ namespace eosio {
     */
    template<typename T>
    inline void print( T&& t ) {
-      t.print();
+      if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
+         prints_l( t.c_str(), t.size() );
+      else if constexpr (std::is_same<std::decay_t<T>, char*>::value)
+         prints(t);
+      else
+         t.print();
    }
 
    /**
