@@ -5,7 +5,9 @@
 #pragma once
 #include <eosiolib/types.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
    /**
     * @defgroup systemapi System API
@@ -76,17 +78,19 @@ extern "C" {
     *  @brief Get time of the current block (i.e. the block including this action)
     *  @return time in microseconds from 1970 of the current block
     */
-   uint64_t  current_time();
+   uint64_t  current_time( void );
 
    /**
     *  Returns the time in seconds from 1970 of the block including this action
     *  @brief Get time (rounded down to the nearest second) of the current block (i.e. the block including this action)
     *  @return time in seconds from 1970 of the current block
     */
-   inline uint32_t  now() {
+   inline uint32_t  now( void ) {
       return (uint32_t)( current_time() / 1000000 );
    }
    ///@ } systemcapi
 
 
+#ifdef __cplusplus
 }
+#endif
