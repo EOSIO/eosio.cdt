@@ -63,6 +63,7 @@
       create_symlink "eosio-cpp eosio-cpp"
       create_symlink "eosio-ld eosio-ld"
       create_symlink "eosio-pp eosio-pp"
+      create_symlink "eosio-abidiff eosio-abidiff"
       create_symlink "eosio-abigen eosio-abigen"
       create_symlink "eosio-wasm2wast eosio-wasm2wast"
       create_symlink "eosio-wast2wasm eosio-wast2wasm"
