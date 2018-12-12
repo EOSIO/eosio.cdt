@@ -5,7 +5,9 @@
 #pragma once
 #include <eosiolib/types.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
    /**
     *  @brief Checks if a transaction is authorized by a provided set of keys and permissions
     *
@@ -65,4 +67,6 @@ extern "C" {
     */
    int64_t get_account_creation_time( capi_name account );
 
+#ifdef __cplusplus
 }
+#endif
