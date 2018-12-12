@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/types.h>
+#include "types.h"
 
 extern "C" {
 

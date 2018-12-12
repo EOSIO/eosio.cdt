@@ -4,8 +4,9 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
-#include <eosiolib/serialize.hpp>
+#include "system.hpp"
+#include "serialize.hpp"
+
 #include <string>
 #include <string_view>
 
@@ -67,13 +68,13 @@ namespace eosio {
       :value(0)
       {
          if( str.size() > 13 ) {
-            eosio_assert( false, "string is too long to be a valid name" );
+            eosio::check( false, "string is too long to be a valid name" );
          }
          if( str.empty() ) {
             return;
          }
 
-         auto n = std::min( str.size(), 12u );
+         auto n = std::min( (uint32_t)str.size(), (uint32_t)12u );
          for( decltype(n) i = 0; i < n; ++i ) {
             value <<= 5;
             value |= char_to_value( str[i] );
@@ -82,7 +83,7 @@ namespace eosio {
          if( str.size() == 13 ) {
             uint64_t v = char_to_value( str[12] );
             if( v > 0x0Full ) {
-               eosio_assert(false, "thirteenth character in name cannot be a letter that comes after j");
+               eosio::check(false, "thirteenth character in name cannot be a letter that comes after j");
             }
             value |= v;
          }
@@ -102,7 +103,7 @@ namespace eosio {
          else if( c >= 'a' && c <= 'z' )
             return (c - 'a') + 6;
          else
-            eosio_assert( false, "character is not in allowed character set for names" );
+            eosio::check( false, "character is not in allowed character set for names" );
 
          return 0; // control flow will never reach here; just added to suppress warning
       }
@@ -259,8 +260,11 @@ namespace eosio {
  *
  * @brief "foo"_n is a shortcut for name("foo")
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-string-literal-operator-template"
 template <typename T, T... Str>
 inline constexpr eosio::name operator""_n() {
    constexpr auto x = eosio::name{std::string_view{eosio::detail::to_const_char_arr<Str...>::value, sizeof...(Str)}};
    return x;
 }
+#pragma clang diagnostic pop

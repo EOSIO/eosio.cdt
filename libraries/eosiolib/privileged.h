@@ -86,13 +86,6 @@ extern "C" {
     */
    uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-   /**
-    * Activate new feature
-    *
-    * @param f - name (identifier) of the feature to be activated
-    */
-   void activate_feature( int64_t f );
-
 #ifdef __cplusplus
 }
 #endif

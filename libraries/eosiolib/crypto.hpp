@@ -4,10 +4,10 @@
  */
 #pragma once
 
-#include <eosiolib/crypto.h>
-#include <eosiolib/fixed_bytes.hpp>
-#include <eosiolib/varint.hpp>
-#include <eosiolib/serialize.hpp>
+#include "crypto.h"
+#include "fixed_bytes.hpp"
+#include "varint.hpp"
+#include "serialize.hpp"
 
 #include <array>
 

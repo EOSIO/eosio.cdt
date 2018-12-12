@@ -75,7 +75,7 @@ class abidiff {
       }
 
       void diff_version() {
-         if (abi_1["version"] == abi_2["version"]) {
+         if (get_version(abi_1) != get_version(abi_2)) {
             std::cout << "< version\n\t";
             std::cout << abi_1["version"] << "\n";
             std::cout << "> version\n\t";

@@ -3,9 +3,10 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/action.h>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/serialize.hpp>
+#include "action.h"
+#include "datastream.hpp"
+#include "serialize.hpp"
+#include "memory.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
@@ -266,7 +267,7 @@ namespace eosio {
        * @pre This action should not contain any authorizations
        */
       void send_context_free() const {
-         eosio_assert( authorization.size() == 0, "context free actions cannot have authorizations");
+         eosio::check( authorization.size() == 0, "context free actions cannot have authorizations");
          auto serialize = pack(*this);
          ::send_context_free_inline(serialize.data(), serialize.size());
       }

@@ -3,11 +3,11 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/print.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/symbol.hpp>
-#include <eosiolib/fixed_key.hpp>
-#include <eosiolib/fixed_bytes.hpp>
+#include "print.h"
+#include "name.hpp"
+#include "symbol.hpp"
+#include "fixed_bytes.hpp"
+
 #include <utility>
 #include <string>
 
@@ -37,8 +37,6 @@
 
 namespace eosio {
 
-   static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
-
    /**
     *  Prints string
     *
@@ -46,24 +44,6 @@ namespace eosio {
     */
    inline void print( const char* ptr ) {
       prints(ptr);
-   }
-
-   /**
-    *  Prints string
-    *
-    *  @param s - a const std::string
-    */
-   inline void print( const std::string& s) {
-      prints_l( s.c_str(), s.size() );
-   }
-
-  /**
-   *  Prints string
-   *
-   *  @param s - a std::string
-   */
-   inline void print( std::string&& s) {
-      prints_l( s.c_str(), s.size() );
    }
 
    /**
@@ -255,7 +235,12 @@ namespace eosio {
     */
    template<typename T>
    inline void print( T&& t ) {
-      t.print();
+      if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
+         prints_l( t.c_str(), t.size() );
+      else if constexpr (std::is_same<std::decay_t<T>, char*>::value)
+         prints(t);
+      else
+         t.print();
    }
 
    /**

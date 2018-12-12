@@ -2,13 +2,13 @@ if(EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT)
    set(EOSIO_CDT_ROOT "@CDT_ROOT_DIR@")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt)
 if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "Off")
     set(EOSIO_WASM_OLD_BEHAVIOR "On")
-    list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt)
     include(EosioWasmToolchain)
-else()
-   set(EOSIO_WASM_TOOLCHAIN_FILE ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake)
 endif()
+
+include(EosioCDTMacros)
   
 
 function(EXTRACT_MAJOR_MINOR_FROM_VERSION version success major minor)
@@ -101,21 +101,3 @@ function(EOSIO_CHECK_VERSION output version hard_min soft_max hard_max) # option
 
    set(${output} "MATCH" PARENT_SCOPE)
 endfunction(EOSIO_CHECK_VERSION)
-
-if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "On")
-    macro(add_contract CONTRACT_NAME TARGET)
-    add_executable( ${TARGET} ${ARGN} )
-    target_compile_options( ${TARGET} PUBLIC -abigen )
-    get_target_property(BINOUTPUT ${TARGET} BINARY_DIR)
-    target_compile_options( ${TARGET} PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
-    target_compile_options( ${TARGET} PUBLIC -contract ${CONTRACT_NAME} )
-    endmacro()
-else()
-    macro(add_contract CONTRACT_NAME TARGET)
-    add_executable( ${TARGET}.wasm ${ARGN} )
-    target_compile_options( ${TARGET}.wasm PUBLIC -abigen )
-    get_target_property(BINOUTPUT ${TARGET}.wasm BINARY_DIR)
-    target_compile_options( ${TARGET}.wasm PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
-    target_compile_options( ${TARGET}.wasm PUBLIC -contract ${CONTRACT_NAME} )
-    endmacro()
-endif()

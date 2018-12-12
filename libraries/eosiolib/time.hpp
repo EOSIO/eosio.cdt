@@ -1,7 +1,8 @@
 #pragma once
+#include "eosio.hpp"
+
 #include <stdint.h>
 #include <string>
-#include <eosiolib/eosio.hpp>
 
 namespace eosio {
   /**
@@ -132,7 +133,7 @@ namespace eosio {
          static block_timestamp min() { return block_timestamp(0); }
 
          block_timestamp next() const {
-            eosio_assert( std::numeric_limits<uint32_t>::max() - slot >= 1, "block timestamp overflow" );
+            eosio::check( std::numeric_limits<uint32_t>::max() - slot >= 1, "block timestamp overflow" );
             auto result = block_timestamp(*this);
             result.slot += 1;
             return result;

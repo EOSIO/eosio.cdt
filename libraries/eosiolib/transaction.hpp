@@ -3,10 +3,12 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/transaction.h>
-#include <eosiolib/action.hpp>
-#include <eosiolib/time.hpp>
-#include <eosiolib/serialize.hpp>
+#include "transaction.h"
+#include "action.hpp"
+#include "time.hpp"
+#include "serialize.hpp"
+#include "system.hpp"
+
 #include <vector>
 
 namespace eosio {
@@ -143,11 +145,11 @@ namespace eosio {
    inline action get_action( uint32_t type, uint32_t index ) {
       constexpr size_t max_stack_buffer_size = 512;
       int s = ::get_action( type, index, nullptr, 0 );
-      eosio_assert( s > 0, "get_action size failed" );
+      eosio::check( s > 0, "get_action size failed" );
       size_t size = static_cast<size_t>(s);
       char* buffer = (char*)( max_stack_buffer_size < size ? malloc(size) : alloca(size) );
       auto size2 = ::get_action( type, index, buffer, size );
-      eosio_assert( size == static_cast<size_t>(size2), "get_action failed" );
+      eosio::check( size == static_cast<size_t>(size2), "get_action failed" );
       return eosio::unpack<eosio::action>( buffer, size );
    }
 

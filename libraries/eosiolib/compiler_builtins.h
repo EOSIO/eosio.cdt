@@ -4,8 +4,6 @@
  */
 #pragma once
 
-#include <eosiolib/system.h>
-
 /**
  *  @addtogroup compiler_builtins
  *  @ingroup c_api
