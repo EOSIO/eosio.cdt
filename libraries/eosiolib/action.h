@@ -116,7 +116,7 @@ extern "C" {
 #else
    _Bool
 #endif
-      has_auth( capi_name name );
+       has_auth( capi_name name );
 
    /**
     *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
