@@ -186,9 +186,9 @@ struct project {
 int main(int argc, const char **argv) {
 
    cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-proj version " << @VERSION_MAJOR@ << "." << @VERSION_MINOR@ << "." << @VERSION_PATCH@ << "\n";
+        os << "eosio-init version " << @VERSION_MAJOR@ << "." << @VERSION_MINOR@ << "." << @VERSION_PATCH@ << "\n";
   });
-   cl::OptionCategory cat("eosio-proj", "generates an eosio smart contract project");
+   cl::OptionCategory cat("eosio-init", "generates an eosio smart contract project");
    
    cl::opt<bool> bare_opt(
       "bare",
