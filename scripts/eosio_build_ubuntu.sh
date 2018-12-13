@@ -74,11 +74,6 @@
 	COUNT=1
 	DISPLAY=""
 	DEP=""
-
-	if [[ "${ENABLE_CODE_COVERAGE}" == true ]]; then
-		DEP_ARRAY+=(lcov)
-	fi
-
 	printf "\\n\\tChecking for installed dependencies.\\n\\n"
 
 	for (( i=0; i<${#DEP_ARRAY[@]}; i++ ));
@@ -97,7 +92,7 @@
 
 	if [ "${COUNT}" -gt 1 ]; then
 		printf "\\n\\tThe following dependencies are required to install EOSIO.\\n"
-		printf "\\n\\t${DISPLAY}\\n\\n" 
+		printf "\\n\\t${DISPLAY}\\n\\n"
 		printf "\\tDo you wish to install these packages?\\n"
 		select yn in "Yes" "No"; do
 			case $yn in
