@@ -20,9 +20,21 @@ extern "C" {
    jmp_buf* ___env_ptr = &env;
    char* ___heap;
    char* ___heap_ptr;
+   char* ___heap_base_ptr;
    void ___putc(char c);
    bool ___disable_output;
    bool ___has_failed;
+
+   size_t __builtin_wasm_current_memory() {
+      return (size_t)___heap_ptr/(size_t)___heap_base_ptr;
+   }
+
+   size_t __builtin_wasm_grow_memory(size_t size) {
+      if ((___heap_ptr + (size*64*1024)) > (___heap_ptr + 100*1024*1024))
+         eosio_assert(false, "__builtin_wasm_grow_memory");
+      ___heap_ptr += (size*64*1024);
+      return (size_t)___heap_ptr/(size_t)___heap_base_ptr;
+   }
 
    void _prints_l(const char* cstr, uint32_t len, uint8_t which) {
       for (int i=0; i < len; i++) {
@@ -58,6 +70,7 @@ extern "C" {
       int ret_val = 0;
       ___heap = _mmap();
       ___heap_ptr = ___heap;
+      ___heap_base_ptr = ___heap;
       ___disable_output = false;
       ___has_failed = false;
       // preset the print functions
