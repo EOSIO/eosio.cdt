@@ -1,8 +1,8 @@
 .global _start
 .global ____putc
 .global __mmap
-.global setjmp
-.global longjmp
+.global _setjmp
+.global _longjmp
 
 _start:
    mov %rsp, %rbp
@@ -38,7 +38,7 @@ __mmap:
    syscall
    ret 
 
-setjmp:
+_setjmp:
 	mov %rbx, 0(%rdi)
 	mov %rbp, 8(%rdi)
 	mov %r12, 16(%rdi)
@@ -52,7 +52,7 @@ setjmp:
 	xor %rax, %rax
 	ret
 
-longjmp:
+_longjmp:
 	mov %rsi,  %rax
 	test %rax, %rax
 	jnz 1f
