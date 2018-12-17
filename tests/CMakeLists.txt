@@ -1,4 +1,5 @@
 add_test(name_tests ${CMAKE_BINARY_DIR}/tests/unit/name_tests)
+add_test(tree_tests ${CMAKE_BINARY_DIR}/tests/unit/tree_tests)
 add_test(malloc_tests ${CMAKE_BINARY_DIR}/tests/unit/malloc_tests)
 add_test(system_tests ${CMAKE_BINARY_DIR}/tests/unit/system_tests)
 add_test(integration_tests ${CMAKE_BINARY_DIR}/tests/integration/integration_tests)

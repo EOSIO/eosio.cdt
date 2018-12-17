@@ -25,4 +25,15 @@ BOOST_FIXTURE_TEST_CASE( malloc_tests, tester ) try {
    produce_blocks();
    push_action(N(test), N(test1), N(test), {});
 
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE( rope_tests, tester ) try {
+   create_accounts( { N(test) } );
+   produce_block();
+
+   set_code( N(test), contracts::rope_tests_wasm() );
+   set_abi( N(test), contracts::rope_tests_abi().data() );
+   produce_blocks();
+   push_action(N(test), N(test1), N(test), {});
+
 } FC_LOG_AND_RETHROW() }

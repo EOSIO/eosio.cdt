@@ -81,18 +81,18 @@ extern "C" {
             _prints(cs, eosio::cdt::output_stream_kind::std_out);
          });
       intrinsics::set_intrinsic<intrinsics::printi>([](int64_t v) {
-            printf("%lli\n", v);
+            printf("%lli", v);
          });
       intrinsics::set_intrinsic<intrinsics::printui>([](uint64_t v) {
-            printf("%llu\n", v);
+            printf("%llu", v);
          });
       intrinsics::set_intrinsic<intrinsics::printi128>([](const int128_t* v) {
             int* tmp = (int*)v;
-            printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+            printf("0x%04x%04x%04x%04x", tmp[0], tmp[1], tmp[2], tmp[3]);
          });
       intrinsics::set_intrinsic<intrinsics::printui128>([](const uint128_t* v) {
             int* tmp = (int*)v;
-            printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+            printf("0x%04x%04x%04x%04x", tmp[0], tmp[1], tmp[2], tmp[3]);
          });
       intrinsics::set_intrinsic<intrinsics::printsf>([](float v) {
             char buff[512] = {0};
@@ -124,7 +124,7 @@ extern "C" {
          });
       intrinsics::set_intrinsic<intrinsics::printqf>([](const long double* v) {
             int* tmp = (int*)v;
-            printf("0x%04x%04x%04x%04x\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+            printf("0x%04x%04x%04x%04x", tmp[0], tmp[1], tmp[2], tmp[3]);
          });
       intrinsics::set_intrinsic<intrinsics::printn>([](uint64_t nm) {
             std::string s = eosio::name(nm).to_string();

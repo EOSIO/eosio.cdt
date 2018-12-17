@@ -47,7 +47,7 @@ namespace eosio {
    using ::memset;
    using ::memcpy;
 
-#ifndef EOSIO_NATIVE
+//#ifndef EOSIO_NATIVE
    class memory_manager  // NOTE: Should never allocate another instance of memory_manager
    {
    friend void* ::malloc(size_t size);
@@ -541,6 +541,6 @@ void free(void* ptr)
    return eosio::memory_heap.free(ptr);
 }
 
-#endif
+//#endif
 }
 
