@@ -1,28 +1,21 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
-#include <eosiolib/types.h>
+#include "types.h"
 
 /**
- *  @defgroup chainapi Chain API
- *  @brief Defines API for querying internal chain state
- *  @ingroup contractdev
- */
-
-/**
- *  @defgroup chaincapi Chain C API
+ *  @addtogroup chain
+ *  @ingroup c_api
  *  @brief Defines %C API for querying internal chain state
- *  @ingroup chainapi
  *  @{
  */
 
 extern "C" {
     /**
      *  Gets the set of active producers.
-     *  @brief Gets the set of active producers.
      *
      *  @param producers - Pointer to a buffer of account names
      *  @param datalen - Byte length of buffer, when passed 0 will return the size required to store full output.
@@ -40,6 +33,6 @@ extern "C" {
      */
 
     uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
-
-   ///@ } chaincapi
 }
+
+/// @}

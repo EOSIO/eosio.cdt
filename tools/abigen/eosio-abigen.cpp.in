@@ -152,6 +152,8 @@ class abigen : public generation_utils {
       pair.name = get_type(type);
       pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
       pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );   
+      add_type(get_template_argument(type).getAsType());
+      add_type(get_template_argument(type, 1).getAsType());
       _abi.structs.insert(pair);
    } 
 
@@ -166,6 +168,8 @@ class abigen : public generation_utils {
       kv.name = name.substr(0, name.length() - 2);
       kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
       kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );   
+      add_type(get_template_argument(type).getAsType());
+      add_type(get_template_argument(type, 1).getAsType());
       _abi.structs.insert(kv);
    }
 
@@ -265,7 +269,7 @@ class abigen : public generation_utils {
       if (!is_builtin_type(translate_type(type))) {
          if (is_aliasing(type))
             add_typedef(type);
-         else if (is_template_specialization(type, {"vector", "set", "optional", "binary_extension", "ignore"})) {
+         else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
             add_type(get_template_argument(type).getAsType());
          }
          else if (is_template_specialization(type, {"map"}))
@@ -524,7 +528,7 @@ class EosioRecordMatcher : public MatchFinder::MatchCallback {
 int main(int argc, const char **argv) {
 
    cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-abigen version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << "eosio-abigen version " << "${VERSION_FULL}" << "\n";
   });
    cl::OptionCategory cat("eosio-abigen", "generates an abi from C++ project input");
 

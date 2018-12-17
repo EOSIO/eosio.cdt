@@ -18,8 +18,16 @@ using namespace llvm;
 
 int main(int argc, const char **argv) {
 
+  // fix to show version info without having to have any other arguments
+  for (int i=0; i < argc; i++) {
+    if (argv[i] == std::string("-v")) {
+      eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
+      return 0;
+    }
+  }
+
   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << COMPILER_NAME << " version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
   });
   cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
   Options opts = CreateOptions();

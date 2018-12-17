@@ -16,21 +16,29 @@ using namespace llvm;
 int main(int argc, const char **argv) {
 
   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-ld version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << "eosio-ld version " << "${VERSION_FULL}" << "\n";
   });
   cl::ParseCommandLineOptions(argc, argv, "eosio-ld (WebAssembly linker)");
   Options opts = CreateOptions();
 
   std::string line;
-  if (!eosio::cdt::environment::exec_subprogram("wasm-ld", opts.ld_options))
-     return -1;
-
+  if (opts.native) {
+#ifdef __APPLE__
+     if (!eosio::cdt::environment::exec_subprogram("ld", opts.ld_options, true))
+#else
+     if (!eosio::cdt::environment::exec_subprogram("ld.lld", opts.ld_options))
+#endif
+         return -1;
+  } else {
+      if (!eosio::cdt::environment::exec_subprogram("wasm-ld", opts.ld_options))
+         return -1;
+  }
   if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
      return -1;
   }
 
   // finally any post processing
-  if (!fno_post_pass_opt) {
+  if (!fno_post_pass_opt && !opts.native) {
      if ( !llvm::sys::fs::exists( opts.eosio_pp_dir+"/eosio-pp" ) ) {
         std::cout << "Error: eosio.pp not found! (Try reinstalling eosio.wasmsdk)" << std::endl;
         return -1;
