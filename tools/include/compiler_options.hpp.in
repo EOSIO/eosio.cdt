@@ -703,7 +703,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #else
    if (fnative_opt)
-      ldopts.emplace_back("-lnative_rt -lnative_c++ -lnative_c -lnative_eosio -lnative -lnative_rt");
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative -lnative_rt");
    else
       ldopts.emplace_back("-lc++ -lc -leosio");
    if (use_rt_opt && !fnative_opt)
