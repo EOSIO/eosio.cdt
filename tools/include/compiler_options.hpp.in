@@ -388,7 +388,6 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
    } else {
 #ifdef __APPLE__
       ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13");
-      ldopts.emplace_back("-e __wrap_main");
 #endif
       ldopts.emplace_back("-static");
    }
