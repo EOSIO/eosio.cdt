@@ -59,7 +59,7 @@
 
 	DEP_ARRAY=( git python3 python3-dev clang-4.0 lldb-4.0 libclang-4.0-dev cmake make libbz2-dev \
 				libssl-dev libgmp3-dev autotools-dev build-essential libbz2-dev libicu-dev \
-				python-dev autoconf libtool curl mongodb doxygen graphviz libsoci-dev )
+				python-dev autoconf libtool curl mongodb doxygen graphviz libsoci-dev sudo )
 	COUNT=1
 	DISPLAY=""
 	DEP=""
