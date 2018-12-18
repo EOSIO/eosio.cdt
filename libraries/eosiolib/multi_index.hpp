@@ -177,7 +177,6 @@ namespace _multi_index_detail {
  *       uint128_t   secondary;
  *       uint64_t primary_key() const { return primary; }
  *       uint64_t get_secondary() const { return secondary; }
- *       EOSLIB_SERIALIZE( record, (primary)(secondary) )
  *     };
  *    public:
  *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
@@ -693,22 +692,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
        *        address_index addresses("dan"_n, "dan"_n); // code, scope
        *        eosio_assert(addresses.get_code() == "dan"_n, "Codes don't match.");
@@ -728,22 +713,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
        *        address_index addresses("dan"_n, "dan"_n); // code, scope
        *        eosio_assert(addresses.get_code() == "dan"_n, "Scopes don't match");
@@ -826,33 +797,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr == addresses.cbegin(), "Only address is not at front.");
        *      }
@@ -873,33 +823,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr == addresses.begin(), "Only address is not at front.");
        *      }
@@ -918,33 +847,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.cend(), "Address for account doesn't exist");
        *      }
@@ -963,33 +871,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.end(), "Address for account doesn't exist");
        *      }
@@ -1008,33 +895,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1063,33 +930,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1118,33 +965,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1174,33 +1001,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1232,36 +1039,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1302,37 +1086,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t liked = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1373,22 +1133,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t key;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return key; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
        *        address_index addresses(_self, _self.value);  // code, scope
        *        // add to table, first argument is account to bill for storage
@@ -1454,17 +1200,8 @@ class multi_index
        *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
        *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
        *        uint32_t zipnumb = 93446;
        *        auto zip_index = addresses.get_index<name("zip")>();
        *        auto itr = zip_index.find(zipnumb);
@@ -1498,36 +1235,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1572,36 +1286,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       * 
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1643,22 +1334,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
        *        address_index addresses(_self, _self.value); // code, scope
        *        // add to table, first argument is account to bill for storage
@@ -1743,33 +1420,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.end(), "Address for account not found");
        *        addresses.modify( itr, account payer, [&]( auto& address ) {
@@ -1811,33 +1467,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.end(), "Address for account not found");
        *        addresses.modify( *itr, payer, [&]( auto& address ) {
@@ -1918,33 +1553,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       * 
        *        auto user = addresses.get("dan"_n);
        *        eosio_assert(user.first_name == "Daniel", "Couldn't get him.");
        *      }
@@ -1968,33 +1582,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.end(), "Couldn't get him.");
        *      }
@@ -2060,33 +1653,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       * 
        *        auto itr = addresses.find("dan"_n);
        *        eosio_assert(itr != addresses.end(), "Address for account not found");
        *        addresses.erase( itr );
@@ -2126,34 +1698,12 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * 
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
        *        auto itr = addresses.find("dan"_n);
+       *        auto itr = addresses.find("dan"_n);
+       * 
        *        eosio_assert(itr != addresses.end(), "Record is not found");
        *        addresses.erase(*itr);
        *        itr = addresses.find("dan"_n);
