@@ -9,28 +9,14 @@
 	DISK_TOTAL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f2 | sed 's/[^0-9]//' )
 	DISK_AVAIL=$( df -h . | grep /dev | tr -s ' ' | cut -d\  -f4 | sed 's/[^0-9]//' )
 
-	CMAKE_VERSION_MAJOR=3
-	CMAKE_VERSION_MINOR=10
-	CMAKE_VERSION_PATCH=2
-	CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
-	MONGODB_VERSION=3.6.3
-	MONGO_C_DRIVER_VERSION=1.9.3
-	MONGO_CXX_DRIVER_VERSION=3.2
-	SRC_LOCATION=/usr/local/src
-	BOOST_VERSION_MAJOR=1
-	BOOST_VERSION_MINOR=66
-	BOOST_VERSION_PATCH=0
-	BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
-	LLVM_CLANG_VERSION=release_40
-	TINI_VERSION=0.18.0
-
-	printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
-	printf "\\tOS Version: %s\\n" "${OS_VER}"
-	printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
-	printf "\\tCPU cores: %s\\n" "${CPU_CORE}"
-	printf "\\tPhysical Memory: %sMgb\\n" "${MEM_MEG}"
-	printf "\\tDisk space total: %sGb\\n" "${DISK_TOTAL}"
-	printf "\\tDisk space available: %sG\\n" "${DISK_AVAIL}"
+	printf "\\nOS name: ${OS_NAME}\\n"
+	printf "OS Version: ${OS_VER}\\n"
+	printf "CPU speed: ${CPU_SPEED}Mhz\\n"
+	printf "CPU cores: %s\\n" "${CPU_CORE}"
+	printf "Physical Memory: ${MEM_MEG} Mgb\\n"
+	printf "Disk install: ${DISK_INSTALL}\\n"
+	printf "Disk space total: ${DISK_TOTAL%.*}G\\n"
+	printf "Disk space available: ${DISK_AVAIL%.*}G\\n"
 
 	if [ "${MEM_MEG}" -lt 7000 ]; then
 		printf "\\tYour system must have 7 or more Gigabytes of physical memory installed.\\n"

@@ -16,7 +16,6 @@
 	DISK_TOTAL=$((total_blks / gbfactor ))
 	DISK_AVAIL=$((avail_blks / gbfactor ))
 
-
 	printf "\\nOS name: ${OS_NAME}\\n"
 	printf "OS Version: ${OS_VER}\\n"
 	printf "CPU speed: ${CPU_SPEED}Mhz\\n"
