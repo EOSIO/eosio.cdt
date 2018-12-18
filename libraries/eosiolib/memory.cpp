@@ -514,31 +514,57 @@ namespace eosio {
    };
 
    memory_manager memory_heap;
+   
+   struct heap {
+      static constexpr uint32_t _size_marker = sizeof(uint32_t);
+      // allocate memory in 8 char blocks
+      static constexpr uint32_t _mem_block = 8;
+      static constexpr uint32_t _rem_mem_block_mask = _mem_block - 1;
+      static constexpr uint32_t _initial_heap_size = 8192;//32768;
+      // if sbrk is not called outside of this file, then this is the max times we can call it
+      static constexpr uint32_t _heaps_size = 16;
+      static constexpr uint32_t wasm_page_size = 64*1024;
 
+      heap() {
+         _store = (char*)sbrk(_initial_heap_size);
+      }
+      
+      inline char* alloc(size_t sz) {
+   //      if (_offset
+      }
+      char* _store;
+      char* _offset;
+   }; 
+   //char* _heap;
+   //char* _offset;
 } /// namespace eosio
 
 extern "C" {
 
-void* malloc(size_t size)
-{
-   return eosio::memory_heap.malloc(size);
+void* malloc(size_t size) {
+   if (size == 0)
+      return NULL;
+   static size_t s = 0;
+   static char* h = 0;
+   s += size;
+   //return eosio::memory_heap.malloc(size);
+   h = (char*)eosio::sbrk(size);
+   eosio::print("Hello %", (size_t)h);
+   return h;
 }
 
-void* calloc(size_t count, size_t size)
-{
+void* calloc(size_t count, size_t size) {
    void* ptr = eosio::memory_heap.malloc(count*size);
    memset(ptr, 0, count*size);
    return ptr;
 }
 
-void* realloc(void* ptr, size_t size)
-{
+void* realloc(void* ptr, size_t size) {
    return eosio::memory_heap.realloc(ptr, size);
 }
 
-void free(void* ptr)
-{
-   return eosio::memory_heap.free(ptr);
+void free(void* ptr) {
+   //return eosio::memory_heap.free(ptr);
 }
 
 //#endif

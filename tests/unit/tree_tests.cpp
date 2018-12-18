@@ -37,33 +37,54 @@ EOSIO_TEST_BEGIN(string_test)
    //ctstring str2 = str0 + str1;
    //ctstring str2 = ctstring("hello").cat(ctstring(", world")); //+ctstring("\n");
    //eosio::print(str2.c_str());
-   uint64_t t0 = __builtin_readcyclecounter();
    rope r("hello");
-   r += ", world";
+   //r.print();
+   r.append(", world");
+   r.append(" and more!");
    r += " please!";
-   r = r + " some more " + "text";
-   for (int i=0; i < 100; i++) {
-      r += "aaaaaa";
-   }
-   //char buff[r.size()];
-   //r.c_str(buff);
-   //eosio::print(buff);
-   uint64_t t1 = __builtin_readcyclecounter();
-   eosio::print_f("TIME1 : %\n", t1-t0);
+   r += " some more ";
+   r.print();
+   //return;
+   //r.append(" please!");
+   //r.print();
+   {
+      uint64_t t0 = __builtin_readcyclecounter();
+      rope r("hello");
+      r += ", world";
+      r += " please!";
+      r += " some more";
+      r += " text";
+      r += ", world";
+      r += " please!";
+      r += " some more";
+      r += " text";
+      r += ", world";
+      r += " please!";
+      r += " some more";
+      r += " text";
 
-   t0 = __builtin_readcyclecounter();
-   std::string s("hello");
-   s += ", world";
-   s += " please!";
-   s = s + " some more " + "text";
-  /* 
-   for (int i=0; i < 100; i++) {
-      s += "aaaaaa";
+      //r.print();
+      //char buff[r.size()];
+      //r.c_str(buff);
+      //eosio::print(buff);
+      uint64_t t1 = __builtin_readcyclecounter();
+      eosio::print("TIME1 : ", t1-t0, "\n");
+
+      t0 = __builtin_readcyclecounter();
+      std::string s("hello");
+      s += ", world";
+      s += " please!";
+      s = s + " some more " + "text";
+      s += ", world";
+      s += " please!";
+      s = s + " some more " + "text";
+      s += ", world";
+      s += " please!";
+      s = s + " some more " + "text";
+
+      t1 = __builtin_readcyclecounter();
+      eosio::print("TIME2 : ", t1-t0, "\n");
    }
-   */
-   //eosio::print(s.c_str());
-   t1 = __builtin_readcyclecounter();
-   eosio::print_f("TIME2 : %\n", t1-t0);
 
 EOSIO_TEST_END
 

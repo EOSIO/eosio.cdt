@@ -1,16 +1,16 @@
-.global _start
+.global start
 .global ____putc
 .global __mmap
-.global setjmp
-.global longjmp
+.global _setjmp
+.global _longjmp
 
-_start:
+start:
    mov %rsp, %rbp
    mov 0(%rbp), %rdi
    lea 8(%rbp), %rsi
    call __wrap_main
    mov %rax, %rdi
-   mov $0x200003C, %rax # exit syscall 0x3C or 60
+   mov $0x2000001, %rax
    syscall
 
 ____putc:
@@ -30,7 +30,7 @@ ____putc:
 __mmap:
    mov $0x20000C5, %eax # mmap syscall 0xC5 or 197
    mov $0, %rdi          # don't map
-   mov $0x6400000, %rsi  # size 100Mb 
+   mov $0x640000000, %rsi  # size 100Mb 
    mov $3, %rdx         
    mov $0x22, %r10
    mov $-1, %r8
@@ -38,7 +38,7 @@ __mmap:
    syscall
    ret 
 
-setjmp:
+_setjmp:
 	mov %rbx, 0(%rdi)
 	mov %rbp, 8(%rdi)
 	mov %r12, 16(%rdi)
@@ -52,7 +52,7 @@ setjmp:
 	xor %rax, %rax
 	ret
 
-longjmp:
+_longjmp:
 	mov %rsi,  %rax
 	test %rax, %rax
 	jnz 1f

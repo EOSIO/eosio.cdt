@@ -16,7 +16,7 @@ CONTRACT rope_tests : public contract{
          r += " please!";
          r.c_str(buff);
          //eosio::print(buff);
-         eosio_assert(false, "something");
+         //eosio_assert(false, "something");
       }
 };
 
