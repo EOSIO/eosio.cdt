@@ -32,40 +32,39 @@ unamestr=`uname`
 if [[ "${unamestr}" == 'Darwin' ]]; then
    BOOST=/usr/local
    CXX_COMPILER=g++
-   export ARCH="Darwin"
+   ARCH=$unamestr
    bash ./scripts/eosio_build_darwin.sh
 else
    OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-
    case "$OS_NAME" in
       "Amazon Linux AMI")
-         export ARCH="Amazon Linux AMI"
+         ARCH=$OS_NAME
          bash ./scripts/eosio_build_amazon.sh
          ;;
       "CentOS Linux")
-         export ARCH="Centos"
+         ARCH="Centos"
          bash ./scripts/eosio_build_centos.sh
          ;;
       "elementary OS")
-         export ARCH="elementary OS"
+         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Fedora")
-         export ARCH="Fedora"
+         ARCH=$OS_NAME
          bash ./scripts/eosio_build_fedora.sh
          ;;
       "Linux Mint")
-         export ARCH="Linux Mint"
+         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Ubuntu")
-         export ARCH="Ubuntu"
+         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Debian GNU/Linux")
-         export ARCH="Debian"
-	 bash ./scripts/eosio_build_ubuntu.sh
-	 ;;
+         ARCH="Debian"
+	      bash ./scripts/eosio_build_ubuntu.sh
+	      ;;
       *)
          printf "\\n\\tUnsupported Linux Distribution. Exiting now.\\n\\n"
          exit 1
