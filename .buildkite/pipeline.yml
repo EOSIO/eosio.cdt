@@ -1,25 +1,25 @@
 steps:
 
-  - command: |
-      echo "+++ :hammer: Building" && \
-      echo 1 | ./build.sh && \
-      echo "--- Compressing build directory :compression:" && \
-      tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":centos: Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      ecr#v1.1.4:
-        login: true
-        account_ids: "436617320021"
-        no-include-email: true
-        region: "us-west-2"
-      docker#v2.1.0:
-        debug: false
-        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
-        workdir: /data/job
-    timeout: 120
+  # - command: |
+  #     echo "+++ :hammer: Building" && \
+  #     echo 1 | ./build.sh && \
+  #     echo "--- Compressing build directory :compression:" && \
+  #     tar -pczf build.tar.gz build/
+  #   artifact_paths: "build.tar.gz"
+  #   label: ":centos: Build"
+  #   agents:
+  #     queue: "automation-large-builder-fleet"
+  #   plugins:
+  #     ecr#v1.1.4:
+  #       login: true
+  #       account_ids: "436617320021"
+  #       no-include-email: true
+  #       region: "us-west-2"
+  #     docker#v2.1.0:
+  #       debug: false
+  #       image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
+  #       workdir: /data/job
+  #   timeout: 120
 
   # - command: |
   #       echo "+++ :hammer: Building" && \

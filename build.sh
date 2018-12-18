@@ -30,7 +30,6 @@ TINI_VERSION=0.18.0
 
 unamestr=`uname`
 if [[ "${unamestr}" == 'Darwin' ]]; then
-   BOOST=/usr/local
    CXX_COMPILER=g++
    export OS_NAME=$unamestr
    bash ./scripts/eosio_build_darwin.sh
