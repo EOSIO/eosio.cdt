@@ -145,13 +145,25 @@
 						sudo chown -R "$(whoami)" /usr/local/share
 					fi
 					"${XCODESELECT}" --install 2>/dev/null;
-					printf "Updating Home Brew.\\n"
-					if ! brew update
-					then
-						printf "Unable to update Home Brew at this time.\\n"
-						printf "Exiting now.\\n\\n"
-						exit 1;
-					fi
+
+					printf "\\nDo you wish to update homebrew packages?\\n\\n"
+					select yn in "Yes" "No"; do
+						case $yn in
+							[Yy]* ) 
+								printf "\\n\\nUpdating...\\n\\n"
+								if ! brew update; then
+									printf "\\nbrew update failed.\\n"
+									printf "\\nExiting now.\\n\\n"
+									exit 1;
+								else
+									printf "\\brew update complete.\\n"
+								fi
+							break;;
+							[Nn]* ) echo "Proceeding without update!";;
+							* ) echo "Please type 1 for yes or 2 for no.";;
+						esac
+					done
+
 					printf "Installing Dependencies.\\n"
 					if ! "${BREW}" install --force ${DEP}
 					then
@@ -165,6 +177,7 @@
 						printf "Exiting now.\\n\\n"
 						exit 1;
 					fi
+					
 				break;;
 				[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
 				* ) echo "Please type 1 for yes or 2 for no.";;

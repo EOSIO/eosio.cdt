@@ -1,6 +1,6 @@
 #!/bin/bash
 
-printf "\t=========== Building eosio.cdt ===========\n\n"
+printf "=========== Building eosio.cdt ===========\n\n"
 
 RED='\033[0;31m'
 NC='\033[0m'
