@@ -16,7 +16,7 @@ steps:
         no-include-email: true
         region: "us-west-2"
       docker#v2.1.0:
-        debug: true
+        debug: false
         image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos"
         workdir: /data/job
     timeout: 120
@@ -57,7 +57,7 @@ steps:
         no-include-email: true
         region: "us-west-2"
       docker#v2.1.0:
-        debug: true
+        debug: false
         image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu18"
         workdir: /data/job
     timeout: 120

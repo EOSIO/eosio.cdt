@@ -13,7 +13,7 @@
 	DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 	DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
-	printf "\\nOS name: ${ARCH}\\n"
+	printf "\\nOS name: ${OS_NAME}\\n"
 	printf "OS Version: ${OS_VER}\\n"
 	printf "CPU speed: ${CPU_SPEED}Mhz\\n"
 	printf "CPU cores: %s\\n" "${CPU_CORE}"

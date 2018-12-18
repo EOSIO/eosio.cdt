@@ -16,14 +16,15 @@
 	DISK_TOTAL=$((total_blks / gbfactor ))
 	DISK_AVAIL=$((avail_blks / gbfactor ))
 
-	printf "\\n\\tOS name: %s\\n" "${ARCH}"
-	printf "\\tOS Version: %s\\n" "${OS_VER}"
-	printf "\\tCPU speed: %sGhz\\n" "${CPU_SPEED}"
-	printf "\\tCPU cores: %s\\n" "${CPU_CORE}"
-	printf "\\tPhysical Memory: %s Gbytes\\n" "${MEM_GIG}"
-	printf "\\tDisk install: %s\\n" "${DISK_INSTALL}"
-	printf "\\tDisk space total: %sG\\n" "${DISK_TOTAL}"
-	printf "\\tDisk space available: %sG\\n\\n" "${DISK_AVAIL}"
+
+	printf "\\nOS name: ${OS_NAME}\\n"
+	printf "OS Version: ${OS_VER}\\n"
+	printf "CPU speed: ${CPU_SPEED}Mhz\\n"
+	printf "CPU cores: %s\\n" "${CPU_CORE}"
+	printf "Physical Memory: ${MEM_GIG} Gbytes\\n"
+	printf "Disk install: ${DISK_INSTALL}\\n"
+	printf "Disk space total: ${DISK_TOTAL}G\\n"
+	printf "Disk space available: ${DISK_AVAIL}G\\n"
 
 	if [ "${MEM_GIG}" -lt 7 ]; then
 		echo "Your system must have 7 or more Gigabytes of physical memory installed."
@@ -43,33 +44,33 @@
 		exit 1
 	fi
 
-	printf "\\tChecking xcode-select installation\\n"
+	printf "Checking xcode-select installation\\n"
 	if ! XCODESELECT=$( command -v xcode-select)
 	then
-		printf "\\n\\tXCode must be installed in order to proceed.\\n\\n"
-		printf "\\tExiting now.\\n"
+		printf "\\nXCode must be installed in order to proceed.\\n\\n"
+		printf "Exiting now.\\n"
 		exit 1
 	fi
 
-	printf "\\txcode-select installation found @ \\n"
-	printf "\\t%s \\n\\n" "${XCODESELECT}"
+	printf "xcode-select installation found @ \\n"
+	printf "%s \\n\\n" "${XCODESELECT}"
 
-	printf "\\tChecking Ruby installation.\\n"
+	printf "Checking Ruby installation.\\n"
 	if ! RUBY=$( command -v ruby)
 	then
 		printf "\\nRuby must be installed in order to proceed.\\n\\n"
-		printf "\\tExiting now.\\n"
+		printf "Exiting now.\\n"
 		exit 1
 	fi
 
-	printf "\\tRuby installation found @ \\n"
-	printf "\\t%s \\n\\n" "${RUBY}"
+	printf "Ruby installation found @ \\n"
+	printf "%s \\n\\n" "${RUBY}"
 
-	printf "\\tChecking Home Brew installation\\n"
+	printf "Checking Home Brew installation\\n"
 	if ! BREW=$( command -v brew )
 	then
-		printf "\\tHomebrew must be installed to compile EOS.IO\\n\\n"
-		printf "\\tDo you wish to install Home Brew?\\n"
+		printf "Homebrew must be installed to compile EOS.IO\\n\\n"
+		printf "Do you wish to install Home Brew?\\n"
 		select yn in "Yes" "No"; do
 			case "${yn}" in
 				[Yy]* ) 
@@ -89,28 +90,28 @@
 		done
 	fi
 
-	printf "\\tHome Brew installation found @\\n"
-	printf "\\t%s\\n\\n" "${BREW}"
+	printf "Home Brew installation found @\\n"
+	printf "%s\\n\\n" "${BREW}"
 	
 	COUNT=1
 	PERMISSION_GETTEXT=0
 	DISPLAY=""
 	DEP=""
 
-	printf "\\tChecking dependencies.\\n"
+	printf "Checking dependencies.\\n"
 	var_ifs="${IFS}"
 	IFS=","
 	while read -r name tester testee brewname uri
 	do
-		printf "\\tChecking %s ... " "${name}"
+		printf "Checking %s ... " "${name}"
 		if [ "${tester}" "${testee}" ]; then
-			printf "\\t\\t %s found\\n" "${name}"
+			printf " %s found\\n" "${name}"
 			continue
 		fi
 		# resolve conflict with homebrew glibtool and apple/gnu installs of libtool
 		if [ "${testee}" == "/usr/local/bin/glibtool" ]; then
 			if [ "${tester}" "/usr/local/bin/libtool" ]; then
-				printf "\\t\\t %s found\\n" "${name}"
+				printf " %s found\\n" "${name}"
 				continue
 			fi
 		fi
@@ -118,25 +119,25 @@
 			PERMISSION_GETTEXT=1
 		fi
 		DEP=$DEP"${brewname} "
-		DISPLAY="${DISPLAY}${COUNT}. ${name}\\n\\t"
-		printf "\\t\\t %s ${bldred}NOT${txtrst} found.\\n" "${name}"
+		DISPLAY="${DISPLAY}${COUNT}. ${name}\\n"
+		printf " %s ${bldred}NOT${txtrst} found.\\n" "${name}"
 		(( COUNT++ ))
 	done < scripts/eosio_build_dep
 	IFS="${var_ifs}"
 		
-	printf "\\tChecking Python3 ... "
+	printf "Checking Python3 ... "
 	if [  -z "$( python3 -c 'import sys; print(sys.version_info.major)' 2>/dev/null )" ]; then
 		DEP=$DEP"python@3 "
-		DISPLAY="${DISPLAY}${COUNT}. Python 3\\n\\t"
-		printf "\\t\\t python3 ${bldred}NOT${txtrst} found.\\n"
+		DISPLAY="${DISPLAY}${COUNT}. Python 3\\n"
+		printf " python3 ${bldred}NOT${txtrst} found.\\n"
 		(( COUNT++ ))
 	else
-		printf "\\t\\t Python3 found\\n"
+		printf " Python3 found\\n"
 	fi
 
 	if [ $COUNT -gt 1 ]; then
-		printf "\\n\\tThe following dependencies are required to install EOSIO.\\n"
-		printf "\\n\\t%s\\n\\n" "${DISPLAY}"
+		printf "\\nThe following dependencies are required to install EOSIO.\\n"
+		printf "\\n%s\\n\\n" "${DISPLAY}"
 		echo "Do you wish to install these packages?"
 		select yn in "Yes" "No"; do
 			case $yn in
@@ -145,24 +146,24 @@
 						sudo chown -R "$(whoami)" /usr/local/share
 					fi
 					"${XCODESELECT}" --install 2>/dev/null;
-					printf "\\tUpdating Home Brew.\\n"
+					printf "Updating Home Brew.\\n"
 					if ! brew update
 					then
-						printf "\\tUnable to update Home Brew at this time.\\n"
-						printf "\\tExiting now.\\n\\n"
+						printf "Unable to update Home Brew at this time.\\n"
+						printf "Exiting now.\\n\\n"
 						exit 1;
 					fi
-					printf "\\tInstalling Dependencies.\\n"
+					printf "Installing Dependencies.\\n"
 					if ! "${BREW}" install --force ${DEP}
 					then
-						printf "\\tHomebrew exited with the above errors.\\n"
-						printf "\\tExiting now.\\n\\n"
+						printf "Homebrew exited with the above errors.\\n"
+						printf "Exiting now.\\n\\n"
 						exit 1;
 					fi
 					if ! "${BREW}" unlink {DEP} && "${BREW}" link --force ${DEP}
 					then
-						printf "\\tHomebrew exited with the above errors.\\n"
-						printf "\\tExiting now.\\n\\n"
+						printf "Homebrew exited with the above errors.\\n"
+						printf "Exiting now.\\n\\n"
 						exit 1;
 					fi
 				break;;
@@ -171,11 +172,11 @@
 			esac
 		done
 	else 
-		printf "\\n\\tNo required Home Brew dependencies to install.\\n"
+		printf "\\nNo required Home Brew dependencies to install.\\n"
 	fi
   
 	function print_instructions()
 	{
-		printf "\\tcd %s; make test\\n\\n" "${BUILD_DIR}"
+		printf "cd %s; make test\\n\\n" "${BUILD_DIR}"
       return 0
 	}

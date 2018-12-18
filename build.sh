@@ -32,37 +32,30 @@ unamestr=`uname`
 if [[ "${unamestr}" == 'Darwin' ]]; then
    BOOST=/usr/local
    CXX_COMPILER=g++
-   ARCH=$unamestr
+   export OS_NAME=$unamestr
    bash ./scripts/eosio_build_darwin.sh
 else
-   OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
+   export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI")
-         ARCH=$OS_NAME
          bash ./scripts/eosio_build_amazon.sh
          ;;
       "CentOS Linux")
-         ARCH="Centos"
          bash ./scripts/eosio_build_centos.sh
          ;;
       "elementary OS")
-         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Fedora")
-         ARCH=$OS_NAME
          bash ./scripts/eosio_build_fedora.sh
          ;;
       "Linux Mint")
-         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Ubuntu")
-         ARCH=$OS_NAME
          bash ./scripts/eosio_build_ubuntu.sh
          ;;
       "Debian GNU/Linux")
-         ARCH="Debian"
 	      bash ./scripts/eosio_build_ubuntu.sh
 	      ;;
       *)

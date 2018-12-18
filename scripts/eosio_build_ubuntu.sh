@@ -30,7 +30,7 @@
 	LLVM_CLANG_VERSION=release_40
 	TINI_VERSION=0.18.0
 
-	printf "\\nOS name: ${ARCH}\\n"
+	printf "\\nOS name: ${OS_NAME}\\n"
 	printf "OS Version: ${OS_VER}\\n"
 	printf "CPU speed: ${CPU_SPEED}Mhz\\n"
 	printf "CPU cores: %s\\n" "${CPU_CORE}"
