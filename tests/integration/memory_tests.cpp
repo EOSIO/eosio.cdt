@@ -34,6 +34,12 @@ BOOST_FIXTURE_TEST_CASE( rope_tests, tester ) try {
    set_code( N(test), contracts::rope_tests_wasm() );
    set_abi( N(test), contracts::rope_tests_abi().data() );
    produce_blocks();
+   uint64_t t0 = __builtin_readcyclecounter();
    push_action(N(test), N(test1), N(test), {});
-
+   uint64_t t1 = __builtin_readcyclecounter();
+   uint64_t t2 = __builtin_readcyclecounter();
+   push_action(N(test), N(test2), N(test), {});
+   uint64_t t3 = __builtin_readcyclecounter();
+   std::cout << "1 : " << t1 - t0 << '\n';
+   std::cout << "2 : " << t3 - t2 << '\n';
 } FC_LOG_AND_RETHROW() }

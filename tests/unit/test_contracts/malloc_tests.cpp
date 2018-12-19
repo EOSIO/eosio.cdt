@@ -9,6 +9,8 @@ CONTRACT malloc_tests : public contract{
 
       ACTION test1() {
          void* ret = malloc(0);
+
+         //print_f("PTR : %\n", (size_t)ret);
          check(ret == NULL, "malloc(0) should return null");
          //ret = malloc(1024);
          //print_f("PTR : %\n", (size_t)ret);

@@ -3,8 +3,15 @@ file(GLOB HEADERS "*.hpp"
 
 add_library(eosio
             eosiolib.cpp
-            memory.cpp
             crypto.cpp
+            ${HEADERS})
+
+add_library(eosio_memory
+            memory.cpp
+            ${HEADERS})
+
+add_library(eosio_dsm
+            simple_malloc.cpp
             ${HEADERS})
 
 add_native_library(native_eosio
@@ -36,6 +43,8 @@ target_link_libraries( native_eosio native_c native_c++ )
 add_dependencies( native_eosio eosio )
 
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET eosio_memory POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_memory> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET eosio_dsm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_dsm> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")

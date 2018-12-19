@@ -702,7 +702,7 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fnative_opt)
       ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
    else
-      ldopts.emplace_back("-lc++ -lc -leosio");
+      ldopts.emplace_back("-lc++ -lc -leosio -leosio_dsm");
 #endif
    return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }

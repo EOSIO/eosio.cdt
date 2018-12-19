@@ -8,6 +8,7 @@ using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(tree_test)
    //silence_output(true);
+   /*
    binary_search_tree<int> bt; 
    bt.insert(32);
    bt.insert(12);
@@ -28,6 +29,7 @@ EOSIO_TEST_BEGIN(tree_test)
    CHECK_EQUAL(bt.has(12), true);
    CHECK_EQUAL(bt.has(32), true);
    CHECK_EQUAL(bt.has(50), true);
+   */
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(string_test)
@@ -38,7 +40,8 @@ EOSIO_TEST_BEGIN(string_test)
    //ctstring str2 = ctstring("hello").cat(ctstring(", world")); //+ctstring("\n");
    //eosio::print(str2.c_str());
    rope r("hello");
-   //r.print();
+   r.print();
+   return;
    r.append(", world");
    r.append(" and more!");
    r += " please!";
