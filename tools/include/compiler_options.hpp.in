@@ -349,13 +349,15 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #endif
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
-      copts.emplace_back("-Xclang");
-      copts.emplace_back("-load");
-      copts.emplace_back("-Xclang");
-      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff))
-         copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
-      else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
-         copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
+      if (!fnative_opt) {
+         copts.emplace_back("-Xclang");
+         copts.emplace_back("-load");
+         copts.emplace_back("-Xclang");
+         if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
+         else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
+      }
       if (false && fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");

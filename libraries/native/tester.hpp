@@ -15,27 +15,35 @@ inline bool has_failed() {
    return ___has_failed;
 }
 
+extern "C" void apply(uint64_t, uint64_t, uint64_t);
+
 template <typename Pred, typename F, typename... Args>
 inline bool expect_assert(bool check, const std::string& li, Pred&& pred, F&& func, Args... args) {
    std_err.clear();
    __set_env_test();
    int ret = setjmp(*___env_ptr);
+   bool disable_out = ___disable_output;
    if (ret == 0) {
       func(args...);
       __reset_env();
+      silence_output(false);
       if (!check)
-         eosio_assert(false, std::string("expect_assert, no assert {"+li+"}").c_str());
-      eosio::print("expect_assert, no assert {"+li+"}\n");
+         eosio_assert(false, std::string("error : expect_assert, no assert {"+li+"}").c_str());
+      eosio::print("error : expect_assert, no assert {"+li+"}\n");
+      silence_output(disable_out);
       return false;
    } 
    __reset_env();
-   bool failed = pred(std_err.get());
+   bool passed = pred(std_err.get());
    std_err.clear();
+   silence_output(false);
    if (!check)
-      eosio_assert(failed, std::string("expect_assert, wrong assert {"+li+"}").c_str());
-   if (!failed)
-      eosio::print("expect_assert, wrong assert {"+li+"}\n");
-   return failed;   
+      eosio_assert(passed, std::string("error : expect_assert, wrong assert {"+li+"}").c_str());
+   if (!passed)
+      eosio::print("error : expect_assert, wrong assert {"+li+"}\n");
+   silence_output(disable_out);
+
+   return passed;   
 }
 
 template <size_t N, typename F, typename... Args>
@@ -43,11 +51,38 @@ inline bool expect_assert(bool check, const std::string& li, const char (&expect
    return expect_assert(check, li, [&](const std::string& s) { return memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
 }
 
+template <typename Pred, typename F, typename... Args>
+inline bool expect_print(bool check, const std::string& li, Pred&& pred, F&& func, Args... args) {
+   std_out.clear();
+   func(args...);
+   bool passed = pred(std_out.get());
+   std_out.clear();
+   bool disable_out = ___disable_output;
+   silence_output(false);
+   if (!check)
+      eosio_assert(passed, std::string("error : wrong print message {"+li+"}").c_str());
+   if (!passed)
+      eosio::print("error : wrong print message {"+li+"}\n");
+   silence_output(disable_out);
+   return passed;
+}
+
+template <size_t N, typename F, typename... Args>
+inline bool expect_print(bool check, const std::string& li, const char (&expected)[N], F&& func, Args... args) {
+   return expect_print(check, li, [&](const std::string& s) { return memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
+}
+
 #define CHECK_ASSERT(...) \
    ___has_failed |= !expect_assert(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
 
 #define REQUIRE_ASSERT(...) \
    expect_assert(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
+
+#define CHECK_PRINT(...) \
+   ___has_failed |= !expect_print(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
+
+#define REQUIRE_PRINT(...) \
+   expect_print(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
 
 #define CHECK_EQUAL(X, Y) \
    if (X != Y) { \
