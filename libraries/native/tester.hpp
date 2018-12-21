@@ -48,7 +48,10 @@ inline bool expect_assert(bool check, const std::string& li, Pred&& pred, F&& fu
 
 template <size_t N, typename F, typename... Args>
 inline bool expect_assert(bool check, const std::string& li, const char (&expected)[N], F&& func, Args... args) {
-   return expect_assert(check, li, [&](const std::string& s) { return memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
+   return expect_assert(check, li, 
+         [&](const std::string& s) { 
+            return std_err.index == N-1 &&
+            memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
 }
 
 template <typename Pred, typename F, typename... Args>
@@ -69,17 +72,21 @@ inline bool expect_print(bool check, const std::string& li, Pred&& pred, F&& fun
 
 template <size_t N, typename F, typename... Args>
 inline bool expect_print(bool check, const std::string& li, const char (&expected)[N], F&& func, Args... args) {
-   return expect_print(check, li, [&](const std::string& s) { return memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
+   return expect_print(check, li, 
+         [&](const std::string& s) { 
+            return std_out.index-1 == N-1 &&
+            memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
+
 }
 
 #define CHECK_ASSERT(...) \
-   ___has_failed |= !expect_assert(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
+   ___has_failed |= expect_assert(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
 
 #define REQUIRE_ASSERT(...) \
    expect_assert(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
 
 #define CHECK_PRINT(...) \
-   ___has_failed |= !expect_print(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
+   ___has_failed |= expect_print(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
 
 #define REQUIRE_PRINT(...) \
    expect_print(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
