@@ -40,7 +40,7 @@
 	BUILD_DIR="${PWD}/build"
 	CMAKE_BUILD_TYPE=Release
 	TIME_BEGIN=$( date -u +%s )
-   INSTALL_PREFIX="/usr/local/eosio.cdt"
+   INSTALL_PREFIX="${HOME}/opt/eosio.cdt"
 	VERSION=1.2
 
 	txtbld=$(tput bold)

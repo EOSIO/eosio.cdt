@@ -12,7 +12,7 @@ binaries=(eosio-ranlib
           eosio-cpp
           eosio-ld)
 
-if [ -d "/usr/local/eosio.cdt" ]; then
+if [ -d "${HOME}/opt/eosio.cdt" ]; then
    printf "\tDo you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
@@ -35,7 +35,7 @@ if [ -d "/usr/local/eosio.cdt" ]; then
    done
 fi
 
-if [ -d "/usr/local/eosio.wasmsdk" ]; then
+if [ -d "${HOME}/opt/eosio.wasmsdk" ]; then
    printf "\tDo you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
