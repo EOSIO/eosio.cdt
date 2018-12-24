@@ -1,13 +1,14 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
-#include <eosiolib/system.h>
-#include <eosiolib/print.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/serialize.hpp>
+#include "system.hpp"
+#include "print.h"
+#include "name.hpp"
+#include "serialize.hpp"
+
 #include <tuple>
 #include <limits>
 #include <string_view>
@@ -15,39 +16,54 @@
 namespace eosio {
 
   /**
-   *  @defgroup symbolapi Symbol API
-   *  @brief Defines API for managing symbols
-   *  @ingroup contractdev
-   */
-
-  /**
-   *  @defgroup symbolcppapi Symbol CPP API
+   *  @addtogroup symbol Symbol CPP API
+   *  @ingroup cpp_api
    *  @brief Defines %CPP API for managing symbols
-   *  @ingroup symbolapi
    *  @{
    */
 
    /**
-    * \struct Stores the symbol code
-    * @brief Stores the symbol code
+    * @class Stores the symbol code
+    * @brief Stores the symbol code as a uint64_t value
     */
    class symbol_code {
    public:
+
+      /**
+       * Default constructor, construct a new symbol_code
+       *
+       * @brief Construct a new symbol_code object defaulting to a value of 0
+       *
+       */
       constexpr symbol_code() : value(0) {}
 
+      /**
+       * Construct a new symbol_code given a scoped enumerated type of raw (uint64_t).
+       *
+       * @brief Construct a new symbol_code object initialising value with raw
+       * @param raw - The raw value which is a scoped enumerated type of unit64_t
+       *
+       */
       constexpr explicit symbol_code( uint64_t raw )
       :value(raw)
       {}
 
+      /**
+       * Construct a new symbol_code given an string.
+       *
+       * @brief Construct a new symbol_code object initialising value with str
+       * @param str - The string value which validated then converted to unit64_t
+       *
+       */
       constexpr explicit symbol_code( std::string_view str )
       :value(0)
       {
          if( str.size() > 7 ) {
-            eosio_assert( false, "string is too long to be a valid symbol_code" );
+            eosio::check( false, "string is too long to be a valid symbol_code" );
          }
          for( auto itr = str.rbegin(); itr != str.rend(); ++itr ) {
             if( *itr < 'A' || *itr > 'Z') {
-               eosio_assert( false, "only uppercase letters allowed in symbol_code string" );
+               eosio::check( false, "only uppercase letters allowed in symbol_code string" );
             }
             value <<= 8;
             value |= *itr;
@@ -90,8 +106,18 @@ namespace eosio {
          return len;
       }
 
+      /**
+       * Casts a symbol code to raw
+       *
+       * @return Returns an instance of raw based on the value of a symbol_code
+       */
       constexpr uint64_t raw()const { return value; }
 
+      /**
+       * Explicit cast to bool of the symbol_code
+       *
+       * @return Returns true if the symbol_code is set to the default value of 0 else true.
+       */
       constexpr explicit operator bool()const { return value != 0; }
 
       /**
@@ -122,6 +148,11 @@ namespace eosio {
          return begin;
       }
 
+      /**
+       *  Returns the symbol_code as a string.
+       *
+       *  @brief Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
+       */
       std::string to_string()const {
          char buffer[7];
          auto end = write_as_string( buffer, buffer + sizeof(buffer) );
@@ -162,20 +193,49 @@ namespace eosio {
    };
 
    /**
-    * \struct Stores information about a symbol
+    * @struct Stores information about a symbol, the symbol can be 7 characters long.
     *
     * @brief Stores information about a symbol
     */
    class symbol {
    public:
+      /**
+       * Default constructor, construct a new symbol
+       *
+       * @brief Construct a new symbol object defaulting to a value of 0
+       *
+       */
       constexpr symbol() : value(0) {}
 
+      /**
+       * Construct a new symbol given a scoped enumerated type of raw (uint64_t).
+       *
+       * @brief Construct a new symbol object initialising value with raw
+       * @param raw - The raw value which is a scoped enumerated type of unit64_t
+       *
+       */
       constexpr explicit symbol( uint64_t raw ) : value(raw) {}
 
+      /**
+       * Construct a new symbol given a symbol_code and a uint8_t precision.
+       *
+       * @brief Construct a new symbol object initialising value with a symbol maximum of 7 characters, packs the symbol and precision into the uint64_t value.
+       * @param sc - The symbol_code
+       * @param precision - The number of decimal places used for the symbol
+       *
+       */
       constexpr symbol( symbol_code sc, uint8_t precision )
       : value( (sc.raw() << 8) | static_cast<uint64_t>(precision) )
       {}
 
+      /**
+       * Construct a new symbol given a string and a uint8_t precision.
+       *
+       * @brief Construct a new symbol object initialising value with a symbol maximum of 7 characters, packs the symbol and precision into the uint64_t value.
+       * @param ss - The string containing the symbol
+       * @param precision - The number of decimal places used for the symbol
+       *
+       */
       constexpr symbol( std::string_view ss, uint8_t precision )
       : value( (symbol_code(ss).raw() << 8)  | static_cast<uint64_t>(precision) )
       {}
@@ -252,19 +312,44 @@ namespace eosio {
    };
 
    /**
-    * \struct Extended asset which stores the information of the owner of the symbol
+    * @struct Extended asset which stores the information of the owner of the symbol
     *
     */
    class extended_symbol
    {
    public:
+
+      /**
+       * Default constructor, construct a new extended_symbol
+       *
+       * @brief Construct a new empty extended_symbol object
+       *
+       */
       constexpr extended_symbol() {}
 
+      /**
+       * Construct a new symbol_code given a symbol and a name.
+       *
+       * @brief Construct a new symbol_code object initialising symbol and contract with the passed in symbol and name
+       * @param sym - The symbol
+       * @param con - The name of the contract
+       *
+       */
       constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}
 
+      /**
+       * Returns the symbol in the extended_contract
+       *
+       * @return symbol
+       */
       constexpr symbol get_symbol() const { return symbol; }
 
-      constexpr name   get_contract() const { return contract; }
+      /**
+       * Returns the name of the contract in the extended_symbol
+       *
+       * @return name
+       */
+      constexpr name  get_contract() const { return contract; }
 
       /**
        * %Print the extended symbol
@@ -313,6 +398,5 @@ namespace eosio {
       EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
    };
 
-   // }@ symbolapi
-
-} /// namespace eosio
+   /// @}
+}

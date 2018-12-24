@@ -9,3 +9,6 @@
 [submodule "eosio_llvm"]
 	path = eosio_llvm
 	url = https://github.com/eosio/llvm
+[submodule "libraries/native/softfloat"]
+	path = libraries/native/softfloat
+	url = https://github.com/EOSIO/berkeley-softfloat-3.git

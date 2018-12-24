@@ -1,14 +1,14 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
+
+#include "system.hpp"
 
 #include <array>
 #include <algorithm>
 #include <type_traits>
-
-#include <eosiolib/system.h>
 
 namespace eosio {
 
@@ -35,6 +35,7 @@ namespace eosio {
 
     /**
     *  @defgroup fixed_bytes Fixed Size Byte Array
+    *  @ingroup types
     *  @brief Fixed size array of bytes sorted lexicographically
     *  @ingroup types
     *  @{
@@ -71,7 +72,7 @@ namespace eosio {
                    continue;
                }
 
-               eosio_assert( sub_words_left == 1, "unexpected error in fixed_bytes constructor" );
+               eosio::check( sub_words_left == 1, "unexpected error in fixed_bytes constructor" );
                temp_word |= static_cast<word_t>(*w_itr);
                sub_words_left = num_sub_words;
 

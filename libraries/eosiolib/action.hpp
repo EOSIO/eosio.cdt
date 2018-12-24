@@ -1,11 +1,12 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/action.h>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/serialize.hpp>
+#include "action.h"
+#include "datastream.hpp"
+#include "serialize.hpp"
+#include "memory.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
@@ -15,18 +16,15 @@
 namespace eosio {
 
    /**
-    * @defgroup actioncppapi Action C++ API
-    * @ingroup actionapi
-    * @brief Defines type-safe C++ wrappers for querying action and sending action
+    *  @addtogroup action Action C++ API
+    *  @ingroup cpp_api
+    *  @brief Defines type-safe C++ wrapers for querying action and sending action
     *
-    * @note There are some methods from the @ref actioncapi that can be used directly from C++
-    *
-    * @{
+    *  @note There are some methods from the @ref action that can be used directly from C++
+    *  @{
     */
 
    /**
-    *
-    *  This method unpacks the current action at type T.
     *
     *  @brief Interpret the action body as type T.
     *  @return Unpacked action data casted as T.
@@ -44,6 +42,7 @@ namespace eosio {
     *  dummy_action msg = unpack_action_data<dummy_action>();
     *  @endcode
     */
+
    template<typename T>
    T unpack_action_data() {
       constexpr size_t max_stack_buffer_size = 512;
@@ -268,7 +267,7 @@ namespace eosio {
        * @pre This action should not contain any authorizations
        */
       void send_context_free() const {
-         eosio_assert( authorization.size() == 0, "context free actions cannot have authorizations");
+         eosio::check( authorization.size() == 0, "context free actions cannot have authorizations");
          auto serialize = pack(*this);
          ::send_context_free_inline(serialize.data(), serialize.size());
       }
@@ -480,8 +479,7 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define INLINE_ACTION_SENDER(...) BOOST_PP_OVERLOAD(INLINE_ACTION_SENDER,__VA_ARGS__)(__VA_ARGS__)
 
 /**
- * @addtogroup actioncppapi
- * Additional documentation for group
+ * @addtogroup action
  * @{
  */
 

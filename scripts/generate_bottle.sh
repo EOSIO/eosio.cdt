@@ -14,6 +14,8 @@ else
    MAC_VERSION="high_sierra"
 fi
 
+NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
+
 mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
 PREFIX="${PROJECT}/${VERSION}"

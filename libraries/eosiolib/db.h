@@ -1,34 +1,15 @@
 /**
  *  @file db.h
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  *  @brief Defines C API for interfacing with blockchain database
  */
 #pragma once
-
 #include <eosiolib/types.h>
-extern "C" {
-/**
- *  @defgroup database Database API
- *  @brief Defines APIs that store and retrieve data on the blockchain
- *  @ingroup contractdev
- *
- *  @defgroup databasecpp Database C++ API
- *  @brief Defines an interface to EOSIO database
- *  @ingroup database
- *
- *  @details
- *  EOSIO organizes data according to the following broad structure:
- *  - **code** - the account name which has write permission
- *     - **scope** - an area where the data is stored
- *        - **table** - a name for the table that is being stored
- *           - **record** - a row in the table
- */
 
 /**
- *  @defgroup databasec Database C API
+ *  @addtogroup database_c_api Database C API
+ *  @ingroup c_api
  *  @brief Defines %C APIs for interfacing with the database.
- *  @ingroup database
- *
  *  @details Database C API provides low level interface to EOSIO database.
  *
  *  @section tabletypes Supported Table Types
@@ -43,6 +24,8 @@ extern "C" {
  *    - long double key
  *  @{
  */
+extern "C" {
+
 
 /**
   *
@@ -936,5 +919,5 @@ int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name 
   */
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
-///@} databasec
+///@}
 }

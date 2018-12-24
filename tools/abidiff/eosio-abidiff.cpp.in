@@ -75,7 +75,7 @@ class abidiff {
       }
 
       void diff_version() {
-         if (abi_1["version"] == abi_2["version"]) {
+         if (get_version(abi_1) != get_version(abi_2)) {
             std::cout << "< version\n\t";
             std::cout << abi_1["version"] << "\n";
             std::cout << "> version\n\t";
@@ -87,7 +87,14 @@ class abidiff {
          std::cout << direction << " struct\n";
          std::cout << pretty_print(abi["structs"].at(index)) << "\n";
       }
-
+      
+      ojson get_base_type(const ojson& abi, const ojson& type) {
+         for (int i=0; i < abi["types"].size(); i++) {
+            if (abi["types"].at(i)["new_type_name"] == type)
+               return abi["types"].at(i)["new_type_name"];
+         } 
+         return type;
+      }
       void find_structs(const ojson& abi1, const ojson& abi2, char direction) {
          for ( int i=0; i < abi1["structs"].size(); i++ ) {
             bool found = false;
@@ -97,11 +104,15 @@ class abidiff {
                      break;
                   if (abi1["structs"].at(i)["base"] != abi2["structs"].at(j)["base"])
                      break;
-
-                  for (int k=0; k < abi1["structs"].at(i)["fields"].size(); k++)
-                     if (abi1["structs"].at(i)["fields"].at(k) != abi2["structs"].at(j)["fields"].at(k))
+                  
+                  bool _found = false;
+                  for (int k=0; k < abi1["structs"].at(i)["fields"].size(); k++) {
+                     if (abi1["structs"].at(i)["fields"].at(k)["name"] != abi2["structs"].at(j)["fields"].at(k)["name"] ||
+                         abi1["structs"].at(i)["fields"].at(k)["type"] != abi2["structs"].at(j)["fields"].at(k)["type"])
                         break;
-                  found = true;
+                     _found = true;
+                  }
+                  found = _found;
                }
             }
             if (!found)
@@ -258,7 +269,7 @@ class abidiff {
 int main(int argc, const char **argv) {
 
    cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-abidiff version " << ${VERSION_MAJOR} << "." << ${VERSION_MINOR} << "." << ${VERSION_PATCH} << "\n";
+        os << "eosio-abidiff version " << "${VERSION_FULL}" << "\n";
   });
    cl::OptionCategory cat("eosio-abidiff", "generates an abi from C++ project input");
 

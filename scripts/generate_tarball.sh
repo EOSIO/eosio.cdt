@@ -18,6 +18,7 @@ cp -R ${BUILD_DIR}/bin/* ${CDT_PREFIX}/bin
 cp -R ${BUILD_DIR}/licenses/* ${CDT_PREFIX}/licenses
 
 # install cmake modules
+sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/EosioCDTMacrosPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake
 sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/EosioWasmToolchainPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake
 sed "s/_PREFIX_/\/${SPREFIX}\/${SSUBPREFIX}/g" ${BUILD_DIR}/modules/${PROJECT}-config.cmake.package &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/${PROJECT}-config.cmake
 
@@ -37,14 +38,23 @@ cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null
 ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/${PROJECT}-config.cmake ${PROJECT}-config.cmake
 ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake EosioWasmToolchain.cmake
+ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake EosioCDTMacros.cmake
 popd &> /dev/null
 
-pushd ${PREFIX}/bin &> /dev/null
-for f in `find ${BUILD_DIR}/bin -name "eosio-*"`; do
-   bn=$(basename $f)
-   ln -sf ../${SUBPREFIX}/bin/$bn $bn
-done
-popd &> /dev/null
+create_symlink() {
+   pushd ${PREFIX}/bin &> /dev/null
+   ln -sf ../${SUBPREFIX}/bin/$1 $2
+   popd &> /dev/null
+}
+
+create_symlink "eosio-cc eosio-cc"
+create_symlink "eosio-cpp eosio-cpp"
+create_symlink "eosio-ld eosio-ld"
+create_symlink "eosio-pp eosio-pp"
+create_symlink "eosio-init eosio-init"
+create_symlink "eosio-abigen eosio-abigen"
+create_symlink "eosio-wasm2wast eosio-wasm2wast"
+create_symlink "eosio-wast2wasm eosio-wast2wasm"
 
 tar -cvzf $NAME ./${PREFIX}/*
 rm -r ${PREFIX}

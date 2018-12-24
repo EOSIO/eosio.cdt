@@ -20,8 +20,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything")
 
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/musl/include/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/*.h"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h"
-)
+                  "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h")
 
 add_library(c 
             ${CRYPT_SOURCES} 
@@ -44,22 +43,46 @@ add_library(c
             "musl/src/malloc/memalign.c"
             ${HEADERS})
 
-add_dependencies(c EosioTools)
+add_native_library(native_c 
+            ${CRYPT_SOURCES} 
+            ${CTYPE_SOURCES}
+            ${ENV_SOURCES}
+            ${ERRNO_SOURCES}
+            ${EXIT_SOURCES}
+            ${INTERNAL_SOURCES}
+            ${LOCALE_SOURCES}
+            ${MATH_SOURCES}
+            ${MBYTE_SOURCES}
+            ${MISC_SOURCES}
+            ${SEARCH_SOURCES}
+            ${STDIO_SOURCES}
+            ${STDLIB_SOURCES}
+            ${STRING_SOURCES}
+            ${TIME_SOURCES}
+            ${THREAD_SOURCES}
+            "musl/src/malloc/posix_memalign.c"
+            "musl/src/malloc/memalign.c"
+            ${HEADERS})
+
 target_include_directories(c 
                            PUBLIC 
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/musl/include;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal;${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt;${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos;${CMAKE_CURRENT_SOURCE_DIR}/../>"
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
+                           ${CMAKE_SOURCE_DIR})
 
-install(TARGETS c EXPORT EosioLib
-   LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} 
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+target_include_directories(native_c 
+                           PUBLIC 
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
+                           ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
+                           ${CMAKE_SOURCE_DIR})
 
-add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${CMAKE_BINARY_DIR}/lib )
+add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${CMAKE_BINARY_DIR}/include/libc/)
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libc)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libc)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libc)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)

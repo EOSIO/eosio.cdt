@@ -1,10 +1,10 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 
-#include <eosiolib/crypto.hpp>
-#include <eosiolib/datastream.hpp>
+#include "crypto.hpp"
+#include "datastream.hpp"
 
 namespace eosio {
 

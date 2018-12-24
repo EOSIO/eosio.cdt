@@ -13,6 +13,15 @@ export TEMP_DIR="/tmp"
 TEMP_DIR='/tmp'
 DISK_MIN=10
 
+# Use current directory's tmp directory if noexec is enabled for /tmp
+if (mount | grep "/tmp " | grep --quiet noexec); then
+  mkdir -p $SOURCE_DIR/tmp
+  TEMP_DIR="${SOURCE_DIR}/tmp"
+  rm -rf $SOURCE_DIR/tmp/*
+else # noexec wasn't found
+  TEMP_DIR="/tmp"
+fi
+
 unamestr=`uname`
 if [[ "${unamestr}" == 'Darwin' ]]; then
    BOOST=/usr/local
@@ -63,7 +72,7 @@ if [[ `uname` == 'Darwin' ]]; then
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
 else
-   FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
+   FREE_MEM=`LC_ALL=C free | grep "Mem:" | awk '{print $4}'`
 fi
 
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
