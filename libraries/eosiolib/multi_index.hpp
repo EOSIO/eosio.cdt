@@ -245,9 +245,9 @@ struct indexed_by {
  *        multi_index<"mytable"_n, record,
  *          indexed_by< "bysecondary1"_n, const_mem_fun<record, uint64_t, &record::get_secondary_1> >,
  *          indexed_by< "bysecondary2"_n, const_mem_fun<record, uint128_t, &record::get_secondary_2> >,
- *          indexed_by< "bysecondary4"_n, const_mem_fun<record, checksum256, &record::get_secondary_4> >,
- *          indexed_by< "bysecondary5"_n, const_mem_fun<record, double, &record::get_secondary_5> >,
- *          indexed_by< "bysecondary6"_n, const_mem_fun<record, long double, &record::get_secondary_6> >
+ *          indexed_by< "bysecondary3"_n, const_mem_fun<record, checksum256, &record::get_secondary_3> >,
+ *          indexed_by< "bysecondary4"_n, const_mem_fun<record, double, &record::get_secondary_4> >,
+ *          indexed_by< "bysecondary5"_n, const_mem_fun<record, long double, &record::get_secondary_5> >
  *        > table( code, scope);
  *      }
  *  }
