@@ -133,7 +133,7 @@ extern "C" {
     *  @brief Verifies that @ref name is an existing account.
     *  @param name - name of the account to check
     */
-#ifdef _cplusplus
+#ifdef __cplusplus
    bool 
 #else
    _Bool
