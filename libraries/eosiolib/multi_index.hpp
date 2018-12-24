@@ -209,8 +209,6 @@ struct indexed_by {
  *  - uint128_t
  *  - double
  *  - long double
- *
- *  `uint256_t` is not support for use as a secondary index, instead use the following
  *  - eosio::checksum256
  *
  *  @tparam TableName - name of the table
