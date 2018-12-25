@@ -77,6 +77,16 @@ namespace eosio {
    inline void print( unsigned int num ) {
       printui(num);
    }
+  
+   /**
+    * Prints 8 bit unsigned integer
+    *
+    * @brief Prints 8 bit unsigned integer as a 64 bit unsigned integer
+    * @param num to be printed
+    */
+   inline void print( uint8_t num ) {
+      printui(num);
+   }
 
    /**
     * Prints 32 bit unsigned integer
