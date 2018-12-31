@@ -5,17 +5,6 @@
 #include "tree.hpp"
 
 namespace eosio {
-   /*
-   class simple_string {
-      public:
-         template <size_t N>
-         constexpr simple_string(const char (&str)[N]) {
-         }
-
-      private:
-
-   };
-   */
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
@@ -33,6 +22,7 @@ namespace eosio {
          };
 
          std::unique_ptr<rope_node> root = nullptr;
+         rope_node* last = nullptr;
          //binary_search_tree<rope_kv> _store;
          size_t size_in_bytes = 0;
          constexpr size_t strlen(const char* str)const {
@@ -77,60 +67,23 @@ namespace eosio {
          }
          */
          constexpr void append(std::unique_ptr<rope_node>&& n) {
-            rope_node* node = root.get();
-            while (node) {
-               rope_node* tmp = nullptr;
-               std::visit(overloaded {
-                  [&](concat_t& c) { 
-                     tmp = c.right.get(); 
-                  },
-                  [](str& s) { check(false, "critical failure should not reach here"); }
-               }, *node);
-
-               if (tmp)
-                  node = tmp;
-               else
-                  break;
-            }
-
+            rope_node* _last = n.get();
             std::visit(overloaded {
                [&](concat_t& c) { 
                   c.right = std::move(n); 
                },
                [](str& s) { check(false, "critical failure should not reach here"); }
-            }, *node);
-         }
-         constexpr void _append(rope&& r) {
-            rope_node* node = root.get();
-            while (node) {
-               rope_node* tmp = nullptr;
-               std::visit(overloaded {
-                  [&](concat_t& c) { 
-                     tmp = c.right.get(); 
-                  },
-                  [](str& s) { check(false, "critical failure should not reach here"); }
-               }, *node);
-
-               if (tmp)
-                  node = tmp;
-               else
-                  break;
-            }
-
-            std::visit(overloaded {
-               [&](concat_t& c) { 
-                  c.right = std::move(r.root); 
-               },
-               [](str& s) { check(false, "critical failure should not reach here"); }
-            }, *node);
+            }, *last);
+            last = _last;
          }
 
       public:
 
-         constexpr rope(const char* s) {
+         rope(const char* s) {
             root = std::make_unique<rope_node>(
                      concat_t{std::make_unique<rope_node>(str{s,strlen(s)}), nullptr}
                   );
+            last = root.get();
          }
         
          rope(const rope& r) //:
@@ -166,7 +119,7 @@ namespace eosio {
          }
 
          constexpr void append(rope&& r) {
-            _append(std::move(r));
+            append(std::move(r.root));
          }
 
          constexpr rope& operator+= (const char* s) {
@@ -179,14 +132,6 @@ namespace eosio {
             return *this;
          }
 
-/*
-         constexpr rope& operator += (const char* str) {
-            const size_t size = strlen(str);
-            _store.insert(rope_kv{size_in_bytes+size, str});
-            size_in_bytes += size;
-            return *this;
-         }
-*/
          friend inline rope operator+ (rope& lhs, const char* rhs) {
             return (lhs += rhs);
          }

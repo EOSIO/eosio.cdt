@@ -1,4 +1,4 @@
-#include "memory.hpp"
+#include <cstdlib> 
 #include "system.hpp"
 
 namespace eosio {

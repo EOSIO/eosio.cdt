@@ -6,8 +6,8 @@ add_library(eosio
             crypto.cpp
             ${HEADERS})
 
-add_library(eosio_memory
-            memory.cpp
+add_library(eosio_malloc
+            malloc.cpp
             ${HEADERS})
 
 add_library(eosio_dsm
@@ -16,7 +16,7 @@ add_library(eosio_dsm
 
 add_native_library(native_eosio
                    eosiolib.cpp
-                   memory.cpp
+                   malloc.cpp
                    crypto.cpp
                    ${HEADERS})
 
@@ -43,7 +43,7 @@ target_link_libraries( native_eosio native_c native_c++ )
 add_dependencies( native_eosio eosio )
 
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
-add_custom_command( TARGET eosio_memory POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_memory> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET eosio_malloc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_malloc> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_dsm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_dsm> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
 
