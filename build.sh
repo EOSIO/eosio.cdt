@@ -74,48 +74,6 @@ else
    BUILD_DIR="${PWD}"
 fi
 
-unamestr=`uname`
-if [[ $unamestr == 'Darwin' ]]; then
-   CXX_COMPILER=g++
-   export OS_NAME=MacOSX
-   bash ./scripts/eosio_build_darwin.sh
-else
-   export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-   case "$OS_NAME" in
-      "Amazon Linux AMI")
-         bash ./scripts/eosio_build_amazon.sh
-         ;;
-      "CentOS Linux")
-         bash ./scripts/eosio_build_centos.sh
-         ;;
-      "elementary OS")
-         bash ./scripts/eosio_build_ubuntu.sh
-         ;;
-      "Fedora")
-         bash ./scripts/eosio_build_fedora.sh
-         ;;
-      "Linux Mint")
-         bash ./scripts/eosio_build_ubuntu.sh
-         ;;
-      "Ubuntu")
-         bash ./scripts/eosio_build_ubuntu.sh
-         ;;
-      "Debian GNU/Linux")
-	      bash ./scripts/eosio_build_ubuntu.sh
-	      ;;
-      *)
-         printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
-         exit 1
-   esac
-fi
-
-if [[ `uname` == 'Darwin' ]]; then
-   FREE_MEM=`vm_stat | grep "Pages free:"`
-   read -ra FREE_MEM <<< "$FREE_MEM"
-   FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
-else
-   FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
-fi
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
 MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
