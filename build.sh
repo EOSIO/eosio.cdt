@@ -74,11 +74,9 @@ else # noexec wasn't found
       TEMP_DIR="/tmp"
 fi
 
-echo $PWD
-ls -laht
-
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
+   echo "OS_NAME: ${OS_NAME}"
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
          FILE="${CURRENT_DIR}/scripts/eosio_build_amazon.sh"
@@ -119,6 +117,7 @@ if [ "$ARCH" == "Linux" ]; then
          printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
          exit 1
    esac
+   . "$FILE" # Execute OS specific build file
 fi
 
 if [ "$ARCH" == "Darwin" ]; then
@@ -132,9 +131,6 @@ CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
 MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
-
-
-. "$FILE" # Execute OS specific build file
 
 # check submodules
 if [ $(( $(git submodule status --recursive | grep -c "^[+\-]") )) -gt 0 ]; then
