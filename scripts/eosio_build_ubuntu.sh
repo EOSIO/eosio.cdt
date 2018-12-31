@@ -1,6 +1,14 @@
 OS_VER=$( grep VERSION_ID /etc/os-release | cut -d'=' -f2 | sed 's/[^0-9\.]//gI' )
 OS_MAJ=$(echo "${OS_VER}" | cut -d'.' -f1)
 OS_MIN=$(echo "${OS_VER}" | cut -d'.' -f2)
+# UBUNTU 18 doesn't have MONGODB 3.6.3
+if [ $OS_MAJ -gt 16 ]; then
+	export MONGODB_VERSION=4.1.1
+else
+	export MONGODB_VERSION=3.6.3
+fi
+# We have to re-set this with the new version
+export MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
 
 MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 || cut -d' ' -f2 )
 CPU_SPEED=$( lscpu | grep -m1 "MHz" | tr -s ' ' | cut -d\  -f3 || cut -d' ' -f3 | cut -d'.' -f1 )
