@@ -1,6 +1,6 @@
 #!/bin/bash
 
-printf "=========== Building eosio.cdt ===========\n\n"
+printf "=========== eosio.cdt ===========\n\n"
 
 VERSION=2.0 # Build script version
 CMAKE_BUILD_TYPE=Release
@@ -74,6 +74,33 @@ else # noexec wasn't found
       TEMP_DIR="/tmp"
 fi
 
+if [ ! -d "${CURRENT_DIR}/.git" ]; then
+   printf "\\nThis build script only works with sources cloned from git\\n"
+   printf "Please clone a new eos directory with 'git clone https://github.com/EOSIO/eos --recursive'\\n"
+   printf "See the wiki for instructions: https://github.com/EOSIO/eos/wiki\\n"
+   exit 1
+fi
+
+pushd "${CURRENT_DIR}" &> /dev/null
+
+STALE_SUBMODS=$(( $(git submodule status --recursive | grep -c "^[+\-]") ))
+if [ $STALE_SUBMODS -gt 0 ]; then
+   printf "\\ngit submodules are not up to date.\\n"
+   printf "Please run the command 'git submodule update --init --recursive'.\\n"
+   exit 1
+fi
+
+printf "\\nBeginning build version: %s\\n" "${VERSION}"
+printf "%s\\n" "$( date -u )"
+printf "User: %s\\n" "$( whoami )"
+# printf "git head id: %s\\n" "$( cat .git/refs/heads/master )"
+printf "Current branch: %s\\n" "$( git rev-parse --abbrev-ref HEAD )"
+
+ARCH=$( uname )
+printf "\\nARCHITECTURE: %s\\n" "${ARCH}"
+
+popd &> /dev/null
+
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    echo "OS_NAME: ${OS_NAME}"
@@ -132,13 +159,6 @@ CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
 MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
-
-# check submodules
-if [ $(( $(git submodule status --recursive | grep -c "^[+\-]") )) -gt 0 ]; then
-   printf "\\n\\tgit submodules are not up to date.\\n"
-   printf "\\tPlease run the command 'git submodule update --init --recursive'.\\n"
-   exit 1
-fi
 
 mkdir -p $BUILD_DIR
 pushd $BUILD_DIR &> /dev/null
