@@ -9,10 +9,6 @@ DOXYGEN=false
 ENABLE_COVERAGE_TESTING=false
 CORE_SYMBOL_NAME="SYS"
 START_MAKE=true
-CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
-MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
-MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
-CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 TIME_BEGIN=$( date -u +%s )
 txtbld=$(tput bold)
@@ -120,6 +116,10 @@ if [[ `uname` == 'Darwin' ]]; then
 else
    FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
 fi
+CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
+MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
+MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
+CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
