@@ -123,7 +123,7 @@ if [ -z "$(command -v scl 2>/dev/null)" ]; then
 else 
 	printf "Centos Software Collections Repository found.\\n\\n"
 fi
-printf "\\nEnabling Centos devtoolset-7...\\n"
+printf "Enabling Centos devtoolset-7...\\n"
 # shellcheck disable=SC1091
 if ! source "/opt/rh/devtoolset-7/enable"
 then
@@ -168,7 +168,7 @@ if [ "${COUNT}" -gt 1 ]; then
 		esac
 	done
 else
-	printf " - No required YUM dependencies to install.\\n"
+	printf " - No required YUM dependencies to install.\\n\\n"
 fi
 
 printf "Checking CMAKE installation...\\n"
