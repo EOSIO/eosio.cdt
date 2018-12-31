@@ -58,57 +58,57 @@ mkdir -p $ETC_LOCATION
 mkdir -p $MONGODB_LOG_LOCATION
 mkdir -p $MONGODB_DATA_LOCATION
 
-# Use current directory's tmp directory if noexec is enabled for /tmp
-if (mount | grep "/tmp " | grep --quiet noexec); then
-      mkdir -p $SOURCE_DIR/tmp
-      TEMP_DIR="${SOURCE_DIR}/tmp"
-      rm -rf $SOURCE_DIR/tmp/*
-else # noexec wasn't found
-      TEMP_DIR="/tmp"
-fi
-
-SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ "${SOURCE_DIR}" == "${PWD}" ]; then
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ "${CURRENT_DIR}" == "${PWD}" ]; then
    BUILD_DIR="${PWD}/build"
 else
    BUILD_DIR="${PWD}"
+fi
+
+# Use current directory's tmp directory if noexec is enabled for /tmp
+if (mount | grep "/tmp " | grep --quiet noexec); then
+      mkdir -p $CURRENT_DIR/tmp
+      TEMP_DIR="${CURRENT_DIR}/tmp"
+      rm -rf $CURRENT_DIR/tmp/*
+else # noexec wasn't found
+      TEMP_DIR="/tmp"
 fi
 
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_amazon.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_amazon.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "CentOS Linux")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_centos.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_centos.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "elementary OS")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Fedora")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_fedora.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_fedora.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "Linux Mint")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Ubuntu")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Debian GNU/Linux")
-         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         FILE="${CURRENT_DIR}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
