@@ -74,11 +74,6 @@ else
    BUILD_DIR="${PWD}"
 fi
 
-CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
-MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
-MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
-CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
-
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
@@ -130,6 +125,10 @@ if [ "$ARCH" == "Darwin" ]; then
 else
    FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
 fi
+CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
+MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
+MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
+CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 . "$FILE" # Execute OS specific build file
 
