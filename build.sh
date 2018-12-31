@@ -121,7 +121,9 @@ MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
 MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
-case "$OS_NAME" in
+if [ "$ARCH" == "Linux" ]; then
+   export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
+   case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
          FILE="${SOURCE_DIR}/scripts/eosio_build_amazon.sh"
          CXX_COMPILER=g++

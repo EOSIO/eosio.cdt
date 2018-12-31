@@ -69,7 +69,7 @@
 		case $yn in
 			[Yy]* ) 
 				printf "\\n\\nUpdating...\\n\\n"
-				if ! sudo apt-get update then
+				if ! sudo apt-get update; then
 					printf "\\nAPT update failed.\\n"
 					printf "\\nExiting now.\\n\\n"
 					exit 1;
