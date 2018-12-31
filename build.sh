@@ -9,6 +9,10 @@ DOXYGEN=false
 ENABLE_COVERAGE_TESTING=false
 CORE_SYMBOL_NAME="SYS"
 START_MAKE=true
+CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
+MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
+MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
+CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 TIME_BEGIN=$( date -u +%s )
 txtbld=$(tput bold)
@@ -74,8 +78,6 @@ else
    BUILD_DIR="${PWD}"
 fi
 
-cd $SRC_LOCATION # Enter working directory
-
 unamestr=`uname`
 if [[ $unamestr == 'Darwin' ]]; then
    CXX_COMPILER=g++
@@ -119,10 +121,57 @@ else
    FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
 fi
 
-CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
-MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
-MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
-CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
+case "$OS_NAME" in
+      "Amazon Linux AMI"|"Amazon Linux")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_amazon.sh"
+         CXX_COMPILER=g++
+         C_COMPILER=gcc
+      ;;
+      "CentOS Linux")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_centos.sh"
+         CXX_COMPILER=g++
+         C_COMPILER=gcc
+      ;;
+      "elementary OS")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         CXX_COMPILER=clang++-4.0
+         C_COMPILER=clang-4.0
+      ;;
+      "Fedora")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_fedora.sh"
+         CXX_COMPILER=g++
+         C_COMPILER=gcc
+      ;;
+      "Linux Mint")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         CXX_COMPILER=clang++-4.0
+         C_COMPILER=clang-4.0
+      ;;
+      "Ubuntu")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         CXX_COMPILER=clang++-4.0
+         C_COMPILER=clang-4.0
+      ;;
+      "Debian GNU/Linux")
+         FILE="${SOURCE_DIR}/scripts/eosio_build_ubuntu.sh"
+         CXX_COMPILER=clang++-4.0
+         C_COMPILER=clang-4.0
+      ;;
+      *)
+         printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
+         exit 1
+   esac
+fi
+
+if [ "$ARCH" == "Darwin" ]; then
+   FREE_MEM=`vm_stat | grep "Pages free:"`
+   read -ra FREE_MEM <<< "$FREE_MEM"
+   FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
+else
+   FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
+fi
+
+. "$FILE" # Execute OS specific build file
 
 # check submodules
 if [ $(( $(git submodule status --recursive | grep -c "^[+\-]") )) -gt 0 ]; then
@@ -146,6 +195,8 @@ if [ $? -ne 0 ]; then exit -1; fi
 make -j$CORES
 if [ $? -ne 0 ]; then exit -1; fi
 popd &> /dev/null
+
+TIME_END=$(( $(date -u +%s) - $TIME_BEGIN ))
 
 printf "\n\n _______  _______  _______ _________ _______\n"
 printf '(  ____ \(  ___  )(  ____ \\\\__   __/(  ___  )\n'
