@@ -90,7 +90,7 @@ if [ $STALE_SUBMODS -gt 0 ]; then
    exit 1
 fi
 
-printf "\\nBeginning build version: %s\\n" "${VERSION}"
+printf "Beginning build version: %s\\n" "${VERSION}"
 printf "%s\\n" "$( date -u )"
 printf "User: %s\\n" "$( whoami )"
 # printf "git head id: %s\\n" "$( cat .git/refs/heads/master )"
@@ -103,7 +103,6 @@ popd &> /dev/null
 
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
-   echo "OS_NAME: ${OS_NAME}"
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
          FILE="${CURRENT_DIR}/scripts/eosio_build_amazon.sh"
@@ -144,7 +143,6 @@ if [ "$ARCH" == "Linux" ]; then
          printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
          exit 1
    esac
-   echo "FILE: ${FILE}"
    . "$FILE" # Execute OS specific build file
 fi
 
