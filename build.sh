@@ -74,8 +74,8 @@ else # noexec wasn't found
       TEMP_DIR="/tmp"
 fi
 
-echo $CURRENT_DIR
-echo ${PWD}
+echo $PWD
+ls -laht
 
 if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
