@@ -178,7 +178,7 @@ if [ -z $CMAKE ]; then
 	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
 	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
-	&& ./bootstrap \
+	&& ./bootstrap --prefix=$HOME \
 	&& make -j"${CPU_CORE}" \
 	&& make install \
 	&& cd .. \

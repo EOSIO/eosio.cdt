@@ -119,9 +119,9 @@ CMAKE=$(command -v cmake 2>/dev/null)
 if [ -z $CMAKE ]; then
 	printf "Installing CMAKE...\\n"
 	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
-	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
+	&& tar -xzvf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
-	&& ./bootstrap \
+	&& ./bootstrap --prefix=$HOME \
 	&& make -j"${CPU_CORE}" \
 	&& make install \
 	&& cd .. \

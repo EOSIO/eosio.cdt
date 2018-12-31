@@ -2,38 +2,51 @@
 
 printf "=========== Building eosio.cdt ===========\n\n"
 
-export SRC_LOCATION=$HOME/src
-export OPT_LOCATION=$HOME/opt
-export VAR_LOCATION=$HOME/var
-export ETC_LOCATION=$HOME/etc
-export BIN_LOCATION=$HOME/bin
-export DATA_LOCATION=$HOME/data
+VERSION=2.0 # Build script version
+CMAKE_BUILD_TYPE=Release
+export DISK_MIN=20
+DOXYGEN=false
+ENABLE_COVERAGE_TESTING=false
+CORE_SYMBOL_NAME="SYS"
+START_MAKE=true
+
+TIME_BEGIN=$( date -u +%s )
+txtbld=$(tput bold)
+bldred=${txtbld}$(tput setaf 1)
+txtrst=$(tput sgr0)
+
+export SRC_LOCATION=${HOME}/src
+export OPT_LOCATION=${HOME}/opt
+export VAR_LOCATION=${HOME}/var
+export ETC_LOCATION=${HOME}/etc
+export BIN_LOCATION=${HOME}/bin
+export DATA_LOCATION=${HOME}/data
 export CMAKE_VERSION_MAJOR=3
 export CMAKE_VERSION_MINOR=10
 export CMAKE_VERSION_PATCH=2
 export CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
 export MONGODB_VERSION=3.6.3
-export MONGODB_ROOT=$OPT_LOCATION/mongodb-$MONGODB_VERSION
-export MONGODB_LOG_LOCATION=$VAR_LOCATION/log/mongodb
-export MONGODB_CONF=$ETC_LOCATION/mongod.conf
-export MONGODB_LINK_LOCATION=$OPT_LOCATION/mongodb
-export MONGODB_DATA_LOCATION=$DATA_LOCATION/mongodb
+export MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
+export MONGODB_CONF=${ETC_LOCATION}/mongod.conf
+export MONGODB_LOG_LOCATION=${VAR_LOCATION}/log/mongodb
+export MONGODB_LINK_LOCATION=${OPT_LOCATION}/mongodb
+export MONGODB_DATA_LOCATION=${DATA_LOCATION}/mongodb
 export MONGO_C_DRIVER_VERSION=1.10.2
 export MONGO_C_DRIVER_ROOT=${SRC_LOCATION}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}
 export MONGO_CXX_DRIVER_VERSION=3.3
-export MONGO_CXX_DRIVER_ROOT=${SRC_LOCATION}/mongo-cxx-driver-${MONGO_CXX_DRIVER_VERSION}
+export MONGO_CXX_DRIVER_ROOT=${SRC_LOCATION}/mongo-cxx-driver-$MONGO_CXX_DRIVER_VERSION
 export BOOST_VERSION_MAJOR=1
 export BOOST_VERSION_MINOR=67
 export BOOST_VERSION_PATCH=0
 export BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
-export BOOST_ROOT=$SRC_LOCATION/boost_$BOOST_VERSION
-export BOOST_LINK_LOCATION=$OPT_LOCATION/boost
+export BOOST_ROOT=${SRC_LOCATION}/boost_${BOOST_VERSION}
+export BOOST_LINK_LOCATION=${OPT_LOCATION}/boost
 export LLVM_CLANG_VERSION=release_40
 export LLVM_CLANG_ROOT=${SRC_LOCATION}/llvm-${LLVM_CLANG_VERSION}
-export LLVM_DIR=$SRC_LOCATION/llvm-$LLVM_CLANG_VERSION/lib/cmake/llvm
-export WASM_LINK_LOCATION=$OPT_LOCATION/wasm
+export LLVM_DIR=${LLVM_CLANG_ROOT}/lib/cmake/llvm
+export WASM_LINK_LOCATION=${OPT_LOCATION}/wasm
 export TINI_VERSION=0.18.0
-export PATH=$MONGODB_LINK_LOCATION/bin:$PATH
+export PATH=${MONGODB_LINK_LOCATION}/bin:${PATH}
 
 # Setup directories
 mkdir -p $SRC_LOCATION
@@ -45,14 +58,6 @@ mkdir -p $ETC_LOCATION
 mkdir -p $MONGODB_LOG_LOCATION
 mkdir -p $MONGODB_DATA_LOCATION
 
-RED='\033[0;31m'
-NC='\033[0m'
-txtbld=$(tput bold)
-bldred=${txtbld}$(tput setaf 1)
-txtrst=$(tput sgr0)
-
-export DISK_MIN=10
-
 # Use current directory's tmp directory if noexec is enabled for /tmp
 if (mount | grep "/tmp " | grep --quiet noexec); then
       mkdir -p $SOURCE_DIR/tmp
@@ -61,7 +66,6 @@ if (mount | grep "/tmp " | grep --quiet noexec); then
 else # noexec wasn't found
       TEMP_DIR="/tmp"
 fi
-TIME_BEGIN=$( date -u +%s )
 
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${SOURCE_DIR}" == "${PWD}" ]; then
