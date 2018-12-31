@@ -117,6 +117,7 @@ if [ "$ARCH" == "Linux" ]; then
          printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
          exit 1
    esac
+   echo "FILE: ${FILE}"
    . "$FILE" # Execute OS specific build file
 fi
 
