@@ -20,40 +20,41 @@ COUNT=1
 DISPLAY=""
 DEP=""
 
-printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
-printf "\\tOS Version: %s\\n" "${OS_VER}"
-printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
-printf "\\tCPU cores: %s\\n" "${CPU_CORE}"
-printf "\\tPhysical Memory: %s Mgb\\n" "${MEM_MEG}"
-printf "\\tDisk install: %s\\n" "${DISK_INSTALL}"
-printf "\\tDisk space total: %sG\\n" "${DISK_TOTAL%.*}"
-printf "\\tDisk space available: %sG\\n" "${DISK_AVAIL%.*}"
+printf "\\nOS name: %s\\n" "${OS_NAME}"
+printf "OS Version: %s\\n" "${OS_VER}"
+printf "CPU speed: %sMhz\\n" "${CPU_SPEED}"
+printf "CPU cores: %s\\n" "${CPU_CORE}"
+printf "Physical Memory: %s Mgb\\n" "${MEM_MEG}"
+printf "Disk install: %s\\n" "${DISK_INSTALL}"
+printf "Disk space total: %sG\\n" "${DISK_TOTAL%.*}"
+printf "Disk space available: %sG\\n" "${DISK_AVAIL%.*}"
 
 if [ "${MEM_MEG}" -lt 7000 ]; then
-	printf "\\tYour system must have 7 or more Gigabytes of physical memory installed.\\n"
-	printf "\\tExiting now.\\n"
+	printf "Your system must have 7 or more Gigabytes of physical memory installed.\\n"
+	printf "Exiting now.\\n"
 	exit 1;
 fi
 
 if [ "${OS_VER}" -lt 25 ]; then
-	printf "\\tYou must be running Fedora 25 or higher to install EOSIO.\\n"
-	printf "\\tExiting now.\\n"
+	printf "You must be running Fedora 25 or higher to install EOSIO.\\n"
+	printf "Exiting now.\\n"
 	exit 1;
 fi
 
 if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
-	printf "\\tYou must have at least %sGB of available storage to install EOSIO.\\n" "${DISK_MIN}"
-	printf "\\tExiting now.\\n"
+	printf "You must have at least %sGB of available storage to install EOSIO.\\n" "${DISK_MIN}"
+	printf "Exiting now.\\n"
 	exit 1;
 fi
 
-printf "\\nChecking Yum installation...\\n"
-if ! YUM=$( command -v yum 2>/dev/null ); then
-		printf "!! Yum must be installed to compile EOS.IO !!\\n"
-		printf "Exiting now.\\n"
-		exit 1;
+printf "\\nChecking Yum installation.\\n"
+if ! YUM=$( command -v yum 2>/dev/null )
+then
+	printf "\\nYum must be installed to compile EOS.IO.\\n"
+	printf "\\nExiting now.\\n"
+	exit 1
 fi
-printf " - Yum installation found at %s.\\n" "${YUM}"
+printf "Yum installation found at ${YUM}.\\n"
 
 printf "\\nDo you wish to update YUM repositories?\\n\\n"
 select yn in "Yes" "No"; do

@@ -32,31 +32,31 @@ printf "Disk space total: ${DISK_TOTAL%.*}G\\n"
 printf "Disk space available: ${DISK_AVAIL%.*}G\\n"
 
 if [ "${MEM_MEG}" -lt 7000 ]; then
-	printf "\\tYour system must have 7 or more Gigabytes of physical memory installed.\\n"
-	printf "\\texiting now.\\n"
+	printf "Your system must have 7 or more Gigabytes of physical memory installed.\\n"
+	printf "exiting now.\\n"
 	exit 1
 fi
 
 if [ "${OS_VER}" -lt 2017 ]; then
-	printf "\\tYou must be running Amazon Linux 2017.09 or higher to install EOSIO.\\n"
-	printf "\\texiting now.\\n"
+	printf "You must be running Amazon Linux 2017.09 or higher to install EOSIO.\\n"
+	printf "exiting now.\\n"
 	exit 1
 fi
 
 if [ "${DISK_AVAIL}" -lt "${DISK_MIN}" ]; then
-	printf "\\tYou must have at least %sGB of available storage to install EOSIO.CDT.\\n" "${DISK_MIN}"
-	printf "\\texiting now.\\n"
+	printf "You must have at least %sGB of available storage to install EOSIO.CDT.\\n" "${DISK_MIN}"
+	printf "exiting now.\\n"
 	exit 1
 fi
 
-printf "\\n\\tChecking Yum installation.\\n"
+printf "\\nChecking Yum installation.\\n"
 if ! YUM=$( command -v yum 2>/dev/null )
 then
-	printf "\\n\\tYum must be installed to compile EOS.IO.\\n"
-	printf "\\n\\tExiting now.\\n"
+	printf "\\nYum must be installed to compile EOS.IO.\\n"
+	printf "\\nExiting now.\\n"
 	exit 1
 fi
-printf "\\tYum installation found at %s.\\n" "${YUM}"
+printf "Yum installation found at ${YUM}.\\n"
 
 printf "\\nDo you wish to update YUM repositories?\\n\\n"
 select yn in "Yes" "No"; do

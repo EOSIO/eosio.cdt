@@ -54,14 +54,14 @@ if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
 	exit 1;
 fi
 
-printf "\\n\\tChecking Yum installation.\\n"
+printf "\\nChecking Yum installation.\\n"
 if ! YUM=$( command -v yum 2>/dev/null )
 then
-	printf "\\n\\tYum must be installed to compile EOS.IO.\\n"
-	printf "\\n\\tExiting now.\\n"
+	printf "\\nYum must be installed to compile EOS.IO.\\n"
+	printf "\\nExiting now.\\n"
 	exit 1
 fi
-printf "\\tYum installation found at %s.\\n" "${YUM}"
+printf "Yum installation found at ${YUM}.\\n"
 
 printf "\\nDo you wish to update YUM repositories?\\n\\n"
 select yn in "Yes" "No"; do
