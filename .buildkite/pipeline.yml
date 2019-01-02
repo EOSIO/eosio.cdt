@@ -51,7 +51,7 @@ steps:
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
-       ecr#v1.1.4:
+      ecr#v1.1.4:
         login: true
         account_ids: "436617320021"
         no-include-email: true
