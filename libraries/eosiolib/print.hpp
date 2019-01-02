@@ -49,64 +49,32 @@ namespace eosio {
    /**
     *  Prints string
     *
-    *  @param c - a const char
+    *  @param c - a char
     */
-   inline void print( const char c ) {
+   inline void print( char c ) {
       prints_l( &c, 1 );
    }
 
    /**
-    * Prints signed integer as a 64 bit signed integer
+    * Prints 16-64 bit signed integer as a 64 bit signed integer
     *
     * @param num to be printed
     */
-   inline void print( int num ) {
+   template <typename T, std::enable_if_t<std::is_integral<T>::value && 
+                                          std::is_signed<T>::value &&
+                                          !std::is_same<T, char>::value, int> = 0>
+   inline void print( T num ) {
       printi(num);
    }
 
    /**
-    * Prints 32 bit signed integer as a 64 bit signed integer
+    * Prints 8-64 bit signed integer as a 64 bit signed integer
     *
     * @param num to be printed
     */
-   inline void print( int32_t num ) {
-      printi(num);
-   }
-
-   /**
-    * Prints 64 bit signed integer as a 64 bit signed integer
-    *
-    * @param num to be printed
-    */
-   inline void print( int64_t num ) {
-      printi(num);
-   }
-
-
-   /**
-    * Prints unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( unsigned int num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 32 bit unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint32_t num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 64 bit unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint64_t num ) {
+   template <typename T, std::enable_if_t<std::is_integral<T>::value && 
+                                          std::is_unsigned<T>::value, int> = 0>
+   inline void print( T num ) {
       printui(num);
    }
 
@@ -127,7 +95,6 @@ namespace eosio {
    inline void print( uint128_t num ) {
       printui128(&num);
    }
-
 
    /**
     * Prints single-precision floating point number (i.e. float)
@@ -211,7 +178,7 @@ namespace eosio {
     * @param t to be printed
     * @pre T must implements print() function
     */
-   template<typename T>
+   template<typename T, std::enable_if_t<!std::is_integral<T>::value, int> = 0>
    inline void print( T&& t ) {
       if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
          prints_l( t.c_str(), t.size() );
