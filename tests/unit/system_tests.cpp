@@ -4,10 +4,10 @@
 using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(system_test)
-   //silence_output(true);
+   silence_output(true);
    auto test_check1 = [](bool b) { eosio::check(b, "asserted"); }; 
    test_check1(true);
-   REQUIRE_ASSERT("asserted", test_check1, false);
+   CHECK_ASSERT("asserted", test_check1, false);
 
    auto test_check2 = [](bool b) { std::string s="asserted"; eosio::check(b, s); }; 
    test_check2(true);
@@ -24,7 +24,6 @@ EOSIO_TEST_BEGIN(system_test)
    auto test_check5 = [](bool b) { eosio::check(b, 13); }; 
    test_check5(true);
    REQUIRE_ASSERT("13", test_check5, false);
-
    silence_output(false);
 EOSIO_TEST_END
 
