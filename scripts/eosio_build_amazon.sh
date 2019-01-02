@@ -122,7 +122,7 @@ if [ -z $CMAKE ]; then
 	&& tar -xzvf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
 	&& ./bootstrap --prefix=$HOME \
-	&& make -j"${CPU_CORE}" \
+	&& make -j"${JOBS}" \
 	&& make install \
 	&& cd .. \
 	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
