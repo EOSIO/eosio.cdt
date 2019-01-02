@@ -18,7 +18,7 @@ if [ -d $OPT_LOCATION/eosio.cdt ]; then
    select yn in "Yes" "No"; do
       case $yn in
          [Yy]* )
-            pushd $OPT_LOCATION &> /dev/null
+            pushd $HOME &> /dev/null
             rm -rf eosio.cdt
             pushd bin &> /dev/null
             for binary in ${binaries[@]}; do
@@ -41,7 +41,7 @@ if [ -d $OPT_LOCATION/eosio.wasmsdk ]; then
    select yn in "Yes" "No"; do
       case $yn in
          [Yy]* )
-            pushd $OPT_LOCATION &> /dev/null
+            pushd $HOME &> /dev/null
             rm -rf eosio.wasmsdk
             pushd bin &> /dev/null
             for binary in ${binaries[@]}; do
