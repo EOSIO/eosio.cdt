@@ -207,9 +207,9 @@ struct indexed_by {
  *  EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
  *  - uint64_t
  *  - uint128_t
- *  - uint256_t
  *  - double
  *  - long double
+ *  - eosio::checksum256
  *
  *  @tparam TableName - name of the table
  *  @tparam T - type of the data stored inside the table
@@ -225,13 +225,13 @@ struct indexed_by {
  *      uint64_t    primary;
  *      uint64_t    secondary_1;
  *      uint128_t   secondary_2;
- *      uint256_t   secondary_3;
+ *      checksum256 secondary_3;
  *      double      secondary_4;
  *      long double secondary_5;
  *      uint64_t primary_key() const { return primary; }
  *      uint64_t get_secondary_1() const { return secondary_1; }
  *      uint128_t get_secondary_2() const { return secondary_2; }
- *      uint256_t get_secondary_3() const { return secondary_3; }
+ *      checksum256 get_secondary_3() const { return secondary_3; }
  *      double get_secondary_4() const { return secondary_4; }
  *      long double get_secondary_5() const { return secondary_5; }
  *    };
@@ -243,7 +243,7 @@ struct indexed_by {
  *        multi_index<"mytable"_n, record,
  *          indexed_by< "bysecondary1"_n, const_mem_fun<record, uint64_t, &record::get_secondary_1> >,
  *          indexed_by< "bysecondary2"_n, const_mem_fun<record, uint128_t, &record::get_secondary_2> >,
- *          indexed_by< "bysecondary3"_n, const_mem_fun<record, uint256_t, &record::get_secondary_3> >,
+ *          indexed_by< "bysecondary3"_n, const_mem_fun<record, checksum256, &record::get_secondary_3> >,
  *          indexed_by< "bysecondary4"_n, const_mem_fun<record, double, &record::get_secondary_4> >,
  *          indexed_by< "bysecondary5"_n, const_mem_fun<record, long double, &record::get_secondary_5> >
  *        > table( code, scope);
