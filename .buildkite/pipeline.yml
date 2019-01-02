@@ -232,7 +232,7 @@ steps:
   # - wait
 
   - command: |
-        ([[ $BUILDKITE_BRANCH == "develop" ]] || [[ $BUILDKITE_BRANCH == "release"* ]]) && \
+        ([[ $BUILDKITE_BRANCH == "develop" ]] || [[ $BUILDKITE_BRANCH == "new"* ]]) && \
         echo "--- :arrow_down: Downloading package" && \
         buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: 18.04 Package builder" && \
         echo "--- :key: AUTHENTICATING GOOGLE SERVICE ACCOUNT" && \
