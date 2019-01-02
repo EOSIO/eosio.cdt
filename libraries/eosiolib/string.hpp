@@ -150,16 +150,15 @@ namespace eosio {
                }, *r);
             }
          }
-         
-         static void c_str(char* buffer, const std::unique_ptr<rope_node>& r) {
-            size_t offset = 0;
+
+         static void c_str(char* buffer, const std::unique_ptr<rope_node>& r, size_t& offset) {
             if (r) {
                std::visit(overloaded {
                   [&](concat_t& c) { 
                      if (c.left)
-                        c_str(buffer, c.left);
+                        c_str(buffer, c.left, offset);
                      if (c.right)
-                        c_str(buffer, c.right);
+                        c_str(buffer, c.right, offset);
                   },
                   [&](str& s) { memcpy(buffer+offset, s.c_str, s.size); offset += s.size; }
                }, *r);
@@ -199,16 +198,20 @@ namespace eosio {
          }
 
          inline constexpr void append(const std::unique_ptr<rope_node>& n) {
-           eosio::print("Hello2\n");
             append(n.get());
          }
 
          constexpr void append(std::unique_ptr<rope_node>&& n) {
+            if (!last) {
+               root = std::move(n);
+               last = n.get();
+               append(std::move(std::get<concat_t>(*(std::get<concat_t>(*n).right)).right));
+               return;
+            }
             rope_node* _last = n.get();
             std::visit(overloaded {
-               [&](concat_t& c) { 
+               [&, this](concat_t& c) { 
                   c.right = std::move(n); 
-                  //eosio::print("SS : ", std::get<str>(*(c.left)).c_str, "\n");
 
                   if (c.right != nullptr) {
                      last = _last;
@@ -251,17 +254,11 @@ namespace eosio {
             last = root.get();
             append(r.copy());
             size = r.size;
-            eosio::print("HOO\n");
          }
          
          constexpr rope(rope&& r) {
-            //eosio::print("HOOt\n");
             root = std::move(r.root);
             last = root.get();
-
-            //eosio::print("HOOtr2\n");
-            append(std::move(get_cc(r.root).right));
-            //eosio::print("HOOtr32\n");
             size = r.size;
          }
 
@@ -325,8 +322,9 @@ namespace eosio {
          }
          
          void c_str(char* buffer)const {
+            size_t off=0;
             if (root)
-               c_str(buffer, root);
+               c_str(buffer, root, off);
          }
          
 
