@@ -329,6 +329,8 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
+      copts.emplace_back("-fno-stack-protector");
+      copts.emplace_back("-m64");
 #else
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
       copts.emplace_back("-m64");
@@ -387,9 +389,9 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--merge-data-segments");
    } else {
 #ifdef __APPLE__
-      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System ");
-      ldopts.emplace_back("-e __wrap_main");
+      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13");
 #endif
+      ldopts.emplace_back("-static");
    }
 }
 #endif
