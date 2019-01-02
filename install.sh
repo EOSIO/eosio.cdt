@@ -31,6 +31,8 @@
 ##########################################################################
 
 OPT_LOCATION=$HOME/opt
+BIN_LOCATION=$HOME/bin
+LIB_LOCATION=$HOME/lib
 
 CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${CWD}" != "${PWD}" ]; then
@@ -49,7 +51,7 @@ bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
 create_symlink() {
-   pushd /usr/local/bin &> /dev/null
+   pushd $BIN_LOCATION &> /dev/null
    ln -sf ../eosio.cdt/bin/$1 $2
    popd &> /dev/null
 }
@@ -72,8 +74,8 @@ install_symlinks() {
 }
 
 create_cmake_symlink() {
-   mkdir -p /usr/local/lib/cmake/eosio.cdt
-   pushd /usr/local/lib/cmake/eosio.cdt &> /dev/null
+   mkdir -p $LIB_LOCATION/cmake/eosio.cdt
+   pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
    ln -sf ../../../eosio.cdt/lib/cmake/eosio.cdt/$1 $1
    popd &> /dev/null
 }
