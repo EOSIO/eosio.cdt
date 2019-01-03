@@ -30,7 +30,7 @@ steps:
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":ubuntu: 18.04 Build"
+    label: ":ubuntu: Ubuntu 18.04 Build"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -45,7 +45,7 @@ steps:
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":fedora: Build"
+    label: ":fedora: Fedora Build"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -60,7 +60,7 @@ steps:
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":centos: Build"
+    label: ":centos: CentOS Build"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -75,7 +75,7 @@ steps:
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":aws: Build"
+    label: ":aws: Amazon AWS Build"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -91,7 +91,7 @@ steps:
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
       cd build && \
       ctest -V
     label: ":darwin: High Sierra Unit Tests"
@@ -104,7 +104,7 @@ steps:
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on macOS Mojave" && \
       cd build && \
       ctest -V
     label: ":darwin: Mojave Unit Tests"
@@ -113,14 +113,14 @@ steps:
       os: "mojave"
     timeout: 120
     
-  - command: | # Ubuntu Unit Tests
+  - command: | # Ubuntu 18.04 Unit Tests
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 18.04 Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on Ubuntu" && \
       cd build && \
       ctest -V
-    label: ":ubuntu: 18.04 Unit Tests"
+    label: ":ubuntu: Ubuntu 18.04 Unit Tests"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -133,10 +133,10 @@ steps:
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":fedora: Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on Fedora" && \
       cd build && \
       ctest -V
-    label: ":fedora: Unit Tests"
+    label: ":fedora: Fedora Unit Tests"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -149,10 +149,10 @@ steps:
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on CentOS" && \
       cd build && \
       ctest -V
-    label: ":centos: Unit Tests"
+    label: ":centos: CentOS Unit Tests"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -165,10 +165,10 @@ steps:
       echo "--- :arrow_down: Downloading build directory" && \
       buildkite-agent artifact download "build.tar.gz" . --step ":aws: Build" && \
       tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests" && \
+      echo "+++ :microscope: Running unit tests on Amazon AWS" && \
       cd build && \
       ctest -V
-    label: ":aws: Unit Tests"
+    label: ":aws: Amazon AWS Unit Tests"
     agents:
       queue: "automation-large-builder-fleet"
     plugins:
@@ -214,7 +214,7 @@ steps:
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd /data/job/build/packages && bash generate_package.sh deb
-    label: ":ubuntu: 18.04 Package builder"
+    label: ":ubuntu: Ubuntu 18.04 Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
@@ -241,7 +241,7 @@ steps:
         mkdir -p /root/rpmbuild/SPECS && \
         mkdir -p /root/rpmbuild/SRPMS && \
         cd /data/job/build/packages && bash generate_package.sh rpm
-    label: ":fedora: Package builder"
+    label: ":fedora: Fedora Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
@@ -268,7 +268,7 @@ steps:
         mkdir -p /root/rpmbuild/SPECS && \
         mkdir -p /root/rpmbuild/SRPMS && \
         cd /data/job/build/packages && bash generate_package.sh rpm
-    label: ":centos: Package builder"
+    label: ":centos: CentOS Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
@@ -304,7 +304,7 @@ steps:
         docker rmi eosio/cdt:latest && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:latest
-    label: "Docker build builder"
+    label: "Docker Build Builder"
     agents:
       queue: "automation-docker-builder-fleet"
     timeout: 300
