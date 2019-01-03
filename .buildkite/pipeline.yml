@@ -1,5 +1,6 @@
 steps:
-  - command: |
+  # BUILDS
+  - command: | # High Sierra Build
       echo "+++ :hammer: Building" && \
       echo 1 | ./build.sh && \
       echo "--- Compressing build directory :compression:" && \
@@ -11,7 +12,7 @@ steps:
       os: "high-sierra"
     timeout: 120
 
-  - command: |
+  - command: | # Mojave Build
       echo "+++ :hammer: Building" && \
       echo 1 | ./build.sh && \
       echo "--- Compressing build directory :compression:" && \
@@ -23,7 +24,7 @@ steps:
       os: "mojave"
     timeout: 120
     
-  - command: |
+  - command: | # Ubuntu Build
         echo "+++ :hammer: Building" && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
@@ -38,7 +39,7 @@ steps:
         workdir: /data/job
     timeout: 120
 
-  - command: |
+  - command: | # Fedora Build
         echo "+++ :hammer: Building" && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
@@ -53,7 +54,7 @@ steps:
         workdir: /data/job
     timeout: 120
 
-  - command: |
+  - command: | # CentOS Build
         echo "+++ :hammer: Building" && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
@@ -68,7 +69,7 @@ steps:
         workdir: /data/job
     timeout: 120
   
-  - command: |
+  - command: | # Amazon Build
         echo "+++ :hammer: Building" && \
         echo 1 | ./build.sh && \
         echo "--- Compressing build directory :compression:" && \
@@ -83,9 +84,103 @@ steps:
         workdir: /data/job
     timeout: 120
 
+  # UNIT TESTING
   - wait
 
-  - command: |
+  - command: | # High Sierra Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":darwin: High Sierra Unit Tests"
+    agents:
+      role: "macos-tester"
+      os: "high-sierra"
+    timeout: 120
+
+  - command: | # Mojave Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":darwin: Mojave Unit Tests"
+    agents:
+      role: "macos-tester"
+      os: "mojave"
+    timeout: 120
+    
+  - command: | # Ubuntu Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 18.04 Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":ubuntu: 18.04 Unit Tests"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:ubuntu18"
+        workdir: /data/job
+    timeout: 120
+
+  - command: | # Fedora Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":fedora: Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":fedora: Unit Tests"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:fedora"
+        workdir: /data/job
+    timeout: 120
+
+  - command: | # CentOS Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":centos: Unit Tests"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:centos"
+        workdir: /data/job
+    timeout: 120
+  
+  - command: | # Amazon Unit Tests
+      echo "--- :arrow_down: Downloading build directory" && \
+      buildkite-agent artifact download "build.tar.gz" . --step ":aws: Build" && \
+      tar -zxf build.tar.gz && \
+      echo "+++ :microscope: Running unit tests" && \
+      cd build && \
+      ctest -V
+    label: ":aws: Unit Tests"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      docker#v2.0.0:
+        image: "eosio/ci:amazonlinux"
+        workdir: /data/job
+    timeout: 120
+
+  # PACKAGE BUILDS
+  - wait
+
+  - command: | # High Sierra Packaging
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
         tar -zxf build.tar.gz && \
@@ -99,7 +194,7 @@ steps:
       - "build/packages/*.tar.gz"
     timeout: 15
 
-  - command: |
+  - command: | # Mojave Packaging
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
         tar -zxf build.tar.gz && \
@@ -113,7 +208,7 @@ steps:
       - "build/packages/*.tar.gz"
     timeout: 15
 
-  - command: |
+  - command: | # Ubuntu Packaging
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 18.04 Build" && \
         tar -zxf build.tar.gz && \
@@ -133,7 +228,7 @@ steps:
       PKGTYPE: "deb"
     timeout: 15
 
-  - command: |
+  - command: | # Fedora Packaging
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":fedora: Build" && \
         tar -zxf build.tar.gz && \
@@ -160,7 +255,7 @@ steps:
       PKGTYPE: "rpm"
     timeout: 15
 
-  - command: |
+  - command: | # CentOS Packaging
         echo "--- :arrow_down: Downloading build directory" && \
         buildkite-agent artifact download "build.tar.gz" . --step ":centos: Build" && \
         tar -zxf build.tar.gz && \
@@ -187,9 +282,10 @@ steps:
       PKGTYPE: "rpm"
     timeout: 15
 
+  # DOCKER BUILD
   - wait
 
-  - command: |
+  - command: | # Docker Build
         echo "--- :arrow_down: Downloading package" && \
         buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: 18.04 Package builder" && \
         echo "--- :key: AUTHENTICATING GOOGLE SERVICE ACCOUNT" && \
