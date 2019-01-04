@@ -10,7 +10,7 @@ CONTRACT multi_index_example : public contract {
   public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
-         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+         : contract(receiver, code, ds), testtab(receiver, code.value) {}
 
 //      [[eosio::action]]
 //      void set( name user ) {
