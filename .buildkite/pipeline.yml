@@ -114,7 +114,7 @@ steps:
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
-        build/packages && bash generate_package.sh brew
+        cd build/packages && bash generate_package.sh brew
     label: ":darwin: High Sierra Package Builder"
     agents:
       role: "builder-v2"
