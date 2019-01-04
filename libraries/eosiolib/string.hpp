@@ -1,7 +1,7 @@
 #pragma once
 
-//#include <string_view>
 #include <variant>
+#include <set>
 #include "system.hpp"
 #include "tree.hpp"
 
@@ -9,124 +9,24 @@ namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-   namespace detail {
-      struct string_node_base {
-         const char* str  = nullptr;
-         uint32_t    size = 0;
-         //std::unique_ptr<string_node_base[]> base_nodes = nullptr;
+   namespace impl {
+      struct str_t {
+         const char* c_str;
+         size_t      size;
       };
       
-      struct string_node; 
-      struct string_node {
-         string_node* next = nullptr;
-         const char* str   = nullptr;
-         uint32_t size     = 0;
-      };
-
-      struct internal_storage {
-         internal_storage() {
-            root = new string_node();
-            tail = root;
-         }
-
-         inline constexpr void append(const char* s, uint32_t sz) {
-            tail->str  = s;
-            tail->size = sz;
-            tail->next = new string_node();
-            tail = tail->next;
-         }
-
-         inline constexpr void append(internal_storage&& is) {
-            tail->str  = is.root->str;
-            tail->size = is.root->size;
-            tail->next = new string_node();
-            tail = tail->next;
-         }
-
-         inline constexpr string_node& at(size_t index) {
-            string_node* n = root; 
-            for (int i=0; i < index+1; i++) {
-               n = n->next;
-               check(n, "at failed, null pointer");
-            }
-            return *n;
-         }
-         
-         inline constexpr string_node& back() {
-            return *tail;
-         }
-
-         string_node* root = nullptr; 
-         string_node* tail = nullptr;
+      struct concat_t;
+      typedef std::variant<concat_t, str_t> rope_node;
+      struct concat_t {
+         std::unique_ptr<rope_node> left  = nullptr;
+         std::unique_ptr<rope_node> right = nullptr;
+         size_t                     index = 0;
       };
    }
 
-   class string {
-      public:
-         
-         inline constexpr string(const char* str) {
-            storage.append(str, strlen(str));
-         }
-         
-         inline constexpr void append(const char* str) {
-            storage.append(str, strlen(str));
-         }
-
-         inline constexpr void append(string&& str) {
-            storage.append(std::move(str.storage));
-         }
-
-         inline constexpr string& operator+= (const char* str) {
-            append(str);
-            return *this;
-         }
-
-         inline constexpr string& operator+= (string&& r) {
-            append(std::move(r));
-            return *this;
-         }
-
-         inline friend inline string operator+ (string& lhs, const char* rhs) {
-            return (lhs += rhs);
-         }
-        
-         inline constexpr char at(size_t index) {
-            return _at(index, 0);
-         }
-
-      private:
-         inline constexpr size_t strlen(const char* str)const {
-            int i=0;
-            while (str[i++]);
-            return i;
-         }
-
-         constexpr char _at(size_t index, size_t n) {
-            return 'c';
-            /*
-            if (storage.at(n).size < index)
-               return storage.at(n).base_nodes[index];
-            else
-               return _at(index, n+1);
-               */
-         }
-
-         detail::internal_storage storage; // start with 16 slots for strings
-   };
-
+   using namespace impl;
    class rope {
       private:
-         struct str {
-            const char* c_str;
-            size_t      size;
-         };
-         struct concat_t;
-         typedef std::variant<concat_t, str> rope_node;
-         struct concat_t {
-            std::unique_ptr<rope_node> left  = nullptr;
-            std::unique_ptr<rope_node> right = nullptr;
-         };
-
          std::unique_ptr<rope_node> root = nullptr;
          rope_node* last                 = nullptr;
          size_t size                     = 0;
@@ -136,31 +36,91 @@ namespace eosio {
             while (str[i++]);
             return i;
          }
+         
+         static void _print(const str_t& s, const std::set<concat_t*>& inserts) {
+            prints_l(s.c_str, cc->index - index);
+            prints_l(ss.c_str, ss.size-1);
+            prints(s.c_str+cc->index - index);
+         }
 
-         static void print(const std::unique_ptr<rope_node>& r) {
+         static void print(const std::unique_ptr<rope_node>& r, int i) {
+            static std::set<concat_t*> inserts;
+            static int index = i;
             if (r) {
                std::visit(overloaded {
-                  [](concat_t& c) { 
-                     if (c.left)
-                        print(c.left);
+                  [&](concat_t& c) { 
+                     if (c.index > 0) {
+                        inserts.emplace(&c);
+                     } else {
+                        if (c.left)
+                           print(c.left);
+                     }
                      if (c.right)
                         print(c.right);
                   },
-                  [](str& s) { prints_l(s.c_str, s.size); }
+                  [&](str_t& s) { 
+                     size_t size_so_far = 0;
+                     while (inserts.size()) {
+                        if ((*inserts.begin())->index < (index + s.size)) {
+                           concat_t* cc = (*inserts.begin());
+                           auto&     ss = std::get<str_t>(*(cc->left));
+                           prints_l(s.c_str, cc->index - index);
+                           prints_l(ss.c_str, ss.size-1);
+                           prints(s.c_str+cc->index - index);
+                           inserts.erase(inserts.begin());
+                           size_so_far += s.size + ss.size
+                        } else {
+                           prints_l(s.c_str, s.size); 
+                           index += s.size;
+                           break;
+                        }
+                        index += s.size;
+                     }
+                  }
                }, *r);
             }
          }
 
-         static void c_str(char* buffer, const std::unique_ptr<rope_node>& r, size_t& offset) {
+         static void print(const std::unique_ptr<rope_node>& r) {
+            print(r, 0);
+         }
+         
+         static void copy_and_insert(char* buffer, int index, const str_t& s, size_t sz, const concat_t* cc) {
+            auto&  ccs = std::get<str_t>(*(cc->left));
+            size_t pre = cc->index - index;
+            memcpy(buffer+offset, s.c_str, pre);
+            memcpy(buffer+offset+pre, ss.c_str, ss.size-1);
+            memcpy(buffer+offset+pre+ss.size-1, s.c_str+pre, s.size-pre);
+         }
+
+         static void c_str(char* buffer, const std::unique_ptr<rope_node>& r, size_t& offset, int i) {
+            static std::set<concat_t*> inserts;
+            static int index = i;
             if (r) {
                std::visit(overloaded {
                   [&](concat_t& c) { 
-                     if (c.left)
-                        c_str(buffer, c.left, offset);
+                     if (c.index > 0) {
+                        inserts.emplace(&c);
+                     } else {
+                        if (c.left)
+                           c_str(buffer, c.left, offset, i);
+                     }
                      if (c.right)
-                        c_str(buffer, c.right, offset);
+                        c_str(buffer, c.right, offset, i);
                   },
-                  [&](str& s) { memcpy(buffer+offset, s.c_str, s.size); offset += s.size; }
+                  [&](str_t& s) { 
+                     if (inserts.size() && (*inserts.begin())->index < (index + s.size)) {
+                        concat_t* cc = (*inserts.begin());
+                        _c_str(buffer, index, s, cc);
+                        inserts.erase(inserts.begin());
+                        index += ss.size;
+                        offset += ss.size;
+                     } else {
+                        memcpy(buffer+offset, s.c_str, s.size-1); 
+                     }
+                     index += s.size;
+                     offset += s.size;
+                  }
                }, *r);
             }
          }
@@ -169,15 +129,15 @@ namespace eosio {
             return std::get<concat_t>(*rn);
          }
 
-         inline const str& get_str(const rope_node* rn)const {
-            return std::get<str>(*rn);
+         inline const str_t& get_str(const rope_node* rn)const {
+            return std::get<str_t>(*rn);
          }
          
          inline const concat_t& get_cc(const std::unique_ptr<rope_node>& rn)const {
             return get_cc(rn.get());
          }
 
-         inline const str& get_str(const std::unique_ptr<rope_node>& rn)const {
+         inline const str_t& get_str(const std::unique_ptr<rope_node>& rn)const {
             return get_str(rn.get());
          }
 
@@ -189,10 +149,10 @@ namespace eosio {
                   auto& ns = get_str(cc.left);
                   c.right = std::make_unique<rope_node>(
                        concat_t{std::make_unique<rope_node>(
-                            str{ns.c_str, ns.size}), nullptr});
+                            str_t{ns.c_str, ns.size}), nullptr, 0});
                   _last = c.right.get();
                },
-               [](str& s) { check(false, "critical failure should not reach here"); }
+               [](str_t& s) { check(false, "critical failure should not reach here"); }
             }, *last);
             last = _last;
          }
@@ -219,8 +179,14 @@ namespace eosio {
                         append(std::move(std::get<concat_t>(*(c.right)).right));
                   }
                },
-               [](str& s) { check(false, "critical failure should not reach here"); }
+               [](str_t& s) { check(false, "critical failure should not reach here"); }
             }, *last);
+         }
+         
+         constexpr void insert(std::unique_ptr<rope_node>&& n, size_t index) {
+            root = std::make_unique<rope_node>(
+                     concat_t{std::move(n), std::move(root), index}
+                  );
          }
 
          rope copy(const std::unique_ptr<rope_node>& node)const {
@@ -239,17 +205,17 @@ namespace eosio {
       public:
          constexpr rope(const char* s) {
             root = std::make_unique<rope_node>(
-                     concat_t{std::make_unique<rope_node>(str{s,strlen(s)}), nullptr}
+                     concat_t{std::make_unique<rope_node>(str_t{s,strlen(s)-1}), nullptr, 0}
                   );
             last = root.get();
-            size += strlen(s);
+            size += strlen(s)-1;
          }
         
          constexpr rope(const rope& r) {
             auto& cc = get_cc(r.root);
             auto& s = get_str(cc.left);
             root = std::make_unique<rope_node>(
-                     concat_t{std::make_unique<rope_node>(str{s.c_str, s.size}), nullptr}
+                     concat_t{std::make_unique<rope_node>(str_t{s.c_str, s.size}), nullptr, 0}
                   );
             last = root.get();
             append(r.copy());
@@ -282,8 +248,11 @@ namespace eosio {
          }
 
          void insert(size_t index, const char* s, size_t len) {
-            str _s{s, len};
-            auto new_node = std::make_unique<rope_node>(_s);
+            auto new_node = std::make_unique<rope_node>(str_t{s, len});
+            root = std::make_unique<rope_node>(
+                     concat_t{std::move(new_node), std::move(root), index}
+                  );
+            size += len;
          }
 
          template <size_t N> 
@@ -292,8 +261,8 @@ namespace eosio {
          }
 
          constexpr void append(const char* s, size_t len) {
-            str _s{s, len};
-            append(std::make_unique<rope_node>(concat_t{std::make_unique<rope_node>(_s), nullptr}));
+            str_t _s{s, len};
+            append(std::make_unique<rope_node>(concat_t{std::make_unique<rope_node>(_s), nullptr, 0}));
             size += len;
          }
 
@@ -303,7 +272,7 @@ namespace eosio {
          }
 
          constexpr rope& operator+= (const char* s) {
-            append(s, strlen(s));
+            append(s, strlen(s)-1);
             return *this;
          }
 
@@ -321,13 +290,19 @@ namespace eosio {
                print(root);
          }
          
-         void c_str(char* buffer)const {
+         std::unique_ptr<char[]> c_str()const {
+            std::unique_ptr<char[]> ret{new char[size+1]};
             size_t off=0;
             if (root)
-               c_str(buffer, root, off);
+               c_str(ret.get(), root, off, 0);
+            ret.get()[size] = '\0';
+            return std::move(ret);
          }
-         
-
    };
 
 } // ns eosio
+
+inline constexpr bool operator< (const eosio::impl::concat_t& a, const eosio::impl::concat_t& b) {
+   return a.index < b.index;
+}
+

@@ -1,4 +1,5 @@
 #include <cstdlib> 
+#include <alloca.h>
 #include "system.hpp"
 
 namespace eosio {
