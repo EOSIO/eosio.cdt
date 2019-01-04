@@ -107,7 +107,7 @@ while read -r name tester testee brewname uri; do
 	DISPLAY="${DISPLAY}${COUNT}. ${name}\\n"
 	printf " - %s ${bldred}NOT${txtrst} found.\\n" "${name}"
 	(( COUNT++ ))
-done < "${SOURCE_DIR}/scripts/eosio_build_darwin_deps"
+done < "${CURRENT_DIR}/scripts/eosio_build_darwin_deps"
 IFS="${var_ifs}"
 
 if [ ! -d /usr/local/Frameworks ]; then
