@@ -93,6 +93,7 @@ steps:
       tar -zxf build.tar.gz && \
       echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
       cd build && \
+      CMAKE_BINARY_DIR="$(pwd)/build" && \ # absolute path error workaround
       ctest -V
     label: ":darwin: High Sierra Unit Tests"
     agents:
@@ -106,10 +107,11 @@ steps:
       tar -zxf build.tar.gz && \
       echo "+++ :microscope: Running unit tests on macOS Mojave" && \
       cd build && \
+      CMAKE_BINARY_DIR="$(pwd)/build" && \ # absolute path error workaround
       ctest -V
     label: ":darwin: Mojave Unit Tests"
     agents:
-      role: "macos-tester"
+      role: "tester"
       os: "mojave"
     timeout: 120
     
@@ -185,6 +187,7 @@ steps:
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
+        CMAKE_BINARY_DIR="$(pwd)/build" && \ # absolute path error workaround
         ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
     label: ":darwin: High Sierra Package Builder"
     agents:
@@ -199,6 +202,7 @@ steps:
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
+        CMAKE_BINARY_DIR="$(pwd)/build" && \ # absolute path error workaround
         ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
     label: ":darwin: Mojave Package Builder"
     agents:
