@@ -6,8 +6,8 @@ VERSION_NO_SUFFIX="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
 VERSION_SUFFIX="@VERSION_SUFFIX@"
 VERSION="@VERSION_FULL@"
 
-BUILD_DIR="./build"
-echo "@CMAKE_BINARY_DIR@"
+# Using CMAKE_BINARY_DIR uses an absolute path and will break cross-vm building/download/make functionality (/data/jobs can be eliminated if we use relative paths)
+BUILD_DIR="../../build"
 
 VENDOR="@VENDOR@"
 PROJECT="@PROJECT_NAME@"
