@@ -61,3 +61,46 @@ int main(int argc, char** argv) {
    EOSIO_TEST(symbol_type_test);
    return has_failed();
 }
+
+// eosio_assert( symbol_code{}.raw() == 0ULL, "symbol_code != 0ULL" );
+// eosio_assert( symbol_code{0ULL}.raw() == 0ULL, "symbol_code != 0ULL" );
+// eosio_assert( symbol_code{1ULL}.raw() == 1ULL, "symbol_code != 1ULL" );
+// eosio_assert( symbol_code{18446744073709551615ULL}.raw() == 18446744073709551615ULL, "symbol_code != 18446744073709551615ULL" );
+
+// eosio_assert( symbol_code{"A"}.raw() == 65ULL, "symbol_code != 65ULL" );
+// eosio_assert( symbol_code{"Z"}.raw() == 90ULL, "symbol_code != 90ULL" );
+// eosio_assert( symbol_code{"AAAAAAA"}.raw() == 18367622009667905ULL, "symbol_code != 18367622009667905ULL" );
+// eosio_assert( symbol_code{"ZZZZZZZ"}.raw() == 25432092013386330ULL, "symbol_code != 25432092013386330ULL" );
+
+// symbol_code s{"ZZZZZZZ"};
+// eosio::print_f("%\n",s.raw());
+   
+// eosio_assert( symbol{}.raw() == 0ULL, "symbol != 0ULL" );
+// eosio_assert( symbol{0ULL}.raw() == 0ULL, "symbol != 0ULL" );
+// eosio_assert( symbol{1ULL}.raw() == 1ULL, "symbol != 1ULL" );
+// eosio_assert( symbol{18446744073709551615ULL}.raw() == 18446744073709551615ULL, "symbol != 18446744073709551615ULL" );
+
+// eosio_assert( symbol{1}.raw() == 576460752303423488ULL, "symbol != 1" );
+// eosio_assert( symbol{5}.raw() == 2882303761517117440ULL, "symbol != 5" );
+// eosio_assert( symbol{"a"}.raw() == 3458764513820540928ULL, "symbol != a" );
+// eosio_assert( symbol{"z"}.raw() == 17870283321406128128ULL, "symbol != z" );
+
+// eosio_assert( symbol{"abc"}.raw() == 3589368903014285312ULL, "symbol != abc" );
+// eosio_assert( symbol{"123"}.raw() == 614178399182651392ULL, "symbol != 123" );
+
+// eosio_assert( symbol{".abc"}.raw() == 112167778219196416ULL, "symbol != .abc" );
+// eosio_assert( symbol{"123."}.raw() == 614178399182651392ULL, "symbol != 123." );
+   
+// eosio_assert( symbol{"abc.123"}.raw() == 3589369488740450304ULL, "symbol != abc.123" );
+// eosio_assert( symbol{"123.abc"}.raw() == 614181822271586304ULL, "symbol != 123.abc" );
+
+// eosio_assert( symbol{"12345abcdefgj"}.raw() == 614251623682315983ULL, "symbol != 12345abcdefgj" );
+// eosio_assert( symbol{"hijklmnopqrsj"}.raw() == 7754926748989239183ULL, "symbol != hijklmnopqrsj" );
+// eosio_assert( symbol{"tuvwxyz.1234j"}.raw() == 14895601873741973071ULL, "symbol != tuvwxyz.1234j" );
+
+// eosio_assert( symbol{"111111111111j"}.raw() == 595056260442243615ULL, "symbol != 111111111111j" );
+// eosio_assert( symbol{"555555555555j"}.raw() == 2975281302211218015ULL, "symbol != 555555555555j" );
+// eosio_assert( symbol{"aaaaaaaaaaaaj"}.raw() == 3570337562653461615ULL, "symbol != aaaaaaaaaaaaj" );
+// eosio_assert( symbol{"zzzzzzzzzzzzj"}.raw() == 18446744073709551615ULL, "symbol != zzzzzzzzzzzzj" );
+// eosio::symbol n(18446744073709551615ULL);
+// eosio::print_f("%\n",n.raw());
