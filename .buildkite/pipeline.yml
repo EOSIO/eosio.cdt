@@ -105,6 +105,7 @@ steps:
         buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
+        CMAKE_BINARY_DIR="$(pwd)/build" && \
         ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
     label: ":darwin: Mojave Package Builder"
     agents:
