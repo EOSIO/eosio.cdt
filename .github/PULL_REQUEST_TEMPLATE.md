@@ -13,5 +13,5 @@
 
 ## Documentation Additions
 - [ ] Documentation Additions
-<!-- checked [x] = API changes; unchecked [ ] = no changes, ignore this section -->
+<!-- checked [x] = Documentation changes; unchecked [ ] = no changes, ignore this section -->
 <!-- Describe what must be added to the documentation after merge. -->
