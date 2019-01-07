@@ -1,106 +1,249 @@
 #include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
+// #define NATIVE_NAME
+#define NATIVE_SYMBOL
+
+using namespace eosio;
 using namespace eosio::native;
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+EOSIO_TEST_BEGIN(symbol_code_type_test)
+   // ----------------
+   // constructors/raw
+   REQUIRE_EQUAL( symbol_code{}.raw(), 0ULL );
+
+   REQUIRE_EQUAL( symbol_code{0ULL}.raw(), 0ULL );
+   REQUIRE_EQUAL( symbol_code{1ULL}.raw(), 1ULL );
+   REQUIRE_EQUAL( symbol_code{18446744073709551615ULL}.raw(), 18446744073709551615ULL );
+
+   REQUIRE_EQUAL( symbol_code{"A"}.raw(), 65ULL );
+   REQUIRE_EQUAL( symbol_code{"Z"}.raw(), 90ULL );
+   REQUIRE_EQUAL( symbol_code{"AAAAAAA"}.raw(), 18367622009667905ULL );
+   REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"}.raw(), 25432092013386330ULL );
+
+   REQUIRE_ASSERT( "string is too long to be a valid symbol_code", ([]() {symbol_code{"ABCDEFGH"};}) );
+   REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"a"};}) );
+   REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"z"};}) );
+   REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"@"};}) );
+   REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"["};}) );
+
+   // --------
+   // is_valid
+   REQUIRE_EQUAL( symbol_code{65ULL}.is_valid(), true ); // "A"
+   REQUIRE_EQUAL( symbol_code{90ULL}.is_valid(), true ); // "Z"
+   REQUIRE_EQUAL( symbol_code{18367622009667905ULL}.is_valid(), true ); // "AAAAAAA"
+   REQUIRE_EQUAL( symbol_code{25432092013386330ULL}.is_valid(), true ); // "ZZZZZZZ"
+
+   REQUIRE_EQUAL( symbol_code{64ULL}.is_valid(), false );
+   REQUIRE_EQUAL( symbol_code{25432092013386331ULL}.is_valid(), false );
+
+   // ------
+   // length
+   REQUIRE_EQUAL( symbol_code{""}.length(), 0 );
+   REQUIRE_EQUAL( symbol_code{"S"}.length(), 1 );
+   REQUIRE_EQUAL( symbol_code{"SY"}.length(), 2 );
+   REQUIRE_EQUAL( symbol_code{"SYM"}.length(), 3 );
+   REQUIRE_EQUAL( symbol_code{"SYMB"}.length(), 4 );
+   REQUIRE_EQUAL( symbol_code{"SYMBO"}.length(), 5 );
+   REQUIRE_EQUAL( symbol_code{"SYMBOL"}.length(), 6 );
+   REQUIRE_EQUAL( symbol_code{"SYMBOLL"}.length(), 7 );
+
+   // -------------
+   // operator bool
+   // Note that I must be explicit about calling the operator because it is defined as `explicit`
+   REQUIRE_EQUAL( symbol_code{0}.operator bool(), false );
+   REQUIRE_EQUAL( symbol_code{1}.operator bool(), true );
+   REQUIRE_EQUAL( !symbol_code{0}, true );
+   REQUIRE_EQUAL( !symbol_code{1}, false );
+
+   REQUIRE_EQUAL( symbol_code{""}.operator bool(), false );
+   REQUIRE_EQUAL( symbol_code{"SYMBOL"}.operator bool(), true );
+   REQUIRE_EQUAL( !symbol_code{""}, true );
+   REQUIRE_EQUAL( !symbol_code{"SYMBOL"}, false );
+
+   // ---------------
+   // write_as_string
+   // TODO: rename when moved
+   char buffer1[7]{};
+
+   // TODO: rename when moved
+   std::string test_str1{"A"};
+   symbol_code{test_str1}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
+print_f("%\n",test_str1);
+print_f("%\n",buffer1);
+   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
+   symbol_code{test_str1 = "Z"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
+print_f("%\n",test_str1);
+print_f("%\n",buffer1);
+   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
+   symbol_code{test_str1 = "AAAAAAA"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
+print_f("%\n",test_str1);
+print_f("%\n",buffer1);
+   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
+   symbol_code{test_str1 = "ZZZZZZZ"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
+print_f("%\n",test_str1);
+print_f("%\n",buffer1);
+   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
+
+   // ---------
+   // to_string
+   REQUIRE_EQUAL( symbol_code{"A"}.to_string(), "A" );
+   REQUIRE_EQUAL( symbol_code{"Z"}.to_string(), "Z" );
+   REQUIRE_EQUAL( symbol_code{"AAAAAAA"}.to_string(), "AAAAAAA" );
+   REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"}.to_string(), "ZZZZZZZ" );
+
+   // ----------
+   // operator==
+   REQUIRE_EQUAL( symbol_code{"A"} == symbol_code{"A"}, true );
+   REQUIRE_EQUAL( symbol_code{"Z"} == symbol_code{"Z"}, true );
+   REQUIRE_EQUAL( symbol_code{"AAAAAAA"} == symbol_code{"AAAAAAA"}, true );
+   REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"} == symbol_code{"ZZZZZZZ"}, true );
+
+   // ----------
+   // operator!=
+   REQUIRE_EQUAL( symbol_code{"A"} != symbol_code{0}, true );
+   REQUIRE_EQUAL( symbol_code{"Z"} != symbol_code{0}, true );
+   REQUIRE_EQUAL( symbol_code{"AAAAAAA"} != symbol_code{0}, true );
+   REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"} != symbol_code{0}, true );
+
+   // ---------
+   // operator<
+   REQUIRE_EQUAL( symbol_code{0} < symbol_code{"A"}, true );
+   REQUIRE_EQUAL( symbol_code{0} < symbol_code{"Z"}, true );
+   REQUIRE_EQUAL( symbol_code{0} < symbol_code{"AAAAAAA"}, true );
+   REQUIRE_EQUAL( symbol_code{0} < symbol_code{"ZZZZZZZ"}, true );
+EOSIO_TEST_END
+
+// Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
-   eosio_assert( symbol_code{}.raw() == 0ULL, "symbol_code != 0ULL" );
-   eosio_assert( symbol_code{0ULL}.raw() == 0ULL, "symbol_code != 0ULL" );
-   eosio_assert( symbol_code{1ULL}.raw() == 1ULL, "symbol_code != 1ULL" );
-   eosio_assert( symbol_code{18446744073709551615ULL}.raw() == 18446744073709551615ULL, "symbol_code != 18446744073709551615ULL" );
+   // ------------
+   // constructors/raw
+   REQUIRE_EQUAL( symbol{}.raw(), 0ULL );
 
-   eosio_assert( symbol_code{"A"}.raw() == 65ULL, "symbol_code != 65ULL" );
-   eosio_assert( symbol_code{"Z"}.raw() == 90ULL, "symbol_code != 90ULL" );
-   eosio_assert( symbol_code{"AAAAAAA"}.raw() == 18367622009667905ULL, "symbol_code != 18367622009667905ULL" );
-   eosio_assert( symbol_code{"ZZZZZZZ"}.raw() == 25432092013386330ULL, "symbol_code != 25432092013386330ULL" );
+   REQUIRE_EQUAL( symbol{0ULL}.raw(), 0ULL );
+   REQUIRE_EQUAL( symbol{1ULL}.raw(), 1ULL );
+   REQUIRE_EQUAL( symbol{18446744073709551615ULL}.raw(), 18446744073709551615ULL );
 
-   eosio_assert( symbol{0ULL}.value == 0ULL, "symbol != 0ULL" );
-   eosio_assert( symbol{1ULL}.value == 1ULL, "symbol != 1ULL" );
-   eosio_assert( symbol{18446744073709551615ULL}.value == 18446744073709551615ULL, "symbol != 18446744073709551615ULL" );
+   // Note that unless constructed with `initializer_list`, precision does not check for wrap-around
+   REQUIRE_EQUAL( (symbol{"A", 0}.raw()), 16640ULL );
+   REQUIRE_EQUAL( (symbol{"Z", 0}.raw()), 23040ULL );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.raw()), 4702111234474983680ULL );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0}.raw()), 6510615555426900480ULL );
 
-   eosio_assert( symbol{"1"}.value == 576460752303423488ULL, "symbol != 1" );
-   eosio_assert( symbol{"5"}.value == 2882303761517117440ULL, "symbol != 5" );
-   eosio_assert( symbol{"a"}.value == 3458764513820540928ULL, "symbol != a" );
-   eosio_assert( symbol{"z"}.value == 17870283321406128128ULL, "symbol != z" );
+   REQUIRE_EQUAL( (symbol{symbol_code{"A"}, 0}.raw()), 16640ULL );
+   REQUIRE_EQUAL( (symbol{symbol_code{"Z"}, 0}.raw()), 23040ULL );
+   REQUIRE_EQUAL( (symbol{symbol_code{"AAAAAAA"}, 0}.raw()), 4702111234474983680ULL );
+   REQUIRE_EQUAL( (symbol{symbol_code{"ZZZZZZZ"}, 0}.raw()), 6510615555426900480ULL );
 
-   eosio_assert( symbol{"abc"}.value == 3589368903014285312ULL, "symbol != abc" );
-   eosio_assert( symbol{"123"}.value == 614178399182651392ULL, "symbol != 123" );
+print_f("%",symbol{"A", 0}.raw());
+print_f("%",symbol{"Z", 0}.raw());
+print_f("%",symbol{"AAAAAAA", 0}.raw());
+print_f("%",symbol{"ZZZZZZZ", 0}.raw());
+print_f("%",symbol{"ZZZZZZZ", 255}.raw());
 
-   eosio_assert( symbol{".abc"}.value == 112167778219196416ULL, "symbol != .abc" );
-   eosio_assert( symbol{"123."}.value == 614178399182651392ULL, "symbol != 123." );
+   // --------
+   // is_valid
+   REQUIRE_EQUAL( symbol{16640ULL}.is_valid(), true ); // "A", precision: 0
+   REQUIRE_EQUAL( symbol{23040ULL}.is_valid(), true ); // "Z", precision: 0
+   REQUIRE_EQUAL( symbol{4702111234474983680ULL}.is_valid(), true ); // "AAAAAAA", precision: 0
+   REQUIRE_EQUAL( symbol{6510615555426900480ULL}.is_valid(), true ); // "ZZZZZZZ", precision: 0
+
+   REQUIRE_EQUAL( symbol{16639ULL}.is_valid(), false );
+   REQUIRE_EQUAL( symbol{6510615555426900736ULL}.is_valid(), false );
+
+   // ---------
+   // precision
+   REQUIRE_EQUAL( (symbol{"A", 0}.precision()), 0 );
+   REQUIRE_EQUAL( (symbol{"Z", 0}.precision()), 0 );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.precision()), 0 );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0}.precision()), 0 );
+
+   REQUIRE_EQUAL( (symbol{"A", 255}.precision()), 255 );
+   REQUIRE_EQUAL( (symbol{"Z", 255}.precision()), 255 );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA", 255}.precision()), 255 );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 255}.precision()), 255 );
+
+   // ----
+   // code
+   REQUIRE_EQUAL( (symbol{"A", 0}.code()), symbol_code{"A"} );
+   REQUIRE_EQUAL( (symbol{"Z", 0}.code()), symbol_code{"Z"} );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.code()), symbol_code{"AAAAAAA"} );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0}.code()), symbol_code{"ZZZZZZZ"} );
+
+   // -------------
+   // operator bool
+   // Note that I must be explicit about calling the operator because it is defined as `explicit`
+   REQUIRE_EQUAL( symbol{0}.operator bool(), false );
+   REQUIRE_EQUAL( symbol{1}.operator bool(), true );
+   REQUIRE_EQUAL( !symbol{0}, true );
+   REQUIRE_EQUAL( !symbol{1}, false );
+
+   REQUIRE_EQUAL( (symbol{"", 0}.operator bool()), false );
+   REQUIRE_EQUAL( (symbol{"SYMBOL", 0}.operator bool()), true );
+   REQUIRE_EQUAL( (!symbol{"", 0}), true );
+   REQUIRE_EQUAL( (!symbol{"SYMBOL", 0}), false );
+
+   // -----
+   // print
    
-   eosio_assert( symbol{"abc.123"}.value == 3589369488740450304ULL, "symbol != abc.123" );
-   eosio_assert( symbol{"123.abc"}.value == 614181822271586304ULL, "symbol != 123.abc" );
 
-   eosio_assert( symbol{"12345abcdefgj"}.value == 614251623682315983ULL, "symbol != 12345abcdefgj" );
-   eosio_assert( symbol{"hijklmnopqrsj"}.value == 7754926748989239183ULL, "symbol != hijklmnopqrsj" );
-   eosio_assert( symbol{"tuvwxyz.1234j"}.value == 14895601873741973071ULL, "symbol != tuvwxyz.1234j" );
+   // ----------
+   // operator==
+   REQUIRE_EQUAL( (symbol{"A", 0} == symbol{"A", 0}), true );
+   REQUIRE_EQUAL( (symbol{"Z", 0} == symbol{"Z", 0}), true );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA", 0} == symbol{"AAAAAAA", 0}), true );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0} == symbol{"ZZZZZZZ", 0}), true );
 
-   eosio_assert( symbol{"111111111111j"}.value == 595056260442243615ULL, "symbol != 111111111111j" );
-   eosio_assert( symbol{"555555555555j"}.value == 2975281302211218015ULL, "symbol != 555555555555j" );
-   eosio_assert( symbol{"aaaaaaaaaaaaj"}.value == 3570337562653461615ULL, "symbol != aaaaaaaaaaaaj" );
-   eosio_assert( symbol{"zzzzzzzzzzzzj"}.value == 18446744073709551615ULL, "symbol != zzzzzzzzzzzzj" );
+   // ----------
+   // operator!=
+   REQUIRE_EQUAL( (symbol{"A",0} != symbol{0}), true );
+   REQUIRE_EQUAL( (symbol{"Z",0} != symbol{0}), true );
+   REQUIRE_EQUAL( (symbol{"AAAAAAA",0} != symbol{0}), true );
+   REQUIRE_EQUAL( (symbol{"ZZZZZZZ",0} != symbol{0}), true );
 
-   REQUIRE_ASSERT( "character is not in allowed character set for symbols", ([]() {symbol{"-1"}.value;}) );
+   // ---------
+   // operator<
+   REQUIRE_EQUAL( (symbol{0} < symbol{"A",0}), true );
+   REQUIRE_EQUAL( (symbol{0} < symbol{"Z",0}), true );
+   REQUIRE_EQUAL( (symbol{0} < symbol{"AAAAAAA",0}), true );
+   REQUIRE_EQUAL( (symbol{0} < symbol{"ZZZZZZZ",0}), true );
+EOSIO_TEST_END
 
-   REQUIRE_ASSERT( "character is not in allowed character set for symbols", ([]() {symbol{"0"}.value;}) );
+// Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+EOSIO_TEST_BEGIN(extended_symbol_type_test)
+   // ------------
+   // constructors
+   
+   
+   // ----------
+   // get_symbol
+   
 
-   REQUIRE_ASSERT( "character is not in allowed character set for symbols", ([]() {symbol{"6"}.value;}) );
+   // ------------
+   // get_contract
+   
 
-   REQUIRE_ASSERT( "thirteenth character in symbol cannot be a letter that comes after j", ([]() {symbol{"111111111111k"}.value;}) );
+   // -----
+   // print
+   
 
-   REQUIRE_ASSERT( "thirteenth character in symbol cannot be a letter that comes after j", ([]() {symbol{"zzzzzzzzzzzzk"}.value;}) );
+   // ----------
+   // operator==
+   
 
-   REQUIRE_ASSERT( "the length must not be longer than 13 characters in an `eosio::symbol`", ([]() {symbol{"12345abcdefghj"}.value;}) );
+   // ----------
+   // operator!=
+   
 
-   silence_output(false);
+   // ---------
+   // operator<
+   
 EOSIO_TEST_END
 
 int main(int argc, char** argv) {
+   // EOSIO_TEST(symbol_code_type_test);
    EOSIO_TEST(symbol_type_test);
+   // EOSIO_TEST(extended_symbol_type_test);
    return has_failed();
 }
-
-// eosio_assert( symbol_code{}.raw() == 0ULL, "symbol_code != 0ULL" );
-// eosio_assert( symbol_code{0ULL}.raw() == 0ULL, "symbol_code != 0ULL" );
-// eosio_assert( symbol_code{1ULL}.raw() == 1ULL, "symbol_code != 1ULL" );
-// eosio_assert( symbol_code{18446744073709551615ULL}.raw() == 18446744073709551615ULL, "symbol_code != 18446744073709551615ULL" );
-
-// eosio_assert( symbol_code{"A"}.raw() == 65ULL, "symbol_code != 65ULL" );
-// eosio_assert( symbol_code{"Z"}.raw() == 90ULL, "symbol_code != 90ULL" );
-// eosio_assert( symbol_code{"AAAAAAA"}.raw() == 18367622009667905ULL, "symbol_code != 18367622009667905ULL" );
-// eosio_assert( symbol_code{"ZZZZZZZ"}.raw() == 25432092013386330ULL, "symbol_code != 25432092013386330ULL" );
-
-// symbol_code s{"ZZZZZZZ"};
-// eosio::print_f("%\n",s.raw());
-   
-// eosio_assert( symbol{}.raw() == 0ULL, "symbol != 0ULL" );
-// eosio_assert( symbol{0ULL}.raw() == 0ULL, "symbol != 0ULL" );
-// eosio_assert( symbol{1ULL}.raw() == 1ULL, "symbol != 1ULL" );
-// eosio_assert( symbol{18446744073709551615ULL}.raw() == 18446744073709551615ULL, "symbol != 18446744073709551615ULL" );
-
-// eosio_assert( symbol{1}.raw() == 576460752303423488ULL, "symbol != 1" );
-// eosio_assert( symbol{5}.raw() == 2882303761517117440ULL, "symbol != 5" );
-// eosio_assert( symbol{"a"}.raw() == 3458764513820540928ULL, "symbol != a" );
-// eosio_assert( symbol{"z"}.raw() == 17870283321406128128ULL, "symbol != z" );
-
-// eosio_assert( symbol{"abc"}.raw() == 3589368903014285312ULL, "symbol != abc" );
-// eosio_assert( symbol{"123"}.raw() == 614178399182651392ULL, "symbol != 123" );
-
-// eosio_assert( symbol{".abc"}.raw() == 112167778219196416ULL, "symbol != .abc" );
-// eosio_assert( symbol{"123."}.raw() == 614178399182651392ULL, "symbol != 123." );
-   
-// eosio_assert( symbol{"abc.123"}.raw() == 3589369488740450304ULL, "symbol != abc.123" );
-// eosio_assert( symbol{"123.abc"}.raw() == 614181822271586304ULL, "symbol != 123.abc" );
-
-// eosio_assert( symbol{"12345abcdefgj"}.raw() == 614251623682315983ULL, "symbol != 12345abcdefgj" );
-// eosio_assert( symbol{"hijklmnopqrsj"}.raw() == 7754926748989239183ULL, "symbol != hijklmnopqrsj" );
-// eosio_assert( symbol{"tuvwxyz.1234j"}.raw() == 14895601873741973071ULL, "symbol != tuvwxyz.1234j" );
-
-// eosio_assert( symbol{"111111111111j"}.raw() == 595056260442243615ULL, "symbol != 111111111111j" );
-// eosio_assert( symbol{"555555555555j"}.raw() == 2975281302211218015ULL, "symbol != 555555555555j" );
-// eosio_assert( symbol{"aaaaaaaaaaaaj"}.raw() == 3570337562653461615ULL, "symbol != aaaaaaaaaaaaj" );
-// eosio_assert( symbol{"zzzzzzzzzzzzj"}.raw() == 18446744073709551615ULL, "symbol != zzzzzzzzzzzzj" );
-// eosio::symbol n(18446744073709551615ULL);
-// eosio::print_f("%\n",n.raw());

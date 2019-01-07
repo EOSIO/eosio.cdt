@@ -132,6 +132,9 @@ namespace eosio {
        *  Returns the suffix of the %name
        */
       constexpr name suffix()const {
+         // if((value >> 56) & 0x1F)
+         //    return name{""};
+         
          uint32_t remaining_bits_after_last_actual_dot = 0;
          uint32_t tmp = 0;
          for( int32_t remaining_bits = 59; remaining_bits >= 4; remaining_bits -= 5 ) { // Note: remaining_bits must remain signed integer
@@ -192,14 +195,17 @@ namespace eosio {
          if( (begin + 13) < begin || (begin + 13) > end ) return begin;
 
          auto v = value;
-         for( auto i = 0;   i < 13; ++i, v <<= 5 ) {
-            if( v == 0 ) return begin;
+         for( auto i = 0; i < 13; ++i, v <<= 5 ) {
+            if( v == 0 ) {
+               *begin = '\0';
+               return begin;
+            }
 
             auto indx = (v & mask) >> (i == 12 ? 60 : 59);
             *begin = charmap[indx];
             ++begin;
          }
-
+         
          return begin;
       }
 

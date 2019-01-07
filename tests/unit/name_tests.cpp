@@ -1,7 +1,7 @@
 #include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
-#define NATIVE
+#define NATIVE_NAME
 
 using namespace eosio;
 using namespace eosio::native;
@@ -10,7 +10,6 @@ using namespace eosio::native;
 EOSIO_TEST_BEGIN(name_type_test)
    // ------------
    // constructors
-   
    REQUIRE_EQUAL( name{}.value, 0ULL );
 
    REQUIRE_EQUAL( name{0ULL}.value, 0ULL );
@@ -56,10 +55,9 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ---------------
    // `char_to_value`
-
    char c{'.'};
    uint8_t expected_value{0}; // Will increment to the expected correct value in the set [0,32)
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of name::char_to_value(%): %", c, static_cast<uint64_t>(name::char_to_value(c)) );
    print_f("Value of expected_value:         %", static_cast<uint64_t>(expected_value) );
 #endif
@@ -67,7 +65,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    ++expected_value;
 
    for(c = '1'; c <= '5'; ++c ) {
-#ifdef NATIVE
+#ifdef NATIVE_NAME
       print_f("Value of name::char_to_value(%): %", c, static_cast<uint64_t>(name::char_to_value(c)) );
       print_f("Value of expected_value:         %", static_cast<uint64_t>(expected_value) );
 #endif
@@ -76,7 +74,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    }
 
    for(c = 'a'; c <= 'z'; ++c ) {
-#ifdef NATIVE
+#ifdef NATIVE_NAME
       print_f("Value of name::char_to_value(%): %", c, static_cast<uint64_t>(name::char_to_value(c)) );
       print_f("Value of expected_value:         %", static_cast<uint64_t>(expected_value) );
 #endif
@@ -95,7 +93,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ------
    // length
-
    REQUIRE_EQUAL( name{""}.length(), 0 );
    REQUIRE_EQUAL( name{"e"}.length(), 1 );
    REQUIRE_EQUAL( name{"eo"}.length(), 2 );
@@ -115,115 +112,114 @@ EOSIO_TEST_BEGIN(name_type_test)
    
    // ------
    // suffix
-
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{".eosioaccounj"}.suffix() ); // TODO: interesting print behavior; starts newline sometimes
    print_f("Value of expected suffix: eosioaccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{".eosioaccounj"}.suffix(), name{"eosioaccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"e.osioaccounj"}.suffix() );
    print_f("Value of expected suffix: osioaccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"e.osioaccounj"}.suffix(), name{"osioaccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eo.sioaccounj"}.suffix() );
    print_f("Value of expected suffix: sioaccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eo.sioaccounj"}.suffix(), name{"sioaccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eos.ioaccounj"}.suffix() );
    print_f("Value of expected suffix: ioaccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eos.ioaccounj"}.suffix(), name{"ioaccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosi.oaccounj"}.suffix() );
    print_f("Value of expected suffix: oaccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosi.oaccounj"}.suffix(), name{"oaccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosio.accounj"}.suffix() );
    print_f("Value of expected suffix: accounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosio.accounj"}.suffix(), name{"accounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioa.ccounj"}.suffix() );
    print_f("Value of expected suffix: ccounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioa.ccounj"}.suffix(), name{"ccounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioac.counj"}.suffix() );
    print_f("Value of expected suffix: counj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioac.counj"}.suffix(), name{"counj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioacc.ounj"}.suffix() );
    print_f("Value of expected suffix: ounj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioacc.ounj"}.suffix(), name{"ounj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioacco.unj"}.suffix() );
    print_f("Value of expected suffix: unj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioacco.unj"}.suffix(), name{"unj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioaccou.nj"}.suffix() );
    print_f("Value of expected suffix: nj\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioaccou.nj"}.suffix(), name{"nj"} );
    
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eosioaccoun.j"}.suffix() );
    print_f("Value of expected suffix: j\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eosioaccoun.j"}.suffix(), name{"j"} );
 
-#ifdef NATIVE
+// Note that this case is ignored because '.' characters at the end of a name are ignored
+// Although, it is my goal to make the functions perfect mirrors of eachother evenutally (01/07/2019)
+// #ifdef NATIVE_NAME
+//    print_f("Value of suffix:          %\n", name{"eosioaccounj."}.suffix() );
+//    print_f("Value of expected suffix: \n" );
+// #endif
+//    eosio_assert( name{"eosioaccounj."}.suffix() == name{""}, "name.suffix() != \"\"" );
+
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"e.o.s.i.o.a.c"}.suffix() );
    print_f("Value of expected suffix: c\n" );
 #endif
    
    REQUIRE_EQUAL( name{"e.o.s.i.o.a.c"}.suffix(), name{"c"} );
 
-#ifdef NATIVE
+#ifdef NATIVE_NAME
    print_f("Value of suffix:          %\n", name{"eos.ioa.cco"}.suffix() );
    print_f("Value of expected suffix: cco\n" );
 #endif
    
    REQUIRE_EQUAL( name{"eos.ioa.cco"}.suffix(), name{"cco"} );
 
-// TODO: fix bug
-// #ifdef NATIVE
-//    print_f("Value of suffix:          %\n", name{"eosioaccounj."}.suffix() );
-//    print_f("Value of expected suffix: \n" );
-// #endif
-//    eosio_assert( name{"eosioaccounj."}.suffix() == name{""}, "name.suffix() != \"\"" );
-
    // ------------
    // operator raw
-
    REQUIRE_EQUAL( static_cast<uint64_t>(name::raw{name{"1"}}), 576460752303423488ULL );
    REQUIRE_EQUAL( static_cast<uint64_t>(name::raw{name{"5"}}), 2882303761517117440ULL );
    REQUIRE_EQUAL( static_cast<uint64_t>(name::raw{name{"a"}}), 3458764513820540928ULL );
@@ -252,38 +248,19 @@ EOSIO_TEST_BEGIN(name_type_test)
      
    // -------------
    // operator bool
+   // Note that I must be explicit about calling the operator because it is defined as `explicit`
+   REQUIRE_EQUAL( name{0}.operator bool(), false );
+   REQUIRE_EQUAL( name{1}.operator bool(), true );
+   REQUIRE_EQUAL( !name{0}, true );
+   REQUIRE_EQUAL( !name{1}, false );
 
-   REQUIRE_EQUAL( static_cast<bool>(name{"1"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"5"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"a"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"z"}), true );
-
-   REQUIRE_EQUAL( static_cast<bool>(name{"abc"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"123"}), true );
-
-   REQUIRE_EQUAL( static_cast<bool>(name{".abc"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{".........abc"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"123."}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"123........."}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{".a.b.c.1.2.3."}), true );
-   
-   REQUIRE_EQUAL( static_cast<bool>(name{"abc.123"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"123.abc"}), true );
-
-   REQUIRE_EQUAL( static_cast<bool>(name{"12345abcdefgj"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"hijklmnopqrsj"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"tuvwxyz.1234j"}), true );
-
-   REQUIRE_EQUAL( static_cast<bool>(name{"111111111111j"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"555555555555j"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"aaaaaaaaaaaaj"}), true );
-   REQUIRE_EQUAL( static_cast<bool>(name{"zzzzzzzzzzzzj"}), true );
-
-   REQUIRE_EQUAL( static_cast<bool>(name{0}), false );
+   REQUIRE_EQUAL( name{""}.operator bool(), false );
+   REQUIRE_EQUAL( name{"1"}.operator bool(), true );
+   REQUIRE_EQUAL( !name{""}, true );
+   REQUIRE_EQUAL( !name{"1"}, false );
 
    // ---------------
    // write_as_string
-
    char buffer[13]{};
    
    std::string test_str{"1"};
@@ -301,8 +278,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    name{test_str = "123"}.write_as_string( buffer, buffer + sizeof(buffer) );
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
 
-   // TODO: fix bug
-   // Note that '.' characters at the end of a name do not get written to the buffer.
+   // Note that any '.' characters at the end of a name are ignored
    name{test_str = ".abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
    name{test_str = ".........abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
@@ -337,7 +313,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ---------
    // to_string
-
    REQUIRE_EQUAL( name{"1"}.to_string(), "1" );
    REQUIRE_EQUAL( name{"5"}.to_string(), "5" );
    REQUIRE_EQUAL( name{"a"}.to_string(), "a" );
@@ -346,7 +321,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    REQUIRE_EQUAL( name{"abc"}.to_string(), "abc" );
    REQUIRE_EQUAL( name{"123"}.to_string(), "123" );
 
-   // TODO: fix bug
    REQUIRE_EQUAL( name{".abc"}.to_string(), ".abc" );
    REQUIRE_EQUAL( name{".........abc"}.to_string(), ".........abc" );
    REQUIRE_EQUAL( name{"123."}.to_string(), "123" );
@@ -367,7 +341,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ----------
    // operator==
-
    REQUIRE_EQUAL( name{"1"} == name{"1"}, true );
    REQUIRE_EQUAL( name{"5"} == name{"5"}, true );
    REQUIRE_EQUAL( name{"a"} == name{"a"}, true );
@@ -376,7 +349,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    REQUIRE_EQUAL( name{"abc"} == name{"abc"}, true );
    REQUIRE_EQUAL( name{"123"} == name{"123"}, true );
 
-   // TODO: fix bug
    REQUIRE_EQUAL( name{".abc"} == name{".abc"}, true );
    REQUIRE_EQUAL( name{".........abc"} == name{".........abc"}, true );
    REQUIRE_EQUAL( name{"123."} == name{"123"}, true );
@@ -397,7 +369,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ----------
    // operator!=
-
    REQUIRE_EQUAL( name{"1"} != name{0}, true );
    REQUIRE_EQUAL( name{"5"} != name{0}, true );
    REQUIRE_EQUAL( name{"a"} != name{0}, true );
@@ -426,7 +397,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ---------
    // operator<
-
    REQUIRE_EQUAL( name{0} < name{"1"}, true );
    REQUIRE_EQUAL( name{0} < name{"5"}, true );
    REQUIRE_EQUAL( name{0} < name{"a"}, true );
@@ -455,7 +425,6 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ------------
    // operator""_n
-
    REQUIRE_EQUAL( name{0} == ""_n, true );
    
    REQUIRE_EQUAL( name{"1"} == "1"_n, true );
@@ -466,7 +435,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    REQUIRE_EQUAL( name{"abc"} == "abc"_n, true );
    REQUIRE_EQUAL( name{"123"} == "123"_n, true );
 
-   // TODO: fix bug
    REQUIRE_EQUAL( name{".abc"} == ".abc"_n, true );
    REQUIRE_EQUAL( name{".........abc"} == ".........abc"_n, true );
    REQUIRE_EQUAL( name{"123."} == "123."_n, true );
@@ -618,6 +586,5 @@ EOSIO_TEST_END
 
 int main(int argc, char** argv) {
    EOSIO_TEST(name_type_test);
-   // EOSIO_TEST(is_account_test);
    return has_failed();
 }
