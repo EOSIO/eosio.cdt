@@ -2,6 +2,8 @@
 #include <eosio/native/tester.hpp>
 
 #define NATIVE_NAME
+#define NATIVE_SYMBOL
+#define NATIVE_ASSET
 
 using namespace eosio;
 using namespace eosio::native;
@@ -456,9 +458,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_methods_test)
-EOSIO_TEST_END
-
 // // Intrinsics defined in `eos/libraries/chain/wasm_interface.cpp` that involve the `name` type
 // // Defined in `eos/libraries/chain/wasm_interface.cpp`
 // EOSIO_TEST_BEGIN(set_resource_limits_intrinsic_test)
@@ -581,7 +580,6 @@ EOSIO_TEST_END
 //    CHECK_EQUAL(is_account(4), true);
 //    CHECK_EQUAL(is_account(6), true);
 //    REQUIRE_EQUAL(is_account(7), true);
-
 // EOSIO_TEST_END
 
 int main(int argc, char** argv) {

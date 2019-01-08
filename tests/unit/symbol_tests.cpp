@@ -1,8 +1,9 @@
 #include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
-// #define NATIVE_NAME
+#define NATIVE_NAME
 #define NATIVE_SYMBOL
+#define NATIVE_ASSET
 
 using namespace eosio;
 using namespace eosio::native;
@@ -64,27 +65,25 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
 
    // ---------------
    // write_as_string
-   // TODO: rename when moved
-   char buffer1[7]{};
+   char buffer[7]{};
 
-   // TODO: rename when moved
-   std::string test_str1{"A"};
-   symbol_code{test_str1}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
-print_f("%\n",test_str1);
-print_f("%\n",buffer1);
-   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
-   symbol_code{test_str1 = "Z"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
-print_f("%\n",test_str1);
-print_f("%\n",buffer1);
-   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
-   symbol_code{test_str1 = "AAAAAAA"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
-print_f("%\n",test_str1);
-print_f("%\n",buffer1);
-   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
-   symbol_code{test_str1 = "ZZZZZZZ"}.write_as_string( buffer1, buffer1 + sizeof(buffer1) );
-print_f("%\n",test_str1);
-print_f("%\n",buffer1);
-   REQUIRE_EQUAL( memcmp(test_str1.c_str(), buffer1, strlen(test_str1.c_str())), 0 );
+   std::string test_str{"A"};
+   symbol_code{test_str}.write_as_string( buffer, buffer + sizeof(buffer) );
+print_f("%\n",test_str);
+print_f("%\n",buffer);
+   REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
+   symbol_code{test_str = "Z"}.write_as_string( buffer, buffer + sizeof(buffer) );
+print_f("%\n",test_str);
+print_f("%\n",buffer);
+   REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
+   symbol_code{test_str = "AAAAAAA"}.write_as_string( buffer, buffer + sizeof(buffer) );
+print_f("%\n",test_str);
+print_f("%\n",buffer);
+   REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
+   symbol_code{test_str = "ZZZZZZZ"}.write_as_string( buffer, buffer + sizeof(buffer) );
+print_f("%\n",test_str);
+print_f("%\n",buffer);
+   REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
 
    // ---------
    // to_string
@@ -186,7 +185,17 @@ print_f("%",symbol{"ZZZZZZZ", 255}.raw());
 
    // -----
    // print
-   
+// symbol{"A", 0}.print(true);
+// symbol{"AAAAAAA", 255}.print(true);
+   // REQUIRE_PRINT( "0,A", [](){symbol{"A", 0}.print(true);} );
+   // REQUIRE_PRINT( "0,Z", [](){symbol{"Z", 0}.print(true);} );
+   // REQUIRE_PRINT( "255,AAAAAAA", [](){symbol{"AAAAAAA", 255}.print(true);} );
+   // REQUIRE_PRINT( "255,ZZZZZZZ", [](){symbol{"ZZZZZZZ", 255}.print(true);} );
+
+   // REQUIRE_PRINT( ",A", [](){symbol{"A", 0}.print(false);} );
+   // REQUIRE_PRINT( ",Z", [](){symbol{"Z", 0}.print(false);} );
+   // REQUIRE_PRINT( ",AAAAAAA", [](){symbol{"AAAAAAA", 255}.print(false);} );
+   // REQUIRE_PRINT( ",ZZZZZZZ", [](){symbol{"ZZZZZZZ", 255}.print(false);} );
 
    // ----------
    // operator==
@@ -213,37 +222,68 @@ EOSIO_TEST_END
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
    // ------------
-   // constructors
+   // constructors/get_symbol/get_contract
+   REQUIRE_EQUAL( (extended_symbol{symbol{}, name{}}.get_symbol().raw()), 0ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{}, name{}}.get_contract().value), 0ULL );
    
-   
-   // ----------
-   // get_symbol
-   
-
-   // ------------
-   // get_contract
-   
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"1"}}.get_symbol().raw()), 16640ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"5"}}.get_symbol().code().raw()), 65ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{"a"}}.get_symbol().raw()), 23040ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{"z"}}.get_symbol().code().raw()), 90ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"1"}}.get_contract().value), 576460752303423488ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"5"}}.get_contract().value), 2882303761517117440ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{"a"}}.get_contract().value), 3458764513820540928ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{"z"}}.get_contract().value), 17870283321406128128ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{"111111111111j"}}.get_symbol().raw()), 4702111234474983680ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{"555555555555j"}}.get_symbol().code().raw()), 18367622009667905ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"aaaaaaaaaaaaj"}}.get_symbol().raw()), 6510615555426900480ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"zzzzzzzzzzzzj"}}.get_symbol().code().raw()), 25432092013386330ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{"111111111111j"}}.get_contract().value), 595056260442243615ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{"555555555555j"}}.get_contract().value), 2975281302211218015ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"aaaaaaaaaaaaj"}}.get_contract().value), 3570337562653461615ULL );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"zzzzzzzzzzzzj"}}.get_contract().value), 18446744073709551615ULL );
 
    // -----
    // print
-   
+// extended_symbol{symbol{"A", 0}, name{"1"}}.print(true);
+// extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(true);
+   // REQUIRE_PRINT( "0@576460752303423488", [](){extended_symbol{symbol{"A", 0}, name{"1"}}.print(true);} );
+   // REQUIRE_PRINT( "0@2882303761517117440", [](){extended_symbol{symbol{"Z", 0}, name{"5"}}.print(true);} );
+   // REQUIRE_PRINT( "255@595056260442243615", [](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(true);} );
+   // REQUIRE_PRINT( "255@2975281302211218015", [](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(true);} );
+
+   // REQUIRE_PRINT( "@576460752303423488", [](){extended_symbol{symbol{"A", 0}, name{"1"}}.print(false);} );
+   // REQUIRE_PRINT( "@2882303761517117440", [](){extended_symbol{symbol{"Z", 0}, name{"5"}}.print(false);} );
+   // REQUIRE_PRINT( "@595056260442243615", [](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(false);} );
+   // REQUIRE_PRINT( "@2975281302211218015", [](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(false);} );
 
    // ----------
    // operator==
-   
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{0}} == extended_symbol{symbol{"A", 0}, name{}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{0}} == extended_symbol{symbol{"Z", 0}, name{}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{0}} == extended_symbol{symbol{"AAAAAAA", 0}, name{}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{0}} == extended_symbol{symbol{"ZZZZZZZ", 0}, name{}}), true );
 
    // ----------
    // operator!=
-   
+   REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
 
    // ---------
    // operator<
-   
+   REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"A", 0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"Z", 0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"AAAAAAA", 0}, name{0}}), true );
+   REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"ZZZZZZZ", 0}, name{0}}), true );
+
+   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char** argv) {
-   // EOSIO_TEST(symbol_code_type_test);
+   EOSIO_TEST(symbol_code_type_test);
    EOSIO_TEST(symbol_type_test);
-   // EOSIO_TEST(extended_symbol_type_test);
+   EOSIO_TEST(extended_symbol_type_test);
    return has_failed();
 }
