@@ -2,6 +2,7 @@
 
 #include <variant>
 #include <set>
+#include <stack>
 #include "system.hpp"
 #include "tree.hpp"
 
@@ -30,176 +31,106 @@ namespace eosio {
          rope_node* root = nullptr;
          rope_node* last = nullptr;
          size_t size     = 0;
-
-         constexpr size_t strlen(const char* str)const {
+         
+         static constexpr void print(const rope_node* rn) {
+            if (auto val = std::get_if<concat_t>(rn))
+               eosio::print_f("concat % % %\n", (size_t)val->left, (size_t)val->right, val->index);
+            else if (auto val = std::get_if<str_t>(rn))
+               eosio::print_f("str %\n", val->c_str);
+         }
+         static constexpr size_t strlen(const char* str) {
             int i=0;
             while (str[i++]);
             return i;
          }
-         /* 
-         static void _print(const str_t& s, const std::set<concat_t*>& inserts) {
-            prints_l(s.c_str, cc->index - index);
-            prints_l(ss.c_str, ss.size-1);
-            prints(s.c_str+cc->index - index);
-         }
 
-         static void print(const std::unique_ptr<rope_node>& r, int i) {
-            static std::set<concat_t*> inserts;
-            static int index = i;
-            if (r) {
-               std::visit(overloaded {
-                  [&](concat_t& c) { 
-                     if (c.index > 0) {
-                        inserts.emplace(&c);
-                     } else {
-                        if (c.left)
-                           print(c.left);
-                     }
-                     if (c.right)
-                        print(c.right);
-                  },
-                  [&](str_t& s) { 
-                     size_t size_so_far = 0;
-                     while (inserts.size()) {
-                        if ((*inserts.begin())->index < (index + s.size)) {
-                           concat_t* cc = (*inserts.begin());
-                           auto&     ss = std::get<str_t>(*(cc->left));
-                           prints_l(s.c_str, cc->index - index);
-                           prints_l(ss.c_str, ss.size-1);
-                           prints(s.c_str+cc->index - index);
-                           inserts.erase(inserts.begin());
-                           size_so_far += s.size + ss.size
-                        } else {
-                           prints_l(s.c_str, s.size); 
-                           index += s.size;
-                           break;
-                        }
-                        index += s.size;
-                     }
-                  }
-               }, *r);
-            }
-         }
-
-         static void print(const std::unique_ptr<rope_node>& r) {
-            print(r, 0);
-         }
-         */ 
-         static void insert(char* buffer, int insert_index, const str_t& s) {
-            memcpy(buffer+insert_index+s.size, buffer+insert_index, s.size);
+         constexpr void insert(char* buffer, int insert_index, const str_t& s)const {
+            memmove(buffer+insert_index+s.size, buffer+insert_index, strlen(buffer+insert_index));
             memcpy(buffer+insert_index, s.c_str, s.size);
          }
-         /*
-         static void copy_and_insert(char* buffer, size_t& offset, int& index, const str_t& s, std::set<const concat_t*>& inserts) {
-            if (inserts.size() && (*inserts.begin())->index < (index + s.size)) {
-               auto&  cc  = *inserts.begin();
-               auto&  ccs = std::get<str_t>(*(cc->left));
-               size_t pre = cc->index - index;
-               memcpy(buffer+offset, s.c_str, s.size);
-               memcpy(buffer+offset+pre, ccs.c_str, ccs.size-1);
-               memcpy(buffer+offset+pre+ccs.size-1, s.c_str+pre, s.size-pre);
-               inserts.erase(inserts.begin());
-               str_t tmp = {buffer+offset, ccs.size+s.size};
-               if (inserts.size())
-                  if ((*inserts.begin())->index < index+ccs.size-1+s.size) {
-                     copy_and_insert(buffer, offset, index, tmp, inserts);
-                  }
-               index  += ccs.size-1;
-               offset += ccs.size-1;
-            } else {
-               memcpy(buffer+offset, s.c_str, s.size);
-            }
-            index += s.size;
-            offset += s.size;
-         }
-         */
 
-         void c_str(char* buffer, const rope_node* r, size_t& offset, std::set<const concat_t*>& inserts)const {
-            if (r) {
-               std::visit(overloaded {
-                  [&](const concat_t& c) { 
-                     if (c.index > 0) {
-                        inserts.emplace(&c);
-                     } else {
-                        if (c.left)
-                           c_str(buffer, c.left, offset, inserts);
-                     }
-                     if (c.right) {
-                        c_str(buffer, c.right, offset, inserts);
-                     }
-                  },
-                  [&](const str_t& s) { 
-                     memcpy(buffer+offset, s.c_str, s.size);
-                     offset += s.size;
+         void c_str(char* buffer, const rope_node* r, size_t& offset)const {
+            // the natural recursive version of this function causes call depth maximum assert to be thrown from nodeos
+            std::set<const concat_t*> inserts;
+            std::stack<const rope_node*> last_cc;
+            const rope_node* tmp = r;
+            while (true) {
+               if (!tmp || tmp == last) {
+                  if (!last_cc.empty()) {
+                     tmp = last_cc.top();
+                     last_cc.pop();
+                     continue;
                   }
-               }, *r);
+                  break;
+               }
+               const auto val = std::get_if<concat_t>(tmp);
+               eosio::check(val, "rope c_str critical failure");
+               eosio::print("----------\n");
+               print(val->left);
+               print(val->right);
+               eosio::print("----------\n");
+
+               if (std::holds_alternative<concat_t>(*(val->left))) {
+                  last_cc.push(val->right);
+                  tmp = val->left;
+               } else {
+                  if (val->index > 0) {
+                     inserts.insert(val);
+                  } else {
+                     if (val->left) {
+                        if (auto lval = std::get_if<str_t>(val->left)) {
+                           memcpy(buffer+offset, lval->c_str, lval->size);
+                           offset += lval->size;
+                        }
+                     }
+                  }
+                  tmp = val->right;
+               }
+            }
+            eosio::print_f("OFF %\n", offset);
+            for (auto ins : inserts) {
+               auto& ins_str = std::get<str_t>(*(ins->left));
+               insert(buffer, ins->index, ins_str);
             }
          }
 
-         inline const concat_t& get_cc(const rope_node* rn)const  {
+         inline constexpr const concat_t& get_cc(const rope_node* rn)const  {
             return std::get<concat_t>(*rn);
          }
 
-         inline const str_t& get_str(const rope_node* rn)const {
+         inline constexpr const str_t& get_str(const rope_node* rn)const {
             return std::get<str_t>(*rn);
          }
 
-         constexpr void append(const rope_node* n) {
-            rope_node* _last = nullptr;
-            std::visit(overloaded {
-               [&](concat_t& c) { 
-                  auto& cc = get_cc(n);
-                  auto& ns = get_str(cc.left);
-                  c.right = new rope_node(
-                       concat_t{ new rope_node(
-                            str_t{ns.c_str, ns.size}), nullptr, 0});
-                  _last = c.right;
-               },
-               [](str_t& s) { check(false, "critical failure should not reach here"); }
-            }, *last);
-            last = _last;
-         }
-       
-         void insert(rope_node* n, size_t index) {
+         constexpr void insert(rope_node* n, size_t index) {
             root = new rope_node{concat_t{n, root, index}};
          }
 
-         rope clone(const rope_node* node)const {
-            auto& rs = get_str(get_cc(node).left);
-            rope ret(rs.c_str);
-            rope_node* n = get_cc(root).right;
-            while (n) {
-               ret.append(n);
-               n = get_cc(n).right;
+         constexpr void append(rope_node* rn, bool use_left=false) {
+            auto cc = std::get_if<concat_t>(last);
+            eosio::check(cc, "append should only allow concat nodes");
+            if (use_left) {
+               root = new rope_node(concat_t{root, rn, 0});
             }
-            ret.last = n;
-            ret.size = size;
-            return ret;
+            else
+               cc->right = rn;
          }
-         
+
       public:
-         rope(const char* s) {
-            root = new rope_node(
-                     concat_t{new rope_node(str_t{s,strlen(s)-1}), nullptr, 0}
-                  );
+         constexpr rope(const char* s) {
+            root = new rope_node(concat_t{new rope_node(str_t{s,strlen(s)-1}), nullptr, 0});
             last = root;
             size += strlen(s)-1;
          }
 
-         inline rope clone()const {
-            return clone(root);
-         }
-        
          template <size_t N> 
-         inline void insert(size_t index, const char (&s)[N]) {
-            insert(index, s, N);
+         inline constexpr void insert(size_t index, const char (&s)[N]) {
+            insert(index, s, N-1);
          }
 
-         void insert(size_t index, const char* s, size_t len) {
+         void constexpr insert(size_t index, const char* s, size_t len) {
             auto new_node = new rope_node(str_t{s, len});
-            root = new rope_node(
-                     concat_t{new_node, root, index}
-                  );
+            root = new rope_node(concat_t{new_node, root, index});
             size += len;
          }
 
@@ -210,13 +141,24 @@ namespace eosio {
 
          constexpr void append(const char* s, size_t len) {
             str_t _s{s, len};
-            append(new rope_node(concat_t{new rope_node(_s), nullptr, 0}));
+            rope_node* rn = new rope_node(concat_t{new rope_node(_s), nullptr, 0});
+            append(rn);
+            last = rn;
             size += len;
          }
 
+         constexpr void append(const rope& r) {
+            eosio::print("append(const rope& r)\n");
+            append(r.root, true);
+            size += r.size;
+            last = r.last;
+         }
+        
          constexpr void append(rope&& r) {
+            eosio::print("append(rope&& r)\n");
             append(std::move(r.root));
             size += r.size;
+            last = r.last;
          }
 
          constexpr rope& operator+= (const char* s) {
@@ -225,33 +167,49 @@ namespace eosio {
          }
 
          constexpr rope& operator+= (rope&& r) {
+            eosio::print("operator+=(rope&& r)\n");
             append(std::move(r));
             return *this;
          }
+
+         constexpr rope& operator+= (const rope& r) {
+            eosio::print("operator+=(const rope& r)\n");
+            append(r);
+            return *this;
+         }
          
+         friend rope operator+ (rope lhs, const char* s) {
+            lhs += rope(s);
+            return lhs;
+         }
+
+         friend rope operator+ (rope lhs, const rope& rhs) {
+            lhs += rhs;
+            return lhs;
+         } 
+
+         friend rope operator+ (rope lhs, rope&& rhs) {
+            lhs += std::move(rhs);
+            return lhs;
+         } 
+
          constexpr size_t length() {
             return size;
          }
 
          void print() {
-            //if (root)
-               //print(root);
+            eosio::print(c_str());
          }
          
-         char* c_str()const {
+         constexpr char* c_str()const {
             char* ret = new char[size+1];
-            std::set<const concat_t*> inserts;
             size_t off=0;
+            eosio::print_f("SIZE %\n", size);
             if (root) {
-               c_str(ret, root, off, inserts);
-               // handle the inserts
-               for (auto ins : inserts) {
-                  auto& ins_str = std::get<str_t>(*(ins->left));
-                  insert(ret, ins->index, ins_str);
-               }
+               c_str(ret, root, off);
             }
             ret[size] = '\0';
-            return std::move(ret);
+            return ret;
          }
    };
 

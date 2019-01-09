@@ -1,5 +1,4 @@
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/memory.hpp>
 
 using namespace eosio;
 

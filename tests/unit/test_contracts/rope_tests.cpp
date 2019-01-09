@@ -1,12 +1,13 @@
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/string.hpp>
-//#include <string>
+#include <string>
 
 using namespace eosio;
 
 CONTRACT rope_tests : public contract{
    public:
       using contract::contract;
+#if 1
       ACTION test1() {
          rope r("hello");
          r += ", world";
@@ -112,6 +113,18 @@ CONTRACT rope_tests : public contract{
          r += ", world";
          r += " please!";
          r.insert(40, "Something else");
+         r.insert(60, "Something else");
+         r.insert(40, "Stupid");
+
+         rope r2 = r + rope("something altogether");
+         //rope r3 = r + r;
+         /*
+         rope r2 = r;
+         r2 += "hoot";
+         r2 += " again";
+         r2 += " again";
+         */
+         /*
          r.insert(40, "Something else");
          r.insert(40, "Something else");
          r.insert(40, "Something else");
@@ -153,14 +166,16 @@ CONTRACT rope_tests : public contract{
          r.insert(40, "Something else");
          r.insert(40, "Something else");
          r.insert(40, "Something else");
-         r.insert(40, "Something else");
+         */
          //auto pp = r.c_str();
          //eosio::print("PP %\n", pp.get());
          //prints_l(pp.get(), r.length());
-         eosio::print(r);
+         //eosio::print_f("%\n", r2.c_str());
+         eosio::print_f("%\n", r2.c_str());
          eosio_assert(false, "something");
       }
-/*
+#endif
+#if 1
       ACTION test2() {
          std::string r("hello");
          r += ", world";
@@ -266,8 +281,9 @@ CONTRACT rope_tests : public contract{
          r += ", world";
          r += " please!";
          r.insert(40, "Something else");
-         r.insert(40, "Something else");
-         r.insert(40, "Something else");
+         r.insert(60, "Something else");
+         r.insert(40, "Stupid2");
+         /*
          r.insert(40, "Something else");
          r.insert(40, "Something else");
          r.insert(40, "Something else");
@@ -311,10 +327,11 @@ CONTRACT rope_tests : public contract{
 
          r.insert(40, "Something else");
         //r.c_str(buff);
-         //eosio::print(r);
-         //eosio_assert(false, "something");
+        */
+        //eosio::print(r);
+        //eosio_assert(false, "somethingelse");
       }
-*/
+#endif
 };
 
-EOSIO_DISPATCH(rope_tests, (test1)) //(test1)(test2))
+EOSIO_DISPATCH(rope_tests, (test1)(test2))
