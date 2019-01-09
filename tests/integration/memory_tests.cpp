@@ -27,6 +27,7 @@ BOOST_FIXTURE_TEST_CASE( malloc_tests, tester ) try {
 
 } FC_LOG_AND_RETHROW()
 
+/*
 BOOST_FIXTURE_TEST_CASE( rope_tests, tester ) try {
    create_accounts( { N(test) } );
    produce_block();
@@ -43,3 +44,5 @@ BOOST_FIXTURE_TEST_CASE( rope_tests, tester ) try {
    std::cout << "1 : " << t1 - t0 << '\n';
    std::cout << "2 : " << t3 - t2 << '\n';
 } FC_LOG_AND_RETHROW() }
+*/
+}
