@@ -1,23 +1,25 @@
 #include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
-#define NATIVE_NAME
-#define NATIVE_SYMBOL
-#define NATIVE_ASSET
-
 using namespace eosio;
 using namespace eosio::native;
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
-   // ----------------
-   // constructors/raw
+   silence_output(true);
+
+   // ------------------------------------------
+   // constructors/constexpr uint64_t raw()const
+
+   /// constexpr symbol_code()
    REQUIRE_EQUAL( symbol_code{}.raw(), 0ULL );
 
+   /// constexpr explicit symbol_code(uint64_t raw)
    REQUIRE_EQUAL( symbol_code{0ULL}.raw(), 0ULL );
    REQUIRE_EQUAL( symbol_code{1ULL}.raw(), 1ULL );
    REQUIRE_EQUAL( symbol_code{18446744073709551615ULL}.raw(), 18446744073709551615ULL );
 
+   /// constexpr explicit symbol_code(std::string_view str)
    REQUIRE_EQUAL( symbol_code{"A"}.raw(), 65ULL );
    REQUIRE_EQUAL( symbol_code{"Z"}.raw(), 90ULL );
    REQUIRE_EQUAL( symbol_code{"AAAAAAA"}.raw(), 18367622009667905ULL );
@@ -29,8 +31,8 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"@"};}) );
    REQUIRE_ASSERT( "only uppercase letters allowed in symbol_code string", ([]() {symbol_code{"["};}) );
 
-   // --------
-   // is_valid
+   // ------------------------------
+   // constexpr bool is_valid()const
    REQUIRE_EQUAL( symbol_code{65ULL}.is_valid(), true ); // "A"
    REQUIRE_EQUAL( symbol_code{90ULL}.is_valid(), true ); // "Z"
    REQUIRE_EQUAL( symbol_code{18367622009667905ULL}.is_valid(), true ); // "AAAAAAA"
@@ -39,8 +41,8 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    REQUIRE_EQUAL( symbol_code{64ULL}.is_valid(), false );
    REQUIRE_EQUAL( symbol_code{25432092013386331ULL}.is_valid(), false );
 
-   // ------
-   // length
+   // --------------------------------
+   // constexpr uint32_t length()const
    REQUIRE_EQUAL( symbol_code{""}.length(), 0 );
    REQUIRE_EQUAL( symbol_code{"S"}.length(), 1 );
    REQUIRE_EQUAL( symbol_code{"SY"}.length(), 2 );
@@ -50,8 +52,8 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    REQUIRE_EQUAL( symbol_code{"SYMBOL"}.length(), 6 );
    REQUIRE_EQUAL( symbol_code{"SYMBOLL"}.length(), 7 );
 
-   // -------------
-   // operator bool
+   // ---------------------------------------
+   // constexpr explicit operator bool()const
    // Note that I must be explicit about calling the operator because it is defined as `explicit`
    REQUIRE_EQUAL( symbol_code{0}.operator bool(), false );
    REQUIRE_EQUAL( symbol_code{1}.operator bool(), true );
@@ -63,51 +65,43 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    REQUIRE_EQUAL( !symbol_code{""}, true );
    REQUIRE_EQUAL( !symbol_code{"SYMBOL"}, false );
 
-   // ---------------
-   // write_as_string
+   // ----------------------------------------
+   // char* write_as_string(char*, char*)const
    char buffer[7]{};
 
    std::string test_str{"A"};
    symbol_code{test_str}.write_as_string( buffer, buffer + sizeof(buffer) );
-print_f("%\n",test_str);
-print_f("%\n",buffer);
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
    symbol_code{test_str = "Z"}.write_as_string( buffer, buffer + sizeof(buffer) );
-print_f("%\n",test_str);
-print_f("%\n",buffer);
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
    symbol_code{test_str = "AAAAAAA"}.write_as_string( buffer, buffer + sizeof(buffer) );
-print_f("%\n",test_str);
-print_f("%\n",buffer);
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
    symbol_code{test_str = "ZZZZZZZ"}.write_as_string( buffer, buffer + sizeof(buffer) );
-print_f("%\n",test_str);
-print_f("%\n",buffer);
    REQUIRE_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 );
 
-   // ---------
-   // to_string
+   // ----------------------------
+   // std::string to_string()const
    REQUIRE_EQUAL( symbol_code{"A"}.to_string(), "A" );
    REQUIRE_EQUAL( symbol_code{"Z"}.to_string(), "Z" );
    REQUIRE_EQUAL( symbol_code{"AAAAAAA"}.to_string(), "AAAAAAA" );
    REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"}.to_string(), "ZZZZZZZ" );
 
-   // ----------
-   // operator==
+   // --------------------------------------------------------------
+   // friend bool operator==(const symbol_code&, const symbol_code&)
    REQUIRE_EQUAL( symbol_code{"A"} == symbol_code{"A"}, true );
    REQUIRE_EQUAL( symbol_code{"Z"} == symbol_code{"Z"}, true );
    REQUIRE_EQUAL( symbol_code{"AAAAAAA"} == symbol_code{"AAAAAAA"}, true );
    REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"} == symbol_code{"ZZZZZZZ"}, true );
 
-   // ----------
-   // operator!=
+   // --------------------------------------------------------------
+   // friend bool operator!=(const symbol_code&, const symbol_code&)
    REQUIRE_EQUAL( symbol_code{"A"} != symbol_code{0}, true );
    REQUIRE_EQUAL( symbol_code{"Z"} != symbol_code{0}, true );
    REQUIRE_EQUAL( symbol_code{"AAAAAAA"} != symbol_code{0}, true );
    REQUIRE_EQUAL( symbol_code{"ZZZZZZZ"} != symbol_code{0}, true );
 
-   // ---------
-   // operator<
+   // -------------------------------------------------------------
+   // friend bool operator<(const symbol_code&, const symbol_code&)
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"A"}, true );
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"Z"}, true );
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"AAAAAAA"}, true );
@@ -116,33 +110,32 @@ EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
-   // ------------
-   // constructors/raw
+   // ------------------------------------------
+   // constructors/constexpr uint64_t raw()const
+
+   /// constexpr symbol()
    REQUIRE_EQUAL( symbol{}.raw(), 0ULL );
 
+   /// constexpr explicit symbol(uint64_t)
    REQUIRE_EQUAL( symbol{0ULL}.raw(), 0ULL );
    REQUIRE_EQUAL( symbol{1ULL}.raw(), 1ULL );
    REQUIRE_EQUAL( symbol{18446744073709551615ULL}.raw(), 18446744073709551615ULL );
 
+   /// constexpr symbol(std::string_view, uint8_t)
    // Note that unless constructed with `initializer_list`, precision does not check for wrap-around
    REQUIRE_EQUAL( (symbol{"A", 0}.raw()), 16640ULL );
    REQUIRE_EQUAL( (symbol{"Z", 0}.raw()), 23040ULL );
    REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.raw()), 4702111234474983680ULL );
    REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0}.raw()), 6510615555426900480ULL );
 
+   /// constexpr symbol(symbol_code, uint8_t)
    REQUIRE_EQUAL( (symbol{symbol_code{"A"}, 0}.raw()), 16640ULL );
    REQUIRE_EQUAL( (symbol{symbol_code{"Z"}, 0}.raw()), 23040ULL );
    REQUIRE_EQUAL( (symbol{symbol_code{"AAAAAAA"}, 0}.raw()), 4702111234474983680ULL );
    REQUIRE_EQUAL( (symbol{symbol_code{"ZZZZZZZ"}, 0}.raw()), 6510615555426900480ULL );
 
-print_f("%",symbol{"A", 0}.raw());
-print_f("%",symbol{"Z", 0}.raw());
-print_f("%",symbol{"AAAAAAA", 0}.raw());
-print_f("%",symbol{"ZZZZZZZ", 0}.raw());
-print_f("%",symbol{"ZZZZZZZ", 255}.raw());
-
-   // --------
-   // is_valid
+   // --------------------
+   // bool is_valid()const
    REQUIRE_EQUAL( symbol{16640ULL}.is_valid(), true ); // "A", precision: 0
    REQUIRE_EQUAL( symbol{23040ULL}.is_valid(), true ); // "Z", precision: 0
    REQUIRE_EQUAL( symbol{4702111234474983680ULL}.is_valid(), true ); // "AAAAAAA", precision: 0
@@ -151,8 +144,8 @@ print_f("%",symbol{"ZZZZZZZ", 255}.raw());
    REQUIRE_EQUAL( symbol{16639ULL}.is_valid(), false );
    REQUIRE_EQUAL( symbol{6510615555426900736ULL}.is_valid(), false );
 
-   // ---------
-   // precision
+   // -------------------------
+   // uint64_t precision()const
    REQUIRE_EQUAL( (symbol{"A", 0}.precision()), 0 );
    REQUIRE_EQUAL( (symbol{"Z", 0}.precision()), 0 );
    REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.precision()), 0 );
@@ -163,15 +156,15 @@ print_f("%",symbol{"ZZZZZZZ", 255}.raw());
    REQUIRE_EQUAL( (symbol{"AAAAAAA", 255}.precision()), 255 );
    REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 255}.precision()), 255 );
 
-   // ----
-   // code
+   // -----------------------
+   // symbol_code code()const
    REQUIRE_EQUAL( (symbol{"A", 0}.code()), symbol_code{"A"} );
    REQUIRE_EQUAL( (symbol{"Z", 0}.code()), symbol_code{"Z"} );
    REQUIRE_EQUAL( (symbol{"AAAAAAA", 0}.code()), symbol_code{"AAAAAAA"} );
    REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0}.code()), symbol_code{"ZZZZZZZ"} );
 
-   // -------------
-   // operator bool
+   // ---------------------------------------
+   // constexpr explicit operator bool()const
    // Note that I must be explicit about calling the operator because it is defined as `explicit`
    REQUIRE_EQUAL( symbol{0}.operator bool(), false );
    REQUIRE_EQUAL( symbol{1}.operator bool(), true );
@@ -183,8 +176,8 @@ print_f("%",symbol{"ZZZZZZZ", 255}.raw());
    REQUIRE_EQUAL( (!symbol{"", 0}), true );
    REQUIRE_EQUAL( (!symbol{"SYMBOL", 0}), false );
 
-   // -----
-   // print
+   // ---------------------
+   // void print(bool)const
 // symbol{"A", 0}.print(true);
 // symbol{"AAAAAAA", 255}.print(true);
    // REQUIRE_PRINT( "0,A", [](){symbol{"A", 0}.print(true);} );
@@ -197,22 +190,22 @@ print_f("%",symbol{"ZZZZZZZ", 255}.raw());
    // REQUIRE_PRINT( ",AAAAAAA", [](){symbol{"AAAAAAA", 255}.print(false);} );
    // REQUIRE_PRINT( ",ZZZZZZZ", [](){symbol{"ZZZZZZZ", 255}.print(false);} );
 
-   // ----------
-   // operator==
+   // --------------------------------------------------------------
+   // friend constexpr bool operator==(const symbol&, const symbol&)
    REQUIRE_EQUAL( (symbol{"A", 0} == symbol{"A", 0}), true );
    REQUIRE_EQUAL( (symbol{"Z", 0} == symbol{"Z", 0}), true );
    REQUIRE_EQUAL( (symbol{"AAAAAAA", 0} == symbol{"AAAAAAA", 0}), true );
    REQUIRE_EQUAL( (symbol{"ZZZZZZZ", 0} == symbol{"ZZZZZZZ", 0}), true );
 
-   // ----------
-   // operator!=
+   // --------------------------------------------------------------
+   // friend constexpr bool operator!=(const symbol&, const symbol&)
    REQUIRE_EQUAL( (symbol{"A",0} != symbol{0}), true );
    REQUIRE_EQUAL( (symbol{"Z",0} != symbol{0}), true );
    REQUIRE_EQUAL( (symbol{"AAAAAAA",0} != symbol{0}), true );
    REQUIRE_EQUAL( (symbol{"ZZZZZZZ",0} != symbol{0}), true );
 
-   // ---------
-   // operator<
+   // --------------------------------------------------------------
+   // friebnd constexpr bool operator<(const symbol&, const symbol&)
    REQUIRE_EQUAL( (symbol{0} < symbol{"A",0}), true );
    REQUIRE_EQUAL( (symbol{0} < symbol{"Z",0}), true );
    REQUIRE_EQUAL( (symbol{0} < symbol{"AAAAAAA",0}), true );
@@ -221,11 +214,14 @@ EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
-   // ------------
+   // ------------------------------------
    // constructors/get_symbol/get_contract
+
+   /// constexpr extended_symbol()
    REQUIRE_EQUAL( (extended_symbol{symbol{}, name{}}.get_symbol().raw()), 0ULL );
    REQUIRE_EQUAL( (extended_symbol{symbol{}, name{}}.get_contract().value), 0ULL );
    
+   /// constexpr extended_symbol(symbol, name)/constexpr symbol get_symbol()const/constexpr name get_contract()const
    REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"1"}}.get_symbol().raw()), 16640ULL );
    REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{"5"}}.get_symbol().code().raw()), 65ULL );
    REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{"a"}}.get_symbol().raw()), 23040ULL );
@@ -243,8 +239,8 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"aaaaaaaaaaaaj"}}.get_contract().value), 3570337562653461615ULL );
    REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{"zzzzzzzzzzzzj"}}.get_contract().value), 18446744073709551615ULL );
 
-   // -----
-   // print
+   // ---------------------
+   // void print(bool)const
 // extended_symbol{symbol{"A", 0}, name{"1"}}.print(true);
 // extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(true);
    // REQUIRE_PRINT( "0@576460752303423488", [](){extended_symbol{symbol{"A", 0}, name{"1"}}.print(true);} );
@@ -257,22 +253,22 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    // REQUIRE_PRINT( "@595056260442243615", [](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(false);} );
    // REQUIRE_PRINT( "@2975281302211218015", [](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(false);} );
 
-   // ----------
-   // operator==
+   // -------------------------------------------------------------------------------
+   // friend constexpr bool operator==(const extended_symbol&, const extended_symbol&)
    REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{0}} == extended_symbol{symbol{"A", 0}, name{}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{0}} == extended_symbol{symbol{"Z", 0}, name{}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{0}} == extended_symbol{symbol{"AAAAAAA", 0}, name{}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{0}} == extended_symbol{symbol{"ZZZZZZZ", 0}, name{}}), true );
 
-   // ----------
-   // operator!=
+   // -------------------------------------------------------------------------------
+   // friend constexpr bool operator!=(const extended_symbol&, const extended_symbol&)
    REQUIRE_EQUAL( (extended_symbol{symbol{"A", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"Z", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"AAAAAAA", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{"ZZZZZZZ", 0}, name{0}} != extended_symbol{symbol{0}, name{0}}), true );
 
-   // ---------
-   // operator<
+   // -------------------------------------------------------------------------------
+   // friend constexpr bool operator<(const extended_symbol&, const extended_symbol&)
    REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"A", 0}, name{0}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"Z", 0}, name{0}}), true );
    REQUIRE_EQUAL( (extended_symbol{symbol{0}, name{0}} < extended_symbol{symbol{"AAAAAAA", 0}, name{0}}), true );

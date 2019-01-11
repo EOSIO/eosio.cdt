@@ -35,7 +35,9 @@ namespace eosio {
        * @brief Construct a new symbol_code object defaulting to a value of 0
        *
        */
-      constexpr symbol_code() : value(0) {}
+      constexpr symbol_code()
+         : value{}
+      {}
 
       /**
        * Construct a new symbol_code given a scoped enumerated type of raw (uint64_t).
