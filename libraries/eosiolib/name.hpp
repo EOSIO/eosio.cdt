@@ -4,8 +4,8 @@
  */
 #pragma once
 
-#include "system.hpp"
 #include "serialize.hpp"
+#include "system.hpp"
 
 #include <string>
 #include <string_view>
@@ -40,8 +40,8 @@ namespace eosio {
       /**
        * Construct a new name given a unit64_t value
        *
-       * @brief Construct a new name object initialising value with v
-       * @param v - The unit64_t value
+       * @brief Construct a new name object initialising value with val
+       * @param val - The unit64_t value
        *
        */
       constexpr explicit name( uint64_t val )
@@ -186,8 +186,8 @@ namespace eosio {
        *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the %name
        */
       char* write_as_string( char* begin, char* end )const {
-         static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
-         constexpr uint64_t mask = 0xF800000000000000ULL;
+         static const char* charmap{".12345abcdefghijklmnopqrstuvwxyz"};
+         constexpr uint64_t mask{0xF800000000000000ULL};
 
          if( (begin + 13) < begin || end < (begin + 13) ) return begin;
 
@@ -218,7 +218,7 @@ namespace eosio {
        *
        * @return boolean - true if both provided %name values are the same
        */
-      friend constexpr bool operator == ( const name& a, const name& b ) {
+      friend constexpr bool operator==( const name& a, const name& b ) {
          return a.value == b.value;
       }
 
@@ -227,20 +227,46 @@ namespace eosio {
        *
        * @return boolean - true if both provided %name values are not the same
        */
-      friend constexpr bool operator != ( const name& a, const name& b ) {
+      friend constexpr bool operator!=( const name& a, const name& b ) {
          return a.value != b.value;
       }
 
       /**
-       * Less than operator. Returns true if a < b.
+       * Less than operator. Returns true if a < b
        *
        * @return boolean - true if %name a is less than b
        */
-      friend constexpr bool operator < ( const name& a, const name& b ) {
+      friend constexpr bool operator<( const name& a, const name& b ) {
          return a.value < b.value;
       }
 
+      /**
+       * Less than or equal to operator. Returns true if a <= b
+       *
+       * @return boolean - true if %name a is less than or equal to b
+       */
+      friend constexpr bool operator<=( const name& a, const name& b ) {
+         return a.value <= b.value;
+      }
 
+      /**
+       * Greater than operator. Returns true if a > b
+       *
+       * @return boolean - true if %name a is greater than b
+       */
+      friend constexpr bool operator>( const name& a, const name& b ) {
+         return a.value > b.value;
+      }
+
+      /**
+       * Greater than or equal to operator. Returns true if a >= b
+       *
+       * @return boolean - true if %name a is greater than or equal to b
+       */
+      friend constexpr bool operator>=( const name& a, const name& b ) {
+         return a.value >= b.value;
+      }
+      
       uint64_t value{};
 
       EOSLIB_SERIALIZE( name, (value) )
