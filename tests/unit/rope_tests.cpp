@@ -43,10 +43,24 @@ EOSIO_TEST_BEGIN(rope_test)
    REQUIRE_EQUAL(s.compare(std::string(r.c_str())), 0);
    REQUIRE_EQUAL(s2.compare(std::string(r2.c_str())), 0);
    REQUIRE_EQUAL(s3.compare(std::string(r3.c_str())), 0);
+   
+   REQUIRE_EQUAL(s.length(),  r.length()); 
+   REQUIRE_EQUAL(s2.length(), r2.length()); 
+   REQUIRE_EQUAL(s3.length(), r3.length()); 
+   
+   for (int i=0; i < s.length(); i++) {
+      eosio::print_f(" S[%]:% R[%]:%\n", i, s[i], i, r[i]);
+      REQUIRE_EQUAL(s[i], r[i]);
+   }
+   /*
+   for (int i=0; i < s2.length(); i++) {
+      REQUIRE_EQUAL(s2[i], r2[i]);
+   }
 
-   REQUIRE_PRINT( "test string 0, test string 1, test string 2, test string 3, test string 4, test string 5, test string 6, test string 7", [&](){eosio::print(r);} );
-   REQUIRE_PRINT( "test string 0, test string 1, test string 2, test string 3, test string 4, test string 5, test string 6, test string 7lhsrhssome stringrvalue +=test string 0, test string 1, test string 2, test string 3, test string 4, test string 5, test string 6, test string 7lhsrhssome stringrvalue +=the end", [&](){eosio::print(r2);} );
-   REQUIRE_PRINT( "test string 0, test string 1, test string 2, test string 3, test string 4, test string 5, test string 6, test string 7lhsrhssome stringrvalue +=test string 0, test string 1, test string 2, test string 3, test string 4, test string 5, test string 6, test string 7lhsrhssome stringrvalue +=the end", [&](){eosio::print(r3);} );
+   for (int i=0; i < s3.length(); i++) {
+      REQUIRE_EQUAL(s3[i], r3[i]);
+   }
+   */
 
    silence_output(false);
 EOSIO_TEST_END

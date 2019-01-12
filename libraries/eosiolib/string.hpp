@@ -65,19 +65,23 @@ namespace eosio {
             }
          }
 
-         void at(char& ret, size_t index, rope_node* rn, size_t index_so_far) {
+         void at(char& ret, size_t index, rope_node* rn, size_t& index_so_far, bool& stop) {
             if (rn) {
                std::visit(overloaded {
                   [&](const concat_t& c) {
-                     if (c.left)
-                        at(ret, index, c.left, index_so_far);
-                     if (c.right)
-                        at(ret, index, c.right, index_so_far);
+                     if (!stop) {
+                        if (c.left)
+                           at(ret, index, c.left, index_so_far, stop);
+                        if (c.right)
+                           at(ret, index, c.right, index_so_far, stop);
+                     }
                   },
                   [&](const str_t& s) { 
                      index_so_far -= s.size;
-                     if (index > index_so_far)
-                        ret = s.c_str[index];
+                     if (index >= index_so_far) {
+                        ret = s.c_str[index-index_so_far];
+                        stop = true;
+                     }
                   }
                }, *rn);
             }
@@ -104,7 +108,9 @@ namespace eosio {
          
          constexpr char at(size_t index) {
             char ret = '\0';
-            at(ret, index, root, size);
+            size_t sz = size;
+            bool stop = false;
+            at(ret, index, root, sz, stop);
             return ret;
          }
 
@@ -116,6 +122,10 @@ namespace eosio {
          constexpr void append(rope&& r) {
             append(r.root, true);
             size += r.size;
+         }
+
+         constexpr char operator[](size_t index) {
+            return at(index);
          }
 
          constexpr rope& operator+= (const char* s) {

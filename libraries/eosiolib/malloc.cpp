@@ -1,6 +1,7 @@
 #include <cstdlib> 
 #include <alloca.h>
 #include "system.hpp"
+#include "../tinyalloc/tinyalloc.h"
 
 namespace eosio {
 #ifdef EOSIO_NATIVE

@@ -28,6 +28,11 @@ static cl::opt<std::string> pp_path_opt(
     cl::desc("Set the directory for eosio.pp"),
     cl::Hidden,
     cl::cat(LD_CAT));
+static cl::opt<bool> use_rt_opt(
+    "use-rt",
+    cl::desc("Use software compiler-rt"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
 static cl::opt<bool> fno_lto_opt(
     "fno-lto",
     cl::desc("Disable LTO"),
@@ -701,8 +706,12 @@ static Options CreateOptions(bool add_defaults=true) {
 #else
    if (fnative_opt)
       ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
-   else
+   else {
       ldopts.emplace_back("-lc++ -lc -leosio -leosio_dsm");
+      ldopts.emplace_back("--only-export \"apply:function\"");
+   }   
+   if (use_rt_opt && !fnative_opt)
+      ldopts.emplace_back("-lrt -lsf");
 #endif
    return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }

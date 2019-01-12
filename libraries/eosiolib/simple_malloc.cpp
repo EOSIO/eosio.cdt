@@ -1,47 +1,54 @@
 #include "system.hpp"
 #include "print.hpp"
 
-extern "C" size_t _get_heap_base();
+#ifdef EOSIO_NATIVE
+   extern "C" {
+      size_t __builtin_wasm_current_memory();
+      size_t __builtin_wasm_grow_memory(size_t);
+   }
+#endif
+
 namespace eosio {   
    struct dsmalloc {
-      static constexpr uint8_t align_amt = 8;
-      inline char* align(char* ptr) {
+      inline char* align(char* ptr, uint8_t align_amt) {
          return (char*)((((size_t)ptr) + align_amt-1) & ~(align_amt-1));
       }
+
+      inline size_t align(size_t ptr, uint8_t align_amt) {
+         return (ptr + align_amt-1) & ~(align_amt-1);
+      }
+
       static constexpr uint32_t wasm_page_size = 64*1024;
       static constexpr uint32_t max_size = 32*1024*1024;
 
       dsmalloc() :
          heap((char*)(__builtin_wasm_current_memory() << 16)),
-         offset(0),
-         last_size(0),
+         last_ptr(heap),
          next_page(__builtin_wasm_current_memory()+1) {
          eosio::check(__builtin_wasm_grow_memory(1) != -1, "failed to allocate pages");
       }
        
-      char* operator()(size_t sz) {
+      char* operator()(size_t sz, uint8_t align_amt=8) {
          if (sz == 0)
             return NULL;
 
-         offset += last_size;
+         char* ret = last_ptr;
+         last_ptr = align(last_ptr+sz, align_amt);
 
          size_t pages_to_alloc = sz >> 16;
          next_page += pages_to_alloc;
-         last_size = sz;
-         const char* aligned = align(heap+offset+sz);
-         eosio::check((size_t)aligned < max_size, "exceeding max heap size");
-         if ((next_page << 16) <= (size_t)aligned) {
+         if ((next_page << 16) <= (size_t)last_ptr) {
             next_page++;
             pages_to_alloc++;
          }         
 
          eosio::check(__builtin_wasm_grow_memory(pages_to_alloc) != -1, "failed to allocate pages");  
-         return heap+offset;
+         return ret;
       }
 
       char*  heap;
+      char*  last_ptr;
       size_t offset;
-      size_t last_size;
       size_t next_page;
    }; 
    dsmalloc _dsmalloc;
