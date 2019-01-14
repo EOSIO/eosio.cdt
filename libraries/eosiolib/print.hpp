@@ -58,8 +58,6 @@ namespace eosio {
          printi128(&num);
       else if constexpr(std::is_same<T, char>::value)
          prints_l( &num, 1 );
-      else if constexpr(std::is_same<T, bool>::value)
-         prints(num?"true":"false");
       else
          printi(num);
    }
@@ -74,6 +72,8 @@ namespace eosio {
    inline void print( T num ) {
       if constexpr(std::is_same<T, uint128_t>::value)
          printui128(&num);
+      else if constexpr(std::is_same<T, bool>::value)
+         prints(num?"true":"false");
       else
          printui(num);
    }
