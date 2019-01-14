@@ -47,53 +47,35 @@ namespace eosio {
    }
 
    /**
-    *  Prints string
-    *
-    *  @param c - a char
-    */
-   inline void print( char c ) {
-      prints_l( &c, 1 );
-   }
-
-   /**
-    * Prints 16-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit signed integer
     *
     * @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<T>::value && 
-                                          std::is_signed<T>::value &&
-                                          !std::is_same<T, char>::value, int> = 0>
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+                                          std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
-      printi(num);
+      if constexpr(std::is_same<T, int128_t>::value)
+         printi128(&num);
+      else if constexpr(std::is_same<T, char>::value)
+         prints_l( &num, 1 );
+      else
+         printi(num);
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit unsigned integer
     *
     * @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<T>::value && 
-                                          std::is_unsigned<T>::value, int> = 0>
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+                                          !std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 128 bit signed integer
-    *
-    * @param num to be printed
-    */
-   inline void print( int128_t num ) {
-      printi128(&num);
-   }
-
-   /**
-    * Prints 128 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint128_t num ) {
-      printui128(&num);
+      if constexpr(std::is_same<T, uint128_t>::value)
+         printui128(&num);
+      else if constexpr(std::is_same<T, bool>::value)
+         prints(num?"true":"false");
+      else
+         printui(num);
    }
 
    /**
@@ -116,7 +98,6 @@ namespace eosio {
     * @param num to be printed
     */
    inline void print( long double num ) { printqf( &num ); }
-
 
    /**
     * Prints fixed_bytes as a hexidecimal string
@@ -163,22 +144,12 @@ namespace eosio {
    }
 
   /**
-    * Prints bool
-    *
-    * @param val to be printed
-    */
-   inline void print( bool val ) {
-      prints(val?"true":"false");
-   }
-
-
-  /**
     * Prints class object
     *
     * @param t to be printed
     * @pre T must implements print() function
     */
-   template<typename T, std::enable_if_t<!std::is_integral<T>::value, int> = 0>
+   template<typename T, std::enable_if_t<!std::is_integral<std::decay_t<T>>::value, int> = 0>
    inline void print( T&& t ) {
       if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
          prints_l( t.c_str(), t.size() );
