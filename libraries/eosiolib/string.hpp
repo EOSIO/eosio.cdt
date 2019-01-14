@@ -4,7 +4,6 @@
 #include <set>
 #include <stack>
 #include "system.hpp"
-#include "tree.hpp"
 
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
