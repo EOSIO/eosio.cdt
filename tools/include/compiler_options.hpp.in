@@ -445,9 +445,7 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
 #else
-      copts.push_back(input_filename);
       inputs.push_back(input_filename);
-      abigen_inputs << input_filename << " ";
 #endif
    }
    
@@ -628,7 +626,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-l"+library);
    }
    if (o_opt.empty()) {
-      copts.emplace_back("-o a.out");
+      //copts.emplace_back("-o a.out");
 #ifndef ONLY_LD
       ldopts.emplace_back("a.out");
 #endif
@@ -636,10 +634,10 @@ static Options CreateOptions(bool add_defaults=true) {
       output_fn = "a.out";
    }
    else {
-      copts.emplace_back("-o "+o_opt);
+      //copts.emplace_back("-o "+o_opt);
 #ifndef ONLY_LD
-      if (!inputs.empty())
-      ldopts.push_back(o_opt);
+      //if (!inputs.empty())
+      //ldopts.push_back(o_opt);
 #endif
       ldopts.emplace_back("-o "+o_opt);
       output_fn = o_opt;

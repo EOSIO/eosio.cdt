@@ -9,6 +9,7 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/Program.h"
+#include "llvm/Support/Path.h"
 
 using namespace clang::tooling;
 using namespace llvm;
@@ -18,48 +19,72 @@ using namespace llvm;
 
 int main(int argc, const char **argv) {
 
-  // fix to show version info without having to have any other arguments
-  for (int i=0; i < argc; i++) {
-    if (argv[i] == std::string("-v")) {
-      eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
-      return 0;
-    }
-  }
-
-  cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
-  });
-  cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C -> WebAssembly compiler)");
-  Options opts = CreateOptions();
-
-  // first compile
-  if (!eosio::cdt::environment::exec_subprogram("clang-7", opts.comp_options))
-     return -1;
-
-  if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
-     return -1;
-  }
-  // then link
-  //
-  if (opts.link) {
-     if (!eosio::cdt::environment::exec_subprogram("eosio-ld", opts.ld_options))
-        return -1;
-
-     if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
-        return -1;
+   // fix to show version info without having to have any other arguments
+   for (int i=0; i < argc; i++) {
+     if (argv[i] == std::string("-v")) {
+       eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
+       return 0;
      }
-  }
-  if (opts.abigen) {
-      opts.abigen_options.emplace(opts.abigen_options.begin(), "-- -Wno-unused-command-line-argument");
-      opts.abigen_options.emplace(opts.abigen_options.begin(), "-contract="+opts.abigen_contract);
-      std::string abigen_output = opts.abigen_output.empty() ? opts.output_fn.substr(0, opts.output_fn.rfind(".wasm"))+".abi" : opts.abigen_output;
-      opts.abigen_options.emplace(opts.abigen_options.begin(), "-output="+abigen_output);
-      opts.abigen_options.insert(opts.abigen_options.begin(), opts.abigen_inputs);
-      for ( auto res : opts.abigen_resources )
-         opts.abigen_options.emplace(opts.abigen_options.begin(), res);
+   }
 
-      if (!eosio::cdt::environment::exec_subprogram("eosio-abigen", opts.abigen_options))
+   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+         os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
+   });
+   cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C -> WebAssembly compiler)");
+   Options opts = CreateOptions();
+
+   if (opts.abigen) {
+       llvm::outs() << "Warning, ABI generation is only available with eosio-abigen or eosio-cpp\n";
+   }
+   
+   std::vector<std::string> outputs;
+   for (auto input : opts.inputs) {
+      std::vector<std::string> new_opts = opts.comp_options;
+      SmallString<64> res;
+      llvm::sys::path::system_temp_directory(true, res);
+      std::string tmp_file = std::string(res.c_str())+"/"+input+"-tmp.c";
+      std::string output;
+
+      if (llvm::sys::fs::exists(tmp_file)) {
+         input = tmp_file;
+         output = input+".o";
+      } else {
+         output = tmp_file+".o";
+      }
+
+      new_opts.insert(new_opts.begin(), input);
+
+      if (!opts.link) {
+         output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
+      }
+
+      new_opts.insert(new_opts.begin(), "-o "+output);
+      outputs.push_back(output);
+      if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
+         llvm::sys::fs::remove(tmp_file);
          return -1;
-  }
-  return 0;
+      }
+      llvm::sys::fs::remove(tmp_file);
+   } 
+   // then link
+   //
+   if (opts.link) {
+      std::vector<std::string> new_opts = opts.ld_options;
+      for (auto input : outputs) {
+         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+      }
+      if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
+         for (auto input : outputs) {
+            llvm::sys::fs::remove(input);
+         }
+         return -1;
+      }
+      for (auto input : outputs) {
+         llvm::sys::fs::remove(input);
+      }
+      if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
+         return -1;
+      }
+   }
+   return 0;
 }
