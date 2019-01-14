@@ -489,14 +489,12 @@ struct generation_utils {
          std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
             auto arg = get_template_argument(type,i);
-            if (arg.getAsExpr()) {
-               auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
-               if (ce) { 
-                  auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
-                  ret += std::to_string(il->getValue().getLimitedValue());
-                  if ( i < tst->getNumArgs()-1 )
-                     ret += "_";
-               }
+            if (auto ce = arg.getKind() == clang::TemplateArgument::ArgKind::Expression
+                  ? llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr()) : nullptr) {
+               auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
+               ret += std::to_string(il->getValue().getLimitedValue());
+               if ( i < tst->getNumArgs()-1 )
+                  ret += "_";
             }
             else {
                ret += translate_type(get_template_argument( type, i ).getAsType());
