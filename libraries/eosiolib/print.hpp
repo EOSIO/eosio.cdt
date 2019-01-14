@@ -47,7 +47,7 @@ namespace eosio {
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit signed integer
     *
     * @param num to be printed
     */
@@ -65,7 +65,7 @@ namespace eosio {
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit unsigned integer
     *
     * @param num to be printed
     */
