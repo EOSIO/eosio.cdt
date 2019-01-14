@@ -28,6 +28,7 @@ extern "C" {
     *  prints("Hello World!"); // Output: Hello World!
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void prints( const char* cstr );
 
    /**
@@ -42,6 +43,7 @@ extern "C" {
     *  prints_l("Hello World!", 5); // Output: Hello
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void prints_l( const char* cstr, uint32_t len);
 
    /**
@@ -56,6 +58,7 @@ extern "C" {
     *  printi(-1e+18); // Output: -1000000000000000000
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printi( int64_t value );
 
    /**
@@ -69,6 +72,7 @@ extern "C" {
     *  printui(1e+18); // Output: 1000000000000000000
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printui( uint64_t value );
 
    /**
@@ -83,6 +87,7 @@ extern "C" {
     *  printi128(&large_int); // Output: -87654323456
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printi128( const int128_t* value );
 
    /**
@@ -97,6 +102,7 @@ extern "C" {
     *  printui128(&large_int); // Output: 87654323456
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printui128( const uint128_t* value );
 
    /**
@@ -111,6 +117,7 @@ extern "C" {
     *  printsf(value); // Output: 0.5
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printsf(float value);
 
    /**
@@ -125,6 +132,7 @@ extern "C" {
     *  printdf(value); // Output: 0.5
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printdf(double value);
 
    /**
@@ -139,6 +147,7 @@ extern "C" {
     *  printqf(value); // Output: 0.5
     *  @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printqf(const long double* value);
 
    /**
@@ -151,6 +160,7 @@ extern "C" {
     * printn("abcde"_n); // Output: abcde
     * @endcode
     */
+   __attribute__((eosio_wasm_import))
    void printn( uint64_t name );
 
     /**
@@ -166,7 +176,8 @@ extern "C" {
     * printhex(&rawData, 9);
     * @endcode
     */
-    void printhex( const void* data, uint32_t datalen );
+   __attribute__((eosio_wasm_import))
+   void printhex( const void* data, uint32_t datalen );
 
    /// @}
 #ifdef __cplusplus
