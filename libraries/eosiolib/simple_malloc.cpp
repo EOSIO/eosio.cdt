@@ -1,3 +1,4 @@
+#include <memory>
 #include "system.hpp"
 #include "print.hpp"
 
@@ -19,13 +20,12 @@ namespace eosio {
       }
 
       static constexpr uint32_t wasm_page_size = 64*1024;
-      static constexpr uint32_t max_size = 32*1024*1024;
 
-      dsmalloc() :
-         heap((char*)(__builtin_wasm_current_memory() << 16)),
-         last_ptr(heap),
-         next_page(__builtin_wasm_current_memory()+1) {
-         eosio::check(__builtin_wasm_grow_memory(1) != -1, "failed to allocate pages");
+      dsmalloc() {
+         volatile uintptr_t heap_base = 0; // linker places this at address 0
+         heap = align(*(char**)heap_base, 8);
+         last_ptr = heap;
+         next_page = __builtin_wasm_current_memory();
       }
        
       char* operator()(size_t sz, uint8_t align_amt=8) {
@@ -41,7 +41,6 @@ namespace eosio {
             next_page++;
             pages_to_alloc++;
          }         
-
          eosio::check(__builtin_wasm_grow_memory(pages_to_alloc) != -1, "failed to allocate pages");  
          return ret;
       }
@@ -63,9 +62,11 @@ void* malloc(size_t size) {
 
 void* memset(void*,int,size_t);
 void* calloc(size_t count, size_t size) {
-   void* ptr = eosio::_dsmalloc(count*size);
-   memset(ptr, 0, count*size);
-   return ptr;
+   if (void* ptr = eosio::_dsmalloc(count*size)) {
+      memset(ptr, 0, count*size);
+      return ptr;
+   }
+   return nullptr;
 }
 
 void* realloc(void* ptr, size_t size) {

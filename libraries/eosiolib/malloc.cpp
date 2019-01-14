@@ -1,7 +1,11 @@
 #include <cstdlib> 
 #include <alloca.h>
 #include "system.hpp"
-#include "../tinyalloc/tinyalloc.h"
+#include "print.hpp"
+
+extern "C" {
+   uintptr_t __heap_base_ptr = 17;
+}
 
 namespace eosio {
 #ifdef EOSIO_NATIVE
@@ -10,6 +14,7 @@ namespace eosio {
       size_t __builtin_wasm_grow_memory(size_t);
    }
 #endif
+   extern "C" uintptr_t  __get_heap_base();
    void* sbrk(size_t num_bytes) {
          constexpr uint32_t NBPPL2  = 16U;
          constexpr uint32_t NBBP    = 65536U;
@@ -24,7 +29,6 @@ namespace eosio {
          if(num_bytes > INT32_MAX)
             return reinterpret_cast<void*>(-1);
 
-         //uint32_t num_bytes = (uint32_t)num_bytesI;
          const uint32_t prev_num_bytes = sbrk_bytes;
          const uint32_t current_pages = __builtin_wasm_current_memory();
 
@@ -40,7 +44,11 @@ namespace eosio {
          }
 
          sbrk_bytes += num_bytes;
-         return reinterpret_cast<void*>(prev_num_bytes);
+#ifdef EOSIO_NATIVE
+      return reinterpret_cast<void*>((char*)__get_heap_base()+prev_num_bytes);
+#else
+      return reinterpret_cast<void*>(prev_num_bytes);
+#endif
    }
 
    using ::memset;
@@ -60,6 +68,7 @@ namespace eosio {
       , _active_heap(0)
       , _active_free_heap(0)
       {
+         //eosio::print("HEAP : ", __data_end, '\n');
       }
 
    private:

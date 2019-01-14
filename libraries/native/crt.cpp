@@ -25,6 +25,10 @@ extern "C" {
    void ___putc(char c);
    bool ___disable_output;
    bool ___has_failed;
+   
+   void* __get_heap_base() {
+      return ___heap_base_ptr;
+   }
 
    size_t __builtin_wasm_current_memory() {
       return ___pages;
@@ -72,7 +76,7 @@ extern "C" {
       ___heap = _mmap();
       ___heap_ptr = ___heap;
       ___heap_base_ptr = ___heap;
-      ___pages = 0;
+      ___pages = 1;
       ___disable_output = false;
       ___has_failed = false;
       // preset the print functions

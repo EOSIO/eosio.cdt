@@ -49,10 +49,9 @@ EOSIO_TEST_BEGIN(rope_test)
    REQUIRE_EQUAL(s3.length(), r3.length()); 
    
    for (int i=0; i < s.length(); i++) {
-      eosio::print_f(" S[%]:% R[%]:%\n", i, s[i], i, r[i]);
       REQUIRE_EQUAL(s[i], r[i]);
    }
-   /*
+
    for (int i=0; i < s2.length(); i++) {
       REQUIRE_EQUAL(s2[i], r2[i]);
    }
@@ -60,7 +59,6 @@ EOSIO_TEST_BEGIN(rope_test)
    for (int i=0; i < s3.length(); i++) {
       REQUIRE_EQUAL(s3[i], r3[i]);
    }
-   */
 
    silence_output(false);
 EOSIO_TEST_END
