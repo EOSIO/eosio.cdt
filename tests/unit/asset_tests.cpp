@@ -408,7 +408,7 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
    EOSIO_TEST(asset_type_test);
    EOSIO_TEST(extended_asset_type_test);
    return has_failed();

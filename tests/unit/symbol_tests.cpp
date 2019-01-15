@@ -106,10 +106,14 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"Z"}, true );
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"AAAAAAA"}, true );
    REQUIRE_EQUAL( symbol_code{0} < symbol_code{"ZZZZZZZ"}, true );
+
+   silence_output(false);
 EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
+   silence_output(true);
+
    // ------------------------------------------
    // constructors/constexpr uint64_t raw()const
 
@@ -210,10 +214,14 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    REQUIRE_EQUAL( (symbol{0} < symbol{"Z",0}), true );
    REQUIRE_EQUAL( (symbol{0} < symbol{"AAAAAAA",0}), true );
    REQUIRE_EQUAL( (symbol{0} < symbol{"ZZZZZZZ",0}), true );
+
+   silence_output(false);
 EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
+   silence_output(true);
+
    // ------------------------------------
    // constructors/get_symbol/get_contract
 
@@ -277,7 +285,7 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
    EOSIO_TEST(symbol_code_type_test);
    EOSIO_TEST(symbol_type_test);
    EOSIO_TEST(extended_symbol_type_test);

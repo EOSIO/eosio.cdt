@@ -4,14 +4,14 @@
  */
 #pragma once
 
-#include "name.hpp"
-#include "print.h"
-#include "serialize.hpp"
 #include "system.hpp"
+#include "print.h"
+#include "name.hpp"
+#include "serialize.hpp"
 
+#include <tuple>
 #include <limits>
 #include <string_view>
-#include <tuple>
 
 namespace eosio {
 
@@ -32,22 +32,20 @@ namespace eosio {
       /**
        * Default constructor, construct a new symbol_code
        *
-       * @brief Construct a new symbol_code object with a default value of 0
+       * @brief Construct a new symbol_code object defaulting to a value of 0
        *
        */
-      constexpr symbol_code()
-         : value{}
-      {}
+      constexpr symbol_code() : value(0) {}
 
       /**
-       * Construct a new symbol_code with a scoped enumerated type of raw uint64_t.
+       * Construct a new symbol_code given a scoped enumerated type of raw (uint64_t).
        *
        * @brief Construct a new symbol_code object initialising value with raw
        * @param raw - The raw value which is a scoped enumerated type of unit64_t
        *
        */
       constexpr explicit symbol_code( uint64_t raw )
-         : value{raw}
+      :value(raw)
       {}
 
       /**
@@ -58,13 +56,15 @@ namespace eosio {
        *
        */
       constexpr explicit symbol_code( std::string_view str )
-         : value{}
+      :value(0)
       {
-         if( 7 < str.size() )
+         if( str.size() > 7 ) {
             eosio::check( false, "string is too long to be a valid symbol_code" );
+         }
          for( auto itr = str.rbegin(); itr != str.rend(); ++itr ) {
-            if( *itr < 'A' || 'Z' < *itr )
+            if( *itr < 'A' || *itr > 'Z') {
                eosio::check( false, "only uppercase letters allowed in symbol_code string" );
+            }
             value <<= 8;
             value |= *itr;
          }
@@ -75,16 +75,16 @@ namespace eosio {
        * @return true - if symbol is valid
        */
       constexpr bool is_valid()const {
-         uint64_t sym{value};
-         for ( int i{}; i < 7; ++i ) {
-            char ch = static_cast<char>(sym & 0xFF);
-            if ( !('A' <= ch && ch <= 'Z') ) return false;
+         auto sym = value;
+         for ( int i=0; i < 7; i++ ) {
+            char c = (char)(sym & 0xFF);
+            if ( !('A' <= c && c <= 'Z') ) return false;
             sym >>= 8;
             if ( !(sym & 0xFF) ) {
                do {
                   sym >>= 8;
                   if ( (sym & 0xFF) ) return false;
-                  ++i;
+                  i++;
                } while( i < 7 );
             }
          }
@@ -97,13 +97,13 @@ namespace eosio {
        * @return length - character length of the provided symbol
        */
       constexpr uint32_t length()const {
-         uint64_t sym{value};
-         uint32_t length{};
-         while (sym & 0xFF && length <= 7) {
-            ++length;
+         auto sym = value;
+         uint32_t len = 0;
+         while (sym & 0xFF && len <= 7) {
+            len++;
             sym >>= 8;
          }
-         return length;
+         return len;
       }
 
       /**
@@ -133,15 +133,15 @@ namespace eosio {
        *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the symbol_code.
        */
       char* write_as_string( char* begin, char* end )const {
-         constexpr uint64_t mask = 0xFFULL;
+         constexpr uint64_t mask = 0xFFull;
 
          if( (begin + 7) < begin || (begin + 7) > end ) return begin;
 
-         auto val = value;
-         for( auto i = 0; i < 7; ++i, val >>= 8 ) {
-            if( val == 0 ) return begin;
+         auto v = value;
+         for( auto i = 0; i < 7; ++i, v >>= 8 ) {
+            if( v == 0 ) return begin;
 
-            *begin = static_cast<char>(val & mask);
+            *begin = static_cast<char>(v & mask);
             ++begin;
          }
 
