@@ -11,6 +11,11 @@ eosio::cdt::output_stream std_out;
 eosio::cdt::output_stream std_err;
 
 extern "C" {
+#ifdef __APPLE__
+   void* alloca(size_t s) {
+      return malloc(s);
+   }
+#endif
    int main(int, char**);
    char* _mmap();
    
@@ -125,5 +130,10 @@ extern "C" {
          ret_val = -1;
       }
       return ret_val;
+   }
+
+   extern "C" void* memset(void*, int, size_t);
+   extern "C" void __bzero(void* to, size_t cnt) {
+      memset(to, 0, cnt);
    }
 }

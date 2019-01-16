@@ -7,15 +7,8 @@
 
 extern "C" {
    /**
-    * @defgroup actionapi Action API
-    * @ingroup contractdev
-    * @brief Defines API for  for querying action and sending action
-    *
-    */
-
-   /**
-    * @defgroup actioncapi Action C API
-    * @ingroup actionapi
+    * @addtogroup action_c Action C API
+    * @ingroup c_api
     * @brief Defines API for querying action and sending action
     *
     *
