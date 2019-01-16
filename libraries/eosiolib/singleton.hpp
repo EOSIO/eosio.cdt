@@ -1,13 +1,13 @@
 #pragma once
-#include <eosiolib/multi_index.hpp>
-#include <eosiolib/system.h>
+#include "multi_index.hpp"
+#include "system.hpp"
 
 namespace  eosio {
 
    /**
     *  @defgroup singleton Singleton Table
-    *  @brief Defines EOSIO Singleton Table
-    *  @ingroup databasecpp
+    *  @ingroup cpp_api
+    *  @brief Defines EOSIO Singleton Table used with %multiindex
     *  @{
     */
 
@@ -22,28 +22,21 @@ namespace  eosio {
    {
       /**
        * Primary key of the data inside singleton table
-       *
-       * @brief Primary key  of the data singleton table
        */
       constexpr static uint64_t pk_value = static_cast<uint64_t>(SingletonName);
 
       /**
        * Structure of data inside the singleton table
-       *
-       * @brief Structure of data inside the singleton table
        */
       struct row {
          /**
           * Value to be stored inside the singleton table
-          *
-          * @brief Value to be stored inside the singleton table
           */
          T value;
 
          /**
           * Get primary key of the data
           *
-          * @brief Get primary key of the data
           * @return uint64_t - Primary Key
           */
          uint64_t primary_key() const { return pk_value; }
@@ -58,7 +51,6 @@ namespace  eosio {
          /**
           * Construct a new singleton object given the table's owner and the scope
           *
-          * @brief Construct a new singleton object
           * @param code - The table's owner
           * @param scope - The scope of the table
           */
@@ -67,7 +59,6 @@ namespace  eosio {
          /**
           *  Check if the singleton table exists
           *
-          * @brief Check if the singleton table exists
           * @return true - if exists
           * @return false - otherwise
           */
@@ -83,14 +74,13 @@ namespace  eosio {
           */
          T get() {
             auto itr = _t.find( pk_value );
-            eosio_assert( itr != _t.end(), "singleton does not exist" );
+            eosio::check( itr != _t.end(), "singleton does not exist" );
             return itr->value;
          }
 
          /**
           * Get the value stored inside the singleton table. If it doesn't exist, it will return the specified default value
           *
-          * @brief Get the value stored inside the singleton table or return the specified default value if it doesn't exist
           * @param def - The default value to be returned in case the data doesn't exist
           * @return T - The value stored
           */
@@ -102,7 +92,6 @@ namespace  eosio {
          /**
           * Get the value stored inside the singleton table. If it doesn't exist, it will create a new one with the specified default value
           *
-          * @brief Get the value stored inside the singleton table or create a new one with the specified default value if it doesn't exist
           * @param bill_to_account - The account to bill for the newly created data if the data doesn't exist
           * @param def - The default value to be created in case the data doesn't exist
           * @return T - The value stored
@@ -115,8 +104,6 @@ namespace  eosio {
 
          /**
           * Set new value to the singleton table
-          *
-          * @brief Set new value to the singleton table
           *
           * @param value - New value to be set
           * @param bill_to_account - Account to pay for the new value
@@ -132,8 +119,6 @@ namespace  eosio {
 
          /**
           * Remove the only data inside singleton table
-          *
-          * @brief Remove the only data inside singleton table
           */
          void remove( ) {
             auto itr = _t.find( pk_value );

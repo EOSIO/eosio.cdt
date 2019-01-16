@@ -1,8 +1,15 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
+
+#include "action.h"
+#include "name.hpp"
+#include "serialize.hpp"
+#include "datastream.hpp"
+#include "db.h"
+#include "fixed_bytes.hpp"
 
 #include <vector>
 #include <tuple>
@@ -14,14 +21,6 @@
 #include <limits>
 #include <algorithm>
 #include <memory>
-
-#include <eosiolib/action.h>
-#include <eosiolib/name.hpp>
-#include <eosiolib/serialize.hpp>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/db.h>
-#include <eosiolib/fixed_key.hpp>
-#include <eosiolib/fixed_bytes.hpp>
 
 namespace eosio {
 
@@ -177,7 +176,6 @@ namespace _multi_index_detail {
  *       uint128_t   secondary;
  *       uint64_t primary_key() const { return primary; }
  *       uint64_t get_secondary() const { return secondary; }
- *       EOSLIB_SERIALIZE( record, (primary)(secondary) )
  *     };
  *    public:
  *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
@@ -200,19 +198,17 @@ struct indexed_by {
 /**
  *  @defgroup multiindex Multi Index Table
  *  @brief Defines EOSIO Multi Index Table
- *  @ingroup databasecpp
+ *  @ingroup cpp_api
  *
- *
- *
- *  EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
+ *  @details EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
  *  EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,
  *  the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t.
  *  EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
  *  - uint64_t
  *  - uint128_t
- *  - uint256_t
  *  - double
  *  - long double
+ *  - eosio::checksum256
  *
  *  @tparam TableName - name of the table
  *  @tparam T - type of the data stored inside the table
@@ -228,13 +224,13 @@ struct indexed_by {
  *      uint64_t    primary;
  *      uint64_t    secondary_1;
  *      uint128_t   secondary_2;
- *      uint256_t   secondary_3;
+ *      checksum256 secondary_3;
  *      double      secondary_4;
  *      long double secondary_5;
  *      uint64_t primary_key() const { return primary; }
  *      uint64_t get_secondary_1() const { return secondary_1; }
  *      uint128_t get_secondary_2() const { return secondary_2; }
- *      uint256_t get_secondary_3() const { return secondary_3; }
+ *      checksum256 get_secondary_3() const { return secondary_3; }
  *      double get_secondary_4() const { return secondary_4; }
  *      long double get_secondary_5() const { return secondary_5; }
  *    };
@@ -246,7 +242,7 @@ struct indexed_by {
  *        multi_index<"mytable"_n, record,
  *          indexed_by< "bysecondary1"_n, const_mem_fun<record, uint64_t, &record::get_secondary_1> >,
  *          indexed_by< "bysecondary2"_n, const_mem_fun<record, uint128_t, &record::get_secondary_2> >,
- *          indexed_by< "bysecondary3"_n, const_mem_fun<record, uint256_t, &record::get_secondary_3> >,
+ *          indexed_by< "bysecondary3"_n, const_mem_fun<record, checksum256, &record::get_secondary_3> >,
  *          indexed_by< "bysecondary4"_n, const_mem_fun<record, double, &record::get_secondary_4> >,
  *          indexed_by< "bysecondary5"_n, const_mem_fun<record, long double, &record::get_secondary_5> >
  *        > table( code, scope);
@@ -358,7 +354,7 @@ class multi_index
                   const_iterator& operator++() {
                      using namespace _multi_index_detail;
 
-                     eosio_assert( _item != nullptr, "cannot increment end iterator" );
+                     eosio::check( _item != nullptr, "cannot increment end iterator" );
 
                      if( _item->__iters[Number] == -1 ) {
                         secondary_key_type temp_secondary_key;
@@ -390,9 +386,9 @@ class multi_index
 
                      if( !_item ) {
                         auto ei = secondary_index_db_functions<secondary_key_type>::db_idx_end(_idx->get_code().value, _idx->get_scope(), _idx->name());
-                        eosio_assert( ei != -1, "cannot decrement end iterator when the index is empty" );
+                        eosio::check( ei != -1, "cannot decrement end iterator when the index is empty" );
                         prev_itr = secondary_index_db_functions<secondary_key_type>::db_idx_previous( ei , &prev_pk );
-                        eosio_assert( prev_itr >= 0, "cannot decrement end iterator when the index is empty" );
+                        eosio::check( prev_itr >= 0, "cannot decrement end iterator when the index is empty" );
                      } else {
                         if( _item->__iters[Number] == -1 ) {
                            secondary_key_type temp_secondary_key;
@@ -401,7 +397,7 @@ class multi_index
                            mi.__iters[Number] = idxitr;
                         }
                         prev_itr = secondary_index_db_functions<secondary_key_type>::db_idx_previous( _item->__iters[Number], &prev_pk );
-                        eosio_assert( prev_itr >= 0, "cannot decrement iterator at beginning of index" );
+                        eosio::check( prev_itr >= 0, "cannot decrement iterator at beginning of index" );
                      }
 
                      const T& obj = *_idx->_multidx->find( prev_pk );
@@ -459,8 +455,8 @@ class multi_index
 
             const_iterator require_find( const secondary_key_type& secondary, const char* error_msg = "unable to find secondary key" )const {
                auto lb = lower_bound( secondary );
-               eosio_assert( lb != cend(), error_msg );
-               eosio_assert( secondary == secondary_extractor_type()(*lb), error_msg );
+               eosio::check( lb != cend(), error_msg );
+               eosio::check( secondary == secondary_extractor_type()(*lb), error_msg );
                return lb;
             }
 
@@ -471,7 +467,7 @@ class multi_index
             // Gets the object with the smallest primary key in the case where the secondary key is not unique.
             const T& get( const secondary_key_type& secondary, const char* error_msg = "unable to find secondary key" )const {
                auto result = find( secondary );
-               eosio_assert( result != cend(), error_msg );
+               eosio::check( result != cend(), error_msg );
                return *result;
             }
 
@@ -515,7 +511,7 @@ class multi_index
                using namespace _multi_index_detail;
 
                const auto& objitem = static_cast<const item&>(obj);
-               eosio_assert( objitem.__idx == _multidx, "object passed to iterator_to is not in multi_index" );
+               eosio::check( objitem.__idx == _multidx, "object passed to iterator_to is not in multi_index" );
 
                if( objitem.__iters[Number] == -1 ) {
                   secondary_key_type temp_secondary_key;
@@ -529,13 +525,13 @@ class multi_index
 
             template<typename Lambda>
             void modify( const_iterator itr, eosio::name payer, Lambda&& updater ) {
-               eosio_assert( itr != cend(), "cannot pass end iterator to modify" );
+               eosio::check( itr != cend(), "cannot pass end iterator to modify" );
 
                _multidx->modify( *itr, payer, std::forward<Lambda&&>(updater) );
             }
 
             const_iterator erase( const_iterator itr ) {
-               eosio_assert( itr != cend(), "cannot pass end iterator to erase" );
+               eosio::check( itr != cend(), "cannot pass end iterator to erase" );
 
                const auto& obj = *itr;
                ++itr;
@@ -598,7 +594,7 @@ class multi_index
             return *itr2->_item;
 
          auto size = db_get_i64( itr, nullptr, 0 );
-         eosio_assert( size >= 0, "error reading iterator" );
+         eosio::check( size >= 0, "error reading iterator" );
 
          //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
          void* buffer = max_stack_buffer_size < size_t(size) ? malloc(size_t(size)) : alloca(size_t(size));
@@ -686,32 +682,17 @@ class multi_index
 
       /**
        *  Returns the `code` member property.
-       *  @brief Returns the `code` member property.
        *
        *  @return Account name of the Code that owns the Primary Table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
        *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio_assert(addresses.get_code() == "dan"_n, "Codes don't match.");
+       *        eosio::check(addresses.get_code() == "dan"_n, "Codes don't match.");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -721,32 +702,17 @@ class multi_index
 
       /**
        *  Returns the `scope` member property.
-       *  @brief Returns the `scope` member property.
        *
        *  @return Scope id of the Scope within the Code of the Current Receiver under which the desired Primary Table instance can be found.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
        *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio_assert(addresses.get_code() == "dan"_n, "Scopes don't match");
+       *        eosio::check(addresses.get_code() == "dan"_n, "Scopes don't match");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -778,7 +744,7 @@ class multi_index
          }
 
          const_iterator& operator++() {
-            eosio_assert( _item != nullptr, "cannot increment end iterator" );
+            eosio::check( _item != nullptr, "cannot increment end iterator" );
 
             uint64_t next_pk;
             auto next_itr = db_next_i64( _item->__primary_itr, &next_pk );
@@ -794,12 +760,12 @@ class multi_index
 
             if( !_item ) {
                auto ei = db_end_i64(_multidx->get_code().value, _multidx->get_scope(), static_cast<uint64_t>(TableName));
-               eosio_assert( ei != -1, "cannot decrement end iterator when the table is empty" );
+               eosio::check( ei != -1, "cannot decrement end iterator when the table is empty" );
                prev_itr = db_previous_i64( ei , &prev_pk );
-               eosio_assert( prev_itr >= 0, "cannot decrement end iterator when the table is empty" );
+               eosio::check( prev_itr >= 0, "cannot decrement end iterator when the table is empty" );
             } else {
                prev_itr = db_previous_i64( _item->__primary_itr, &prev_pk );
-               eosio_assert( prev_itr >= 0, "cannot decrement iterator at beginning of table" );
+               eosio::check( prev_itr >= 0, "cannot decrement iterator at beginning of table" );
             }
 
             _item = &_multidx->load_object_by_primary_iterator( prev_itr );
@@ -819,42 +785,20 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr == addresses.cbegin(), "Only address is not at front.");
+       *        eosio::check(itr == addresses.cbegin(), "Only address is not at front.");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -866,42 +810,20 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr == addresses.begin(), "Only address is not at front.");
+       *        eosio::check(itr == addresses.begin(), "Only address is not at front.");
        *      }
        *  }
        *  EOSIO_ABI( addressbook, (myaction) )
@@ -911,42 +833,20 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.cend(), "Address for account doesn't exist");
+       *        eosio::check(itr != addresses.cend(), "Address for account doesn't exist");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -956,42 +856,20 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Address for account doesn't exist");
+       *        eosio::check(itr != addresses.end(), "Address for account doesn't exist");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1001,40 +879,19 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1044,9 +901,9 @@ class multi_index
        *          address.state = "HK";
        *        });
        *        auto itr = addresses.crbegin();
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
        *        itr++;
-       *        eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
+       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1056,40 +913,19 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @brief Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1099,9 +935,9 @@ class multi_index
        *          address.state = "HK";
        *        });
        *        auto itr = addresses.rbegin();
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
        *        itr++;
-       *        eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
+       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1111,40 +947,19 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1155,9 +970,9 @@ class multi_index
        *        });
        *        auto itr = addresses.crend();
        *        itr--;
-       *        eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
+       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
        *        itr--;
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1167,40 +982,19 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @brief Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1211,9 +1005,9 @@ class multi_index
        *        });
        *        auto itr = addresses.rend();
        *        itr--;
-       *        eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
+       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
        *        itr--;
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1223,45 +1017,20 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
-       *  @brief Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the lower bound search.
-       *
        *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1274,11 +1043,11 @@ class multi_index
        *        uint32_t zipnumb = 93445;
        *        auto zip_index = addresses.get_index<name("zip")>();
        *        auto itr = zip_index.lower_bound(zipnumb);
-       *        eosio_assert(itr->account_name == name("brendan"), "Lock arf, Incorrect First Lower Bound Record ");
+       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Lower Bound Record ");
        *        itr++;
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Second Lower Bound Record");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Lower Bound Record");
        *        itr++;
-       *        eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1293,46 +1062,20 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
-       *  @brief Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
-       *
        *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
        *
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t liked = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1345,9 +1088,9 @@ class multi_index
        *        uint32_t zipnumb = 93445;
        *        auto zip_index = addresses.get_index<name("zip")>();
        *        auto itr = zip_index.upper_bound(zipnumb);
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
        *        itr++;
-       *        eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1362,7 +1105,6 @@ class multi_index
 
       /**
        *  Returns an available primary key.
-       *  @brief Returns an available primary key.
        *
        *  @return An available (unused) primary key value.
        *
@@ -1373,22 +1115,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t key;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return key; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
        *        address_index addresses(_self, _self.value);  // code, scope
        *        // add to table, first argument is account to bill for storage
@@ -1420,13 +1148,12 @@ class multi_index
             }
          }
 
-         eosio_assert( _next_primary_key < no_available_primary_key, "next primary key in table is at autoincrement limit");
+         eosio::check( _next_primary_key < no_available_primary_key, "next primary key in table is at autoincrement limit");
          return _next_primary_key;
       }
 
       /**
        *  Returns an appropriately typed Secondary Index.
-       *  @brief Returns an appropriately typed Secondary Index.
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1454,21 +1181,12 @@ class multi_index
        *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
        *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
        *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
        *        uint32_t zipnumb = 93446;
        *        auto zip_index = addresses.get_index<name("zip")>();
        *        auto itr = zip_index.find(zipnumb);
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect Record ");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Record ");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1489,7 +1207,6 @@ class multi_index
 
       /**
        *  Returns an appropriately typed Secondary Index.
-       *  @brief Returns an appropriately typed Secondary Index.
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1498,36 +1215,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1540,9 +1234,9 @@ class multi_index
        *        uint32_t zipnumb = 93445;
        *        auto zip_index = addresses.get_index<name("zip")>();
        *        auto itr = zip_index.upper_bound(zipnumb);
-       *        eosio_assert(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
+       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
        *        itr++;
-       *        eosio_assert(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1563,7 +1257,6 @@ class multi_index
 
       /**
        *  Returns an iterator to the given object in a Multi-Index table.
-       *  @brief Returns an iterator to the given object in a Multi-Index table.
        *
        *  @param obj - A reference to the desired object
        *
@@ -1572,36 +1265,13 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *          address.zip = 93446;
-       *        });
+       *        // create reference to address_index  - see emplace example below
+       *        // add dan account to table           - see emplace example below
+       *        // add additional account - brendan
+       *
        *        addresses.emplace(payer, [&](auto& address) {
        *          address.account_name = "brendan"_n;
        *          address.first_name = "Brendan";
@@ -1613,7 +1283,7 @@ class multi_index
        *        });
        *        auto user = addresses.get("dan"_n);
        *        auto itr = address.find("dan"_n);
-       *        eosio_assert(iterator_to(user) == itr, "Invalid iterator");
+       *        eosio::check(iterator_to(user) == itr, "Invalid iterator");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1621,12 +1291,11 @@ class multi_index
        */
       const_iterator iterator_to( const T& obj )const {
          const auto& objitem = static_cast<const item&>(obj);
-         eosio_assert( objitem.__idx == this, "object passed to iterator_to is not in multi_index" );
+         eosio::check( objitem.__idx == this, "object passed to iterator_to is not in multi_index" );
          return {this, &objitem};
       }
       /**
        *  Adds a new object (i.e., row) to the table.
-       *  @brief Adds a new object (i.e., row) to the table.
        *
        *  @param payer - Account name of the payer for the Storage usage of the new object
        *  @param constructor - Lambda function that does an in-place initialization of the object to be created in the table
@@ -1643,22 +1312,8 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
        *        address_index addresses(_self, _self.value); // code, scope
        *        // add to table, first argument is account to bill for storage
@@ -1679,7 +1334,7 @@ class multi_index
       const_iterator emplace( name payer, Lambda&& constructor ) {
          using namespace _multi_index_detail;
 
-         eosio_assert( _code.value == current_receiver(), "cannot create objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
+         eosio::check( _code.value == current_receiver(), "cannot create objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
 
          auto itm = std::make_unique<item>( this, [&]( auto& i ){
             T& obj = static_cast<T&>(i);
@@ -1722,7 +1377,6 @@ class multi_index
 
       /**
        *  Modifies an existing object in a table.
-       *  @brief Modifies an existing object in a table.
        *
        *  @param itr - an iterator pointing to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1743,35 +1397,14 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Address for account not found");
+       *        eosio::check(itr != addresses.end(), "Address for account not found");
        *        addresses.modify( itr, account payer, [&]( auto& address ) {
        *          address.city = "San Luis Obispo";
        *          address.state = "CA";
@@ -1783,14 +1416,13 @@ class multi_index
        */
       template<typename Lambda>
       void modify( const_iterator itr, name payer, Lambda&& updater ) {
-         eosio_assert( itr != end(), "cannot pass end iterator to modify" );
+         eosio::check( itr != end(), "cannot pass end iterator to modify" );
 
          modify( *itr, payer, std::forward<Lambda&&>(updater) );
       }
 
       /**
        *  Modifies an existing object in a table.
-       *  @brief Modifies an existing object in a table.
        *
        *  @param obj - a reference to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1811,40 +1443,19 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Address for account not found");
+       *        eosio::check(itr != addresses.end(), "Address for account not found");
        *        addresses.modify( *itr, payer, [&]( auto& address ) {
        *          address.city = "San Luis Obispo";
        *          address.state = "CA";
        *        });
-       *        eosio_assert(itr->city == "San Luis Obispo", "Lock arf, Address not modified");
+       *        eosio::check(itr->city == "San Luis Obispo", "Lock arf, Address not modified");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1855,9 +1466,9 @@ class multi_index
          using namespace _multi_index_detail;
 
          const auto& objitem = static_cast<const item&>(obj);
-         eosio_assert( objitem.__idx == this, "object passed to modify is not in multi_index" );
+         eosio::check( objitem.__idx == this, "object passed to modify is not in multi_index" );
          auto& mutableitem = const_cast<item&>(objitem);
-         eosio_assert( _code.value == current_receiver(), "cannot modify objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
+         eosio::check( _code.value == current_receiver(), "cannot modify objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
 
          auto secondary_keys = hana::transform( _indices, [&]( auto&& idx ) {
             typedef typename decltype(+hana::at_c<0>(idx))::type index_type;
@@ -1870,7 +1481,7 @@ class multi_index
          auto& mutableobj = const_cast<T&>(obj); // Do not forget the auto& otherwise it would make a copy and thus not update at all.
          updater( mutableobj );
 
-         eosio_assert( pk == obj.primary_key(), "updater cannot change primary key when modifying an object" );
+         eosio::check( pk == obj.primary_key(), "updater cannot change primary key when modifying an object" );
 
          size_t size = pack_size( obj );
          //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
@@ -1908,7 +1519,6 @@ class multi_index
 
       /**
        *  Retrieves an existing object from a table using its primary key.
-       *  @brief Retrieves an existing object from a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @return A constant reference to the object containing the specified primary key.
@@ -1918,35 +1528,14 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       *
        *        auto user = addresses.get("dan"_n);
-       *        eosio_assert(user.first_name == "Daniel", "Couldn't get him.");
+       *        eosio::check(user.first_name == "Daniel", "Couldn't get him.");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1954,13 +1543,12 @@ class multi_index
        */
       const T& get( uint64_t primary, const char* error_msg = "unable to find key" )const {
          auto result = find( primary );
-         eosio_assert( result != cend(), error_msg );
+         eosio::check( result != cend(), error_msg );
          return *result;
       }
 
       /**
        *  Search for an existing object in a table using its primary key.
-       *  @brief Search for an existing object in a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @return An iterator to the found object which has a primary key equal to `primary` OR the `end` iterator of the referenced table if an object with primary key `primary` is not found.
@@ -1968,35 +1556,14 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Couldn't get him.");
+       *        eosio::check(itr != addresses.end(), "Couldn't get him.");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -2018,7 +1585,6 @@ class multi_index
 
       /**
        *  Search for an existing object in a table using its primary key.
-       *  @brief Search for an existing object in a table using its primary key.
        *
        *  @param primary - Primary key value of the object
        *  @param error_msg - error message if an object with primary key `primary` is not found.
@@ -2033,7 +1599,7 @@ class multi_index
             return iterator_to(*(itr2->_item));
 
          auto itr = db_find_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
-         eosio_assert( itr >= 0,  error_msg );
+         eosio::check( itr >= 0,  error_msg );
 
          const item& i = load_object_by_primary_iterator( itr );
          return iterator_to(static_cast<const T&>(i));
@@ -2041,7 +1607,6 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
-       *  @brief Remove an existing object from a table using its primary key.
        *
        *  @param itr - An iterator pointing to the object to be removed
        *
@@ -2060,44 +1625,23 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
+       *        // create reference to address_index  - see emplace example
+       *        // add dan account to table           - see emplace example
+       *
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Address for account not found");
+       *        eosio::check(itr != addresses.end(), "Address for account not found");
        *        addresses.erase( itr );
-       *        eosio_assert(itr != addresses.end(), "Everting lock arf, Address not erased properly");
+       *        eosio::check(itr != addresses.end(), "Everting lock arf, Address not erased properly");
        *      }
        *  }
        *  EOSIO_ABI( addressbook, (myaction) )
        *  @endcode
        */
       const_iterator erase( const_iterator itr ) {
-         eosio_assert( itr != end(), "cannot pass end iterator to erase" );
+         eosio::check( itr != end(), "cannot pass end iterator to erase" );
 
          const auto& obj = *itr;
          ++itr;
@@ -2109,7 +1653,6 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
-       *  @brief Remove an existing object from a table using its primary key.
        *
        *  @param obj - Object to be removed
        *
@@ -2126,38 +1669,14 @@ class multi_index
        *  Example:
        *
        *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address > address_index;
+       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       *
        *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
        *        auto itr = addresses.find("dan"_n);
-       *        eosio_assert(itr != addresses.end(), "Record is not found");
+       *        eosio::check(itr != addresses.end(), "Record is not found");
        *        addresses.erase(*itr);
        *        itr = addresses.find("dan"_n);
-       *        eosio_assert(itr == addresses.end(), "Record is not deleted");
+       *        eosio::check(itr == addresses.end(), "Record is not deleted");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -2167,15 +1686,15 @@ class multi_index
          using namespace _multi_index_detail;
 
          const auto& objitem = static_cast<const item&>(obj);
-         eosio_assert( objitem.__idx == this, "object passed to erase is not in multi_index" );
-         eosio_assert( _code.value == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
+         eosio::check( objitem.__idx == this, "object passed to erase is not in multi_index" );
+         eosio::check( _code.value == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
 
          auto pk = objitem.primary_key();
          auto itr2 = std::find_if(_items_vector.rbegin(), _items_vector.rend(), [&](const item_ptr& ptr) {
             return ptr._item->primary_key() == pk;
          });
 
-         eosio_assert( itr2 != _items_vector.rend(), "attempt to remove object that was not in multi_index" );
+         eosio::check( itr2 != _items_vector.rend(), "attempt to remove object that was not in multi_index" );
 
          _items_vector.erase(--(itr2.base()));
 

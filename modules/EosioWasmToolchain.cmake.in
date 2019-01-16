@@ -1,43 +1,42 @@
-message(STATUS "Setting up Eosio Wasm Toolchain @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@ at @CDT_ROOT_DIR@")
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_CROSSCOMPILING 1)
-set(CMAKE_C_COMPILER_WORKS 1)
-set(CMAKE_CXX_COMPILER_WORKS 1)
+message(STATUS "Setting up Eosio Wasm Toolchain @VERSION_FULL@ at @CDT_ROOT_DIR@")
 
-set(EOSIO_CDT_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@")
-set(EOSIO_WASMSDK_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@")
+if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "On")
+    set(CMAKE_SYSTEM_NAME Generic)
+    set(CMAKE_SYSTEM_PROCESSOR wasm)
+    set(CMAKE_CROSSCOMPILING 1)
+    set(CMAKE_C_COMPILER_WORKS 1)
+    set(CMAKE_CXX_COMPILER_WORKS 1)
+endif()
+  
+set(EOSIO_CDT_VERSION "@VERSION_FULL@")
+set(EOSIO_WASMSDK_VERSION "@VERSION_FULL@")
 
-set(CMAKE_C_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc" CACHE PATH "cc" FORCE)
-set(CMAKE_CXX_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cpp" CACHE PATH "cxx" FORCE)
+set(CMAKE_C_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
+set(CMAKE_CXX_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cpp")
+set(CMAKE_ASM_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
 
 set(CMAKE_C_FLAGS " -O3 ")
 set(CMAKE_CXX_FLAGS " -O3 ")
+set(CMAKE_ASM_FLAGS " -fnative -fasm ")
 
 set(WASM_LINKER "@CDT_ROOT_DIR@/bin/eosio-ld")
 
 set(CMAKE_C_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE "${WASM_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 
-set(CMAKE_AR "@CDT_ROOT_DIR@/bin/eosio-ar" CACHE PATH "ar" FORCE)
-set(CMAKE_RANLIB "@CDT_ROOT_DIR@/bin/eosio-ranlib" CACHE PATH "ranlib" FORCE)
-set(ABIGEN "@CDT_ROOT_DIR@/bin/eosio-abigen")
+if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "On")
+    set(CMAKE_EXECUTABLE_SUFFIX_C ".wasm")
+    set(CMAKE_EXECUTABLE_SUFFIX_CXX ".wasm")
 
-# hack for CMake on Linux
-set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
-set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
+    set(CMAKE_FIND_ROOT_PATH "@CDT_ROOT_DIR@")
+    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+endif()
+
+set(ABIGEN "@CDT_ROOT_DIR@/bin/eosio-abigen")
 
 # hack for OSX
 set(CMAKE_OSX_SYSROOT="@SYSROOT_DIR@")
 set(CMAKE_OSX_DEPLOYMENT_TARGET="")
-include_directories(
-      @CDT_ROOT_DIR@/eosio.cdt/include/libcxx
-      @CDT_ROOT_DIR@/eosio.cdt/include/libc
-      @CDT_ROOT_DIR@/eosio.cdt/include/)
-
-macro(add_contract CONTRACT_NAME TARGET)
-   add_executable( ${TARGET}.wasm ${ARGN} )
-   target_compile_options( ${TARGET}.wasm PUBLIC -abigen )
-   get_target_property(BINOUTPUT ${TARGET}.wasm BINARY_DIR)
-   target_compile_options( ${TARGET}.wasm PUBLIC -abigen_output=${BINOUTPUT}/${TARGET}.abi )
-   target_compile_options( ${TARGET}.wasm PUBLIC -contract ${CONTRACT_NAME} )
-endmacro()

@@ -1,21 +1,14 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <eosiolib/system.h>
+#include "system.hpp"
 
 extern "C" {
    /**
-    * @defgroup actionapi Action API
-    * @ingroup contractdev
-    * @brief Defines API for  for querying action and sending action
-    *
-    */
-
-   /**
-    * @defgroup actioncapi Action C API
-    * @ingroup actionapi
+    * @addtogroup action_c Action C API
+    * @ingroup c_api
     * @brief Defines API for querying action and sending action
     *
     *
@@ -25,7 +18,7 @@ extern "C" {
     *   struct action {
     *     capi_name  account_name; // the contract defining the primary code to execute for code/type
     *     capi_name  action_name; // the action to be taken
-    *     permission_level[] authorization; // the accounts and permission levels provided
+    *     permission_level authorization; // the accounts and permission levels provided
     *     bytes data; // opaque data processed by code
     *   };
     * ```
@@ -68,10 +61,10 @@ extern "C" {
     */
 
    /**
-    *  Copy up to @ref len bytes of current action data to the specified location
+    *  Copy up to length bytes of current action data to the specified location
     *
     *  @brief Copy current action data to the specified location
-    *  @param msg - a pointer where up to @ref len bytes of the current action data will be copied
+    *  @param msg - a pointer where up to length bytes of the current action data will be copied
     *  @param len - len of the current action data to be copied, 0 to report required size
     *  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
     *  @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
@@ -96,7 +89,7 @@ extern "C" {
    void require_recipient( capi_name name );
 
    /**
-    *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    *  Verifies that name exists in the set of provided auths on a action. Throws if not found.
     *
     *  @brief Verify specified account exists in the set of provided auths
     *  @param name - name of the account to be verified
@@ -104,15 +97,15 @@ extern "C" {
    void require_auth( capi_name name );
 
     /**
-    *  Verifies that @ref name has auth.
+    *  Verifies that name has auth.
     *
-    *  @brief Verifies that @ref name has auth.
+    *  @brief Verifies that name has auth.
     *  @param name - name of the account to be verified
     */
    bool has_auth( capi_name name );
 
    /**
-    *  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    *  Verifies that name exists in the set of provided auths on a action. Throws if not found.
     *
     *  @brief Verify specified account exists in the set of provided auths
     *  @param name - name of the account to be verified
@@ -138,6 +131,7 @@ extern "C" {
    void send_inline(char *serialized_action, size_t size);
 
    /**
+    * /function
     *  Send an inline context free action in the context of this action's parent transaction
     *
     *  @param serialized_action - serialized action
@@ -159,5 +153,6 @@ extern "C" {
     *  @return the account which specifies the current receiver of the action
     */
    capi_name current_receiver();
-   ///@ } actioncapi
+
+   /// @} action
 }

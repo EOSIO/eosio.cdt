@@ -1,14 +1,21 @@
 #! /bin/bash
 
-NAME="${PROJECT}-${VERSION}.x86_64"
 PREFIX="usr"
 SPREFIX=${PREFIX}
 SUBPREFIX="opt/${PROJECT}/${VERSION}"
 SSUBPREFIX="opt\/${PROJECT}\/${VERSION}"
+RELEASE="${VERSION_SUFFIX}"
+
+# default release to "1" if there is no suffix
+if [[ -z $RELEASE ]]; then
+  RELEASE="1"
+fi
+
+NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
 
 mkdir -p ${PROJECT}/DEBIAN
 echo "Package: ${PROJECT} 
-Version: ${VERSION}
+Version: ${VERSION_NO_SUFFIX}-${RELEASE}
 Section: devel
 Priority: optional
 Architecture: amd64

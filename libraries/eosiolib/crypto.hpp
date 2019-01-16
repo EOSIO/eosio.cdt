@@ -1,13 +1,13 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
 
-#include <eosiolib/crypto.h>
-#include <eosiolib/fixed_bytes.hpp>
-#include <eosiolib/varint.hpp>
-#include <eosiolib/serialize.hpp>
+#include "crypto.h"
+#include "fixed_bytes.hpp"
+#include "varint.hpp"
+#include "serialize.hpp"
 
 #include <array>
 
@@ -51,7 +51,7 @@ namespace eosio {
    /// @} publickeytype
 
    /**
-   *  @defgroup signaturetype Public Key Type
+   *  @defgroup signature Public Key Type
    *  @ingroup types
    *  @brief Specifies signature type
    *
@@ -88,16 +88,9 @@ namespace eosio {
    /// @} signaturetype
 
    /**
-    *  @defgroup cryptoapi Chain API
+    *  @defgroup crypto Chain API
+    *  @ingroup cpp_api
     *  @brief Defines API for calculating and checking hashes
-    *  @ingroup contractdev
-    *  @{
-    */
-
-   /**
-    *  @defgroup cryptocppapi Chain C API
-    *  @brief Defines type-safe C++ wrapers for calculating and checking hashes
-    *  @ingroup chainapi
     *  @{
     */
 
@@ -204,6 +197,5 @@ namespace eosio {
     */
    void assert_recover_key( const eosio::checksum256& digest, const eosio::signature& sig, const eosio::public_key& pubkey );
 
-   /// }@cryptocppapi
    /// }@cryptoapi
 }

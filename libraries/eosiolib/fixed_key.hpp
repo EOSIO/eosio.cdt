@@ -1,14 +1,14 @@
 /**
  *  @file
- *  @copyright defined in eos/LICENSE.txt
+ *  @copyright defined in eos/LICENSE
  */
 #pragma once
+
+#include "system.hpp"
 
 #include <array>
 #include <algorithm>
 #include <type_traits>
-
-#include <eosiolib/system.h>
 
 namespace eosio {
 
@@ -33,19 +33,17 @@ namespace eosio {
    template<size_t Size>
    bool operator <=(const fixed_key<Size> &c1, const fixed_key<Size> &c2);
 
-    /**
-    *  @defgroup fixed_key Fixed Size Key
-    *  @brief Fixed size key sorted lexicographically for Multi Index Table
-    *  @ingroup types
-    *  @{
-    */
+   /**
+   *  @defgroup fixed_key Fixed Size Key
+   *  @ingroup types
+   *  @brief Fixed size key sorted lexicographically for Multi Index Table
+   *  @{
+   */
 
    /**
     *  Fixed size key sorted lexicographically for Multi Index Table
     *
-    *  @brief Fixed size key sorted lexicographically for Multi Index Table
     *  @tparam Size - Size of the fixed_key object
-    *  @ingroup types
     */
    template<size_t Size>
    class [[deprecated("Replaced by fixed_bytes")]] fixed_key {
@@ -71,7 +69,7 @@ namespace eosio {
                    continue;
                }
 
-               eosio_assert( sub_words_left == 1, "unexpected error in fixed_key constructor" );
+               eosio::check( sub_words_left == 1, "unexpected error in fixed_key constructor" );
                temp_word |= static_cast<word_t>(*w_itr);
                sub_words_left = num_sub_words;
 
@@ -92,8 +90,6 @@ namespace eosio {
 
          /**
           * Get number of words contained in this fixed_key object. A word is defined to be 16 bytes in size
-          *
-          * @brief Get number of words contained in this fixed_key object
           */
 
          static constexpr size_t num_words() { return (Size + sizeof(word_t) - 1) / sizeof(word_t); }
@@ -101,22 +97,17 @@ namespace eosio {
          /**
           * Get number of padded bytes contained in this fixed_key object. Padded bytes are the remaining bytes
           * inside the fixed_key object after all the words are allocated
-          *
-          * @brief Get number of padded bytes contained in this fixed_key object
           */
          static constexpr size_t padded_bytes() { return num_words() * sizeof(word_t) - Size; }
 
          /**
-         * @brief Default constructor to fixed_key object
-         *
-         * @details Default constructor to fixed_key object which initializes all bytes to zero
+         * \Default constructor to fixed_key object
          */
          constexpr fixed_key() : _data() {}
 
          /**
-         * @brief Constructor to fixed_key object from std::array of num_words() word_t types
+         * Constructor to fixed_key object from std::array of num_words() words
          *
-         * @details Constructor to fixed_key object from std::array of num_words() word_t types
          * @param arr    data
          */
          fixed_key(const std::array<word_t, num_words()>& arr)
@@ -125,9 +116,8 @@ namespace eosio {
          }
 
          /**
-         * @brief Constructor to fixed_key object from std::array of Word types smaller in size than word_t
+         * Constructor to fixed_key object from std::array of num_words() words
          *
-         * @details Constructor to fixed_key object from std::array of Word types smaller in size than word_t
          * @param arr - Source data
          */
          template<typename Word, size_t NumWords,
@@ -163,9 +153,8 @@ namespace eosio {
          }
 
          /**
-         * @brief Create a new fixed_key object from a sequence of words
+         * Create a new fixed_key object from a sequence of words
          *
-         * @details Create a new fixed_key object from a sequence of words
          * @tparam FirstWord - The type of the first word in the sequence
          * @tparam Rest - The type of the remaining words in the sequence
          * @param first_word - The first word in the sequence
@@ -193,32 +182,28 @@ namespace eosio {
 
          /**
           * Get the contained std::array
-          * @brief Get the contained std::array
           */
          const auto& get_array()const { return _data; }
 
          /**
           * Get the underlying data of the contained std::array
-          * @brief Get the underlying data of the contained std::array
           */
          auto data() { return _data.data(); }
 
          /**
           * Get the underlying data of the contained std::array
-          * @brief Get the underlying data of the contained std::array
           */
          auto data()const { return _data.data(); }
 
          /**
           * Get the size of the contained std::array
-          * @brief Get the size of the contained std::array
           */
          auto size()const { return _data.size(); }
 
 
          /**
           * Extract the contained data as an array of bytes
-          * @brief Extract the contained data as an array of bytes
+          *
           * @return - the extracted data as array of bytes
           */
          std::array<uint8_t, Size> extract_as_byte_array()const {
@@ -270,9 +255,8 @@ namespace eosio {
     };
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Lexicographically compares two fixed_key variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
     * @param c2 - Second fixed_key object to compare
     * @return if c1 == c2, return true, otherwise false
@@ -283,9 +267,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Lexicographically compares two fixed_key variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
     * @param c2 - Second fixed_key object to compare
     * @return if c1 != c2, return true, otherwise false
@@ -296,9 +279,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Lexicographically compares two fixed_key variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
     * @param c2 - Second fixed_key object to compare
     * @return if c1 > c2, return true, otherwise false
@@ -309,9 +291,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Lexicographically compares two fixed_key variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
     * @param c2 - Second fixed_key object to compare
     * @return if c1 < c2, return true, otherwise false
@@ -322,7 +303,7 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Compares two fixed_key variables c1 and c2
     *
     * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
@@ -335,7 +316,7 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_key variables c1 and c2
+    * Compares two fixed_key variables c1 and c2
     *
     * @details Lexicographically compares two fixed_key variables c1 and c2
     * @param c1 - First fixed_key object to compare
@@ -350,4 +331,5 @@ namespace eosio {
    /// @} fixed_key
 
    typedef fixed_key<32> key256;
+   ///@}
 }
