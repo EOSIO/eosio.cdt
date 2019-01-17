@@ -6,6 +6,7 @@
 using eosio::microseconds;
 using eosio::time_point;
 using eosio::time_point_sec;
+using eosio::block_timestamp;
 
 using namespace eosio::native;
 
@@ -202,11 +203,14 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    REQUIRE_EQUAL( (time_point{time_point_sec{tp0}}.elapsed.count()), 0 )
    REQUIRE_EQUAL( (time_point{time_point_sec{tp1}}.elapsed.count()), 0 )
    REQUIRE_EQUAL( (time_point{time_point_sec{tp2}}.elapsed.count()), 0 )
-   REQUIRE_EQUAL( (time_point{time_point_sec{tp_max}}.elapsed._count / 1000000), ms_max.count() / 1000000 )
-   REQUIRE_EQUAL( (time_point{time_point_sec{tp_min}}.elapsed._count / 1000000), ms_min.count() / 1000000 )
+   REQUIRE_EQUAL( (time_point{time_point_sec{tp_max}}.elapsed.count() / 1000000), ms_max.count() / 1000000 )
+   REQUIRE_EQUAL( (time_point{time_point_sec{tp_min}}.elapsed.count() / 1000000), ms_min.count() / 1000000 )
    
    // -------------------------------------------
    // time_point_sec operator=(const time_point&)
+   REQUIRE_EQUAL( (time_point_sec{} = time_point{tp0}), time_point_sec{} )
+   REQUIRE_EQUAL( (time_point_sec{} = time_point{tp1}), time_point_sec{} )
+   REQUIRE_EQUAL( (time_point_sec{} = time_point{tp_max}), time_point_sec{tp_max} )
 
    // --------------------------------------------------------------------
    // friend bool operator==(const time_point_sec&, const time_point_sec&)
@@ -215,12 +219,12 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    // friend bool operator<=(const time_point_sec&, const time_point_sec&)
    // friend bool operator>(const time_point_sec&, const time_point_sec&)
    // friend bool operator>=(const time_point_sec&, const time_point_sec&)
-   // REQUIRE_EQUAL( (time_point_sec{tp0} == time_point{tp0}), true )
-   // REQUIRE_EQUAL( (time_point_sec{tp1} != time_point{tp0}), true )
-   // REQUIRE_EQUAL( (time_point_sec{tp0} < time_point{tp1}), true )
-   // REQUIRE_EQUAL( (time_point_sec{tp1} <= time_point{tp1}), true )
-   // REQUIRE_EQUAL( (time_point_sec{tp1} > time_point{tp0}), true )
-   // REQUIRE_EQUAL( (time_point_sec{tp1} >= time_point{tp1}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp0} == time_point{tp0}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp_max} != time_point{tp0}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp0} < time_point{tp_max}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp_max} <= time_point{tp_max}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp_max} > time_point{tp0}), true )
+   REQUIRE_EQUAL( (time_point_sec{tp_max} >= time_point{tp_max}), true )
 
 
    // ------------------------------------
@@ -232,47 +236,109 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    // time_point_sec& operator-=(time_point_sec)
    // time_point_sec operator+(uint32_t)const
    // time_point_sec operator-(uint32_t)const
-
+   REQUIRE_EQUAL( (time_point_sec{} += i64MAX), time_point_sec{i64MAX} )
+   REQUIRE_EQUAL( (time_point_sec{} += microseconds{i64MAX}), time_point_sec{tp_max} )
+   REQUIRE_EQUAL( (time_point_sec{} += time_point_sec{i64MAX}), time_point_sec{i64MAX} )
+   REQUIRE_EQUAL( (time_point_sec{i64MAX} -= i64MAX), time_point_sec{} )
+   REQUIRE_EQUAL( (time_point_sec{i64MAX} -= microseconds{i64MAX}), time_point_sec{i64MAX - (i64MAX / 1000000LL)} )
+   REQUIRE_EQUAL( (time_point_sec{i64MAX} -= time_point_sec{i64MAX}), time_point_sec{} )
+   REQUIRE_EQUAL( (time_point_sec{} + i64MAX), time_point_sec{i64MAX} )
+   REQUIRE_EQUAL( (time_point_sec{i64MAX} - i64MAX), time_point_sec{} )
 
    // -----------------------------------------------------------------------
    // friend time_point operator+(const time_point_sec&, const microseconds&)
    // friend time_point operator-(const time_point_sec&, const microseconds&)
    // friend microseconds operator-(const time_point_sec&, const time_point_sec&)
    // friend microseconds operator-(const time_point&, const time_point_sec&)
-
+   // REQUIRE_EQUAL( (time_point_sec{} + microseconds{}), time_point{} )
+   // REQUIRE_EQUAL( (time_point_sec{i64MAX} - microseconds{i64MAX}), time_point{} )
+   // REQUIRE_EQUAL( (time_point_sec{} - time_point_sec{}), microseconds{} )
+   // REQUIRE_EQUAL( (time_point{} - time_point_sec{}), microseconds{} )
 
    silence_output(false);
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(block_timestamp_type_test)
-   silence_output(true);
+   silence_output(false);
+
+   microseconds ms0{0LL};
+   microseconds ms1{1LL};
+   microseconds ms2{-1LL};
+   microseconds ms_max{i64MAX};
+   microseconds ms_min{i64MIN};
+
+   time_point tp0{ms0};
+   time_point tp1{ms1};
+   time_point tp2{ms2};
+   time_point tp_max{ms_max};
+   time_point tp_min{ms_min};
+
+   time_point_sec tps0{tp0};
+   time_point_sec tps1{tp1};
+   time_point_sec tps2{tp2};
+   time_point_sec tps_max{tp_max};
+   time_point_sec tps_min{tp_min};
+
+// eosio::print_f("%",block_timestamp{tp0}.slot);
+// eosio::print_f("%",block_timestamp{0}.slot);
 
    // ------------
    // constructors
 
    /// explicit block_timestamp(uint32_t)
+   REQUIRE_EQUAL( block_timestamp{}.slot == block_timestamp{0}.slot, true )
 
+   // NOTE: No invariant established. `block_timestamp` gets wonky with certain inputs.
+   // Steps to reproduce:
+   // microseconds ms0{0LL};
+   // time_point tp0{ms0};
+   // block_timestamp{tp0};
+   // eosio::print_f("%", block_timestamp.slot); // output: 18446744071816182016
+   // Reason for erros:
+   // set_time_point(time_point{microseconds{0LL}});
+   // int64_t micro_since_epoch = t.time_since_epoch().count(); // 0
+   // int64_t msec_since_epoch  = micro_since_epoch / 1000;     // 0 / 1000 = 0
+   // slot = uint32_t(( msec_since_epoch - block_timestamp_epoch ) / int64_t(block_interval_ms)); // 0 - 946684800000ll / 500
    /// block_timestamp(const time_point&)
+   // REQUIRE_EQUAL( block_timestamp{tp0}.slot == block_timestamp{0}.slot, true )
 
-   /// block_timestamp(const time_point&)
+   /// block_timestamp(const time_point_sec&)
+   // REQUIRE_EQUAL( block_timestamp{tps0}.slot == block_timestamp{0}.slot, true )
 
    // --------------------------------
    // static block_timestamp maximum()
+   REQUIRE_EQUAL( block_timestamp{}.maximum(), block_timestamp{0xFFFF} )
 
    // ----------------------------
    // static block_timestamp min()
+   REQUIRE_EQUAL( block_timestamp{}.min(), block_timestamp{0} )
 
    // ----------------------
    // block_timestamp next()
+   REQUIRE_EQUAL( (block_timestamp{}.next()), block_timestamp{1} )
 
-   // -------------------------------
-   // time_point to_time_point()const
+   // NOTE: This function will never throw unless the value lands on `0`
+   // For example:
+   // block_timestamp{std::numeric_limits<uint32_t>::max();
+   // REQUIRE_ASSERT( "block timestamp overflow", ([]() {block_timestamp{std::numeric_limits<uint32_t>::max()-1}.next();}) );
 
-   // --------------------------
-   // operator time_point()const
+   // ----------------------------------------------------------
+   // time_point to_time_point()const/operator time_point()const
+   block_timestamp bt0{tps0};
+   block_timestamp bt1{tps1};
+   block_timestamp bt2{tps2};
+   block_timestamp bt_max{tps_max};
+   block_timestamp bt_min{tps_min};
+
+   REQUIRE_EQUAL( (bt0.to_time_point()), static_cast<time_point>(tps0) )
+   REQUIRE_EQUAL( (bt1.to_time_point()), static_cast<time_point>(tps1) )
+   REQUIRE_EQUAL( (bt2.to_time_point()), static_cast<time_point>(tps2) )
+   REQUIRE_EQUAL( (bt_max.to_time_point()), static_cast<time_point>(tps_max) )
+   REQUIRE_EQUAL( (bt_min.to_time_point()), static_cast<time_point>(tps_min) )
 
    // --------------------------------------
    // void set_time_point(const time_point&)
+   // REQUIRE_EQUAL( bt0.set_time_point{tp0},  )
 
    // ------------------------------------------
    // void set_time_point(const time_point_sec&)
@@ -287,6 +353,12 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    // bool operator<=(const block_timestamp&)
    // bool operator>(const block_timestamp&)
    // bool operator>=(const block_timestamp&)
+   REQUIRE_EQUAL( bt0 == block_timestamp{tps0}, true )
+   REQUIRE_EQUAL( bt_max != block_timestamp{tps1}, true )
+   // REQUIRE_EQUAL( bt0 < block_timestamp{tps_max}, true )
+   REQUIRE_EQUAL( bt_max <= block_timestamp{tps_max}, true )
+   // REQUIRE_EQUAL( bt_max > block_timestamp{tps0}, true )
+   REQUIRE_EQUAL( bt_max >= block_timestamp{bt_max}, true )
 
    silence_output(false);
 EOSIO_TEST_END
@@ -294,7 +366,7 @@ EOSIO_TEST_END
 int main(int argc, char* argv[]) {
    // EOSIO_TEST(microseconds_type_test);
    // EOSIO_TEST(time_point_type_test);
-   EOSIO_TEST(time_point_sec_type_test);
-   // EOSIO_TEST(block_timestamp_type_test);
+   // EOSIO_TEST(time_point_sec_type_test);
+   EOSIO_TEST(block_timestamp_type_test);
    return has_failed();
 }
