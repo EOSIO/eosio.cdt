@@ -112,7 +112,7 @@ steps:
   - label: ":darwin: [Darwin] High Sierra Package Builder"
     command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: [Darwin] High Sierra Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd build/packages && bash generate_package.sh brew
@@ -126,7 +126,7 @@ steps:
   - label: ":darwin: [Darwin] Mojave Package Builder"
     command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: [Darwin] Mojave Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd build/packages && bash generate_package.sh brew
@@ -141,7 +141,7 @@ steps:
   - label: ":ubuntu: [Ubuntu] 18.04 Package Builder"
     command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: 18.04 Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: [Ubuntu] 18.04 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd /data/job/build/packages && bash generate_package.sh deb
@@ -167,7 +167,7 @@ steps:
   - label: ":fedora: [Fedora] 27 Package Builder"
     command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":fedora: 27 Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":fedora: [Fedora] 27 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         yum install -y rpm-build && \
@@ -200,7 +200,7 @@ steps:
   - label: ":centos: [Centos] 7 Package Builder"
     command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":centos: 7 Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":centos: [Centos] 7 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         yum install -y rpm-build && \
