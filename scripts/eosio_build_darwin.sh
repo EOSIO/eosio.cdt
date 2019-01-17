@@ -2,11 +2,10 @@ OS_VER=$(sw_vers -productVersion)
 OS_MAJ=$(echo "${OS_VER}" | cut -d'.' -f1)
 OS_MIN=$(echo "${OS_VER}" | cut -d'.' -f2)
 OS_PATCH=$(echo "${OS_VER}" | cut -d'.' -f3)
-
 MEM_GIG=$(bc <<< "($(sysctl -in hw.memsize) / 1024000000)")
-
 CPU_SPEED=$(bc <<< "scale=2; ($(sysctl -in hw.cpufrequency) / 10^8) / 10")
 CPU_CORE=$( sysctl -in machdep.cpu.core_count )
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_INSTALL=$(df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 || cut -d' ' -f1)
 blksize=$(df . | head -1 | awk '{print $2}' | cut -d- -f1)
@@ -15,6 +14,13 @@ total_blks=$(df . | tail -1 | awk '{print $2}')
 avail_blks=$(df . | tail -1 | awk '{print $4}')
 DISK_TOTAL=$((total_blks / gbfactor ))
 DISK_AVAIL=$((avail_blks / gbfactor ))
+
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+COUNT=1
+PERMISSION_GETTEXT=0
+DISPLAY=""
+DEPS=""
 
 printf "\\nOS name: ${OS_NAME}\\n"
 printf "OS Version: ${OS_VER}\\n"
@@ -42,6 +48,7 @@ if [ "${DISK_AVAIL}" -lt "$DISK_MIN" ]; then
 	echo "Exiting now."
 	exit 1
 fi
+
 printf "Checking xcode-select installation\\n"
 if ! XCODESELECT=$( command -v xcode-select)
 then
@@ -59,6 +66,24 @@ then
 	exit 1
 fi
 printf "Ruby installation found @ ${RUBY}\\n"
+
+printf "Checking CMAKE installation...\\n"
+CMAKE=$(command -v cmake 2>/dev/null)
+if [ -z $CMAKE ]; then
+	printf "Installing CMAKE...\\n"
+	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
+	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
+	&& cd cmake-$CMAKE_VERSION \
+	&& ./bootstrap --prefix=$HOME \
+	&& make -j"${JOBS}" \
+	&& make install \
+	&& cd .. \
+	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
+	|| exit 1
+	printf " - CMAKE successfully installed @ ${HOME}/bin/cmake \\n"
+else
+	printf " - CMAKE found @ ${CMAKE}.\\n"
+fi
 
 printf "Checking Home Brew installation\\n"
 if ! BREW=$( command -v brew )
@@ -103,7 +128,7 @@ while read -r name tester testee brewname uri; do
 	if [ "${brewname}" = "gettext" ]; then
 		PERMISSION_GETTEXT=1
 	fi
-	DEP=$DEP"${brewname} "
+	DEPS=$DEPS"${brewname},"
 	DISPLAY="${DISPLAY}${COUNT}. ${name}\\n"
 	printf " - %s ${bldred}NOT${txtrst} found.\\n" "${name}"
 	(( COUNT++ ))
@@ -111,12 +136,12 @@ done < "${CURRENT_DIR}/scripts/eosio_build_darwin_deps"
 IFS="${var_ifs}"
 
 if [ ! -d /usr/local/Frameworks ]; then
-	printf "\\n${bldred}/usr/local/Framworks is necessary to brew install python@3. Run the following commands as sudo and try again:\\n"
-	printf "sudo mkdir /usr/local/Frameworks && sudo chown $(whoami):admin /usr/local/Frameworks${txtrst}\\n\\n"
+	printf "\\n${bldred}/usr/local/Framworks is necessary to brew install python@3. Run the following commands as sudo and try again:${txtrst}\\n"
+	printf "sudo mkdir /usr/local/Frameworks && sudo chown $(whoami):admin /usr/local/Frameworks\\n\\n"
 	exit 1;
 fi
 if [  -z "$( python3 -c 'import sys; print(sys.version_info.major)' 2>/dev/null )" ]; then
-	DEP=$DEP"python@3 "
+	DEPS=$DEPS"python@3 "
 	DISPLAY="${DISPLAY}${COUNT}. Python 3\\n"
 	printf " - python3 ${bldred}NOT${txtrst} found.\\n"
 	(( COUNT++ ))
@@ -126,16 +151,12 @@ fi
 
 if [ $COUNT -gt 1 ]; then
 	printf "\\nThe following dependencies are required to install EOSIO.\\n"
-	printf "\\n${DISPLAY}\\n\\n"
+	printf "\\n${DISPLAY}\\n"
 	echo "Do you wish to install these packages?"
 	select yn in "Yes" "No"; do
 		case $yn in
 			[Yy]* )
-				if [ $PERMISSION_GETTEXT -eq 1 ]; then
-					sudo chown -R "$(whoami)" /usr/local/share
-				fi
 				"${XCODESELECT}" --install 2>/dev/null;
-
 				printf "\\nDo you wish to update homebrew packages first?\\n"
 				select yn in "Yes" "No"; do
 					case $yn in
@@ -149,18 +170,28 @@ if [ $COUNT -gt 1 ]; then
 								printf "\\brew update complete.\\n"
 							fi
 						break;;
-						[Nn]* ) echo "Proceeding without update!";;
+						[Nn]* ) echo "Proceeding without update!"
+						break;;
 						* ) echo "Please type 1 for yes or 2 for no.";;
 					esac
 				done
 
-				printf "Installing Dependencies.\\n"
-				if ! "${BREW}" install --force ${DEP}
-				then
-					printf "Homebrew exited with the above errors.\\n"
-					printf "Exiting now.\\n\\n"
-					exit 1;
-				fi
+				brew tap eosio/eosio # Required to install mongo-cxx-driver with static library
+				printf "\\nInstalling Dependencies.\\n"
+				# Ignore cmake so we don't install a newer version.
+				# Build from source to use local cmake
+				# DON'T INSTALL llvm@4 WITH --force!
+				OIFS="$IFS"
+				IFS=$','
+				for DEP in $DEPS; do
+					# Eval to support string/arguments with $DEP
+					if ! eval $BREW install $DEP; then
+						printf "Homebrew exited with the above errors.\\n"
+						printf "Exiting now.\\n\\n"
+						exit 1;
+					fi
+				done
+				IFS="$OIFS"
 			break;;
 			[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
 			* ) echo "Please type 1 for yes or 2 for no.";;
@@ -169,3 +200,6 @@ if [ $COUNT -gt 1 ]; then
 else
 	printf "No required Home Brew dependencies to install.\\n"
 fi
+
+# Failed to find Gettext libintl (missing: Intl_INCLUDE_DIR); known bug
+brew unlink gettext 2> /dev/null && brew link --force gettext

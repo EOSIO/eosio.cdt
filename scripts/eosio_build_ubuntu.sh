@@ -4,10 +4,9 @@ OS_MIN=$(echo "${OS_VER}" | cut -d'.' -f2)
 
 MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 || cut -d' ' -f2 )
 CPU_SPEED=$( lscpu | grep -m1 "MHz" | tr -s ' ' | cut -d\  -f3 || cut -d' ' -f3 | cut -d'.' -f1 )
-CPU_CORE=$( lscpu | grep "^CPU(s)" | tr -s ' ' | cut -d\  -f2 || cut -d' ' -f2 )
-
+CPU_CORE=$( nproc )
 MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
-JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_INSTALL=$(df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 || cut -d' ' -f1)
 DISK_TOTAL_KB=$(df . | tail -1 | awk '{print $2}')
@@ -47,11 +46,16 @@ case "${OS_NAME}" in
 		# UBUNTU 18 doesn't have MONGODB 3.6.3
 		if [ $OS_MAJ -gt 16 ]; then
 			export MONGODB_VERSION=4.1.1
-		else
-			export MONGODB_VERSION=3.6.3
 		fi
 		# We have to re-set this with the new version
 		export MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
+	;;
+	"Debian")
+		if [ $OS_MAJ -lt 10 ]; then
+			printf "You must be running Debian 10 to install EOSIO, and resolve missing dependencies from unstable (sid).\n"
+			printf "Exiting now.\n"
+			exit 1
+	fi
 	;;
 esac
 
@@ -61,14 +65,21 @@ if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
 	exit 1
 fi
 
-DEP_ARRAY=( git python3 python3-dev clang-4.0 lldb-4.0 libclang-4.0-dev cmake make libbz2-dev \
-			libssl-dev libgmp3-dev autotools-dev build-essential libbz2-dev libicu-dev \
-			python-dev autoconf libtool curl libsoci-dev sudo )
+# llvm-4.0 is installed into /usr/lib/llvm-4.0
+DEP_ARRAY=(
+	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev doxygen graphviz \
+	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
+	autoconf libtool curl zlib1g-dev sudo ruby
+)
 COUNT=1
 DISPLAY=""
 DEP=""
 
-printf "\\nDo you wish to update repositories with apt-get update?\\n\\n"
+if [[ "${ENABLE_CODE_COVERAGE}" == true ]]; then
+	DEP_ARRAY+=(lcov)
+fi
+
+printf "Do you wish to update repositories with apt-get update?\\n\\n"
 select yn in "Yes" "No"; do
 	case $yn in
 		[Yy]* ) 
@@ -127,3 +138,23 @@ else
 	printf "\\nNo required dpkg dependencies to install."
 fi
 
+
+printf "\\n"
+
+CMAKE=$(command -v cmake 2>/dev/null)
+printf "Checking CMAKE installation...\\n"
+if [ ! -d $SRC_LOCATION/cmake-$CMAKE_VERSION ]; then
+	printf "Installing CMAKE...\\n"
+	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
+	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
+	&& cd cmake-$CMAKE_VERSION \
+	&& ./bootstrap --prefix=$HOME \
+	&& make -j"${JOBS}" \
+	&& make install \
+	&& cd .. \
+	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
+	|| exit 1
+	printf " - CMAKE successfully installed @ ${CMAKE}.\\n"
+else
+	printf " - CMAKE found @ ${CMAKE}.\\n"
+fi

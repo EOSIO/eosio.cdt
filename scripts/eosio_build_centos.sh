@@ -5,7 +5,7 @@ MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 )
 CPU_SPEED=$( lscpu | grep "MHz" | tr -s ' ' | cut -d\  -f3 | cut -d'.' -f1 )
 CPU_CORE=$( nproc )
 MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
-JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_INSTALL=$( df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 )
 DISK_TOTAL_KB=$( df . | tail -1 | awk '{print $2}' )
@@ -13,28 +13,15 @@ DISK_AVAIL_KB=$( df . | tail -1 | awk '{print $4}' )
 DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
-DEP_ARRAY=( 
-	git autoconf automake libtool make bzip2 \
-	bzip2-devel openssl-devel gmp-devel \
-	ocaml doxygen libicu-devel python-devel \
-	gettext-devel file gcc-c++	
-)
-COUNT=1
-DISPLAY=""
-DEP=""
-
-# Enter working directory
-mkdir -p $SRC_LOCATION
-cd $SRC_LOCATION
-
 printf "\\nOS name: ${OS_NAME}\\n"
 printf "OS Version: ${OS_VER}\\n"
 printf "CPU speed: ${CPU_SPEED}Mhz\\n"
-printf "CPU cores: %s\\n" "${CPU_CORE}"
-printf "Physical Memory: ${MEM_MEG} Mgb\\n"
+printf "CPU cores: ${CPU_CORE}\\n"
+printf "Physical Memory: ${MEM_MEG}Mgb\\n"
 printf "Disk install: ${DISK_INSTALL}\\n"
-printf "Disk space total: ${DISK_TOTAL%.*}G\\n"
+printf "Disk space total: ${DISK_TOTAL%.*}G\\n" 
 printf "Disk space available: ${DISK_AVAIL%.*}G\\n"
+printf "Concurrent Jobs (make -j): ${JOBS}\\n"
 
 if [ "${MEM_MEG}" -lt 7000 ]; then
 	printf "\\nYour system must have 7 or more Gigabytes of physical memory installed.\\n"
@@ -54,14 +41,15 @@ if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
 	exit 1;
 fi
 
-printf "\\nChecking Yum installation.\\n"
-if ! YUM=$( command -v yum 2>/dev/null )
-then
-	printf "\\nYum must be installed to compile EOS.IO.\\n"
-	printf "\\nExiting now.\\n"
-	exit 1
+printf "\\n"
+
+printf "Checking Yum installation...\\n"
+if ! YUM=$( command -v yum 2>/dev/null ); then
+		printf "!! Yum must be installed to compile EOS.IO !!\\n"
+		printf "Exiting now.\\n"
+		exit 1;
 fi
-printf "Yum installation found at ${YUM}.\\n"
+printf " - Yum installation found at %s.\\n" "${YUM}"
 
 printf "\\nDo you wish to update YUM repositories?\\n\\n"
 select yn in "Yes" "No"; do
@@ -76,63 +64,77 @@ select yn in "Yes" "No"; do
 				printf "\\nYUM update complete.\\n"
 			fi
 		break;;
-		[Nn]* ) echo "Proceeding without update!";;
+		[Nn]* ) 
+			echo "Proceeding without update!"
+		break;;
 		* ) echo "Please type 1 for yes or 2 for no.";;
 	esac
 done
 
-printf "\\nChecking installation of Centos Software Collections Repository...\\n"
-if [ -z "$(command -v scl 2>/dev/null)" ]; then
-	printf "\\nThe Centos Software Collections Repository, devtoolset-7 and Python3 are required to install EOSIO.\\n"
-	printf "Do you wish to install and enable this repository, devtoolset-7 and Python3 packages?\\n"
+printf "Checking installation of Centos Software Collections Repository...\\n"
+SCL=$( rpm -qa | grep -E 'centos-release-scl-[0-9].*' )
+if [ -z "${SCL}" ]; then
+	printf " - Do you wish to install and enable this repository?\\n"
 	select yn in "Yes" "No"; do
 		case $yn in
-			[Yy]* ) 
-				printf "\\n\\nInstalling SCL.\\n\\n"
-				if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl
-				then
-					printf "\\nCentos Software Collections Repository installation failed.\\n"
-					printf "\\nExiting now.\\n\\n"
+			[Yy]* )
+				printf "Installing SCL...\\n"
+				if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl 2>/dev/null; then
+					printf "!! Centos Software Collections Repository installation failed !!\\n"
+					printf "Exiting now.\\n\\n"
 					exit 1;
 				else
-					printf "\\nCentos Software Collections Repository installed successfully.\\n"
-				fi
-				printf "\\n\\nInstalling devtoolset-7.\\n\\n"
-				if ! sudo "${YUM}" install -y devtoolset-7
-				then
-					printf "\\nCentos devtoolset-7 installation failed.\\n"
-					printf "\\nExiting now.\\n\\n"
-					exit 1;
-				else
-					printf "\\nCentos devtoolset installed successfully.\\n"
-				fi
-				printf "\\n\\nInstalling Python3.\\n\\n"
-				if ! sudo "${YUM}" install -y python33
-				then
-					printf "\\nCentos Python3 installation failed.\\n"
-					printf "\\nExiting now.\\n\\n"
-					exit 1;
-				else
-					printf "\\nCentos Python3 installed successfully.\\n"
+					printf "Centos Software Collections Repository installed successfully.\\n"
 				fi
 			break;;
 			[Nn]* ) echo "User aborting installation of required Centos Software Collections Repository, Exiting now."; exit;;
 			* ) echo "Please type 1 for yes or 2 for no.";;
 		esac
 	done
-else 
-	printf "Centos Software Collections Repository found.\\n\\n"
+else
+	printf " - ${SCL} found.\\n"
+fi
+
+printf "Checking installation of devtoolset-7...\\n"
+DEVTOOLSET=$( rpm -qa | grep -E 'devtoolset-7-[0-9].*' )
+if [ -z "${DEVTOOLSET}" ]; then
+	printf "Do you wish to install devtoolset-7?\\n"
+	select yn in "Yes" "No"; do
+		case $yn in
+			[Yy]* )
+				printf "Installing devtoolset-7...\\n"
+				if ! sudo "${YUM}" install -y devtoolset-7 2>/dev/null; then
+						printf "!! Centos devtoolset-7 installation failed !!\\n"
+						printf "Exiting now.\\n"
+						exit 1;
+				else
+						printf "Centos devtoolset installed successfully.\\n"
+				fi
+			break;;
+			[Nn]* ) echo "User aborting installation of devtoolset-7. Exiting now."; exit;;
+			* ) echo "Please type 1 for yes or 2 for no.";;
+		esac
+	done
+else
+	printf " - ${DEVTOOLSET} found.\\n"
 fi
 printf "Enabling Centos devtoolset-7...\\n"
-# shellcheck disable=SC1091
-if ! source "/opt/rh/devtoolset-7/enable"
-then
-	printf "\\nUnable to enable Centos devtoolset-7 at this time.\\n"
-	printf "\\nExiting now.\\n\\n"
+if ! source "/opt/rh/devtoolset-7/enable" 2>/dev/null; then
+	printf "!! Unable to enable Centos devtoolset-7 at this time !!\\n"
+	printf "Exiting now.\\n\\n"
 	exit 1;
-fi 
-printf "Centos devtoolset-7 successfully enabled.\\n\\n"
+fi
+printf "Centos devtoolset-7 successfully enabled.\\n"
 
+printf "\\n"
+
+DEP_ARRAY=( git autoconf automake libtool make bzip2 doxygen graphviz \
+				bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
+				ocaml.x86_64 libicu-devel.x86_64 python33.x86_64 python-devel.x86_64 \
+				gettext-devel.x86_64 file sudo )
+COUNT=1
+DISPLAY=""
+DEP=""
 printf "Checking RPM for installed dependencies...\\n"
 for (( i=0; i<${#DEP_ARRAY[@]}; i++ )); do
 	pkg=$( rpm -qi "${DEP_ARRAY[$i]}" 2>/dev/null | grep Name )
@@ -168,8 +170,12 @@ if [ "${COUNT}" -gt 1 ]; then
 		esac
 	done
 else
-	printf " - No required YUM dependencies to install.\\n\\n"
+	printf " - No required YUM dependencies to install.\\n"
 fi
+
+
+printf "\\n"
+
 
 printf "Checking CMAKE installation...\\n"
 CMAKE=$(command -v cmake 2>/dev/null)

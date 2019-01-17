@@ -2,9 +2,9 @@ OS_VER=$( grep VERSION_ID /etc/os-release | cut -d'=' -f2 | sed 's/[^0-9\.]//gI'
 
 MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 )
 CPU_SPEED=$( lscpu | grep "MHz" | tr -s ' ' | cut -d\  -f3 | cut -d'.' -f1 )
-CPU_CORE=$( lscpu | grep "^CPU(s)" | tr -s ' ' | cut -d\  -f2 )
+CPU_CORE=$( nproc )
 MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
-JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
 DISK_INSTALL=$( df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 )
 DISK_TOTAL_KB=$( df . | tail -1 | awk '{print $2}' )
@@ -12,22 +12,24 @@ DISK_AVAIL_KB=$( df . | tail -1 | awk '{print $4}' )
 DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
-DEP_ARRAY=( git gcc.x86_64 gcc-c++.x86_64 autoconf automake libtool make cmake.x86_64 \
-bzip2.x86_64 bzip2-devel.x86_64 gmp-devel.x86_64 libstdc++-devel.x86_64 \
-python2-devel.x86_64 python3-devel.x86_64 libedit.x86_64 \
-graphviz.x86_64 doxygen.x86_64 )
+DEP_ARRAY=( 
+	git sudo python3 procps-ng which gcc.x86_64 autoconf automake libtool make \
+	bzip2-devel.x86_64 wget bzip2 compat-openssl10 graphviz.x86_64 doxygen.x86_64 \
+	openssl-devel.x86_64 gmp-devel.x86_64 libstdc++-devel.x86_64 python2-devel.x86_64 python3-devel.x86_64 \
+	libedit.x86_64 ncurses-devel.x86_64 swig.x86_64 
+)
 COUNT=1
 DISPLAY=""
 DEP=""
 
-printf "\\nOS name: %s\\n" "${OS_NAME}"
-printf "OS Version: %s\\n" "${OS_VER}"
-printf "CPU speed: %sMhz\\n" "${CPU_SPEED}"
+printf "\\nOS name: ${OS_NAME}\\n"
+printf "OS Version: ${OS_VER}\\n"
+printf "CPU speed: ${CPU_SPEED}Mhz\\n"
 printf "CPU cores: %s\\n" "${CPU_CORE}"
-printf "Physical Memory: %s Mgb\\n" "${MEM_MEG}"
-printf "Disk install: %s\\n" "${DISK_INSTALL}"
-printf "Disk space total: %sG\\n" "${DISK_TOTAL%.*}"
-printf "Disk space available: %sG\\n" "${DISK_AVAIL%.*}"
+printf "Physical Memory: ${MEM_MEG} Mgb\\n"
+printf "Disk install: ${DISK_INSTALL}\\n"
+printf "Disk space total: ${DISK_TOTAL%.*}G\\n"
+printf "Disk space available: ${DISK_AVAIL%.*}G\\n"
 
 if [ "${MEM_MEG}" -lt 7000 ]; then
 	printf "Your system must have 7 or more Gigabytes of physical memory installed.\\n"
@@ -47,14 +49,13 @@ if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
 	exit 1;
 fi
 
-printf "\\nChecking Yum installation.\\n"
-if ! YUM=$( command -v yum 2>/dev/null )
-then
-	printf "\\nYum must be installed to compile EOS.IO.\\n"
-	printf "\\nExiting now.\\n"
-	exit 1
+printf "\\nChecking Yum installation...\\n"
+if ! YUM=$( command -v yum 2>/dev/null ); then
+		printf "!! Yum must be installed to compile EOS.IO !!\\n"
+		printf "Exiting now.\\n"
+		exit 1;
 fi
-printf "Yum installation found at ${YUM}.\\n"
+printf " - Yum installation found at %s.\\n" "${YUM}"
 
 printf "\\nDo you wish to update YUM repositories?\\n\\n"
 select yn in "Yes" "No"; do
@@ -112,6 +113,10 @@ if [ "${COUNT}" -gt 1 ]; then
 else
 	printf " - No required YUM dependencies to install.\\n"
 fi
+
+
+printf "\\n"
+
 
 printf "Checking CMAKE installation...\\n"
 CMAKE=$(command -v cmake 2>/dev/null)
