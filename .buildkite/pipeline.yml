@@ -130,7 +130,7 @@ steps:
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd build/packages && bash generate_package.sh brew
-    label: ":darwin: Mojave Package Builder"
+    label: ":darwin: [Darwin] Mojave Package Builder"
     agents:
       role: "builder-v2"
       os: "mojave"
