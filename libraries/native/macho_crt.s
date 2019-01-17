@@ -32,7 +32,7 @@ __mmap:
    mov $0, %rdi          # don't map
    mov $0x640000000, %rsi  # size 100Mb 
    mov $3, %rdx         
-   mov $0x22, %r10
+   mov $0x1002, %r10
    mov $-1, %r8
    mov $0, %r9
    syscall

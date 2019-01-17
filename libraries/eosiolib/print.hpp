@@ -47,87 +47,36 @@ namespace eosio {
    }
 
    /**
-    *  Prints string
-    *
-    *  @param c - a const char
-    */
-   inline void print( const char c ) {
-      prints_l( &c, 1 );
-   }
-
-   /**
-    * Prints signed integer as a 64 bit signed integer
+    * Prints 8-128 bit signed integer
     *
     * @param num to be printed
     */
-   inline void print( int num ) {
-      printi(num);
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+                                          std::is_signed<std::decay_t<T>>::value, int> = 0>
+   inline void print( T num ) {
+      if constexpr(std::is_same<T, int128_t>::value)
+         printi128(&num);
+      else if constexpr(std::is_same<T, char>::value)
+         prints_l( &num, 1 );
+      else
+         printi(num);
    }
 
    /**
-    * Prints 32 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit unsigned integer
     *
     * @param num to be printed
     */
-   inline void print( int32_t num ) {
-      printi(num);
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+                                          !std::is_signed<std::decay_t<T>>::value, int> = 0>
+   inline void print( T num ) {
+      if constexpr(std::is_same<T, uint128_t>::value)
+         printui128(&num);
+      else if constexpr(std::is_same<T, bool>::value)
+         prints(num?"true":"false");
+      else
+         printui(num);
    }
-
-   /**
-    * Prints 64 bit signed integer as a 64 bit signed integer
-    *
-    * @param num to be printed
-    */
-   inline void print( int64_t num ) {
-      printi(num);
-   }
-
-
-   /**
-    * Prints unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( unsigned int num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 32 bit unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint32_t num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 64 bit unsigned integer as a 64 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint64_t num ) {
-      printui(num);
-   }
-
-   /**
-    * Prints 128 bit signed integer
-    *
-    * @param num to be printed
-    */
-   inline void print( int128_t num ) {
-      printi128(&num);
-   }
-
-   /**
-    * Prints 128 bit unsigned integer
-    *
-    * @param num to be printed
-    */
-   inline void print( uint128_t num ) {
-      printui128(&num);
-   }
-
 
    /**
     * Prints single-precision floating point number (i.e. float)
@@ -149,7 +98,6 @@ namespace eosio {
     * @param num to be printed
     */
    inline void print( long double num ) { printqf( &num ); }
-
 
    /**
     * Prints fixed_bytes as a hexidecimal string
@@ -196,22 +144,12 @@ namespace eosio {
    }
 
   /**
-    * Prints bool
-    *
-    * @param val to be printed
-    */
-   inline void print( bool val ) {
-      prints(val?"true":"false");
-   }
-
-
-  /**
     * Prints class object
     *
     * @param t to be printed
     * @pre T must implements print() function
     */
-   template<typename T>
+   template<typename T, std::enable_if_t<!std::is_integral<std::decay_t<T>>::value, int> = 0>
    inline void print( T&& t ) {
       if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
          prints_l( t.c_str(), t.size() );

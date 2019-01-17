@@ -17,6 +17,7 @@ add_library(eosio_dsm
 add_native_library(native_eosio
                    eosiolib.cpp
                    crypto.cpp
+                   malloc.cpp
                    ${HEADERS})
 
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)

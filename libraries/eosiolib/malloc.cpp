@@ -3,10 +3,6 @@
 #include "system.hpp"
 #include "print.hpp"
 
-extern "C" {
-   uintptr_t __heap_base_ptr = 17;
-}
-
 namespace eosio {
 #ifdef EOSIO_NATIVE
    extern "C" {

@@ -11,6 +11,11 @@ eosio::cdt::output_stream std_out;
 eosio::cdt::output_stream std_err;
 
 extern "C" {
+#ifdef __APPLE__
+   //void* alloca(size_t s) {
+   //   return malloc(s);
+   //}
+#endif
    int main(int, char**);
    char* _mmap();
    
