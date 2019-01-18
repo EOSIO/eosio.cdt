@@ -101,6 +101,11 @@ static cl::opt<bool> fuse_main_opt(
 
 #ifndef ONLY_LD
 /// begin c/c++ options/
+static cl::opt<bool> llvm_ir_opt(
+    "emit-ir",
+    cl::desc("Emit llvm ir"),
+    cl::Hidden,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<std::string> MF_opt(
     "MF",
     cl::desc("Write depfile output"),
@@ -598,6 +603,11 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if (S_opt) {
       copts.emplace_back("-S");
+      link = false;
+   }
+   if (llvm_ir_opt) {
+      copts.emplace_back("-S");
+      copts.emplace_back("-emit-llvm");
       link = false;
    }
    if (v_opt) {
