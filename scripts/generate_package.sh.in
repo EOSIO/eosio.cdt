@@ -6,7 +6,8 @@ VERSION_NO_SUFFIX="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
 VERSION_SUFFIX="@VERSION_SUFFIX@"
 VERSION="@VERSION_FULL@"
 
-BUILD_DIR="@CMAKE_BINARY_DIR@"
+# Using CMAKE_BINARY_DIR uses an absolute path and will break cross-vm building/download/make functionality (/data/jobs can be eliminated if we use relative paths)
+BUILD_DIR="../../build"
 
 VENDOR="@VENDOR@"
 PROJECT="@PROJECT_NAME@"
@@ -36,9 +37,4 @@ else
    echo "Error, unknown package type. Use either ['brew', 'deb', 'rpm']."
    exit -1
 fi
-
-BUILDSTATUS=$?
-
 rm -r tmp
-
-exit $BUILDSTATUS
