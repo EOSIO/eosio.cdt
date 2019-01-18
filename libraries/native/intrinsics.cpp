@@ -864,7 +864,7 @@ extern "C" {
    void eosio_assert_code(uint32_t test, uint64_t code) {
       if (test == 0) {
          char buff[32];
-         snprintf(buff, 32, "%llu\n", code);
+         snprintf(buff, 32, "%llu", code);
          _prints(buff, eosio::cdt::output_stream_kind::std_err);
          _prints_l("\n", 1, eosio::cdt::output_stream_kind::none);
          longjmp(*___env_ptr, 1);
@@ -877,15 +877,4 @@ extern "C" {
       eosio_assert(false, "abort");
    }
 #pragma clang diagnostic pop
-   
-   size_t __builtin_wasm_current_memory() {
-      return (size_t)___heap_ptr;
-   }
-
-   size_t __builtin_wasm_grow_memory(size_t size) {
-      if ((___heap_ptr + (size*64*1024)) > (___heap_ptr + 100*1024*1024))
-         eosio_assert(false, "__builtin_wasm_grow_memory");
-      ___heap_ptr += (size*64*1024);
-      return (size_t)___heap_ptr;
-   }
 }

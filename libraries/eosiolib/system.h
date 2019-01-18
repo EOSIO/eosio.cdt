@@ -69,7 +69,6 @@ extern "C" {
    __attribute__((eosio_wasm_import, noreturn))
    void eosio_exit( int32_t code );
 
-
    /**
     *  Returns the time in microseconds from 1970 of the current block
     *
