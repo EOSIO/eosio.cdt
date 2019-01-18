@@ -206,6 +206,9 @@ int main(int argc, const char **argv) {
 
    cl::ParseCommandLineOptions(argc, argv, std::string("eosio-proj"));
    try {
+      if (!std::regex_match(project_name, std::regex("^[_a-zA-Z][_a-zA-Z0-9]*$"))) {
+         throw std::runtime_error("ERROR: invalid identifier: " + project_name);
+      }
       llvm::SmallString<128> rp;
       std::string path = output_dir;
       if (path.empty())
