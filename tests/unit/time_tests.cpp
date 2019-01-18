@@ -10,11 +10,11 @@ using eosio::block_timestamp;
 
 using namespace eosio::native;
 
-const uint32_t u32MAX = std::numeric_limits<uint32_t>::max(); // 18446744073709551615
 const uint32_t u32MIN = std::numeric_limits<uint32_t>::min(); // 0
+const uint32_t u32MAX = std::numeric_limits<uint32_t>::max(); // 18446744073709551615
 
-const int64_t i64MAX = std::numeric_limits<int64_t>::max(); // 9223372036854775807
 const int64_t i64MIN = std::numeric_limits<int64_t>::min(); // -9223372036854775808
+const int64_t i64MAX = std::numeric_limits<int64_t>::max(); // 9223372036854775807
 
 // This is interesting. `print_f` won't print the '-' character.
 // `printf` won't print anything.

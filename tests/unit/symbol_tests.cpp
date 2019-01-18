@@ -6,8 +6,8 @@ using eosio::symbol_code;
 using eosio::symbol;
 using eosio::extended_symbol;
 
-const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
+const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
 // Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
@@ -213,10 +213,10 @@ EOSIO_TEST_BEGIN(symbol_type_test)
 
    // --------------------------------------------------------------
    // friend constexpr bool operator!=(const symbol&, const symbol&)
-   CHECK_EQUAL( (symbol{sc0, 0} != symbol{0}), true )
-   CHECK_EQUAL( (symbol{sc1, 0} != symbol{0}), true )
-   CHECK_EQUAL( (symbol{sc2, 0} != symbol{0}), true )
-   CHECK_EQUAL( (symbol{sc3, 0} != symbol{0}), true )
+   CHECK_EQUAL( (symbol{sc0, 0} != symbol{}), true )
+   CHECK_EQUAL( (symbol{sc1, 0} != symbol{}), true )
+   CHECK_EQUAL( (symbol{sc2, 0} != symbol{}), true )
+   CHECK_EQUAL( (symbol{sc3, 0} != symbol{}), true )
 
    // --------------------------------------------------------------
    // friebnd constexpr bool operator<(const symbol&, const symbol&)

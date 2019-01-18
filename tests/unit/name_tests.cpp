@@ -3,12 +3,12 @@
 
 using eosio::name;
 
-const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
+const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
 // Defined in `eosio.cdt/libraries/eosiolib/name.hpp`
 EOSIO_TEST_BEGIN(name_type_test)
-   silence_output(true);
+   silence_output(false);
 
    // ------------
    // constructors
@@ -64,7 +64,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    // --------------------------------------------
    // static constexpr uint8_t char_to_value(char)
    char c{'.'};
-   uint8_t expected_value{0}; // Will increment to the expected correct value in the set [0,32)
+   uint8_t expected_value{}; // Will increment to the expected correct value in the set [0,32)
    CHECK_EQUAL( name::char_to_value(c), expected_value )
    ++expected_value;
 
