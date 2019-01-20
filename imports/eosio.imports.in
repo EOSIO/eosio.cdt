@@ -45,3 +45,4 @@ memcpy
 memmove
 memcmp
 memset
+abort
