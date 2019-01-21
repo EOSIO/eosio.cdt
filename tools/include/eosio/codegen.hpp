@@ -46,12 +46,20 @@ namespace eosio { namespace cdt {
          return "eosio.codegen fatal error";
       }
    };
+   
+   struct include_double {
+      include_double(std::string fn, SourceRange sr) : file_name(fn), range(sr) {}
+      std::string    file_name;
+      SourceRange    range;
+   };
 
    class codegen : public generation_utils {
       public:
          codegen_exception codegen_ex;
          Rewriter          codegen_rewriter;
          CompilerInstance* codegen_ci;
+         std::string       contract_name;
+         std::string       abi;
          std::set<std::string> defined_datastreams;
          std::set<std::string> datastream_uses;
          std::set<std::string> actions;
@@ -70,6 +78,14 @@ namespace eosio { namespace cdt {
          static codegen& get() {
             static codegen inst;
             return inst;
+         }
+         
+         void set_contract_name(std::string cn) {
+            contract_name = cn;
+         }
+         
+         void set_abi(std::string s) {
+            abi = s;
          }
 
          void add_action( const clang::CXXRecordDecl* decl ) {
@@ -118,11 +134,43 @@ namespace eosio { namespace cdt {
          }
    };
 
+   std::map<std::string, std::vector<include_double>>  global_includes;
+
+   class eosio_ppcallbacks : public PPCallbacks {
+      public:
+         eosio_ppcallbacks(SourceManager& sm, std::string file) : sources(sm), fn(file) {}
+      protected:
+         virtual void InclusionDirective(
+            SourceLocation hash_loc,
+            const Token &include_token,
+            StringRef file_name,
+            bool is_angled,
+            CharSourceRange filename_range,
+            const FileEntry *file,
+            StringRef search_path,
+            StringRef relative_path,
+            const clang::Module *imported,
+            clang::SrcMgr::CharacteristicKind file_type) {
+            auto fid = sources.getFileID(hash_loc);
+            auto fe  = sources.getFileEntryForID(fid); 
+
+            if (!is_angled && llvm::sys::path::filename(fe->getName()) == llvm::sys::path::filename(fn)) {
+               global_includes[fe->getName().str()].emplace_back(
+                     (search_path + llvm::sys::path::get_separator() + file_name).str(), 
+                     filename_range.getAsRange());
+            }
+         }
+
+         std::string fn;
+         SourceManager& sources;
+   };
+
    class eosio_codegen_visitor : public RecursiveASTVisitor<eosio_codegen_visitor>, public generation_utils {
       private:
          codegen& cg = codegen::get();
-         FileID   main_fid;
-         Rewriter rewriter;
+         FileID    main_fid;
+         StringRef main_name;
+         Rewriter  rewriter;
          CompilerInstance* ci;
 
       public:
@@ -136,6 +184,10 @@ namespace eosio { namespace cdt {
          void set_main_fid(FileID fid) {
             main_fid = fid;
          }
+         
+         void set_main_name(StringRef mn) {
+            main_name = mn;
+         } 
          
          Rewriter& get_rewriter() {
             return rewriter;
@@ -181,30 +233,38 @@ namespace eosio { namespace cdt {
             constexpr static uint32_t max_stack_size = 512;
             std::stringstream ss;
             codegen& cg = codegen::get();
-            ss << "extern \"C\" void __eosio_action_" << decl->getNameAsString() << "(uint64_t r, uint64_t c, uint64_t a) {\n";
-            ss << "if (a == eosio::name{\"" << generation_utils::get_action_name(decl) << "\"}.value){\n";
-            ss << "size_t as = action_data_size();\n";
-            ss << "if (as <= 0) return;\n";
-            ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
-            ss << "read_action_data(buff, as);\n";
-            ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
-            int i=0;
-            for (auto param : decl->parameters()) {
-               clang::LangOptions lang_opts;
-               lang_opts.CPlusPlus = true;
-               clang::PrintingPolicy policy(lang_opts);
-               std::string tn = clang::TypeName::getFullyQualifiedName(param->getOriginalType().getNonReferenceType(), *(cg.ast_context), policy);
-               ss << tn << " arg" << i << "; ds >> arg" << i++ << ";\n";
+            if (cg.is_eosio_contract(decl, cg.contract_name)) {
+               ss << "extern \"C\" __attribute__((eosio_wasm_live, weak)) void __eosio_action_" << decl->getNameAsString() << "(unsigned long long r, unsigned long long c, unsigned long long a) {\n";
+               ss << "if (a == eosio::name{\"" << generation_utils::get_action_name(decl) << "\"}.value){\n";
+               ss << "size_t as = action_data_size();\n";
+               ss << "if (as <= 0) return;\n";
+               ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
+               ss << "read_action_data(buff, as);\n";
+               ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
+               int i=0;
+               for (auto param : decl->parameters()) {
+                  clang::LangOptions lang_opts;
+                  lang_opts.CPlusPlus = true;
+                  clang::PrintingPolicy policy(lang_opts);
+                  auto qt = param->getOriginalType().getNonReferenceType();
+                  qt.removeLocalConst();
+                  qt.removeLocalVolatile();
+                  qt.removeLocalRestrict();
+                  std::string tn = clang::TypeName::getFullyQualifiedName(qt, *(cg.ast_context), policy);
+                  tn = tn == "_Bool" ? "bool" : tn; // TODO look out for more of these oddities
+                  ss << tn << " arg" << i << "; ds >> arg" << i++ << ";\n";
+               }
+               ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
+               for (int i=0; i < decl->parameters().size(); i++) {
+                  ss << "arg" << i;
+                  if (i < decl->parameters().size()-1)
+                     ss << ", ";
+               }
+               ss << ");";
+               ss << "}}\n";
+
+               rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
-            ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
-            for (int i=0; i < decl->parameters().size(); i++) {
-               ss << "arg" << i;
-               if (i < decl->parameters().size()-1)
-                  ss << ", ";
-            }
-            ss << ");";
-            ss << "}}\n";
-            rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
          }
          virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
             std::string method_name = decl->getNameAsString();
@@ -253,10 +313,11 @@ namespace eosio { namespace cdt {
       private:
          eosio_codegen_visitor *visitor;
          std::string main_file;
+         CompilerInstance* ci;
 
       public:
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
-            : visitor(new eosio_codegen_visitor(CI)), main_file(file) { }
+            : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
          
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
@@ -266,6 +327,7 @@ namespace eosio { namespace cdt {
             if (main_fe) {
                auto fid = src_mgr.getOrCreateFileID(f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
                visitor->set_main_fid(fid);
+               visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
                int fd;
                llvm::SmallString<128> fn;
@@ -274,6 +336,20 @@ namespace eosio { namespace cdt {
                   llvm::sys::path::system_temp_directory(true, res);
 
                   std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str()+"-tmp.cpp");
+                  for (auto inc : global_includes[main_file]) {
+                     visitor->get_rewriter().ReplaceText(inc.range, 
+                           std::string("\"")+inc.file_name+"\"\n");
+                  }
+                  // generate apply stub with abi
+                  std::stringstream ss;
+                  ss << "extern \"C\" {\n";
+                  ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
+                  std::string abi = cg.abi;
+                  ss << std::quoted(abi);
+                  ss << ")))\n";
+                  ss << "\tvoid __apply(){}\n";
+                  ss << "}";
+                  visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
                   out << std::string(RewriteBuf.begin(), RewriteBuf.end());
                   cg.tmp_files.emplace(main_file, fn.str());
@@ -289,6 +365,7 @@ namespace eosio { namespace cdt {
       class eosio_codegen_frontend_action : public ASTFrontendAction {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+            CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
             return std::make_unique<eosio_codegen_consumer>(&CI, file);
          }
    };

@@ -319,7 +319,6 @@ struct Options {
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
-   
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
@@ -688,8 +687,10 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
    if (!contract_name.empty())
       abigen_contract = contract_name;
-   else
-      abigen_contract = output_fn.substr(0, output_fn.rfind(".wasm"));
+   else {
+      std::string fn = llvm::sys::path::filename(output_fn);
+      abigen_contract = fn.substr(0, fn.rfind(".wasm"));
+   }
 
    for ( auto resource : resources ) {
       agresources.emplace_back(std::string("-R")+resource);
@@ -701,8 +702,10 @@ static Options CreateOptions(bool add_defaults=true) {
 #else
    if (fnative_opt)
       ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
-   else
+   else {
       ldopts.emplace_back("-lc++ -lc -leosio");
+      ldopts.emplace_back("--only-export \"apply:function\"");
+   }
 #endif
    return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }

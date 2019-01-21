@@ -17,6 +17,7 @@
 // Declares llvm::cl::extrahelp.
 #include "llvm/Support/CommandLine.h"
 #include <set>
+#include <sstream>
 
 using namespace clang::tooling;
 using namespace clang::ast_matchers;
@@ -174,6 +175,7 @@ int main(int argc, const char **argv) {
 
    get_abigen_ref().set_contract_name(contract_name);
    get_abigen_ref().set_resource_dirs(resource_paths);
+   codegen::get().set_contract_name(contract_name);
 
    EosioMethodMatcher eosio_method_matcher;
    EosioRecordMatcher eosio_record_matcher;
@@ -185,15 +187,19 @@ int main(int argc, const char **argv) {
 
    int tool_run = -1;
    try {
+      if (!codegen_only) {
+         tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+         if (tool_run != 0) {
+            std::cout << "abigen error\n";
+            return tool_run;
+         }
+      }
+      std::string abi_s;
+      get_abigen_ref().to_json().dump(abi_s);
+      codegen::get().set_abi(abi_s);
       if (codegen || codegen_only)
          tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
-      if (codegen_only)
-         return 0;
-      tool_run = ctool.run(newFrontendActionFactory(&finder).get());
-      if (tool_run != 0) {
-         std::cout << "abigen error\n";
-         return tool_run;
-      }
+
       std::ofstream output(abidir);
       output << pretty_print(get_abigen_ref().to_json());
       output.close();
