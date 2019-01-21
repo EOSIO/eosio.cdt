@@ -18,6 +18,15 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> fquery_opt(
+    "fquery",
+    cl::desc("Produce binaries for wasmql"),
+    cl::cat(LD_CAT));
+static cl::opt<bool> use_old_malloc_opt(
+    "use-freeing-malloc",
+    cl::desc("Set the malloc implementation to the old freeing malloc"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
 static cl::opt<std::string> eosio_imports_opt(
     "eosio-imports",
     cl::desc("Set the file for eosio.imports"),
@@ -26,6 +35,11 @@ static cl::opt<std::string> eosio_imports_opt(
 static cl::opt<std::string> pp_path_opt(
     "eosio-pp-dir",
     cl::desc("Set the directory for eosio.pp"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
+static cl::opt<bool> use_rt_opt(
+    "use-rt",
+    cl::desc("Use software compiler-rt"),
     cl::Hidden,
     cl::cat(LD_CAT));
 static cl::opt<bool> fno_lto_opt(
@@ -87,6 +101,11 @@ static cl::opt<bool> fuse_main_opt(
 
 #ifndef ONLY_LD
 /// begin c/c++ options/
+static cl::opt<bool> llvm_ir_opt(
+    "emit-ir",
+    cl::desc("Emit llvm ir"),
+    cl::Hidden,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<std::string> MF_opt(
     "MF",
     cl::desc("Write depfile output"),
@@ -380,15 +399,20 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
       if (fuse_main_opt)
          ldopts.emplace_back("-e main");
-      else
-         ldopts.emplace_back("-e apply");
+      else {
+         if (fquery_opt) {
+            // fill in base entry point for query wasm
+            ldopts.emplace_back("-e apply");
+         } else
+            ldopts.emplace_back("-e apply");
+      }
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("-zstack-size="+std::string("${EOSIO_STACK_SIZE}"));
       ldopts.emplace_back("--merge-data-segments");
    } else {
 #ifdef __APPLE__
-      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13");
+      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System");
 #endif
       ldopts.emplace_back("-static");
    }
@@ -578,6 +602,11 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-S");
       link = false;
    }
+   if (llvm_ir_opt) {
+      copts.emplace_back("-S");
+      copts.emplace_back("-emit-llvm");
+      link = false;
+   }
    if (v_opt) {
       copts.emplace_back("-v");
    }
@@ -704,8 +733,24 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
    else {
       ldopts.emplace_back("-lc++ -lc -leosio");
-      ldopts.emplace_back("--only-export \"apply:function\"");
-   }
+      if (use_old_malloc_opt)
+         ldopts.emplace_back("-leosio_malloc");
+      else
+         ldopts.emplace_back("-leosio_dsm");
+
+      if (fquery_opt) {
+         ldopts.emplace_back("--export-table");
+         ldopts.emplace_back("--only-export \"*:table\"");
+         // fill in other exports for "entry points"
+         //ldopts.emplace_back("--export ");
+         //ldopts.emplace_back("--only-export \":function\"");
+      } else {
+         ldopts.emplace_back("--only-export \"apply:function\"");
+      }
+
+   }   
+   if ((use_rt_opt && !fnative_opt) || fquery_opt)
+      ldopts.emplace_back("-lrt -lsf");
 #endif
    return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }

@@ -4,6 +4,7 @@
  */
 #pragma once
 #include "system.h"
+#include <alloca.h>
 #include <string>
 
 namespace eosio {

@@ -43,6 +43,7 @@ extern "C" {
   *  @return iterator to the newly created table row
   *  @post a new entry is created in the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_store_i64(uint64_t scope, capi_name table, capi_name payer, uint64_t id,  const void* data, uint32_t len);
 
 /**
@@ -59,6 +60,7 @@ int32_t db_store_i64(uint64_t scope, capi_name table, capi_name payer, uint64_t 
   *  @pre `iterator` points to an existing table row in the table
   *  @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
   */
+__attribute__((eosio_wasm_import))
 void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t len);
 
 /**
@@ -78,6 +80,7 @@ void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t
   *  db_remove_i64(itr);
   *  @endcode
   */
+__attribute__((eosio_wasm_import))
 void db_remove_i64(int32_t iterator);
 
 /**
@@ -102,6 +105,7 @@ void db_remove_i64(int32_t iterator);
   *  db_get_i64(itr, value, len);
   *  @endcode
   */
+__attribute__((eosio_wasm_import))
 int32_t db_get_i64(int32_t iterator, const void* data, uint32_t len);
 
 /**
@@ -125,6 +129,7 @@ int32_t db_get_i64(int32_t iterator, const void* data, uint32_t len);
   *  eosio_assert(end_itr < -1, "Charlie was not the last entry in the table");
   *  @endcode
   */
+__attribute__((eosio_wasm_import))
 int32_t db_next_i64(int32_t iterator, uint64_t* primary);
 
 /**
@@ -145,6 +150,7 @@ int32_t db_next_i64(int32_t iterator, uint64_t* primary);
   *  int32_t  itr_prev = db_previous_i64(itr, &prim);
   *  @endcode
   */
+__attribute__((eosio_wasm_import))
 int32_t db_previous_i64(int32_t iterator, uint64_t* primary);
 
 /**
@@ -164,6 +170,7 @@ int32_t db_previous_i64(int32_t iterator, uint64_t* primary);
   *  int itr = db_find_i64(receiver, receiver, table1, "charlie"_n);
   *  @endcode
   */
+__attribute__((eosio_wasm_import))
 int32_t db_find_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
@@ -178,6 +185,7 @@ int32_t db_find_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id
   *  @param id - The primary key used to determine the lowerbound
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_lowerbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
@@ -192,6 +200,7 @@ int32_t db_lowerbound_i64(capi_name code, uint64_t scope, capi_name table, uint6
   *  @param id - The primary key used to determine the upperbound
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_upperbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id);
 
 /**
@@ -204,6 +213,7 @@ int32_t db_upperbound_i64(capi_name code, uint64_t scope, capi_name table, uint6
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_end_i64(capi_name code, uint64_t scope, capi_name table);
 
 /**
@@ -219,6 +229,7 @@ int32_t db_end_i64(capi_name code, uint64_t scope, capi_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint64_t* secondary);
 
 /**
@@ -232,6 +243,7 @@ int32_t db_idx64_store(uint64_t scope, capi_name table, capi_name payer, uint64_
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
+__attribute__((eosio_wasm_import))
 void db_idx64_update(int32_t iterator, capi_name payer, const uint64_t* secondary);
 
 /**
@@ -243,6 +255,7 @@ void db_idx64_update(int32_t iterator, capi_name payer, const uint64_t* secondar
   *  @pre `iterator` points to an existing table row in the table
   *  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
   */
+__attribute__((eosio_wasm_import))
 void db_idx64_remove(int32_t iterator);
 
 /**
@@ -256,6 +269,7 @@ void db_idx64_remove(int32_t iterator);
   *  @pre `iterator` points to an existing table row in the table
   *  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_next(int32_t iterator, uint64_t* primary);
 
 /**
@@ -269,6 +283,7 @@ int32_t db_idx64_next(int32_t iterator, uint64_t* primary);
   *  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
   *  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_previous(int32_t iterator, uint64_t* primary);
 
 /**
@@ -284,6 +299,7 @@ int32_t db_idx64_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_find_primary(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t primary);
 
 /**
@@ -299,6 +315,7 @@ int32_t db_idx64_find_primary(capi_name code, uint64_t scope, capi_name table, u
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint64_t* secondary, uint64_t* primary);
 
 /**
@@ -316,6 +333,7 @@ int32_t db_idx64_find_secondary(capi_name code, uint64_t scope, capi_name table,
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_lowerbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary);
 
 /**
@@ -333,6 +351,7 @@ int32_t db_idx64_lowerbound(capi_name code, uint64_t scope, capi_name table, uin
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_upperbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary);
 
 /**
@@ -345,6 +364,7 @@ int32_t db_idx64_upperbound(capi_name code, uint64_t scope, capi_name table, uin
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx64_end(capi_name code, uint64_t scope, capi_name table);
 
 
@@ -362,6 +382,7 @@ int32_t db_idx64_end(capi_name code, uint64_t scope, capi_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* secondary);
 
 /**
@@ -375,6 +396,7 @@ int32_t db_idx128_store(uint64_t scope, capi_name table, capi_name payer, uint64
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
+__attribute__((eosio_wasm_import))
 void db_idx128_update(int32_t iterator, capi_name payer, const uint128_t* secondary);
 
 /**
@@ -386,6 +408,7 @@ void db_idx128_update(int32_t iterator, capi_name payer, const uint128_t* second
   *  @pre `iterator` points to an existing table row in the table
   *  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
   */
+__attribute__((eosio_wasm_import))
 void db_idx128_remove(int32_t iterator);
 
 /**
@@ -399,6 +422,7 @@ void db_idx128_remove(int32_t iterator);
   *  @pre `iterator` points to an existing table row in the table
   *  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_next(int32_t iterator, uint64_t* primary);
 
 /**
@@ -412,6 +436,7 @@ int32_t db_idx128_next(int32_t iterator, uint64_t* primary);
   *  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
   *  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_previous(int32_t iterator, uint64_t* primary);
 
 /**
@@ -427,6 +452,7 @@ int32_t db_idx128_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_find_primary(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t primary);
 
 /**
@@ -442,6 +468,7 @@ int32_t db_idx128_find_primary(capi_name code, uint64_t scope, capi_name table, 
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint128_t* secondary, uint64_t* primary);
 
 /**
@@ -459,6 +486,7 @@ int32_t db_idx128_find_secondary(capi_name code, uint64_t scope, capi_name table
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_lowerbound(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t* primary);
 
 /**
@@ -476,6 +504,7 @@ int32_t db_idx128_lowerbound(capi_name code, uint64_t scope, capi_name table, ui
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_upperbound(capi_name code, uint64_t scope, capi_name table, uint128_t* secondary, uint64_t* primary);
 
 /**
@@ -488,6 +517,7 @@ int32_t db_idx128_upperbound(capi_name code, uint64_t scope, capi_name table, ui
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx128_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
@@ -504,6 +534,7 @@ int32_t db_idx128_end(capi_name code, uint64_t scope, capi_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* data, uint32_t data_len );
 
 /**
@@ -518,6 +549,7 @@ int32_t db_idx256_store(uint64_t scope, capi_name table, capi_name payer, uint64
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key
   */
+__attribute__((eosio_wasm_import))
 void db_idx256_update(int32_t iterator, capi_name payer, const uint128_t* data, uint32_t data_len);
 
 /**
@@ -529,6 +561,7 @@ void db_idx256_update(int32_t iterator, capi_name payer, const uint128_t* data, 
   *  @pre `iterator` points to an existing table row in the table
   *  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
   */
+__attribute__((eosio_wasm_import))
 void db_idx256_remove(int32_t iterator);
 
 /**
@@ -542,6 +575,7 @@ void db_idx256_remove(int32_t iterator);
   *  @pre `iterator` points to an existing table row in the table
   *  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_next(int32_t iterator, uint64_t* primary);
 
 /**
@@ -555,6 +589,7 @@ int32_t db_idx256_next(int32_t iterator, uint64_t* primary);
   *  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
   *  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_previous(int32_t iterator, uint64_t* primary);
 
 /**
@@ -571,6 +606,7 @@ int32_t db_idx256_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_find_primary(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t primary);
 
 /**
@@ -587,6 +623,7 @@ int32_t db_idx256_find_primary(capi_name code, uint64_t scope, capi_name table, 
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
@@ -605,6 +642,7 @@ int32_t db_idx256_find_secondary(capi_name code, uint64_t scope, capi_name table
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_lowerbound(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
@@ -623,6 +661,7 @@ int32_t db_idx256_lowerbound(capi_name code, uint64_t scope, capi_name table, ui
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_upperbound(capi_name code, uint64_t scope, capi_name table, uint128_t* data, uint32_t data_len, uint64_t* primary);
 
 /**
@@ -635,6 +674,7 @@ int32_t db_idx256_upperbound(capi_name code, uint64_t scope, capi_name table, ui
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx256_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
@@ -650,6 +690,7 @@ int32_t db_idx256_end(capi_name code, uint64_t scope, capi_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const double* secondary);
 
 /**
@@ -663,6 +704,7 @@ int32_t db_idx_double_store(uint64_t scope, capi_name table, capi_name payer, ui
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
+__attribute__((eosio_wasm_import))
 void db_idx_double_update(int32_t iterator, capi_name payer, const double* secondary);
 
 /**
@@ -674,6 +716,7 @@ void db_idx_double_update(int32_t iterator, capi_name payer, const double* secon
   *  @pre `iterator` points to an existing table row in the table
   *  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
   */
+__attribute__((eosio_wasm_import))
 void db_idx_double_remove(int32_t iterator);
 
 /**
@@ -687,6 +730,7 @@ void db_idx_double_remove(int32_t iterator);
   *  @pre `iterator` points to an existing table row in the table
   *  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_next(int32_t iterator, uint64_t* primary);
 
 /**
@@ -700,6 +744,7 @@ int32_t db_idx_double_next(int32_t iterator, uint64_t* primary);
   *  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
   *  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_previous(int32_t iterator, uint64_t* primary);
 
 /**
@@ -715,6 +760,7 @@ int32_t db_idx_double_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_find_primary(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t primary);
 
 /**
@@ -730,6 +776,7 @@ int32_t db_idx_double_find_primary(capi_name code, uint64_t scope, capi_name tab
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_find_secondary(capi_name code, uint64_t scope, capi_name table, const double* secondary, uint64_t* primary);
 
 /**
@@ -747,6 +794,7 @@ int32_t db_idx_double_find_secondary(capi_name code, uint64_t scope, capi_name t
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_lowerbound(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t* primary);
 
 /**
@@ -764,6 +812,7 @@ int32_t db_idx_double_lowerbound(capi_name code, uint64_t scope, capi_name table
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_upperbound(capi_name code, uint64_t scope, capi_name table, double* secondary, uint64_t* primary);
 
 /**
@@ -776,6 +825,7 @@ int32_t db_idx_double_upperbound(capi_name code, uint64_t scope, capi_name table
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_double_end(capi_name code, uint64_t scope, capi_name table);
 
 /**
@@ -791,6 +841,7 @@ int32_t db_idx_double_end(capi_name code, uint64_t scope, capi_name table);
   *  @return iterator to the newly created table row
   *  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const long double* secondary);
 
 /**
@@ -804,6 +855,7 @@ int32_t db_idx_long_double_store(uint64_t scope, capi_name table, capi_name paye
   *  @pre `iterator` points to an existing table row in the table
   *  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
   */
+__attribute__((eosio_wasm_import))
 void db_idx_long_double_update(int32_t iterator, capi_name payer, const long double* secondary);
 
 /**
@@ -815,6 +867,7 @@ void db_idx_long_double_update(int32_t iterator, capi_name payer, const long dou
   *  @pre `iterator` points to an existing table row in the table
   *  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
   */
+__attribute__((eosio_wasm_import))
 void db_idx_long_double_remove(int32_t iterator);
 
 /**
@@ -828,6 +881,7 @@ void db_idx_long_double_remove(int32_t iterator);
   *  @pre `iterator` points to an existing table row in the table
   *  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_next(int32_t iterator, uint64_t* primary);
 
 /**
@@ -841,6 +895,7 @@ int32_t db_idx_long_double_next(int32_t iterator, uint64_t* primary);
   *  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
   *  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_previous(int32_t iterator, uint64_t* primary);
 
 /**
@@ -856,6 +911,7 @@ int32_t db_idx_long_double_previous(int32_t iterator, uint64_t* primary);
   *  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
   *  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_find_primary(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t primary);
 
 /**
@@ -871,6 +927,7 @@ int32_t db_idx_long_double_find_primary(capi_name code, uint64_t scope, capi_nam
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_find_secondary(capi_name code, uint64_t scope, capi_name table, const long double* secondary, uint64_t* primary);
 
 /**
@@ -888,6 +945,7 @@ int32_t db_idx_long_double_find_secondary(capi_name code, uint64_t scope, capi_n
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_lowerbound(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t* primary);
 
 /**
@@ -905,6 +963,7 @@ int32_t db_idx_long_double_lowerbound(capi_name code, uint64_t scope, capi_name 
   *  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
   *  @return iterator to the found table row or the end iterator of the table if the table row could not be found
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name table, long double* secondary, uint64_t* primary);
 
 /**
@@ -917,6 +976,7 @@ int32_t db_idx_long_double_upperbound(capi_name code, uint64_t scope, capi_name 
   *  @param table - The table name
   *  @return end iterator of the table
   */
+__attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@}
