@@ -1,6 +1,5 @@
 #include <memory>
 #include "system.hpp"
-#include "print.hpp"
 
 #ifdef EOSIO_NATIVE
    extern "C" {
@@ -26,7 +25,6 @@ namespace eosio {
          heap = align(*(char**)heap_base, 8);
          last_ptr = heap;
          next_page = __builtin_wasm_current_memory();
-         pp = 1004;
       }
        
       char* operator()(size_t sz, uint8_t align_amt=8) {
@@ -50,7 +48,6 @@ namespace eosio {
       char*  last_ptr;
       size_t offset;
       size_t next_page;
-      size_t pp;
    }; 
    dsmalloc _dsmalloc;
 } // ns eosio
