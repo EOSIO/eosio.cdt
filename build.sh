@@ -145,16 +145,21 @@ if [ "$ARCH" == "Linux" ]; then
          printf "\\nUnsupported Linux Distribution. Exiting now.\\n\\n"
          exit 1
    esac
-   . "$FILE" # Execute OS specific build file
 fi
 
 if [ "$ARCH" == "Darwin" ]; then
+   FILE="${CURRENT_DIR}/scripts/eosio_build_darwin.sh"
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
 else
    FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
 fi
+
+pushd $SRC_LOCATION &> /dev/null
+. "$FILE" # Execute OS specific build file
+popd &> /dev/null
+
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
 MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
@@ -170,7 +175,7 @@ fi
 printf "\\n========================================================================\\n"
 printf "======================= Starting EOSIO.CDT Build =======================\\n"
 
-$CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt ../
+$CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt "${CURRENT_DIR}"
 if [ $? -ne 0 ]; then exit -1; fi
 make -j$CORES
 if [ $? -ne 0 ]; then exit -1; fi
