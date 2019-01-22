@@ -1,5 +1,7 @@
 #! /bin/bash
 
+OPT_LOCATION=$HOME/opt
+
 binaries=(
    eosio-ranlib
    eosio-ar
@@ -43,7 +45,7 @@ if [ -d $OPT_LOCATION/eosio.cdt ]; then
       case $yn in
          [Yy]* )
             if [ "$(id -u)" -ne 0 ]; then
-               printf "\n\tThis requires sudo, please run ./uninstall.sh with sudo\n\n"
+               printf "\nThis requires sudo, please run ./uninstall.sh with sudo\n\n"
                exit -1
             fi
             pushd $HOME &> /dev/null
@@ -54,6 +56,9 @@ if [ -d $OPT_LOCATION/eosio.cdt ]; then
             for binary in ${binaries[@]}; do
                rm ${binary}
             done
+            popd &> /dev/null
+            pushd lib/cmake &> /dev/null
+            rm -rf eosio.cdt
             popd &> /dev/null
             break;;
          [Nn]* )
