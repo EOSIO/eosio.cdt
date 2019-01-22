@@ -203,6 +203,14 @@ namespace eosio { namespace cdt {
          bool is_type_of(const QualType& qt, const std::string& t, const std::string& ns="") {
             return true;
          }
+
+         template <size_t N>
+         void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
+            FullSourceLoc full(loc, inst.getSourceManager());
+            unsigned id = inst.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err);
+            inst.getDiagnostics().Report(full, id);
+         }
+
          std::string get_base_type(const QualType& qt) {
             std::istringstream ss(qt.getAsString());
             std::vector<std::string> results((std::istream_iterator<std::string>(ss)),
@@ -216,6 +224,7 @@ namespace eosio { namespace cdt {
             }
             return "";
          }
+
          virtual bool VisitFunctionTemplateDecl(FunctionTemplateDecl* decl) {
             if (decl->getNameAsString() == "operator<<") {
                if (decl->getTemplatedDecl()->getNumParams() == 2) {
@@ -229,13 +238,18 @@ namespace eosio { namespace cdt {
             }
             return true;
          }
+
          void create_action_dispatch(CXXMethodDecl* decl) {
             constexpr static uint32_t max_stack_size = 512;
             std::stringstream ss;
             codegen& cg = codegen::get();
+            std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "extern \"C\" __attribute__((eosio_wasm_live, weak)) void __eosio_action_" << decl->getNameAsString() << "(unsigned long long r, unsigned long long c, unsigned long long a) {\n";
-               ss << "if (a == eosio::name{\"" << generation_utils::get_action_name(decl) << "\"}.value){\n";
+               ss << "extern \"C\" __attribute__((eosio_wasm_action(\"";
+               ss << generation_utils::get_action_name(decl);
+               ss << ":";
+               ss << "__eosio_action_" << nm;
+               ss << "\"))) void __eosio_action_" << nm << "(unsigned long long r, unsigned long long c, unsigned long long a) {\n";
                ss << "size_t as = action_data_size();\n";
                ss << "if (as <= 0) return;\n";
                ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
@@ -261,17 +275,22 @@ namespace eosio { namespace cdt {
                      ss << ", ";
                }
                ss << ");";
-               ss << "}}\n";
+               ss << "}\n";
 
                rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
          }
+
+
          virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
             std::string method_name = decl->getNameAsString();
             if (decl->isEosioAction()) {
                method_name = generation_utils::get_action_name(decl);
-               if (cg.actions.count(method_name) == 0)
-                  create_action_dispatch(decl);
+               if (cg.actions.count(decl->getNameAsString()) == 0)
+                  if (cg.actions.count(method_name) == 0)
+                     create_action_dispatch(decl);
+                  else
+                     emitError(*ci, decl->getLocation(), "action already defined elsewhere");
                cg.actions.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
                cg.actions.insert(method_name);
                for (auto param : decl->parameters()) {
@@ -343,11 +362,18 @@ namespace eosio { namespace cdt {
                   // generate apply stub with abi
                   std::stringstream ss;
                   ss << "extern \"C\" {\n";
+                  ss << "void __eosio_action_hi_hello(unsigned long long, unsigned long long, unsigned long long);";
                   ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                   std::string abi = cg.abi;
                   ss << std::quoted(abi);
                   ss << ")))\n";
-                  ss << "\tvoid __apply(){}\n";
+                  ss << "\tvoid apply(unsigned long long r, unsigned long long c, unsigned long long a){";
+                  ss << "if (r == c) {";
+                  ss << "__eosio_action_hi_hello(r,c,a);";
+                  ss << "} else {";
+                  ss << " if (c == 3){";
+                  ss << "__eosio_action_hi_hello(r,c,a);}}";
+                  ss << "}\n";
                   ss << "}";
                   visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);

@@ -199,10 +199,6 @@ int main(int argc, const char **argv) {
       codegen::get().set_abi(abi_s);
       if (codegen || codegen_only)
          tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
-
-      std::ofstream output(abidir);
-      output << pretty_print(get_abigen_ref().to_json());
-      output.close();
    } catch (std::exception& ex) {
       std::cout << ex.what() << "\n";
       tool_run = -1;

@@ -121,6 +121,9 @@ void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& 
    mod.data_segments.push_back(&ds);
 }
 
+void construct_apply( Module& mod ) {
+}
+
 void WriteBufferToFile(string_view filename,
                        const OutputBuffer& buffer) {
   buffer.WriteToFile(filename);
