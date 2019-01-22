@@ -33,17 +33,17 @@
 OPT_LOCATION=$HOME/opt
 BIN_LOCATION=$HOME/bin
 LIB_LOCATION=$HOME/lib
+mkdir -p $LIB_LOCATION
 
 CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${CWD}" != "${PWD}" ]; then
-   printf "\\n\\tPlease cd into directory %s to run this script.\\n \\tExiting now.\\n\\n" "${CWD}"
+   printf "\\nPlease cd into directory %s to run this script.\\n \Exiting now.\\n\\n" "${CWD}"
    exit 1
 fi
 
 BUILD_DIR="${PWD}/build"
 CMAKE_BUILD_TYPE=Release
 TIME_BEGIN=$( date -u +%s )
-INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt
 VERSION=2.0
 
 txtbld=$(tput bold)
@@ -57,7 +57,7 @@ create_symlink() {
 }
 
 install_symlinks() {
-   printf "\\n\\tInstalling EOSIO.CDT Binary Symlinks\\n\\n"
+   printf "\\nInstalling EOSIO.CDT Binary Symlinks\\n\\n"
    create_symlink "llvm-ranlib eosio-ranlib"
    create_symlink "llvm-ar eosio-ar"
    create_symlink "llvm-objdump eosio-objdump"
@@ -80,19 +80,17 @@ create_cmake_symlink() {
    popd &> /dev/null
 }
 if [ ! -d "${BUILD_DIR}" ]; then
-   printf "\\n\\tError, build.sh has not ran.  Please run ./build.sh first!\\n\\n"
+   printf "\\n\Error, build.sh has not ran.  Please run ./build.sh first!\\n\\n"
    exit -1
 fi
 
-if ! pushd "${BUILD_DIR}"
-then
-   printf "Unable to enter build directory %s.\\n Exiting now.\\n" "${BUILD_DIR}"
+if ! pushd "${BUILD_DIR}"; then
+   printf "Unable to enter build directory ${BUILD_DIR}.\\n Exiting now.\\n"
    exit 1;
 fi
 
-if ! make install
-then
-   printf "\\n\\t>>>>>>>>>>>>>>>>>>>> MAKE installing EOSIO has exited with the above error.\\n\\n"
+if ! make install; then
+   printf "\\n>>>>>>>>>>>>>>>>>>>> MAKE installing EOSIO has exited with the above error.\\n\\n"
    exit -1
 fi
 popd &> /dev/null 
@@ -100,17 +98,17 @@ popd &> /dev/null
 install_symlinks   
 create_cmake_symlink "eosio.cdt-config.cmake"
 
-printf "\n${bldred}\t      ___           ___           ___                       ___\n"
-printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
-printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
-printf "\t   /  /:/ /\\     /  /:/\\:\\     /  /:/ /\\    /  /:/       /  /:/\\:\\ \n"
-printf "\t  /  /:/ /:/_   /  /:/  \\:\\   /  /:/ /::\\  /__/::\\      /  /:/  \\:\\ \n"
-printf "\t /__/:/ /:/ /\\ /__/:/ \\__\\:\\ /__/:/ /:/\\:\\ \\__\\/\\:\\__  /__/:/ \\__\\:\\ \n"
-printf "\t \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  \\:\\ /  /:/ \n"
-printf "\t  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
-printf "\t   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
-printf "\t    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
-printf "\t     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
+printf "\n${bldred}      ___           ___           ___                       ___\n"
+printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
+printf "    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
+printf "   /  /:/ /\\     /  /:/\\:\\     /  /:/ /\\    /  /:/       /  /:/\\:\\ \n"
+printf "  /  /:/ /:/_   /  /:/  \\:\\   /  /:/ /::\\  /__/::\\      /  /:/  \\:\\ \n"
+printf " /__/:/ /:/ /\\ /__/:/ \\__\\:\\ /__/:/ /:/\\:\\ \\__\\/\\:\\__  /__/:/ \\__\\:\\ \n"
+printf " \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  \\:\\ /  /:/ \n"
+printf "  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
+printf "   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
+printf "    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
+printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
 
-printf "\\tFor more information:\\n"
-printf "\\tEOSIO website: https://eos.io\\n"
+printf "For more information:\\n"
+printf "EOSIO website: https://eos.io\\n"
