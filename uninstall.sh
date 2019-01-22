@@ -17,7 +17,7 @@ binaries=(
 )
 
 if [ -d "/usr/local/eosio.cdt" ]; then
-   printf "\tDo you wish to remove this install? (requires sudo)\n"
+   printf "Do you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
          [Yy]* )
@@ -33,14 +33,14 @@ if [ -d "/usr/local/eosio.cdt" ]; then
             popd &> /dev/null
             break;;
          [Nn]* ) 
-            printf "\tAborting uninstall\n\n"
+            printf "Aborting uninstall\n\n"
             exit -1;;
       esac
    done
 fi
 
 if [ -d $OPT_LOCATION/eosio.cdt ]; then
-   printf "\tDo you wish to remove this install? (requires sudo)\n"
+   printf "Do you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
          [Yy]* )
@@ -69,7 +69,7 @@ if [ -d $OPT_LOCATION/eosio.cdt ]; then
 fi
 
 if [ -d "/usr/local/eosio.wasmsdk" ]; then
-   printf "\tDo you wish to remove this install? (requires sudo)\n"
+   printf "Do you wish to remove this install? (requires sudo)\n"
    select yn in "Yes" "No"; do
       case $yn in
          [Yy]* )
@@ -83,7 +83,7 @@ if [ -d "/usr/local/eosio.wasmsdk" ]; then
             break;;
 
          [Nn]* ) 
-            printf "\tAborting uninstall\n\n"
+            printf "Aborting uninstall\n\n"
             exit -1;;
       esac
    done
