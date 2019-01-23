@@ -362,18 +362,11 @@ namespace eosio { namespace cdt {
                   // generate apply stub with abi
                   std::stringstream ss;
                   ss << "extern \"C\" {\n";
-                  ss << "void __eosio_action_hi_hello(unsigned long long, unsigned long long, unsigned long long);";
                   ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                   std::string abi = cg.abi;
                   ss << std::quoted(abi);
                   ss << ")))\n";
-                  ss << "\tvoid apply(unsigned long long r, unsigned long long c, unsigned long long a){";
-                  ss << "if (r == c) {";
-                  ss << "__eosio_action_hi_hello(r,c,a);";
-                  ss << "} else {";
-                  ss << " if (c == 3){";
-                  ss << "__eosio_action_hi_hello(r,c,a);}}";
-                  ss << "}\n";
+                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){}\n";
                   ss << "}";
                   visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
