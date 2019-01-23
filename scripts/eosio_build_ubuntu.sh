@@ -67,7 +67,7 @@ fi
 
 # llvm-4.0 is installed into /usr/lib/llvm-4.0
 DEP_ARRAY=(
-	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev doxygen graphviz \
+	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
 	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
 	autoconf libtool curl zlib1g-dev sudo ruby
 )

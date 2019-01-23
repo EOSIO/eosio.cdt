@@ -25,25 +25,12 @@ export CMAKE_VERSION_MAJOR=3
 export CMAKE_VERSION_MINOR=13
 export CMAKE_VERSION_PATCH=2
 export CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
-export MONGODB_VERSION=3.6.3
-export MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
-export MONGODB_CONF=${ETC_LOCATION}/mongod.conf
-export MONGODB_LOG_LOCATION=${VAR_LOCATION}/log/mongodb
-export MONGODB_LINK_LOCATION=${OPT_LOCATION}/mongodb
-export MONGODB_DATA_LOCATION=${DATA_LOCATION}/mongodb
-export MONGO_C_DRIVER_VERSION=1.13.0
-export MONGO_C_DRIVER_ROOT=${SRC_LOCATION}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}
-export MONGO_CXX_DRIVER_VERSION=3.4.0
-export MONGO_CXX_DRIVER_ROOT=${SRC_LOCATION}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}
 export BOOST_VERSION_MAJOR=1
 export BOOST_VERSION_MINOR=67
 export BOOST_VERSION_PATCH=0
 export BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
 export BOOST_ROOT=${SRC_LOCATION}/boost_${BOOST_VERSION}
 export BOOST_LINK_LOCATION=${OPT_LOCATION}/boost
-export LLVM_VERSION=release_40
-export LLVM_ROOT=${OPT_LOCATION}/llvm
-export LLVM_DIR=${LLVM_ROOT}/lib/cmake/llvm
 export DOXYGEN_VERSION=1_8_14
 export DOXYGEN_ROOT=${SRC_LOCATION}/doxygen-${DOXYGEN_VERSION}
 export TINI_VERSION=0.18.0
@@ -57,8 +44,6 @@ mkdir -p $VAR_LOCATION
 mkdir -p $BIN_LOCATION
 mkdir -p $VAR_LOCATION/log
 mkdir -p $ETC_LOCATION
-mkdir -p $MONGODB_LOG_LOCATION
-mkdir -p $MONGODB_DATA_LOCATION
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${CURRENT_DIR}" == "${PWD}" ]; then
@@ -153,7 +138,7 @@ if [ "$ARCH" == "Darwin" ]; then
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
 else
-   FREE_MEM=`LANG=C free | grep "Mem:" | awk '{print $4}'`
+   FREE_MEM=`LC_ALL=C free | grep "Mem:" | awk '{print $4}'`
 fi
 
 pushd $SRC_LOCATION &> /dev/null
@@ -183,14 +168,17 @@ popd &> /dev/null
 
 TIME_END=$(( $(date -u +%s) - $TIME_BEGIN ))
 
-printf "\n\n _______  _______  _______ _________ _______\n"
-printf '(  ____ \(  ___  )(  ____ \\\\__   __/(  ___  )\n'
-printf "| (    \/| (   ) || (    \/   ) (   | (   ) |\n"
-printf "| (__    | |   | || (_____    | |   | |   | |\n"
-printf "|  __)   | |   | |(_____  )   | |   | |   | |\n"
-printf "| (      | |   | |      ) |   | |   | |   | |\n"
-printf "| (____/\| (___) |/\____) |___) (___| (___) |\n"
-printf "(_______/(_______)\_______)\_______/(_______)\n\n"
+printf "\n${bldred}\t      ___           ___           ___                       ___\n"
+printf "\t     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
+printf "\t    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
+printf "\t   /  /:/ /\\     /  /:/\\:\\     /  /:/ /\\    /  /:/       /  /:/\\:\\ \n"
+printf "\t  /  /:/ /:/_   /  /:/  \\:\\   /  /:/ /::\\  /__/::\\      /  /:/  \\:\\ \n"
+printf "\t /__/:/ /:/ /\\ /__/:/ \\__\\:\\ /__/:/ /:/\\:\\ \\__\\/\\:\\__  /__/:/ \\__\\:\\ \n"
+printf "\t \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  \\:\\ /  /:/ \n"
+printf "\t  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
+printf "\t   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
+printf "\t    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
+printf "\t     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
 
 printf "\\nEOSIO.CDT has been successfully built. %02d:%02d:%02d\\n\\n" $(($TIME_END/3600)) $(($TIME_END%3600/60)) $(($TIME_END%60))
 printf "${txtrst}==============================================================================================\\n"

@@ -13,9 +13,9 @@ DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
 DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
 DEP_ARRAY=( 
-	sudo procps which gcc72 gcc72-c++ autoconf automake libtool make doxygen.x86_64 graphviz.x86_64 \
+	sudo procps which gcc72 gcc72-c++ autoconf automake libtool make \
     bzip2 bzip2-devel openssl-devel gmp gmp-devel libstdc++72 python27 python27-devel python34-devel \
-    libedit-devel ncurses-devel swig wget file
+    libedit-devel ncurses-devel swig file
 )
 COUNT=1
 DISPLAY=""

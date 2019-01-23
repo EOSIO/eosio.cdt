@@ -125,9 +125,6 @@ while read -r name tester testee brewname uri; do
 			continue
 		fi
 	fi
-	if [ "${brewname}" = "gettext" ]; then
-		PERMISSION_GETTEXT=1
-	fi
 	DEPS=$DEPS"${brewname},"
 	DISPLAY="${DISPLAY}${COUNT}. ${name}\\n"
 	printf " - %s ${bldred}NOT${txtrst} found.\\n" "${name}"
@@ -200,6 +197,3 @@ if [ $COUNT -gt 1 ]; then
 else
 	printf "No required Home Brew dependencies to install.\\n"
 fi
-
-# Failed to find Gettext libintl (missing: Intl_INCLUDE_DIR); known bug
-brew unlink gettext 2> /dev/null && brew link --force gettext
