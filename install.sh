@@ -57,7 +57,7 @@ create_symlink() {
 }
 
 install_symlinks() {
-   printf "\\nInstalling EOSIO.CDT Binary Symlinks\\n\\n"
+   printf "\\nInstalling EOSIO.CDT Binary Symlinks...\\n\\n"
    create_symlink "llvm-ranlib eosio-ranlib"
    create_symlink "llvm-ar eosio-ar"
    create_symlink "llvm-objdump eosio-objdump"
@@ -95,7 +95,8 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-install_symlinks   
+install_symlinks
+printf "\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n\\n"
 create_cmake_symlink "eosio.cdt-config.cmake"
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
@@ -110,5 +111,5 @@ printf "   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:
 printf "    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
 printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
 
-printf "For more information:\\n"
+printf "\\nFor more information:\\n"
 printf "EOSIO website: https://eos.io\\n"
