@@ -76,7 +76,7 @@ install_symlinks() {
 create_cmake_symlink() {
    mkdir -p $LIB_LOCATION/cmake/eosio.cdt
    pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
-   ln -sf $LIB_LOCATION/cmake/eosio.cdt/$1 $1
+   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $1
    popd &> /dev/null
 }
 if [ ! -d "${BUILD_DIR}" ]; then
