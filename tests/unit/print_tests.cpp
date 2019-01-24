@@ -69,10 +69,10 @@ EOSIO_TEST_BEGIN(print_test)
 
    // ------------------------
    // inline void print(float)
-   float f{};
-   for(float i{}; i < 1; f += 0.01) {
-      CHECK_PRINT( [&](std::string){return std::to_string{f};}, [&](){eosio::print(f);} );
-   }
+   // float f{};
+   // for(float i{}; i < 1; f += 0.01) {
+   //    CHECK_PRINT( [&](std::string){return std::to_string{f};}, [&](){eosio::print(f);} );
+   // }
 
    // s = ;
    // CHECK_PRINT( "", [&](){eosio::print(s.c_str());} );
