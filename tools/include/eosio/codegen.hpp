@@ -249,7 +249,7 @@ namespace eosio { namespace cdt {
                ss << generation_utils::get_action_name(decl);
                ss << ":";
                ss << "__eosio_action_" << nm;
-               ss << "\"))) void __eosio_action_" << nm << "(unsigned long long r, unsigned long long c, unsigned long long a) {\n";
+               ss << "\"))) void __eosio_action_" << nm << "(unsigned long long r, unsigned long long c) {\n";
                ss << "size_t as = action_data_size();\n";
                ss << "if (as <= 0) return;\n";
                ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
