@@ -51,9 +51,8 @@ bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
 create_symlink() {
-   pushd $BIN_LOCATION &> /dev/null
-   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $2
-   popd &> /dev/null
+   printf "ln -sf ${OPT_LOCATION}/eosio/bin/${1} ${BIN_LOCATION}/${2}\\n"
+   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $BIN_LOCATION/$2
 }
 
 install_symlinks() {
@@ -71,6 +70,7 @@ install_symlinks() {
    create_symlink "eosio-abidiff eosio-abidiff"
    create_symlink "eosio-wasm2wast eosio-wasm2wast"
    create_symlink "eosio-wast2wasm eosio-wast2wasm"
+   printf " - Installed binaries into ${BIN_LOCATION}!"
 }
 
 create_cmake_symlink() {
@@ -97,6 +97,7 @@ popd &> /dev/null
 install_symlinks
 printf "\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n\\n"
 create_cmake_symlink "eosio.cdt-config.cmake"
+printf " - Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!"
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
