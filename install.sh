@@ -51,12 +51,12 @@ bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
 create_symlink() {
-   printf "ln -sf ${OPT_LOCATION}/eosio/bin/${1} ${BIN_LOCATION}/${2}\\n"
+   printf " ln -sf ${OPT_LOCATION}/eosio/bin/${1} ${BIN_LOCATION}/${2}\\n"
    ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $BIN_LOCATION/$2
 }
 
 install_symlinks() {
-   printf "\\nInstalling EOSIO.CDT Binary Symlinks...\\n\\n"
+   printf "\\nInstalling EOSIO.CDT Binary Symlinks...\\n"
    create_symlink "llvm-ranlib eosio-ranlib"
    create_symlink "llvm-ar eosio-ar"
    create_symlink "llvm-objdump eosio-objdump"
@@ -70,11 +70,12 @@ install_symlinks() {
    create_symlink "eosio-abidiff eosio-abidiff"
    create_symlink "eosio-wasm2wast eosio-wasm2wast"
    create_symlink "eosio-wast2wasm eosio-wast2wasm"
-   printf " - Installed binaries into ${BIN_LOCATION}!"
+   printf "Installed binaries into ${BIN_LOCATION}!"
 }
 
 create_cmake_symlink() {
    mkdir -p $LIB_LOCATION/cmake/eosio.cdt
+   printf " ln -sf ${OPT_LOCATION}/eosio.cdt/lib/cmake/eosio.cdt/${1} ${LIB_LOCATION}/cmake/eosio.cdt/${1}\\n"
    ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $LIB_LOCATION/cmake/eosio.cdt/$1
 }
 
@@ -83,7 +84,7 @@ if [ ! -d "${BUILD_DIR}" ]; then
    exit -1
 fi
 
-if ! pushd "${BUILD_DIR}"; then
+if ! pushd "${BUILD_DIR}" &> /dev/null; then
    printf "Unable to enter build directory ${BUILD_DIR}.\\n Exiting now.\\n"
    exit 1;
 fi
@@ -95,9 +96,9 @@ fi
 popd &> /dev/null 
 
 install_symlinks
-printf "\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n\\n"
+printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
 create_cmake_symlink "eosio.cdt-config.cmake"
-printf " - Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!"
+printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
@@ -109,7 +110,9 @@ printf " \\  \\:\\/:/ /:/ \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/    \\  \\:\\/\\ \\  
 printf "  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:\\  /:/ \n"
 printf "   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
 printf "    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
-printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n${txtrst}"
+printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n\n${txtrst}"
 
-printf "\\nFor more information:\\n"
+printf "For more information:\\n"
 printf "EOSIO website: https://eos.io\\n"
+printf "EOSIO resources: https://eos.io/resources/\\n"
+printf "EOSIO Stack Exchange: https://eosio.stackexchange.com\\n"
