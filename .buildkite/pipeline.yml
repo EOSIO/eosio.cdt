@@ -234,7 +234,7 @@ steps:
 
   - command: |  
         echo "--- :arrow_down: Downloading package" && \
-        buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: [Ubuntu] 18.04 Package builder" && \
+        buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: [Ubuntu] 18.04 Package Builder" && \
         echo "--- :key: AUTHENTICATING GOOGLE SERVICE ACCOUNT" && \
         gcloud --quiet auth activate-service-account b1-automation-svc@b1-automation-dev.iam.gserviceaccount.com --key-file=/etc/gcp-service-account.json && \
         docker-credential-gcr configure-docker && \
