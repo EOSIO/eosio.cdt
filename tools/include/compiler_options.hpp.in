@@ -321,7 +321,6 @@ static cl::opt<bool> fcoroutine_ts_opt(
 
 struct Options {
    std::string output_fn;
-   std::string abigen_inputs;
    std::vector<std::string> inputs;
    bool link;
    bool abigen;
@@ -421,7 +420,6 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 
 static Options CreateOptions(bool add_defaults=true) {
    std::string output_fn;
-   std::stringstream abigen_inputs;
    std::vector<std::string> inputs;
    std::vector<std::string> agresources;
    std::vector<std::string> copts;
@@ -654,7 +652,6 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-l"+library);
    }
    if (o_opt.empty()) {
-      //copts.emplace_back("-o a.out");
 #ifndef ONLY_LD
       ldopts.emplace_back("a.out");
 #endif
@@ -662,11 +659,6 @@ static Options CreateOptions(bool add_defaults=true) {
       output_fn = "a.out";
    }
    else {
-      //copts.emplace_back("-o "+o_opt);
-#ifndef ONLY_LD
-      //if (!inputs.empty())
-      //ldopts.push_back(o_opt);
-#endif
       ldopts.emplace_back("-o "+o_opt);
       output_fn = o_opt;
    }
@@ -752,5 +744,5 @@ static Options CreateOptions(bool add_defaults=true) {
    if ((use_rt_opt && !fnative_opt) || fquery_opt)
       ldopts.emplace_back("-lrt -lsf");
 #endif
-   return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }

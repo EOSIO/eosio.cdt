@@ -17,6 +17,19 @@ using namespace llvm;
 #define COMPILER_NAME "eosio-cpp"
 #include <compiler_options.hpp>
 
+int run_gen(std::string input, Options opts) {
+   opts.abigen_options.emplace(opts.abigen_options.begin(), "-- -Wno-unused-command-line-argument");
+   opts.abigen_options.emplace(opts.abigen_options.begin(), "-codegen");
+   opts.abigen_options.emplace(opts.abigen_options.begin(), "-contract="+opts.abigen_contract);
+   std::string abigen_output = opts.abigen_output.empty() ? opts.output_fn.substr(0, opts.output_fn.rfind(".wasm"))+".abi" : opts.abigen_output;
+   opts.abigen_options.emplace(opts.abigen_options.begin(), "-output="+abigen_output);
+   opts.abigen_options.insert(opts.abigen_options.begin(), input);
+   for ( auto res : opts.abigen_resources )
+      opts.abigen_options.emplace(opts.abigen_options.begin(), res);
+   if (!eosio::cdt::environment::exec_subprogram("eosio-abigen", opts.abigen_options))
+      return -1;
+}
+
 int main(int argc, const char **argv) {
 
    // fix to show version info without having to have any other arguments
@@ -33,22 +46,6 @@ int main(int argc, const char **argv) {
    cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
    Options opts = CreateOptions();
 
-   opts.abigen_options.emplace(opts.abigen_options.begin(), "-- -Wno-unused-command-line-argument");
-   if (opts.abigen)
-      opts.abigen_options.emplace(opts.abigen_options.begin(), "-codegen");
-   else
-      opts.abigen_options.emplace(opts.abigen_options.begin(), "-codegen-only");
-   opts.abigen_options.emplace(opts.abigen_options.begin(), "-contract="+opts.abigen_contract);
-   std::string abigen_output = opts.abigen_output.empty() ? opts.output_fn.substr(0, opts.output_fn.rfind(".wasm"))+".abi" : opts.abigen_output;
-   opts.abigen_options.emplace(opts.abigen_options.begin(), "-output="+abigen_output);
-   for (auto input : opts.inputs) {
-      opts.abigen_options.insert(opts.abigen_options.begin(), input);
-   }
-   for ( auto res : opts.abigen_resources )
-      opts.abigen_options.emplace(opts.abigen_options.begin(), res);
-   if (!eosio::cdt::environment::exec_subprogram("eosio-abigen", opts.abigen_options))
-      return -1;
-
    std::vector<std::string> outputs;
    for (auto input : opts.inputs) {
       std::vector<std::string> new_opts = opts.comp_options;
@@ -56,6 +53,11 @@ int main(int argc, const char **argv) {
       llvm::sys::path::system_temp_directory(true, res);
       std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str()+"-tmp.cpp";
       std::string output;
+      
+      if (run_gen(input, opts) == -1) {
+         throw std::runtime_error("error, generation failed");
+         return -1;
+      }
 
       if (llvm::sys::fs::exists(tmp_file)) {
          input = tmp_file;
@@ -78,8 +80,7 @@ int main(int argc, const char **argv) {
       }
       //llvm::sys::fs::remove(tmp_file);
    } 
-   // then link
-   //
+
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {

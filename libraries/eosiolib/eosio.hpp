@@ -19,6 +19,7 @@ static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 #define CONTRACT class [[eosio::contract]]
 #define ACTION   [[eosio::action]] void
 #define TABLE struct [[eosio::table]]
+#define NOTIFY(PAIR) [[eosio::notify(#PAIR)]] void
 
 #define _OVERLOAD(_1, _2, MAC, ...) MAC
 

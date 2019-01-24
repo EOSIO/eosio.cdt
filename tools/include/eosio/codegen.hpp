@@ -63,6 +63,7 @@ namespace eosio { namespace cdt {
          std::set<std::string> defined_datastreams;
          std::set<std::string> datastream_uses;
          std::set<std::string> actions;
+         std::set<std::string> notify_handlers;
          ASTContext *ast_context;
          std::map<std::string, CXXMethodDecl*> cxx_methods;
          std::map<std::string, CXXRecordDecl*> cxx_records;
@@ -86,51 +87,6 @@ namespace eosio { namespace cdt {
          
          void set_abi(std::string s) {
             abi = s;
-         }
-
-         void add_action( const clang::CXXRecordDecl* decl ) {
-            std::string action_name;
-            auto _action_name = decl->getEosioActionAttr()->getName();
-            if (_action_name.empty()) {
-               try {
-                  validate_name( decl->getName().str(), error_handler );
-               } catch (...) {
-                  std::cout << "Error, name <" <<decl->getName().str() << "> is an invalid EOSIO name.\n";
-                  throw;
-               }
-               action_name = decl->getName().str();
-            }
-            else {
-               try {
-                  validate_name( _action_name.str(), error_handler );
-               } catch (...) {
-                  std::cout << "Error, name <" << _action_name.str() << "> is an invalid EOSIO name.\n";
-                  throw;
-               }
-               action_name = _action_name.str();
-            }
-         }
-
-         void add_action( const clang::CXXMethodDecl* decl ) {
-            std::string action_name;
-            auto _action_name = decl->getEosioActionAttr()->getName();
-
-            if (_action_name.empty()) {
-               try {
-                  validate_name( decl->getNameAsString(), error_handler );
-               } catch (...) {
-                  std::cout << "Error, name <" <<decl->getNameAsString() << "> is an invalid EOSIO name.\n";
-               }
-               action_name = decl->getNameAsString();
-            }
-            else {
-               try {
-                  validate_name( _action_name.str(), error_handler );
-               } catch (...) {
-                  std::cout << "Error, name <" << _action_name.str() << "> is an invalid EOSIO name.\n";
-               }
-               action_name = _action_name.str();
-            }
          }
    };
 
@@ -239,17 +195,18 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         void create_action_dispatch(CXXMethodDecl* decl) {
+         template <typename F>
+         void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
             constexpr static uint32_t max_stack_size = 512;
             std::stringstream ss;
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "extern \"C\" __attribute__((eosio_wasm_action(\"";
-               ss << generation_utils::get_action_name(decl);
+               ss << "extern \"C\" __attribute__((" << attr << "(\"";
+               ss << get_str(decl);
                ss << ":";
-               ss << "__eosio_action_" << nm;
-               ss << "\"))) void __eosio_action_" << nm << "(unsigned long long r, unsigned long long c) {\n";
+               ss << func_name << nm;
+               ss << "\"))) void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
                ss << "size_t as = action_data_size();\n";
                ss << "if (as <= 0) return;\n";
                ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
@@ -281,11 +238,29 @@ namespace eosio { namespace cdt {
             }
          }
 
+         void create_action_dispatch(CXXMethodDecl* decl) {
+            auto func = [](CXXMethodDecl* d) { return generation_utils::get_action_name(d); };
+            create_dispatch("eosio_wasm_action", "__eosio_action_", func, decl);
+         }
+
+         void create_notify_dispatch(CXXMethodDecl* decl) {
+            auto func = [](CXXMethodDecl* d) { return generation_utils::get_notify_pair(d); };
+            create_dispatch("eosio_wasm_notify", "__eosio_notify_", func, decl);
+         }
 
          virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
             std::string method_name = decl->getNameAsString();
+            static std::set<std::string> _action_set; //used for validations
+            static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
                method_name = generation_utils::get_action_name(decl);
+               if (!_action_set.count(method_name))
+                  _action_set.insert(method_name);
+               else {
+                  auto itr = _action_set.find(method_name);
+                  if (*itr != method_name)
+                     emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
+               }
                if (cg.actions.count(decl->getNameAsString()) == 0)
                   if (cg.actions.count(method_name) == 0)
                      create_action_dispatch(decl);
@@ -299,10 +274,36 @@ namespace eosio { namespace cdt {
                   }
                }
             }
+            if (decl->isEosioNotify()) {
+
+               method_name = generation_utils::get_notify_pair(decl);
+               if (!_notify_set.count(method_name))
+                  _notify_set.insert(method_name);
+               else {
+                  auto itr = _notify_set.find(method_name);
+                  if (*itr != method_name)
+                     emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
+               }
+
+               if (cg.notify_handlers.count(decl->getNameAsString()) == 0)
+                  if (cg.notify_handlers.count(method_name) == 0)
+                     create_notify_dispatch(decl);
+                  else
+                     emitError(*ci, decl->getLocation(), "notification handler already defined elsewhere");
+               cg.notify_handlers.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
+               cg.notify_handlers.insert(method_name);
+               for (auto param : decl->parameters()) {
+                  if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
+                     cg.datastream_uses.insert(tp->getQualifiedNameAsString());
+                  }
+               }
+            }
+
             cg.cxx_methods.emplace(method_name, decl);
             return true;
          }
          virtual bool VisitRecordDecl(RecordDecl* decl) {
+            static std::set<std::string> _action_set; //used for validations
             std::string rec_name = decl->getQualifiedNameAsString();
             cg.records.emplace(rec_name, decl);
             return true;
@@ -366,7 +367,9 @@ namespace eosio { namespace cdt {
                   std::string abi = cg.abi;
                   ss << std::quoted(abi);
                   ss << ")))\n";
-                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){}\n";
+                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){"; 
+                  ss << "eosio_assert_code(false, 1);";
+                  ss << "}\n";
                   ss << "}";
                   visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);

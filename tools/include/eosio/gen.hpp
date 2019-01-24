@@ -181,6 +181,11 @@ struct generation_utils {
          return tmp;
       return decl->getNameAsString();
    }
+   static inline std::string get_notify_pair( const clang::CXXMethodDecl* decl ) {
+      std::string notify_pair = "";
+      auto tmp = decl->getEosioNotifyAttr()->getName();
+      return tmp;
+   }
    static inline std::string get_action_name( const clang::CXXRecordDecl* decl ) {
       std::string action_name = "";
       auto tmp = decl->getEosioActionAttr()->getName();

@@ -104,7 +104,7 @@ class ABIMerger {
             for (auto obj_a : a[type].array_range()) {
                if (obj_a[id] == obj_b[id]) {
                   if (!is_same_func(obj_a, obj_b))
-                     throw std::runtime_error("Error, ABI structs malformed");
+                     throw std::runtime_error(std::string("Error, ABI structs malformed : ")+obj_a[id].as<std::string>()+" already defined");
                   else
                      should_skip = true;
                }
