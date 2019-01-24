@@ -75,10 +75,9 @@ install_symlinks() {
 
 create_cmake_symlink() {
    mkdir -p $LIB_LOCATION/cmake/eosio.cdt
-   pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
-   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $1
-   popd &> /dev/null
+   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $LIB_LOCATION/cmake/eosio.cdt/$1
 }
+
 if [ ! -d "${BUILD_DIR}" ]; then
    printf "\\n\Error, build.sh has not ran.  Please run ./build.sh first!\\n\\n"
    exit -1
