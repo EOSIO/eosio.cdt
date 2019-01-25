@@ -7,10 +7,6 @@
 #include <stdint.h>
 #include <wchar.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  *  @defgroup c_types
  *  @ingroup c_api
@@ -68,7 +64,3 @@ struct ALIGNED(capi_checksum512) {
 };
 
 /// @}
-
-#ifdef __cplusplus
-} /// extern "C"
-#endif

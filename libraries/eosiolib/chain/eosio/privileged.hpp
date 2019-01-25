@@ -1,9 +1,36 @@
 #pragma once
-#include "privileged.h"
-#include "serialize.hpp"
-#include "crypto.hpp"
+#include "../../core/eosio/crypto.hpp"
+#include "../../core/eosio/name.hpp"
+#include "../../core/eosio/serialize.hpp"
 
 namespace eosio {
+
+   namespace internal_use_do_not_use {
+      extern "C" {
+         __attribute__((eosio_wasm_import))
+         void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
+         __attribute__((eosio_wasm_import))
+         void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
+
+         __attribute__((eosio_wasm_import))
+         int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
+
+         __attribute__((eosio_wasm_import))
+         void set_active_producers( char *producer_data, uint32_t producer_data_size );
+
+         __attribute__((eosio_wasm_import))
+         bool is_privileged( uint64_t account );
+
+         __attribute__((eosio_wasm_import))
+         void set_privileged( uint64_t account, bool is_priv );
+
+         __attribute__((eosio_wasm_import))
+         void set_blockchain_parameters_packed( char* data, uint32_t datalen );
+
+         __attribute__((eosio_wasm_import))
+         uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+      }
+   }
 
   /**
    * @addtogroup privileged Privileged C++ API

@@ -4,7 +4,6 @@
  */
 #pragma once
 
-#include "crypto.h"
 #include "fixed_bytes.hpp"
 #include "varint.hpp"
 #include "serialize.hpp"
@@ -45,8 +44,39 @@ namespace eosio {
       friend bool operator != ( const public_key& a, const public_key& b ) {
         return std::tie(a.type,a.data) != std::tie(b.type,b.data);
       }
-      EOSLIB_SERIALIZE( public_key, (type)(data) )
    };
+
+   /**
+    *  Serialize an eosio::public_key into a stream
+    *
+    *  @brief Serialize an eosio::public_key
+    *  @param ds - The stream to write
+    *  @param pubkey - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::public_key& pubkey) {
+      ds << pubkey.type;
+      ds.write( pubkey.data.data(), pubkey.data.size() );
+      return ds;
+   }
+
+   /**
+    *  Deserialize an eosio::public_key from a stream
+    *
+    *  @brief Deserialize an eosio::public_key
+    *  @param ds - The stream to read
+    *  @param pubkey - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::public_key& pubkey) {
+      ds >> pubkey.type;
+      ds.read( pubkey.data.data(), pubkey.data.size() );
+      return ds;
+   }
 
    /// @} publickeytype
 
@@ -82,8 +112,39 @@ namespace eosio {
       friend bool operator != ( const signature& a, const signature& b ) {
         return std::tie(a.type,a.data) != std::tie(b.type,b.data);
       }
-      EOSLIB_SERIALIZE( signature, (type)(data) )
    };
+
+   /**
+    *  Serialize an eosio::signature into a stream
+    *
+    *  @brief Serialize an eosio::signature
+    *  @param ds - The stream to write
+    *  @param sig - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::signature& sig) {
+      ds << sig.type;
+      ds.write( sig.data.data(), sig.data.size() );
+      return ds;
+   }
+
+   /**
+    *  Deserialize an eosio::signature from a stream
+    *
+    *  @brief Deserialize an eosio::signature
+    *  @param ds - The stream to read
+    *  @param sig - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::signature& sig) {
+      ds >> sig.type;
+      ds.read( sig.data.data(), sig.data.size() );
+      return ds;
+   }
 
    /// @} signaturetype
 

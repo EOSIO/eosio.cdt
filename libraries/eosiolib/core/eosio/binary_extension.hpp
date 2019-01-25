@@ -1,7 +1,8 @@
 #pragma once
-#include "print.hpp"
 
- namespace eosio {
+#include "system.hpp"
+
+namespace eosio {
     /**
     *  Container to hold a binary payload for an extension
     *
@@ -65,14 +66,14 @@
           /** get the contained value */
          constexpr T& value()& {
             if (!_has_value) {
-               eosio_assert(false, "cannot get value of empty binary_extension");
+               check(false, "cannot get value of empty binary_extension");
             }
             return _get();
          }
           /** get the contained value */
          constexpr const T& value()const & {
             if (!_has_value) {
-               eosio_assert(false, "cannot get value of empty binary_extension");
+               check(false, "cannot get value of empty binary_extension");
             }
             return _get();
          }
@@ -160,4 +161,39 @@
             return *reinterpret_cast<const T*>(&_data);
          }
    };
+
+   /**
+    *  Serialize a binary_extension into a stream
+    *
+    *  @brief Serialize a binary_extension
+    *  @param ds - The stream to write
+    *  @param opt - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, typename T>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binary_extension<T>& be) {
+     ds << be.value_or();
+     return ds;
+   }
+
+   /**
+    *  Deserialize a binary_extension from a stream
+    *
+    *  @brief Deserialize a binary_extension
+    *  @param ds - The stream to read
+    *  @param opt - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, typename T>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_extension<T>& be) {
+     if( ds.remaining() ) {
+        T val;
+        ds >> val;
+        be.emplace(val);
+     }
+     return ds;
+   }
+
 } // namespace eosio

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <eosiolib/action.h>
-#include <eosiolib/chain.h>
-#include <eosiolib/crypto.h>
-#include <eosiolib/db.h>
-#include <eosiolib/permission.h>
-#include <eosiolib/print.h>
-#include <eosiolib/privileged.h>
-#include <eosiolib/system.h>
-#include <eosiolib/transaction.h>
-#include <eosiolib/types.h>
+#include <capi/eosio/action.h>
+#include <capi/eosio/chain.h>
+#include <capi/eosio/crypto.h>
+#include <capi/eosio/db.h>
+#include <capi/eosio/permission.h>
+#include <capi/eosio/print.h>
+#include <capi/eosio/privileged.h>
+#include <capi/eosio/system.h>
+#include <capi/eosio/transaction.h>
+#include <capi/eosio/types.h>
 
 #include <type_traits>
 

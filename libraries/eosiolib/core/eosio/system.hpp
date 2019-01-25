@@ -3,11 +3,30 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "system.h"
+
 #include <alloca.h>
 #include <string>
 
 namespace eosio {
+   
+   namespace internal_use_do_not_use {
+      extern "C" {
+         __attribute__((eosio_wasm_import))
+         void eosio_assert( uint32_t test, const char* msg );
+
+         __attribute__((eosio_wasm_import))
+         void eosio_assert_message( uint32_t test, const char* msg, uint32_t msg_len );
+
+         __attribute__((eosio_wasm_import))
+         void eosio_assert_code( uint32_t test, uint64_t code );
+
+         __attribute__((eosio_wasm_import, noreturn))
+         void eosio_exit( int32_t code );
+
+         __attribute__((eosio_wasm_import))
+         uint64_t current_time();
+      }
+   }
 
    /**
     *  @addtogroup system System C++ API
@@ -29,7 +48,7 @@ namespace eosio {
     */
    inline void check(bool pred, const char* msg) {
       if (!pred) {
-         eosio_assert(false, msg);
+         internal_use_do_not_use::eosio_assert(false, msg);
       }
    }
 
@@ -45,7 +64,7 @@ namespace eosio {
     */
    inline void check(bool pred, const std::string& msg) {
       if (!pred) {
-         eosio_assert(false, msg.c_str());
+         internal_use_do_not_use::eosio_assert(false, msg.c_str());
       }
    }
 
@@ -61,7 +80,7 @@ namespace eosio {
     */
    inline void check(bool pred, std::string&& msg) {
       if (!pred) {
-         eosio_assert(false, msg.c_str());
+         internal_use_do_not_use::eosio_assert(false, msg.c_str());
       }
    }
 
@@ -78,7 +97,7 @@ namespace eosio {
     */
    inline void check(bool pred, const char* msg, size_t n) {
       if (!pred) {
-         eosio_assert_message(false, msg, n);
+         internal_use_do_not_use::eosio_assert_message(false, msg, n);
       }
    }
 
@@ -95,7 +114,7 @@ namespace eosio {
     */
    inline void check(bool pred, const std::string& msg, size_t n) {
       if (!pred) {
-         eosio_assert_message(false, msg.c_str(), n);
+         internal_use_do_not_use::eosio_assert_message(false, msg.c_str(), n);
       }
    }
 
@@ -111,8 +130,44 @@ namespace eosio {
     */
    inline void check(bool pred, uint64_t code) {
       if (!pred) {
-         eosio_assert_code(false, code);
+         internal_use_do_not_use::eosio_assert_code(false, code);
       }
    }
+
+     /**
+    *  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
+    *
+    *  @param code - the exit code
+    *  Example:
+    *
+    *  @code
+    *  eosio_exit(0);
+    *  eosio_exit(1);
+    *  eosio_exit(2);
+    *  eosio_exit(3);
+    *  @endcode
+    */
+   inline void eosio_exit( int32_t code ) {
+      internal_use_do_not_use::eosio_exit(code);
+   }
+
+   /**
+    *  Returns the time in microseconds from 1970 of the current block
+    *
+    *  @return time in microseconds from 1970 of the current block
+    */
+   inline uint64_t  current_time() {
+      return internal_use_do_not_use::current_time();
+   }
+
+    /**
+    *  Get time (rounded down to the nearest second) of the current block (i.e. the block including this action)
+    *
+    *  @return time in seconds from 1970 of the current block
+    */
+  inline uint32_t  now() {
+      return (uint32_t)( current_time() / 1000000 );
+   }
+
 } // namespace eosio
    /// @}

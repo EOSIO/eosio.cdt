@@ -5,7 +5,6 @@
 #pragma once
 
 #include "system.hpp"
-#include "print.h"
 #include "name.hpp"
 #include "serialize.hpp"
 
@@ -14,6 +13,22 @@
 #include <string_view>
 
 namespace eosio {
+
+   namespace internal_use_do_not_use {
+      extern "C" {
+         __attribute__((eosio_wasm_import))
+         void printui( uint64_t value );
+
+         __attribute__((eosio_wasm_import))
+         void prints( const char* cstr );
+
+         __attribute__((eosio_wasm_import))
+         void prints_l( const char* cstr, uint32_t len);
+      
+         __attribute__((eosio_wasm_import))
+         void printn( uint64_t name );
+      }
+   }
 
   /**
    *  @addtogroup symbol Symbol CPP API
@@ -193,6 +208,39 @@ namespace eosio {
    };
 
    /**
+    *  Serialize a symbol_code into a stream
+    *
+    *  @brief Serialize a symbol_code
+    *  @param ds - The stream to write
+    *  @param sym - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym_code) {
+     uint64_t raw = sym_code.raw();
+     ds.write( (const char*)&raw, sizeof(raw));
+     return ds;
+   }
+
+   /**
+    *  Deserialize a symbol_code from a stream
+    *
+    *  @brief Deserialize a symbol_code
+    *  @param ds - The stream to read
+    *  @param symbol - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym_code) {
+     uint64_t raw = 0;
+     ds.read((char*)&raw, sizeof(raw));
+     sym_code = symbol_code(raw);
+     return ds;
+   }
+
+   /**
     * @struct Stores information about a symbol, the symbol can be 7 characters long.
     *
     * @brief Stores information about a symbol
@@ -269,13 +317,13 @@ namespace eosio {
        */
       void print( bool show_precision = true )const {
          if( show_precision ){
-            printui( static_cast<uint64_t>(precision()) );
-            prints(",");
+            internal_use_do_not_use::printui( static_cast<uint64_t>(precision()) );
+            internal_use_do_not_use::prints(",");
          }
          char buffer[7];
          auto end = code().write_as_string( buffer, buffer + sizeof(buffer) );
          if( buffer < end )
-            prints_l( buffer, (end-buffer) );
+            internal_use_do_not_use::prints_l( buffer, (end-buffer) );
       }
 
       /**
@@ -310,6 +358,39 @@ namespace eosio {
    private:
       uint64_t value = 0;
    };
+
+   /**
+    *  Serialize a symbol into a stream
+    *
+    *  @brief Serialize a symbol
+    *  @param ds - The stream to write
+    *  @param sym - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol sym) {
+     uint64_t raw = sym.raw();
+     ds.write( (const char*)&raw, sizeof(raw));
+     return ds;
+   }
+
+   /**
+    *  Deserialize a symbol from a stream
+    *
+    *  @brief Deserialize a symbol
+    *  @param ds - The stream to read
+    *  @param symbol - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol& sym) {
+     uint64_t raw = 0;
+     ds.read((char*)&raw, sizeof(raw));
+     sym = symbol(raw);
+     return ds;
+   }
 
    /**
     * @struct Extended asset which stores the information of the owner of the symbol
@@ -358,8 +439,8 @@ namespace eosio {
        */
       void print( bool show_precision = true )const {
          symbol.print( show_precision );
-         prints("@");
-         printn( contract.value );
+         internal_use_do_not_use::prints("@");
+         internal_use_do_not_use::printn( contract.value );
       }
 
       /**

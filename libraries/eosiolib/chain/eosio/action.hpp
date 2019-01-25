@@ -5,9 +5,10 @@
 #pragma once
 #include <cstdlib>
 
-#include "action.h"
-#include "datastream.hpp"
-#include "serialize.hpp"
+#include "../../core/eosio/serialize.hpp"
+#include "../../core/eosio/datastream.hpp"
+#include "../../core/eosio/name.hpp"
+#include "../../core/eosio/ignore.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
@@ -15,6 +16,43 @@
 #include <boost/preprocessor/facilities/overload.hpp>
 
 namespace eosio {
+
+   namespace internal_use_do_not_use {
+      extern "C" {
+         __attribute__((eosio_wasm_import))
+         uint32_t read_action_data( void* msg, uint32_t len );
+
+         __attribute__((eosio_wasm_import))
+         uint32_t action_data_size();
+
+         __attribute__((eosio_wasm_import))
+         void require_recipient( uint64_t name );
+
+         __attribute__((eosio_wasm_import))
+         void require_auth( uint64_t name );
+
+         __attribute__((eosio_wasm_import))
+         bool has_auth( uint64_t name );
+
+         __attribute__((eosio_wasm_import))
+         void require_auth2( uint64_t name, uint64_t permission );
+
+         __attribute__((eosio_wasm_import))
+         bool is_account( uint64_t name );
+
+         __attribute__((eosio_wasm_import))
+         void send_inline(char *serialized_action, size_t size);
+
+         __attribute__((eosio_wasm_import))
+         void send_context_free_inline(char *serialized_action, size_t size);
+
+         __attribute__((eosio_wasm_import))
+         uint64_t  publication_time();
+
+         __attribute__((eosio_wasm_import))
+         uint64_t current_receiver();
+      }
+   };
 
    /**
     *  @addtogroup action Action C++ API
@@ -47,9 +85,9 @@ namespace eosio {
    template<typename T>
    T unpack_action_data() {
       constexpr size_t max_stack_buffer_size = 512;
-      size_t size = action_data_size();
+      size_t size = internal_use_do_not_use::action_data_size();
       char* buffer = (char*)( max_stack_buffer_size < size ? malloc(size) : alloca(size) );
-      read_action_data( buffer, size );
+      internal_use_do_not_use::read_action_data( buffer, size );
       return unpack<T>( buffer, size );
    }
 
@@ -60,7 +98,7 @@ namespace eosio {
     *  @param notify_account - name of the account to be verified
     */
    inline void require_recipient( name notify_account ){
-      ::require_recipient( notify_account.value );
+      internal_use_do_not_use::require_recipient( notify_account.value );
    }
 
    /**
@@ -83,7 +121,7 @@ namespace eosio {
     */
    template<typename... accounts>
    void require_recipient( name notify_account, accounts... remaining_accounts ){
-      ::require_recipient( notify_account.value );
+      internal_use_do_not_use::require_recipient( notify_account.value );
       require_recipient( remaining_accounts... );
    }
 
@@ -94,7 +132,7 @@ namespace eosio {
     *  @param name - name of the account to be verified
     */
    inline void require_auth( name n ) {
-      ::require_auth( n.value );
+      internal_use_do_not_use::require_auth( n.value );
    }
 
    /**
@@ -156,7 +194,7 @@ namespace eosio {
     * @param level - Authorization to be required
     */
    inline void require_auth( const permission_level& level ) {
-      ::require_auth2( level.actor.value, level.permission.value );
+      internal_use_do_not_use::require_auth2( level.actor.value, level.permission.value );
    }
 
    /**
@@ -166,7 +204,7 @@ namespace eosio {
     *  @param n - name of the account to be verified
     */
    inline bool has_auth( name n ) {
-      return ::has_auth( n.value );
+      return internal_use_do_not_use::has_auth( n.value );
    }
 
    /**
@@ -176,7 +214,7 @@ namespace eosio {
     *  @param n - name of the account to check
     */
    inline bool is_account( name n ) {
-      return ::is_account( n.value );
+      return internal_use_do_not_use::is_account( n.value );
    }
 
    /**
@@ -258,7 +296,7 @@ namespace eosio {
        */
       void send() const {
          auto serialize = pack(*this);
-         ::send_inline(serialize.data(), serialize.size());
+         internal_use_do_not_use::send_inline(serialize.data(), serialize.size());
       }
 
       /**
@@ -270,7 +308,7 @@ namespace eosio {
       void send_context_free() const {
          eosio::check( authorization.size() == 0, "context free actions cannot have authorizations");
          auto serialize = pack(*this);
-         ::send_context_free_inline(serialize.data(), serialize.size());
+         internal_use_do_not_use::send_context_free_inline(serialize.data(), serialize.size());
       }
 
       /**

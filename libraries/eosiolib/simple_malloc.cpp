@@ -1,6 +1,5 @@
 #include <memory>
-#include "system.hpp"
-#include "print.hpp"
+#include "core/eosio/system.hpp"
 
 #ifdef EOSIO_NATIVE
    extern "C" {
@@ -77,4 +76,3 @@ void* realloc(void* ptr, size_t size) {
 
 void free(void* ptr) {}
 }
-

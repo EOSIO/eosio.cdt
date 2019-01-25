@@ -5,6 +5,7 @@
 #pragma once
 
 #include "system.hpp"
+#include "datastream.hpp"
 
 #include <array>
 #include <algorithm>
@@ -349,4 +350,37 @@ namespace eosio {
    using checksum160 = fixed_bytes<20>;
    using checksum256 = fixed_bytes<32>;
    using checksum512 = fixed_bytes<64>;
+
+   /**
+    *  Serialize a fixed_bytes into a stream
+    *
+    *  @brief Serialize a fixed_bytes
+    *  @param ds - The stream to write
+    *  @param d - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, size_t Size>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const fixed_bytes<Size>& d) {
+      auto arr = d.extract_as_byte_array();
+      ds.write( (const char*)arr.data(), arr.size() );
+      return ds;
+   }
+
+   /**
+    *  Deserialize a fixed_bytes from a stream
+    *
+    *  @brief Deserialize a fixed_bytes
+    *  @param ds - The stream to read
+    *  @param d - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, size_t Size>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, fixed_bytes<Size>& d) {
+      std::array<uint8_t, Size> arr;
+      ds.read( (char*)arr.data(), arr.size() );
+      d = fixed_bytes<Size>( arr );
+      return ds;
+   }
 }

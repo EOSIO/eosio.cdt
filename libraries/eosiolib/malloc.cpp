@@ -1,7 +1,7 @@
 #include <cstdlib> 
 #include <alloca.h>
-#include "system.hpp"
-#include "print.hpp"
+
+#include "core/eosio/system.hpp"
 
 namespace eosio {
 #ifdef EOSIO_NATIVE
@@ -537,4 +537,3 @@ void free(void* ptr) {
    return eosio::memory_heap.free(ptr);
 }
 }
-

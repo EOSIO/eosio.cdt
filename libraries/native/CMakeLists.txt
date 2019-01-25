@@ -328,11 +328,12 @@ file ( GLOB softfloat_headers "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/incl
                               "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE/specialize.h" )
 list( APPEND softfloat_sources ${softfloat_headers} )
 
+message(STATUS "WHOOOO ${CMAKE_SOURCE_DIR}")
 add_library ( sf STATIC ${softfloat_sources} )
-target_include_directories( sf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR})
+target_include_directories( sf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR}/eosiolib ${CMAKE_SOURCE_DIR}/eosiolib/chain)
 
 add_native_library ( native STATIC ${softfloat_sources} intrinsics.cpp crt.cpp ${CRT_ASM} )
-target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR})
+target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR}/eosiolib ${CMAKE_SOURCE_DIR}/eosiolib/chain)
 
 add_dependencies(native native_eosio)
 

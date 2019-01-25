@@ -11,8 +11,6 @@
  *  @{
  */
 
-extern "C" {
-
 /**
  *  Tests if the sha256 hash generated from data matches the provided checksum.
  *
@@ -232,5 +230,3 @@ __attribute__((eosio_wasm_import))
 void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t siglen, const char* pub, size_t publen );
 
 /// @}
-
-}

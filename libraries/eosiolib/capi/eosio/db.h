@@ -4,7 +4,8 @@
  *  @brief Defines C API for interfacing with blockchain database
  */
 #pragma once
-#include <eosiolib/types.h>
+
+#include "types.h"
 
 /**
  *  @addtogroup database_c_api Database C API
@@ -24,8 +25,6 @@
  *    - long double key
  *  @{
  */
-extern "C" {
-
 
 /**
   *
@@ -980,4 +979,3 @@ __attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@}
-}
