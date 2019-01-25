@@ -190,17 +190,22 @@ int main(int argc, const char **argv) {
       if (!codegen_only) {
          tool_run = ctool.run(newFrontendActionFactory(&finder).get());
          if (tool_run != 0) {
-            std::cout << "abigen error\n";
+            llvm::errs() << "abigen error\n";
             return tool_run;
          }
       }
       std::string abi_s;
       get_abigen_ref().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
-      if (codegen || codegen_only)
+      if (codegen || codegen_only) {
          tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
+         if (tool_run != 0) {
+            llvm::errs() << "codegen error\n";
+            return tool_run;
+         }
+      }
    } catch (std::exception& ex) {
-      std::cout << ex.what() << "\n";
+      llvm::errs() << ex.what() << "\n";
       tool_run = -1;
    } 
    return tool_run;

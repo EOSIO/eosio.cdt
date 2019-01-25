@@ -147,7 +147,7 @@ struct generation_utils {
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
-   inline void set_resource_dirs( const llvm::cl::list<std::string>& rd ) {
+   inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
       if (!has_real_path)

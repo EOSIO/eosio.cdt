@@ -261,11 +261,12 @@ namespace eosio { namespace cdt {
                   if (*itr != method_name)
                      emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
                }
-               if (cg.actions.count(decl->getNameAsString()) == 0)
+               if (cg.actions.count(decl->getNameAsString()) == 0) {
                   if (cg.actions.count(method_name) == 0)
                      create_action_dispatch(decl);
                   else
                      emitError(*ci, decl->getLocation(), "action already defined elsewhere");
+               }
                cg.actions.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
                cg.actions.insert(method_name);
                for (auto param : decl->parameters()) {
@@ -277,6 +278,14 @@ namespace eosio { namespace cdt {
             if (decl->isEosioNotify()) {
 
                method_name = generation_utils::get_notify_pair(decl);
+               size_t occur = method_name.find_first_of(":");
+               if (occur != std::string::npos && occur+1 < method_name.size() && method_name[occur+1] == ':') {
+                  method_name = method_name.erase(occur);
+                  llvm::outs() << "MN " << method_name << '\n';
+               } else {
+                  emitError(*ci, decl->getLocation(), "notify handler name ill-formed");
+               }
+
                if (!_notify_set.count(method_name))
                   _notify_set.insert(method_name);
                else {
