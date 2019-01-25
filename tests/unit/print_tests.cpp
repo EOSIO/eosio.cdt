@@ -5,6 +5,9 @@
 #include <eosiolib/print.hpp>
 #include <eosiolib/symbol.hpp>
 
+using eosio::name;
+using eosio::print;
+
 using namespace eosio::native;
 
 // EOSIO_TEST_BEGIN(print_test)
@@ -33,9 +36,9 @@ EOSIO_TEST_BEGIN(print_test)
 
    // ------------------------------
    // inline void print(const char*)
-   std::string s{};
-   char c{};
-   CHECK_PRINT( "", [&](){eosio::print(s.c_str());} );
+   // std::string s{};
+   // char c{};
+   // CHECK_PRINT( "", [&](){eosio::print(s.c_str());} );
 
    // Not understanding how this test isn't passing
    // for(unsigned short i{}; i < 256; ++i) {
@@ -71,7 +74,7 @@ EOSIO_TEST_BEGIN(print_test)
    // inline void print(float)
    // float f{};
    // for(float i{}; i < 1; f += 0.01) {
-   //    CHECK_PRINT( [&](std::string){return std::to_string{f};}, [&](){eosio::print(f);} );
+      // CHECK_PRINT( [&](std::string){return std::to_string{f};}, [&](){eosio::print(f);} );
    // }
 
    // s = ;
@@ -93,6 +96,34 @@ EOSIO_TEST_BEGIN(print_test)
 
    // -----------------------
    // inline void print(name)
+// CHECK_PRINT( [](const std::string& s) {print("HI\n", s.size(), "\n", s, "\n", std_out.index, "\n"); return false;}, []() {print(name{"1"});} )
+// CHECK_PRINT( [](const std::string& s) {print("HI\n", s.size(), "\n", s, "\n", std_out.index, "\n"); return false;}, []() {print(name{"1"});} )
+// print("------\n");
+   CHECK_PRINT( "1", []() {print(name{"1"});} )
+   // REQUIRE_PRINT( "5", []() {print(name{"5"});} )
+   // REQUIRE_PRINT( "a", []() {print(name{"a"});} )
+   // REQUIRE_PRINT( "z", []() {print(name{"z"});} )
+
+   // REQUIRE_PRINT( "abc", []() {print(name{"abc"});} )
+   // REQUIRE_PRINT( "123", []() {print(name{"123"});} )
+
+   // REQUIRE_PRINT( ".abc", []() {print(name{".abc"});} )
+   // REQUIRE_PRINT( ".........abc", []() {print(name{".........abc"});} )
+   // REQUIRE_PRINT( "123.", []() {print(name{"123."});} )
+   // REQUIRE_PRINT( "123.........", []() {print(name{"123........."});} )
+   // REQUIRE_PRINT( ".a.b.c.1.2.3.", []() {print(name{".a.b.c.1.2.3."});} )
+   
+   // REQUIRE_PRINT( "abc.123", []() {print(name{"abc.123"});} )
+   // REQUIRE_PRINT( "123.abc", []() {print(name{"123.abc"});} )
+
+   // REQUIRE_PRINT( "12345abcdefgj", []() {print(name{"12345abcdefgj"});} )
+   // REQUIRE_PRINT( "hijklmnopqrsj", []() {print(name{"hijklmnopqrsj"});} )
+   // REQUIRE_PRINT( "tuvwxyz.1234j", []() {print(name{"tuvwxyz.1234j"});} )
+
+   // REQUIRE_PRINT( "111111111111j", []() {print(name{"111111111111j"});} )
+   // REQUIRE_PRINT( "555555555555j", []() {print(name{"555555555555j"});} )
+   // REQUIRE_PRINT( "aaaaaaaaaaaaj", []() {print(name{"aaaaaaaaaaaaj"});} )
+   // REQUIRE_PRINT( "zzzzzzzzzzzzj", []() {print(name{"zzzzzzzzzzzzj"});} )
 
    // -------------------------------------
    // inline void print(eosio::symbol_code)
