@@ -1,14 +1,17 @@
-#include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
+
+#include <eosiolib/system.hpp>
+
+#include <string>
 
 using eosio::check;
 using std::string;
 
 using namespace eosio::native;
 
-// Defined in `eosio.cdt/libraries/eosiolib/system.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/system.hpp`
 EOSIO_TEST_BEGIN(system_test)
-   silence_output(false);
+   silence_output(true);
 
    // inline void check(bool, const char*)
    REQUIRE_ASSERT( "asserted", []() { const char* str{"asserted"}; check(false, str);} );

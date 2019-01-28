@@ -1,14 +1,32 @@
-#include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
-using namespace eosio;
+#include <eosiolib/eosio.hpp>
+
 using namespace eosio::native;
 
-// Defined in `eosio.cdt/libraries/eosiolib/eosio.hpp`
+namespace using_no_macros {
+class [[eosio::contract]] con {
+
+   struct [[eosio::table]] tab {};
+    
+   [[eosio::action]] void act() {}
+};
+}
+
+namespace using_macros {
+CONTRACT con {
+
+   TABLE tab {};
+
+   ACTION act() {}
+};
+}
+
+// Definitions in `eosio.cdt/libraries/eosiolib/eosio.hpp`
 EOSIO_TEST_BEGIN(eosio_test)
    silence_output(false);
 
-   
+// REQUIRE_EQUAL( typeid(using_no_macros::con).name() == typeid(using_macros::con).name(), true )
 
    silence_output(false);
 EOSIO_TEST_END

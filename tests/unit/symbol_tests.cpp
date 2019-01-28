@@ -1,4 +1,5 @@
 #include <eosio/native/tester.hpp>
+
 #include <eosiolib/symbol.hpp>
 
 using eosio::name;
@@ -9,7 +10,7 @@ using eosio::extended_symbol;
 const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
 const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
-// Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
    silence_output(true);
 
@@ -114,7 +115,7 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
    silence_output(true);
 
@@ -227,7 +228,7 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Defined in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
    silence_output(true);
 
@@ -270,20 +271,20 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    REQUIRE_EQUAL( (extended_symbol{s3, n6}.get_contract().value), 3570337562653461615ULL )
    REQUIRE_EQUAL( (extended_symbol{s3, n7}.get_contract().value), u64max )
 
-   // Note: uncomment once the appended '\n' is removed from the `print` function
-   // ---------------------
-   // void print(bool)const
+   // // Note: uncomment once the appended '\n' is removed from the `print` function
+   // // ---------------------
+   // // void print(bool)const
    // extended_symbol{s0, n0}.print(true);
    // extended_symbol{s0, n0}.print(true);
-   // REQUIRE_PRINT( "0@576460752303423488", [](){extended_symbol{s0, n0}.print(true);} );
-   // REQUIRE_PRINT( "0@2882303761517117440", [](){extended_symbol{s1, n1}.print(true);} );
-   // REQUIRE_PRINT( "255@595056260442243615", [](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(true);} );
-   // REQUIRE_PRINT( "255@2975281302211218015", [](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(true);} );
+   // REQUIRE_PRINT( "0@576460752303423488", [&](){extended_symbol{s0, n0}.print(true);} );
+   // REQUIRE_PRINT( "0@2882303761517117440", [&](){extended_symbol{s1, n1}.print(true);} );
+   // REQUIRE_PRINT( "255@595056260442243615", [&](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(true);} );
+   // REQUIRE_PRINT( "255@2975281302211218015", [&](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(true);} );
 
-   // REQUIRE_PRINT( "@576460752303423488", [](){extended_symbol{symbol{"A", 0}, name{"1"}}.print(false);} );
-   // REQUIRE_PRINT( "@2882303761517117440", [](){extended_symbol{symbol{"Z", 0}, name{"5"}}.print(false);} );
-   // REQUIRE_PRINT( "@595056260442243615", [](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(false);} );
-   // REQUIRE_PRINT( "@2975281302211218015", [](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(false);} );
+   // REQUIRE_PRINT( "@576460752303423488", [&](){extended_symbol{symbol{"A", 0}, name{"1"}}.print(false);} );
+   // REQUIRE_PRINT( "@2882303761517117440", [&](){extended_symbol{symbol{"Z", 0}, name{"5"}}.print(false);} );
+   // REQUIRE_PRINT( "@595056260442243615", [&](){extended_symbol{symbol{"AAAAAAA", 255}, name{"111111111111j"}}.print(false);} );
+   // REQUIRE_PRINT( "@2975281302211218015", [&](){extended_symbol{symbol{"ZZZZZZZ", 255}, name{"555555555555j"}}.print(false);} );
 
    // -------------------------------------------------------------------------------
    // friend constexpr bool operator==(const extended_symbol&, const extended_symbol&)

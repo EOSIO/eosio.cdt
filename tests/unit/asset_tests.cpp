@@ -1,4 +1,5 @@
 #include <eosio/native/tester.hpp>
+
 #include <eosiolib/asset.hpp>
 
 using eosio::name;
@@ -16,7 +17,7 @@ const int64_t asset_max{ asset_mask}; //  4611686018427387903
 // therefore a constexpr function is needed to dynamically test `precision`
 constexpr uint8_t increment_precision( uint8_t precision ) { return ++precision; }
 
-// Defined in `eosio.cdt/libraries/eosiolib/asset.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/asset.hpp`
 EOSIO_TEST_BEGIN(asset_type_test)
    silence_output(true);
 
@@ -225,7 +226,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
    )
 
    REQUIRE_ASSERT( "comparison of assets with different symbols is not allowed", ([&]() {
-         asset{{1LL}, s0} / asset{{1LL}, s1};
+         asset{1LL, s0} / asset{1LL, s1};
       })
    )
 
@@ -236,7 +237,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
    REQUIRE_EQUAL( (asset{asset_max, sym_no_prec} == asset{asset_max, sym_no_prec} ), true )
 
    REQUIRE_ASSERT( "comparison of assets with different symbols is not allowed", ( []() {
-      asset{{}, symbol{"SYMBOLL", 0}} == asset{{}, symbol{"LLOBMYS", 0}};
+         asset{{}, symbol{"SYMBOLL", 0}} == asset{{}, symbol{"LLOBMYS", 0}};
       })
    )
 
@@ -267,7 +268,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Defined in `eosio.cdt/libraries/eosiolib/asset.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/asset.hpp`
 EOSIO_TEST_BEGIN(extended_asset_type_test)
    silence_output(true);
 

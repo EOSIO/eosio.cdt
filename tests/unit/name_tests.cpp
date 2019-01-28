@@ -1,4 +1,5 @@
 #include <eosio/native/tester.hpp>
+
 #include <eosiolib/name.hpp>
 
 using eosio::name;
@@ -6,7 +7,7 @@ using eosio::name;
 const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
 const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
-// Defined in `eosio.cdt/libraries/eosiolib/name.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/name.hpp`
 EOSIO_TEST_BEGIN(name_type_test)
    silence_output(true);
 

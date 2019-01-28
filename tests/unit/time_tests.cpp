@@ -1,4 +1,3 @@
-#include <eosiolib/eosio.hpp>
 #include <eosio/native/tester.hpp>
 
 #include <eosiolib/time.hpp>
@@ -25,7 +24,7 @@ const int64_t i64max = std::numeric_limits<int64_t>::max(); //  9223372036854775
 // Or if you check the `seconds` of a (u64MAX / 1000000 + 1), it will overflow.
 // Potentially could be abused in a contract?
 
-// Defined in `eosio.cdt/libraries/eosiolib/time.hpp`
+// Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
 EOSIO_TEST_BEGIN(microseconds_type_test)
    silence_output(false);
 
