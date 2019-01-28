@@ -293,25 +293,25 @@ steps:
         docker-credential-gcr configure-docker && \
         echo "--- :hammer_and_wrench: BUILDING BUILD IMAGE" && \
         cd docker/dev && \
-        [[ $BUILDKITE_TAG != "" ]] && docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH -t eosio/cdt:$BUILDKITE_TAG . || docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH . && \
+        [[ "$BUILDKITE_TAG" != "" ]] && docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH -t eosio/cdt:$BUILDKITE_TAG . || docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH . && \
         docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH -t eosio/cdt:$BUILDKITE_TAG . && \
         docker tag eosio/cdt:$BUILDKITE_COMMIT gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
         docker tag eosio/cdt:$BUILDKITE_BRANCH gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
-        [[ $BUILDKITE_TAG != "" ]] && docker tag eosio/cdt:$BUILDKITE_TAG gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
+        [[ "$BUILDKITE_TAG" != "" ]] && docker tag eosio/cdt:$BUILDKITE_TAG gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker tag eosio/cdt:latest gcr.io/b1-automation-dev/eosio/cdt:latest && \
         echo "--- :hand: PUSHING DOCKER IMAGES" && \
         docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
         docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
-        [[ $BUILDKITE_TAG != "" ]] && docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
+        [[ "$BUILDKITE_TAG" != "" ]] && docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker push gcr.io/b1-automation-dev/eosio/cdt:latest && \
         echo "--- :thought_balloon: TRASHING OLD IMAGES" && \
         docker rmi eosio/cdt:$BUILDKITE_COMMIT && \
         docker rmi eosio/cdt:$BUILDKITE_BRANCH && \
-        [[ $BUILDKITE_TAG != "" ]] && docker rmi eosio/cdt:$BUILDKITE_TAG || : && \
+        [[ "$BUILDKITE_TAG" != "" ]] && docker rmi eosio/cdt:$BUILDKITE_TAG || : && \
         docker rmi eosio/cdt:latest && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
-        [[ $BUILDKITE_TAG != "" ]] && docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
+        [[ "$BUILDKITE_TAG" != "" ]] && docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:latest
     label: "Docker Build Builder"
     agents:
