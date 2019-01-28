@@ -190,21 +190,16 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(false);
 
    char datastream_buffer[8+sizeof(unsigned_int)]{}; // Buffer for the datastream to point to
-   char const buffer[8]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}; // Buffer to act upon for testing
-
-   // // Fill the char array `buffer` with all all 256 ASCII characters
-   // for(int i{0}, j{-0x80}; i < 256; ++i, ++j)
-   //    buffer[i] = j;
+   char buffer[8]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}; // Buffer to act upon for testing
 
    // ---------
    // std::list
 
-const std::list<char> l{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', };
-eosio::print(sizeof(unsigned_int));
+   std::list<char> l{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', };
 
    datastream<char*> ds{datastream_buffer, 8+sizeof(unsigned_int)};
 
-   for(int i{0}; i < 8; ++i)
+   for(int i{0}; i < 17; ++i)
        eosio::print(datastream_buffer[i]);
    eosio::print("\n");
    for(int i{0}; i < 8; ++i)
@@ -218,7 +213,21 @@ eosio::print(sizeof(unsigned_int));
    
    ds << l;
 
-   for(int i{0}; i < 8+sizeof(unsigned_int); ++i)
+   for(int i{0}; i < 17; ++i)
+       eosio::print(datastream_buffer[i]);
+   eosio::print("\n");
+   for(int i{0}; i < 8; ++i)
+       eosio::print(buffer[i]);
+   eosio::print("\n");
+   for(auto& x : l)
+       eosio::print(x);
+   eosio::print("\n");
+
+   ds >> l;
+
+   eosio::print("\n");
+
+   for(int i{0}; i < 17; ++i)
        eosio::print(datastream_buffer[i]);
    eosio::print("\n");
    for(int i{0}; i < 8; ++i)

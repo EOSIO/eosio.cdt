@@ -1,5 +1,4 @@
 #include <eosio/native/tester.hpp>
-
 #include <eosiolib/name.hpp>
 
 using eosio::name;
