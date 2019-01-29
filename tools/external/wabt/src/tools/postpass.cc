@@ -107,7 +107,7 @@ void StripZeroedData( Module& mod, size_t& fix_bytes ) {
 }
 
 void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& buff, DataSegment& ds ) {
-   uint32_t heap_ptr  = ((GetHeapPtr(mod, buff) - fixup) + 7) & ~7; // align to 8 bytes
+   uint32_t heap_ptr  = ((GetHeapPtr(mod, buff)) + 7) & ~7; // align to 8 bytes
    Const c;
    c.I32(0);
    std::unique_ptr<Expr> ce(new ConstExpr(c));

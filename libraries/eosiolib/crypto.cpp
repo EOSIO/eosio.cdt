@@ -2,7 +2,6 @@
  *  @file
  *  @copyright defined in eos/LICENSE
  */
-
 #include "crypto.hpp"
 #include "datastream.hpp"
 
