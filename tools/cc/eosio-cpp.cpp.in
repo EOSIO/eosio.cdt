@@ -107,14 +107,14 @@ namespace eosio { namespace cdt {
    };
 }} // ns eosio::cdt
 
-void generate(int argc, const char **argv, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths) {
    std::vector<std::string> options;
-   options.push_back(argv[0]);
+   options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");
-   for (size_t i=1; i < argc; i++) {
-      options.push_back(argv[i]);
+   for (size_t i=1; i < base_options.size(); i++) {
+      options.push_back(base_options[i]);
    }
    options.push_back("--target=wasm32");
    options.push_back("-nostdlib");
@@ -184,7 +184,7 @@ int main(int argc, const char **argv) {
    });
    cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
    Options opts = CreateOptions();
-   
+
    std::vector<std::string> outputs;
    try {
       for (auto input : opts.inputs) {
@@ -193,8 +193,8 @@ int main(int argc, const char **argv) {
          llvm::sys::path::system_temp_directory(true, res);
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str()+"-tmp.cpp";
          std::string output;
-         
-         generate(argc, argv, input, opts.abigen_contract, opts.abigen_resources);
+
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources);
 
          if (llvm::sys::fs::exists(tmp_file)) {
             input = tmp_file;
@@ -216,7 +216,7 @@ int main(int argc, const char **argv) {
             return -1;
          }
          llvm::sys::fs::remove(tmp_file);
-      } 
+      }
    } catch (std::runtime_error& err) {
       llvm::errs() << err.what() << '\n';
       return -1;

@@ -8,6 +8,10 @@ struct contracts {
    static std::vector<char>    malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.abi"); }
    static std::vector<uint8_t> old_malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"); }
    static std::vector<char>    old_malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.abi"); }
-};
 
+   static std::vector<uint8_t> simple_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.wasm"); }
+   static std::vector<char>    simple_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.abi"); }
+
+};
+ 
 }} //ns eosio::testing
