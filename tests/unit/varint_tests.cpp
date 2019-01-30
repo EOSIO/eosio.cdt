@@ -2,6 +2,8 @@
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/varint.hpp>
 
+#include <eosiolib/print.hpp>
+
 using eosio::datastream;
 
 using namespace eosio::native;
@@ -252,14 +254,23 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
    // template<typename DataStream>
    // friend DataStream& operator<<(DataStream&, const signed_int&)
    const signed_int ci{0x7F};
-   const char expected_buffer0[1]{0x7F};
 
-   char buffer0[1]{};
-   datastream<char*> ds0{buffer0, 1};
+   char buffer0[10]{};
+   datastream<char*> ds0{buffer0, 10};
 
-   // ds0 << ci;
+eosio::print(ci.value, "\n");
+   ds0 << ci;
+eosio::print(static_cast<int>(buffer0[0]), " ");
+eosio::print(static_cast<int>(buffer0[1]), "\n");
+   signed_int temp{};
+   ds0 >> temp;
+eosio::print(static_cast<int>(buffer0[0]), " ");
+eosio::print(static_cast<int>(buffer0[1]), "\n");
+eosio::print(temp.value, "\n");
 
-   // REQUIRE_EQUAL( memcmp(expected_buffer0, buffer0, 1), 0 )
+   REQUIRE_EQUAL( ci == temp, true )
+   
+   // REQUIRE_EQUAL( memcmp(expected_buffer0, buffer0, 2), 0 )
 
    // -----------------------------
    // template<typename DataStream>

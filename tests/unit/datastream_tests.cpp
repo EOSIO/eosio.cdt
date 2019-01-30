@@ -1,11 +1,17 @@
+// eosio-cpp -fnative -w datastream_tests.cpp; ./a.out
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/datastream.hpp>
+#include <deque>
 #include <list>
 #include <vector>
 
 #include <eosiolib/print.hpp>
 
 using eosio::datastream;
+using std::begin;
+using std::end;
+using std::fill;
 using std::list;
 
 using namespace eosio::native;
@@ -189,73 +195,59 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    silence_output(false);
 EOSIO_TEST_END
 
+template <typename T>
+void print_bufs(const char* datastream_buffer, const T& container) {
+   eosio::print("\n");
+   eosio::print("\033[1;36mdatastream_buffer:\033[0m\n");
+   eosio::print((int)datastream_buffer[0]);
+   for (int i = 0; i < 15; ++i) {
+      eosio::print(datastream_buffer[i+1]);
+   }
+   eosio::print("\n");
+
+   eosio::print("\033[1;36mcontainer:\033[0m\n");
+   for (auto& x : container) {
+      eosio::print(x);
+   }
+   eosio::print("\n");
+}
+
 // Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(false);
 
-   static constexpr size_t elements{8};
-   unsigned_int ui{elements};
-   char datastream_buffer[256]{}; // Buffer for the datastream to point to
-   char buffer[8]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}; // Buffer to act upon for testing
+   static constexpr uint8_t buffer_size{16};
+   char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
+   char expectation_buffer[buffer_size]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}; // Buffer to act upon for testing
+   datastream<char*> ds{datastream_buffer, buffer_size};
 
    // ---------
    // std::list
-
-   std::list<char> l{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', };
-
-   datastream<char*> ds{datastream_buffer, 8+sizeof(unsigned_int)};
-
-   for(int i{0}; i < 16; ++i)
-       eosio::print(datastream_buffer[i]);
-   eosio::print("\n");
-   for(int i{0}; i < 8; ++i)
-       eosio::print(buffer[i]);
-   eosio::print("\n");
-   for(auto& x : l)
-       eosio::print(x);
-   eosio::print("\n");
-
-   eosio::print("\n");
+   // `datastream_buffer+1` is used to skip the size byte
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const std::list<char> cl{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   std::list<char> l{};
+   ds << cl;
+   REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
    
-   ds << l;
-
-   for(int i{0}; i < 17; ++i)
-       eosio::print(datastream_buffer[i]);
-   eosio::print("\n");
-   for(int i{0}; i < 8; ++i)
-       eosio::print(buffer[i]);
-   eosio::print("\n");
-   for(auto& x : l)
-       eosio::print(x);
-   eosio::print("\n");
-
+   ds.seekp(0);
    ds >> l;
-
-   eosio::print("\n");
-
-   for(int i{0}; i < 16; ++i)
-       eosio::print(datastream_buffer[i]);
-   eosio::print("\n");
-   for(int i{0}; i < 8; ++i)
-       eosio::print(buffer[i]);
-   eosio::print("\n");
-   for(auto& x : l)
-       eosio::print(x);
-   eosio::print("\n");
-
-   // std::vector<char> um_ds(std::begin(datastream_buffer), std::end(datastream_buffer));
-   // std::vector<char> um_list(std::begin(datastream_buffer), std::end(datastream_buffer));
-
-   // for(uint16_t i{0}; i < 256; ++i)
-   //     eosio::print(datastream_buffer);
-
-   // for(uint16_t i{0}; i < 256; ++i)
-   //     eosio::print(datastream_buffer);
-
-   // REQUIRE_EQUAL( um_ds ==  um_list, true )
-
+   REQUIRE_EQUAL( cl == l, true )
+   
    // ----------
    // std::deque
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const std::deque<char> cd{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   std::deque<char> d{};
+   ds << cd;
+   REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+
+   // This part segfaults
+   // ds.seekp(0);
+   // ds >> d;
+   // REQUIRE_EQUAL( cd == d, true )
 
    // Make custom small struct; use default constructor; spit in/spit out. Then compare
    // the value in the default constructor (expected) to result. And also put custom input to .value_or as well
@@ -264,15 +256,42 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 
    // ------------
    // std::variant
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::variant<char> cv{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::variant<char> v{};
+   // ds << cv;
+   // REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+   
+   // ds.seekp(0);
+   // ds >> v;
+   // REQUIRE_EQUAL( cv == v, true )
 
    // ---------
    // std::pair
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::pair<char> cp{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::pair<char> p{};
+   // ds << cp;
+   // REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+   
+   // ds.seekp(0);
+   // ds >> p;
+   // REQUIRE_EQUAL( cp == p, true )
 
    // ---------
    // std::optional
-
-   // ---------
-   // std::pair
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::optional<char> co{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::optional<char> o{};
+   // ds << co;
+   // REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+   
+   // ds.seekp(0);
+   // ds >> o;
+   // REQUIRE_EQUAL( co == o, true )
 
    // ---------
    // symbol_code
@@ -301,11 +320,31 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    // -----------
    // fixed_bytes
 
-   // -----------
+   // ----
    // bool
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::list<char> cl{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::list<char> l{};
+   // ds << cl;
+   // REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+   
+   // ds.seekp(0);
+   // ds >> l;
+   // REQUIRE_EQUAL( cl == l, true )
 
    // -----------
    // std::array
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::array<char> ca{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::array<char> a{};
+   // ds << ca;
+   // REQUIRE_EQUAL( memcmp(datastream_buffer+1, expectation_buffer, 9), 0 )
+   
+   // ds.seekp(0);
+   // ds >> a;
+   // REQUIRE_EQUAL( ca == a, true )
 
    silence_output(false);
 EOSIO_TEST_END
