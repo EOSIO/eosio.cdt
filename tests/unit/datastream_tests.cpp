@@ -12,7 +12,7 @@ using namespace eosio::native;
 
 // Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_test)
-   silence_output(true);
+   silence_output(false);
 
    char datastream_buffer[256]{}; // Buffer for the datastream to point to
    char buffer[256]{}; // Buffer to act upon for testing
@@ -29,6 +29,11 @@ EOSIO_TEST_BEGIN(datastream_test)
    ds.skip(1);
    REQUIRE_EQUAL( ds.pos() == datastream_buffer+1, true )
    ds.skip(-1);
+volatile int* ip = (int*)(200);
+size_t ss = -1;
+eosio::print_f("ip : %\n", (size_t)ip);
+ip += ss;
+eosio::print_f("ip : %\n", (size_t)ip);
    REQUIRE_EQUAL( ds.pos() == datastream_buffer, true )
 
    // inline bool read(char*, size_t)
@@ -55,7 +60,6 @@ EOSIO_TEST_BEGIN(datastream_test)
 
    REQUIRE_ASSERT( "write", ([&]() {ds.write(buffer, 1);}) )
 
-   // I'm getting the error: `read-only variable is not assignable *_pos = c;`
    // inline bool put(char)
    ds.seekp(0);
    REQUIRE_EQUAL( ds.put('c'), true )
@@ -189,7 +193,9 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(false);
 
-   char datastream_buffer[8+sizeof(unsigned_int)]{}; // Buffer for the datastream to point to
+   static constexpr size_t elements{8};
+   unsigned_int ui{elements};
+   char datastream_buffer[256]{}; // Buffer for the datastream to point to
    char buffer[8]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}; // Buffer to act upon for testing
 
    // ---------
@@ -199,7 +205,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 
    datastream<char*> ds{datastream_buffer, 8+sizeof(unsigned_int)};
 
-   for(int i{0}; i < 17; ++i)
+   for(int i{0}; i < 16; ++i)
        eosio::print(datastream_buffer[i]);
    eosio::print("\n");
    for(int i{0}; i < 8; ++i)
@@ -227,7 +233,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 
    eosio::print("\n");
 
-   for(int i{0}; i < 17; ++i)
+   for(int i{0}; i < 16; ++i)
        eosio::print(datastream_buffer[i]);
    eosio::print("\n");
    for(int i{0}; i < 8; ++i)
@@ -251,6 +257,8 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    // ----------
    // std::deque
 
+   // Make custom small struct; use default constructor; spit in/spit out. Then compare
+   // the value in the default constructor (expected) to result. And also put custom input to .value_or as well
    // ----------------
    // binary_extension
 
@@ -303,7 +311,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
-    //EOSIO_TEST(datastream_test);
+   // EOSIO_TEST(datastream_test);
    // EOSIO_TEST(datastream_specialization_test);
    EOSIO_TEST(datastream_stream_test);
    return has_failed();

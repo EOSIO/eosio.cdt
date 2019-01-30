@@ -93,8 +93,9 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( (be_const_value0.value() == "efgh"), false )
 
    // constexpr auto value_or(U&&) -> std::enable_if_t<std::is_convertible<U, T>::value, T&>&
-   binary_extension<uint8_t> be_temp_value_or{};
-   // REQUIRE_EQUAL( (be_temp_value_or = be_temp_value_or.value_or(binary_extension<uint16_t>{0x63}) == 0x63), true )
+   binary_extension<uint16_t> be_temp_value_or{};
+   uint16_t some_value = be_temp_value_or.value_or(uint16_t{0x63});
+   REQUIRE_EQUAL( (some_value == 0x63), true )
 
    // constexpr T&& value_or()&&
    REQUIRE_EQUAL( (binary_extension<char>{'c'}.value_or() == 'c'), true )
