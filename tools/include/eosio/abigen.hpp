@@ -337,6 +337,27 @@ namespace eosio { namespace cdt {
          o["key_types"] = ojson::array();
          return o;
       }
+      
+      bool is_empty() {
+         std::set<abi_table> set_of_tables;
+         for ( auto t : ctables ) {
+            bool has_multi_index = false;
+            for ( auto u : _abi.tables ) {
+               if (t.type == u.type) {
+                  has_multi_index = true;
+                  break;
+               }
+               set_of_tables.insert(u);
+            }
+            if (!has_multi_index)
+               set_of_tables.insert(t);
+         }
+         for ( auto t : _abi.tables ) {
+            set_of_tables.insert(t);
+         }
+
+         return _abi.structs.empty() && _abi.typedefs.empty() && _abi.actions.empty() && set_of_tables.empty() && _abi.ricardian_clauses.empty() && _abi.variants.empty();
+      }
 
       ojson to_json() {
          ojson o;
