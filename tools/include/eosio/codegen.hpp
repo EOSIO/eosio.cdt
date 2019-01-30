@@ -46,7 +46,7 @@ namespace eosio { namespace cdt {
          return "eosio.codegen fatal error";
       }
    };
-   
+
    struct include_double {
       include_double(std::string fn, SourceRange sr) : file_name(fn), range(sr) {}
       std::string    file_name;
@@ -80,11 +80,11 @@ namespace eosio { namespace cdt {
             static codegen inst;
             return inst;
          }
-         
+
          void set_contract_name(std::string cn) {
             contract_name = cn;
          }
-         
+
          void set_abi(std::string s) {
             abi = s;
          }
@@ -108,11 +108,11 @@ namespace eosio { namespace cdt {
             const clang::Module *imported,
             clang::SrcMgr::CharacteristicKind file_type) {
             auto fid = sources.getFileID(hash_loc);
-            auto fe  = sources.getFileEntryForID(fid); 
+            auto fe  = sources.getFileEntryForID(fid);
 
             if (!is_angled && llvm::sys::path::filename(fe->getName()) == llvm::sys::path::filename(fn)) {
                global_includes[fe->getName().str()].emplace_back(
-                     (search_path + llvm::sys::path::get_separator() + file_name).str(), 
+                     (search_path + llvm::sys::path::get_separator() + file_name).str(),
                      filename_range.getAsRange());
             }
          }
@@ -130,7 +130,7 @@ namespace eosio { namespace cdt {
          CompilerInstance* ci;
 
       public:
-         explicit eosio_codegen_visitor(CompilerInstance *CI) 
+         explicit eosio_codegen_visitor(CompilerInstance *CI)
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
@@ -140,18 +140,18 @@ namespace eosio { namespace cdt {
          void set_main_fid(FileID fid) {
             main_fid = fid;
          }
-         
+
          void set_main_name(StringRef mn) {
             main_name = mn;
-         } 
-         
+         }
+
          Rewriter& get_rewriter() {
             return rewriter;
          }
 
          bool is_datastream(const QualType& qt) {
             auto str_name = qt.getAsString();
-            auto ds_re    = std::regex("(((class eosio::)?datastream<[a-zA-Z]+[a-zA-Z0-9]*.*>)|(DataStream)) &"); 
+            auto ds_re    = std::regex("(((class eosio::)?datastream<[a-zA-Z]+[a-zA-Z0-9]*.*>)|(DataStream)) &");
             if (std::regex_match(str_name, ds_re))
                return true;
             return false;
@@ -249,26 +249,27 @@ namespace eosio { namespace cdt {
          }
 
          virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
-            std::string method_name = decl->getNameAsString();
+            std::string name = decl->getNameAsString();
             static std::set<std::string> _action_set; //used for validations
             static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
-               method_name = generation_utils::get_action_name(decl);
-               if (!_action_set.count(method_name))
-                  _action_set.insert(method_name);
+               name = generation_utils::get_action_name(decl);
+               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
+               if (!_action_set.count(name))
+                  _action_set.insert(name);
                else {
-                  auto itr = _action_set.find(method_name);
-                  if (*itr != method_name)
+                  auto itr = _action_set.find(name);
+                  if (*itr != name)
                      emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
                }
                if (cg.actions.count(decl->getNameAsString()) == 0) {
-                  if (cg.actions.count(method_name) == 0)
+                  if (cg.actions.count(name) == 0)
                      create_action_dispatch(decl);
                   else
                      emitError(*ci, decl->getLocation(), "action already defined elsewhere");
                }
                cg.actions.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
-               cg.actions.insert(method_name);
+               cg.actions.insert(name);
                for (auto param : decl->parameters()) {
                   if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
                      cg.datastream_uses.insert(tp->getQualifiedNameAsString());
@@ -277,30 +278,28 @@ namespace eosio { namespace cdt {
             }
             if (decl->isEosioNotify()) {
 
-               method_name = generation_utils::get_notify_pair(decl);
-               size_t occur = method_name.find_first_of(":");
-               if (occur != std::string::npos && occur+1 < method_name.size() && method_name[occur+1] == ':') {
-                  method_name = method_name.erase(occur);
-                  llvm::outs() << "MN " << method_name << '\n';
-               } else {
-                  emitError(*ci, decl->getLocation(), "notify handler name ill-formed");
-               }
+               name = generation_utils::get_notify_pair(decl);
+               auto first = name.substr(0, name.find("::"));
+               if (first != "*")
+                  validate_name(first, [&]() {emitError(*ci, decl->getLocation(), "invalid contract name");});
+               auto second = name.substr(name.find("::")+2);
+               validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
 
-               if (!_notify_set.count(method_name))
-                  _notify_set.insert(method_name);
+               if (!_notify_set.count(name))
+                  _notify_set.insert(name);
                else {
-                  auto itr = _notify_set.find(method_name);
-                  if (*itr != method_name)
+                  auto itr = _notify_set.find(name);
+                  if (*itr != name)
                      emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
                }
 
                if (cg.notify_handlers.count(decl->getNameAsString()) == 0)
-                  if (cg.notify_handlers.count(method_name) == 0)
+                  if (cg.notify_handlers.count(name) == 0)
                      create_notify_dispatch(decl);
                   else
                      emitError(*ci, decl->getLocation(), "notification handler already defined elsewhere");
                cg.notify_handlers.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
-               cg.notify_handlers.insert(method_name);
+               cg.notify_handlers.insert(name);
                for (auto param : decl->parameters()) {
                   if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
                      cg.datastream_uses.insert(tp->getQualifiedNameAsString());
@@ -308,7 +307,7 @@ namespace eosio { namespace cdt {
                }
             }
 
-            cg.cxx_methods.emplace(method_name, decl);
+            cg.cxx_methods.emplace(name, decl);
             return true;
          }
          virtual bool VisitRecordDecl(RecordDecl* decl) {
@@ -347,7 +346,7 @@ namespace eosio { namespace cdt {
       public:
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
             : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
-         
+
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
             auto& src_mgr = Context.getSourceManager();
@@ -366,7 +365,7 @@ namespace eosio { namespace cdt {
 
                   std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str()+"-tmp.cpp");
                   for (auto inc : global_includes[main_file]) {
-                     visitor->get_rewriter().ReplaceText(inc.range, 
+                     visitor->get_rewriter().ReplaceText(inc.range,
                            std::string("\"")+inc.file_name+"\"\n");
                   }
                   // generate apply stub with abi
@@ -376,7 +375,7 @@ namespace eosio { namespace cdt {
                   std::string abi = cg.abi;
                   ss << std::quoted(abi);
                   ss << ")))\n";
-                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){"; 
+                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
                   ss << "eosio_assert_code(false, 1);";
                   ss << "}\n";
                   ss << "}";

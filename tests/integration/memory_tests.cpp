@@ -34,10 +34,4 @@ BOOST_FIXTURE_TEST_CASE( malloc_tests, tester ) try {
                           eosio_assert_message_exception,
                           eosio_assert_message_is("failed to allocate pages") );
                           */
-   set_code( N(test), contracts::hello_wasm() );
-   set_abi( N(test), contracts::hello_abi().data() );
-   produce_blocks();
-   push_action(N(test), N(hi), N(test), 
-         mvo()
-         ("nm", "bucky"));
 } FC_LOG_AND_RETHROW() }
