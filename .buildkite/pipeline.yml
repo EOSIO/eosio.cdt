@@ -87,31 +87,31 @@ steps:
   # UNIT TESTING
   - wait
 
-  - command: | # High Sierra Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
-      cd build && \
-      ctest -V
-    label: ":darwin: High Sierra Unit Tests"
-    agents:
-      role: "macos-tester"
-      os: "high-sierra"
-    timeout: 120
+  # - command: | # High Sierra Unit Tests
+  #     echo "--- :arrow_down: Downloading build directory" && \
+  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
+  #     tar -zxf build.tar.gz && \
+  #     echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
+  #     cd build && \
+  #     ctest -V
+  #   label: ":darwin: High Sierra Unit Tests"
+  #   agents:
+  #     role: "macos-tester"
+  #     os: "high-sierra"
+  #   timeout: 120
 
-  - command: | # Mojave Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on macOS Mojave" && \
-      cd build && \
-      ctest -V
-    label: ":darwin: Mojave Unit Tests"
-    agents:
-      role: "tester"
-      os: "mojave"
-    timeout: 120
+  # - command: | # Mojave Unit Tests
+  #     echo "--- :arrow_down: Downloading build directory" && \
+  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
+  #     tar -zxf build.tar.gz && \
+  #     echo "+++ :microscope: Running unit tests on macOS Mojave" && \
+  #     cd build && \
+  #     ctest -V
+  #   label: ":darwin: Mojave Unit Tests"
+  #   agents:
+  #     role: "tester"
+  #     os: "mojave"
+  #   timeout: 120
     
   - command: | # Ubuntu 18.04 Unit Tests
       echo "--- :arrow_down: Downloading build directory" && \
