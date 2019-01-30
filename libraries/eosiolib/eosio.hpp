@@ -29,3 +29,8 @@ static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
   * @defgroup contracts Contracts API
   * @brief C++ Chain API for chain-dependent smart-contract functionality
   */
+
+/**
+ * @defgroup types Types
+ * @brief TODO
+ */

@@ -15,7 +15,7 @@ namespace eosio {
 
    /**
    *  @defgroup public_key Public Key Type
-   *  @ingroup core
+   *  @ingroup types
    *  @brief Specifies public key type
    *
    *  @{
@@ -52,7 +52,7 @@ namespace eosio {
 
    /**
    *  @defgroup signature Signature type
-   *  @ingroup core
+   *  @ingroup types
    *  @brief Specifies signature type
    *
    *  @{

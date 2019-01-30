@@ -35,7 +35,7 @@ namespace eosio {
 
    /**
    *  @defgroup fixed_key Fixed Size Key
-   *  @ingroup core
+   *  @ingroup types
    *  @brief Fixed size key sorted lexicographically for Multi Index Table
    *  @{
    */

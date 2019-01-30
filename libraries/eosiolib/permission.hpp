@@ -16,7 +16,7 @@ namespace eosio {
   /**
    * @addtogroup permission Permission C++ API
    * @brief Defines C++ API functions for validating authorization of keys and permissions
-   * @ingroup core
+   * @ingroup types
    * @{
    */
 

@@ -35,7 +35,7 @@ namespace eosio {
 
     /**
     *  @defgroup fixed_bytes Fixed Size Byte Array
-    *  @ingroup core
+    *  @ingroup types
     *  @brief Fixed size array of bytes sorted lexicographically
     *  @{
     */

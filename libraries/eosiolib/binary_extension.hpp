@@ -6,7 +6,6 @@
     *  Container to hold a binary payload for an extension
     *
     *  @defgroup binary_extension Binary Extension
-    *  @ingroup core
     *  @ingroup types
     *  @{
     */
