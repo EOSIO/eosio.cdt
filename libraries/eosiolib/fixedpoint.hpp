@@ -6,7 +6,7 @@ namespace eosio
 {
     /**
     * @defgroup fixed_point Fixed Point
-    * @ingroup types
+    * @ingroup core
     * @brief 32,64,128,256 bits version of fixed point variables
     *
     * @details Floating point operations are indeterministic, hence is prevented in smart contract.

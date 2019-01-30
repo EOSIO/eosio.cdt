@@ -6,7 +6,7 @@
 
 /**
  * @defgroup contract Contract
- * @ingroup types
+ * @ingroup contracts
  * @brief Defines contract type which is %base class for every EOSIO contract
  * @{
  */

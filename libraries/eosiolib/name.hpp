@@ -14,7 +14,7 @@ namespace eosio {
 
    /**
     * @defgroup name
-    * @ingroup types
+    * @ingroup core
     * @brief EOSIO Types
     * @{
 

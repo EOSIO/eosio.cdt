@@ -6,9 +6,10 @@
 namespace eosio {
 
   /**
-   * @addtogroup privileged Privileged C++ API
-   * @ingroup cpp_api
    * Defines C++ Privileged API
+   *
+   * @addtogroup privileged Privileged C++ API
+   * @ingroup contracts
    * @{
    */
 
@@ -150,7 +151,7 @@ namespace eosio {
    ///@}
 
    /**
-   *  @defgroup types
+   *  @ingroup core
    *  @{
    */
 

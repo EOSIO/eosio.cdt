@@ -14,8 +14,8 @@
 namespace eosio {
 
    /**
-   *  @defgroup publickeytype Public Key Type
-   *  @ingroup types
+   *  @defgroup public_key Public Key Type
+   *  @ingroup core
    *  @brief Specifies public key type
    *
    *  @{
@@ -51,8 +51,8 @@ namespace eosio {
    /// @} publickeytype
 
    /**
-   *  @defgroup signature Public Key Type
-   *  @ingroup types
+   *  @defgroup signature Signature type
+   *  @ingroup core
    *  @brief Specifies signature type
    *
    *  @{
@@ -89,7 +89,7 @@ namespace eosio {
 
    /**
     *  @defgroup crypto Chain API
-    *  @ingroup cpp_api
+    *  @ingroup core
     *  @brief Defines API for calculating and checking hashes
     *  @{
     */
