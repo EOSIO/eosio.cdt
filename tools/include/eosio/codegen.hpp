@@ -346,6 +346,21 @@ namespace eosio { namespace cdt {
       public:
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
             : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
+         
+         // replace with std::quoted and std::make_unique when we can get better C++14 support for Centos 
+         std::string quoted(const std::string& instr) {
+            std::stringstream ss;
+            for (char c : instr) {
+               if (c == '"')
+                  ss << '\\';
+               ss << c;
+            }
+            return ss.str();
+         }
+         template<typename T, typename... Args>
+         std::unique_ptr<T> make_unique(Args&&... args) {
+            return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+         }
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
@@ -374,7 +389,7 @@ namespace eosio { namespace cdt {
                      ss << "extern \"C\" {\n";
                      ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                      std::string abi = cg.abi;
-                     ss << std::quoted(abi);
+                     ss << quoted(abi);
                      ss << ")))\n";
                      ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
                      ss << "eosio_assert_code(false, 1);";
@@ -397,8 +412,8 @@ namespace eosio { namespace cdt {
       class eosio_codegen_frontend_action : public ASTFrontendAction {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
-            CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return std::make_unique<eosio_codegen_consumer>(&CI, file);
+            CI.getPreprocessor().addPPCallbacks(make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
+            return make_unique<eosio_codegen_consumer>(&CI, file);
          }
    };
 
