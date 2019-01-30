@@ -1,8 +1,6 @@
 #pragma once
 
 #include <variant>
-#include <set>
-#include <stack>
 #include "system.hpp"
 
 namespace eosio {

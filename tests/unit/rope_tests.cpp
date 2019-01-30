@@ -1,5 +1,5 @@
 #include <eosiolib/eosio.hpp>
-#include <eosiolib/string.hpp>
+#include <eosiolib/rope.hpp>
 #include <eosio/native/tester.hpp>
 #include <string>
 

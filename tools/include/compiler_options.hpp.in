@@ -341,8 +341,6 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
    } else {
-      copts.emplace_back("-msoft-float");
-      copts.emplace_back("-mno-implicit-float");
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");

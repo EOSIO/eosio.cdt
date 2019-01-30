@@ -30,11 +30,11 @@ extern "C" {
       return ___heap_base_ptr;
    }
 
-   size_t __builtin_wasm_current_memory() {
+   size_t _current_memory() {
       return ___pages;
    }
 
-   size_t __builtin_wasm_grow_memory(size_t size) {
+   size_t _grow_memory(size_t size) {
       if ((___heap_ptr + (size*64*1024)) > (___heap_ptr + 100*1024*1024))
          eosio_assert(false, "__builtin_wasm_grow_memory");
       ___heap_ptr += (size*64*1024);
