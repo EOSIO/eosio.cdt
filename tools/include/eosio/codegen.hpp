@@ -240,10 +240,9 @@ namespace eosio { namespace cdt {
                   qt.removeLocalRestrict();
                   std::string tn = clang::TypeName::getFullyQualifiedName(qt, *(cg.ast_context), policy);
                   tn = tn == "_Bool" ? "bool" : tn; // TODO look out for more of these oddities
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunsequenced"
-                  ss << tn << " arg" << i << "; ds >> arg" << i++ << ";\n";
-#pragma GCC diagnostic pop
+                  int j = i+1;
+                  ss << tn << " arg" << i << "; ds >> arg" << j << ";\n";
+                  i = j;
                }
                ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
                for (int i=0; i < decl->parameters().size(); i++) {
