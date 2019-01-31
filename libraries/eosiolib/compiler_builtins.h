@@ -30,6 +30,7 @@ extern "C" {
   * printi128(&res); // Output: 10000
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __multi3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
 
  /**
@@ -50,6 +51,7 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __divti3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
 
  /**
@@ -69,6 +71,7 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __udivti3(unsigned __int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
 
  /**
@@ -89,6 +92,7 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __modti3(__int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
 
  /**
@@ -109,6 +113,7 @@ extern "C" {
   * printi128(&res); // Output: 1
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __umodti3(unsigned __int128& res, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb);
 
 /**
@@ -127,6 +132,7 @@ extern "C" {
   * printi128(&res); // Output: 16
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __lshlti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
 
  /**
@@ -145,6 +151,7 @@ extern "C" {
   * printi128(&res); // Output: 4
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __lshrti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
 
 /**
@@ -163,6 +170,7 @@ extern "C" {
   * printi128(&res); // Output: 16
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __ashlti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
 
  /**
@@ -181,6 +189,7 @@ extern "C" {
   * printi128(&res); // Output: -4
   * @endcode
   */
+  __attribute__((eosio_wasm_import))
   void __ashrti3(__int128& res, uint64_t lo, uint64_t hi, uint32_t shift);
 
  /**
@@ -193,6 +202,7 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+  __attribute__((eosio_wasm_import))
   void __addtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -205,6 +215,7 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+  __attribute__((eosio_wasm_import))
   void __subtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -217,6 +228,7 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+  __attribute__((eosio_wasm_import))
   void __multf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -229,6 +241,7 @@ extern "C" {
   * @param hb   High 64 bits of the second 128 bit factor.
   * @post `ret` is replaced with the result of the operation
   */
+  __attribute__((eosio_wasm_import))
   void __divtf3( long double& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -244,6 +257,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return 1 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __eqtf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -259,6 +273,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return1 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __netf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
 
@@ -275,6 +290,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return -1 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __getf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -290,6 +306,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return 0 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __gttf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -305,6 +322,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return 1 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __letf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -320,6 +338,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return 0 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __lttf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -335,6 +354,7 @@ extern "C" {
   * @return -1 if a less than b
   * @return 1 if either a or b is NaN
   */
+  __attribute__((eosio_wasm_import))
   int __cmptf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -348,6 +368,7 @@ extern "C" {
   * @return 1 if either a or b is NaN
   * @return 0 if either a or b is not NaN
   */
+  __attribute__((eosio_wasm_import))
   int __unordtf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb );
 
  /**
@@ -357,6 +378,7 @@ extern "C" {
   * @param f    Input float to be extended
   * @post `ret` is replaced with the extended float
   */
+  __attribute__((eosio_wasm_import))
   void __extendsftf2( long double& ret, float f );
 
  /**
@@ -366,6 +388,7 @@ extern "C" {
   * @param f    Input float to be extended
   * @post `ret` is replaced with the extended float
   */
+  __attribute__((eosio_wasm_import))
   void __extenddftf2( long double& ret, double f );
 
  /**
@@ -375,6 +398,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted 64 bit integer.
   */
+  __attribute__((eosio_wasm_import))
   int64_t __fixtfdi( uint64_t l, uint64_t h );
 
  /**
@@ -384,6 +408,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted 32 bit integer.
   */
+  __attribute__((eosio_wasm_import))
   int32_t __fixtfsi( uint64_t l, uint64_t h );
 
  /**
@@ -393,6 +418,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted 64 bit unsigned integer.
   */
+  __attribute__((eosio_wasm_import))
   uint64_t __fixunstfdi( uint64_t l, uint64_t h );
 
  /**
@@ -402,6 +428,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted 32 bit unsigned integer.
   */
+  __attribute__((eosio_wasm_import))
   uint32_t __fixunstfsi( uint64_t l, uint64_t h );
 
  /**
@@ -412,6 +439,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted double
   */
+  __attribute__((eosio_wasm_import))
   double __trunctfdf2( uint64_t l, uint64_t h );
 
  /**
@@ -421,6 +449,7 @@ extern "C" {
   * @param h   High 64 bits of the first 128 bit factor.
   * @return the converted float
   */
+  __attribute__((eosio_wasm_import))
   float __trunctfsf2( uint64_t l, uint64_t h );
 
   void __break_point();
