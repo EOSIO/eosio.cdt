@@ -403,11 +403,11 @@ namespace eosio { namespace cdt {
                      ss << "}\n";
                      ss << "}";
                      visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
-                     auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
-                     out << std::string(RewriteBuf.begin(), RewriteBuf.end());
-                     cg.tmp_files.emplace(main_file, fn.str());
-                     out.close();
                   }
+                  auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
+                  out << std::string(RewriteBuf.begin(), RewriteBuf.end());
+                  cg.tmp_files.emplace(main_file, fn.str());
+                  out.close();
                } catch (...) {
                   llvm::outs() << "Failed to create temporary file\n";
                }

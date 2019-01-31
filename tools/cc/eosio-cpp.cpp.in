@@ -203,7 +203,6 @@ int main(int argc, const char **argv) {
          if (llvm::sys::fs::exists(tmp_file)) {
             input = tmp_file;
          }
-
          output = tmp_file+".o";
 
          new_opts.insert(new_opts.begin(), input);
@@ -211,9 +210,9 @@ int main(int argc, const char **argv) {
          if (!opts.link) {
             output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
          }
-
          new_opts.insert(new_opts.begin(), "-o "+output);
          outputs.push_back(output);
+
          if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
             llvm::sys::fs::remove(tmp_file);
             return -1;
