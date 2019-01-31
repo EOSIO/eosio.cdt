@@ -290,11 +290,13 @@ namespace eosio { namespace cdt {
                }
                cg.actions.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
                cg.actions.insert(name);
+               /*
                for (auto param : decl->parameters()) {
                   if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
                      cg.datastream_uses.insert(tp->getQualifiedNameAsString());
                   }
                }
+               */
             }
             if (decl->isEosioNotify()) {
 
@@ -321,11 +323,13 @@ namespace eosio { namespace cdt {
                }
                cg.notify_handlers.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
                cg.notify_handlers.insert(name);
+               /*
                for (auto param : decl->parameters()) {
                   if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
                      cg.datastream_uses.insert(tp->getQualifiedNameAsString());
                   }
                }
+               */
             }
 
             cg.cxx_methods.emplace(name, decl);
