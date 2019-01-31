@@ -65,7 +65,7 @@ inline bool expect_print(bool check, const std::string& li, Pred&& pred, F&& fun
    if (!check)
       eosio_assert(passed, std::string("error : wrong print message {"+li+"}").c_str());
    if (!passed)
-      eosio::print("error : wrong print message {"+li+"}\n");
+      eosio::print("error : wrong print message9 {"+li+"}\n");
    silence_output(disable_out);
    return passed;
 }
@@ -74,7 +74,7 @@ template <size_t N, typename F, typename... Args>
 inline bool expect_print(bool check, const std::string& li, const char (&expected)[N], F&& func, Args... args) {
    return expect_print(check, li, 
          [&](const std::string& s) { 
-            return std_out.index-1 == N-1 &&
+            return std_out.index == N-1 &&
             memcmp(expected, s.c_str(), N-1) == 0; }, func, args...);
 
 }

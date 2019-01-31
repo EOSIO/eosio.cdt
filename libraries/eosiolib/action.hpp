@@ -3,10 +3,11 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
+#include <cstdlib>
+
 #include "action.h"
 #include "datastream.hpp"
 #include "serialize.hpp"
-#include "memory.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>

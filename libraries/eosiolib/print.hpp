@@ -47,7 +47,7 @@ namespace eosio {
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit signed integer
     *
     * @param num to be printed
     */
@@ -58,14 +58,12 @@ namespace eosio {
          printi128(&num);
       else if constexpr(std::is_same<T, char>::value)
          prints_l( &num, 1 );
-      else if constexpr(std::is_same<T, bool>::value)
-         prints(num?"true":"false");
       else
          printi(num);
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit unsigned integer
     *
     * @param num to be printed
     */
@@ -74,6 +72,8 @@ namespace eosio {
    inline void print( T num ) {
       if constexpr(std::is_same<T, uint128_t>::value)
          printui128(&num);
+      else if constexpr(std::is_same<T, bool>::value)
+         prints(num?"true":"false");
       else
          printui(num);
    }
