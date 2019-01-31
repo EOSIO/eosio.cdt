@@ -1,5 +1,8 @@
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#pragma GCC diagnostic ignored "-Wcovered-switch-default"
 #include <jsoncons/json.hpp>
 #include "abi.hpp"
 
@@ -152,3 +155,4 @@ class ABIMerger {
 
       ojson abi;
 };
+#pragma GCC diagnostic pop

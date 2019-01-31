@@ -41,6 +41,21 @@ using namespace eosio;
 using namespace eosio::cdt;
 
 namespace eosio { namespace cdt {
+   // replace with std::quoted and std::make_unique when we can get better C++14 support for Centos 
+   std::string _quoted(const std::string& instr) {
+      std::stringstream ss;
+      for (char c : instr) {
+         if (c == '"')
+            ss << '\\';
+         ss << c;
+      }
+      return ss.str();
+   }
+   template<typename T, typename... Args>
+   std::unique_ptr<T> _make_unique(Args&&... args) {
+      return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+   }
+
    struct codegen_exception : public std::exception {
       virtual const char* what() const throw() {
          return "eosio.codegen fatal error";
@@ -182,6 +197,7 @@ namespace eosio { namespace cdt {
          }
 
          virtual bool VisitFunctionTemplateDecl(FunctionTemplateDecl* decl) {
+            /*
             if (decl->getNameAsString() == "operator<<") {
                if (decl->getTemplatedDecl()->getNumParams() == 2) {
                   auto param0 = decl->getTemplatedDecl()->getParamDecl(0)->getOriginalType();
@@ -192,6 +208,7 @@ namespace eosio { namespace cdt {
                   }
                }
             }
+            */
             return true;
          }
 
@@ -223,7 +240,10 @@ namespace eosio { namespace cdt {
                   qt.removeLocalRestrict();
                   std::string tn = clang::TypeName::getFullyQualifiedName(qt, *(cg.ast_context), policy);
                   tn = tn == "_Bool" ? "bool" : tn; // TODO look out for more of these oddities
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunsequenced"
                   ss << tn << " arg" << i << "; ds >> arg" << i++ << ";\n";
+#pragma GCC diagnostic pop
                }
                ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
                for (int i=0; i < decl->parameters().size(); i++) {
@@ -293,11 +313,12 @@ namespace eosio { namespace cdt {
                      emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
                }
 
-               if (cg.notify_handlers.count(decl->getNameAsString()) == 0)
+               if (cg.notify_handlers.count(decl->getNameAsString()) == 0) {
                   if (cg.notify_handlers.count(name) == 0)
                      create_notify_dispatch(decl);
                   else
                      emitError(*ci, decl->getLocation(), "notification handler already defined elsewhere");
+               }
                cg.notify_handlers.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
                cg.notify_handlers.insert(name);
                for (auto param : decl->parameters()) {
@@ -347,20 +368,6 @@ namespace eosio { namespace cdt {
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
             : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
          
-         // replace with std::quoted and std::make_unique when we can get better C++14 support for Centos 
-         std::string _quoted(const std::string& instr) {
-            std::stringstream ss;
-            for (char c : instr) {
-               if (c == '"')
-                  ss << '\\';
-               ss << c;
-            }
-            return ss.str();
-         }
-         template<typename T, typename... Args>
-         std::unique_ptr<T> _make_unique(Args&&... args) {
-            return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-         }
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
@@ -389,7 +396,7 @@ namespace eosio { namespace cdt {
                      ss << "extern \"C\" {\n";
                      ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                      std::string abi = cg.abi;
-                     ss << _quoted(abi);
+                     ss << "\"" << _quoted(abi) << "\"";
                      ss << ")))\n";
                      ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
                      ss << "eosio_assert_code(false, 1);";

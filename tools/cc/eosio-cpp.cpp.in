@@ -107,7 +107,7 @@ namespace eosio { namespace cdt {
    };
 }} // ns eosio::cdt
 
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -156,15 +156,17 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
 
    int tool_run = -1;
-   tool_run = ctool.run(newFrontendActionFactory(&finder).get());
-   if (tool_run != 0) {
-      throw std::runtime_error("abigen error");
+   if (abigen) {
+      tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+      if (tool_run != 0) {
+         throw std::runtime_error("abigen error");
+      }
+      std::string abi_s;
+      if (get_abigen_ref().is_empty())
+         return;
+      get_abigen_ref().to_json().dump(abi_s);
+      codegen::get().set_abi(abi_s);
    }
-   std::string abi_s;
-   if (get_abigen_ref().is_empty())
-      return;
-   get_abigen_ref().to_json().dump(abi_s);
-   codegen::get().set_abi(abi_s);
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("codegen error");
@@ -196,7 +198,7 @@ int main(int argc, const char **argv) {
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str()+"-tmp.cpp";
          std::string output;
 
-         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources);
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
 
          if (llvm::sys::fs::exists(tmp_file)) {
             input = tmp_file;
