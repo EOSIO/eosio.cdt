@@ -196,8 +196,8 @@ namespace eosio { namespace cdt {
             return "";
          }
 
+         /*
          virtual bool VisitFunctionTemplateDecl(FunctionTemplateDecl* decl) {
-            /*
             if (decl->getNameAsString() == "operator<<") {
                if (decl->getTemplatedDecl()->getNumParams() == 2) {
                   auto param0 = decl->getTemplatedDecl()->getParamDecl(0)->getOriginalType();
@@ -208,9 +208,9 @@ namespace eosio { namespace cdt {
                   }
                }
             }
-            */
             return true;
          }
+         */
 
          template <typename F>
          void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
@@ -298,7 +298,7 @@ namespace eosio { namespace cdt {
                }
                */
             }
-            if (decl->isEosioNotify()) {
+            else if (decl->isEosioNotify()) {
 
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
@@ -332,9 +332,10 @@ namespace eosio { namespace cdt {
                */
             }
 
-            cg.cxx_methods.emplace(name, decl);
+            //cg.cxx_methods.emplace(name, decl);
             return true;
          }
+         /*
          virtual bool VisitRecordDecl(RecordDecl* decl) {
             static std::set<std::string> _action_set; //used for validations
             std::string rec_name = decl->getQualifiedNameAsString();
@@ -360,6 +361,7 @@ namespace eosio { namespace cdt {
             cg.cxx_records.emplace(rec_name, decl);
             return true;
          }
+         */
       };
 
       class eosio_codegen_consumer : public ASTConsumer {

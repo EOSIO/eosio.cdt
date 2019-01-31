@@ -197,7 +197,7 @@ int main(int argc, const char **argv) {
          llvm::sys::path::system_temp_directory(true, res);
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str()+"-tmp.cpp";
          std::string output;
-
+         
          generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
 
          if (llvm::sys::fs::exists(tmp_file)) {
