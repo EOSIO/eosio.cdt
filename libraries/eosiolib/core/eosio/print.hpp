@@ -3,7 +3,6 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "print.h"
 #include "name.hpp"
 #include "symbol.hpp"
 #include "fixed_bytes.hpp"
@@ -34,8 +33,43 @@
    *  @{
    */
 
-
 namespace eosio {
+   namespace internal_use_do_not_use {
+      extern "C" {
+         __attribute__((eosio_wasm_import))
+         void prints(const char*);
+
+         __attribute__((eosio_wasm_import))
+         void prints_l(const char*, uint32_t);
+
+         __attribute__((eosio_wasm_import))
+         void printi(int64_t);
+
+         __attribute__((eosio_wasm_import))
+         void printui(uint64_t);
+
+         __attribute__((eosio_wasm_import))
+         void printi128(const int128_t*);
+
+         __attribute__((eosio_wasm_import))
+         void printui128(const uint128_t*);
+
+         __attribute__((eosio_wasm_import))
+         void printsf(float);
+
+         __attribute__((eosio_wasm_import))
+         void printdf(double);
+
+         __attribute__((eosio_wasm_import))
+         void printqf(const long double*);
+
+         __attribute__((eosio_wasm_import))
+         void printn(uint64_t);
+
+         __attribute__((eosio_wasm_import))
+         void printhex(const void*, uint32_t);
+      }
+   };
 
    /**
     *  Prints string
@@ -43,7 +77,7 @@ namespace eosio {
     *  @param ptr - a null terminated string
     */
    inline void print( const char* ptr ) {
-      prints(ptr);
+     internal_use_do_not_use::prints(ptr);
    }
 
    /**
@@ -55,11 +89,11 @@ namespace eosio {
                                           std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, int128_t>::value)
-         printi128(&num);
+        internal_use_do_not_use::printi128(&num);
       else if constexpr(std::is_same<T, char>::value)
-         prints_l( &num, 1 );
+        internal_use_do_not_use::prints_l( &num, 1 );
       else
-         printi(num);
+        internal_use_do_not_use::printi(num);
    }
 
    /**
@@ -71,11 +105,11 @@ namespace eosio {
                                           !std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, uint128_t>::value)
-         printui128(&num);
+         internal_use_do_not_use::printui128(&num);
       else if constexpr(std::is_same<T, bool>::value)
-         prints(num?"true":"false");
+         internal_use_do_not_use::prints(num?"true":"false");
       else
-         printui(num);
+        internal_use_do_not_use::printui(num);
    }
 
    /**
@@ -83,21 +117,21 @@ namespace eosio {
     *
     * @param num to be printed
     */
-   inline void print( float num ) { printsf( num ); }
+   inline void print( float num ) { internal_use_do_not_use::printsf( num ); }
 
    /**
     * Prints double-precision floating point number (i.e. double)
     *
     * @param num to be printed
     */
-   inline void print( double num ) { printdf( num ); }
+   inline void print( double num ) { internal_use_do_not_use::printdf( num ); }
 
    /**
     * Prints quadruple-precision floating point number (i.e. long double)
     *
     * @param num to be printed
     */
-   inline void print( long double num ) { printqf( &num ); }
+   inline void print( long double num ) { internal_use_do_not_use::printqf( &num ); }
 
    /**
     * Prints fixed_bytes as a hexidecimal string
@@ -108,7 +142,7 @@ namespace eosio {
    template<size_t Size>
    inline void print( const fixed_bytes<Size>& val ) {
       auto arr = val.extract_as_byte_array();
-      printhex(static_cast<const void*>(arr.data()), arr.size());
+      internal_use_do_not_use::printhex(static_cast<const void*>(arr.data()), arr.size());
    }
 
   /**
@@ -128,7 +162,7 @@ namespace eosio {
     * @param name 64 bit name to be printed
     */
    inline void print( name name ) {
-      printn(name.value);
+     internal_use_do_not_use::printn(name.value);
    }
 
    /**
@@ -140,7 +174,7 @@ namespace eosio {
       char buffer[7];
       auto end = sym_code.write_as_string( buffer, buffer + sizeof(buffer) );
       if( buffer < end )
-         prints_l( buffer, (end-buffer) );
+        internal_use_do_not_use::prints_l( buffer, (end-buffer) );
    }
 
   /**
@@ -152,9 +186,9 @@ namespace eosio {
    template<typename T, std::enable_if_t<!std::is_integral<std::decay_t<T>>::value, int> = 0>
    inline void print( T&& t ) {
       if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
-         prints_l( t.c_str(), t.size() );
+         internal_use_do_not_use::prints_l( t.c_str(), t.size() );
       else if constexpr (std::is_same<std::decay_t<T>, char*>::value)
-         prints(t);
+         internal_use_do_not_use::prints(t);
       else
          t.print();
    }
@@ -165,7 +199,7 @@ namespace eosio {
     * @param s null terminated string to be printed
     */
    inline void print_f( const char* s ) {
-      prints(s);
+     internal_use_do_not_use::prints(s);
    }
 
    /**
@@ -190,7 +224,7 @@ namespace eosio {
             print_f( s+1, rest... );
             return;
          }
-         prints_l( s, 1 );
+         internal_use_do_not_use::prints_l( s, 1 );
          s++;
       }
    }
@@ -254,6 +288,4 @@ namespace eosio {
    static iostream cout;
 
    /// @} consolecppapi
-
-
 }

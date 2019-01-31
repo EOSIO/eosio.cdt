@@ -1,5 +1,5 @@
 #include "core/eosio/datastream.hpp"
-#include "chain/eosio/privileged.hpp"
+#include "contracts/eosio/privileged.hpp"
 
 namespace eosio {
 

@@ -1,5 +1,5 @@
-#include <core/eosio/name.hpp>
-#include <chain/eosio/action.hpp>
+#include <eosio/name.hpp>
+#include <eosio/action.hpp>
 #include "intrinsics.hpp"
 #include "crt.hpp"
 #include <cstdint>

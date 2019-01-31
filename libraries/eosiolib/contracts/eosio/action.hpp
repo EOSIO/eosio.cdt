@@ -136,6 +136,47 @@ namespace eosio {
    }
 
    /**
+   *  Returns the time in microseconds from 1970 of the publication_time
+   *  @brief Get the publication time
+   *  @return the time in microseconds from 1970 of the publication_time
+   */
+   inline uint64_t  publication_time() {
+     return internal_use_do_not_use::publication_time();
+   }
+
+   /**
+   *  Get the current receiver of the action
+   *  @brief Get the current receiver of the action
+   *  @return the account which specifies the current receiver of the action
+   */
+   inline name current_receiver() {
+     return name{internal_use_do_not_use::current_receiver()};
+   }
+
+   /**
+    *  Copy up to length bytes of current action data to the specified location
+    *
+    *  @brief Copy current action data to the specified location
+    *  @param msg - a pointer where up to length bytes of the current action data will be copied
+    *  @param len - len of the current action data to be copied, 0 to report required size
+    *  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
+    *  @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
+    *  @post `msg` is filled with packed action data
+    */
+   inline uint32_t read_action_data( void* msg, uint32_t len ) {
+     return internal_use_do_not_use::read_action_data(msg, len);
+   }
+
+   /**
+    * Get the length of the current action's data field. This method is useful for dynamically sized actions
+    *
+    * @brief Get the length of current action's data field
+    * @return the length of the current action's data field
+    */
+   inline uint32_t action_data_size() {
+     return internal_use_do_not_use::action_data_size();
+   }
+   /**
     * Packed representation of a permission level (Authorization)
     *
     * @brief Packed representation of a permission level (Authorization)
