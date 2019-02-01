@@ -257,7 +257,7 @@ class abigen : public generation_utils {
    void add_variant( const clang::QualType& t ) {
       abi_variant var;
       auto pt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr());
-      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : t.getTypePtr());
       var.name = get_type(t);
       for (int i=0; i < tst->getNumArgs(); ++i)
          var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
