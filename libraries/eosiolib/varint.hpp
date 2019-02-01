@@ -431,7 +431,7 @@ struct signed_int {
          v |= uint32_t(uint8_t(b) & 0x7f) << by;
          by += 7;
       } while( uint8_t(b) & 0x80 );
-      vi.value= (v>>1) ^ -(v&1);                                //reverse zigzag encoding
+      vi.value= (v>>1) ^ (~(v&1)+1ull);                         //reverse zigzag encoding
       return ds;
     }
 };
