@@ -7,7 +7,7 @@
 namespace eosio {
   /**
    * @addtogroup time
-   * @ingroup cpp_api
+   * @ingroup contracts
    * @{
    */
   class microseconds {

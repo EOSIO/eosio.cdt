@@ -11,8 +11,8 @@ namespace eosio {
 
    /**
     *  @addtogroup system System C++ API
-    *  @ingroup cpp_api
-    *  @brief Defines wrappers over eosio_assert 
+    *  @ingroup core
+    *  @brief Defines wrappers over eosio_assert
     *
     *  @{
     */

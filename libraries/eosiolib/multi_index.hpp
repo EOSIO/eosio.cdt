@@ -196,9 +196,9 @@ struct indexed_by {
 };
 
 /**
- *  @defgroup multiindex Multi Index Table
+ *  @defgroup multi_index Multi Index Table
  *  @brief Defines EOSIO Multi Index Table
- *  @ingroup cpp_api
+ *  @ingroup contracts
  *
  *  @details EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
  *  EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,

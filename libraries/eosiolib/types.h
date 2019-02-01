@@ -12,12 +12,6 @@ extern "C" {
 #endif
 
 /**
- *  @defgroup c_types
- *  @ingroup c_api
- *  @brief Specifies builtin types, typedefs and aliases
- */
-
-/**
  *  @addtogroup c_types
  *  @brief Specifies builtin types, typedefs and aliases
  *  @{

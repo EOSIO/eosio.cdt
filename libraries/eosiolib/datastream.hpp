@@ -263,7 +263,7 @@ class datastream<size_t> {
 /**
  *  Serialize an std::list into a stream
  *
- *  @brief Serialize an std::list 
+ *  @brief Serialize an std::list
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -299,7 +299,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::list<T>& l) {
 /**
  *  Serialize an std::deque into a stream
  *
- *  @brief Serialize an std::queue 
+ *  @brief Serialize an std::queue
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -1379,7 +1379,7 @@ DataStream& operator>>( DataStream& ds, T& v ) {
  * Defines data stream for reading and writing data in the form of bytes
  *
  * @addtogroup datastream Data Stream
- * @ingroup cpp_api
+ * @ingroup core
  * @{
  */
 
@@ -1507,6 +1507,8 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, capi_checksum512& 
    ds.read((char*)&cs.hash[0], sizeof(cs.hash));
    return ds;
 }
+
+///@}
 
 
 
