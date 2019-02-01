@@ -87,31 +87,31 @@ steps:
   # UNIT TESTING
   - wait
 
-  - command: | # High Sierra Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
-      cd build && \
-      ctest -V
-    label: ":darwin: High Sierra Unit Tests"
-    agents:
-      role: "macos-tester"
-      os: "high-sierra"
-    timeout: 120
+  # - command: | # High Sierra Unit Tests
+  #     echo "--- :arrow_down: Downloading build directory" && \
+  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
+  #     tar -zxf build.tar.gz && \
+  #     echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
+  #     cd build && \
+  #     ctest -V
+  #   label: ":darwin: High Sierra Unit Tests"
+  #   agents:
+  #     role: "macos-tester"
+  #     os: "high-sierra"
+  #   timeout: 120
 
-  - command: | # Mojave Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on macOS Mojave" && \
-      cd build && \
-      ctest -V
-    label: ":darwin: Mojave Unit Tests"
-    agents:
-      role: "tester"
-      os: "mojave"
-    timeout: 120
+  # - command: | # Mojave Unit Tests
+  #     echo "--- :arrow_down: Downloading build directory" && \
+  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
+  #     tar -zxf build.tar.gz && \
+  #     echo "+++ :microscope: Running unit tests on macOS Mojave" && \
+  #     cd build && \
+  #     ctest -V
+  #   label: ":darwin: Mojave Unit Tests"
+  #   agents:
+  #     role: "tester"
+  #     os: "mojave"
+  #   timeout: 120
     
   - command: | # Ubuntu 18.04 Unit Tests
       echo "--- :arrow_down: Downloading build directory" && \
@@ -293,16 +293,24 @@ steps:
         docker-credential-gcr configure-docker && \
         echo "--- :hammer_and_wrench: BUILDING BUILD IMAGE" && \
         cd docker/dev && \
-        docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT . && \
+        [[ "$BUILDKITE_TAG" == "" ]] && docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH -t eosio/cdt:$BUILDKITE_TAG . || docker build -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH . && \
         docker tag eosio/cdt:$BUILDKITE_COMMIT gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
+        docker tag eosio/cdt:$BUILDKITE_BRANCH gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
+        [[ "$BUILDKITE_TAG" == "" ]] && docker tag eosio/cdt:$BUILDKITE_TAG gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker tag eosio/cdt:latest gcr.io/b1-automation-dev/eosio/cdt:latest && \
         echo "--- :hand: PUSHING DOCKER IMAGES" && \
         docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
+        docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
+        [[ "$BUILDKITE_TAG" == "" ]] && docker push gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker push gcr.io/b1-automation-dev/eosio/cdt:latest && \
         echo "--- :thought_balloon: TRASHING OLD IMAGES" && \
         docker rmi eosio/cdt:$BUILDKITE_COMMIT && \
+        docker rmi eosio/cdt:$BUILDKITE_BRANCH && \
+        [[ "$BUILDKITE_TAG" == "" ]] && docker rmi eosio/cdt:$BUILDKITE_TAG || : && \
         docker rmi eosio/cdt:latest && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT && \
+        docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
+        [[ "$BUILDKITE_TAG" == "" ]] && docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:latest
     label: "Docker Build Builder"
     agents:
