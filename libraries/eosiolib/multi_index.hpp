@@ -4,10 +4,11 @@
  */
 #pragma once
 
-#include "../../core/eosio/action.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/serialize.hpp"
-#include "../../core/eosio/fixed_bytes.hpp"
+#include "db.h"
+#include "action.hpp"
+#include "name.hpp"
+#include "serialize.hpp"
+#include "fixed_bytes.hpp"
 
 #include <vector>
 #include <tuple>
@@ -20,6 +21,7 @@
 #include <algorithm>
 #include <memory>
 
+#warning "<eosiolib/multi_index.hpp> is deprecated use <eosio/multi_index.hpp>"
 namespace eosio {
 
 constexpr static inline name same_payer{};
@@ -55,54 +57,54 @@ struct const_mem_fun
 #define WRAP_SECONDARY_SIMPLE_TYPE(IDX, TYPE)\
 template<>\
 struct secondary_index_db_functions<TYPE> {\
-   static int32_t db_idx_next( int32_t iterator, uint64_t* primary )          { return db_##IDX##_next( iterator, primary ); }\
-   static int32_t db_idx_previous( int32_t iterator, uint64_t* primary )      { return db_##IDX##_previous( iterator, primary ); }\
-   static void    db_idx_remove( int32_t iterator  )                          { db_##IDX##_remove( iterator ); }\
-   static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return db_##IDX##_end( code, scope, table ); }\
+   static int32_t db_idx_next( int32_t iterator, uint64_t* primary )          { return internal_use_do_not_use::db_##IDX##_next( iterator, primary ); } \
+   static int32_t db_idx_previous( int32_t iterator, uint64_t* primary )      { return internal_use_do_not_use::db_##IDX##_previous( iterator, primary ); } \
+   static void    db_idx_remove( int32_t iterator  )                          { internal_use_do_not_use::db_##IDX##_remove( iterator ); } \
+   static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return internal_use_do_not_use::db_##IDX##_end( code, scope, table ); } \
    static int32_t db_idx_store( uint64_t scope, uint64_t table, uint64_t payer, uint64_t id, const TYPE& secondary ) {\
-      return db_##IDX##_store( scope, table, payer, id, &secondary );\
+     return internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, &secondary ); \
    }\
    static void    db_idx_update( int32_t iterator, uint64_t payer, const TYPE& secondary ) {\
-      db_##IDX##_update( iterator, payer, &secondary );\
+     internal_use_do_not_use::db_##IDX##_update( iterator, payer, &secondary ); \
    }\
    static int32_t db_idx_find_primary( uint64_t code, uint64_t scope, uint64_t table, uint64_t primary, TYPE& secondary ) {\
-      return db_##IDX##_find_primary( code, scope, table, &secondary, primary );\
+     return internal_use_do_not_use::db_##IDX##_find_primary( code, scope, table, &secondary, primary ); \
    }\
    static int32_t db_idx_find_secondary( uint64_t code, uint64_t scope, uint64_t table, const TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_find_secondary( code, scope, table, &secondary, &primary );\
+     return internal_use_do_not_use::db_##IDX##_find_secondary( code, scope, table, &secondary, &primary ); \
    }\
    static int32_t db_idx_lowerbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_lowerbound( code, scope, table, &secondary, &primary );\
+     return internal_use_do_not_use::db_##IDX##_lowerbound( code, scope, table, &secondary, &primary ); \
    }\
    static int32_t db_idx_upperbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_upperbound( code, scope, table, &secondary, &primary );\
+     return internal_use_do_not_use::db_##IDX##_upperbound( code, scope, table, &secondary, &primary ); \
    }\
 };
 
 #define WRAP_SECONDARY_ARRAY_TYPE(IDX, TYPE)\
 template<>\
 struct secondary_index_db_functions<TYPE> {\
-   static int32_t db_idx_next( int32_t iterator, uint64_t* primary )          { return db_##IDX##_next( iterator, primary ); }\
-   static int32_t db_idx_previous( int32_t iterator, uint64_t* primary )      { return db_##IDX##_previous( iterator, primary ); }\
-   static void    db_idx_remove( int32_t iterator )                           { db_##IDX##_remove( iterator ); }\
-   static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return db_##IDX##_end( code, scope, table ); }\
+   static int32_t db_idx_next( int32_t iterator, uint64_t* primary )          { return internal_use_do_not_use::db_##IDX##_next( iterator, primary ); } \
+   static int32_t db_idx_previous( int32_t iterator, uint64_t* primary )      { return internal_use_do_not_use::db_##IDX##_previous( iterator, primary ); } \
+   static void    db_idx_remove( int32_t iterator )                           { internal_use_do_not_use::db_##IDX##_remove( iterator ); } \
+   static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return internal_use_do_not_use::db_##IDX##_end( code, scope, table ); } \
    static int32_t db_idx_store( uint64_t scope, uint64_t table, uint64_t payer, uint64_t id, const TYPE& secondary ) {\
-      return db_##IDX##_store( scope, table, payer, id, secondary.data(), TYPE::num_words() );\
+     return internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, secondary.data(), TYPE::num_words() ); \
    }\
    static void    db_idx_update( int32_t iterator, uint64_t payer, const TYPE& secondary ) {\
-      db_##IDX##_update( iterator, payer, secondary.data(), TYPE::num_words() );\
+     internal_use_do_not_use::db_##IDX##_update( iterator, payer, secondary.data(), TYPE::num_words() ); \
    }\
    static int32_t db_idx_find_primary( uint64_t code, uint64_t scope, uint64_t table, uint64_t primary, TYPE& secondary ) {\
-      return db_##IDX##_find_primary( code, scope, table, secondary.data(), TYPE::num_words(), primary );\
+     return internal_use_do_not_use::db_##IDX##_find_primary( code, scope, table, secondary.data(), TYPE::num_words(), primary ); \
    }\
    static int32_t db_idx_find_secondary( uint64_t code, uint64_t scope, uint64_t table, const TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_find_secondary( code, scope, table, secondary.data(), TYPE::num_words(), &primary );\
+     return internal_use_do_not_use::db_##IDX##_find_secondary( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
    }\
    static int32_t db_idx_lowerbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_lowerbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary );\
+     return internal_use_do_not_use::db_##IDX##_lowerbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
    }\
    static int32_t db_idx_upperbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-      return db_##IDX##_upperbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary );\
+     return internal_use_do_not_use::db_##IDX##_upperbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
    }\
 };
 
@@ -139,12 +141,6 @@ namespace _multi_index_detail {
    template<>
    struct secondary_key_traits<long double> {
       static constexpr long double true_lowest() { return -std::numeric_limits<long double>::infinity(); }
-   };
-
-   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::key256)
-   template<>
-   struct secondary_key_traits<eosio::key256> {
-      static constexpr eosio::key256 true_lowest() { return eosio::key256(); }
    };
 
    WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>)
@@ -591,13 +587,13 @@ class multi_index
          if( itr2 != _items_vector.rend() )
             return *itr2->_item;
 
-         auto size = db_get_i64( itr, nullptr, 0 );
+         auto size = internal_use_do_not_use::db_get_i64( itr, nullptr, 0 );
          eosio::check( size >= 0, "error reading iterator" );
 
          //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
          void* buffer = max_stack_buffer_size < size_t(size) ? malloc(size_t(size)) : alloca(size_t(size));
 
-         db_get_i64( itr, buffer, uint32_t(size) );
+         internal_use_do_not_use::db_get_i64( itr, buffer, uint32_t(size) );
 
          datastream<const char*> ds( (char*)buffer, uint32_t(size) );
 
@@ -745,7 +741,7 @@ class multi_index
             eosio::check( _item != nullptr, "cannot increment end iterator" );
 
             uint64_t next_pk;
-            auto next_itr = db_next_i64( _item->__primary_itr, &next_pk );
+            auto next_itr = internal_use_do_not_use::db_next_i64( _item->__primary_itr, &next_pk );
             if( next_itr < 0 )
                _item = nullptr;
             else
@@ -757,12 +753,12 @@ class multi_index
             int32_t  prev_itr = -1;
 
             if( !_item ) {
-               auto ei = db_end_i64(_multidx->get_code().value, _multidx->get_scope(), static_cast<uint64_t>(TableName));
+               auto ei = internal_use_do_not_use::db_end_i64(_multidx->get_code().value, _multidx->get_scope(), static_cast<uint64_t>(TableName));
                eosio::check( ei != -1, "cannot decrement end iterator when the table is empty" );
-               prev_itr = db_previous_i64( ei , &prev_pk );
+               prev_itr = internal_use_do_not_use::db_previous_i64( ei , &prev_pk );
                eosio::check( prev_itr >= 0, "cannot decrement end iterator when the table is empty" );
             } else {
-               prev_itr = db_previous_i64( _item->__primary_itr, &prev_pk );
+               prev_itr = internal_use_do_not_use::db_previous_i64( _item->__primary_itr, &prev_pk );
                eosio::check( prev_itr >= 0, "cannot decrement iterator at beginning of table" );
             }
 
@@ -1052,7 +1048,7 @@ class multi_index
        *  @endcode
        */
       const_iterator lower_bound( uint64_t primary )const {
-         auto itr = db_lowerbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
+         auto itr = internal_use_do_not_use::db_lowerbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
          if( itr < 0 ) return end();
          const auto& obj = load_object_by_primary_iterator( itr );
          return {this, &obj};
@@ -1095,7 +1091,7 @@ class multi_index
        *  @endcode
        */
       const_iterator upper_bound( uint64_t primary )const {
-         auto itr = db_upperbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
+         auto itr = internal_use_do_not_use::db_upperbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
          if( itr < 0 ) return end();
          const auto& obj = load_object_by_primary_iterator( itr );
          return {this, &obj};
@@ -1348,7 +1344,7 @@ class multi_index
 
             auto pk = obj.primary_key();
 
-            i.__primary_itr = db_store_i64( _scope, static_cast<uint64_t>(TableName), payer.value, pk, buffer, size );
+            i.__primary_itr = internal_use_do_not_use::db_store_i64( _scope, static_cast<uint64_t>(TableName), payer.value, pk, buffer, size );
 
             if ( max_stack_buffer_size < size ) {
                free(buffer);
@@ -1488,7 +1484,7 @@ class multi_index
          datastream<char*> ds( (char*)buffer, size );
          ds << obj;
 
-         db_update_i64( objitem.__primary_itr, payer.value, buffer, size );
+         internal_use_do_not_use::db_update_i64( objitem.__primary_itr, payer.value, buffer, size );
 
          if ( max_stack_buffer_size < size ) {
             free( buffer );
@@ -1574,7 +1570,7 @@ class multi_index
          if( itr2 != _items_vector.rend() )
             return iterator_to(*(itr2->_item));
 
-         auto itr = db_find_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
+         auto itr = internal_use_do_not_use::db_find_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
          if( itr < 0 ) return end();
 
          const item& i = load_object_by_primary_iterator( itr );
@@ -1596,7 +1592,7 @@ class multi_index
          if( itr2 != _items_vector.rend() )
             return iterator_to(*(itr2->_item));
 
-         auto itr = db_find_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
+         auto itr = internal_use_do_not_use::db_find_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
          eosio::check( itr >= 0,  error_msg );
 
          const item& i = load_object_by_primary_iterator( itr );
@@ -1685,7 +1681,7 @@ class multi_index
 
          const auto& objitem = static_cast<const item&>(obj);
          eosio::check( objitem.__idx == this, "object passed to erase is not in multi_index" );
-         eosio::check( _code.value == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
+         eosio::check( _code == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
 
          auto pk = objitem.primary_key();
          auto itr2 = std::find_if(_items_vector.rbegin(), _items_vector.rend(), [&](const item_ptr& ptr) {
@@ -1696,7 +1692,7 @@ class multi_index
 
          _items_vector.erase(--(itr2.base()));
 
-         db_remove_i64( objitem.__primary_itr );
+         internal_use_do_not_use::db_remove_i64( objitem.__primary_itr );
 
          hana::for_each( _indices, [&]( auto& idx ) {
             typedef typename decltype(+hana::at_c<0>(idx))::type index_type;

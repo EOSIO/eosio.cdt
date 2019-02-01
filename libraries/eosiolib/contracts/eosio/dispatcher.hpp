@@ -1,5 +1,5 @@
 #pragma once
-#include <eosiolib/action.hpp>
+#include "action.hpp"
 
 #include <boost/fusion/adapted/std_tuple.hpp>
 #include <boost/fusion/include/std_tuple.hpp>

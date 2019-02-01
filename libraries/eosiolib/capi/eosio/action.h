@@ -5,6 +5,10 @@
 #pragma once
 #include "system.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @addtogroup action_c Action C API
  * @ingroup c_api
@@ -165,3 +169,7 @@ __attribute__((eosio_wasm_import))
 capi_name current_receiver();
 
 /// @} action
+
+#ifdef __cplusplus
+}
+#endif

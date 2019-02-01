@@ -1,8 +1,74 @@
-/**
- *  @file
- *  @copyright defined in eos/LICENSE
- */
 #pragma once
-#include "../core/eosio/ignore.hpp"
+
+#include "datastream.hpp"
 
 #warning "<eosiolib/ignore.hpp> is deprecated use <eosio/ignore.hpp>"
+namespace eosio {
+   /**
+    * @brief Tells the datastream to ignore this type, but allows the abi generator to add the correct type.
+    * 
+    * @details Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
+    * @note This restriction will be relaxed in a later release.
+    * Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
+    * This restriction will be relaxed in a later release.
+    */
+   template <typename T>
+   struct [[eosio::ignore]] ignore {};
+
+    /**
+    * Wrapper class to allow sending inline actions with the correct payload
+    */
+   template <typename T>
+   struct ignore_wrapper {
+      constexpr ignore_wrapper() {}
+      constexpr ignore_wrapper(T val) : value(val) {}
+      constexpr ignore_wrapper(ignore<T> val) {}
+      constexpr inline T get() { return value; }
+      constexpr operator T() { return value; }
+      constexpr operator ignore<T>() { return {}; }
+      T value;
+   };
+
+   /**
+    *  Serialize an ignored_wrapper type into a stream
+    *
+    *  @brief Serialize ignored_wrapper<T>'s T value
+    *  @param ds - The stream to write
+    *  @param val - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, typename T>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignore_wrapper<T>& val) {
+     ds << val.value;
+     return ds;
+   }
+
+   /**
+    *  Serialize an ignored type into a stream
+    *
+    *  @brief Serialize an ignored type
+    *  @param ds - The stream to write
+    *  @param ignore - The value to serialize
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, typename T>
+   inline datastream<Stream>& operator<<(datastream<Stream>& ds, const ::eosio::ignore<T>& val) {
+     return ds;
+   }
+
+   /**
+    *  Deserialize an ignored type from a stream
+    *
+    *  @brief Deserialize an ignored type
+    *  @param ds - The stream to read
+    *  @param ignored - The destination for deserialized value
+    *  @tparam Stream - Type of datastream buffer
+    *  @return datastream<Stream>& - Reference to the datastream
+    */
+   template<typename Stream, typename T>
+   inline datastream<Stream>& operator>>(datastream<Stream>& ds, ::eosio::ignore<T>) {
+     return ds;
+   }
+} //ns eosio

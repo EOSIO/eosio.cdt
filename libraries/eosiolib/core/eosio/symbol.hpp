@@ -7,29 +7,13 @@
 #include "system.hpp"
 #include "name.hpp"
 #include "serialize.hpp"
+#include "datastream.hpp"
 
 #include <tuple>
 #include <limits>
 #include <string_view>
 
 namespace eosio {
-
-   namespace internal_use_do_not_use {
-      extern "C" {
-         __attribute__((eosio_wasm_import))
-         void printui( uint64_t value );
-
-         __attribute__((eosio_wasm_import))
-         void prints( const char* cstr );
-
-         __attribute__((eosio_wasm_import))
-         void prints_l( const char* cstr, uint32_t len);
-      
-         __attribute__((eosio_wasm_import))
-         void printn( uint64_t name );
-      }
-   }
-
   /**
    *  @addtogroup symbol Symbol CPP API
    *  @ingroup cpp_api
@@ -317,13 +301,12 @@ namespace eosio {
        */
       void print( bool show_precision = true )const {
          if( show_precision ){
-            internal_use_do_not_use::printui( static_cast<uint64_t>(precision()) );
-            internal_use_do_not_use::prints(",");
+            eosio::print( static_cast<uint64_t>(precision()), "," );
          }
          char buffer[7];
          auto end = code().write_as_string( buffer, buffer + sizeof(buffer) );
          if( buffer < end )
-            internal_use_do_not_use::prints_l( buffer, (end-buffer) );
+            eosio::print( buffer, (end-buffer) );
       }
 
       /**
@@ -439,8 +422,7 @@ namespace eosio {
        */
       void print( bool show_precision = true )const {
          symbol.print( show_precision );
-         internal_use_do_not_use::prints("@");
-         internal_use_do_not_use::printn( contract.value );
+         eosio::print("@", contract);
       }
 
       /**

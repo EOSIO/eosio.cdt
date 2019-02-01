@@ -5,6 +5,10 @@
 #pragma once
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @addtogroup transaction_c Transaction API
  * @ingroup c_api
@@ -154,3 +158,7 @@ __attribute__((eosio_wasm_import))
 int get_context_free_data( uint32_t index, char* buff, size_t size );
 
 ///}@
+
+#ifdef __cplusplus
+}
+#endif

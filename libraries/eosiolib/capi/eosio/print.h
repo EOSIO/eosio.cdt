@@ -6,6 +6,10 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  *  @defgroup console_c Console C API
  *  @ingroup c_api
@@ -176,3 +180,7 @@ __attribute__((eosio_wasm_import))
 void printhex( const void* data, uint32_t datalen );
 
 /// @}
+
+#ifdef __cplusplus
+}
+#endif

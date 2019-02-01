@@ -6,6 +6,10 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  *  @addtogroup chain
  *  @ingroup c_api
@@ -34,3 +38,7 @@ __attribute__((eosio_wasm_import))
 uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
 
 /// @}
+
+#ifdef __cplusplus
+}
+#endif

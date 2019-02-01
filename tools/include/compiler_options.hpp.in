@@ -488,13 +488,15 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-I"+sysroot_opt+"/include/libc");
 
       // only allow capi for native builds and for eosio-cc
-      if (fnative_opt)
+      if (fnative_opt) {
         copts.emplace_back("-I"+sysroot_opt+"/include/capi");
+        copts.emplace_back("-I"+sysroot_opt+"/include/native");
+      }
 #ifndef CPP_COMP
         copts.emplace_back("-I"+sysroot_opt+"/include/capi");
 #endif
       copts.emplace_back("-I"+sysroot_opt+"/include/core");
-      copts.emplace_back("-I"+sysroot_opt+"/include/contract");
+      copts.emplace_back("-I"+sysroot_opt+"/include/contracts");
 
       agopts.emplace_back("--sysroot="+sysroot_opt);
       agopts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
@@ -515,13 +517,15 @@ static Options CreateOptions(bool add_defaults=true) {
       agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
 
-      if (fnative_opt)
-        copts.emplace_back("-I"+sysroot_opt+"/include/capi");
+      if (fnative_opt) {
+        copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/capi");
+        copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/native");
+      }
 #ifndef CPP_COMP
-      copts.emplace_back("-I"+sysroot_opt+"/include/capi");
+      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/capi");
 #endif
-      copts.emplace_back("-I"+sysroot_opt+"/include/core");
-      copts.emplace_back("-I"+sysroot_opt+"/include/contract");
+      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/core");
+      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/contracts");
 
 #ifndef __APPLE__
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");

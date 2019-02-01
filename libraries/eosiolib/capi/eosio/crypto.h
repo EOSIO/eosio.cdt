@@ -5,6 +5,10 @@
 #pragma once
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  *  @addtogroup crypto Crypto
  *  @brief Defines %C API for calculating and checking hash
@@ -230,3 +234,7 @@ __attribute__((eosio_wasm_import))
 void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t siglen, const char* pub, size_t publen );
 
 /// @}
+
+#ifdef __cplusplus
+}
+#endif

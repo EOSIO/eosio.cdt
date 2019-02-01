@@ -5,6 +5,10 @@
 #pragma once
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
 * @defgroup permission_c Permissions C API
 * @ingroup c_api
@@ -77,3 +81,7 @@ __attribute__((eosio_wasm_import))
 int64_t get_account_creation_time( capi_name account );
 
 ///@}
+
+#ifdef __cplusplus
+}
+#endif

@@ -7,6 +7,10 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  *  @addtogroup database_c_api Database C API
  *  @ingroup c_api
@@ -979,3 +983,7 @@ __attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@}
+
+#ifdef __cplusplus
+}
+#endif

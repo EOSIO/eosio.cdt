@@ -1862,7 +1862,7 @@ class multi_index
 
          const auto& objitem = static_cast<const item&>(obj);
          eosio::check( objitem.__idx == this, "object passed to erase is not in multi_index" );
-         eosio::check( _code.value == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
+         eosio::check( _code == current_receiver(), "cannot erase objects in table of another contract" ); // Quick fix for mutating db using multi_index that shouldn't allow mutation. Real fix can come in RC2.
 
          auto pk = objitem.primary_key();
          auto itr2 = std::find_if(_items_vector.rbegin(), _items_vector.rend(), [&](const item_ptr& ptr) {
