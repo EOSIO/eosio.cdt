@@ -3,9 +3,14 @@
 
 #ifdef EOSIO_NATIVE
    extern "C" {
-      size_t __builtin_wasm_current_memory();
-      size_t __builtin_wasm_grow_memory(size_t);
+      size_t _current_memory();
+      size_t _grow_memory(size_t);
    }
+#define CURRENT_MEMORY _current_memory()
+#define GROW_MEMORY(X) _grow_memory(X)
+#else
+#define CURRENT_MEMORY __builtin_wasm_current_memory()
+#define GROW_MEMORY(X) __builtin_wasm_grow_memory(X)
 #endif
 
 namespace eosio {   
@@ -24,7 +29,8 @@ namespace eosio {
          volatile uintptr_t heap_base = 0; // linker places this at address 0
          heap = align(*(char**)heap_base, 8);
          last_ptr = heap;
-         next_page = __builtin_wasm_current_memory();
+
+         next_page = CURRENT_MEMORY;
       }
        
       char* operator()(size_t sz, uint8_t align_amt=8) {
@@ -40,7 +46,7 @@ namespace eosio {
             next_page++;
             pages_to_alloc++;
          }         
-         eosio::check(__builtin_wasm_grow_memory(pages_to_alloc) != -1, "failed to allocate pages");  
+         eosio::check(GROW_MEMORY(pages_to_alloc) != -1, "failed to allocate pages");  
          return ret;
       }
 

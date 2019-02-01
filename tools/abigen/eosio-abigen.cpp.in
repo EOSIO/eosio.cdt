@@ -600,7 +600,7 @@ int main(int argc, const char **argv) {
    finder.addMatcher(record_decl_matcher, &eosio_record_matcher);
    finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
 
-
+   llvm::errs() << "Warning, this tool is deprecated.  Only use eosio-cpp in the future." << '\n';
    int tool_run = -1;
    try {
       tool_run = tool.run(newFrontendActionFactory(&finder).get());

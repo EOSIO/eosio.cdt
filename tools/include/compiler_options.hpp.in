@@ -79,8 +79,8 @@ static cl::opt<std::string> o_opt(
     cl::desc("Write output to <file>"),
     cl::cat(LD_CAT));
 static cl::list<std::string> input_filename_opt(
-      cl::Positional, 
-      cl::desc("<input file> ..."), 
+      cl::Positional,
+      cl::desc("<input file> ..."),
       cl::cat(LD_CAT),
       cl::OneOrMore);
 static cl::opt<bool> fasm_opt(
@@ -321,7 +321,6 @@ static cl::opt<bool> fcoroutine_ts_opt(
 
 struct Options {
    std::string output_fn;
-   std::string abigen_inputs;
    std::vector<std::string> inputs;
    bool link;
    bool abigen;
@@ -338,13 +337,10 @@ struct Options {
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
-   
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
    } else {
-      copts.emplace_back("-msoft-float");
-      copts.emplace_back("-mno-implicit-float");
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
@@ -422,7 +418,6 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 
 static Options CreateOptions(bool add_defaults=true) {
    std::string output_fn;
-   std::stringstream abigen_inputs;
    std::vector<std::string> inputs;
    std::vector<std::string> agresources;
    std::vector<std::string> copts;
@@ -447,12 +442,12 @@ static Options CreateOptions(bool add_defaults=true) {
       GetLdDefaults(ldopts);
 #endif
    }
-   
+
    if (!pp_path_opt.empty())
       pp_dir = pp_path_opt;
    else
       pp_dir = eosio::cdt::whereami::where();
-   
+
    if (!fno_cfl_aa_opt) {
       copts.emplace_back("-mllvm");
       copts.emplace_back("-use-cfl-aa-in-codegen=both");
@@ -469,18 +464,16 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
 #else
-      copts.push_back(input_filename);
       inputs.push_back(input_filename);
-      abigen_inputs << input_filename << " ";
 #endif
    }
-   
+
 #ifdef ONLY_LD
    ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
 #ifndef __APPLE__
    ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
 #endif
-#endif   
+#endif
 #ifndef ONLY_LD
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
@@ -657,7 +650,6 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-l"+library);
    }
    if (o_opt.empty()) {
-      copts.emplace_back("-o a.out");
 #ifndef ONLY_LD
       ldopts.emplace_back("a.out");
 #endif
@@ -665,17 +657,12 @@ static Options CreateOptions(bool add_defaults=true) {
       output_fn = "a.out";
    }
    else {
-      copts.emplace_back("-o "+o_opt);
-#ifndef ONLY_LD
-      if (!inputs.empty())
-      ldopts.push_back(o_opt);
-#endif
       ldopts.emplace_back("-o "+o_opt);
       output_fn = o_opt;
    }
-   
-   if (!fnative_opt) { 
-#ifndef ONLY_LD 
+
+   if (!fnative_opt) {
+#ifndef ONLY_LD
       if (!eosio_imports_opt.empty()) {
          ldopts.emplace_back("-eosio-imports="+eosio_imports_opt);
       }
@@ -700,11 +687,11 @@ static Options CreateOptions(bool add_defaults=true) {
 
    }
 
-   if (faligned_allocation_opt) { 
+   if (faligned_allocation_opt) {
       copts.emplace_back("-faligned-allocation");
       agopts.emplace_back("-faligned-allocation");
    }
-   if (fcoroutine_ts_opt) { 
+   if (fcoroutine_ts_opt) {
       copts.emplace_back("-fcoroutine-ts");
       agopts.emplace_back("-fcoroutine-ts");
    }
@@ -719,8 +706,10 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
    if (!contract_name.empty())
       abigen_contract = contract_name;
-   else
-      abigen_contract = output_fn.substr(0, output_fn.rfind(".wasm"));
+   else {
+      std::string fn = llvm::sys::path::filename(output_fn);
+      abigen_contract = fn.substr(0, fn.rfind(".wasm"));
+   }
 
    for ( auto resource : resources ) {
       agresources.emplace_back(std::string("-R")+resource);
@@ -749,9 +738,9 @@ static Options CreateOptions(bool add_defaults=true) {
          ldopts.emplace_back("--only-export \"apply:function\"");
       }
 
-   }   
+   }
    if ((use_rt_opt && !fnative_opt) || fquery_opt)
       ldopts.emplace_back("-lrt -lsf");
 #endif
-   return {output_fn, abigen_inputs.str(), inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }
