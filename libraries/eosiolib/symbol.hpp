@@ -13,6 +13,7 @@
 #include <limits>
 #include <string_view>
 
+#warning "<eosiolib/symbol.hpp> is deprecated use <eosio/symbol.hpp>"
 namespace eosio {
 
   /**
@@ -186,6 +187,38 @@ namespace eosio {
        */
       friend constexpr bool operator < ( const symbol_code& a, const symbol_code& b ) {
          return a.value < b.value;
+      }
+      /**
+      *  Serialize a symbol_code into a stream
+      *
+      *  @brief Serialize a symbol_code
+      *  @param ds - The stream to write
+      *  @param sym - The value to serialize
+      *  @tparam Stream - Type of datastream buffer
+      *  @return datastream<Stream>& - Reference to the datastream
+      */
+      template<typename Stream>
+      friend inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym_code) {
+         uint64_t raw = sym_code.raw();
+         ds.write( (const char*)&raw, sizeof(raw));
+         return ds;
+      }
+
+      /**
+      *  Deserialize a symbol_code from a stream
+      *
+      *  @brief Deserialize a symbol_code
+      *  @param ds - The stream to read
+      *  @param symbol - The destination for deserialized value
+      *  @tparam Stream - Type of datastream buffer
+      *  @return datastream<Stream>& - Reference to the datastream
+      */
+      template<typename Stream>
+      friend inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym_code) {
+         uint64_t raw = 0;
+         ds.read((char*)&raw, sizeof(raw));
+         sym_code = symbol_code(raw);
+         return ds;
       }
 
    private:

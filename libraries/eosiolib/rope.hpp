@@ -3,6 +3,7 @@
 #include <variant>
 #include "system.hpp"
 
+#warning "<eosiolib/rope.hpp> is deprecated use <eosio/rope.hpp>"
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;

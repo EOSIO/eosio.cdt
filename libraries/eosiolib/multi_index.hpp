@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <memory>
 
+#warning "<eosiolib/multi_index.hpp> is deprecated use <eosio/multi_index.hpp>"
+
 namespace eosio {
 
 constexpr static inline name same_payer{};

@@ -4,7 +4,7 @@
  */
 #pragma once
 
-
+#warning "<eosiolib/varint.hpp> is deprecated use <eosio/varint.hpp>"
 /**
  * @defgroup varint Variable Length Integer Type
  * @brief Defines variable length integer type which provides more efficient serialization

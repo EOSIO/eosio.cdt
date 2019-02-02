@@ -5,6 +5,7 @@
 #pragma once
 #include "types.h"
 
+#warning "<eosiolib/transaction.h> is deprecated use <eosio/transaction.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
 extern "C" {
    /**
     * @addtogroup transaction_c Transaction API

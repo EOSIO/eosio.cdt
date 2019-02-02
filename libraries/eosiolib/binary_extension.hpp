@@ -1,6 +1,8 @@
 #pragma once
 #include "print.hpp"
 
+#warning "<eosiolib/binary_extension.hpp> is deprecated use <eosio/binary_extension.hpp>"
+
  namespace eosio {
     /**
     *  Container to hold a binary payload for an extension
@@ -145,6 +147,40 @@
                _get().~value_type();
                _has_value = false;
             }
+         }
+
+         /**
+           *  Serialize a binary_extension into a stream
+           *
+           *  @brief Serialize a binary_extension
+           *  @param ds - The stream to write
+           *  @param opt - The value to serialize
+           *  @tparam DataStream - Type of datastream buffer
+           *  @return DataStream& - Reference to the datastream
+           */
+         template<typename DataStream, typename T>
+         friend inline DataStream& operator<<(DataStream& ds, const eosio::binary_extension<T>& be) {
+            ds << be.value_or();
+            return ds;
+         }
+
+         /**
+           *  Deserialize a binary_extension from a stream
+           *
+           *  @brief Deserialize a binary_extension
+           *  @param ds - The stream to read
+           *  @param opt - The destination for deserialized value
+           *  @tparam DataStream - Type of datastream buffer
+           *  @return DataStream& - Reference to the datastream
+           */
+         template<typename DataStream, typename T>
+         friend inline DataStream& operator>>(DataStream& ds, eosio::binary_extension<T>& be) {
+            if( ds.remaining() ) {
+               T val;
+               ds >> val;
+               be.emplace(val);
+            }
+            return ds;
          }
 
        private:

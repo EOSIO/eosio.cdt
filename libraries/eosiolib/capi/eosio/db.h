@@ -4,9 +4,12 @@
  *  @brief Defines C API for interfacing with blockchain database
  */
 #pragma once
-#include <eosiolib/types.h>
 
-#warning "<eosiolib/db.h> is deprecated use <eosio/db.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#include "types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  *  @addtogroup database_c_api Database C API
@@ -26,8 +29,6 @@
  *    - long double key
  *  @{
  */
-extern "C" {
-
 
 /**
   *
@@ -982,4 +983,7 @@ __attribute__((eosio_wasm_import))
 int32_t db_idx_long_double_end(capi_name code, uint64_t scope, capi_name table);
 
 ///@}
+
+#ifdef __cplusplus
 }
+#endif

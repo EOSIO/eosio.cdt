@@ -5,15 +5,15 @@
 #pragma once
 #include "types.h"
 
-#warning "<eosiolib/crypto.h> is deprecated use <eosio/crypto.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  *  @addtogroup crypto Crypto
  *  @brief Defines %C API for calculating and checking hash
  *  @{
  */
-
-extern "C" {
 
 /**
  *  Tests if the sha256 hash generated from data matches the provided checksum.
@@ -235,4 +235,6 @@ void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t
 
 /// @}
 
+#ifdef __cplusplus
 }
+#endif

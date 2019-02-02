@@ -11,6 +11,8 @@
 
 #include <array>
 
+#warning "<eosiolib/crypto.hpp> is deprecated use <eosio/crypto.hpp>"
+
 namespace eosio {
 
    /**

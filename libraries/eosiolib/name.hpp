@@ -10,6 +10,7 @@
 #include <string>
 #include <string_view>
 
+#warning "<eosiolib/name.hpp> is deprecated use <eosio/name.hpp>"
 namespace eosio {
 
    /**

@@ -5,6 +5,7 @@
 #pragma once
 #include "types.h"
 
+#warning "<eosiolib/system.h> is deprecated use <eosio/system.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
 #ifdef __cplusplus
 extern "C" {
 #endif

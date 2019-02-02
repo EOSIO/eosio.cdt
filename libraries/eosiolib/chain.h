@@ -6,6 +6,7 @@
 
 #include "types.h"
 
+#warning "<eosiolib/chain.h> is deprecated use <eosio/chain.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
 /**
  *  @addtogroup chain
  *  @ingroup c_api
