@@ -335,6 +335,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
       copts.emplace_back("-m64");
 #endif
+      copts.emplace_back("-mno-sse");
       if (!fasm_opt) {
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLP64");
@@ -389,7 +390,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--merge-data-segments");
    } else {
 #ifdef __APPLE__
-      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13");
+      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System");
 #endif
       ldopts.emplace_back("-static");
    }
