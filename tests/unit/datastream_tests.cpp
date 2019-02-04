@@ -1,7 +1,10 @@
 // eosio-cpp -fnative -w -o a.out datastream_tests.cpp; ./a.out
+// TODO: come up with more succinct and descriptive variable names
 
 #include <eosio/native/tester.hpp>
 #include <eosiolib/datastream.hpp>
+#include <eosiolib/ignore.hpp>
+#include <eosiolib/symbol.hpp>
 #include <deque>
 #include <list>
 #include <vector>
@@ -9,6 +12,11 @@
 #include <eosiolib/print.hpp>
 
 using eosio::datastream;
+using eosio::ignore_wrapper;
+using eosio::public_key;
+using eosio::signature;
+using eosio::symbol;
+using eosio::symbol_code;
 using std::begin;
 using std::end;
 using std::fill;
@@ -211,10 +219,8 @@ void print_bufs(const char* datastream_buffer, const T& container) {
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(false);
 
-   static constexpr uint8_t buffer_size{16};
+   static constexpr uint8_t buffer_size{64};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
-   char expectation_buffer_multiple[buffer_size]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}; // Buffer to act upon for testing
-   char expectation_buffer_single[buffer_size]{'c'}; // Buffer to act upon for testing
    datastream<char*> ds{datastream_buffer, buffer_size};
 
    // ---------
@@ -227,24 +233,18 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> l;
    REQUIRE_EQUAL( cl == l, true )
-   
+
+   // Note: uncomment once issue has been resolved
    // ----------
    // std::deque
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   const std::deque<char> cd{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
-   std::deque<char> d{};
-   ds << cd;
-   ds.seekp(0);
-
-int* pi = (int*)malloc(9*sizeof(int));
-eosio::print_f("PI %\n", (size_t)pi);
-for (int i = 0; i < 9; ++i) {
-   pi[i]=42;
-}
-
-//ds >> d;
-//REQUIRE_EQUAL( cd == d, true )
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const std::deque<char> cd{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // std::deque<char> d{};
+   // ds << cd;
+   // ds.seekp(0);
+   // ds >> d; // Fails here
+   // REQUIRE_EQUAL( cd == d, true )
 
    // Make custom small struct; use default constructor; spit in/spit out. Then compare
    // the value in the default constructor (expected) to result. And also put custom input to .value_or as well
@@ -264,8 +264,6 @@ for (int i = 0; i < 9; ++i) {
 
    // ---------
    // std::pair
-   const char pair_expectation_buffer[buffer_size]{'c', static_cast<char>(0x43)}; // Buffer to act upon for testing
-   
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const std::pair<char, int> cp{'c', 0x43};
@@ -275,7 +273,7 @@ for (int i = 0; i < 9; ++i) {
    ds >> p;
    REQUIRE_EQUAL( cp == p, true )
 
-   // ---------
+   // -------------
    // std::optional
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
@@ -286,43 +284,108 @@ for (int i = 0; i < 9; ++i) {
    ds >> o;
    REQUIRE_EQUAL( co == o, true )
    
-   // ---------
+   // -----------
    // symbol_code
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const symbol_code csc{"SYMBOLL"};
+   symbol_code sc{};
+   ds << csc;
+   ds.seekp(0);
+   ds >> sc;
+   REQUIRE_EQUAL( csc == sc, true )
 
-   // ---------
+   // ------
    // symbol
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const symbol sym_no_prec{"SYMBOLL", 0};
+   symbol sym{};
+   ds << sym_no_prec;
+   ds.seekp(0);
+   ds >> sym;
+   REQUIRE_EQUAL( sym_no_prec == sym, true )
 
-   // ---------
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const symbol sym_prec{"SYMBOLL", 255};
+   ds << sym_prec;
+   ds.seekp(0);
+   ds >> sym;
+   REQUIRE_EQUAL( sym_prec == sym, true )
+
+   // --------------
    // ignore_wrapper
+   // struct ig_wrapped {
+   //    bool b{true};
+   //    int i{42};
+   //    double d{4.2};
+   //    const std::list<char> cl{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+   // };
 
-   // ---------
+   // const ig_wrapped ig_wrapped_obj;
+   
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const ignore_wrapper<ig_wrapped> ciw{ig_wrapped_obj};
+   // ds << ciw;
+
+   // ------
    // ignore
 
-   // ---------
+   // ---------------
    // capi_public_key
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const capi_public_key c_cpubkey{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   capi_public_key cpubkey{};
+   ds << c_cpubkey;
+   ds.seekp(0);
+   ds >> cpubkey;
+   REQUIRE_EQUAL( memcmp(c_cpubkey.data, cpubkey.data, 32), 0 )
 
-   // ---------
+////////////////////////////////////////////////////////////////////
+
+   // ----------
    // public_key
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const public_key c_pubkey{{}, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   public_key pubkey{};
+   ds << c_pubkey;
+   ds.seekp(0);
+   ds >> pubkey;
+   REQUIRE_EQUAL( c_pubkey == pubkey, true )
 
    // ---------
    // signature
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const signature c_sig{{}, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   // signature sig{};
+   // ds << c_sig;
+   // ds.seekp(0);
+   // ds >> sig;
+   // REQUIRE_EQUAL( c_sig == sig, true )
 
-   // ---------
+   // ----------------
    // public_keykey256
 
    // -----------
    // fixed_bytes
 
+////////////////////////////////////////////////////////////////////
+
    // ----
    // bool
-   // ds.seekp(0);
-   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   // const std::list<char> cl{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
-   // std::list<char> l{};
-   // ds << cl;
-   // ds.seekp(0);
-   // ds >> l;
-   // REQUIRE_EQUAL( cl == l, true )
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const bool cboolean{true};
+   bool boolean{};
+   ds << cboolean;
+   ds.seekp(0);
+   ds >> boolean;
+   REQUIRE_EQUAL( cboolean == boolean, true )
 
    // ----------
    // std::array
