@@ -219,12 +219,12 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "#include <eosio/datastream.hpp>\n";
+               ss << "\n\n#include <eosio/datastream.hpp>\n";
                ss << "#include <eosio/name.hpp>\n";
                ss << "extern \"C\" {\n";
                ss << "uint32_t action_data_size();\n";
                ss << "uint32_t read_action_data(void*, uint32_t);\n";
-               ss << "__attribute__((" << attr << "(\"";
+               ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
                ss << func_name << nm;
