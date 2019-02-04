@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "types.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -80,8 +79,7 @@ int64_t get_permission_last_used( capi_name account, capi_name permission );
 __attribute__((eosio_wasm_import))
 int64_t get_account_creation_time( capi_name account );
 
-///@}
-
 #ifdef __cplusplus
 }
 #endif
+///@}

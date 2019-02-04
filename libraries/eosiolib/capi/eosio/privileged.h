@@ -97,3 +97,4 @@ uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 #ifdef __cplusplus
 }
 #endif
+

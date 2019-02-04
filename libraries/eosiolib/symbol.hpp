@@ -194,11 +194,11 @@ namespace eosio {
       *  @brief Serialize a symbol_code
       *  @param ds - The stream to write
       *  @param sym - The value to serialize
-      *  @tparam Stream - Type of datastream buffer
-      *  @return datastream<Stream>& - Reference to the datastream
+      *  @tparam DataStream - Type of datastream buffer
+      *  @return DataStream& - Reference to the datastream
       */
-      template<typename Stream>
-      friend inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym_code) {
+      template<typename DataStream>
+      friend inline DataStream& operator<<(DataStream& ds, const eosio::symbol_code sym_code) {
          uint64_t raw = sym_code.raw();
          ds.write( (const char*)&raw, sizeof(raw));
          return ds;
@@ -210,11 +210,11 @@ namespace eosio {
       *  @brief Deserialize a symbol_code
       *  @param ds - The stream to read
       *  @param symbol - The destination for deserialized value
-      *  @tparam Stream - Type of datastream buffer
-      *  @return datastream<Stream>& - Reference to the datastream
+      *  @tparam DataStream - Type of datastream buffer
+      *  @return DataStream& - Reference to the datastream
       */
-      template<typename Stream>
-      friend inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym_code) {
+      template<typename DataStream>
+      friend inline DataStream& operator>>(DataStream& ds, eosio::symbol_code& sym_code) {
          uint64_t raw = 0;
          ds.read((char*)&raw, sizeof(raw));
          sym_code = symbol_code(raw);

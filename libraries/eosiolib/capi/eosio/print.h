@@ -5,7 +5,6 @@
 #pragma once
 
 #include "types.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -179,8 +178,7 @@ void printn( uint64_t name );
 __attribute__((eosio_wasm_import))
 void printhex( const void* data, uint32_t datalen );
 
-/// @}
-
 #ifdef __cplusplus
 }
 #endif
+/// @}

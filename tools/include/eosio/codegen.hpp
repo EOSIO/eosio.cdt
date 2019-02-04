@@ -219,7 +219,12 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "extern \"C\" __attribute__((" << attr << "(\"";
+               ss << "#include <eosio/datastream.hpp>\n";
+               ss << "#include <eosio/name.hpp>\n";
+               ss << "extern \"C\" {\n";
+               ss << "uint32_t action_data_size();\n";
+               ss << "uint32_t read_action_data(void*, uint32_t);\n";
+               ss << "__attribute__((" << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
                ss << func_name << nm;
@@ -250,7 +255,7 @@ namespace eosio { namespace cdt {
                      ss << ", ";
                }
                ss << ");";
-               ss << "}\n";
+               ss << "}}\n";
 
                rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
@@ -398,6 +403,7 @@ namespace eosio { namespace cdt {
                      // generate apply stub with abi
                      std::stringstream ss;
                      ss << "extern \"C\" {\n";
+                     ss << "void eosio_assert_code(uint32_t, uint64_t);";
                      ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                      std::string abi = cg.abi;
                      ss << "\"" << _quoted(abi) << "\"";

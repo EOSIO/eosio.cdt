@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "types.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -76,8 +75,8 @@ void eosio_exit( int32_t code );
  */
 __attribute__((eosio_wasm_import))
 uint64_t  current_time();
-///@}
 
 #ifdef __cplusplus
 }
 #endif
+///@}

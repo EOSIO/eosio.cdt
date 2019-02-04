@@ -158,7 +158,7 @@
            *  @tparam DataStream - Type of datastream buffer
            *  @return DataStream& - Reference to the datastream
            */
-         template<typename DataStream, typename T>
+         template<typename DataStream>
          friend inline DataStream& operator<<(DataStream& ds, const eosio::binary_extension<T>& be) {
             ds << be.value_or();
             return ds;
@@ -173,7 +173,7 @@
            *  @tparam DataStream - Type of datastream buffer
            *  @return DataStream& - Reference to the datastream
            */
-         template<typename DataStream, typename T>
+         template<typename DataStream>
          friend inline DataStream& operator>>(DataStream& ds, eosio::binary_extension<T>& be) {
             if( ds.remaining() ) {
                T val;

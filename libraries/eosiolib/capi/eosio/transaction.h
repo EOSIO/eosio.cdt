@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "types.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -157,8 +156,7 @@ int get_action( uint32_t type, uint32_t index, char* buff, size_t size );
 __attribute__((eosio_wasm_import))
 int get_context_free_data( uint32_t index, char* buff, size_t size );
 
-///}@
-
 #ifdef __cplusplus
 }
 #endif
+///}@

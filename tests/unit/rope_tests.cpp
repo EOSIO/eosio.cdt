@@ -1,6 +1,6 @@
-#include <eosiolib/eosio.hpp>
-#include <eosiolib/rope.hpp>
-#include <eosio/native/tester.hpp>
+#include <eosio/eosio.hpp>
+#include <eosio/rope.hpp>
+#include <eosio/tester.hpp>
 #include <string>
 
 using namespace eosio::native;
