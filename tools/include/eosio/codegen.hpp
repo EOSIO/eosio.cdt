@@ -219,7 +219,7 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "extern \"C\" __attribute__((" << attr << "(\"";
+               ss << "\n\nextern \"C\" __attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
                ss << func_name << nm;
