@@ -164,6 +164,9 @@ namespace eosio {
       EOSLIB_SERIALIZE( onerror, (sender_id)(sent_trx) )
    };
 
+   void send_deferred(const uint128_t& sender_id, name payer, const char* serialized_transaction, size_t size, bool replace = false) {
+     internal_use_do_not_use::send_deferred(sender_id, payer.value, serialized_transaction, size, replace);
+   }
    /**
     * Retrieve the indicated action from the active transaction.
     *

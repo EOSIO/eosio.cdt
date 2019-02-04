@@ -6,7 +6,7 @@ namespace eosio {
    namespace internal_use_do_not_use {
       extern "C" {
          __attribute__((eosio_wasm_import))
-         int64_t current_time();
+         uint64_t current_time();
       }
    }
 
@@ -193,7 +193,25 @@ namespace eosio {
     *  @return time in microseconds from 1970 of the current block
     */
    inline microseconds current_time() {
-      return microseconds(internal_use_do_not_use::current_time());
+     return microseconds(static_cast<int64_t>(internal_use_do_not_use::current_time()));
+   }
+
+   /**
+    *  Returns the time in microseconds from 1970 of the current block as a time_point
+    *
+    *  @return time in microseconds from 1970 of the current block as a time_point
+    */
+   inline time_point current_time_point() {
+     return time_point(current_time());
+   }
+
+   /**
+    *  Returns the time in microseconds from 1970 of the current block as a block_timestamp
+    *
+    *  @return time in microseconds from 1970 of the current block as a block_timestamp
+    */
+   inline block_timestamp current_block_time() {
+     return block_timestamp(current_time_point());
    }
 
     /**

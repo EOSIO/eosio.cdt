@@ -9,6 +9,7 @@
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/ignore.hpp"
+#include "../../core/eosio/time.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
@@ -140,8 +141,8 @@ namespace eosio {
    *  @brief Get the publication time
    *  @return the time in microseconds from 1970 of the publication_time
    */
-   inline uint64_t  publication_time() {
-     return internal_use_do_not_use::publication_time();
+   inline time_point  publication_time() {
+     return time_point( microseconds ( internal_use_do_not_use::publication_time() ) );
    }
 
    /**
