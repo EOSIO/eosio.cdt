@@ -89,5 +89,3 @@ CONTRACT malloc_tests : public contract{
           check(ptr3 + 20 < ptr4, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
       }
 };
-
-EOSIO_DISPATCH(malloc_tests, (mallocalot)(mallocpass)(mallocfail)(mallocpass2)(malloctest))

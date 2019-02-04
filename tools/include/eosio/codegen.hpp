@@ -229,10 +229,10 @@ namespace eosio { namespace cdt {
                ss << ":";
                ss << func_name << nm;
                ss << "\"))) void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
-               ss << "size_t as = action_data_size();\n";
+               ss << "size_t as = ::action_data_size();\n";
                ss << "if (as <= 0) return;\n";
                ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
-               ss << "read_action_data(buff, as);\n";
+               ss << "::read_action_data(buff, as);\n";
                ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
                int i=0;
                for (auto param : decl->parameters()) {
