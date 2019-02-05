@@ -351,6 +351,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-m64");
 #endif
       if (!fasm_opt) {
+         copts.emplace_back("-mno-sse");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLP64");
       }
