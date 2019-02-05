@@ -9,7 +9,7 @@
  * @defgroup varint Variable Length Integer Type
  * @brief Defines variable length integer type which provides more efficient serialization
  * @ingroup types
- * @{/
+ * @{
  */
 /**
  * Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int.

@@ -10,7 +10,7 @@
 /**
  * @addtogroup serialize Serialize C++ API
  * @brief Defines C++ API to serialize and deserialize object
- * @ingroup cpp_api
+ * @ingroup core
  * @{
  */
 

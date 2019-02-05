@@ -3,13 +3,19 @@
 #include "system.hpp"
 #include "print.hpp"
 
-namespace eosio {
 #ifdef EOSIO_NATIVE
    extern "C" {
-      size_t __builtin_wasm_current_memory();
-      size_t __builtin_wasm_grow_memory(size_t);
+      size_t _current_memory();
+      size_t _grow_memory(size_t);
    }
+#define CURRENT_MEMORY _current_memory()
+#define GROW_MEMORY(X) _grow_memory(X)
+#else
+#define CURRENT_MEMORY __builtin_wasm_current_memory() 
+#define GROW_MEMORY(X) __builtin_wasm_grow_memory(X)
 #endif
+
+namespace eosio {
    extern "C" uintptr_t  __get_heap_base();
    void* sbrk(size_t num_bytes) {
          constexpr uint32_t NBPPL2  = 16U;
@@ -18,7 +24,7 @@ namespace eosio {
          static bool initialized;
          static uint32_t sbrk_bytes;
          if(!initialized) {
-            sbrk_bytes = __builtin_wasm_current_memory() * NBBP;
+            sbrk_bytes = CURRENT_MEMORY * NBBP;
             initialized = true;
          }
 
@@ -26,7 +32,7 @@ namespace eosio {
             return reinterpret_cast<void*>(-1);
 
          const uint32_t prev_num_bytes = sbrk_bytes;
-         const uint32_t current_pages = __builtin_wasm_current_memory();
+         const uint32_t current_pages = CURRENT_MEMORY;
 
          // round the absolute value of num_bytes to an alignment boundary
          num_bytes = (num_bytes + 7U) & ~7U;
@@ -35,7 +41,7 @@ namespace eosio {
          const uint32_t num_desired_pages = (sbrk_bytes + num_bytes + NBBP - 1) >> NBPPL2;
 
          if(num_desired_pages > current_pages) {
-            if (__builtin_wasm_grow_memory(num_desired_pages - current_pages) == -1)
+            if (GROW_MEMORY(num_desired_pages - current_pages) == -1)
                return reinterpret_cast<void*>(-1);
          }
 
