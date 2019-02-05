@@ -345,18 +345,20 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
       copts.emplace_back("-fno-stack-protector");
+      copts.emplace_back("-mno-sse");
       copts.emplace_back("-m64");
 #else
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
+      copts.emplace_back("-mtune=generic");
       copts.emplace_back("-m64");
 #endif
       if (!fasm_opt) {
-         copts.emplace_back("-mno-sse");
+         copts.emplace_back("-msoft-float");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLP64");
+         copts.emplace_back("-nostdlib");
       }
    }
-   //copts.emplace_back("-nostdlib");
 
    if (!fasm_opt) {
       copts.emplace_back("-fno-threadsafe-statics");

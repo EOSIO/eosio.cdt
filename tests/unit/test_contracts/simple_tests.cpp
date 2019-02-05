@@ -61,8 +61,13 @@ class [[eosio::contract]] simple_tests : public contract {
 
 };
 
-extern "C" void pre_dispatch(name self, name original_receiver, name action) {
+extern "C" bool pre_dispatch(name self, name original_receiver, name action) {
    print_f("pre_dispatch : % % %\n", self, original_receiver, action);
+   if (self == "notbucky"_n) {
+      eosio::check(self != "notbucky"_n, "uh oh");
+      return false;
+   }
+   return true;
 }
 
 extern "C" void post_dispatch(name self, name original_receiver, name action) {
