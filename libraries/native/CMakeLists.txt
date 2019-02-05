@@ -6,7 +6,8 @@ else()
    set(CRT_ASM macho_crt.s)
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything -allow-sse")
 
 file(GLOB HEADERS "*.hpp"
                   "*.h")

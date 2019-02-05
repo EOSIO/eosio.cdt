@@ -1,6 +1,7 @@
 # Defines builtins library
 set(C_DEFINES, "-D__wasm__ -DQUAD_PRECISION")
-set( CMAKE_C_FLAGS " -Wall ${CMAKE_C_FLAGS} ${C_DEFINES}" )
+set( CMAKE_C_FLAGS " -Wall ${CMAKE_C_FLAGS} ${C_DEFINES} -allow-sse" )
+set( CMAKE_CXX_FLAGS " -Wall ${CMAKE_CXX_FLAGS} ${C_DEFINES} -allow-sse" )
 set ( builtins_sources
    compiler_builtins.cpp
    fixtfti.c

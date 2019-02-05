@@ -97,6 +97,11 @@ static cl::opt<bool> fuse_main_opt(
     "fuse-main",
     cl::desc("Use main as entry"),
     cl::cat(LD_CAT));
+static cl::opt<bool> allow_sse_opt(
+    "allow-sse",
+    cl::desc("Should not be used, except for build libc"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -345,18 +350,20 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
       copts.emplace_back("-fno-stack-protector");
-      copts.emplace_back("-mno-sse");
       copts.emplace_back("-m64");
 #else
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
-      copts.emplace_back("-mtune=generic");
       copts.emplace_back("-m64");
 #endif
+      if (!allow_sse_opt) {
+         copts.emplace_back("-mno-sse");
+         copts.emplace_back("-mno-sse2");
+         copts.emplace_back("-mno-mmx");
+         copts.emplace_back("-mno-3dnow");
+      }
       if (!fasm_opt) {
-         copts.emplace_back("-msoft-float");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLP64");
-         copts.emplace_back("-nostdlib");
       }
    }
 
