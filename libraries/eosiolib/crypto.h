@@ -5,7 +5,7 @@
 #pragma once
 #include "types.h"
 
-#warning "<eosiolib/crypto.h> is deprecated use <eosio/crypto.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#warning "<eosiolib/crypto.h> is deprecated use <eosio/crypto.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 
 /**
  *  @addtogroup crypto Crypto

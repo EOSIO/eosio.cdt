@@ -5,7 +5,7 @@
 #pragma once
 #include "types.h"
 
-#warning "<eosiolib/permission.h> is deprecated use <eosio/permission.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#warning "<eosiolib/permission.h> is deprecated use <eosio/permission.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 
 extern "C" {
 

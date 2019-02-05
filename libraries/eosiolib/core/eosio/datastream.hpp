@@ -263,7 +263,7 @@ class datastream<size_t> {
 template<typename Stream, typename T>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::list<T>& l) {
    ds << unsigned_int( l.size() );
-   for ( auto elem : l )
+   for ( const auto& elem : l )
       ds << elem;
   return ds;
 }
@@ -299,7 +299,7 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::list<T>& l) {
 template<typename Stream, typename T>
 inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::deque<T>& d) {
    ds << unsigned_int( d.size() );
-   for ( auto elem : d )
+   for ( const auto& elem : d )
       ds << elem;
   return ds;
 }

@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-#warning "<eosiolib/print.h> is deprecated use <eosio/print.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#warning "<eosiolib/print.h> is deprecated use <eosio/print.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 
 /**
  *  @defgroup console_c Console C API

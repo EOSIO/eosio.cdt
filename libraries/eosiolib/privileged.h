@@ -1,6 +1,6 @@
 #pragma once
 
-#warning "<eosiolib/privileged.h> is deprecated use <eosio/privileged.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#warning "<eosiolib/privileged.h> is deprecated use <eosio/privileged.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 
 #ifdef __cplusplus
 extern "C" {

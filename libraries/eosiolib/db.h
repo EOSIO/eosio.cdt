@@ -6,7 +6,7 @@
 #pragma once
 #include <eosiolib/types.h>
 
-#warning "<eosiolib/db.h> is deprecated use <eosio/db.h>, if you are using c++ the capi files will be removed from inclusion entirely in v1.7.0"
+#warning "<eosiolib/db.h> is deprecated use <eosio/db.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 
 /**
  *  @addtogroup database_c_api Database C API
