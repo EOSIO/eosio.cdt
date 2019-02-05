@@ -1,22 +1,31 @@
 // eosio-cpp -fnative -w -o a.out datastream_tests.cpp; ./a.out
 // TODO: come up with more succinct and descriptive variable names
+// TODO: tidy up tests
 
 #include <eosio/native/tester.hpp>
+#include <eosiolib/binary_extension.hpp>
+#include <eosiolib/crypto.hpp>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/ignore.hpp>
 #include <eosiolib/symbol.hpp>
+#include <array>
 #include <deque>
 #include <list>
 #include <vector>
 
 #include <eosiolib/print.hpp>
 
+using eosio::binary_extension;
 using eosio::datastream;
+using eosio::fixed_bytes;
+using eosio::ignore;
 using eosio::ignore_wrapper;
+using eosio::key256;
 using eosio::public_key;
 using eosio::signature;
 using eosio::symbol;
 using eosio::symbol_code;
+using std::array;
 using std::begin;
 using std::end;
 using std::fill;
@@ -28,97 +37,96 @@ using namespace eosio::native;
 EOSIO_TEST_BEGIN(datastream_test)
    silence_output(false);
 
-   char datastream_buffer[256]{}; // Buffer for the datastream to point to
-   char buffer[256]{}; // Buffer to act upon for testing
+   // char datastream_buffer[256]{}; // Buffer for the datastream to point to
+   // char buffer[256]; // Buffer to act upon for testing
 
-   // Fill the char array `datastream_buffer` with all all 256 ASCII characters
-   for(int i{0}, j{-0x80}; i < 256; ++i, ++j)
-      datastream_buffer[i] = j;
+   // // Fill the char array `datastream_buffer` with all 256 ASCII characters
+   // unsigned char j{0};
+   // for(int i{0}; i < 256; ++i)
+   //    datastream_buffer[i] = j++;
 
-   // Why can't I initialize a data stream object of type `datastream<uint32_t> ds{0, 256}`??
-   /// datastream(T, size_t)
-   datastream<char*> ds{datastream_buffer, 256};
+   // // Why can't I initialize a data stream object of type `datastream<uint32_t> ds{0, 256}`??
+   // /// datastream(T, size_t)
+   // datastream<char*> ds{datastream_buffer, 256};
 
-   // inline void skip(size_t)
-   ds.skip(1);
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer+1, true )
-   ds.skip(-1);
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer, true )
+   // // inline void skip(size_t)
+   // ds.skip(1);
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer+1, true )
+   // ds.skip(-1);
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer, true )
+   
+   // // inline bool read(char*, size_t)
+   // REQUIRE_EQUAL( ds.read(buffer, 256), true )
+   // REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0)
 
-   // inline bool read(char*, size_t)
-   REQUIRE_EQUAL( ds.read(buffer, 256), true )
-   REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
+   // REQUIRE_ASSERT( "read", ([&]() {ds.read(buffer, 1);}) )
 
-   REQUIRE_ASSERT( "read", ([&]() {ds.read(buffer, 1);}) )
+   // // T pos()const
+   // // inline bool seekp(size_t)
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer+256, true )
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer, false )
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer, true )
+   // REQUIRE_EQUAL( ds.pos() == datastream_buffer+256, false )
 
-   // T pos()const
-   // inline bool seekp(size_t)
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer+256, true )
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer, false )
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer, true )
-   REQUIRE_EQUAL( ds.pos() == datastream_buffer+256, false )
+   // // inline bool write(const char*, size_t)
+   // // Fill `buffer` with a new set of values
+   // for(int i{0}, j{1}; i < 256; ++i)
+   //    buffer[i] = j;
 
-   // inline bool write(const char*, size_t)
-   // Fill `buffer` with a new set of values
-   for(int i{0}, j{1}; i < 256; ++i)
-      buffer[i] = j;
+   // REQUIRE_EQUAL( ds.write(buffer, 256), true )
+   // REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
 
-   REQUIRE_EQUAL( ds.write(buffer, 256), true )
-   REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
+   // REQUIRE_ASSERT( "write", ([&]() {ds.write(buffer, 1);}) )
 
-   REQUIRE_ASSERT( "write", ([&]() {ds.write(buffer, 1);}) )
+   // // inline bool put(char)
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.put('c'), true )
+   // *buffer = 'c';
+   // REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
 
-   // inline bool put(char)
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.put('c'), true )
-   *buffer = 'c';
-   REQUIRE_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
-
-   ds.seekp(256);
-   REQUIRE_ASSERT( "put", ([&]() {ds.put('c');}) )
+   // ds.seekp(256);
+   // REQUIRE_ASSERT( "put", ([&]() {ds.put('c');}) )
   
-   // inline bool get(unsigned char&)
-   unsigned char c0{};
+   // // inline bool get(unsigned char&)
+   // unsigned char c0{};
 
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.get(c0), true )
-   REQUIRE_EQUAL( c0, 'c' )
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.get(c0), true )
+   // REQUIRE_EQUAL( c0, 'c' )
 
-   // inline bool get(char&)
-   char c1{};
+   // // inline bool get(char&)
+   // char c1{};
 
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.get(c1), true )
-   REQUIRE_EQUAL( c1, 'c' )
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.get(c1), true )
+   // REQUIRE_EQUAL( c1, 'c' )
 
-   // inline bool valid()const
-   ds.seekp(256);
-   REQUIRE_EQUAL( ds.valid(), true )
+   // // inline bool valid()const
+   // ds.seekp(256);
+   // REQUIRE_EQUAL( ds.valid(), true )
 
-   ds.seekp(257);
-   REQUIRE_EQUAL( ds.valid(), false )
+   // ds.seekp(257);
+   // REQUIRE_EQUAL( ds.valid(), false )
 
-   // inline size_t tellp()const
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.tellp(), 0 )
-   ds.seekp(256);
-   REQUIRE_EQUAL( ds.tellp(), 256 )
-   ds.seekp(257);
-   REQUIRE_EQUAL( ds.tellp(), 257 )
+   // // inline size_t tellp()const
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.tellp(), 0 )
+   // ds.seekp(256);
+   // REQUIRE_EQUAL( ds.tellp(), 256 )
+   // ds.seekp(257);
+   // REQUIRE_EQUAL( ds.tellp(), 257 )
 
-   //inline size_t remaining()const
-   ds.seekp(0);
-   REQUIRE_EQUAL( ds.remaining(), 256 )
-   ds.seekp(256);
-   REQUIRE_EQUAL( ds.remaining(), 0 )
-   // I don't understand:
-   // If the return type is of type `size_t`, how then does `_end - _pos` equate to
-   // -1? Should it be the maximum value of a `size_t`?
-   ds.seekp(257);
-   REQUIRE_EQUAL( ds.remaining(), -1)
-
-   // eosio::print("_start: ", (uint64_t)ds._start, "_pos: ", (uint64_t)ds._pos, "_end: ", (uint64_t)ds._end);
+   // //inline size_t remaining()const
+   // ds.seekp(0);
+   // REQUIRE_EQUAL( ds.remaining(), 256 )
+   // ds.seekp(256);
+   // REQUIRE_EQUAL( ds.remaining(), 0 )
+   // // I don't understand:
+   // // If the return type is of type `size_t`, how then does `_end - _pos` equate to
+   // // -1? Should it be the maximum value of a `size_t`?
+   // ds.seekp(257);
+   // REQUIRE_EQUAL( ds.remaining(), -1)
 
    silence_output(false);
 EOSIO_TEST_END
@@ -198,28 +206,12 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    silence_output(false);
 EOSIO_TEST_END
 
-template <typename T>
-void print_bufs(const char* datastream_buffer, const T& container) {
-   eosio::print("\n");
-   eosio::print("\033[1;36mdatastream_buffer:\033[0m\n");
-   eosio::print((int)datastream_buffer[0]);
-   for (int i = 0; i < 15; ++i) {
-      eosio::print(datastream_buffer[i+1]);
-   }
-   eosio::print("\n");
-
-   eosio::print("\033[1;36mcontainer:\033[0m\n");
-   for (auto& x : container) {
-      eosio::print(x);
-   }
-   eosio::print("\n");
-}
-
 // Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(false);
 
-   static constexpr uint8_t buffer_size{64};
+   // TODO: figure out why making this buffer and off number throws a segfault
+   static constexpr uint8_t buffer_size{128};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
    datastream<char*> ds{datastream_buffer, buffer_size};
 
@@ -246,10 +238,43 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    // ds >> d; // Fails here
    // REQUIRE_EQUAL( cd == d, true )
 
-   // Make custom small struct; use default constructor; spit in/spit out. Then compare
-   // the value in the default constructor (expected) to result. And also put custom input to .value_or as well
    // ----------------
    // binary_extension
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const binary_extension<char> cbe_char{'c'};
+   binary_extension<char> cb_char{};
+   ds << cbe_char;
+   ds.seekp(0);
+   ds >> cb_char;
+   REQUIRE_EQUAL( cbe_char.value() == cb_char.value(), true )
+
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   binary_extension<int> be_char_vor0{};
+   binary_extension<int> cb_char_vor1{};
+   ds << be_char_vor0.value_or(42);
+   ds.seekp(0);
+   ds >> cb_char_vor1;
+   REQUIRE_EQUAL( cb_char_vor1.value() == 42, true )
+
+   struct be_test {
+      be_test() : val{42} {}
+      int val;
+   };
+   const be_test bet{};
+   
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const binary_extension<be_test> cbe{bet};
+   binary_extension<be_test> cb{};
+   ds << cbe;
+   ds.seekp(0);
+   ds >> cb;
+   REQUIRE_EQUAL( cbe.value().val == cb.value().val, true )
+   
+   const binary_extension<be_test> cbe_none{};
+   REQUIRE_ASSERT( "cannot get value of empty binary_extension", [&](){cbe_none.value();} )
 
    // ------------
    // std::variant
@@ -316,22 +341,25 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 
    // --------------
    // ignore_wrapper
-   // struct ig_wrapped {
-   //    bool b{true};
-   //    int i{42};
-   //    double d{4.2};
-   //    const std::list<char> cl{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
-   // };
-
-   // const ig_wrapped ig_wrapped_obj;
-   
-   // ds.seekp(0);
-   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   // const ignore_wrapper<ig_wrapped> ciw{ig_wrapped_obj};
-   // ds << ciw;
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const ignore_wrapper<char> cigw{'c'};
+   char c_igw;
+   ds << cigw;
+   ds.seekp(0);
+   ds >> c_igw;
+   REQUIRE_EQUAL( cigw.value == c_igw, true )
 
    // ------
    // ignore
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const ignore<char> cig{};
+   ignore<char> c_ig;
+   ds << cig;
+   REQUIRE_EQUAL( ds.tellp() == 0, true )
+   ds >> c_ig;
+   REQUIRE_EQUAL( ds.tellp() == 0, true )
 
    // ---------------
    // capi_public_key
@@ -343,8 +371,6 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> cpubkey;
    REQUIRE_EQUAL( memcmp(c_cpubkey.data, cpubkey.data, 32), 0 )
-
-////////////////////////////////////////////////////////////////////
 
    // ----------
    // public_key
@@ -359,22 +385,40 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 
    // ---------
    // signature
-   // ds.seekp(0);
-   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   // const signature c_sig{{}, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
-   // signature sig{};
-   // ds << c_sig;
-   // ds.seekp(0);
-   // ds >> sig;
-   // REQUIRE_EQUAL( c_sig == sig, true )
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const signature c_sig{{}, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   signature sig{};
+   ds << c_sig;
+   ds.seekp(0);
+   ds >> sig;
+   REQUIRE_EQUAL( c_sig == sig, true )
 
-   // ----------------
-   // public_keykey256
+   // TODO: Test a more complex `key256`
+   // ------
+   // key256
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const key256 c_key{};
+   key256 key{};
+   ds << c_key;
+   ds.seekp(0);
+   ds >> key;
 
+   REQUIRE_EQUAL( c_key == key, true )
+
+   // TODO: Test a more complex `fixed_bytes`
    // -----------
    // fixed_bytes
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const fixed_bytes<32> c_fb{};
+   fixed_bytes<32> fb{};
+   ds << c_fb;
+   ds.seekp(0);
+   ds >> fb;
 
-////////////////////////////////////////////////////////////////////
+   REQUIRE_EQUAL( c_fb == fb, true )
 
    // ----
    // bool
@@ -402,8 +446,8 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
-   // EOSIO_TEST(datastream_test);
+   EOSIO_TEST(datastream_test);
    // EOSIO_TEST(datastream_specialization_test);
-   EOSIO_TEST(datastream_stream_test);
+   // EOSIO_TEST(datastream_stream_test);
    return has_failed();
 }
