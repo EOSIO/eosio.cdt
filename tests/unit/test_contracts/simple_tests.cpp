@@ -1,4 +1,5 @@
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/transaction.hpp>
 #include "transfer.hpp" 
 
 using namespace eosio;
@@ -42,6 +43,23 @@ class [[eosio::contract]] simple_tests : public contract {
          trans.send(_self, to, asset{100, {"TST", 4}}, "memo");
       }
 
+      [[eosio::action]] 
+      void testc(name nm) {
+         check(nm == "bucky"_n, "should be bucky");
+      }
+
+      [[eosio::action]] 
+      void testd(name nm) {
+         transaction t;
+         action act;
+         act.account = "other"_n;
+         act.name    = "testc"_n;
+         act.authorization = {permission_level{get_self(), "active"_n}};
+         std::vector<char> data = pack(nm);
+         t.actions.push_back(act);
+         t.send(nm.value, get_self());
+      }
+
       [[eosio::on_notify("eosio.token::transfer")]] 
       void on_transfer(name from, name to, asset quant, std::string memo) {
          check(_code == "eosio.token"_n, "should be eosio.token");
@@ -58,13 +76,13 @@ class [[eosio::contract]] simple_tests : public contract {
       void on_transfer3(name from, name to, asset quant, std::string memo) {
          print_f("On notify 3 : % % % %", from, to, quant, memo);
       }
-
 };
 
 extern "C" bool pre_dispatch(name self, name original_receiver, name action) {
    print_f("pre_dispatch : % % %\n", self, original_receiver, action);
-   if (self == "notbucky"_n) {
-      eosio::check(self != "notbucky"_n, "uh oh");
+   name nm;
+   read_action_data((char*)&nm, sizeof(nm));
+   if (nm == "quit"_n) {
       return false;
    }
    return true;
