@@ -339,6 +339,16 @@ class multi_index
                   const T& operator*()const { return *static_cast<const T*>(_item); }
                   const T* operator->()const { return static_cast<const T*>(_item); }
 
+                  const_iterator operator+(int n) {
+                     const_iterator result(*this);
+                     return result + n;
+                  }
+
+                  const_iterator operator-(int n) {
+                     const_iterator result(*this);
+                     return result - n;
+                  }
+
                   const_iterator operator++(int){
                      const_iterator result(*this);
                      ++(*this);
@@ -730,6 +740,16 @@ class multi_index
 
          const T& operator*()const { return *static_cast<const T*>(_item); }
          const T* operator->()const { return static_cast<const T*>(_item); }
+
+         const_iterator operator+(int n) {
+            const_iterator result(*this);
+            return result + n;
+         }
+
+         const_iterator operator-(int n) {
+            const_iterator result(*this);
+            return result - n;
+         }
 
          const_iterator operator++(int) {
             const_iterator result(*this);
