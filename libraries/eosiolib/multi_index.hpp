@@ -145,12 +145,6 @@ namespace _multi_index_detail {
       static constexpr long double true_lowest() { return -std::numeric_limits<long double>::infinity(); }
    };
 
-   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::key256)
-   template<>
-   struct secondary_key_traits<eosio::key256> {
-      static constexpr eosio::key256 true_lowest() { return eosio::key256(); }
-   };
-
    WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>)
    template<>
    struct secondary_key_traits<eosio::fixed_bytes<32>> {

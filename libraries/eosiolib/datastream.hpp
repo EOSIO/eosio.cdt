@@ -6,7 +6,6 @@
 #include "types.h"
 #include "symbol.hpp"
 #include "fixed_bytes.hpp"
-#include "fixed_key.hpp"
 #include "crypto.hpp"
 #include "ignore.hpp"
 #include "varint.hpp"
@@ -626,36 +625,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::signature& 
    ds >> sig.type;
    ds.read( sig.data.data(), sig.data.size() );
    return ds;
-}
-
-/**
- *  Serialize a key256 into a stream
- *
- *  @brief Serialize a key256
- *  @param ds - The stream to write
- *  @param d - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const key256& d) {
-  ds.write( (const char*)d.data(), d.size() );
-  return ds;
-}
-
-/**
- *  Deserialize a key256 from a stream
- *
- *  @brief Deserialize a key256
- *  @param ds - The stream to read
- *  @param d - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, key256& d) {
-  ds.read((char*)d.data(), d.size() );
-  return ds;
 }
 
 /**
