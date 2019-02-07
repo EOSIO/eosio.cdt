@@ -207,10 +207,11 @@ int main(int argc, const char **argv) {
          output = tmp_file+".o";
 
          new_opts.insert(new_opts.begin(), input);
-
+         
          if (!opts.link) {
             output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
          }
+
          new_opts.insert(new_opts.begin(), "-o "+output);
          outputs.push_back(output);
 

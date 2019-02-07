@@ -356,6 +356,8 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-m64");
 #endif
       if (!allow_sse_opt) {
+         copts.emplace_back("-Wno-error=unused-command-line-argument");
+         copts.emplace_back("-fno-builtin");
          copts.emplace_back("-mno-sse");
          copts.emplace_back("-mno-sse2");
          copts.emplace_back("-mno-mmx");
