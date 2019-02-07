@@ -17,14 +17,17 @@ namespace eosio {
         __attribute__((eosio_wasm_import))
         void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
-         __attribute__((eosio_wasm_import))
-         void set_privileged( uint64_t account, bool is_priv );
+        __attribute__((eosio_wasm_import))
+        void set_privileged( uint64_t account, bool is_priv );
 
-         __attribute__((eosio_wasm_import))
-         void set_blockchain_parameters_packed( char* data, uint32_t datalen );
+        __attribute__((eosio_wasm_import))
+        void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-         __attribute__((eosio_wasm_import))
-         uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+        __attribute__((eosio_wasm_import))
+        uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+
+        __attribute((eosio_wasm_import))
+        int64_t set_proposed_producers( char*, uint32_t );
       }
    }
 
@@ -199,7 +202,6 @@ namespace eosio {
     *
     * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
     * @param producers - vector of producer keys 
-    * @param producer_data_size - size of the data buffer
     *
     * @return false if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
     */

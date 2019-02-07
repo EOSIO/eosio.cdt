@@ -133,6 +133,7 @@ namespace eosio {
          */
          template<typename Word, size_t NumWords,
                   typename Enable = typename std::enable_if<std::is_integral<Word>::value &&
+                                                             std::is_unsigned<Word>::value &&
                                                              !std::is_same<Word, bool>::value &&
                                                              std::less<size_t>{}(sizeof(Word), sizeof(word_t))>::type >
          fixed_bytes(const std::array<Word, NumWords>& arr)
@@ -152,6 +153,7 @@ namespace eosio {
          */
          template<typename Word, size_t NumWords,
                   typename Enable = typename std::enable_if<std::is_integral<Word>::value &&
+                                                             std::is_unsigned<Word>::value &&
                                                              !std::is_same<Word, bool>::value &&
                                                              std::less<size_t>{}(sizeof(Word), sizeof(word_t))>::type >
          fixed_bytes(const Word(&arr)[NumWords])
@@ -176,6 +178,7 @@ namespace eosio {
          static
          fixed_bytes<Size>
          make_from_word_sequence(typename std::enable_if<std::is_integral<FirstWord>::value &&
+                                                          std::is_unsigned<FirstWord>::value &&
                                                           !std::is_same<FirstWord, bool>::value &&
                                                           sizeof(FirstWord) <= sizeof(word_t) &&
                                                           all_true<(std::is_same<FirstWord, Rest>::value)...>::value,

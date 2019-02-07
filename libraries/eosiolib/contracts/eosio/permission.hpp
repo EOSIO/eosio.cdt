@@ -60,7 +60,7 @@ namespace eosio {
    *  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
    *  @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)
    *  @param perms_size - size (in bytes) of the serialized vector of provided permissions
-   *  @param delay_us - the provided delay in microseconds (cannot exceed INT64_MAX)
+   *  @param delay - the provided delay in microseconds (cannot exceed INT64_MAX)
    *
    *  @return 1 if the permission is authorized, 0 otherwise
    */
@@ -69,8 +69,10 @@ namespace eosio {
                                    name permission,
                                    const char* pubkeys_data, uint32_t pubkeys_size,
                                    const char* perms_data,   uint32_t perms_size,
-                                   microseconds delay_us ) {
-     internal_use_do_not_use::check_permission_authorization( account.value, permission.value, pubkeys_data, pubkeys_size, perms_data, perms_size, delay_us );
+                                   microseconds delay ) {
+      int64_t delay_us = delay.count();
+      check(delay_us >= 0, "negative delay is not allowed");
+     internal_use_do_not_use::check_permission_authorization( account.value, permission.value, pubkeys_data, pubkeys_size, perms_data, perms_size,  static_cast<uint64_t>(delay_us) );
    }
 
 
@@ -137,9 +139,11 @@ namespace eosio {
                                    name                               permission,
                                    const std::set<public_key>&        provided_keys,
                                    const std::set<permission_level>&  provided_permissions = std::set<permission_level>(),
-                                   microseconds                       provided_delay_us = microseconds{std::numeric_limits<int64_t>::max()}
+                                   microseconds                       provided_delay = microseconds{std::numeric_limits<int64_t>::max()}
                                  )
    {
+      int64_t provided_delay_us = provided_delay.count();
+      check(provided_delay_us >= 0, "negative delay is not allowed");
       std::vector<char> packed_keys;
       auto nkeys = provided_keys.size();
       if( nkeys > 0 ) {

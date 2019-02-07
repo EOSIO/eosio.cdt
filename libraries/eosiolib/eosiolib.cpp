@@ -33,7 +33,8 @@ namespace eosio {
    }
 
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods ) {
-      int64_t ret = set_proposed_producers((char*)prods.data(), prods.size()*sizeof(producer_key));
+      auto packed_prods = eosio::pack( prods );
+      int64_t ret = set_proposed_producers((char*)packed_prods.data(), packed_prods.size());
       if (ret >= 0)
         return static_cast<uint64_t>(ret);
       return {};
@@ -51,7 +52,7 @@ namespace eosio {
    }
 
    std::vector<name> get_active_producers() {
-     static constexpr uint8_t prod_cnt = 21;
+      auto prod_cnt = get_active_producers(nullptr, 0)/8;
      std::vector<name> active_prods(prod_cnt);
      get_active_producers((uint64_t*)active_prods.data(), prod_cnt);
      return active_prods;
