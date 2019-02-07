@@ -276,10 +276,7 @@ namespace eosio { namespace cdt {
          std::stringstream ss;
          ss << "This file was generated with eosio-abigen.";
          ss << " DO NOT EDIT ";
-         auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-         ss << std::ctime(&t);
-         auto output = ss.str();
-         return output.substr(0, output.length()-1); // remove the newline character
+         return ss.str(); 
       }
 
       ojson struct_to_json( const abi_struct& s ) {
