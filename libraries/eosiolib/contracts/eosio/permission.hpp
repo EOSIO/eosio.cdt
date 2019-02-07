@@ -7,6 +7,7 @@
 #include "transaction.hpp"
 #include "../../core/eosio/crypto.hpp"
 #include "../../core/eosio/name.hpp"
+#include "../../core/eosio/time.hpp"
 
 #include <set>
 #include <limits>
@@ -68,7 +69,7 @@ namespace eosio {
                                    name permission,
                                    const char* pubkeys_data, uint32_t pubkeys_size,
                                    const char* perms_data,   uint32_t perms_size,
-                                   uint64_t delay_us ) {
+                                   microseconds delay_us ) {
      internal_use_do_not_use::check_permission_authorization( account.value, permission.value, pubkeys_data, pubkeys_size, perms_data, perms_size, delay_us );
    }
 
@@ -136,7 +137,7 @@ namespace eosio {
                                    name                               permission,
                                    const std::set<public_key>&        provided_keys,
                                    const std::set<permission_level>&  provided_permissions = std::set<permission_level>(),
-                                   uint64_t                           provided_delay_us = static_cast<uint64_t>(std::numeric_limits<int64_t>::max())
+                                   microseconds                       provided_delay_us = microseconds{std::numeric_limits<int64_t>::max()}
                                  )
    {
       std::vector<char> packed_keys;

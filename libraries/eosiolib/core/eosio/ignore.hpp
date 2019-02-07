@@ -67,7 +67,7 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream, typename T>
-   inline DataStream& operator>>(DataStream& ds, ::eosio::ignore<T>) {
+   inline DataStream& operator>>(DataStream& ds, ::eosio::ignore<T>&) {
      return ds;
    }
 } //ns eosio

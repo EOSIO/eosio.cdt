@@ -1,6 +1,6 @@
 #include <cstdlib> 
 #include <alloca.h>
-#include "core/eosio/system.hpp"
+#include "core/eosio/check.hpp"
 #include "core/eosio/print.hpp"
 
 #ifdef EOSIO_NATIVE

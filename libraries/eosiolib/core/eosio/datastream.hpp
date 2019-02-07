@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "system.hpp"
+#include "check.hpp"
 #include "varint.hpp"
 
 #include <list>

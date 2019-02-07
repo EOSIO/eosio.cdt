@@ -3,7 +3,7 @@
 #include <variant>
 #include <set>
 #include <stack>
-#include "system.hpp"
+#include "check.hpp"
 
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

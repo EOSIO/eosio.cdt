@@ -19,9 +19,6 @@ namespace eosio {
 
          __attribute__((eosio_wasm_import))
          void eosio_assert_code( uint32_t test, uint64_t code );
-
-         __attribute__((eosio_wasm_import, noreturn))
-         void eosio_exit( int32_t code );
       }
    }
 
@@ -130,23 +127,5 @@ namespace eosio {
          internal_use_do_not_use::eosio_assert_code(false, code);
       }
    }
-
-     /**
-    *  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
-    *
-    *  @param code - the exit code
-    *  Example:
-    *
-    *  @code
-    *  eosio_exit(0);
-    *  eosio_exit(1);
-    *  eosio_exit(2);
-    *  eosio_exit(3);
-    *  @endcode
-    */
-   inline void eosio_exit( int32_t code ) {
-      internal_use_do_not_use::eosio_exit(code);
-   }
-
 } // namespace eosio
 /// @}

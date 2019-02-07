@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "system.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C" {

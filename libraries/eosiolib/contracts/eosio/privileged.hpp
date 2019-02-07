@@ -1,4 +1,5 @@
 #pragma once
+#include "producer_schedule.hpp"
 #include "../../core/eosio/crypto.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/serialize.hpp"
@@ -8,18 +9,13 @@ namespace eosio {
    namespace internal_use_do_not_use {
       extern "C" {
          __attribute__((eosio_wasm_import))
-         void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
-         __attribute__((eosio_wasm_import))
-         void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
-
-         __attribute__((eosio_wasm_import))
-         int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
-
-         __attribute__((eosio_wasm_import))
-         void set_active_producers( char *producer_data, uint32_t producer_data_size );
-
-         __attribute__((eosio_wasm_import))
          bool is_privileged( uint64_t account );
+
+        __attribute__((eosio_wasm_import))
+        void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
+
+        __attribute__((eosio_wasm_import))
+        void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
          __attribute__((eosio_wasm_import))
          void set_privileged( uint64_t account, bool is_priv );
@@ -202,25 +198,12 @@ namespace eosio {
     * Proposes a schedule change
     *
     * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
-    * @param producer_data - packed data of produce_keys in the appropriate producer schedule order
+    * @param producers - vector of producer keys 
     * @param producer_data_size - size of the data buffer
     *
-    * @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
+    * @return false if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
     */
-   inline int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size ) {
-      internal_use_do_not_use::set_proposed_producers( producer_data, producer_data_size );
-   }
-
-   /**
-    * Set new active producers. Producers will only be activated once the block which starts the next round is irrreversible
-    *
-    * @param producer_data - pointer to producer schedule packed as bytes
-    * @param producer_data_size - size of the packed producer schedule
-    * @pre `producer_data` is a valid pointer to a range of memory at least `producer_data_size` bytes long that contains serialized produced schedule data
-    */
-   inline void set_active_producers( char *producer_data, uint32_t producer_data_size ) {
-      internal_use_do_not_use::set_active_producers( producer_data, producer_data_size );
-   }
+   std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods );
 
    /**
     * Check if an account is privileged
@@ -244,41 +227,4 @@ namespace eosio {
    }
 
    ///@}
-
-   /**
-   *  @defgroup types
-   *  @{
-   */
-
-   /**
-    * Maps producer with its signing key, used for producer schedule
-    *
-    * @brief Maps producer with its signing key
-    */
-   struct producer_key {
-
-      /**
-       * Name of the producer
-       *
-       * @brief Name of the producer
-       */
-      name             producer_name;
-
-      /**
-       * Block signing key used by this producer
-       *
-       * @brief Block signing key used by this producer
-       */
-      public_key       block_signing_key;
-
-      friend constexpr bool operator < ( const producer_key& a, const producer_key& b ) {
-         return a.producer_name < b.producer_name;
-      }
-
-      EOSLIB_SERIALIZE( producer_key, (producer_name)(block_signing_key) )
-   };
-
-   ///@}
-
-
 }
