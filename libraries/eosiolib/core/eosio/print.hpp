@@ -88,6 +88,15 @@ namespace eosio {
    }
 
    /**
+    *  Prints string
+    *
+    *  @param ptr - a null terminated string
+    */
+   inline void print( const char* ptr ) {
+     internal_use_do_not_use::prints(ptr);
+   }
+
+   /**
     * Prints 8-128 bit signed integer
     *
     * @param num to be printed
