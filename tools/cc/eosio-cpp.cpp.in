@@ -165,6 +165,7 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       if (get_abigen_ref().is_empty())
          return;
       get_abigen_ref().to_json().dump(abi_s);
+      llvm::outs() << abi_s << '\n';
       codegen::get().set_abi(abi_s);
    }
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
@@ -195,7 +196,7 @@ int main(int argc, const char **argv) {
          std::vector<std::string> new_opts = opts.comp_options;
          SmallString<64> res;
          llvm::sys::path::system_temp_directory(true, res);
-         std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str()+"-tmp.cpp";
+         std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
          std::string output;
          
          generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);

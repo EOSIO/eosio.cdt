@@ -722,7 +722,7 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
    for ( auto resource : resources ) {
-      agresources.emplace_back(std::string("-R")+resource);
+      agresources.emplace_back(resource);
    }
    if (fnative_opt)
       ldopts.emplace_back("-fnative");

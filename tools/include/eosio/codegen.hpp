@@ -45,7 +45,7 @@ namespace eosio { namespace cdt {
    std::string _quoted(const std::string& instr) {
       std::stringstream ss;
       for (char c : instr) {
-         if (c == '"')
+         if (c == '"' || c == '\\')
             ss << '\\';
          ss << c;
       }
@@ -389,7 +389,7 @@ namespace eosio { namespace cdt {
                   SmallString<64> res;
                   llvm::sys::path::system_temp_directory(true, res);
 
-                  std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str()+"-tmp.cpp");
+                  std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str());
                   for (auto inc : global_includes[main_file]) {
                      visitor->get_rewriter().ReplaceText(inc.range,
                            std::string("\"")+inc.file_name+"\"\n");
