@@ -203,7 +203,7 @@ namespace eosio {
     * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
     * @param producers - vector of producer keys 
     *
-    * @return false if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
+    * @return an optional value of the version of the new proposed schedule if successful
     */
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods );
 
