@@ -162,7 +162,7 @@ namespace eosio {
                                                    (nkeys > 0)  ? packed_keys.size()  : 0,
                                                    (nperms > 0) ? packed_perms.data() : (const char*)0,
                                                    (nperms > 0) ? packed_perms.size() : 0,
-                                                   provided_delay_us
+                                                   static_cast<uint64_t>(provided_delay_us)
                                                  );
 
       return (res > 0);
