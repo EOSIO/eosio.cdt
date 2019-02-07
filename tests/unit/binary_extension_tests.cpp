@@ -1,9 +1,12 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/binary_extension.hpp>
 
 using eosio::binary_extension;
-
-using namespace eosio::native;
 
 // Definitions in `eosio.cdt/libraries/eosiolib/binary_extension.hpp`
 EOSIO_TEST_BEGIN(binary_extension_test)
@@ -49,7 +52,8 @@ EOSIO_TEST_BEGIN(binary_extension_test)
 
    binary_extension<const char*> bin_copy_str_lval0{"abcd"};
    binary_extension<const char*> bin_copy_str_lval1{bin_copy_str_lval0};
-   REQUIRE_EQUAL( (bin_copy_str_lval0.value() == bin_copy_str_lval1.value() && bin_copy_str_lval0.has_value() == bin_copy_str_lval1.has_value()), true)
+   REQUIRE_EQUAL( (bin_copy_str_lval0.value() == bin_copy_str_lval1.value() &&
+                   bin_copy_str_lval0.has_value() == bin_copy_str_lval1.has_value()), true)
 
    // constexpr binary_extension(binary_extension&&)
    binary_extension<const char> bin_copy_char_rval0{'c'};

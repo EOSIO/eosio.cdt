@@ -1,12 +1,31 @@
+// TODO: Make sure CHECK_EQUAL is changed REQUIRE_EQUAL
+// TODO: Change: `REQUIRE_EQUAL( ds.tellp() == 9, true )` to `REQUIRE_EQUAL( ds.tellp(), 9 )`
+// TODO: Organize tests to be in a logical order
+// TODO: Swithc arrays with ints to arrays with chars; I think it makes it more readable
+// TODO: Organize the `capi` tests and the respective `eosio` comments
+// TODO: Double-check to make sure I get everything right
+// TODO: Test a more complex `fixed_bytes`
+// TODO: Test a more complex `key256`
+
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/binary_extension.hpp>
 #include <eosiolib/crypto.hpp>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/ignore.hpp>
 #include <eosiolib/symbol.hpp>
+
+#include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
+
 #include <array>
 #include <deque>
 #include <list>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -20,14 +39,21 @@ using eosio::public_key;
 using eosio::signature;
 using eosio::symbol;
 using eosio::symbol_code;
+using eosio::unpack;
+
+using boost::container::flat_map;
+using boost::container::flat_set;
+
 using std::array;
 using std::begin;
 using std::end;
 using std::fill;
 using std::list;
+using std::map;
+using std::set;
 using std::string;
-
-using namespace eosio::native;
+using std::tuple;
+using std::vector;
 
 // Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_test)
@@ -311,7 +337,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    CHECK_EQUAL( co == o, true )
    
    // -----------
-   // symbol_code
+   // eosio::symbol_code
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const symbol_code csc{"SYMBOLL"};
@@ -322,7 +348,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    CHECK_EQUAL( csc == sc, true )
 
    // ------
-   // symbol
+   // eosio::symbol
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const symbol sym_no_prec{"SYMBOLL", 0};
@@ -341,7 +367,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    CHECK_EQUAL( sym_prec == sym, true )
 
    // --------------
-   // ignore_wrapper
+   // eosio::ignore_wrapper
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const ignore_wrapper<char> ciw{'c'};
@@ -352,7 +378,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    CHECK_EQUAL( ciw.value == iw, true )
 
    // ------
-   // ignore
+   // eosio::ignore
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const ignore<char> cig{};
@@ -374,7 +400,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    CHECK_EQUAL( memcmp(c_cpubkey.data, c_cpubkey.data, 32), 0 )
 
    // ----------
-   // public_key
+   // eosio::public_key
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const public_key cpubkey{{}, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
@@ -394,30 +420,30 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> sig;
    CHECK_EQUAL( csig == sig, true )
-
-   // TODO: Test a more complex `key256`
-   // ------
-   // key256
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   const key256 ckey256{};
-   key256 key256{};
-   ds << ckey256;
-   ds.seekp(0);
-   ds >> key256;
-   CHECK_EQUAL( ckey256 == key256, true )
-
-   // TODO: Test a more complex `fixed_bytes`
-   // -----------
-   // fixed_bytes
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   const fixed_bytes<32> cfb{};
-   fixed_bytes<32> fb{};
-   ds << cfb;
-   ds.seekp(0);
-   ds >> fb;
-   CHECK_EQUAL( cfb == fb, true )
+   
+   // // ------
+   // // key256
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const key256 ckey256{};
+   // key256 key256{};
+   // ds << ckey256;
+   // ds.seekp(0);
+   // ds >> key256;
+   // CHECK_EQUAL( ckey256 == key256, true )
+   
+   // // -----------
+   // // fixed_bytes
+   // array<uint128_t,32> arr{0x01,0x02,0x03,0x04};
+   
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const fixed_bytes<32> cfb{arr};
+   // fixed_bytes<32> fb{};
+   // ds << cfb;
+   // ds.seekp(0);
+   // ds >> fb;
+   // CHECK_EQUAL( cfb == fb, true )
 
    // ----
    // bool
@@ -430,16 +456,213 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds >> boolean;
    CHECK_EQUAL( cboolean == boolean, true )
 
+   // ----------------
+   // capi_checksum160
+
+   // ----------------
+   // capi_checksum512
+
+   // -----------
+   // checksum256
+   
+   // ------
+   // string
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const string cstr {"abcdefghi"};
+   string str{};
+   ds << cstr;
+   ds.seekp(0);
+   ds >> str;
+   CHECK_EQUAL( cstr == str, true )
+
    // ----------
    // std::array
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   const std::array<char, 9> ca{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
-   const std::array<char, 9> a{};
+   const array<char, 9> ca{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   std::array<char, 9> a{};
    ds << ca;
    ds.seekp(0);
    ds >> a;
    CHECK_EQUAL( ca == a, true )
+
+   // ---------------
+   // T[] (primitive)
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const int cprim_array[10]{0,1,2,3,4,5,6,7,8,9};
+   int prim_array[10]{};
+   ds << cprim_array;
+   REQUIRE_EQUAL( ds.tellp() == 41, true )
+
+   ds.seekp(0); // Next three lines are testing an implementation detail ???
+   ds >> prim_array;
+   REQUIRE_EQUAL( memcmp(cprim_array, prim_array, 10), 0 )
+
+   ds.seekp(1);
+   fill(begin(prim_array), end(prim_array), 0);
+   REQUIRE_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> prim_array;} )
+
+   // -------------------
+   // T[] (non-primitive)
+   struct non_prim_array_test {
+      int val;
+   };
+
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const non_prim_array_test cnon_prim_array[10]{0,1,2,3,4,5,6,7,8,9};
+   non_prim_array_test non_prim_array[10]{};
+   ds << cnon_prim_array;
+   REQUIRE_EQUAL( ds.tellp() == 41, true )
+
+   ds.seekp(0); // Next three lines are testing an implementation detail ???
+   ds >> non_prim_array;
+   REQUIRE_EQUAL( memcmp(cnon_prim_array, non_prim_array, 10), 0 )
+
+   ds.seekp(1);
+   fill(begin(non_prim_array), end(non_prim_array), non_prim_array_test{});
+   REQUIRE_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> non_prim_array;} )
+
+   // -----------
+   // std::vector
+   struct vec_test {
+      char val;
+   };
+
+   // ds.seekp(0);
+   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   // const vector<vec_test> ctest_vec{{'a'}, {'b'}, {'c'}, {'d'}, {'e'}, {'f'}, {'g'}, {'h'}, {'i'}};
+   // std::vector<vec_test> test_vec{};
+   // ds << ctest_vec;
+   // ds.seekp(0);
+   // ds >> test_vec;
+   // CHECK_EQUAL( ctest_vec == test_vec, true )
+
+   // -----------------
+   // std::vector<char>
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const vector<char> cchar_vec{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   vector<char> char_vec{};
+   ds << cchar_vec;
+   ds.seekp(0);
+   ds >> char_vec;
+   CHECK_EQUAL( cchar_vec == char_vec, true )
+
+   // --------
+   // std::set
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const set<char> cchar_set{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   set<char> char_set{};
+   ds << cchar_set;
+   ds.seekp(0);
+   ds >> char_set;
+   CHECK_EQUAL( cchar_set == char_set, true )
+
+   // --------------------------
+   // boost::container::flat_set
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const flat_set<char> cchar_flat_set{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+   flat_set<char> char_flat_set{};
+   ds << cchar_flat_set;
+   ds.seekp(0);
+   ds >> char_flat_set;
+   CHECK_EQUAL( cchar_flat_set == char_flat_set, true )
+
+   // --------
+   // std::map
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const map<char,int> cchar_map{{'a',97}, {'b',98}, {'c',99}, {'d',100}};
+   map<char,int> char_map{};
+   ds << cchar_map;
+   ds.seekp(0);
+   ds >> char_map;
+   CHECK_EQUAL( cchar_map == char_map, true )
+
+   // --------------------------
+   // boost::container::flat_map
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const flat_map<char,int> cchar_flat_map{{'a',97}, {'b',98}, {'c',99}, {'d',100}};
+   flat_map<char,int> char_flat_map{};
+   ds << cchar_flat_map;
+   ds.seekp(0);
+   ds >> char_flat_map;
+   CHECK_EQUAL( cchar_flat_map == char_flat_map, true )
+
+   // ----------
+   // std::tuple
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const tuple<string,int,char> ctup{"abc123",42,'a'};
+   tuple<string,int,char> tup{};
+   ds << ctup;
+   ds.seekp(0);
+   ds >> tup;
+   CHECK_EQUAL( ctup == tup, true )
+
+   // ---------------
+   // T (primitive)
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const int cprim{10};
+   int prim{};
+   ds << cprim;
+   ds.seekp(0);
+   ds >> prim;
+   REQUIRE_EQUAL( cprim == prim, true )
+
+   // -------------------
+   // T (non-primitive)
+   struct non_prim_test {
+      int val;
+   };
+
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const non_prim_test cnonprim{10};
+   non_prim_test nonprim{};
+   ds << cnonprim;
+   ds.seekp(0);
+   ds >> nonprim;
+   REQUIRE_EQUAL( cnonprim.val == nonprim.val, true )
+   
+   silence_output(false);
+EOSIO_TEST_END
+
+// Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
+EOSIO_TEST_BEGIN(misc_datastream_test)
+   silence_output(false);
+
+   // -----------------------------
+   // T unpack(const char*, size_t)
+   const char unpack_source_buffer[9]{'a','b','c','d','e','f','g','h','i'};
+   char unpack_ch{};
+   for (uint8_t i = 0; i < 9; ++i) {
+      unpack_ch = unpack<char>(unpack_source_buffer+i, 9);
+      REQUIRE_EQUAL( unpack_source_buffer[i], unpack_ch )
+   }
+
+   // -----------------------------
+   // T unpack(const vector<char>&)
+   const vector<char> unpack_source_vec{'a','b','c','d','e','f','g','h','i'};
+   for (uint8_t i = 0; i < 9; ++i) {
+      unpack_ch = unpack<char>(unpack_source_buffer+i, 9);
+      REQUIRE_EQUAL( unpack_source_buffer[i], unpack_ch )
+   }
+
+   // --------------------------
+   // size_t pack_size(const T&)
+
+
+   // ---------------------------
+   // vector<char> pack(const T&)
+
 
    silence_output(false);
 EOSIO_TEST_END
@@ -447,7 +670,8 @@ EOSIO_TEST_END
 int main(int argc, char* argv[]) {
    // Note: uncomment once segfaulting during `memcpy` has been resolved
    // EOSIO_TEST(datastream_test);
-   EOSIO_TEST(datastream_specialization_test);
+   // EOSIO_TEST(datastream_specialization_test);
    EOSIO_TEST(datastream_stream_test);
+   // EOSIO_TEST(misc_datastream_test);
    return has_failed();
 }

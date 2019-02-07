@@ -1,3 +1,8 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/asset.hpp>
 
@@ -148,7 +153,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
    // How are these `assets` constructed? Isn't `uint8_t precision` supposed to be constexpr when constructing a symbol?
    for( uint8_t precision{0}; precision < 64; ++precision ) {
       CHECK_EQUAL( (asset{0LL, symbol{"SYMBOLL", precision}}.to_string()),
-                     (std::string(std::string("0.") + std::string(precision, '0') + std::string(" SYMBOLL"))) )
+                   (std::string(std::string("0.") + std::string(precision, '0') + std::string(" SYMBOLL"))) )
    }
 
    // ----------------------

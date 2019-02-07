@@ -1,7 +1,10 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/eosio.hpp>
-
-using namespace eosio::native;
 
 namespace using_no_macros {
 class [[eosio::contract]] con {

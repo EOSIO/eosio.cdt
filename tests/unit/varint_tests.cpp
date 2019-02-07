@@ -1,3 +1,8 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/varint.hpp>
@@ -5,8 +10,6 @@
 #include <eosiolib/print.hpp>
 
 using eosio::datastream;
-
-using namespace eosio::native;
 
 const uint32_t u32min = std::numeric_limits<uint32_t>::min(); // 0
 const uint32_t u32max = std::numeric_limits<uint32_t>::max(); // 18446744073709551615

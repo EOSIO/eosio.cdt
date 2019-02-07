@@ -1,11 +1,15 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/system.hpp>
+
 #include <string>
 
 using eosio::check;
 using std::string;
-
-using namespace eosio::native;
 
 // Definitions in `eosio.cdt/libraries/eosiolib/system.hpp`
 EOSIO_TEST_BEGIN(system_test)

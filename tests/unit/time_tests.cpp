@@ -1,3 +1,8 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/time.hpp>
 
@@ -5,8 +10,6 @@ using eosio::microseconds;
 using eosio::time_point;
 using eosio::time_point_sec;
 using eosio::block_timestamp;
-
-using namespace eosio::native;
 
 const uint32_t u32min = std::numeric_limits<uint32_t>::min(); // 0
 const uint32_t u32max = std::numeric_limits<uint32_t>::max(); // 18446744073709551615

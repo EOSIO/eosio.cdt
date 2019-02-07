@@ -1,14 +1,16 @@
-#include <eosiolib/eosio.hpp>
-#include <eosio/native/tester.hpp>
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
 
+#include <eosio/native/tester.hpp>
+#include <eosiolib/eosio.hpp>
 #include <eosiolib/name.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/symbol.hpp>
 
 using eosio::name;
 using eosio::print;
-
-using namespace eosio::native;
 
 // EOSIO_TEST_BEGIN(print_test)
 //    silence_output(true);
