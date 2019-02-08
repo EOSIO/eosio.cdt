@@ -48,6 +48,8 @@ using eosio::unpack;
 using boost::container::flat_map;
 using boost::container::flat_set;
 
+// This data structure (which cannot be defined within a test macro block) needs both a default and a
+// user-defined constructor for a specific `binary extension` test
 struct be_test {
    be_test() : val{42} {}
    be_test(int i) : val{i} {}
