@@ -48,6 +48,14 @@ using eosio::unpack;
 using boost::container::flat_map;
 using boost::container::flat_set;
 
+struct be_test {
+   be_test() : val{42} {}
+   be_test(int i) : val{i} {}
+   int val;
+      
+   EOSLIB_SERIALIZE( be_test, (val) )
+};
+
 // Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_test)
    silence_output(true);
@@ -60,9 +68,6 @@ EOSIO_TEST_BEGIN(datastream_test)
    for(int i{0}; i < buffer_size; ++i) // Fill the char array `datastream_buffer` with all 256 ASCII characters
       datastream_buffer[i] = j++;
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   ////////// I can't initialize a data stream object of type `datastream<uint32_t> ds{0, 256}`? //////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    /// datastream(T, size_t)
    datastream<char*> ds{datastream_buffer, buffer_size};
 
@@ -155,10 +160,7 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    unsigned char j{0};
    for(int i{0}; i < buffer_size; ++i) // Fill the char array `datastream_buffer` with all all 256 ASCII characters
       datastream_buffer[i] = j++;
-   
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   ////////// I can't initialize a data stream object of type `datastream<uint32_t> ds{0, 256}`? //////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
    /// datastream(T, size_t)
    datastream<size_t> ds{buffer_size};
 
@@ -227,9 +229,6 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(true);
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   /////////// TODO: figure out why making this buffer and off number throws a segfault ///////////////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
@@ -416,30 +415,30 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    // std::variant
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   std::variant<int, char> v0{1024};
+   const std::variant<int, char> v0{1024};
    std::variant<int, char> v1{};
    ds << v0;
    ds.seekp(0);
    ds >> v1;
    CHECK_EQUAL( v0, v1 )
-
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////// Note: uncomment once issue has been resolved ////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
    // -----------
    // std::vector
    struct vec_test {
       char val;
    };
 
-   // ds.seekp(0);
-   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   // const vector<vec_test> ctest_vec{{'a'},{'b'},{'c'},{'d'},{'e'},{'f'},{'g'},{'h'},{'i'}};
-   // std::vector<vec_test> test_vec{};
-   // ds << ctest_vec;
-   // ds.seekp(0);
-   // ds >> test_vec;
-   // CHECK_EQUAL( ctest_vec, test_vec )
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const vector<vec_test> ctest_vec{{'a'},{'b'},{'c'},{'d'},{'e'},{'f'},{'g'},{'h'},{'i'}};
+   vector<vec_test> test_vec{};
+   ds << ctest_vec;
+   ds.seekp(0);
+   ds >> test_vec;
+
+   for (int i{0}; i < ctest_vec.size(); ++i) {
+      CHECK_EQUAL( ctest_vec[i].val, test_vec[i].val )
+   }
 
    // -----------------
    // std::vector<char>
@@ -516,17 +515,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds >> be_int1;
    CHECK_EQUAL( be_int1.value(), 42 )
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   ////////////////////// Not understanding fully why this can't take data structures with ////////////////////
-   ////////////////////// more constructors than just a default constructors //////////////////////////////////
-   ////////////////////// Note: uncomment once issue has been resolved ////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   struct be_test {
-      be_test() : val{42} {}
-      int val;
-   };
-   const be_test bet{};
-   
+   const be_test bet{}; // For default value
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
    const binary_extension<be_test> cbe_btest{bet};
@@ -535,6 +524,12 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> cb_btest;
    CHECK_EQUAL( cbe_btest.value().val, cb_btest.value().val )
+
+   ds.seekp(256);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   binary_extension<be_test> cb_default_test{};
+   ds >> cb_default_test;
+   CHECK_EQUAL( 42, cb_default_test.value_or().val )
    
    const binary_extension<be_test> cbe_none{};
    CHECK_ASSERT( "cannot get value of empty binary_extension", [&](){cbe_none.value();} )
