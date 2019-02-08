@@ -73,7 +73,7 @@ void some_function(...) {
 }
 ```
 
-This will mark an arbitrary function as an entry point, which will then wrap the function will global constructors (ctors) and global destructors (dtors).  This will allow for the eosio.cdt toolchain to produce WASM binaries for other ecosystems.
+This will mark an arbitrary function as an entry point, which will then wrap the function with global constructors (ctors) and global destructors (dtors).  This will allow for the eosio.cdt toolchain to produce WASM binaries for other ecosystems.
 
 #### [[eosio::wasm_import]]
 ```
