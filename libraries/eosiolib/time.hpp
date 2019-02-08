@@ -4,10 +4,11 @@
 #include <stdint.h>
 #include <string>
 
+#warning "<eosiolib/time.hpp> is deprecated use <eosio/time.hpp>"
 namespace eosio {
   /**
    * @addtogroup time
-   * @ingroup cpp_api
+   * @ingroup contracts
    * @{
    */
   class microseconds {

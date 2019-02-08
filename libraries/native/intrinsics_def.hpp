@@ -1,18 +1,19 @@
 #pragma once
 
-#include <eosiolib/action.h>
-#include <eosiolib/chain.h>
-#include <eosiolib/crypto.h>
-#include <eosiolib/db.h>
-#include <eosiolib/permission.h>
-#include <eosiolib/print.h>
-#include <eosiolib/privileged.h>
-#include <eosiolib/system.h>
-#include <eosiolib/transaction.h>
-#include <eosiolib/types.h>
+#include <eosio/action.h>
+#include <eosio/chain.h>
+#include <eosio/crypto.h>
+#include <eosio/db.h>
+#include <eosio/permission.h>
+#include <eosio/print.h>
+#include <eosio/privileged.h>
+#include <eosio/system.h>
+#include <eosio/transaction.h>
+#include <eosio/types.h>
 
 #include <type_traits>
 
+#warning "<eosio/native/intrinsics_def.hpp> is deprecated use <eosio/intrinsics_def.hpp>"
 namespace eosio { namespace native {
    template <typename... Args, size_t... Is>
    auto get_args_full(std::index_sequence<Is...>) {

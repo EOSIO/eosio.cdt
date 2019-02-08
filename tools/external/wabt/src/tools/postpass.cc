@@ -28,6 +28,7 @@
 #include "src/feature.h"
 #include "src/generate-names.h"
 #include "src/ir.h"
+#include "src/leb128.h"
 #include "src/option-parser.h"
 #include "src/stream.h"
 #include "src/validator.h"
@@ -44,16 +45,16 @@ static WriteBinaryOptions s_write_binary_options;
 static std::unique_ptr<FileStream> s_log_stream;
 
 static const char s_description[] =
-R"(  Read a file in the WebAssembly binary format, strip bss or any data segment that is only initialized to zeros.
+R"(  Read a file in the WebAssembly binary format, strip bss or any data segment that is only initialized to zeros, and other post processing.
 
-  $ stripbss test.wasm -o test.stripped.wasm
+  $ eosio-pp test.wasm -o test.stripped.wasm
 
   # or original replacement
   $ wasm2wat test.wasm 
 )";
 
 static void ParseOptions(int argc, char** argv) {
-  OptionParser parser("stripbss", s_description);
+  OptionParser parser("postprocess", s_description);
 
   parser.AddOption('v', "verbose", "Use multiple times for more info", []() {
     s_verbose++;
@@ -75,7 +76,21 @@ static void ParseOptions(int argc, char** argv) {
   parser.Parse(argc, argv);
 }
 
-void StripZeroedData( Module& mod ) {
+uint32_t GetHeapPtr( Module& mod, const std::vector<uint8_t>& buff ) {
+   size_t offset = mod.GetGlobal(Var(1))->init_expr.begin()->loc.offset;
+   uint32_t heap_ptr;
+   ReadS32Leb128(buff.data()+offset+4, buff.data()+offset+9, &heap_ptr);
+   return heap_ptr;
+}
+
+uint32_t GetStackPtr( Module& mod, const std::vector<uint8_t>& buff ) {
+   size_t offset = mod.GetGlobal(Var(0))->init_expr.begin()->loc.offset;
+   uint32_t stack_ptr;
+   ReadS32Leb128(buff.data()+offset+4, buff.data()+offset+9, &stack_ptr);
+   return stack_ptr;
+}
+
+void StripZeroedData( Module& mod, size_t& fix_bytes ) {
    std::vector<DataSegment*> ds;
    for ( auto DS : mod.data_segments ) {
       bool isZeroed = true;
@@ -84,9 +99,29 @@ void StripZeroedData( Module& mod ) {
       }
       if (!isZeroed) {
          ds.push_back(DS);
+      } else {
+         fix_bytes += DS->data.size();
       }
    }
    mod.data_segments = ds;
+}
+
+void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& buff, DataSegment& ds ) {
+   uint32_t heap_ptr  = ((GetHeapPtr(mod, buff)) + 7) & ~7; // align to 8 bytes
+   Const c;
+   c.I32(0);
+   std::unique_ptr<Expr> ce(new ConstExpr(c));
+   ds.memory_var = Var(0);
+   ds.offset = ExprList{std::move(ce)};
+   uint8_t* dat = reinterpret_cast<uint8_t*>(&heap_ptr);
+   ds.data = std::vector<uint8_t>{dat[0],
+                                   dat[1], 
+                                   dat[2], 
+                                   dat[3]};
+   mod.data_segments.push_back(&ds);
+}
+
+void construct_apply( Module& mod ) {
 }
 
 void WriteBufferToFile(string_view filename,
@@ -104,6 +139,7 @@ int ProgramMain(int argc, char** argv) {
   bool stub = false;
   std::unique_ptr<FileStream> s_log_stream_s;
   result = ReadFile(s_infile.c_str(), &file_data);
+  DataSegment _hds;
   if (Succeeded(result)) {
     ErrorHandlerFile error_handler(Location::Type::Binary);
     Module module;
@@ -115,7 +151,9 @@ int ProgramMain(int argc, char** argv) {
                           file_data.size(), &options, &error_handler, &module);
 
     if (Succeeded(result)) {
-      StripZeroedData(module);
+      size_t fixup = 0;
+      StripZeroedData(module, fixup);
+      AddHeapPointerData(module, fixup, file_data, _hds);
      if (Succeeded(result)) {
       MemoryStream stream(s_log_stream.get());
       result =

@@ -35,6 +35,8 @@ target_include_directories(native_c++
 target_link_libraries(c++ c)
 target_link_libraries(native_c++ native_c)
 
+target_compile_options(native_c++ PUBLIC -allow-sse)
+
 add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${BASE_BINARY_DIR}/lib )
 
 add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )

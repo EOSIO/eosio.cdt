@@ -4,12 +4,12 @@
  */
 #pragma once
 
-
+#warning "<eosiolib/varint.hpp> is deprecated use <eosio/varint.hpp>"
 /**
  * @defgroup varint Variable Length Integer Type
  * @brief Defines variable length integer type which provides more efficient serialization
  * @ingroup types
- * @{/
+ * @{
  */
 /**
  * Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int.
@@ -406,8 +406,8 @@ struct signed_int {
      */
     template<typename DataStream>
     friend DataStream& operator << ( DataStream& ds, const signed_int& v ){
-      uint32_t val = uint32_t((v.value<<1) ^ (v.value>>31));
-      do {
+      uint32_t val = uint32_t((v.value<<1) ^ (v.value>>31));    //apply zigzag encoding
+      do {                                                      //store 7 bit chunks
          uint8_t b = uint8_t(val) & 0x7f;
          val >>= 7;
          b |= ((val > 0) << 7);
@@ -427,14 +427,12 @@ struct signed_int {
     template<typename DataStream>
     friend DataStream& operator >> ( DataStream& ds, signed_int& vi ){
       uint32_t v = 0; char b = 0; int by = 0;
-      do {
+      do {                                                      //read 7 bit chunks
          ds.get(b);
          v |= uint32_t(uint8_t(b) & 0x7f) << by;
          by += 7;
       } while( uint8_t(b) & 0x80 );
-      vi.value = ((v>>1) ^ (v>>31)) + (v&0x01);
-      vi.value = v&0x01 ? vi.value : -vi.value;
-      vi.value = -vi.value;
+      vi.value= (v>>1) ^ (~(v&1)+1ull);                         //reverse zigzag encoding
       return ds;
     }
 };

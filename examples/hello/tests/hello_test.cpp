@@ -1,10 +1,13 @@
-#include <eosiolib/eosio.hpp>
-#include <eosio/native/tester.hpp>
+#include <eosio/eosio.hpp>
+#include <eosio/tester.hpp>
 
 #include <hello.hpp>
 
 using namespace eosio;
 using namespace eosio::native;
+
+// need to create a dispatcher, codegen will not be done for native builds until a later release
+EOSIO_DISPATCH(hello, (hi)(check))
 
 EOSIO_TEST_BEGIN(hello_test)
    // These can be redefined by the user to suit there needs per unit test

@@ -1,5 +1,9 @@
-set(unit_test_dir ${CMAKE_BINARY_DIR}/EosioWasmTests-prefix/src/EosioWasmTests-build)
+add_test(name_tests ${CMAKE_BINARY_DIR}/tests/unit/name_tests)
+add_test(rope_tests ${CMAKE_BINARY_DIR}/tests/unit/rope_tests)
+add_test(print_tests ${CMAKE_BINARY_DIR}/tests/unit/print_tests)
+add_test(system_tests ${CMAKE_BINARY_DIR}/tests/unit/system_tests)
+add_test(varint_tests ${CMAKE_BINARY_DIR}/tests/unit/varint_tests)
 
-add_test(name_tests ${unit_test_dir}/name_tests)
-add_test(system_tests ${unit_test_dir}/system_tests)
-add_test(print_tests ${unit_test_dir}/print_tests)
+if (eosio_FOUND AND EOSIO_RUN_INTEGRATION_TESTS)
+   add_test(integration_tests ${CMAKE_BINARY_DIR}/tests/integration/integration_tests)
+endif()
