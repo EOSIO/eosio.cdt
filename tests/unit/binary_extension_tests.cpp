@@ -98,33 +98,33 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    // constexpr auto value_or(U&&) -> std::enable_if_t<std::is_convertible<U, T>::value, T&>&
    binary_extension<uint8_t> bin_temp_value_or{};
    uint8_t some_value = bin_temp_value_or.value_or(uint8_t{0x63});
-   REQUIRE_EQUAL( (some_value == 0x63), true )
+   REQUIRE_EQUAL( some_value, 0x63 )
 
    // constexpr T&& value_or()&&
-   REQUIRE_EQUAL( (binary_extension<char>{'c'}.value_or() == 'c'), true )
+   REQUIRE_EQUAL( binary_extension<char>{'c'}.value_or(), 'c' )
 
    binary_extension<char*> bin_value_or_rval{"abcd"};
-   REQUIRE_EQUAL( (bin_value_or_rval.value_or() == "abcd"), true )
+   REQUIRE_EQUAL( bin_value_or_rval.value_or(), "abcd" )
 
    // constexpr const T&& value_or()const&&
-   REQUIRE_EQUAL( (binary_extension<const char>{'c'}.value_or() == 'c'), true )
+   REQUIRE_EQUAL( binary_extension<const char>{'c'}.value_or(), 'c' )
 
    binary_extension<const char*> bin_const_value_or_rval{"abcd"};
-   REQUIRE_EQUAL( (bin_const_value_or_rval.value_or() == "abcd"), true )
+   REQUIRE_EQUAL( bin_const_value_or_rval.value_or(), "abcd" )
 
    // constexpr T value_or()&
    binary_extension<char> bin_char_value_or_val{'c'};
-   REQUIRE_EQUAL( (bin_char_value_or_val.value_or() == 'c'), true )
+   REQUIRE_EQUAL( bin_char_value_or_val.value_or(), 'c' )
 
    binary_extension<char*> bin_value_or_val{"abcd"};
-   REQUIRE_EQUAL( (bin_value_or_val.value_or() == "abcd"), true )
+   REQUIRE_EQUAL( bin_value_or_val.value_or(), "abcd" )
 
    // constexpr T value_or()const&
    binary_extension<const char> bin_char_const_value_or_val{'c'};
-   REQUIRE_EQUAL( (bin_char_const_value_or_val.value_or() == 'c'), true )
+   REQUIRE_EQUAL( bin_char_const_value_or_val.value_or(), 'c' )
 
    binary_extension<const char*> bin_const_value_or_val{"abcd"};
-   REQUIRE_EQUAL( (bin_const_value_or_val.value_or() == "abcd"), true )
+   REQUIRE_EQUAL( bin_const_value_or_val.value_or(), "abcd" )
 
    // constexpr T* operator->()
    binary_extension<char> bin_char_arrow_op{'c'};
