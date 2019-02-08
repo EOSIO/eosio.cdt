@@ -5,6 +5,8 @@
 #pragma once
 #include "system.hpp"
 
+#warning "<eosiolib/action.h> is deprecated use <eosio/action.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
+
 extern "C" {
    /**
     * @addtogroup action_c Action C API

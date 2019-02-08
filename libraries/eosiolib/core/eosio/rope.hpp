@@ -1,7 +1,9 @@
 #pragma once
 
 #include <variant>
-#include "system.hpp"
+#include <set>
+#include <stack>
+#include "check.hpp"
 
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

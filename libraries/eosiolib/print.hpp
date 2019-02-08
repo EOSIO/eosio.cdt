@@ -11,6 +11,7 @@
 #include <utility>
 #include <string>
 
+#warning "<eosiolib/print.hpp> is deprecated use <eosio/print.hpp>"
 /**
    *  @defgroup console Console C++ API
    *  @ingroup core

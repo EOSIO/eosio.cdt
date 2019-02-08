@@ -1,4 +1,4 @@
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 using namespace eosio;
 
 CONTRACT send_inline : public contract {
