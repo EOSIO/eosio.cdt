@@ -51,10 +51,9 @@ struct project {
                            "ACTION @::hi( name nm ) {\n"
                            "   /* fill in action body */\n"
                            "   print_f(\"Name : %\\n\",nm);\n"
-                           "}\n\n"
-                           "EOSIO_DISPATCH( @, (hi) )";
+                           "}";
 
-   const std::string hpp = "#include <eosiolib/eosio.hpp>\n"
+   const std::string hpp = "#include <eosio/eosio.hpp>\n"
                            "using namespace eosio;\n\n"
                            "CONTRACT @ : public contract {\n"
                            "   public:\n"

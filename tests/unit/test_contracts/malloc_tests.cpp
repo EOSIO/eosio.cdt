@@ -1,4 +1,4 @@
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 
 using namespace eosio;
 
@@ -67,27 +67,25 @@ CONTRACT malloc_tests : public contract{
 
       ACTION malloctest() {
           char* ptr1 = (char*)malloc(0);
-          eosio_assert(ptr1 == nullptr, "should not have allocated a 0 char buf");
+          check(ptr1 == nullptr, "should not have allocated a 0 char buf");
 
           // 20 chars - 20 + 4(header) which is divisible by 8
           ptr1 = (char*)malloc(20);
-          eosio_assert(ptr1 != nullptr, "should have allocated a 20 char buf");
+          check(ptr1 != nullptr, "should have allocated a 20 char buf");
 
           // 20 chars allocated
           char* ptr2 = (char*)malloc(20);
-          eosio_assert(ptr2 != nullptr, "should have allocated another 20 char buf");
-          eosio_assert(ptr1 + 20 < ptr2, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
+          check(ptr2 != nullptr, "should have allocated another 20 char buf");
+          check(ptr1 + 20 < ptr2, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
 
           // 20 chars allocated
           char* ptr3 = (char*)malloc(20);
-          eosio_assert(ptr3 != nullptr, "should have allocated another 20 char buf");
-          eosio_assert(ptr2 + 20 < ptr3, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
+          check(ptr3 != nullptr, "should have allocated another 20 char buf");
+          check(ptr2 + 20 < ptr3, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
 
           // 20 chars allocated
           char* ptr4 = (char*)malloc(20);
-          eosio_assert(ptr4 != nullptr, "should have allocated another 20 char buf");
-          eosio_assert(ptr3 + 20 < ptr4, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
+          check(ptr4 != nullptr, "should have allocated another 20 char buf");
+          check(ptr3 + 20 < ptr4, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
       }
 };
-
-EOSIO_DISPATCH(malloc_tests, (mallocalot)(mallocpass)(mallocfail)(mallocpass2)(malloctest))

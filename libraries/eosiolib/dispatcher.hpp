@@ -7,6 +7,8 @@
 
 #include <boost/mp11/tuple.hpp>
 
+#warning "<eosiolib/dispatcher.hpp> is deprecated use <eosio/dispatcher.hpp>"
+
 namespace eosio {
 
    template<typename Contract, typename FirstAction>

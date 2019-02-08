@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <wchar.h>
 
+#warning "<eosiolib/types.h> is deprecated use <eosio/types.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1,4 +1,4 @@
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 #include "transfer.hpp" 
 
 using namespace eosio;
@@ -44,13 +44,13 @@ class [[eosio::contract]] simple_tests : public contract {
 
       [[eosio::on_notify("eosio.token::transfer")]] 
       void on_transfer(name from, name to, asset quant, std::string memo) {
-         check(_code == "eosio.token"_n, "should be eosio.token");
+         check(get_first_receiver() == "eosio.token"_n, "should be eosio.token");
          print_f("On notify : % % % %", from, to, quant, memo);
       }
 
       [[eosio::on_notify("*::transfer")]] 
       void on_transfer2(name from, name to, asset quant, std::string memo) {
-         check(_code != "eosio.token"_n, "should not be eosio.token");
+         check(get_first_receiver() != "eosio.token"_n, "should not be eosio.token");
          print_f("On notify 2 : % % % %", from, to, quant, memo);
       }
 

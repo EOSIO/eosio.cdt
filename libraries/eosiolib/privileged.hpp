@@ -3,6 +3,7 @@
 #include "serialize.hpp"
 #include "crypto.hpp"
 
+#warning "<eosiolib/privileged.hpp> is deprecated use <eosio/privileged.hpp>"
 namespace eosio {
 
   /**

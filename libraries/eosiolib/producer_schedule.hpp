@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#warning "<eosiolib/producer_schedule.hpp> is deprecated use <eosio/producer_schedule.hpp>"
 namespace eosio {
 
    /**

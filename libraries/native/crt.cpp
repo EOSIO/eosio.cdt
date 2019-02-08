@@ -1,7 +1,7 @@
-#include <eosiolib/name.hpp>
-#include <eosiolib/action.hpp>
-#include "intrinsics.hpp"
-#include "crt.hpp"
+#include <eosio/name.hpp>
+#include <eosio/action.hpp>
+#include "native/eosio/intrinsics.hpp"
+#include "native/eosio/crt.hpp"
 #include <cstdint>
 #include <functional>
 #include <stdio.h>

@@ -9,6 +9,8 @@
 #include "dispatcher.hpp"
 #include "contract.hpp"
 
+#warning "<eosiolib/eosio.hpp> is deprecated use <eosio/eosio.hpp>"
+
 #ifndef EOSIO_NATIVE
 static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 #endif

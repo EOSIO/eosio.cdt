@@ -7,6 +7,7 @@
 #include <alloca.h>
 #include <string>
 
+#warning "<eosiolib/system.hpp> is deprecated use <eosio/system.hpp>"
 namespace eosio {
 
    /**

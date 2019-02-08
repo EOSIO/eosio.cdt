@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <memory>
 
+#warning "<eosiolib/multi_index.hpp> is deprecated use <eosio/multi_index.hpp>"
+
 namespace eosio {
 
 constexpr static inline name same_payer{};
@@ -141,12 +143,6 @@ namespace _multi_index_detail {
    template<>
    struct secondary_key_traits<long double> {
       static constexpr long double true_lowest() { return -std::numeric_limits<long double>::infinity(); }
-   };
-
-   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::key256)
-   template<>
-   struct secondary_key_traits<eosio::key256> {
-      static constexpr eosio::key256 true_lowest() { return eosio::key256(); }
    };
 
    WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>)

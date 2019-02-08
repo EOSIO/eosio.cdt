@@ -1,5 +1,7 @@
 #pragma once
 
+#warning "<eosiolib/privileged.h> is deprecated use <eosio/privileged.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,15 +46,6 @@ extern "C" {
    __attribute__((eosio_wasm_import))
    int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
 
-   /**
-    * Set new active producers. Producers will only be activated once the block which starts the next round is irrreversible
-    *
-    * @param producer_data - pointer to producer schedule packed as bytes
-    * @param producer_data_size - size of the packed producer schedule
-    * @pre `producer_data` is a valid pointer to a range of memory at least `producer_data_size` bytes long that contains serialized produced schedule data
-    */
-   __attribute__((eosio_wasm_import))
-   void set_active_producers( char *producer_data, uint32_t producer_data_size );
    /**
     * Check if an account is privileged
     *
