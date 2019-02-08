@@ -89,7 +89,7 @@ namespace eosio {
        *
        * @brief Construct a new transaction_header object initialising the transaction header expiration to now + 60 seconds
        */
-      transaction_header( time_point_sec exp = time_point_sec((current_time_point().count()/1000000) + 60) )
+      transaction_header( time_point_sec exp = time_point_sec(current_time_point()) + 60)
          :expiration(exp)
       {}
 
@@ -115,7 +115,7 @@ namespace eosio {
        *
        * @brief Construct a new transaction object initialising the transaction header expiration to now + 60 seconds
        */
-      transaction(time_point_sec exp = time_point_sec((current_time_point().count()/1000000) + 60)) : transaction_header( exp ) {}
+      transaction(time_point_sec exp = time_point_sec(current_time_point()) + 60) : transaction_header( exp ) {}
 
       /**
        *  Sends this transaction, packs the transaction then sends it as a deferred transaction
