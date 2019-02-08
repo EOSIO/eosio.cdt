@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#warning "<eosiolib/transaction.hpp> is deprecated use <eosio/transaction.hpp>"
 namespace eosio {
 
   /**

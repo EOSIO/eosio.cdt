@@ -3,11 +3,9 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "system.hpp"
 #include "types.h"
 #include "symbol.hpp"
 #include "fixed_bytes.hpp"
-#include "fixed_key.hpp"
 #include "crypto.hpp"
 #include "ignore.hpp"
 #include "varint.hpp"
@@ -29,6 +27,8 @@
 #include <boost/fusion/include/for_each.hpp>
 
 #include <boost/pfr.hpp>
+
+#warning "<eosiolib/datastream.hpp> is deprecated use <eosio/datastream.hpp>"
 
 namespace eosio {
 
@@ -333,40 +333,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::deque<T>& d) 
 }
 
 /**
- *  Serialize a binary_extension into a stream
- *
- *  @brief Serialize a binary_extension
- *  @param ds - The stream to write
- *  @param opt - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename T>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::binary_extension<T>& be) {
-  ds << be.value_or();
-  return ds;
-}
-
-/**
- *  Deserialize a binary_extension from a stream
- *
- *  @brief Deserialize a binary_extension
- *  @param ds - The stream to read
- *  @param opt - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename T>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::binary_extension<T>& be) {
-  if( ds.remaining() ) {
-     T val;
-     ds >> val;
-     be.emplace(val);
-  }
-  return ds;
-}
-
-/**
  *  Serialize an std::variant into a stream
  *
  *  @brief Serialize an std::variant
@@ -488,39 +454,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::optional<T>& 
      ds >> val;
      opt = val;
   }
-  return ds;
-}
-
-/**
- *  Serialize a symbol_code into a stream
- *
- *  @brief Serialize a symbol_code
- *  @param ds - The stream to write
- *  @param sym - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const eosio::symbol_code sym_code) {
-  uint64_t raw = sym_code.raw();
-  ds.write( (const char*)&raw, sizeof(raw));
-  return ds;
-}
-
-/**
- *  Deserialize a symbol_code from a stream
- *
- *  @brief Deserialize a symbol_code
- *  @param ds - The stream to read
- *  @param symbol - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::symbol_code& sym_code) {
-  uint64_t raw = 0;
-  ds.read((char*)&raw, sizeof(raw));
-  sym_code = symbol_code(raw);
   return ds;
 }
 
@@ -692,36 +625,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, eosio::signature& 
    ds >> sig.type;
    ds.read( sig.data.data(), sig.data.size() );
    return ds;
-}
-
-/**
- *  Serialize a key256 into a stream
- *
- *  @brief Serialize a key256
- *  @param ds - The stream to write
- *  @param d - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator<<(datastream<Stream>& ds, const key256& d) {
-  ds.write( (const char*)d.data(), d.size() );
-  return ds;
-}
-
-/**
- *  Deserialize a key256 from a stream
- *
- *  @brief Deserialize a key256
- *  @param ds - The stream to read
- *  @param d - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream>
-inline datastream<Stream>& operator>>(datastream<Stream>& ds, key256& d) {
-  ds.read((char*)d.data(), d.size() );
-  return ds;
 }
 
 /**

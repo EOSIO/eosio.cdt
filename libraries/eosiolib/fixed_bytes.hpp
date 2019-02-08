@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <type_traits>
 
+#warning "<eosiolib/fixed_bytes.hpp> is deprecated use <eosio/fixed_bytes.hpp>"
+
 namespace eosio {
 
    template<size_t Size>

@@ -5,6 +5,8 @@
 #include <setjmp.h>
 #include <vector>
 
+#warning "<eosio/native/tester.hpp> is deprecated use <eosio/tester.hpp>"
+
 extern "C" bool ___disable_output;
 extern "C" bool ___has_failed;
 

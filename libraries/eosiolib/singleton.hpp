@@ -2,6 +2,7 @@
 #include "multi_index.hpp"
 #include "system.hpp"
 
+#warning "<eosiolib/singleton.hpp> is deprecated use <eosio/singleton.hpp>"
 namespace  eosio {
 
    /**

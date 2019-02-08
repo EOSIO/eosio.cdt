@@ -1,5 +1,7 @@
 #pragma once
 
+#warning "<eosiolib/ignore.hpp> is deprecated use <eosio/ignore.hpp>"
+
 namespace eosio {
    /**
     * @brief Tells the datastream to ignore this type, but allows the abi generator to add the correct type.

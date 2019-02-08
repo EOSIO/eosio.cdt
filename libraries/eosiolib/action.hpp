@@ -14,6 +14,8 @@
 #include <boost/preprocessor/tuple/enum.hpp>
 #include <boost/preprocessor/facilities/overload.hpp>
 
+#warning "<eosiolib/action.hpp> is deprecated use <eosio/action.hpp>"
+
 namespace eosio {
 
    /**

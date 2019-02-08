@@ -1,5 +1,5 @@
 #include <memory>
-#include "system.hpp"
+#include "core/eosio/check.hpp"
 
 #ifdef EOSIO_NATIVE
    extern "C" {

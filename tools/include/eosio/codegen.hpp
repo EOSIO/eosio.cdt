@@ -106,6 +106,9 @@ namespace eosio { namespace cdt {
    };
 
    std::map<std::string, std::vector<include_double>>  global_includes;
+   
+   // remove after v1.7.0
+   bool has_eosiolib = false;
 
    class eosio_ppcallbacks : public PPCallbacks {
       public:
@@ -130,8 +133,11 @@ namespace eosio { namespace cdt {
                      (search_path + llvm::sys::path::get_separator() + file_name).str(),
                      filename_range.getAsRange());
             }
+            
+            if ( file_name.find("eosiolib") != StringRef::npos )
+               has_eosiolib = true;
          }
-
+   
          std::string fn;
          SourceManager& sources;
    };
@@ -159,7 +165,7 @@ namespace eosio { namespace cdt {
          void set_main_name(StringRef mn) {
             main_name = mn;
          }
-
+         
          Rewriter& get_rewriter() {
             return rewriter;
          }
@@ -219,15 +225,25 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "\n\nextern \"C\" __attribute__((weak, " << attr << "(\"";
+               if (has_eosiolib) {
+                  ss << "\n\n#include <eosiolib/datastream.hpp>\n";
+                  ss << "#include <eosiolib/name.hpp>\n";
+               } else {
+                  ss << "\n\n#include <eosio/datastream.hpp>\n";
+                  ss << "#include <eosio/name.hpp>\n";
+               }
+               ss << "extern \"C\" {\n";
+               ss << "uint32_t action_data_size();\n";
+               ss << "uint32_t read_action_data(void*, uint32_t);\n";
+               ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
                ss << func_name << nm;
                ss << "\"))) void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
-               ss << "size_t as = action_data_size();\n";
+               ss << "size_t as = ::action_data_size();\n";
                ss << "if (as <= 0) return;\n";
                ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
-               ss << "read_action_data(buff, as);\n";
+               ss << "::read_action_data(buff, as);\n";
                ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
                int i=0;
                for (auto param : decl->parameters()) {
@@ -250,7 +266,7 @@ namespace eosio { namespace cdt {
                      ss << ", ";
                }
                ss << ");";
-               ss << "}\n";
+               ss << "}}\n";
 
                rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
@@ -398,6 +414,7 @@ namespace eosio { namespace cdt {
                      // generate apply stub with abi
                      std::stringstream ss;
                      ss << "extern \"C\" {\n";
+                     ss << "void eosio_assert_code(uint32_t, uint64_t);";
                      ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                      std::string abi = cg.abi;
                      ss << "\"" << _quoted(abi) << "\"";

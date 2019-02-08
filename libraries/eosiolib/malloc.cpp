@@ -1,7 +1,7 @@
 #include <cstdlib> 
 #include <alloca.h>
-#include "system.hpp"
-#include "print.hpp"
+#include "core/eosio/check.hpp"
+#include "core/eosio/print.hpp"
 
 #ifdef EOSIO_NATIVE
    extern "C" {
