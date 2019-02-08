@@ -19,7 +19,7 @@ using mvo = fc::mutable_variant_object;
 BOOST_AUTO_TEST_SUITE(codegen_tests)
 
 BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
-   create_accounts( { N(test), N(eosio.token), N(someone) } );
+   create_accounts( { N(test), N(eosio.token), N(someone), N(other) } );
    produce_block();
 
    set_code( N(eosio.token), contracts::transfer_wasm() );
@@ -30,6 +30,10 @@ BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
 
    set_code( N(test), contracts::simple_wasm() );
    set_abi( N(test),  contracts::simple_abi().data() );
+
+   set_code( N(other), contracts::simple_wasm() );
+   set_abi( N(other),  contracts::simple_abi().data() );
+
    produce_blocks();
    push_action(N(test), N(test1), N(test), 
          mvo()
@@ -57,6 +61,11 @@ BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
    push_action(N(test), N(test5), N(test), mvo() ("to", "someone"));
    push_action(N(test), N(testa), N(test), mvo() ("to", "someone"));
    BOOST_CHECK_THROW(push_action(N(test), N(testb), N(test), mvo() ("to", "someone")), fc::exception);
+
+   // test that the pre_dispatch will short circuit dispatching if false
+   push_action(N(test), N(testc), N(test), mvo() ("nm", "bucky"));
+   BOOST_CHECK_THROW(push_action(N(test), N(testc), N(test), mvo() ("nm", "someone")), fc::exception);
+   push_action(N(test), N(testc), N(test), mvo() ("nm", "quit"));
 
 } FC_LOG_AND_RETHROW()
 

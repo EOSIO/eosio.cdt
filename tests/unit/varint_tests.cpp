@@ -14,11 +14,10 @@ EOSIO_TEST_BEGIN(signed_int_test)   //test datastream insert/extract signed_int
    ds.seekp(0);
    signed_int aa, bb, cc, dd;
    ds >> aa >> bb >> cc >> dd;
-   char* errmess= "signed_int datastream extract fails";
-   check(a.value==aa.value,errmess);
-   check(b.value==bb.value,errmess);
-   check(c.value==cc.value,errmess);
-   check(d.value==dd.value,errmess);
+   check(a.value==aa.value, "signed_int datastream extract fails");
+   check(b.value==bb.value, "signed_int datastream extract fails");
+   check(c.value==cc.value, "signed_int datastream extract fails");
+   check(d.value==dd.value, "signed_int datastream extract fails");
    silence_output(false);
 EOSIO_TEST_END
 

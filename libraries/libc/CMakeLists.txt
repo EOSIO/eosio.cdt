@@ -16,7 +16,7 @@ file(GLOB THREAD_SOURCES "musl/src/thread/*.c") #only for __lock __unlock
 
 set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c musl/src/internal/shgetc.c musl/src/internal/libc.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse")
 
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/musl/include/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/*.h"

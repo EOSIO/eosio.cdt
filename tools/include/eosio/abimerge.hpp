@@ -70,6 +70,14 @@ class ABIMerger {
                 a["ricardian_contract"] == b["ricardian_contract"];
       }
 
+      template <typename T>
+      static bool action_is_almost_same(ojson a, ojson b, T& rc) {
+         if (a["ricardian_contract"].empty())
+            rc = b["ricardian_contract"];
+         return a["name"] == b["name"] &&
+                a["type"] == b["type"];
+      }
+
 
       static bool variant_is_same(ojson a, ojson b) {
          for (auto tya : a["types"].array_range()) {
@@ -96,7 +104,7 @@ class ABIMerger {
          return a["id"] == b["id"] &&
                 a["body"] == b["body"];
       } 
-
+         
       template <typename F> 
       void add_object(ojson& ret, ojson a, ojson b, std::string type, std::string id, F&& is_same_func) {
          for (auto obj_a : a[type].array_range()) {
@@ -106,8 +114,9 @@ class ABIMerger {
             bool should_skip = false;
             for (auto obj_a : a[type].array_range()) {
                if (obj_a[id] == obj_b[id]) {
-                  if (!is_same_func(obj_a, obj_b))
+                  if (!is_same_func(obj_a, obj_b)) {
                      throw std::runtime_error(std::string("Error, ABI structs malformed : ")+obj_a[id].as<std::string>()+" already defined");
+                  }
                   else
                      should_skip = true;
                }
@@ -116,7 +125,7 @@ class ABIMerger {
                ret.push_back(obj_b);
          }
       }
-
+      
       ojson merge_structs(ojson b) {
          ojson structs = ojson::array();
          add_object(structs, abi, b, "structs", "name", struct_is_same);

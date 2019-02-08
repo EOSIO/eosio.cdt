@@ -19,7 +19,7 @@ add_contract( test test test.cpp )
 In `test.cpp`:
 
 ```
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 using namespace eosio;
 
 CONTRACT test : public eosio::contract {

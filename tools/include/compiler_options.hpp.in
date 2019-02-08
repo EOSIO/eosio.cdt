@@ -97,6 +97,11 @@ static cl::opt<bool> fuse_main_opt(
     "fuse-main",
     cl::desc("Use main as entry"),
     cl::cat(LD_CAT));
+static cl::opt<bool> allow_sse_opt(
+    "allow-sse",
+    cl::desc("Should not be used, except for build libc"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -350,12 +355,19 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
       copts.emplace_back("-m64");
 #endif
+      if (!allow_sse_opt) {
+         copts.emplace_back("-Wno-error=unused-command-line-argument");
+         copts.emplace_back("-fno-builtin");
+         copts.emplace_back("-mno-sse");
+         copts.emplace_back("-mno-sse2");
+         copts.emplace_back("-mno-mmx");
+         copts.emplace_back("-mno-3dnow");
+      }
       if (!fasm_opt) {
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLP64");
       }
    }
-   //copts.emplace_back("-nostdlib");
 
    if (!fasm_opt) {
       copts.emplace_back("-fno-threadsafe-statics");
@@ -732,7 +744,7 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
    for ( auto resource : resources ) {
-      agresources.emplace_back(std::string("-R")+resource);
+      agresources.emplace_back(resource);
    }
    if (fnative_opt)
       ldopts.emplace_back("-fnative");
