@@ -9,8 +9,6 @@
 using eosio::public_key;
 using eosio::signature;
 
-using namespace eosio::native;
-
 // Definitions in `eosio.cdt/libraries/eosiolib/crypto.hpp`
 EOSIO_TEST_BEGIN(public_key_type_test)
    silence_output(true);

@@ -234,10 +234,10 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    name n6{"aaaaaaaaaaaaj"};
    name n7{"zzzzzzzzzzzzj"};
 
-   symbol s0{"A", 0};
-   symbol s1{"Z", 0};
-   symbol s2{"AAAAAAA", 255};
-   symbol s3{"ZZZZZZZ", 255};
+   symbol s0{"A",0};
+   symbol s1{"Z",0};
+   symbol s2{"AAAAAAA",255};
+   symbol s3{"ZZZZZZZ",255};
 
    //// constexpr extended_symbol()
    // constexpr name get_symbol()

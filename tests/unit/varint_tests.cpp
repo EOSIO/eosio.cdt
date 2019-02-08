@@ -7,8 +7,6 @@
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/varint.hpp>
 
-#include <eosiolib/print.hpp>
-
 using eosio::datastream;
 
 const uint32_t u32min = std::numeric_limits<uint32_t>::min(); // 0

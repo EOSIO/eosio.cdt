@@ -338,33 +338,33 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ------------------------------------
    // inline constexpr name operator""_n()
-   CHECK_EQUAL( name{} == ""_n, true )
+   CHECK_EQUAL( name{}, ""_n )
    
-   CHECK_EQUAL( name{"1"} == "1"_n, true )
-   CHECK_EQUAL( name{"5"} == "5"_n, true )
-   CHECK_EQUAL( name{"a"} == "a"_n, true )
-   CHECK_EQUAL( name{"z"} == "z"_n, true )
+   CHECK_EQUAL( name{"1"}, "1"_n )
+   CHECK_EQUAL( name{"5"}, "5"_n )
+   CHECK_EQUAL( name{"a"}, "a"_n )
+   CHECK_EQUAL( name{"z"}, "z"_n )
 
-   CHECK_EQUAL( name{"abc"} == "abc"_n, true )
-   CHECK_EQUAL( name{"123"} == "123"_n, true )
+   CHECK_EQUAL( name{"abc"}, "abc"_n )
+   CHECK_EQUAL( name{"123"}, "123"_n )
 
-   CHECK_EQUAL( name{".abc"} == ".abc"_n, true )
-   CHECK_EQUAL( name{".........abc"} == ".........abc"_n, true )
-   CHECK_EQUAL( name{"123."} == "123."_n, true )
-   CHECK_EQUAL( name{"123........."} == "123........."_n, true )
-   CHECK_EQUAL( name{".a.b.c.1.2.3."} == ".a.b.c.1.2.3."_n, true )
+   CHECK_EQUAL( name{".abc"}, ".abc"_n )
+   CHECK_EQUAL( name{".........abc"}, ".........abc"_n )
+   CHECK_EQUAL( name{"123."}, "123."_n )
+   CHECK_EQUAL( name{"123........."}, "123........."_n )
+   CHECK_EQUAL( name{".a.b.c.1.2.3."}, ".a.b.c.1.2.3."_n )
    
-   CHECK_EQUAL( name{"abc.123"} == "abc.123"_n, true )
-   CHECK_EQUAL( name{"123.abc"} == "123.abc"_n, true )
+   CHECK_EQUAL( name{"abc.123"}, "abc.123"_n )
+   CHECK_EQUAL( name{"123.abc"}, "123.abc"_n )
 
-   CHECK_EQUAL( name{"12345abcdefgj"} == "12345abcdefgj"_n, true )
-   CHECK_EQUAL( name{"hijklmnopqrsj"} == "hijklmnopqrsj"_n, true )
-   CHECK_EQUAL( name{"tuvwxyz.1234j"} == "tuvwxyz.1234j"_n, true )
+   CHECK_EQUAL( name{"12345abcdefgj"}, "12345abcdefgj"_n )
+   CHECK_EQUAL( name{"hijklmnopqrsj"}, "hijklmnopqrsj"_n )
+   CHECK_EQUAL( name{"tuvwxyz.1234j"}, "tuvwxyz.1234j"_n )
 
-   CHECK_EQUAL( name{"111111111111j"} == "111111111111j"_n, true )
-   CHECK_EQUAL( name{"555555555555j"} == "555555555555j"_n, true )
-   CHECK_EQUAL( name{"aaaaaaaaaaaaj"} == "aaaaaaaaaaaaj"_n, true )
-   CHECK_EQUAL( name{"zzzzzzzzzzzzj"} == "zzzzzzzzzzzzj"_n, true )
+   CHECK_EQUAL( name{"111111111111j"}, "111111111111j"_n )
+   CHECK_EQUAL( name{"555555555555j"}, "555555555555j"_n )
+   CHECK_EQUAL( name{"aaaaaaaaaaaaj"}, "aaaaaaaaaaaaj"_n )
+   CHECK_EQUAL( name{"zzzzzzzzzzzzj"}, "zzzzzzzzzzzzj"_n )
 
    silence_output(false);
 EOSIO_TEST_END

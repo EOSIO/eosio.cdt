@@ -3,10 +3,10 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <string>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/system.hpp>
-
-#include <string>
 
 using eosio::check;
 using std::string;
