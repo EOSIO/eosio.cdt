@@ -30,15 +30,21 @@
 # https://github.com/EOSIO/eos/blob/master/LICENSE.txt
 ##########################################################################
 
+CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ "${CWD}" != "${PWD}" ]; then
+   printf "\\nPlease cd into directory %s to run this script.\\n \Exiting now.\\n\\n" "${CWD}"
+   exit 1
+fi
+
 OPT_LOCATION=$HOME/opt
 BIN_LOCATION=$HOME/bin
 LIB_LOCATION=$HOME/lib
 mkdir -p $LIB_LOCATION
 
-CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ "${CWD}" != "${PWD}" ]; then
-   printf "\\nPlease cd into directory %s to run this script.\\n \Exiting now.\\n\\n" "${CWD}"
-   exit 1
+if [[ $1 == "--with-symlinks" ]]; then
+  SYMLINKS=1
+else
+  SYMLINKS=0
 fi
 
 BUILD_DIR="${PWD}/build"
@@ -51,7 +57,7 @@ bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
 create_symlink() {
-   printf " ln -sf ${OPT_LOCATION}/eosio/bin/${1} ${BIN_LOCATION}/${2}\\n"
+   printf " ln -sf ${OPT_LOCATION}/eosio.cdt/bin/${1} ${BIN_LOCATION}/${2}\\n"
    ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $BIN_LOCATION/$2
 }
 
@@ -95,10 +101,15 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-install_symlinks
-printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
-create_cmake_symlink "eosio.cdt-config.cmake"
-printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
+if [ SYMLINKS == 1 ]; then
+   install_symlinks
+   printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
+   create_cmake_symlink "eosio.cdt-config.cmake"
+   printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
+else
+   printf "\\n\\nEOSIO.CDT has been installed into ${OPT_LOCATION}/eosio.cdt/bin!"
+fi
+
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"

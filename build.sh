@@ -33,7 +33,7 @@ export BOOST_ROOT=${SRC_LOCATION}/boost_${BOOST_VERSION}
 export BOOST_LINK_LOCATION=${OPT_LOCATION}/boost
 export TINI_VERSION=0.18.0
 
-export PATH=$HOME/bin:$PATH:$HOME/opt/llvm/bin
+export PATH=$HOME/bin:$PATH
 
 # Setup directories
 mkdir -p $SRC_LOCATION
