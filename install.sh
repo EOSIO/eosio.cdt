@@ -31,9 +31,8 @@
 ##########################################################################
 
 OPT_LOCATION=$HOME/opt
-BIN_LOCATION=$HOME/bin
-LIB_LOCATION=$HOME/lib
-mkdir -p $LIB_LOCATION
+BIN_LOCATION=/usr/local/bin
+LIB_LOCATION=/usr/local/lib
 
 CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${CWD}" != "${PWD}" ]; then
@@ -51,8 +50,10 @@ bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
 create_symlink() {
-   printf " ln -sf ${OPT_LOCATION}/eosio/bin/${1} ${BIN_LOCATION}/${2}\\n"
-   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $BIN_LOCATION/$2
+   printf " ln -sf ${OPT_LOCATION}/eosio.cdt/bin/${1} ${BIN_LOCATION}/${2}\\n"
+   pushd $BIN_LOCATION &> /dev/null
+   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $2
+   popd &> /dev/null
 }
 
 install_symlinks() {
@@ -64,9 +65,7 @@ install_symlinks() {
    create_symlink "eosio-cc eosio-cc"
    create_symlink "eosio-cpp eosio-cpp"
    create_symlink "eosio-ld eosio-ld"
-   create_symlink "eosio-pp eosio-pp"
    create_symlink "eosio-init eosio-init"
-   create_symlink "eosio-abigen eosio-abigen"
    create_symlink "eosio-abidiff eosio-abidiff"
    create_symlink "eosio-wasm2wast eosio-wasm2wast"
    create_symlink "eosio-wast2wasm eosio-wast2wasm"
@@ -76,7 +75,9 @@ install_symlinks() {
 create_cmake_symlink() {
    mkdir -p $LIB_LOCATION/cmake/eosio.cdt
    printf " ln -sf ${OPT_LOCATION}/eosio.cdt/lib/cmake/eosio.cdt/${1} ${LIB_LOCATION}/cmake/eosio.cdt/${1}\\n"
-   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $LIB_LOCATION/cmake/eosio.cdt/$1
+   pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
+   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $1
+   popd &> /dev/null
 }
 
 if [ ! -d "${BUILD_DIR}" ]; then
