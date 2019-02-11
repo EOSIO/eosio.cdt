@@ -41,12 +41,6 @@ BIN_LOCATION=$HOME/bin
 LIB_LOCATION=$HOME/lib
 mkdir -p $LIB_LOCATION
 
-if [[ $1 == "--with-symlinks" ]]; then
-  SYMLINKS=1
-else
-  SYMLINKS=0
-fi
-
 BUILD_DIR="${PWD}/build"
 CMAKE_BUILD_TYPE=Release
 TIME_BEGIN=$( date -u +%s )
@@ -101,7 +95,7 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-if [ SYMLINKS == 1 ]; then
+if [[ $1 == "--with-symlinks" ]]; then
    install_symlinks
    printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
    create_cmake_symlink "eosio.cdt-config.cmake"
