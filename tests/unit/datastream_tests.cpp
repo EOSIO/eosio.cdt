@@ -1,3 +1,5 @@
+// TODO: Make costructor comments across all files consistant
+// TODO: Fix line 275 comment
 /**
  *  @file
  *  @copyright defined in eosio.cdt/LICENSE.txt
@@ -234,7 +236,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
-   datastream<char*> ds{datastream_buffer, buffer_size};
+   datastream<const char*> ds{datastream_buffer, buffer_size};
 
    // -------------
    // T (primitive)
