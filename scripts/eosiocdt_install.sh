@@ -37,8 +37,8 @@ if [ "${CWD}" != "${PWD}" ]; then
 fi
 
 OPT_LOCATION=$HOME/opt
-BIN_LOCATION=/usr/local/bin
-LIB_LOCATION=/usr/local/lib
+BIN_LOCATION=$HOME/bin
+LIB_LOCATION=$HOME/lib
 
 BUILD_DIR="${PWD}/build"
 CMAKE_BUILD_TYPE=Release
@@ -65,8 +65,7 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-
-printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
+printf "\\n\\nEOSIO.CDT has been installed into ${HOME}/opt/eosio.cdt/bin!"
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
