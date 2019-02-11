@@ -49,41 +49,8 @@ txtbld=$(tput bold)
 bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
-create_symlink() {
-   printf " ln -sf ${OPT_LOCATION}/eosio.cdt/bin/${1} ${BIN_LOCATION}/${2}\\n"
-   pushd $BIN_LOCATION &> /dev/null
-   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $2
-   popd &> /dev/null
-}
-
-install_symlinks() {
-   printf "\\nInstalling EOSIO.CDT Binary Symlinks...\\n"
-   create_symlink "llvm-ranlib eosio-ranlib"
-   create_symlink "llvm-ar eosio-ar"
-   create_symlink "llvm-objdump eosio-objdump"
-   create_symlink "llvm-readelf eosio-readelf"
-   create_symlink "eosio-cc eosio-cc"
-   create_symlink "eosio-cpp eosio-cpp"
-   create_symlink "eosio-ld eosio-ld"
-   create_symlink "eosio-pp eosio-pp"
-   create_symlink "eosio-init eosio-init"
-   create_symlink "eosio-abigen eosio-abigen"
-   create_symlink "eosio-abidiff eosio-abidiff"
-   create_symlink "eosio-wasm2wast eosio-wasm2wast"
-   create_symlink "eosio-wast2wasm eosio-wast2wasm"
-   printf "Installed binaries into ${BIN_LOCATION}!"
-}
-
-create_cmake_symlink() {
-   mkdir -p $LIB_LOCATION/cmake/eosio.cdt
-   printf " ln -sf ${OPT_LOCATION}/eosio.cdt/lib/cmake/eosio.cdt/${1} ${LIB_LOCATION}/cmake/eosio.cdt/${1}\\n"
-   pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
-   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $1
-   popd &> /dev/null
-}
-
 if [ ! -d "${BUILD_DIR}" ]; then
-   printf "\\n\Error, build.sh has not ran.  Please run ./build.sh first!\\n\\n"
+   printf "\\n\Error, build.sh has not run successfully. Please run ./build.sh first!\\n\\n"
    exit -1
 fi
 
@@ -93,24 +60,13 @@ if ! pushd "${BUILD_DIR}" &> /dev/null; then
 fi
 
 if ! make install; then
-   printf "\\n>>>>>>>>>>>>>>>>>>>> MAKE installing EOSIO has exited with the above error.\\n\\n"
+   printf "\\nMAKE installing EOSIO has exited with the above error.\\n\\n"
    exit -1
 fi
 popd &> /dev/null 
 
-if [[ $1 == "--without-symlinks" ]]; then
-   printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
-else
-   if [ "$(id -u)" -ne 0 ]; then
-      printf "\nThis requires sudo, please run with sudo...\n\n"
-      exit -1
-   fi
-   install_symlinks
-   printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
-   create_cmake_symlink "eosio.cdt-config.cmake"
-   printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
-fi
 
+printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
 
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
