@@ -37,8 +37,8 @@ if [ "${CWD}" != "${PWD}" ]; then
 fi
 
 OPT_LOCATION=$HOME/opt
-BIN_LOCATION=$HOME/bin
-LIB_LOCATION=$HOME/lib
+BIN_LOCATION=/usr/local/bin
+LIB_LOCATION=/usr/local/lib
 mkdir -p $LIB_LOCATION
 
 BUILD_DIR="${PWD}/build"
@@ -96,12 +96,16 @@ fi
 popd &> /dev/null 
 
 if [[ $1 == "--with-symlinks" ]]; then
+   if [ "$(id -u)" -ne 0 ]; then
+      printf "\nThis requires sudo, please run with sudo...\n\n"
+      exit -1
+   fi
    install_symlinks
    printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
    create_cmake_symlink "eosio.cdt-config.cmake"
    printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
 else
-   printf "\\n\\nEOSIO.CDT has been installed into ${OPT_LOCATION}/eosio.cdt/bin!"
+   printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
 fi
 
 
