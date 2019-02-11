@@ -39,7 +39,6 @@ fi
 OPT_LOCATION=$HOME/opt
 BIN_LOCATION=/usr/local/bin
 LIB_LOCATION=/usr/local/lib
-mkdir -p $LIB_LOCATION
 
 BUILD_DIR="${PWD}/build"
 CMAKE_BUILD_TYPE=Release
@@ -52,7 +51,9 @@ txtrst=$(tput sgr0)
 
 create_symlink() {
    printf " ln -sf ${OPT_LOCATION}/eosio.cdt/bin/${1} ${BIN_LOCATION}/${2}\\n"
-   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $BIN_LOCATION/$2
+   pushd $BIN_LOCATION &> /dev/null
+   ln -sf $OPT_LOCATION/eosio.cdt/bin/$1 $2
+   popd &> /dev/null
 }
 
 install_symlinks() {
@@ -76,7 +77,9 @@ install_symlinks() {
 create_cmake_symlink() {
    mkdir -p $LIB_LOCATION/cmake/eosio.cdt
    printf " ln -sf ${OPT_LOCATION}/eosio.cdt/lib/cmake/eosio.cdt/${1} ${LIB_LOCATION}/cmake/eosio.cdt/${1}\\n"
-   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $LIB_LOCATION/cmake/eosio.cdt/$1
+   pushd $LIB_LOCATION/cmake/eosio.cdt &> /dev/null
+   ln -sf $OPT_LOCATION/eosio.cdt/lib/cmake/eosio.cdt/$1 $1
+   popd &> /dev/null
 }
 
 if [ ! -d "${BUILD_DIR}" ]; then
@@ -95,7 +98,9 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-if [[ $1 == "--with-symlinks" ]]; then
+if [[ $1 == "--without-symlinks" ]]; then
+   printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
+else
    if [ "$(id -u)" -ne 0 ]; then
       printf "\nThis requires sudo, please run with sudo...\n\n"
       exit -1
@@ -104,8 +109,6 @@ if [[ $1 == "--with-symlinks" ]]; then
    printf "\\n\\nInstalling EOSIO.CDT CMAKE Symlinks...\\n"
    create_cmake_symlink "eosio.cdt-config.cmake"
    printf "Installed CMAKE files into ${LIB_LOCATION}/cmake/eosio.cdt!\\n"
-else
-   printf "\\n\\nEOSIO.CDT has been installed into $HOME/opt/eosio.cdt/bin!"
 fi
 
 
