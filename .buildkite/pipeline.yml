@@ -1,236 +1,173 @@
 steps:
-  # BUILDS
-  - command: | # High Sierra Build
+
+  - label: ":centos: [Centos] 7 Build"
+    command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos7"
+        workdir: /data/job
+    timeout: 120
+  
+  - label: ":aws: [AWS] 1 Build"
+    command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.0.0:
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:amazonlinux1"
+        workdir: /data/job
+    timeout: 120
+    
+  - label: ":fedora: [Fedora] 27 Build"
+    command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:fedora27"
+        workdir: /data/job
+    timeout: 120
+
+  - label: ":ubuntu: [Ubuntu] 18.04 Build"
+    command: |
+        echo "+++ :hammer: Building" && \
+        echo 1 | ./build.sh && \
+        echo "--- Compressing build directory :compression:" && \
+        tar -pczf build.tar.gz build/
+    artifact_paths: "build.tar.gz"
+    agents:
+      queue: "automation-large-builder-fleet"
+    plugins:
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu18"
+        workdir: /data/job
+    timeout: 120
+
+  - label: ":darwin: [Darwin] High Sierra Build"
+    command: |
       echo "+++ :hammer: Building" && \
       echo 1 | ./build.sh && \
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":darwin: High Sierra Build"
     agents:
-      role: "macos-builder"
+      role: "builder-v2"
       os: "high-sierra"
     timeout: 120
 
-  - command: | # Mojave Build
+  - label: ":darwin: [Darwin] Mojave Build"
+    command: |
       echo "+++ :hammer: Building" && \
       echo 1 | ./build.sh && \
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
-    label: ":darwin: Mojave Build"
     agents:
-      role: "builder"
+      role: "builder-v2"
       os: "mojave"
     timeout: 120
-    
-  - command: | # Ubuntu Build
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":ubuntu: Ubuntu 18.04 Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:ubuntu18"
-        workdir: /data/job
-    timeout: 120
 
-  - command: | # Fedora Build
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":fedora: Fedora Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:fedora"
-        workdir: /data/job
-    timeout: 120
-
-  - command: | # CentOS Build
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":centos: CentOS Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:centos"
-        workdir: /data/job
-    timeout: 120
-  
-  - command: | # Amazon Build
-        echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
-        echo "--- Compressing build directory :compression:" && \
-        tar -pczf build.tar.gz build/
-    artifact_paths: "build.tar.gz"
-    label: ":aws: Amazon AWS Build"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:amazonlinux"
-        workdir: /data/job
-    timeout: 120
-
-  # UNIT TESTING
   - wait
 
-  # - command: | # High Sierra Unit Tests
-  #     echo "--- :arrow_down: Downloading build directory" && \
-  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
-  #     tar -zxf build.tar.gz && \
-  #     echo "+++ :microscope: Running unit tests on macOS High Sierra" && \
-  #     cd build && \
-  #     ctest -V
-  #   label: ":darwin: High Sierra Unit Tests"
-  #   agents:
-  #     role: "macos-tester"
-  #     os: "high-sierra"
-  #   timeout: 120
-
-  # - command: | # Mojave Unit Tests
-  #     echo "--- :arrow_down: Downloading build directory" && \
-  #     buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
-  #     tar -zxf build.tar.gz && \
-  #     echo "+++ :microscope: Running unit tests on macOS Mojave" && \
-  #     cd build && \
-  #     ctest -V
-  #   label: ":darwin: Mojave Unit Tests"
-  #   agents:
-  #     role: "tester"
-  #     os: "mojave"
-  #   timeout: 120
-    
-  - command: | # Ubuntu 18.04 Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: Ubuntu 18.04 Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on Ubuntu" && \
-      cd build && \
-      ctest -V
-    label: ":ubuntu: Ubuntu 18.04 Unit Tests"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:ubuntu18"
-        workdir: /data/job
-    timeout: 120
-
-  - command: | # Fedora Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":fedora: Fedora Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on Fedora" && \
-      cd build && \
-      ctest -V
-    label: ":fedora: Fedora Unit Tests"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:fedora"
-        workdir: /data/job
-    timeout: 120
-
-  - command: | # CentOS Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":centos: CentOS Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on CentOS" && \
-      cd build && \
-      ctest -V
-    label: ":centos: CentOS Unit Tests"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:centos"
-        workdir: /data/job
-    timeout: 120
-  
-  - command: | # Amazon Unit Tests
-      echo "--- :arrow_down: Downloading build directory" && \
-      buildkite-agent artifact download "build.tar.gz" . --step ":aws: Amazon AWS Build" && \
-      tar -zxf build.tar.gz && \
-      echo "+++ :microscope: Running unit tests on Amazon AWS" && \
-      cd build && \
-      ctest -V
-    label: ":aws: Amazon AWS Unit Tests"
-    agents:
-      queue: "automation-large-builder-fleet"
-    plugins:
-      docker#v2.0.0:
-        image: "eosio/ci:amazonlinux"
-        workdir: /data/job
-    timeout: 120
-
-  # PACKAGE BUILDS
-  - wait
-
-  - command: | # High Sierra Packaging
+  - label: ":darwin: [Darwin] High Sierra Package Builder"
+    command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: High Sierra Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: [Darwin] High Sierra Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
-        ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
-    label: ":darwin: High Sierra Package Builder"
+        cd build/packages && bash generate_package.sh brew
     agents:
-      role: "macos-builder"
+      role: "builder-v2"
       os: "high-sierra"
     artifact_paths:
       - "build/packages/*.tar.gz"
     timeout: 15
 
-  - command: | # Mojave Packaging
+  - label: ":darwin: [Darwin] Mojave Package Builder"
+    command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: Mojave Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":darwin: [Darwin] Mojave Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
-        ln -s "$(pwd)" /data/job && cd /data/job/build/packages && bash generate_package.sh brew
-    label: ":darwin: Mojave Package Builder"
+        cd build/packages && bash generate_package.sh brew
+    label: ":darwin: [Darwin] Mojave Package Builder"
     agents:
-      role: "builder"
+      role: "builder-v2"
       os: "mojave"
     artifact_paths:
       - "build/packages/*.tar.gz"
     timeout: 15
 
-  - command: | # Ubuntu Packaging
+  - label: ":ubuntu: [Ubuntu] 18.04 Package Builder"
+    command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: Ubuntu 18.04 Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":ubuntu: [Ubuntu] 18.04 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         cd /data/job/build/packages && bash generate_package.sh deb
-    label: ":ubuntu: Ubuntu 18.04 Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
       - "build/packages/*.deb"
     plugins:
-      docker#v1.4.0:
-        image: "eosio/ci:ubuntu18"
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:ubuntu18"
         workdir: /data/job
     env:
       OS: "ubuntu-18.04"
       PKGTYPE: "deb"
     timeout: 15
 
-  - command: | # Fedora Packaging
+  - label: ":fedora: [Fedora] 27 Package Builder"
+    command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":fedora: Fedora Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":fedora: [Fedora] 27 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         yum install -y rpm-build && \
@@ -241,23 +178,29 @@ steps:
         mkdir -p /root/rpmbuild/SPECS && \
         mkdir -p /root/rpmbuild/SRPMS && \
         cd /data/job/build/packages && bash generate_package.sh rpm
-    label: ":fedora: Fedora Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
       - "build/packages/x86_64/*.rpm"
     plugins:
-      docker#v1.4.0:
-        image: "eosio/ci:fedora"
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:fedora27"
         workdir: /data/job
     env:
       OS: "fedora"
       PKGTYPE: "rpm"
     timeout: 15
 
-  - command: | # CentOS Packaging
+  - label: ":centos: [Centos] 7 Package Builder"
+    command: |
         echo "--- :arrow_down: Downloading build directory" && \
-        buildkite-agent artifact download "build.tar.gz" . --step ":centos: CentOS Build" && \
+        buildkite-agent artifact download "build.tar.gz" . --step ":centos: [Centos] 7 Build" && \
         tar -zxf build.tar.gz && \
         echo "+++ :package: Starting package build" && \
         yum install -y rpm-build && \
@@ -268,26 +211,30 @@ steps:
         mkdir -p /root/rpmbuild/SPECS && \
         mkdir -p /root/rpmbuild/SRPMS && \
         cd /data/job/build/packages && bash generate_package.sh rpm
-    label: ":centos: CentOS Package Builder"
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
       - "build/packages/x86_64/*.rpm"
     plugins:
-      docker#v1.4.0:
-        image: "eosio/ci:centos"
+      ecr#v1.1.4:
+        login: true
+        account_ids: "436617320021"
+        no-include-email: true
+        region: "us-west-2"
+      docker#v2.1.0:
+        debug: false
+        image: "436617320021.dkr.ecr.us-west-2.amazonaws.com/ci:centos7"
         workdir: /data/job
     env:
       OS: "centos"
       PKGTYPE: "rpm"
     timeout: 15
 
-  # DOCKER BUILD
   - wait
 
-  - command: | # Docker Build
+  - command: |  
         echo "--- :arrow_down: Downloading package" && \
-        buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: Ubuntu 18.04 Package Builder" && \
+        buildkite-agent artifact download "build/packages/*.deb" docker/dev/. --step ":ubuntu: [Ubuntu] 18.04 Package Builder" && \
         echo "--- :key: AUTHENTICATING GOOGLE SERVICE ACCOUNT" && \
         gcloud --quiet auth activate-service-account b1-automation-svc@b1-automation-dev.iam.gserviceaccount.com --key-file=/etc/gcp-service-account.json && \
         docker-credential-gcr configure-docker && \
@@ -312,7 +259,7 @@ steps:
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH && \
         [[ "$BUILDKITE_TAG" != "" ]] && docker rmi gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || : && \
         docker rmi gcr.io/b1-automation-dev/eosio/cdt:latest
-    label: "Docker Build Builder"
+    label: "Docker build builder"
     agents:
       queue: "automation-docker-builder-fleet"
     timeout: 300

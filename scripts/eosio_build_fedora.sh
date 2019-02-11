@@ -1,163 +1,137 @@
-	OS_VER=$( grep VERSION_ID /etc/os-release | cut -d'=' -f2 | sed 's/[^0-9\.]//gI' )
+OS_VER=$( grep VERSION_ID /etc/os-release | cut -d'=' -f2 | sed 's/[^0-9\.]//gI' )
 
-	MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 )
-	CPU_SPEED=$( lscpu | grep "MHz" | tr -s ' ' | cut -d\  -f3 | cut -d'.' -f1 )
-	CPU_CORE=$( lscpu | grep "^CPU(s)" | tr -s ' ' | cut -d\  -f2 )
-	MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
-	JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
+MEM_MEG=$( free -m | sed -n 2p | tr -s ' ' | cut -d\  -f2 )
+CPU_SPEED=$( lscpu | grep "MHz" | tr -s ' ' | cut -d\  -f3 | cut -d'.' -f1 )
+CPU_CORE=$( nproc )
+MEM_GIG=$(( ((MEM_MEG / 1000) / 2) ))
+export JOBS=$(( MEM_GIG > CPU_CORE ? CPU_CORE : MEM_GIG ))
 
-	DISK_INSTALL=$( df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 )
-	DISK_TOTAL_KB=$( df . | tail -1 | awk '{print $2}' )
-	DISK_AVAIL_KB=$( df . | tail -1 | awk '{print $4}' )
-	DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
-	DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
+DISK_INSTALL=$( df -h . | tail -1 | tr -s ' ' | cut -d\  -f1 )
+DISK_TOTAL_KB=$( df . | tail -1 | awk '{print $2}' )
+DISK_AVAIL_KB=$( df . | tail -1 | awk '{print $4}' )
+DISK_TOTAL=$(( DISK_TOTAL_KB / 1048576 ))
+DISK_AVAIL=$(( DISK_AVAIL_KB / 1048576 ))
 
-	printf "\\n\\tOS name: %s\\n" "${OS_NAME}"
-	printf "\\tOS Version: %s\\n" "${OS_VER}"
-	printf "\\tCPU speed: %sMhz\\n" "${CPU_SPEED}"
-	printf "\\tCPU cores: %s\\n" "${CPU_CORE}"
-	printf "\\tPhysical Memory: %s Mgb\\n" "${MEM_MEG}"
-	printf "\\tDisk install: %s\\n" "${DISK_INSTALL}"
-	printf "\\tDisk space total: %sG\\n" "${DISK_TOTAL%.*}"
-	printf "\\tDisk space available: %sG\\n" "${DISK_AVAIL%.*}"
+DEP_ARRAY=( 
+	git sudo procps-ng which gcc gcc-c++ autoconf automake libtool make \
+	bzip2-devel wget bzip2 compat-openssl10 \
+	openssl-devel gmp-devel libstdc++-devel python2 python2-devel python3 python3-devel \
+	libedit ncurses-devel swig
+)
+COUNT=1
+DISPLAY=""
+DEP=""
 
-	if [ "${MEM_MEG}" -lt 7000 ]; then
-		printf "\\tYour system must have 7 or more Gigabytes of physical memory installed.\\n"
-		printf "\\tExiting now.\\n"
+printf "\\nOS name: ${OS_NAME}\\n"
+printf "OS Version: ${OS_VER}\\n"
+printf "CPU speed: ${CPU_SPEED}Mhz\\n"
+printf "CPU cores: %s\\n" "${CPU_CORE}"
+printf "Physical Memory: ${MEM_MEG} Mgb\\n"
+printf "Disk install: ${DISK_INSTALL}\\n"
+printf "Disk space total: ${DISK_TOTAL%.*}G\\n"
+printf "Disk space available: ${DISK_AVAIL%.*}G\\n"
+
+if [ "${MEM_MEG}" -lt 7000 ]; then
+	printf "Your system must have 7 or more Gigabytes of physical memory installed.\\n"
+	printf "Exiting now.\\n"
+	exit 1;
+fi
+
+if [ "${OS_VER}" -lt 25 ]; then
+	printf "You must be running Fedora 25 or higher to install EOSIO.\\n"
+	printf "Exiting now.\\n"
+	exit 1;
+fi
+
+if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
+	printf "You must have at least %sGB of available storage to install EOSIO.\\n" "${DISK_MIN}"
+	printf "Exiting now.\\n"
+	exit 1;
+fi
+
+printf "\\nChecking Yum installation...\\n"
+if ! YUM=$( command -v yum 2>/dev/null ); then
+		printf "!! Yum must be installed to compile EOS.IO !!\\n"
+		printf "Exiting now.\\n"
 		exit 1;
-	fi
+fi
+printf " - Yum installation found at %s.\\n" "${YUM}"
 
-	if [ "${OS_VER}" -lt 25 ]; then
-		printf "\\tYou must be running Fedora 25 or higher to install EOSIO.\\n"
-		printf "\\tExiting now.\\n"
-		exit 1;
-	fi
-
-	if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
-		printf "\\tYou must have at least %sGB of available storage to install EOSIO.\\n" "${DISK_MIN}"
-		printf "\\tExiting now.\\n"
-		exit 1;
-	fi
-	
-	printf "\\n\\tChecking Yum installation\\n"
-	
-	YUM=$( command -v yum 2>/dev/null )
-	if [ -z "${YUM}" ]; then
-		printf "\\n\\tYum must be installed to compile EOS.IO.\\n"
-		printf "\\n\\tExiting now.\\n"
-		exit 1;
-	fi
-	
-	printf "\\tYum installation found at %s.\\n" "${YUM}"
-	printf "\\tUpdating YUM.\\n"
-	if ! sudo yum -y update
-	then
-		printf "\\n\\tYUM update failed with the above errors.\\n"
-		printf "\\n\\tExiting now.\\n"
-		exit 1;
-	fi
-	
-	DEP_ARRAY=( git gcc.x86_64 gcc-c++.x86_64 autoconf automake libtool make cmake.x86_64 \
-	bzip2.x86_64 bzip2-devel.x86_64 gmp-devel.x86_64 libstdc++-devel.x86_64 \
-	python2-devel.x86_64 python3-devel.x86_64 libedit.x86_64 \
-	graphviz.x86_64 doxygen.x86_64 )
-	COUNT=1
-	DISPLAY=""
-	DEP=""
-
-	printf "\\n\\tChecking YUM for installed dependencies.\\n\\n"
-
-	for (( i=0; i<${#DEP_ARRAY[@]}; i++ ));
-	do
-		pkg=$( sudo "${YUM}" info "${DEP_ARRAY[$i]}" 2>/dev/null | grep Repo | tr -s ' ' | cut -d: -f2 | sed 's/ //g' )
-
-		if [ "$pkg" != "@System" ]; then
-			DEP=$DEP" ${DEP_ARRAY[$i]} "
-			DISPLAY="${DISPLAY}${COUNT}. ${DEP_ARRAY[$i]}\\n\\t"
-			printf "\\tPackage %s ${bldred} NOT ${txtrst} found.\\n" "${DEP_ARRAY[$i]}"
-			(( COUNT++ ))
-		else
-			printf "\\tPackage %s found.\\n" "${DEP_ARRAY[$i]}"
-			continue
-		fi
-	done		
-
-	if [ ${COUNT} -gt 1 ]; then
-		printf "\\n\\tThe following dependencies are required to install EOSIO.\\n"
-		printf "\\n\\t${DISPLAY}\\n\\n"
-		printf "\\tDo you wish to install these dependencies?\\n"
-		select yn in "Yes" "No"; do
-			case $yn in
-				[Yy]* ) 
-					printf "\\n\\n\\tInstalling dependencies\\n\\n"
-					if ! sudo yum -y install ${DEP}
-					then
-						printf "\\n\\tYUM dependency installation failed.\\n"
-						printf "\\n\\tExiting now.\\n"
-						exit 1;
-					else
-						printf "\\n\\tYUM dependencies installed successfully.\\n"
-					fi
-				break;;
-				[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
-				* ) echo "Please type 1 for yes or 2 for no.";;
-			esac
-		done
-	else 
-		printf "\\n\\tNo required YUM dependencies to install.\\n"
-	fi
-
-	if [ "${ENABLE_COVERAGE_TESTING}" = true ]; then
-		printf "\\n\\tCode coverage build requested."
-		printf "\\n\\tChecking perl installation.\\n"
-		perl_bin=$( command -v perl 2>/dev/null )
-		if [ -z "${perl_bin}" ]; then
-			printf "\\n\\tInstalling perl.\\n"
-			if ! sudo "${YUM}" -y install perl
-			then
-				printf "\\n\\tUnable to install perl at this time.\\n"
-				printf "\\n\\tExiting now.\\n\\n"
+printf "\\nDo you wish to update YUM repositories?\\n\\n"
+select yn in "Yes" "No"; do
+	case $yn in
+		[Yy]* ) 
+			printf "\\n\\nUpdating...\\n\\n"
+			if ! "${YUM}" -y update; then
+				printf "\\nYUM update failed.\\n"
+				printf "\\nExiting now.\\n\\n"
 				exit 1;
+			else
+				printf "\\nYUM update complete.\\n"
 			fi
-		else
-			printf "\\tPerl installation found at %s.\\n" "${perl_bin}"
-		fi
-		printf "\\n\\tChecking LCOV installation."
-		if [ ! -e "/usr/local/bin/lcov" ]; then
-			printf "\\n\\tLCOV installation not found.\\n"
-			printf "\\tInstalling LCOV.\\n"
-			if ! cd "${TEMP_DIR}"
-			then
-				printf "\\n\\tUnable to enter %s. Exiting now.\\n" "${TEMP_DIR}"
-				exit 1;
-			fi
-			if ! git clone "https://github.com/linux-test-project/lcov.git"
-			then
-				printf "\\n\\tUnable to clone LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			if ! cd "${TEMP_DIR}/lcov"
-			then
-				printf "\\n\\tUnable to enter %s/lcov. Exiting now.\\n" "${TEMP_DIR}"
-				exit 1;
-			fi
-			if ! sudo make install
-			then
-				printf "\\n\\tUnable to install LCOV at this time.\\n"
-				printf "\\tExiting now.\\n\\n"
-				exit 1;
-			fi
-			rm -rf "${TEMP_DIR}/lcov"
-			printf "\\n\\tSuccessfully installed LCOV.\\n\\n"
-		else
-			printf "\\n\\tLCOV installation found @ /usr/local/bin.\\n"
-		fi
-	fi
+		break;;
+		[Nn]* ) echo "Proceeding without update!";;
+		* ) echo "Please type 1 for yes or 2 for no.";;
+	esac
+done
 
-	function print_instructions()
-	{
-		printf "\\n\\t%s -f %s &\\n" "$( command -v mongod )" "${MONGOD_CONF}"
-		printf "\\tcd %s; make test\\n\\n" "${BUILD_DIR}"
-	return 0;
-	}
+printf "\\n"
+
+printf "Checking RPM for installed dependencies...\\n"
+for (( i=0; i<${#DEP_ARRAY[@]}; i++ )); do
+	pkg=$( rpm -qi "${DEP_ARRAY[$i]}" 2>/dev/null | grep Name )
+	if [[ -z $pkg ]]; then
+		DEP=$DEP" ${DEP_ARRAY[$i]} "
+		DISPLAY="${DISPLAY}${COUNT}. ${DEP_ARRAY[$i]}\\n"
+		printf "!! Package %s ${bldred} NOT ${txtrst} found !!\\n" "${DEP_ARRAY[$i]}"
+		(( COUNT++ ))
+	else
+		printf " - Package %s found.\\n" "${DEP_ARRAY[$i]}"
+		continue
+	fi
+done
+if [ "${COUNT}" -gt 1 ]; then
+	printf "The following dependencies are required to install EOSIO.\\n"
+	printf "${DISPLAY}\\n"
+	printf "Do you wish to install these dependencies?\\n"
+	select yn in "Yes" "No"; do
+		case $yn in
+			[Yy]* )
+				printf "Installing dependencies\\n\\n"
+				if ! "${YUM}" -y install ${DEP}; then
+					printf "!! YUM dependency installation failed !!\\n"
+					printf "Exiting now.\\n"
+					exit 1;
+				else
+					printf "YUM dependencies installed successfully.\\n"
+				fi
+			break;;
+			[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
+			* ) echo "Please type 1 for yes or 2 for no.";;
+		esac
+	done
+else
+	printf " - No required YUM dependencies to install.\\n"
+fi
+
+
+printf "\\n"
+
+
+printf "Checking CMAKE installation...\\n"
+CMAKE=$(command -v cmake 2>/dev/null)
+if [ -z $CMAKE ]; then
+	printf "Installing CMAKE...\\n"
+	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
+	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
+	&& cd cmake-$CMAKE_VERSION \
+	&& ./bootstrap --prefix=$HOME \
+	&& make -j"${JOBS}" \
+	&& make install \
+	&& cd .. \
+	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
+	|| exit 1
+	printf " - CMAKE successfully installed @ ${CMAKE}.\\n"
+else
+	printf " - CMAKE found @ ${CMAKE}.\\n"
+fi
