@@ -30,17 +30,14 @@
 # https://github.com/EOSIO/eos/blob/master/LICENSE.txt
 ##########################################################################
 
-CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ "${CWD}" != "${PWD}" ]; then
-   printf "\\nPlease cd into directory %s to run this script.\\n \Exiting now.\\n\\n" "${CWD}"
-   exit 1
-fi
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="${SCRIPT_DIR}/.."
+BUILD_DIR="${REPO_ROOT}/build"
 
 OPT_LOCATION=$HOME/opt
 BIN_LOCATION=$HOME/bin
 LIB_LOCATION=$HOME/lib
 
-BUILD_DIR="${PWD}/build"
 CMAKE_BUILD_TYPE=Release
 TIME_BEGIN=$( date -u +%s )
 VERSION=2.0
@@ -65,8 +62,6 @@ if ! make install; then
 fi
 popd &> /dev/null 
 
-printf "\\n\\nEOSIO.CDT has been installed into ${HOME}/opt/eosio.cdt/bin!"
-
 printf "\n${bldred}      ___           ___           ___                       ___\n"
 printf "     /  /\\         /  /\\         /  /\\        ___          /  /\\ \n"
 printf "    /  /:/_       /  /::\\       /  /:/_      /  /\\        /  /::\\ \n"
@@ -78,6 +73,11 @@ printf "  \\  \\::/ /:/   \\  \\:\\  /:/   \\  \\::/ /:/      \\__\\::/  \\  \\:
 printf "   \\  \\:\\/:/     \\  \\:\\/:/     \\__\\/ /:/       /__/:/    \\  \\:\\/:/ \n"
 printf "    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::/ \n"
 printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n\n${txtrst}"
+
+printf "==============================================================================================\\n"
+printf "EOSIO has been installed into ${OPT_LOCATION}/eosio.cdt/bin!\\n"
+printf "If you need to, you can fully uninstall using eosiocdt_uninstall.sh.\\n"
+printf "==============================================================================================\\n\\n"
 
 printf "For more information:\\n"
 printf "EOSIO website: https://eos.io\\n"
