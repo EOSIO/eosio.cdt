@@ -13,7 +13,7 @@ fi
 
 NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
 
-mkdir -p ${PROJECT}/DEBIAN
+mkdir -p ${PROJECT}/DEBIAN || exit 1
 echo "Package: ${PROJECT} 
 Version: ${VERSION_NO_SUFFIX}-${RELEASE}
 Section: devel
@@ -30,10 +30,10 @@ export SSUBPREFIX
 
 bash generate_tarball.sh ${NAME}.tar.gz
 
-tar -xvzf ${NAME}.tar.gz -C ${PROJECT} 
-dpkg-deb --build ${PROJECT} 
+tar -xvzf ${NAME}.tar.gz -C ${PROJECT} || exit 1
+dpkg-deb --build ${PROJECT} || exit 1
 BUILDSTATUS=$?
-mv ${PROJECT}.deb ${NAME}.deb
-rm -r ${PROJECT}
+mv ${PROJECT}.deb ${NAME}.deb || exit 1
+rm -r ${PROJECT} || exit 1
 
 exit $BUILDSTATUS
