@@ -53,21 +53,21 @@ REPO_ROOT="${CURRENT_DIR}/.."
 
 # Use current directory's tmp directory if noexec is enabled for /tmp
 if (mount | grep "/tmp " | grep --quiet noexec); then
-      mkdir -p $CURRENT_DIR/tmp
-      TEMP_DIR="${CURRENT_DIR}/tmp"
-      rm -rf $CURRENT_DIR/tmp/*
+      mkdir -p $REPO_ROOT/tmp
+      TEMP_DIR="${REPO_ROOT}/tmp"
+      rm -rf $REPO_ROOT/tmp/*
 else # noexec wasn't found
       TEMP_DIR="/tmp"
 fi
 
-if [ ! -d "../.git" ]; then
+if [ ! -d "${REPO_ROOT}/.git" ]; then
    printf "\\nThis build script only works with sources cloned from git\\n"
    printf "Please clone a new eos directory with 'git clone https://github.com/EOSIO/eos --recursive'\\n"
    printf "See the wiki for instructions: https://github.com/EOSIO/eos/wiki\\n"
    exit 1
 fi
 
-pushd "${CURRENT_DIR}" &> /dev/null
+pushd "${REPO_ROOT}" &> /dev/null
 
 STALE_SUBMODS=$(( $(git submodule status --recursive | grep -c "^[+\-]") ))
 if [ $STALE_SUBMODS -gt 0 ]; then
@@ -91,37 +91,37 @@ if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
-         FILE="./eosio_build_amazon.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_amazon.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "CentOS Linux")
-         FILE="./eosio_build_centos.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_centos.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "elementary OS")
-         FILE="./eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Fedora")
-         FILE="./eosio_build_fedora.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_fedora.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "Linux Mint")
-         FILE="./eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Ubuntu")
-         FILE="./eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Debian GNU/Linux")
-         FILE="./eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
@@ -132,7 +132,7 @@ if [ "$ARCH" == "Linux" ]; then
 fi
 
 if [ "$ARCH" == "Darwin" ]; then
-   FILE="./eosio_build_darwin.sh"
+   FILE="${REPO_ROOT}/scripts/eosio_build_darwin.sh"
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
@@ -159,7 +159,7 @@ fi
 printf "\\n========================================================================\\n"
 printf "======================= Starting EOSIO.CDT Build =======================\\n"
 
-$CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt "${CURRENT_DIR}"
+$CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt "${REPO_ROOT}"
 if [ $? -ne 0 ]; then exit -1; fi
 make -j$CORES
 if [ $? -ne 0 ]; then exit -1; fi
