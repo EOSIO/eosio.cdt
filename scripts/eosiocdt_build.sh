@@ -87,37 +87,37 @@ if [ "$ARCH" == "Linux" ]; then
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
-         FILE="${REPO_ROOT}/scripts/eosio_build_amazon.sh"
+         FILE="./scripts/eosiocdt_build_amazon.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "CentOS Linux")
-         FILE="${REPO_ROOT}/scripts/eosio_build_centos.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_centos.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "elementary OS")
-         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Fedora")
-         FILE="${REPO_ROOT}/scripts/eosio_build_fedora.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_fedora.sh"
          CXX_COMPILER=g++
          C_COMPILER=gcc
       ;;
       "Linux Mint")
-         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Ubuntu")
-         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
       "Debian GNU/Linux")
-         FILE="${REPO_ROOT}/scripts/eosio_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
          CXX_COMPILER=clang++-4.0
          C_COMPILER=clang-4.0
       ;;
@@ -128,7 +128,7 @@ if [ "$ARCH" == "Linux" ]; then
 fi
 
 if [ "$ARCH" == "Darwin" ]; then
-   FILE="${REPO_ROOT}/scripts/eosio_build_darwin.sh"
+   FILE="${REPO_ROOT}/scripts/eosiocdt_build_darwin.sh"
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
