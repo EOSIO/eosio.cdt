@@ -25,7 +25,6 @@ mkdir -p ${RPMBUILD}
 FILES=$(tar -xvzf ${NAME}.tar.gz -C ${RPMBUILD})
 PFILES=""
 for f in ${FILES[@]}; do
-  echo $f
   if [ -f ${RPMBUILD}/${f} ]; then
     PFILES="${PFILES}/${f}\n"
   fi

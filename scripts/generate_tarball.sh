@@ -45,14 +45,14 @@ create_symlink() {
    ln -sf ../${SUBPREFIX}/bin/$1 ${PREFIX}/bin/$2 || exit 1
 }
 
-create_symlink "eosio-cc eosio-cc"
-create_symlink "eosio-cpp eosio-cpp"
-create_symlink "eosio-ld eosio-ld"
-create_symlink "eosio-pp eosio-pp"
-create_symlink "eosio-init eosio-init"
-create_symlink "eosio-abigen eosio-abigen"
-create_symlink "eosio-wasm2wast eosio-wasm2wast"
-create_symlink "eosio-wast2wasm eosio-wast2wasm"
+create_symlink eosio-cc eosio-cc
+create_symlink eosio-cpp eosio-cpp
+create_symlink eosio-ld eosio-ld
+create_symlink eosio-pp eosio-pp
+create_symlink eosio-init eosio-init
+create_symlink eosio-abigen eosio-abigen
+create_symlink eosio-wasm2wast eosio-wasm2wast
+create_symlink eosio-wast2wasm eosio-wast2wasm
 
 echo "Generating Tarball $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1
