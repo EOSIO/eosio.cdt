@@ -44,12 +44,12 @@ mkdir -p $VAR_LOCATION/log
 mkdir -p $ETC_LOCATION
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ "${CURRENT_DIR}" =~ "scripts" ]; then # Ensure you're in scripts
+if [[ "${CURRENT_DIR}" =~ "scripts$" ]]; then
    BUILD_DIR="../build"
 else
-   printf "\\nPlease execute build/install scripts from within the scripts directory..."
-   exit 1
+   BUILD_DIR="build"
 fi
+REPO_ROOT="${CURRENT_DIR}/.."
 
 # Use current directory's tmp directory if noexec is enabled for /tmp
 if (mount | grep "/tmp " | grep --quiet noexec); then
