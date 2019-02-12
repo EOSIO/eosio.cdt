@@ -42,9 +42,7 @@ ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake EosioCDTM
 popd &> /dev/null
 
 create_symlink() {
-   pushd ${PREFIX}/bin &> /dev/null
-   ln -sf ../${SUBPREFIX}/bin/$1 $2 || exit 1
-   popd &> /dev/null
+   ln -sf ../${SUBPREFIX}/bin/$1 ${PREFIX}/bin/$2 || exit 1
 }
 
 create_symlink "eosio-cc eosio-cc"
@@ -56,5 +54,5 @@ create_symlink "eosio-abigen eosio-abigen"
 create_symlink "eosio-wasm2wast eosio-wasm2wast"
 create_symlink "eosio-wast2wasm eosio-wast2wasm"
 
-tar -cvzf $NAME ./${PREFIX}/* || exit 1
+tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1
 rm -r ${PREFIX} || exit 1

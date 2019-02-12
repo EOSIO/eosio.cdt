@@ -16,7 +16,7 @@ fi
 
 NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
 
-mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake || exit 1
+mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
 PREFIX="${PROJECT}/${VERSION}"
 SPREFIX="\/usr\/local"
@@ -64,4 +64,4 @@ echo "class EosioCdt < Formula
 end
 __END__" &> eosio.cdt.rb
 
-rm -r ${PROJECT}
+rm -r ${PROJECT} || exit 1
