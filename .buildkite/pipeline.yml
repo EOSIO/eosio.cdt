@@ -3,7 +3,7 @@ steps:
   - label: ":centos: [Centos] 7 Build"
     command: |
         echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
+        echo 1 | ./scripts/eosiocdt_build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -24,7 +24,7 @@ steps:
   - label: ":aws: [AWS] 1 Build"
     command: |
         echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
+        echo 1 | ./scripts/eosiocdt_build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -44,7 +44,7 @@ steps:
   - label: ":fedora: [Fedora] 27 Build"
     command: |
         echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
+        echo 1 | ./scripts/eosiocdt_build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -65,7 +65,7 @@ steps:
   - label: ":ubuntu: [Ubuntu] 18.04 Build"
     command: |
         echo "+++ :hammer: Building" && \
-        echo 1 | ./build.sh && \
+        echo 1 | ./scripts/eosiocdt_build.sh && \
         echo "--- Compressing build directory :compression:" && \
         tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -86,7 +86,7 @@ steps:
   - label: ":darwin: [Darwin] High Sierra Build"
     command: |
       echo "+++ :hammer: Building" && \
-      echo 1 | ./build.sh && \
+      echo 1 | ./scripts/eosiocdt_build.sh && \
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -98,7 +98,7 @@ steps:
   - label: ":darwin: [Darwin] Mojave Build"
     command: |
       echo "+++ :hammer: Building" && \
-      echo 1 | ./build.sh && \
+      echo 1 | ./scripts/eosiocdt_build.sh && \
       echo "--- Compressing build directory :compression:" && \
       tar -pczf build.tar.gz build/
     artifact_paths: "build.tar.gz"
@@ -181,7 +181,7 @@ steps:
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
-      - "build/packages/x86_64/*.rpm"
+      - "build/packages/*.rpm"
     plugins:
       ecr#v1.1.4:
         login: true
@@ -214,7 +214,7 @@ steps:
     agents:
       queue: "automation-large-builder-fleet"
     artifact_paths:
-      - "build/packages/x86_64/*.rpm"
+      - "build/packages/*.rpm"
     plugins:
       ecr#v1.1.4:
         login: true

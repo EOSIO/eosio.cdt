@@ -131,7 +131,7 @@ printf "\\n"
 DEP_ARRAY=( 
 	git autoconf automake libtool make bzip2 \
 	bzip2-devel openssl-devel gmp-devel \
-	ocaml libicu-devel python python-devel python33 python33-devel \
+	ocaml libicu-devel python python-devel python33 \
 	gettext-devel file sudo
 )
 COUNT=1
