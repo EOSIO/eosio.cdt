@@ -1,5 +1,23 @@
-// TODO: Make costructor comments across all files consistant
-// TODO: Fix line 275 comment
+// TODO: Make costructor comments across all files consistant `///` make them three slashes
+// TODO: Get rid of redundant tests
+// TODO: Organize all tests in the most logical way
+// TODO: Figure out a logical ordering of temporary helper variables
+// TODO: Should I extern all global variables?
+// TODO: Line up everything
+// TODO: Make all parenthesis consistent in the `REQUIRE` expressions
+// TODO: Change all `REQUIRE`'s to `CHECK`'s
+// TODO: Chnage the uint32_t max to the real value in all files
+// TODO: Check to make sure that the uint32_t changes didn't break anything for all files
+// TODO: Make sure to remove all explicit `std::` in statements
+// TODO: Make parenthesis consistent
+// TODO: Make sure to check the CMake files
+// TODO: Make the appropriate variabels const and/or static
+// Is this a good convention?
+// microseconds ms0{ 0LL};
+// microseconds ms1{ 1LL};
+// microseconds ms2{-1LL};
+// microseconds ms_min{i64min};
+// microseconds ms_max{i64max};
 /**
  *  @file
  *  @copyright defined in eosio.cdt/LICENSE.txt
@@ -56,7 +74,6 @@ struct be_test {
    be_test() : val{42} {}
    be_test(int i) : val{i} {}
    int val;
-      
    EOSLIB_SERIALIZE( be_test, (val) )
 };
 
@@ -273,13 +290,13 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds << cprim_array;
    CHECK_EQUAL( ds.tellp(), 41 )
 
-   ds.seekp(0); // Next three lines are testing an implementation detail ???
+   ds.seekp(0);
    ds >> prim_array;
    CHECK_EQUAL( memcmp(cprim_array, prim_array, 10), 0 )
 
    ds.seekp(1);
    fill(begin(prim_array), end(prim_array), 0);
-   REQUIRE_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> prim_array;} )
+   CHECK_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> prim_array;} )
 
    // -------------------
    // T[] (non-primitive)
@@ -294,13 +311,13 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds << cnon_prim_array;
    CHECK_EQUAL( ds.tellp(), 41 )
 
-   ds.seekp(0); // Next three lines are testing an implementation detail ???
+   ds.seekp(0);
    ds >> non_prim_array;
    CHECK_EQUAL( memcmp(cnon_prim_array, non_prim_array, 10), 0 )
 
    ds.seekp(1);
    fill(begin(non_prim_array), end(non_prim_array), non_prim_array_test{});
-   REQUIRE_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> non_prim_array;} )
+   CHECK_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> non_prim_array;} )
 
    // ----
    // bool
@@ -324,9 +341,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds >> a;
    CHECK_EQUAL( ca, a )
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////// Note: uncomment once issue has been resolved ////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   /// Note: uncomment once issue has been resolved ///
    // ----------
    // std::deque
    // ds.seekp(0);

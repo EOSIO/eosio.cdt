@@ -14,9 +14,9 @@ EOSIO_TEST_BEGIN(binary_extension_test)
 
    /// constexpr binary_extension()
    // constexpr bool has_value()const
-   REQUIRE_EQUAL( (binary_extension<const char>{}.has_value()), false ) ///// Should I test more than just the `const char*` /////
+   REQUIRE_EQUAL( (binary_extension<const char>{}.has_value()), false )
 
-   REQUIRE_EQUAL( (binary_extension<const char*>{}.has_value()), false ) ///// Should I test more than just the `const char*` /////
+   REQUIRE_EQUAL( (binary_extension<const char*>{}.has_value()), false )
 
    /// constexpr binary_extension(const T&)
    REQUIRE_EQUAL( (binary_extension<const char>{'c'}.has_value()), true )
@@ -29,33 +29,22 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( (binary_extension<const char*>{std::move("abcd")}.has_value()), true )
 
    /// constexpr binary_extension(std::in_place_t, Args&&...)
-   REQUIRE_EQUAL( (binary_extension<const char>{std::in_place, 'c'}.has_value()), true ) ///// How do I pack more args into this?? /////
+   REQUIRE_EQUAL( (binary_extension<const char>{std::in_place, 'c'}.has_value()), true ) /// How do I pack more args into this?? ///
 
-   REQUIRE_EQUAL( (binary_extension<const char*>{std::in_place, "abcd"}.has_value()), true ) ///// How do I pack more args into this?? /////
+   REQUIRE_EQUAL( (binary_extension<const char*>{std::in_place, "abcd"}.has_value()), true ) /// How do I pack more args into this?? ///
 
-   // ~binary_extension()
-   binary_extension<const char> bin_destruct_char{'c'};
-   REQUIRE_EQUAL( bin_destruct_char.has_value(), true )
-   bin_destruct_char.~binary_extension();
-   REQUIRE_EQUAL( bin_destruct_char.has_value(), false )
-
-   binary_extension<const char*> bin_destruct_str{"abcd"};
-   REQUIRE_EQUAL( bin_destruct_str.has_value(), true )
-   bin_destruct_str.~binary_extension();
-   REQUIRE_EQUAL( bin_destruct_str.has_value(), false )
-
-   // constexpr binary_extension(const binary_extension&)
+   /// constexpr binary_extension(const binary_extension&)
    binary_extension<const char> bin_copy_char_lval0{'c'};
    binary_extension<const char> bin_copy_char_lval1{bin_copy_char_lval0};
-   REQUIRE_EQUAL( (bin_copy_char_lval0.value() == bin_copy_char_lval1.value() &&
-                   bin_copy_char_lval0.has_value() == bin_copy_char_lval1.has_value()), true)
+   REQUIRE_EQUAL( bin_copy_char_lval0.value(), bin_copy_char_lval1.value() )
+   REQUIRE_EQUAL( bin_copy_char_lval0.has_value(), bin_copy_char_lval1.has_value() )
 
    binary_extension<const char*> bin_copy_str_lval0{"abcd"};
    binary_extension<const char*> bin_copy_str_lval1{bin_copy_str_lval0};
-   REQUIRE_EQUAL( (bin_copy_str_lval0.value() == bin_copy_str_lval1.value() &&
-                   bin_copy_str_lval0.has_value() == bin_copy_str_lval1.has_value()), true)
+   REQUIRE_EQUAL( bin_copy_str_lval0.value(), bin_copy_str_lval1.value() )
+   REQUIRE_EQUAL( bin_copy_str_lval0.has_value(), bin_copy_str_lval1.has_value() )
 
-   // constexpr binary_extension(binary_extension&&)
+   /// constexpr binary_extension(binary_extension&&)
    binary_extension<const char> bin_copy_char_rval0{'c'};
    REQUIRE_EQUAL( bin_copy_char_rval0.has_value(), true )
    binary_extension<const char> bin_copy_char_rval1{std::move(bin_copy_char_rval0)};
@@ -68,6 +57,19 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( bin_copy_str_rval0.has_value(), false )
    REQUIRE_ASSERT( "cannot get value of empty binary_extension", [&](){bin_copy_str_rval0.value();} )
 
+   // -------------------
+   // ~binary_extension()
+   binary_extension<const char> bin_destruct_char{'c'};
+   REQUIRE_EQUAL( bin_destruct_char.has_value(), true )
+   bin_destruct_char.~binary_extension();
+   REQUIRE_EQUAL( bin_destruct_char.has_value(), false )
+
+   binary_extension<const char*> bin_destruct_str{"abcd"};
+   REQUIRE_EQUAL( bin_destruct_str.has_value(), true )
+   bin_destruct_str.~binary_extension();
+   REQUIRE_EQUAL( bin_destruct_str.has_value(), false )
+
+   // ---------------------------------------
    // constexpr explicit operator bool()const
    REQUIRE_EQUAL( (binary_extension<const char>{}.operator bool()), false )
    REQUIRE_EQUAL( (binary_extension<const char>{0}.operator bool()), true )
@@ -77,6 +79,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( (binary_extension<const char*>{nullptr}.operator bool()), true )
    REQUIRE_EQUAL( (binary_extension<const char*>{"abcd"}.operator bool()), true )
 
+   // ---------------------
    // constexpr T& value()&
    binary_extension<char> bin_char_value0{'c'};
    REQUIRE_EQUAL( (bin_char_value0.value() == 'c'), true )
@@ -86,6 +89,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( (bin_str_value0.value() == "abcd"), true )
    REQUIRE_EQUAL( (bin_str_value0.value() == "efgh"), false )
 
+   // --------------------------------
    // constexpr const T& value()const&
    binary_extension<const char> bin_const_char_value0{'c'};
    REQUIRE_EQUAL( (bin_const_char_value0.value() == 'c'), true )
@@ -95,23 +99,27 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( (bin_const_str_value0.value() == "abcd"), true )
    REQUIRE_EQUAL( (bin_const_str_value0.value() == "efgh"), false )
 
+   // ---------------------------------------------------------------------------------------
    // constexpr auto value_or(U&&) -> std::enable_if_t<std::is_convertible<U, T>::value, T&>&
    binary_extension<uint8_t> bin_temp_value_or{};
    uint8_t some_value = bin_temp_value_or.value_or(uint8_t{0x63});
    REQUIRE_EQUAL( some_value, 0x63 )
 
+   // --------------------------
    // constexpr T&& value_or()&&
    REQUIRE_EQUAL( binary_extension<char>{'c'}.value_or(), 'c' )
 
    binary_extension<char*> bin_value_or_rval{"abcd"};
    REQUIRE_EQUAL( bin_value_or_rval.value_or(), "abcd" )
 
+   // -------------------------------------
    // constexpr const T&& value_or()const&&
    REQUIRE_EQUAL( binary_extension<const char>{'c'}.value_or(), 'c' )
 
    binary_extension<const char*> bin_const_value_or_rval{"abcd"};
    REQUIRE_EQUAL( bin_const_value_or_rval.value_or(), "abcd" )
 
+   // -----------------------
    // constexpr T value_or()&
    binary_extension<char> bin_char_value_or_val{'c'};
    REQUIRE_EQUAL( bin_char_value_or_val.value_or(), 'c' )
@@ -119,6 +127,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    binary_extension<char*> bin_value_or_val{"abcd"};
    REQUIRE_EQUAL( bin_value_or_val.value_or(), "abcd" )
 
+   // ----------------------------
    // constexpr T value_or()const&
    binary_extension<const char> bin_char_const_value_or_val{'c'};
    REQUIRE_EQUAL( bin_char_const_value_or_val.value_or(), 'c' )
@@ -126,6 +135,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    binary_extension<const char*> bin_const_value_or_val{"abcd"};
    REQUIRE_EQUAL( bin_const_value_or_val.value_or(), "abcd" )
 
+   // -------------------------
    // constexpr T* operator->()
    binary_extension<char> bin_char_arrow_op{'c'};
    REQUIRE_EQUAL( *bin_char_arrow_op.operator->() == 'c', true )
@@ -135,6 +145,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( *bin_arrow_op.operator->() == "abcd", true )
    REQUIRE_EQUAL( *bin_arrow_op.operator->() != "efgh", true )
 
+   // ------------------------------------
    // constexpr const T* operator->()const
    binary_extension<const char> bin_char_const_arrow_op{'c'};
    REQUIRE_EQUAL( *bin_char_const_arrow_op.operator->() == 'c', true )
@@ -144,6 +155,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( *bin_const_arrow_op.operator->() == "abcd", true )
    REQUIRE_EQUAL( *bin_const_arrow_op.operator->() != "efgh", true )
 
+   // -------------------------
    // constexpr T& operator*()&
    binary_extension<char> bin_char_star_op{'c'};
    REQUIRE_EQUAL( bin_char_star_op.operator*() == 'c', true )
@@ -153,6 +165,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( bin_star_op.operator*() == "abcd", true )
    REQUIRE_EQUAL( bin_star_op.operator*() != "efgh", true )
 
+   // ------------------------------------
    // constexpr const T& operator*()const&
    binary_extension<const char> bin_char_const_star_op{'c'};
    REQUIRE_EQUAL( bin_char_const_star_op.operator*() == 'c', true )
@@ -162,6 +175,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( bin_const_star_op.operator*() == "abcd", true )
    REQUIRE_EQUAL( bin_const_star_op.operator*() != "efgh", true )
 
+   // ---------------------------
    // constexpr T&& operator*()&&
    binary_extension<char> bin_char_rval_star_op{'c'};
    REQUIRE_EQUAL( std::move(bin_char_rval_star_op.operator*()) == 'c', true )
@@ -171,6 +185,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( std::move(bin_str_rval_star_op.operator*()) == "abcd", true )
    REQUIRE_EQUAL( std::move(bin_str_rval_star_op.operator*()) != "efgh", true )
 
+   // --------------------------------------
    // constexpr const T&& operator*()const&&
    binary_extension<const char> bin_const_char_rval_star_op{'c'};
    REQUIRE_EQUAL( std::move(bin_const_char_rval_star_op.operator*()) == 'c', true )
@@ -179,7 +194,8 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    binary_extension<const char*> bin_const_str_rval_star_op{"abcd"};
    REQUIRE_EQUAL( std::move(bin_const_str_rval_star_op.operator*()) == "abcd", true )
    REQUIRE_EQUAL( std::move(bin_const_str_rval_star_op.operator*()) != "efgh", true )
-   
+
+   // ----------------------------
    // T& emplace(Args&& ... args)&
    binary_extension<const char> bin_char_emplace{'c'};
    bin_char_emplace.emplace(std::move('d'));
@@ -191,6 +207,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    REQUIRE_EQUAL( bin_str_emplace.value() == "efgh", true )
    REQUIRE_EQUAL( bin_str_emplace.value() != "abcd", true ) 
 
+   // ------------
    // void reset()
    binary_extension<const char> bin_char_reset{'c'};
    REQUIRE_EQUAL( bin_char_reset.has_value(), true )

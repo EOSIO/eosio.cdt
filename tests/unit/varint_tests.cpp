@@ -7,13 +7,15 @@
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/varint.hpp>
 
+using std::numeric_limits;
+
 using eosio::datastream;
 
-const uint32_t u32min = std::numeric_limits<uint32_t>::min(); // 0
-const uint32_t u32max = std::numeric_limits<uint32_t>::max(); // 18446744073709551615
+const uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
+const uint32_t u32max = numeric_limits<uint32_t>::max(); // 18446744073709551615
 
-const int32_t i32min = std::numeric_limits<int32_t>::min(); // -9223372036854775808
-const int32_t i32max = std::numeric_limits<int32_t>::max(); //  9223372036854775807
+const int32_t i32min = numeric_limits<int32_t>::min(); // -9223372036854775808
+const int32_t i32max = numeric_limits<int32_t>::max(); //  9223372036854775807
 
 // Defined in `eosio.cdt/libraries/eosiolib/varint.hpp`
 EOSIO_TEST_BEGIN(unsigned_int_type_test)

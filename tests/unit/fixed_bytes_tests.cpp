@@ -15,9 +15,6 @@ using namespace eosio::native;
 EOSIO_TEST_BEGIN(fixed_bytes_test)
    silence_output(false);
 
-// ------------
-// constructors
-
 /// constexpr fixed_bytes()
 // static constexpr size_t padded_bytes()
 REQUIRE_EQUAL( fixed_bytes<20>{}.padded_bytes(), 12 )
