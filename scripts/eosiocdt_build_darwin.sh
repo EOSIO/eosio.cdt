@@ -18,7 +18,6 @@ DISK_AVAIL=$((avail_blks / gbfactor ))
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 COUNT=1
-PERMISSION_GETTEXT=0
 DISPLAY=""
 DEPS=""
 
@@ -67,24 +66,6 @@ then
 fi
 printf "Ruby installation found @ ${RUBY}\\n"
 
-printf "Checking CMAKE installation...\\n"
-CMAKE=$(command -v cmake 2>/dev/null)
-if [ -z $CMAKE ]; then
-	printf "Installing CMAKE...\\n"
-	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
-	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
-	&& cd cmake-$CMAKE_VERSION \
-	&& ./bootstrap --prefix=$HOME \
-	&& make -j"${JOBS}" \
-	&& make install \
-	&& cd .. \
-	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
-	|| exit 1
-	printf " - CMAKE successfully installed @ ${HOME}/bin/cmake \\n"
-else
-	printf " - CMAKE found @ ${CMAKE}.\\n"
-fi
-
 printf "Checking Home Brew installation...\\n"
 if ! BREW=$( command -v brew )
 then
@@ -122,9 +103,6 @@ while read -r name tester testee brewname uri; do
 			continue
 		fi
 	fi
-	if [ "${brewname}" = "gettext" ]; then
-		PERMISSION_GETTEXT=1
-	fi
 	DEPS=$DEPS"${brewname},"
 	DISPLAY="${DISPLAY}${COUNT}. ${name}\\n"
 	printf " - %s ${bldred}NOT${txtrst} found.\\n" "${name}"
@@ -158,10 +136,8 @@ if [ $COUNT -gt 1 ]; then
 				[Nn]* ) echo "Proceeding without update!";;
 				* ) echo "Please type 'y' for yes or 'n' for no."; exit;;
 			esac
-			brew tap eosio/eosio # Required to install mongo-cxx-driver with static library
+			brew tap eosio/eosio
 			printf "\\nInstalling Dependencies...\\n"
-			# Ignore cmake so we don't install a newer version.
-			# Build from source to use local cmake; see homebrew-eosio repo for examples
 			# DON'T INSTALL llvm@4 WITH --force!
 			OIFS="$IFS"
 			IFS=$','
