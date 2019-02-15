@@ -61,7 +61,7 @@ select yn in "Yes" "No"; do
 	case $yn in
 		[Yy]* ) 
 			printf "\\n\\nUpdating...\\n\\n"
-			if ! "${YUM}" -y update; then
+			if ! sudo $YUM -y update; then
 				printf "\\nYUM update failed.\\n"
 				printf "\\nExiting now.\\n\\n"
 				exit 1;
@@ -96,7 +96,7 @@ if [ "${COUNT}" -gt 1 ]; then
 		case $yn in
 			[Yy]* )
 				printf "Installing dependencies\\n\\n"
-				if ! "${YUM}" -y install ${DEP}; then
+				if ! sudo $YUM -y install ${DEP}; then
 					printf "!! YUM dependency installation failed !!\\n"
 					printf "Exiting now.\\n"
 					exit 1;
@@ -117,11 +117,10 @@ printf "\\n"
 
 
 printf "Checking CMAKE installation...\\n"
-CMAKE=$(command -v cmake 2>/dev/null)
 if [ -z $CMAKE ]; then
 	printf "Installing CMAKE...\\n"
 	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
-	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
+	&& tar -xzf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
 	&& ./bootstrap --prefix=$HOME \
 	&& make -j"${JOBS}" \

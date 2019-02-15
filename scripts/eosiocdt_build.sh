@@ -63,7 +63,7 @@ if [ ! -d "${REPO_ROOT}/.git" ]; then
    exit 1
 fi
 
-pushd "${REPO_ROOT}" &> /dev/null
+cd $REPO_ROOT
 
 STALE_SUBMODS=$(( $(git submodule status --recursive | grep -c "^[+\-]") ))
 if [ $STALE_SUBMODS -gt 0 ]; then
@@ -81,9 +81,12 @@ printf "Current branch: %s\\n" "$( git rev-parse --abbrev-ref HEAD )"
 ARCH=$( uname )
 printf "\\nARCHITECTURE: %s\\n" "${ARCH}"
 
-popd &> /dev/null
+# Find and use existing CMAKE
+export CMAKE=$(command -v cmake 2>/dev/null)
 
 if [ "$ARCH" == "Linux" ]; then
+   # Check if cmake is already installed or not and use source install location
+   if [ -z $CMAKE ]; then export CMAKE=$HOME/bin/cmake; fi
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
@@ -128,6 +131,8 @@ if [ "$ARCH" == "Linux" ]; then
 fi
 
 if [ "$ARCH" == "Darwin" ]; then
+   # Check if cmake is already installed or not and use source install location
+   if [ -z $CMAKE ]; then export CMAKE=/usr/local/bin/cmake; fi
    FILE="${REPO_ROOT}/scripts/eosiocdt_build_darwin.sh"
    FREE_MEM=`vm_stat | grep "Pages free:"`
    read -ra FREE_MEM <<< "$FREE_MEM"
@@ -136,9 +141,8 @@ else
    FREE_MEM=`LC_ALL=C free | grep "Mem:" | awk '{print $4}'`
 fi
 
-pushd $SRC_LOCATION &> /dev/null
+cd $SRC_LOCATION
 . "$FILE" # Execute OS specific build file
-popd &> /dev/null
 
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core
@@ -146,11 +150,7 @@ MEM_CORES=$(( $MEM_CORES > 0 ? $MEM_CORES : 1 ))
 CORES=$(( $CORES_AVAIL < $MEM_CORES ? $CORES_AVAIL : $MEM_CORES ))
 
 mkdir -p $BUILD_DIR
-pushd $BUILD_DIR &> /dev/null
-
-if [ -z "${CMAKE}" ]; then
-  CMAKE=$( command -v cmake 2>/dev/null )
-fi
+cd $BUILD_DIR
 
 printf "\\n========================================================================\\n"
 printf "======================= Starting EOSIO.CDT Build =======================\\n"
@@ -159,7 +159,6 @@ $CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt "${REPO_ROOT}"
 if [ $? -ne 0 ]; then exit -1; fi
 make -j$CORES
 if [ $? -ne 0 ]; then exit -1; fi
-popd &> /dev/null
 
 TIME_END=$(( $(date -u +%s) - $TIME_BEGIN ))
 
