@@ -12,6 +12,8 @@
 // TODO: Make parenthesis consistent
 // TODO: Make sure to check the CMake files
 // TODO: Make the appropriate variabels const and/or static
+// TODO: Make sure to adjust the correct min max values
+// TODO: Make sure all output is on it's appropriate value
 // Is this a good convention?
 // microseconds ms0{ 0LL};
 // microseconds ms1{ 1LL};
