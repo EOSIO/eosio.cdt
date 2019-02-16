@@ -1,0 +1,15 @@
+#! /bin/bash
+
+run_test() {
+   @CMAKE_BINARY_DIR@/$1
+   if [[ $? != 0 ]]; then
+      echo "Failed test $1"
+      exit -1
+   fi
+}
+
+run_test name_tests
+run_test rope_tests
+run_test print_tests
+run_test system_tests
+run_test varint_tests

@@ -9,6 +9,7 @@ EOSIO_TEST_BEGIN(system_test)
    test_check1(true);
    CHECK_ASSERT("asserted", test_check1, false);
 
+   eosio::print("WHHHHHY!\n");
    auto test_check2 = [](bool b) { std::string s="asserted"; eosio::check(b, s); }; 
    test_check2(true);
    REQUIRE_ASSERT("asserted", test_check2, false);
@@ -25,9 +26,12 @@ EOSIO_TEST_BEGIN(system_test)
    test_check5(true);
    REQUIRE_ASSERT("13", test_check5, false);
    silence_output(false);
+   eosio::print("WHHHHHY!\n");
 EOSIO_TEST_END
 
 int main(int argc, char** argv) {
+   eosio::print("What the fuck0!\n");
    EOSIO_TEST(system_test);
+   eosio::print("What the fuck1!\n");
    return has_failed();
 }

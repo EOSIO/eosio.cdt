@@ -8,3 +8,4 @@ add_native_executable(print_tests print_tests.cpp)
 add_native_executable(varint_tests varint_tests.cpp)
 
 add_subdirectory(test_contracts)
+configure_file(test_runner.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_runner.sh @ONLY)

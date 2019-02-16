@@ -148,6 +148,7 @@ extern "C" {
    
    extern "C" void* memset(void*, int, size_t);
    extern "C" void __bzero(void *to, size_t cnt) {
-      memset( to, 0, cnt );
+      for (int i=0; i < cnt; i++)
+         ((char*)to)[i] = 0;
    }
 }

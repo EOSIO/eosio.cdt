@@ -15,6 +15,18 @@ ExternalProject_Add(
   DEPENDS EosioWasmLibraries EosioTools
 )
 
+ExternalProject_Add(
+  EosioSanityTests
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/sanity"
+  BINARY_DIR "${CMAKE_BINARY_DIR}/tests/sanity"
+  CMAKE_ARGS  -DEOSIO_BINARY_DIR=${CMAKE_BINARY_DIR}
+  UPDATE_COMMAND ""
+  PATCH_COMMAND  ""
+  TEST_COMMAND   ""
+  INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
+  DEPENDS EosioWasmLibraries EosioTools
+)
 
 if (EOSIO_RUN_INTEGRATION_TESTS)
    find_package(eosio)
