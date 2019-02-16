@@ -14,6 +14,8 @@
 // TODO: Make the appropriate variabels const and/or static
 // TODO: Make sure to adjust the correct min max values
 // TODO: Make sure all output is on it's appropriate value
+// TODO: Make sure it is readable for all future people (and myself) reading the code
+// TODO: Organize functions in the most logical order, even if it's not the order in which they are defined
 // Is this a good convention?
 // microseconds ms0{ 0LL};
 // microseconds ms1{ 1LL};
