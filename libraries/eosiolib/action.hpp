@@ -486,10 +486,26 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 /**
  * Send inline action
  *
- * @brief Send inline action
- * @param CONTRACT - The account this action is intended for
- * @param NAME - The name of the action
- * @param ... - The member of the action specified as ("action_member1_name", action_member1_value)("action_member2_name", action_member2_value)
+ * @brief A macro to simplify calling inline actions
+ * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling actions from actions 
+ * EOSIO supports two communication models, inline and deferred. Inline actions are executed as part of the current transaction. This macro
+ * creates an @ref action using the supplied parameters and automatically calls action.send().
+ *
+ * Example:
+ * @code
+ * SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
+ * @endcode
+ * 
+ * This is taken from eosio.token. The example  
+ * 		uses this.get_self() i.e. the eosio.token contract, 
+ * 		and calls the eosio.token::transfer() action, 
+ * 		using the active permission of the "issuer" account
+ * 		passing in st.issuer, to, quantity and memo 
+ * creating an action struct used to 'send()' (call) transfer(account_name from, account_name to, asset quantity, string memo)
+ * 
+ * @param CONTRACT - The contract to call, which contains the action, maps to the @ref account
+ * @param NAME - The name of the action to be called, maps to @ref name
+ * @param ... - The authorising permission, maps to @ref authorization , followed by the parameters of the action, maps to @ref data.
  */
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
