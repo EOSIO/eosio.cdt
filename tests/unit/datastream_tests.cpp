@@ -10,15 +10,12 @@
 #include <string>
 #include <vector>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/binary_extension.hpp>
-#include <eosiolib/crypto.hpp>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/ignore.hpp>
-#include <eosiolib/symbol.hpp>
-
-#include <boost/container/flat_set.hpp>
-#include <boost/container/flat_map.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/binary_extension.hpp>
+#include <eosio/crypto.hpp>
+#include <eosio/datastream.hpp>
+#include <eosio/ignore.hpp>
+#include <eosio/symbol.hpp>
 
 using std::array;
 using std::begin;
@@ -40,7 +37,6 @@ using eosio::datastream;
 using eosio::fixed_bytes;
 using eosio::ignore;
 using eosio::ignore_wrapper;
-using eosio::key256;
 using eosio::pack;
 using eosio::pack_size;
 using eosio::public_key;
@@ -48,9 +44,6 @@ using eosio::signature;
 using eosio::symbol;
 using eosio::symbol_code;
 using eosio::unpack;
-
-using boost::container::flat_map;
-using boost::container::flat_set;
 
 // This data structure (which cannot be defined within a test macro block) needs both a default and a
 // user-defined constructor for a specific `binary extension` test
@@ -61,7 +54,7 @@ struct be_test {
    EOSLIB_SERIALIZE( be_test, (val) )
 };
 
-// Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_test)
    silence_output(true);
 
@@ -154,7 +147,7 @@ EOSIO_TEST_BEGIN(datastream_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_specialization_test)
    silence_output(true);
 
@@ -230,7 +223,7 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_stream_test)
    silence_output(true);
 
@@ -455,50 +448,6 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds >> char_vec;
    CHECK_EQUAL( cchar_vec, char_vec )
 
-   // ----------------
-   // capi_checksum160
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const capi_checksum160 ccheck160 {0x01,0x02,0x03,0x04};
-   capi_checksum160 check160{};
-   ds << ccheck160;
-   ds.seekp(0);
-   ds >> check160;
-   CHECK_EQUAL( memcmp(ccheck160.hash, check160.hash, 20), 0 )
-
-   // ----------------
-   // capi_checksum256
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const capi_checksum256 ccheck256 {0x01,0x02,0x03,0x04};
-   capi_checksum256 check256{};
-   ds << ccheck256;
-   ds.seekp(0);
-   ds >> check256;
-   CHECK_EQUAL( memcmp(ccheck256.hash, check256.hash, 32), 0 )
-
-   // ----------------
-   // capi_checksum512
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const capi_checksum512 ccheck512 {0x01,0x02,0x03,0x04};
-   capi_checksum512 check512{};
-   ds << ccheck512;
-   ds.seekp(0);
-   ds >> check512;
-   CHECK_EQUAL( memcmp(ccheck512.hash, check512.hash, 64), 0 )
-
-   // ---------------
-   // capi_public_key
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const capi_public_key c_cpubkey{'a','b','c','d','e','f','g','h','i'};
-   capi_public_key c_pubkey{};
-   ds << c_cpubkey;
-   ds.seekp(0);
-   ds >> c_pubkey;
-   CHECK_EQUAL( memcmp(c_cpubkey.data, c_cpubkey.data, 32), 0 )
-
    // -----------------------
    // eosio::binary_extension
    ds.seekp(0);
@@ -620,32 +569,10 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds >> sc;
    CHECK_EQUAL( csc, sc )
 
-   // --------------------------
-   // boost::container::flat_map
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const flat_map<char,int> cchar_flat_map{{'a',97}, {'b',98}, {'c',99}, {'d',100}};
-   flat_map<char,int> char_flat_map{};
-   ds << cchar_flat_map;
-   ds.seekp(0);
-   ds >> char_flat_map;
-   CHECK_EQUAL( cchar_flat_map, char_flat_map )
-
-   // --------------------------
-   // boost::container::flat_set
-   ds.seekp(0);
-   fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   static const flat_set<char> cchar_flat_set{'a','b','c','d','e','f','g','h','i'};
-   flat_set<char> char_flat_set{};
-   ds << cchar_flat_set;
-   ds.seekp(0);
-   ds >> char_flat_set;
-   CHECK_EQUAL( cchar_flat_set, char_flat_set )
-   
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/datastream.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(misc_datastream_test)
    silence_output(true);
 

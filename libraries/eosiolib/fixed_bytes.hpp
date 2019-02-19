@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <type_traits>
 
+#warning "<eosiolib/fixed_bytes.hpp> is deprecated use <eosio/fixed_bytes.hpp>"
+
 namespace eosio {
 
    template<size_t Size>
@@ -37,7 +39,6 @@ namespace eosio {
     *  @defgroup fixed_bytes Fixed Size Byte Array
     *  @ingroup types
     *  @brief Fixed size array of bytes sorted lexicographically
-    *  @ingroup types
     *  @{
     */
 
@@ -134,7 +135,7 @@ namespace eosio {
          template<typename Word, size_t NumWords,
                   typename Enable = typename std::enable_if<std::is_integral<Word>::value &&
                                                              !std::is_same<Word, bool>::value &&
-                                                             sizeof(Word) < sizeof(word_t)>::type >
+                                                             std::less<size_t>{}( sizeof(Word), sizeof(word_t))>::type >
          fixed_bytes(const std::array<Word, NumWords>& arr)
          {
             static_assert( sizeof(word_t) == (sizeof(word_t)/sizeof(Word)) * sizeof(Word),
@@ -153,7 +154,7 @@ namespace eosio {
          template<typename Word, size_t NumWords,
                   typename Enable = typename std::enable_if<std::is_integral<Word>::value &&
                                                              !std::is_same<Word, bool>::value &&
-                                                             sizeof(Word) < sizeof(word_t)>::type >
+                                                             std::less<size_t>{}( sizeof(Word), sizeof(word_t))>::type >
          fixed_bytes(const Word(&arr)[NumWords])
          {
             static_assert( sizeof(word_t) == (sizeof(word_t)/sizeof(Word)) * sizeof(Word),

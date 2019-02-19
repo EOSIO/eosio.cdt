@@ -5,14 +5,14 @@
 
 #include <array>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/fixed_bytes.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/fixed_bytes.hpp>
 
 using std::array;
 
 using eosio::fixed_bytes;
 
-// Definitions in `eosio.cdt/libraries/eosiolib/fixed_bytes.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/fixed_bytes.hpp`
 EOSIO_TEST_BEGIN(fixed_bytes_test)
    silence_output(true);
 

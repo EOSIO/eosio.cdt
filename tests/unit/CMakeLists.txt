@@ -11,6 +11,7 @@ add_native_executable( rope_tests rope_tests.cpp )
 add_native_executable( serialize_tests serialize_tests.cpp )
 add_native_executable( symbol_tests symbol_tests.cpp )
 add_native_executable( system_tests system_tests.cpp )
+add_native_executable(rope_tests rope_tests.cpp)
 add_native_executable( time_tests time_tests.cpp )
 add_native_executable( varint_tests varint_tests.cpp )
 
@@ -26,3 +27,5 @@ add_dependencies( symbol_tests EosioTools )
 add_dependencies( system_tests EosioTools )
 add_dependencies( time_tests EosioTools )
 add_dependencies( varint_tests EosioTools )
+
+add_subdirectory(test_contracts)

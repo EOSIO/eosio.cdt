@@ -5,8 +5,8 @@
 
 #include <string>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/system.hpp>
+#include <eosio/eosio.hpp>
+#include <eosio/tester.hpp>
 
 using std::move;
 using std::string;

@@ -11,9 +11,10 @@
 #include <utility>
 #include <string>
 
+#warning "<eosiolib/print.hpp> is deprecated use <eosio/print.hpp>"
 /**
    *  @defgroup console Console C++ API
-   *  @ingroup cpp_api
+   *  @ingroup core
    *  @brief Defines C++ wrapper to log/print text messages
    *
    *  @details This API uses C++ variadic templates and type detection to
@@ -47,33 +48,33 @@ namespace eosio {
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit signed integer
     *
     * @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value &&
                                           std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, int128_t>::value)
          printi128(&num);
       else if constexpr(std::is_same<T, char>::value)
          prints_l( &num, 1 );
-      else if constexpr(std::is_same<T, bool>::value)
-         prints(num?"true":"false");
       else
          printi(num);
    }
 
    /**
-    * Prints 8-64 bit signed integer as a 64 bit signed integer
+    * Prints 8-128 bit unsigned integer
     *
     * @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value &&
                                           !std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, uint128_t>::value)
          printui128(&num);
+      else if constexpr(std::is_same<T, bool>::value)
+         prints(num?"true":"false");
       else
          printui(num);
    }

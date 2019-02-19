@@ -3,8 +3,8 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/time.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/time.hpp>
 
 using std::numeric_limits;
 
@@ -24,7 +24,7 @@ static constexpr int64_t i64max = numeric_limits<int64_t>::max(); //  9223372036
 static constexpr uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
 static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
 
-// Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(microseconds_type_test)
 silence_output(true);
 
@@ -124,7 +124,7 @@ silence_output(true);
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(time_point_type_test)
    silence_output(true);
 
@@ -211,7 +211,7 @@ EOSIO_TEST_BEGIN(time_point_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(time_point_sec_type_test)
    silence_output(true);
 
@@ -378,7 +378,7 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(block_timestamp_type_test)
    silence_output(true);
 

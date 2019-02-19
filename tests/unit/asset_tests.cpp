@@ -5,8 +5,8 @@
 
 #include <string>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/asset.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/asset.hpp>
 
 using std::string;
 
@@ -20,7 +20,7 @@ static constexpr int64_t asset_mask{(1LL << 62) - 1};
 static constexpr int64_t asset_min{-asset_mask}; // -4611686018427387903
 static constexpr int64_t asset_max{ asset_mask}; //  4611686018427387903
 
-// Definitions in `eosio.cdt/libraries/eosiolib/asset.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/asset.hpp`
 EOSIO_TEST_BEGIN(asset_type_test)
    silence_output(true);
 
@@ -354,7 +354,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/asset.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/asset.hpp`
 EOSIO_TEST_BEGIN(extended_asset_type_test)
    silence_output(true);
 

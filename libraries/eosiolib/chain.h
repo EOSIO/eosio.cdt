@@ -6,6 +6,7 @@
 
 #include "types.h"
 
+#warning "<eosiolib/chain.h> is deprecated use <eosio/chain.h>. If you are using C++ the .h header files will be removed from inclusion entirely in v1.7.0"
 /**
  *  @addtogroup chain
  *  @ingroup c_api
@@ -31,8 +32,8 @@ extern "C" {
      *  uint32_t bytes_populated = get_active_producers(producers, sizeof(capi_name)*21);
      *  @endcode
      */
-
-    uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
+   __attribute__((eosio_wasm_import))
+   uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
 }
 
 /// @}

@@ -9,9 +9,9 @@
 #include <tuple>
 #include <vector>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/serialize.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/datastream.hpp>
+#include <eosio/serialize.hpp>
 
 using std::begin;
 using std::end;
@@ -50,7 +50,7 @@ struct D2 : public D1 {
    }
 };
 
-// Definitions in `eosio.cdt/libraries/eosiolib/serialize.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/serialize.hpp`
 EOSIO_TEST_BEGIN(serialize_test)
    silence_output(true);
 

@@ -5,12 +5,13 @@
 
 #include <limits>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/datastream.hpp>
-#include <eosiolib/varint.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/datastream.hpp>
+#include <eosio/varint.hpp>
 
 using std::numeric_limits;
 
+using namespace eosio;
 using eosio::datastream;
 
 static constexpr uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
@@ -19,7 +20,7 @@ static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 429496729
 static constexpr int32_t i32min = numeric_limits<int32_t>::min(); // -2147483648
 static constexpr int32_t i32max = numeric_limits<int32_t>::max(); //  2147483647
 
-// Defined in `eosio.cdt/libraries/eosiolib/varint.hpp`
+// Defined in `eosio.cdt/libraries/eosio/varint.hpp`
 EOSIO_TEST_BEGIN(unsigned_int_type_test)
    silence_output(false);
 
@@ -125,7 +126,7 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Defined in `eosio.cdt/libraries/eosiolib/varint.hpp`
+// Defined in `eosio.cdt/libraries/eosio/varint.hpp`
 EOSIO_TEST_BEGIN(signed_int_type_test)
    silence_output(false);
    

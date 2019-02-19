@@ -147,7 +147,7 @@ struct generation_utils {
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
-   inline void set_resource_dirs( const llvm::cl::list<std::string>& rd ) {
+   inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
       if (!has_real_path)
@@ -180,6 +180,11 @@ struct generation_utils {
       if (!tmp.empty())
          return tmp;
       return decl->getNameAsString();
+   }
+   static inline std::string get_notify_pair( const clang::CXXMethodDecl* decl ) {
+      std::string notify_pair = "";
+      auto tmp = decl->getEosioNotifyAttr()->getName();
+      return tmp;
    }
    static inline std::string get_action_name( const clang::CXXRecordDecl* decl ) {
       std::string action_name = "";
@@ -489,14 +494,12 @@ struct generation_utils {
          std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
             auto arg = get_template_argument(type,i);
-            if (arg.getAsExpr()) {
-               auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
-               if (ce) { 
-                  auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
-                  ret += std::to_string(il->getValue().getLimitedValue());
-                  if ( i < tst->getNumArgs()-1 )
-                     ret += "_";
-               }
+            if (auto ce = arg.getKind() == clang::TemplateArgument::ArgKind::Expression
+                  ? llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr()) : nullptr) {
+               auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
+               ret += std::to_string(il->getValue().getLimitedValue());
+               if ( i < tst->getNumArgs()-1 )
+                  ret += "_";
             }
             else {
                ret += translate_type(get_template_argument( type, i ).getAsType());

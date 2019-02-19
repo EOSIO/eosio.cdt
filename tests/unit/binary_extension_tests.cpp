@@ -3,15 +3,15 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/binary_extension.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/binary_extension.hpp>
 
 using std::in_place;
 using std::move;
 
 using eosio::binary_extension;
 
-// Definitions in `eosio.cdt/libraries/eosiolib/binary_extension.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/binary_extension.hpp`
 EOSIO_TEST_BEGIN(binary_extension_test)
    silence_output(true);
 

@@ -257,7 +257,7 @@ class abigen : public generation_utils {
    void add_variant( const clang::QualType& t ) {
       abi_variant var;
       auto pt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr());
-      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+      auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : t.getTypePtr());
       var.name = get_type(t);
       for (int i=0; i < tst->getNumArgs(); ++i)
          var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
@@ -291,11 +291,8 @@ class abigen : public generation_utils {
    std::string generate_json_comment() {
       std::stringstream ss;
       ss << "This file was generated with eosio-abigen.";
-      ss << " DO NOT EDIT ";
-      auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-      ss << std::ctime(&t);
-      auto output = ss.str();
-      return output.substr(0, output.length()-1); // remove the newline character
+      ss << " DO NOT EDIT";
+      return ss.str();
    }
 
    ojson struct_to_json( const abi_struct& s ) {
@@ -603,7 +600,7 @@ int main(int argc, const char **argv) {
    finder.addMatcher(record_decl_matcher, &eosio_record_matcher);
    finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
 
-
+   llvm::errs() << "Warning, this tool is deprecated.  Only use eosio-cpp in the future." << '\n';
    int tool_run = -1;
    try {
       tool_run = tool.run(newFrontendActionFactory(&finder).get());

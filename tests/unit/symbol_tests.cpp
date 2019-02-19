@@ -6,8 +6,8 @@
 #include <limits>
 #include <string>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/symbol.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/symbol.hpp>
 
 using std::numeric_limits;
 using std::string;
@@ -20,7 +20,7 @@ using eosio::extended_symbol;
 static constexpr uint64_t u64min = numeric_limits<uint64_t>::min(); // 0ULL
 static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
-// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
    silence_output(true);
 
@@ -123,7 +123,7 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
    silence_output(true);
 
@@ -229,7 +229,7 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
    silence_output(true);
 

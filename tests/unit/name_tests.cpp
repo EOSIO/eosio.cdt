@@ -6,8 +6,8 @@
 #include <limits>
 #include <string>
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/name.hpp>
+#include <eosio/eosio.hpp>
+#include <eosio/tester.hpp>
 
 using std::numeric_limits;
 using std::string;
@@ -17,7 +17,7 @@ using eosio::name;
 static constexpr uint64_t u64min = numeric_limits<uint64_t>::min(); // 0ULL
 static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
-// Definitions in `eosio.cdt/libraries/eosiolib/name.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/name.hpp`
 EOSIO_TEST_BEGIN(name_type_test)
    silence_output(true);
 

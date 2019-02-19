@@ -3,13 +3,13 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
-#include <eosio/native/tester.hpp>
-#include <eosiolib/crypto.hpp>
+#include <eosio/tester.hpp>
+#include <eosio/crypto.hpp>
 
 using eosio::public_key;
 using eosio::signature;
 
-// Definitions in `eosio.cdt/libraries/eosiolib/crypto.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/crypto.hpp`
 EOSIO_TEST_BEGIN(public_key_type_test)
    silence_output(true);
 
@@ -26,7 +26,7 @@ EOSIO_TEST_BEGIN(public_key_type_test)
    silence_output(false);
 EOSIO_TEST_END
 
-// Definitions in `eosio.cdt/libraries/eosiolib/crypto.hpp`
+// Definitions in `eosio.cdt/libraries/eosio/crypto.hpp`
 EOSIO_TEST_BEGIN(signature_type_test)
    silence_output(true);
 
