@@ -489,7 +489,7 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
  * @brief A macro to simplify calling inline actions
  * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling new actions from existing actions 
  * EOSIO supports two communication models, inline and deferred. Inline actions are executed as part of the current transaction. This macro
- * creates an @ref action using the supplied parameters and automatically calls action.send().
+ * creates an @ref action using the supplied parameters and automatically calls action.send() on this newly created action.
  *
  * Example:
  * @code
