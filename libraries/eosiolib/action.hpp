@@ -487,7 +487,7 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
  * Send inline action
  *
  * @brief A macro to simplify calling inline actions
- * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling actions from actions 
+ * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling new actions from existing actions 
  * EOSIO supports two communication models, inline and deferred. Inline actions are executed as part of the current transaction. This macro
  * creates an @ref action using the supplied parameters and automatically calls action.send().
  *
@@ -496,16 +496,17 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
  * SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
  * @endcode
  * 
- * This is taken from eosio.token. The example  
- * 		uses this.get_self() i.e. the eosio.token contract, 
- * 		and calls the eosio.token::transfer() action, 
- * 		using the active permission of the "issuer" account
- * 		passing in st.issuer, to, quantity and memo 
- * creating an action struct used to 'send()' (call) transfer(account_name from, account_name to, asset quantity, string memo)
+ * The example above is taken from eosio.token. 
+ * This example:  
+ * 		uses the passed in, dereferenced `this` pointer, to call this.get_self() i.e. the eosio.token contract; 
+ * 		calls the eosio.token::transfer() action; 
+ * 		uses the active permission of the "issuer" account;
+ * 		uses parameters st.issuer, to, quantity and memo. 
+ * This macro creates an action struct used to 'send()' (call) transfer(account_name from, account_name to, asset quantity, string memo)
  * 
- * @param CONTRACT - The contract to call, which contains the action, maps to the @ref account
- * @param NAME - The name of the action to be called, maps to @ref name
- * @param ... - The authorising permission, maps to @ref authorization , followed by the parameters of the action, maps to @ref data.
+ * @param CONTRACT - The contract to call, which contains the action being sent, maps to the @ref account
+ * @param NAME - The name of the action to be called, maps to a @ref name
+ * @param ... - The authorising permission, maps to an @ref authorization , followed by the parameters of the action, maps to a @ref data.
  */
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
