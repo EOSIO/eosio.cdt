@@ -3,6 +3,8 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <limits>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/varint.hpp>
@@ -11,22 +13,22 @@ using std::numeric_limits;
 
 using eosio::datastream;
 
-const uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
-const uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
+static constexpr uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
+static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
 
-const int32_t i32min = numeric_limits<int32_t>::min(); // -2147483648
-const int32_t i32max = numeric_limits<int32_t>::max(); //  2147483647
+static constexpr int32_t i32min = numeric_limits<int32_t>::min(); // -2147483648
+static constexpr int32_t i32max = numeric_limits<int32_t>::max(); //  2147483647
 
 // Defined in `eosio.cdt/libraries/eosiolib/varint.hpp`
 EOSIO_TEST_BEGIN(unsigned_int_type_test)
-   silence_output(true);
+   silence_output(false);
 
-   /// unsigned_int(uint32_t)
+   //// unsigned_int(uint32_t)
    CHECK_EQUAL( unsigned_int{}.value, 0 )
    CHECK_EQUAL( unsigned_int{u32min}.value, 0 )
    CHECK_EQUAL( unsigned_int{u32max}.value, 4294967295 )
    
-   /// unsigned_int(T)
+   //// unsigned_int(T)
    CHECK_EQUAL( unsigned_int{uint8_t{0}}.value,  0 )
    CHECK_EQUAL( unsigned_int{uint16_t{1}}.value, 1 )
    CHECK_EQUAL( unsigned_int{uint32_t{2}}.value, 2 )
@@ -39,10 +41,10 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
 
    // ---------------------------------
    // unsigned_int& operator=(uint32_t)
-   unsigned_int ui0{};
-   unsigned_int ui1{42};
+   static const unsigned_int ui0{42};
+   unsigned_int ui1{};
 
-   ui0 = ui1;
+   ui1 = ui0;
    CHECK_EQUAL( ui0 == ui1, true )
 
    // ------------------------------------------------------------
@@ -113,7 +115,7 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
 
    datastream<const char*> ds{datastream_buffer, buffer_size};
    
-   const unsigned_int cui{42};
+   static const unsigned_int cui{42};
    unsigned_int ui{};
    ds << cui;
    ds.seekp(0);
@@ -125,9 +127,9 @@ EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosiolib/varint.hpp`
 EOSIO_TEST_BEGIN(signed_int_type_test)
-   silence_output(true);
+   silence_output(false);
    
-   /// signed_int(uint32_t)
+   //// signed_int(uint32_t)
    CHECK_EQUAL( signed_int{}.value, 0 )
    CHECK_EQUAL( signed_int{i32min}.value, -2147483648 )
    CHECK_EQUAL( signed_int{i32max}.value,  2147483647 )
@@ -140,39 +142,39 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
 
    // --------------------------------
    //  signed_int& operator=(const T&)
-   signed_int i0{};
-   signed_int i1{};
-   signed_int i2{};
-   signed_int i3{};
+   static const int8_t i8{0};
+   static const int16_t i16{1};
+   static const int32_t i32{2};
+   static const int64_t i64{3};
 
-   int8_t i8{0};
-   int16_t i16{1};
-   int32_t i32{2};
-   int64_t i64{3};
+   signed_int si0{};
+   signed_int si1{};
+   signed_int si2{};
+   signed_int si3{};
 
-   i0 = i8;
-   i1 = i16;
-   i2 = i32;
-   i3 = i64;
+   si0 = i8;
+   si1 = i16;
+   si2 = i32;
+   si3 = i64;
 
-   CHECK_EQUAL( i0.value, 0 )
-   CHECK_EQUAL( i1.value, 1 )
-   CHECK_EQUAL( i2.value, 2 )
-   CHECK_EQUAL( i3.value, 3 )
+   CHECK_EQUAL( si0.value, 0 )
+   CHECK_EQUAL( si1.value, 1 )
+   CHECK_EQUAL( si2.value, 2 )
+   CHECK_EQUAL( si3.value, 3 )
 
    // --------------------------
    // signed_int operator++(int)
-   signed_int post_inc0{0};
-   signed_int post_inc1{1};
-   CHECK_EQUAL( post_inc0++.value, 0 )
-   CHECK_EQUAL( post_inc1++.value, 1 )
+   signed_int si_post_inc0{0};
+   signed_int si_post_inc1{1};
+   CHECK_EQUAL( si_post_inc0++.value, 0 )
+   CHECK_EQUAL( si_post_inc1++.value, 1 )
 
    // ------------------------
    // signed_int& operator++()
-   signed_int pre_inc0{0};
-   signed_int pre_inc1{1};
-   CHECK_EQUAL( ++pre_inc0.value, 1 )
-   CHECK_EQUAL( ++pre_inc1.value, 2 )
+   signed_int si_pre_inc0{0};
+   signed_int si_pre_inc1{1};
+   CHECK_EQUAL( ++si_pre_inc0.value, 1 )
+   CHECK_EQUAL( ++si_pre_inc1.value, 2 )
 
    // ------------------------------------------------------------
    // friend bool operator==(const signed_int&, const uint32_t&)
@@ -242,7 +244,7 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
 
    datastream<const char*> ds{datastream_buffer, buffer_size};
 
-   const signed_int csi{-42};
+   static const signed_int csi{-42};
    signed_int si{};
    ds << csi;
    ds.seekp(0);

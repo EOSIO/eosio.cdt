@@ -18,17 +18,17 @@ using eosio::time_point;
 using eosio::time_point_sec;
 using eosio::block_timestamp;
 
-const int64_t i64min = numeric_limits<int64_t>::min(); // -9223372036854775808
-const int64_t i64max = numeric_limits<int64_t>::max(); //  9223372036854775807
+static constexpr int64_t i64min = numeric_limits<int64_t>::min(); // -9223372036854775808
+static constexpr int64_t i64max = numeric_limits<int64_t>::max(); //  9223372036854775807
 
-const uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
-const uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
+static constexpr uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
+static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
 
 // Definitions in `eosio.cdt/libraries/eosiolib/time.hpp`
 EOSIO_TEST_BEGIN(microseconds_type_test)
 silence_output(true);
 
-   /// explicit microseconds(uint64_t)/int64_t count()
+   //// explicit microseconds(uint64_t)/int64_t count()
    CHECK_EQUAL( microseconds{}._count, 0ULL )
    CHECK_EQUAL( microseconds{i64max}._count, i64max )
    CHECK_EQUAL( microseconds{i64min}._count, i64min )
@@ -128,13 +128,13 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(time_point_type_test)
    silence_output(true);
 
-   microseconds ms0 { 0LL};
-   microseconds ms1 { 1LL};
-   microseconds msn1{-1LL};
-   microseconds ms_min{i64min};
-   microseconds ms_max{i64max};
+   static const microseconds ms0 { 0LL};
+   static const microseconds ms1 { 1LL};
+   static const microseconds msn1{-1LL};
+   static const microseconds ms_min{i64min};
+   static const microseconds ms_max{i64max};
    
-   /// explicit time_point(microseconds)
+   //// explicit time_point(microseconds)
    // microseconds& time_since_epoch()
    CHECK_EQUAL( time_point{ms0}.time_since_epoch(), ms0 )
    CHECK_EQUAL( time_point{ms1}.time_since_epoch(), ms1 )
@@ -215,28 +215,28 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(time_point_sec_type_test)
    silence_output(true);
 
-   microseconds ms0 { 0LL};
-   microseconds ms1 { 1LL};
-   microseconds msn1{-1LL};
-   microseconds ms_min{i64min};
-   microseconds ms_max{i64max};
+   static const microseconds ms0 { 0LL};
+   static const microseconds ms1 { 1LL};
+   static const microseconds msn1{-1LL};
+   static const microseconds ms_min{i64min};
+   static const microseconds ms_max{i64max};
 
-   time_point tp0{ms0};
-   time_point tp1{ms1};
-   time_point tpn1{msn1};
-   time_point tp_min{ms_min};
-   time_point tp_max{ms_max};
+   static const time_point tp0{ms0};
+   static const time_point tp1{ms1};
+   static const time_point tpn1{msn1};
+   static const time_point tp_min{ms_min};
+   static const time_point tp_max{ms_max};
 
-   /// time_point_sec()
+   //// time_point_sec()
    //uint32_t sec_since_epoch()const
    CHECK_EQUAL( time_point_sec{}.utc_seconds, 0 )
 
-   /// explicit time_point_sec(uint32_t)
+   //// explicit time_point_sec(uint32_t)
    CHECK_EQUAL( time_point_sec{u32min}.utc_seconds, 0 )
    CHECK_EQUAL( time_point_sec{u32max}.utc_seconds, u32max )
    CHECK_EQUAL( time_point_sec{u32max + 1}.utc_seconds, 0 )
 
-   /// time_point_sec(const time_point&)
+   //// time_point_sec(const time_point&)
    CHECK_EQUAL( time_point_sec{tp0}.utc_seconds, ms0._count / 1000000 )
    CHECK_EQUAL( time_point_sec{tp1}.utc_seconds, ms1._count / 1000000 )
    CHECK_EQUAL( time_point_sec{tpn1}.utc_seconds, msn1._count / 1000000 )
@@ -398,18 +398,18 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    static const time_point_sec tps1{tp1};
    static const time_point_sec tps2{tp2};
 
-   /// explicit block_timestamp(uint32_t)
+   //// explicit block_timestamp(uint32_t)
    CHECK_EQUAL( block_timestamp{}.slot, 0 )
    CHECK_EQUAL( block_timestamp{u32min}.slot, u32min )
    CHECK_EQUAL( block_timestamp{u32max}.slot, u32max )
    
-   /// block_timestamp(const time_point&)
+   //// block_timestamp(const time_point&)
    // void set_time_point(const time_point&)
    CHECK_EQUAL( block_timestamp{tp0}.slot, 0 )
    CHECK_EQUAL( block_timestamp{tp1}.slot, 1 )
    CHECK_EQUAL( block_timestamp{tp2}.slot, 2 )
 
-   /// block_timestamp(const time_point_sec&)
+   //// block_timestamp(const time_point_sec&)
    // void set_time_point(const time_point_sec&)
    // Infeasible constructor?
 
@@ -429,7 +429,7 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    CHECK_EQUAL( (block_timestamp{1}.next()), block_timestamp{2} )
    CHECK_EQUAL( (block_timestamp{2}.next()), block_timestamp{3} )
 
-   REQUIRE_ASSERT( "block timestamp overflow", [](){block_timestamp{u32max}.next();} )
+   CHECK_ASSERT( "block timestamp overflow", [](){block_timestamp{u32max}.next();} )
 
    // -------------------------------
    // time_point to_time_point()const
@@ -445,13 +445,13 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
 
    // ---------------------------------
    // void operator=(const time_point&)
-   block_timestamp opequal{};
-   opequal = tp0;
-   CHECK_EQUAL( opequal, block_timestamp{tp0} )
-   opequal = tp1;
-   CHECK_EQUAL( opequal, block_timestamp{tp1} )
-   opequal = tp2;
-   CHECK_EQUAL( opequal, block_timestamp{tp2} )
+   block_timestamp bt_equal_op{};
+   bt_equal_op = tp0;
+   CHECK_EQUAL( bt_equal_op, block_timestamp{tp0} )
+   bt_equal_op = tp1;
+   CHECK_EQUAL( bt_equal_op, block_timestamp{tp1} )
+   bt_equal_op = tp2;
+   CHECK_EQUAL( bt_equal_op, block_timestamp{tp2} )
 
    // ---------------------------------------
    // bool operator==(const block_timestamp&)

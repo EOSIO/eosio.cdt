@@ -3,8 +3,12 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <string>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/asset.hpp>
+
+using std::string;
 
 using eosio::name;
 using eosio::symbol;
@@ -12,20 +16,20 @@ using eosio::extended_symbol;
 using eosio::asset;
 using eosio::extended_asset;
 
-const int64_t asset_mask{(1LL << 62) - 1};
-const int64_t asset_min{-asset_mask}; // -4611686018427387903
-const int64_t asset_max{ asset_mask}; //  4611686018427387903
+static constexpr int64_t asset_mask{(1LL << 62) - 1};
+static constexpr int64_t asset_min{-asset_mask}; // -4611686018427387903
+static constexpr int64_t asset_max{ asset_mask}; //  4611686018427387903
 
 // Definitions in `eosio.cdt/libraries/eosiolib/asset.hpp`
 EOSIO_TEST_BEGIN(asset_type_test)
    silence_output(true);
 
-   symbol s0{"A",0};
-   symbol s1{"Z",0};
-   symbol s2{"AAAAAAA",0};
-   symbol s3{"ZZZZZZZ",0};
-   symbol sym_no_prec{"SYMBOLL",0}; // Symbol with no precision
-   symbol sym_prec{"SYMBOLL",63};   // Symbol with precision
+   static constexpr symbol s0{"A", 0};
+   static constexpr symbol s1{"Z", 0};
+   static constexpr symbol s2{"AAAAAAA", 0};
+   static constexpr symbol s3{"ZZZZZZZ", 0};
+   static constexpr symbol sym_no_prec{"SYMBOLL", 0}; // Symbol with no precision
+   static constexpr symbol sym_prec{"SYMBOLL", 63};   // Symbol with precision
 
    //// constexpr asset()
    CHECK_EQUAL( asset{}.amount, 0ULL )
@@ -43,10 +47,9 @@ EOSIO_TEST_BEGIN(asset_type_test)
    
    // Note: there is an invariant established for `asset` that is not enforced for `symbol`
    // For example:
-   // valid code:
-   // `symbol{};`
-   // throws "invalid symbol name":
-   // `asset{{}, symbol{}};`
+   // `symbol{};` // valid code
+   // `asset{{}, symbol{}};` // throws "invalid symbol name"
+   
    CHECK_ASSERT( "invalid symbol name", ([]() {asset{0LL, symbol{0LL}};}) )
    CHECK_ASSERT( "invalid symbol name", ([]() {asset{0LL, symbol{1LL}};}) )
    CHECK_ASSERT( "invalid symbol name", ([]() {asset{0LL, symbol{16639ULL}};}) )
@@ -87,70 +90,103 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    // ------------------------
    // void set_amount(int64_t)
-   asset a{0LL, sym_no_prec};
-   CHECK_EQUAL( (a.set_amount(0LL), a.amount), 0LL )
-   CHECK_EQUAL( (a.set_amount(1LL), a.amount), 1LL )
-   CHECK_EQUAL( (a.set_amount(asset_min), a.amount), asset_min )
-   CHECK_EQUAL( (a.set_amount(asset_max), a.amount), asset_max )
+   asset asset_set_amount{0LL, sym_no_prec};
+   CHECK_EQUAL( (asset_set_amount.set_amount(0LL), asset_set_amount.amount), 0LL )
+   CHECK_EQUAL( (asset_set_amount.set_amount(1LL), asset_set_amount.amount), 1LL )
+   CHECK_EQUAL( (asset_set_amount.set_amount(asset_min), asset_set_amount.amount), asset_min )
+   CHECK_EQUAL( (asset_set_amount.set_amount(asset_max), asset_set_amount.amount), asset_max )
    
    CHECK_ASSERT( "magnitude of asset amount must be less than 2^62", (
       [&]() {
-         a.set_amount(asset_min - 1);
+         asset_set_amount.set_amount(asset_min - 1);
       })
    )
 
    CHECK_ASSERT( "magnitude of asset amount must be less than 2^62", (
       [&]() {
-         a.set_amount(asset_max + 1);
+         asset_set_amount.set_amount(asset_max + 1);
       })
    )
 
    // ---------------------
    // std::to_string()const
-   // Note that printing an `asset` is limited to a precision of 63
+   // Note:
+   // Printing an `asset` is limited to a precision of 63
    // This will trigger an error:
-   // `asset{int64_t{1LL}, symbol{"SYMBOLL", 64}}.print();`
-   // output: "Floating point exception: ..."
+   // `asset{int64_t{1LL}, symbol{"SYMBOLL", 64}}.print();` // output: "Floating point exception: ..."
 
-   // This produces weird behavior when the `precision` is 0:
-   // `asset{int64_t{1LL}, symbol{"SYMBOLL", 0}}.print();`
-   // output: "1. SYMBOLL"
+   // Note:
+   // This produces odd behavior when the `precision` is 0:
+   // `asset{int64_t{1LL}, symbol{"SYMBOLL", 0}}.print();` // output: "1. SYMBOLL"
 
-   // Note that `assets` with negative amounts with 0 `precision` print have the odd behavior of printing two '-' characters:
+   // Note:
+   // That `assets` with negative amounts with 0 `precision` print two '-' characters
+   
    CHECK_EQUAL( (asset{0LL, sym_no_prec}.to_string()), "0. SYMBOLL" )
    CHECK_EQUAL( (asset{-0LL, sym_no_prec}.to_string()), "0. SYMBOLL" )
-   CHECK_EQUAL( (asset{0LL, sym_prec}.to_string()), "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
-   CHECK_EQUAL( (asset{-0LL, sym_prec}.to_string()), "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
+   CHECK_EQUAL( (asset{0LL, sym_prec}.to_string()),
+                "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
+   CHECK_EQUAL( (asset{-0LL, sym_prec}.to_string()),
+                "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
 
    CHECK_EQUAL( (asset{1LL, sym_no_prec}.to_string()), "1. SYMBOLL" )
    CHECK_EQUAL( (asset{-1LL, sym_no_prec}.to_string()), "--1. SYMBOLL" )
-   CHECK_EQUAL( (asset{1LL, sym_prec}.to_string()), "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
-   CHECK_EQUAL( (asset{-1LL, sym_prec}.to_string()), "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
+   CHECK_EQUAL( (asset{1LL, sym_prec}.to_string()),
+                "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
+   CHECK_EQUAL( (asset{-1LL, sym_prec}.to_string()),
+                "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
 
    CHECK_EQUAL( (asset{asset_min, sym_no_prec}.to_string()), "--4611686018427387903. SYMBOLL" )
    CHECK_EQUAL( (asset{asset_max, sym_no_prec}.to_string()), "4611686018427387903. SYMBOLL" )
-   CHECK_EQUAL( (asset{asset_min, sym_prec}.to_string()), "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
-   CHECK_EQUAL( (asset{asset_max, sym_prec}.to_string()), "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
+   CHECK_EQUAL( (asset{asset_min, sym_prec}.to_string()),
+                "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
+   CHECK_EQUAL( (asset{asset_max, sym_prec}.to_string()),
+                "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
 
-   // Note: uncomment once print checking has been resolved
    // -----------------
    // void print()const
+   // Note:
+   // Uncomment once print checking has been resolved
+   
    // CHECK_PRINT( "0. SYMBOLL", [&](){asset{0LL, sym_no_prec}.print();} );
    // CHECK_PRINT( "0. SYMBOLL", [&](){asset{-0LL, sym_no_prec}.print();} );
-   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", [&](){asset{0LL, sym_prec}.print();} );
-   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", [&](){asset{-0LL, sym_prec}.print();} );
+   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", (
+   //    [&]() {
+   //       asset{0LL, sym_prec}.print();
+   //    });
+   // )
+   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", (
+   //    [&]() {
+   //       asset{-0LL, sym_prec}.print();
+   //    });
+   // )
 
    // CHECK_PRINT( "1. SYMBOLL", [&](){asset{1LL, sym_no_prec}.print();} );
    // CHECK_PRINT( "--1. SYMBOLL", [&](){asset{-1LL, sym_no_prec}.print();} );
-   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", [&](){asset{1LL, sym_prec}.print();} );
-   // CHECK_PRINT( "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", [&](){asset{-1LL, sym_prec}.print();} );
+   // CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
+   //    [&]() {
+   //       asset{1LL, sym_prec}.print();
+   //    });
+   // )
+   // CHECK_PRINT( "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
+   //    [&]() {
+   //       asset{-1LL, sym_prec}.print();
+   //    });
+   // )
 
    // CHECK_PRINT( "--4611686018427387903. SYMBOLL", [&](){asset{asset_min, sym_no_prec}.print();} );
    // CHECK_PRINT( "4611686018427387903. SYMBOLL", [&](){asset{asset_max, sym_no_prec}.print();} );
-   // CHECK_PRINT( "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", [&](){asset{asset_min, sym_prec}.print();} );
-   // CHECK_PRINT( "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", [&](){asset{asset_max, sym_prec}.print();} );
+   // CHECK_PRINT( "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", (
+   //    [&]() {
+   //       asset{asset_min, sym_prec}.print();
+   //    });
+   // )
+   // CHECK_PRINT( "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", (
+   //    [&]() {
+   //        asset{asset_max, sym_prec}.print();
+   //    });
+   // )
    
-   // How are these `assets` constructed? Isn't `uint8_t precision` supposed to be constexpr when constructing a symbol?
    for( uint8_t precision{0}; precision < 64; ++precision ) {
       CHECK_EQUAL( (asset{0LL, symbol{"SYMBOLL", precision}}.to_string()),
                    (std::string(std::string("0.") + std::string(precision, '0') + std::string(" SYMBOLL"))) )
@@ -237,29 +273,34 @@ EOSIO_TEST_BEGIN(asset_type_test)
       })
    )
 
-   // -----------------------------------------------------------------------------------------------------------------------------
-   // friend asset operator/(const asset&, int64_t)/asset& operator/=(int64_t)/friend int64_t operator/(const asset&, const asset&)
+   // ---------------------------------------------
+   // friend asset operator/(const asset&, int64_t)
    CHECK_EQUAL( (asset{ 0LL, sym_no_prec} / asset{ 1LL, sym_no_prec}.amount), (asset{ 0LL, sym_no_prec}) )
    CHECK_EQUAL( (asset{ 1LL, sym_no_prec} / asset{ 1LL, sym_no_prec}.amount), (asset{ 1LL, sym_no_prec}) )
    CHECK_EQUAL( (asset{ 4LL, sym_no_prec} / asset{ 2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
    CHECK_EQUAL( (asset{-4LL, sym_no_prec} / asset{ 2LL, sym_no_prec}.amount), (asset{-2LL, sym_no_prec}) )
    CHECK_EQUAL( (asset{-4LL, sym_no_prec} / asset{-2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
 
-   CHECK_EQUAL( (asset{ 0LL, sym_no_prec} /= asset{ 1LL, sym_no_prec}.amount), (asset{ 0LL, sym_no_prec}) )
-   CHECK_EQUAL( (asset{ 1LL, sym_no_prec} /= asset{ 1LL, sym_no_prec}.amount), (asset{ 1LL, sym_no_prec}) )
-   CHECK_EQUAL( (asset{ 4LL, sym_no_prec} /= asset{ 2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
-   CHECK_EQUAL( (asset{-4LL, sym_no_prec} /= asset{ 2LL, sym_no_prec}.amount), (asset{-2LL, sym_no_prec}) )
-   CHECK_EQUAL( (asset{-4LL, sym_no_prec} /= asset{-2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
-
+   // ----------------------------------------------------
+   // friend int64_t operator/(const asset&, const asset&)
    CHECK_EQUAL( (asset{ 0LL, sym_no_prec} / asset{ 1LL, sym_no_prec} ), (asset{ 0LL, sym_no_prec}.amount) )
    CHECK_EQUAL( (asset{ 1LL, sym_no_prec} / asset{ 1LL, sym_no_prec} ), (asset{ 1LL, sym_no_prec}.amount) )
    CHECK_EQUAL( (asset{ 4LL, sym_no_prec} / asset{ 2LL, sym_no_prec} ), (asset{ 2LL, sym_no_prec}.amount) )
    CHECK_EQUAL( (asset{-4LL, sym_no_prec} / asset{ 2LL, sym_no_prec} ), (asset{-2LL, sym_no_prec}.amount) )
    CHECK_EQUAL( (asset{-4LL, sym_no_prec} / asset{-2LL, sym_no_prec} ), (asset{ 2LL, sym_no_prec}.amount) )
 
+   // ---------------------------------
+   // friend asset& operator/=(int64_t)
+   CHECK_EQUAL( (asset{ 0LL, sym_no_prec} /= asset{ 1LL, sym_no_prec}.amount), (asset{ 0LL, sym_no_prec}) )
+   CHECK_EQUAL( (asset{ 1LL, sym_no_prec} /= asset{ 1LL, sym_no_prec}.amount), (asset{ 1LL, sym_no_prec}) )
+   CHECK_EQUAL( (asset{ 4LL, sym_no_prec} /= asset{ 2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
+   CHECK_EQUAL( (asset{-4LL, sym_no_prec} /= asset{ 2LL, sym_no_prec}.amount), (asset{-2LL, sym_no_prec}) )
+   CHECK_EQUAL( (asset{-4LL, sym_no_prec} /= asset{-2LL, sym_no_prec}.amount), (asset{ 2LL, sym_no_prec}) )
+
    CHECK_ASSERT( "divide by zero", ([&]() {asset{1LL, sym_no_prec} /= 0;}) )
 
-   // Note that there is no invariant established here when adding or setting the `amount`
+   // Note:
+   // There is no invariant established here when adding or setting the `amount`
    CHECK_ASSERT( "signed division overflow", (
       []() {
          asset a{};
@@ -276,7 +317,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    // --------------------------------------------------
    // friend bool operator==(const asset&, const asset&)
-   CHECK_EQUAL( (asset{{}, sym_no_prec} == asset{{}, sym_no_prec} ), true )
+   CHECK_EQUAL( (asset{0LL, sym_no_prec} == asset{0LL, sym_no_prec} ), true )
    CHECK_EQUAL( (asset{asset_min, sym_no_prec} == asset{asset_min, sym_no_prec} ), true )
    CHECK_EQUAL( (asset{asset_max, sym_no_prec} == asset{asset_max, sym_no_prec} ), true )
 
@@ -293,21 +334,21 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    // -------------------------------------------------
    // friend bool operator<(const asset&, const asset&)
-   CHECK_EQUAL( (asset{{}, sym_no_prec} < asset{1LL, sym_no_prec} ), true )
+   CHECK_EQUAL( (asset{0LL, sym_no_prec} < asset{1LL, sym_no_prec} ), true )
 
    // --------------------------------------------------
    // friend bool operator<=(const asset&, const asset&)
-   CHECK_EQUAL( ( asset{{},  sym_no_prec} <= asset{1LL, sym_no_prec} ), true )
+   CHECK_EQUAL( ( asset{0LL, sym_no_prec} <= asset{1LL, sym_no_prec} ), true )
    CHECK_EQUAL( ( asset{1LL, sym_no_prec} <= asset{1LL, sym_no_prec} ), true )
 
    // -------------------------------------------------
    // friend bool operator>(const asset&, const asset&)
-   CHECK_EQUAL( ( asset{1LL, sym_no_prec} > asset{{}, sym_no_prec} ), true )
-   CHECK_EQUAL( ( asset{{}, sym_no_prec}  > asset{1LL, sym_no_prec} ), false )
+   CHECK_EQUAL( ( asset{1LL, sym_no_prec} > asset{0LL, sym_no_prec} ),  true  )
+   CHECK_EQUAL( ( asset{0LL, sym_no_prec}  > asset{1LL, sym_no_prec} ), false )
 
    // --------------------------------------------------
    // friend bool operator>=( const asset&, const asset&)
-   CHECK_EQUAL( ( asset{1LL, sym_no_prec} >= asset{{},  sym_no_prec} ), true )
+   CHECK_EQUAL( ( asset{1LL, sym_no_prec} >= asset{0LL, sym_no_prec} ), true )
    CHECK_EQUAL( ( asset{1LL, sym_no_prec} >= asset{1LL, sym_no_prec} ), true )
 
    silence_output(false);
@@ -317,22 +358,22 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(extended_asset_type_test)
    silence_output(true);
 
-   symbol sym_no_prec{"SYMBOLL",0};
-   symbol sym_prec{"SYMBOLL",63};
+   static constexpr symbol sym_no_prec{"SYMBOLL",0};
+   static constexpr symbol sym_prec{"SYMBOLL",63};
 
-   extended_symbol ex_sym_no_prec{sym_no_prec, name{"eosioaccountj"}};
-   extended_symbol ex_sym_prec{sym_prec, name{"eosioaccountj"}};
+   static constexpr extended_symbol ext_sym_no_prec{sym_no_prec, name{"eosioaccountj"}};
+   static constexpr extended_symbol ext_sym_prec{sym_prec, name{"eosioaccountj"}};
 
-   asset asset_no_prec{0LL, sym_no_prec};
-   asset asset_prec{0LL, sym_prec};
+   static const asset asset_no_prec{0LL, sym_no_prec};
+   static const asset asset_prec{0LL, sym_prec};
 
    //// extended_asset()
    CHECK_EQUAL( extended_asset{}.quantity, asset{} )
-   CHECK_EQUAL( extended_asset{}.contract, name{} )
+   CHECK_EQUAL( extended_asset{}.contract, name{}  )
 
    //// extended_asset(int64_t, extended_symbol)
-   CHECK_EQUAL( (extended_asset{{},ex_sym_no_prec}.quantity), (asset{0LL, sym_no_prec}) )
-   CHECK_EQUAL( (extended_asset{{},ex_sym_no_prec}.contract), (name{"eosioaccountj"}) )
+   CHECK_EQUAL( (extended_asset{{},ext_sym_no_prec}.quantity), (asset{0LL, sym_no_prec}) )
+   CHECK_EQUAL( (extended_asset{{},ext_sym_no_prec}.contract), (name{"eosioaccountj"}) )
 
    //// extended_asset(asset, name)
    CHECK_EQUAL( (extended_asset{asset_no_prec, name{"eosioaccountj"}}.quantity), (asset{ 0LL, sym_no_prec}) )
@@ -340,15 +381,18 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
 
    // ------------------------------------------
    // extended_symbol get_extended_symbol()const
-   CHECK_EQUAL( (extended_asset{{},ex_sym_no_prec}.get_extended_symbol()), (ex_sym_no_prec) )
-   CHECK_EQUAL( (extended_asset{{},ex_sym_prec}.get_extended_symbol()), (ex_sym_prec) )
+   CHECK_EQUAL( (extended_asset{{},ext_sym_no_prec}.get_extended_symbol()), (ext_sym_no_prec) )
+   CHECK_EQUAL( (extended_asset{{},ext_sym_prec}.get_extended_symbol()), (ext_sym_prec) )
 
-   // Note: uncomment once print checking has been resolved
-   // Note that if there is no precision, there will be odd output:
-   // `extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();`
-   // output: "0. A@1"
    // -----------------
    // void print()const
+   // Note:
+   // Uncomment once print checking has been resolved
+   
+   // Note:
+   // That if there is no precision, there will be odd output:
+   // `extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();` // output: "0. A@1"
+   
    // CHECK_PRINT( "0. A@1", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();} )
    // CHECK_PRINT( "0. A@5", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"5"}}.print();} )
    // CHECK_PRINT( "0. Z@a", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"a"}}.print();} )

@@ -3,13 +3,19 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <limits>
+#include <string>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/name.hpp>
 
+using std::numeric_limits;
+using std::string;
+
 using eosio::name;
 
-const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
-const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
+static constexpr uint64_t u64min = numeric_limits<uint64_t>::min(); // 0ULL
+static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
 // Definitions in `eosio.cdt/libraries/eosiolib/name.hpp`
 EOSIO_TEST_BEGIN(name_type_test)
@@ -28,8 +34,9 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{name::raw{1ULL}}.value, 1ULL )
    CHECK_EQUAL( name{name::raw{u64max}}.value, u64max )
 
-   // Note that these are the exact `uint64_t` value representations of the given string
-   //// constexpr explicit name(std::string_view)
+   //// constexpr explicit name(string_view)
+   // Note:
+   // These are the exact `uint64_t` value representations of the given string
    CHECK_EQUAL( name{"1"}.value, 576460752303423488ULL )
    CHECK_EQUAL( name{"5"}.value, 2882303761517117440ULL )
    CHECK_EQUAL( name{"a"}.value, 3458764513820540928ULL )
@@ -122,12 +129,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"eosioaccou.nj"}.suffix(), name{"nj"} )
    CHECK_EQUAL( name{"eosioaccoun.j"}.suffix(), name{"j"} )
 
-   // Note that this case is ignored because '.' characters at the end of a name are ignored
-   // Make functions perfect mirrors of eachother (01/07/2019)
-   // `print_f("Value of suffix:          %\n", name{"eosioaccounj."}.suffix() );`
-   // `print_f("Value of expected suffix: \n" );`
-   // `eosio_assert( name{"eosioaccounj."}.suffix() == name{""}, "name.suffix() != \"\"" );`
-
    CHECK_EQUAL( name{"e.o.s.i.o.a.c"}.suffix(), name{"c"} )
    CHECK_EQUAL( name{"eos.ioa.cco"}.suffix(), name{"cco"} )
 
@@ -176,56 +177,57 @@ EOSIO_TEST_BEGIN(name_type_test)
    // char* write_as_string(char*, char*)const
    char buffer[13]{};
    
-   std::string test_str{"1"};
-   name{test_str}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "5"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "a"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "z"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
+   string str{"1"};
+   name{str}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "5"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "a"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "z"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
 
-   name{test_str = "abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "123"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
+   name{str = "abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "123"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
 
-   // Note that any '.' characters at the end of a name are ignored
-   name{test_str = ".abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = ".........abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "123."}.write_as_string( buffer, buffer + sizeof(buffer) );
+   // Note:
+   // Any '.' characters at the end of a name are ignored
+   name{str = ".abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = ".........abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "123."}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp("123", buffer, 3), 0 )
-   name{test_str = "123........."}.write_as_string( buffer, buffer + sizeof(buffer) );
+   name{str = "123........."}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp("123", buffer, 3), 0 )
-   name{test_str = ".a.b.c.1.2.3."}.write_as_string( buffer, buffer + sizeof(buffer) );
+   name{str = ".a.b.c.1.2.3."}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(".a.b.c.1.2.3", buffer, 12), 0 )
 
-   name{test_str = "abc.123"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "123.abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
+   name{str = "abc.123"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "123.abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
 
-   name{test_str = "12345abcdefgj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "hijklmnopqrsj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "tuvwxyz.1234j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
+   name{str = "12345abcdefgj"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "hijklmnopqrsj"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "tuvwxyz.1234j"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
 
-   name{test_str = "111111111111j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "555555555555j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "aaaaaaaaaaaaj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   name{test_str = "zzzzzzzzzzzzj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
+   name{str = "111111111111j"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "555555555555j"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "aaaaaaaaaaaaj"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
+   name{str = "zzzzzzzzzzzzj"}.write_as_string( buffer, buffer + sizeof(buffer) );
+   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
 
-   // ----------------------------
-   // std::string to_string()const
+   // -----------------------
+   // string to_string()const
    CHECK_EQUAL( name{"1"}.to_string(), "1" )
    CHECK_EQUAL( name{"5"}.to_string(), "5" )
    CHECK_EQUAL( name{"a"}.to_string(), "a" )

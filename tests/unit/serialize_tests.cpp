@@ -3,6 +3,12 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <algorithm>
+#include <list>
+#include <string>
+#include <tuple>
+#include <vector>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/datastream.hpp>
 #include <eosiolib/serialize.hpp>
@@ -55,7 +61,7 @@ EOSIO_TEST_BEGIN(serialize_test)
    datastream<const char*> ds_expected{ds_expected_buffer, buffer_size};
 
    // Testing base structures
-   const B b{'c'};
+   static constexpr B b{'c'};
    B bb;
    ds_expected << b.c;
    ds << b;
@@ -70,7 +76,7 @@ EOSIO_TEST_BEGIN(serialize_test)
    fill(begin(ds_expected_buffer), end(ds_expected_buffer), 0);
 
    // Testing derived structures
-   const D1 d1{'c', 42};
+   static constexpr D1 d1{'c', 42};
    D1 dd1;
    ds_expected << d1.c << d1.i;
    ds << d1;
@@ -86,7 +92,7 @@ EOSIO_TEST_BEGIN(serialize_test)
    fill(begin(ds_expected_buffer), end(ds_expected_buffer), 0);
 
    // Testing multiple layers of derived structures
-   const D2 d2{'c', 42, {1.1, 2.2}};
+   static const D2 d2{'c', 42, {1.1, 2.2}};
    D1 dd2;
    ds_expected << d2.c << d2.i << d2.v;
    ds << d2;

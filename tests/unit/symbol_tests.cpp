@@ -3,16 +3,22 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <limits>
+#include <string>
+
 #include <eosio/native/tester.hpp>
 #include <eosiolib/symbol.hpp>
+
+using std::numeric_limits;
+using std::string;
 
 using eosio::name;
 using eosio::symbol_code;
 using eosio::symbol;
 using eosio::extended_symbol;
 
-const uint64_t u64min = std::numeric_limits<uint64_t>::min(); // 0ULL
-const uint64_t u64max = std::numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
+static constexpr uint64_t u64min = numeric_limits<uint64_t>::min(); // 0ULL
+static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
 // Definitions in `eosio.cdt/libraries/eosiolib/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
@@ -27,7 +33,7 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    CHECK_EQUAL( symbol_code{1ULL}.raw(), 1ULL )
    CHECK_EQUAL( symbol_code{u64max}.raw(), u64max )
 
-   //// constexpr explicit symbol_code(std::string_view str)
+   //// constexpr explicit symbol_code(string_view str)
    CHECK_EQUAL( symbol_code{"A"}.raw(), 65ULL )
    CHECK_EQUAL( symbol_code{"Z"}.raw(), 90ULL )
    CHECK_EQUAL( symbol_code{"AAAAAAA"}.raw(), 18367622009667905ULL )
@@ -76,7 +82,7 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    // char* write_as_string(char*, char*)const
    char buffer[7]{};
 
-   std::string test_str{"A"};
+   string test_str{"A"};
    symbol_code{test_str}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
    symbol_code{test_str = "Z"}.write_as_string( buffer, buffer + sizeof(buffer) );
@@ -86,8 +92,8 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    symbol_code{test_str = "ZZZZZZZ"}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
 
-   // ----------------------------
-   // std::string to_string()const
+   // -----------------------
+   // string to_string()const
    CHECK_EQUAL( symbol_code{"A"}.to_string(), "A" )
    CHECK_EQUAL( symbol_code{"Z"}.to_string(), "Z" )
    CHECK_EQUAL( symbol_code{"AAAAAAA"}.to_string(), "AAAAAAA" )
@@ -121,10 +127,10 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(symbol_type_test)
    silence_output(true);
 
-   symbol_code sc0{"A"};
-   symbol_code sc1{"Z"};
-   symbol_code sc2{"AAAAAAA"};
-   symbol_code sc3{"ZZZZZZZ"};
+   static constexpr symbol_code sc0{"A"};
+   static constexpr symbol_code sc1{"Z"};
+   static constexpr symbol_code sc2{"AAAAAAA"};
+   static constexpr symbol_code sc3{"ZZZZZZZ"};
 
    //// constexpr symbol()
    // constexpr uint64_t raw()const
@@ -135,8 +141,9 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    CHECK_EQUAL( symbol{1ULL}.raw(), 1ULL )
    CHECK_EQUAL( symbol{u64max}.raw(), u64max )
 
-   //// constexpr symbol(std::string_view, uint8_t)
-   // Note that unless constructed with `initializer_list`, precision does not check for wrap-around
+   //// constexpr symbol(string_view, uint8_t)
+   // Note:
+   // Unless constructed with `initializer_list`, precision does not check for wrap-around
    CHECK_EQUAL( (symbol{sc0, 0}.raw()), 16640ULL )
    CHECK_EQUAL( (symbol{sc1, 0}.raw()), 23040ULL )
    CHECK_EQUAL( (symbol{sc2, 0}.raw()), 4702111234474983680ULL )
@@ -188,10 +195,11 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    CHECK_EQUAL( (symbol{"SYMBOLL", 0}.operator bool()), true )
    CHECK_EQUAL( (!symbol{"", 0}.operator bool()), true )
    CHECK_EQUAL( (!symbol{"SYMBOLL", 0}.operator bool()), false )
-
-   // Note: uncomment once print checking has been resolved
+   
    // ---------------------
    // void print(bool)const
+   // Note:
+   // Uncomment once print checking has been resolved
    // CHECK_PRINT( "0,A", [&](){symbol{"A", 0}.print(true);} );
    // CHECK_PRINT( "0,Z", [&](){symbol{"Z", 0}.print(true);} );
    // CHECK_PRINT( "255,AAAAAAA", [&](){symbol{"AAAAAAA", 255}.print(true);} );
@@ -225,19 +233,19 @@ EOSIO_TEST_END
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
    silence_output(true);
 
-   name n0{"1"};
-   name n1{"5"};
-   name n2{"a"};
-   name n3{"z"};
-   name n4{"111111111111j"};
-   name n5{"555555555555j"};
-   name n6{"aaaaaaaaaaaaj"};
-   name n7{"zzzzzzzzzzzzj"};
+   static constexpr name n0{"1"};
+   static constexpr name n1{"5"};
+   static constexpr name n2{"a"};
+   static constexpr name n3{"z"};
+   static constexpr name n4{"111111111111j"};
+   static constexpr name n5{"555555555555j"};
+   static constexpr name n6{"aaaaaaaaaaaaj"};
+   static constexpr name n7{"zzzzzzzzzzzzj"};
 
-   symbol s0{"A",0};
-   symbol s1{"Z",0};
-   symbol s2{"AAAAAAA",255};
-   symbol s3{"ZZZZZZZ",255};
+   static constexpr symbol s0{"A",0};
+   static constexpr symbol s1{"Z",0};
+   static constexpr symbol s2{"AAAAAAA",255};
+   static constexpr symbol s3{"ZZZZZZZ",255};
 
    //// constexpr extended_symbol()
    // constexpr name get_symbol()
@@ -263,9 +271,10 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    CHECK_EQUAL( (extended_symbol{s3, n6}.get_contract().value), 3570337562653461615ULL )
    CHECK_EQUAL( (extended_symbol{s3, n7}.get_contract().value), u64max )
    
-   // Note: uncomment once print checking has been resolved
    // ---------------------
    // void print(bool)const
+   // Note:
+   // Uncomment once print checking has been resolved
    // CHECK_PRINT( "0,A@1", [&](){extended_symbol{s0, n0}.print(true);} );
    // CHECK_PRINT( "0,A@5", [&](){extended_symbol{s0, n1}.print(true);} );
    // CHECK_PRINT( "0,Z@a", [&](){extended_symbol{s1, n2}.print(true);} );
