@@ -83,12 +83,10 @@ EOSIO_TEST_BEGIN(datastream_test)
 
    // T pos()const
    CHECK_EQUAL( ds.pos(), datastream_buffer+256 )
-   CHECK_EQUAL( ds.pos(), datastream_buffer )
 
    // inline bool seekp(size_t)
    ds.seekp(0);
    CHECK_EQUAL( ds.pos(), datastream_buffer )
-   CHECK_EQUAL( ds.pos(), datastream_buffer+256 )
 
    // inline bool write(const char*, size_t)
    fill(begin(buffer), end(buffer), 1); // Fill `buffer` with a new set of values
@@ -613,9 +611,7 @@ EOSIO_TEST_BEGIN(misc_datastream_test)
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
-   // Note:
-   // Uncomment once segfaulting during `memcpy` has been resolved
-   // EOSIO_TEST(datastream_test);
+   EOSIO_TEST(datastream_test);
    EOSIO_TEST(datastream_specialization_test);
    EOSIO_TEST(datastream_stream_test);
    EOSIO_TEST(misc_datastream_test);
