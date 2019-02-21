@@ -3,14 +3,11 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
-#include <string>
-
 #include <eosio/tester.hpp>
 #include <eosio/binary_extension.hpp>
 
 using std::in_place;
 using std::move;
-using std::string;
 
 using eosio::binary_extension;
 
