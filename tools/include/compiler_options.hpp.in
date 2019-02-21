@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Path.h"
 
 #ifdef ONLY_LD
 #define LD_CAT EosioLdToolCategory
@@ -677,10 +678,27 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if (o_opt.empty()) {
 #ifndef ONLY_LD
-      ldopts.emplace_back("a.out");
+      if (inputs.size() == 1) {
+         llvm::SmallString<256> fn  = llvm::sys::path::filename(inputs[0]);
+         llvm::SmallString<256> fn2 = fn;
+         llvm::sys::path::replace_extension(fn, ".wasm");
+         output_fn = fn.str();
+         llvm::SmallString<256> res;
+         llvm::sys::path::system_temp_directory(true, res);
+         ldopts.emplace_back(std::string(std::string(res.str())+"/"+std::string(fn2.str())+".o"));
+      } else {
+         ldopts.emplace_back("a.out");
+      }
 #endif
-      ldopts.emplace_back("-o a.out");
-      output_fn = "a.out";
+      if (inputs.size() == 1) {      
+         llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
+         llvm::sys::path::replace_extension(fn, ".wasm");
+         ldopts.emplace_back("-o "+output_fn);
+         output_fn = fn.str();
+      } else {
+         ldopts.emplace_back("-o a.out");
+         output_fn = "a.out";
+      }
    }
    else {
       ldopts.emplace_back("-o "+o_opt);
@@ -733,8 +751,9 @@ static Options CreateOptions(bool add_defaults=true) {
    if (!contract_name.empty())
       abigen_contract = contract_name;
    else {
-      std::string fn = llvm::sys::path::filename(output_fn);
-      abigen_contract = fn.substr(0, fn.rfind(".wasm"));
+      llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
+      llvm::sys::path::replace_extension(fn, "");
+      abigen_contract = fn.str();
    }
 
    for ( auto resource : resources ) {
