@@ -11,8 +11,9 @@
 
 using std::numeric_limits;
 
-using namespace eosio;
 using eosio::datastream;
+using eosio::unsigned_int;
+using eosio::signed_int;
 
 static constexpr uint32_t u32min = numeric_limits<uint32_t>::min(); // 0
 static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 4294967295
@@ -121,7 +122,7 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
    ds << cui;
    ds.seekp(0);
    ds >> ui;
-   CHECK_EQUAL( cui == ui, true)
+   CHECK_EQUAL( cui, ui)
    
    silence_output(false);
 EOSIO_TEST_END
@@ -246,11 +247,15 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
    datastream<const char*> ds{datastream_buffer, buffer_size};
 
    static const signed_int csi{-42};
-   signed_int si{};
-   ds << csi;
+   signed_int a{44}, b{(1<<30)+2}, c{-35}, d{-(1<<30)-2}; // Small+, Small-, Large+, Large-
+   signed_int aa, bb, cc, dd;
+   ds << a << b << c << d;
    ds.seekp(0);
-   ds >> si;
-   CHECK_EQUAL( csi == si, true)
+   ds >> aa >> bb >> cc >> dd;
+   CHECK_EQUAL( a, aa )
+   CHECK_EQUAL( b, bb )
+   CHECK_EQUAL( c, cc )
+   CHECK_EQUAL( d, dd )
 
    silence_output(false);
 EOSIO_TEST_END
