@@ -22,7 +22,7 @@ static constexpr int64_t asset_max{ asset_mask}; //  4611686018427387903
 
 // Definitions in `eosio.cdt/libraries/eosio/asset.hpp`
 EOSIO_TEST_BEGIN(asset_type_test)
-   silence_output(false);
+   silence_output(true);
 
    static constexpr symbol s0{"A", 0};
    static constexpr symbol s1{"Z", 0};
@@ -122,24 +122,24 @@ EOSIO_TEST_BEGIN(asset_type_test)
    // Note:
    // That `assets` with negative amounts with 0 `precision` print two '-' characters
    
-   CHECK_EQUAL( (asset{0LL, sym_no_prec}.to_string()), "0. SYMBOLL" )
-   CHECK_EQUAL( (asset{-0LL, sym_no_prec}.to_string()), "0. SYMBOLL" )
-   CHECK_EQUAL( (asset{0LL, sym_prec}.to_string()),
+   CHECK_EQUAL( (asset{ 0LL, sym_no_prec}.to_string()), "0 SYMBOLL" )
+   CHECK_EQUAL( (asset{-0LL, sym_no_prec}.to_string()), "0 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 0LL, sym_prec}.to_string()),
                 "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
    CHECK_EQUAL( (asset{-0LL, sym_prec}.to_string()),
                 "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL" )
 
-   CHECK_EQUAL( (asset{1LL, sym_no_prec}.to_string()), "1. SYMBOLL" )
-   CHECK_EQUAL( (asset{-1LL, sym_no_prec}.to_string()), "--1. SYMBOLL" )
-   CHECK_EQUAL( (asset{1LL, sym_prec}.to_string()),
+   CHECK_EQUAL( (asset{ 1LL, sym_no_prec}.to_string()),  "1 SYMBOLL" )
+   CHECK_EQUAL( (asset{-1LL, sym_no_prec}.to_string()), "-1 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 1LL, sym_prec}.to_string()),
                 "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
    CHECK_EQUAL( (asset{-1LL, sym_prec}.to_string()),
-                "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
-
-   CHECK_EQUAL( (asset{asset_min, sym_no_prec}.to_string()), "--4611686018427387903. SYMBOLL" )
-   CHECK_EQUAL( (asset{asset_max, sym_no_prec}.to_string()), "4611686018427387903. SYMBOLL" )
+                "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
+   
+   CHECK_EQUAL( (asset{asset_min, sym_no_prec}.to_string()), "-4611686018427387903 SYMBOLL" )
+   CHECK_EQUAL( (asset{asset_max, sym_no_prec}.to_string()),  "4611686018427387903 SYMBOLL" )
    CHECK_EQUAL( (asset{asset_min, sym_prec}.to_string()),
-                "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
+                "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
    CHECK_EQUAL( (asset{asset_max, sym_prec}.to_string()),
                 "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
 
@@ -148,8 +148,8 @@ EOSIO_TEST_BEGIN(asset_type_test)
    // Note:
    // Uncomment once print checking has been resolved
    
-    CHECK_PRINT( "0. SYMBOLL", [&](){asset{0LL, sym_no_prec}.print();} );
-    CHECK_PRINT( "0. SYMBOLL", [&](){asset{-0LL, sym_no_prec}.print();} );
+    CHECK_PRINT( "0 SYMBOLL", [&](){asset{0LL, sym_no_prec}.print();} );
+    CHECK_PRINT( "0 SYMBOLL", [&](){asset{-0LL, sym_no_prec}.print();} );
     CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", (
        [&]() {
           asset{0LL, sym_prec}.print();
@@ -161,22 +161,22 @@ EOSIO_TEST_BEGIN(asset_type_test)
        })
     )
 
-    CHECK_PRINT( "1. SYMBOLL", [&](){asset{1LL, sym_no_prec}.print();} );
-    CHECK_PRINT( "--1. SYMBOLL", [&](){asset{-1LL, sym_no_prec}.print();} );
-    CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
+    CHECK_PRINT(  "1 SYMBOLL", [&](){asset{1LL, sym_no_prec}.print();} );
+    CHECK_PRINT( "-1 SYMBOLL", [&](){asset{-1LL, sym_no_prec}.print();} );
+    CHECK_PRINT(  "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
        [&]() {
           asset{1LL, sym_prec}.print();
        })
     )
-    CHECK_PRINT( "-0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
+    CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL", (
        [&]() {
           asset{-1LL, sym_prec}.print();
        })
     )
 
-    CHECK_PRINT( "--4611686018427387903. SYMBOLL", [&](){asset{asset_min, sym_no_prec}.print();} );
-    CHECK_PRINT( "4611686018427387903. SYMBOLL", [&](){asset{asset_max, sym_no_prec}.print();} );
-    CHECK_PRINT( "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", (
+    CHECK_PRINT( "-4611686018427387903 SYMBOLL", [&](){asset{asset_min, sym_no_prec}.print();} );
+    CHECK_PRINT(  "4611686018427387903 SYMBOLL", [&](){asset{asset_max, sym_no_prec}.print();} );
+    CHECK_PRINT(  "0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL", (
        [&]() {
           asset{asset_min, sym_prec}.print();
        })
@@ -186,8 +186,9 @@ EOSIO_TEST_BEGIN(asset_type_test)
            asset{asset_max, sym_prec}.print();
        })
     )
-   
-   for( uint8_t precision{0}; precision < 64; ++precision ) {
+
+   // Printing symbols at every level of precision
+   for( uint8_t precision{1}; precision < 64; ++precision ) {
       CHECK_EQUAL( (asset{0LL, symbol{"SYMBOLL", precision}}.to_string()),
                    (std::string(std::string("0.") + std::string(precision, '0') + std::string(" SYMBOLL"))) )
    }
@@ -393,10 +394,10 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
    // That if there is no precision, there will be odd output:
    // `extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();` // output: "0. A@1"
    
-   CHECK_PRINT( "0. A@1", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();} )
-   CHECK_PRINT( "0. A@5", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"5"}}.print();} )
-   CHECK_PRINT( "0. Z@a", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"a"}}.print();} )
-   CHECK_PRINT( "0. Z@z", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"z"}}.print();} )
+   CHECK_PRINT( "0 A@1", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();} )
+   CHECK_PRINT( "0 A@5", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"5"}}.print();} )
+   CHECK_PRINT( "0 Z@a", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"a"}}.print();} )
+   CHECK_PRINT( "0 Z@z", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"z"}}.print();} )
    
    CHECK_PRINT( "1.1 A@1", [](){extended_asset{asset{int64_t{11}, symbol{"A", 1}}, name{"1"}}.print();} )
    CHECK_PRINT( "1.1 A@5", [](){extended_asset{asset{int64_t{11}, symbol{"A", 1}}, name{"5"}}.print();} )
@@ -412,24 +413,25 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
    CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 Z@z",
       [](){extended_asset{asset{int64_t{11}, symbol{"Z", 63}}, name{"z"}}.print();} )
 
-   CHECK_PRINT( "0. AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{0}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
-   CHECK_PRINT( "0. AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{0}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
-   CHECK_PRINT( "0. ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
-   CHECK_PRINT( "0. ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
-   //CHECK_PRINT( "1.1 AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
-   //CHECK_PRINT( "1.1 AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
-   //CHECK_PRINT( "1.1 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
-   //CHECK_PRINT( "1.1 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
-
-   //CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 AAAAAAA@111111111111j",
-   //   [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
-   //CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 AAAAAAA@555555555555j",
-   //   [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
-   //CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 ZZZZZZZ@aaaaaaaaaaaaj",
-   //   [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
-   //CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 ZZZZZZZ@zzzzzzzzzzzzj",
-   //   [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
-
+   CHECK_PRINT( "0 AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{0}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
+   CHECK_PRINT( "0 AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{0}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
+   CHECK_PRINT( "0 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
+   CHECK_PRINT( "0 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
+   
+   // CHECK_PRINT( "1.1 AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
+   // CHECK_PRINT( "1.1 AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
+   // CHECK_PRINT( "1.1 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
+   // CHECK_PRINT( "1.1 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
+   
+   CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 AAAAAAA@111111111111j",
+     [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 63}}, name{"111111111111j"}}.print();} )
+   CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 AAAAAAA@555555555555j",
+     [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 63}}, name{"555555555555j"}}.print();} )
+   CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 ZZZZZZZ@aaaaaaaaaaaaj",
+     [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 63}}, name{"aaaaaaaaaaaaj"}}.print();} )
+   CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 ZZZZZZZ@zzzzzzzzzzzzj",
+     [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 63}}, name{"zzzzzzzzzzzzj"}}.print();} )
+   
    // -------------------------------
    // extended_asset operator-()const
    CHECK_EQUAL( (-extended_asset{asset{ 0, sym_no_prec}, {}}.quantity), (extended_asset{asset_no_prec, {}}.quantity) )
