@@ -175,7 +175,8 @@ EOSIO_TEST_BEGIN(name_type_test)
 
    // ----------------------------------------
    // char* write_as_string(char*, char*)const
-   char buffer[13]{};
+   static constexpr uint8_t buffer_size{32};
+   char buffer[buffer_size]{};
    
    string str{"1"};
    name{str}.write_as_string( buffer, buffer + sizeof(buffer) );

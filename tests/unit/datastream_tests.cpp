@@ -318,16 +318,14 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    
    // ----------
    // std::deque
-   // Note:
-   // Uncomment once issue has been resolved
-   // ds.seekp(0);
-   // fill(begin(datastream_buffer), end(datastream_buffer), 0);
-   // const deque<char> cd{'a','b','c','d','e','f','g','h','i' };
-   // deque<char> d{};
-   // ds << cd;
-   // ds.seekp(0);
-   // ds >> d; // Fails here
-   // CHECK_EQUAL( cd, d )
+   ds.seekp(0);
+   fill(begin(datastream_buffer), end(datastream_buffer), 0);
+   const deque<char> cd{'a','b','c','d','e','f','g','h','i' };
+   deque<char> d{};
+   ds << cd;
+   ds.seekp(0);
+   ds >> d;
+   CHECK_EQUAL( cd, d )
 
    // ---------
    // std::list

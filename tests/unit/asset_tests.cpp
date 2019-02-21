@@ -114,13 +114,6 @@ EOSIO_TEST_BEGIN(asset_type_test)
    // Printing an `asset` is limited to a precision of 63
    // This will trigger an error:
    // `asset{int64_t{1LL}, symbol{"SYMBOLL", 64}}.print();` // output: "Floating point exception: ..."
-
-   // Note:
-   // This produces odd behavior when the `precision` is 0:
-   // `asset{int64_t{1LL}, symbol{"SYMBOLL", 0}}.print();` // output: "1. SYMBOLL"
-
-   // Note:
-   // That `assets` with negative amounts with 0 `precision` print two '-' characters
    
    CHECK_EQUAL( (asset{ 0LL, sym_no_prec}.to_string()), "0 SYMBOLL" )
    CHECK_EQUAL( (asset{-0LL, sym_no_prec}.to_string()), "0 SYMBOLL" )
@@ -145,9 +138,6 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    // -----------------
    // void print()const
-   // Note:
-   // Uncomment once print checking has been resolved
-   
     CHECK_PRINT( "0 SYMBOLL", [&](){asset{0LL, sym_no_prec}.print();} );
     CHECK_PRINT( "0 SYMBOLL", [&](){asset{-0LL, sym_no_prec}.print();} );
     CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000000 SYMBOLL", (
@@ -187,7 +177,7 @@ EOSIO_TEST_BEGIN(asset_type_test)
        })
     )
 
-   // Printing symbols at every level of precision
+   // Printing symbols at every level of precision, starting at a precision of `1`
    for( uint8_t precision{1}; precision < 64; ++precision ) {
       CHECK_EQUAL( (asset{0LL, symbol{"SYMBOLL", precision}}.to_string()),
                    (std::string(std::string("0.") + std::string(precision, '0') + std::string(" SYMBOLL"))) )
@@ -324,7 +314,8 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    CHECK_ASSERT( "comparison of assets with different symbols is not allowed", (
       []() {
-         asset{{}, symbol{"SYMBOLL", 0}} == asset{{}, symbol{"LLOBMYS", 0}};
+         bool b{asset{{}, symbol{"SYMBOLL", 0}} == asset{{}, symbol{"LLOBMYS", 0}}};
+         return b;
       })
    )
 
@@ -387,13 +378,6 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
 
    // -----------------
    // void print()const
-   // Note:
-   // Uncomment once print checking has been resolved
-   
-   // Note:
-   // That if there is no precision, there will be odd output:
-   // `extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();` // output: "0. A@1"
-   
    CHECK_PRINT( "0 A@1", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"1"}}.print();} )
    CHECK_PRINT( "0 A@5", [](){extended_asset{asset{int64_t{0}, symbol{"A", 0}}, name{"5"}}.print();} )
    CHECK_PRINT( "0 Z@a", [](){extended_asset{asset{int64_t{0}, symbol{"Z", 0}}, name{"a"}}.print();} )
@@ -418,10 +402,10 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
    CHECK_PRINT( "0 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
    CHECK_PRINT( "0 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{0}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
    
-   // CHECK_PRINT( "1.1 AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
-   // CHECK_PRINT( "1.1 AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
-   // CHECK_PRINT( "1.1 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
-   // CHECK_PRINT( "1.1 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
+   CHECK_PRINT( "11 AAAAAAA@111111111111j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"111111111111j"}}.print();} )
+   CHECK_PRINT( "11 AAAAAAA@555555555555j", [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 0}}, name{"555555555555j"}}.print();} )
+   CHECK_PRINT( "11 ZZZZZZZ@aaaaaaaaaaaaj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"aaaaaaaaaaaaj"}}.print();} )
+   CHECK_PRINT( "11 ZZZZZZZ@zzzzzzzzzzzzj", [](){extended_asset{asset{int64_t{11}, symbol{"ZZZZZZZ", 0}}, name{"zzzzzzzzzzzzj"}}.print();} )
    
    CHECK_PRINT( "0.000000000000000000000000000000000000000000000000000000000000011 AAAAAAA@111111111111j",
      [](){extended_asset{asset{int64_t{11}, symbol{"AAAAAAA", 63}}, name{"111111111111j"}}.print();} )
@@ -513,17 +497,32 @@ EOSIO_TEST_BEGIN(extended_asset_type_test)
    // -------------------------------------------------------------------
    // friend bool operator<(const extended_asset&, const extended_asset&)
    CHECK_EQUAL( (extended_asset{asset_no_prec, name{}} < extended_asset{asset{ 1LL, sym_no_prec}, {}}), true )
-   CHECK_ASSERT( "type mismatch", ([&]() {extended_asset{{}, name{}} < extended_asset{{}, name{"eosioaccountj"}};}) )
+   CHECK_ASSERT( "type mismatch", (
+      [&]() {
+         bool b{extended_asset{{}, name{}} < extended_asset{{}, name{"eosioaccountj"}}};
+         return b;
+      })
+   )
 
    // --------------------------------------------------------------------
    // friend bool operator<=(const extended_asset&, const extended_asset&)
    CHECK_EQUAL( (extended_asset{asset_no_prec, name{}} <= extended_asset{asset{ 1LL, sym_no_prec}, {}}), true );
-   CHECK_ASSERT( "type mismatch", ([&]() {extended_asset{{}, name{}} <= extended_asset{{}, name{"eosioaccountj"}};}) )
+   CHECK_ASSERT( "type mismatch", (
+      [&]() {
+         bool b{extended_asset{{}, name{}} <= extended_asset{{}, name{"eosioaccountj"}}};
+         return b;
+      })
+   )
 
    // --------------------------------------------------------------------
    // friend bool operator>=(const extended_asset&, const extended_asset&)
    CHECK_EQUAL( (extended_asset{asset{ 1LL, sym_no_prec}, {}} >= extended_asset{asset_no_prec, name{}}), true );
-   CHECK_ASSERT( "type mismatch", ([&]() {extended_asset{{}, name{}} >= extended_asset{{}, name{"eosioaccountj"}};}) )
+   CHECK_ASSERT( "type mismatch", (
+      [&]() {
+         bool b{extended_asset{{}, name{}} >= extended_asset{{}, name{"eosioaccountj"}}};
+         return b;
+      })
+   )
 
    silence_output(false);
 EOSIO_TEST_END
