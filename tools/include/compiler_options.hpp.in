@@ -346,26 +346,20 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
    } else {
+      copts.emplace_back("-Wunused-command-line-argument");
 #ifdef __APPLE__
       copts.emplace_back("--target=x86_64-unknown-darwin-macho");
       copts.emplace_back("-mmacosx-version-min=10.13");
       copts.emplace_back("-fno-stack-protector");
-      copts.emplace_back("-m64");
 #else
       copts.emplace_back("--target=x86_64-unknown-linux-gnu");
-      copts.emplace_back("-m64");
 #endif
-      if (!allow_sse_opt) {
-         copts.emplace_back("-Wno-error=unused-command-line-argument");
-         copts.emplace_back("-fno-builtin");
-         copts.emplace_back("-mno-sse");
-         copts.emplace_back("-mno-sse2");
-         copts.emplace_back("-mno-mmx");
-         copts.emplace_back("-mno-3dnow");
-      }
+      copts.emplace_back("-m64");
       if (!fasm_opt) {
+         copts.emplace_back("-fno-builtin");
+         copts.emplace_back("-mstackrealign");
          copts.emplace_back("-DEOSIO_NATIVE");
-         copts.emplace_back("-DLP64");
+         copts.emplace_back("-DLLP64");
       }
    }
 
