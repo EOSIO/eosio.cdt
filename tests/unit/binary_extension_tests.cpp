@@ -3,11 +3,14 @@
  *  @copyright defined in eosio.cdt/LICENSE.txt
  */
 
+#include <string>
+
 #include <eosio/tester.hpp>
 #include <eosio/binary_extension.hpp>
 
 using std::in_place;
 using std::move;
+using std::string;
 
 using eosio::binary_extension;
 
@@ -88,7 +91,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( (be_char_value.value() == 'c'), true  )
    CHECK_EQUAL( (be_char_value.value() == 'd'), false )
 
-   binary_extension<char*> be_str_value{"abcd"};
+   binary_extension<char*> be_str_value{const_cast<char*>("abcd")};
    CHECK_EQUAL( (be_str_value.value() == "abcd"), true  )
    CHECK_EQUAL( (be_str_value.value() == "efgh"), false )
 
@@ -102,7 +105,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( (cbe_str_value.value() == "abcd"), true  )
    CHECK_EQUAL( (cbe_str_value.value() == "efgh"), false )
 
-   // ---------------------------------------------------------------------------------------
+   // -----------------------------------------------------------------------------
    // constexpr auto value_or(U&&) -> enable_if_t<is_convertible<U, T>::value, T&>&
    binary_extension<uint8_t> be_val_or{};
    uint8_t ui8_val = be_val_or.value_or(uint8_t{0x63});
@@ -112,7 +115,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    // constexpr T&& value_or()&&
    CHECK_EQUAL( binary_extension<char>{'c'}.value_or(), 'c' )
 
-   binary_extension<char*> be_val_or_rval{"abcd"};
+   binary_extension<char*> be_val_or_rval{const_cast<char*>("abcd")};
    CHECK_EQUAL( be_val_or_rval.value_or(), "abcd" )
 
    // -------------------------------------
@@ -127,7 +130,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    binary_extension<char> be_char_val_or{'c'};
    CHECK_EQUAL( be_char_val_or.value_or(), 'c' )
 
-   binary_extension<char*> be_str_val_or{"abcd"};
+   binary_extension<char*> be_str_val_or{const_cast<char*>("abcd")};
    CHECK_EQUAL( be_str_val_or.value_or(), "abcd" )
 
    // ----------------------------
@@ -144,7 +147,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( *be_char_mem_op.operator->() == 'c', true )
    CHECK_EQUAL( *be_char_mem_op.operator->() != 'd', true )
 
-   binary_extension<char*> be_str_mem_op{"abcd"};
+   binary_extension<char*> be_str_mem_op{const_cast<char*>("abcd")};
    CHECK_EQUAL( *be_str_mem_op.operator->() == "abcd", true )
    CHECK_EQUAL( *be_str_mem_op.operator->() != "efgh", true )
 
@@ -164,7 +167,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( be_char_lval_dref_op.operator*() == 'c', true )
    CHECK_EQUAL( be_char_lval_dref_op.operator*() != 'd', true )
 
-   binary_extension<char*> be_str_lval_dref_op{"abcd"};
+   binary_extension<char*> be_str_lval_dref_op{const_cast<char*>("abcd")};
    CHECK_EQUAL( be_str_lval_dref_op.operator*() == "abcd", true )
    CHECK_EQUAL( be_str_lval_dref_op.operator*() != "efgh", true )
 
@@ -184,7 +187,7 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( move(be_char_rval_dref_op.operator*()) == 'c', true )
    CHECK_EQUAL( move(be_char_rval_dref_op.operator*()) != 'd', true )
 
-   binary_extension<char*> be_str_rval_dref_op{"abcd"};
+   binary_extension<char*> be_str_rval_dref_op{const_cast<char*>("abcd")};
    CHECK_EQUAL( move(be_str_rval_dref_op.operator*()) == "abcd", true )
    CHECK_EQUAL( move(be_str_rval_dref_op.operator*()) != "efgh", true )
 
