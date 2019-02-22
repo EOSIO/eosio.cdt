@@ -401,24 +401,50 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef ONLY_LD
 static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
-      if (fuse_main_opt)
-         ldopts.emplace_back("-e main");
-      else {
-         if (fquery_opt) {
-            // fill in base entry point for query wasm
-            ldopts.emplace_back("-e apply");
-         } else
-            ldopts.emplace_back("-e apply");
-      }
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("-zstack-size="+std::string("${EOSIO_STACK_SIZE}"));
       ldopts.emplace_back("--merge-data-segments");
+      if (fquery_opt) {
+         ldopts.emplace_back("--export-table");
+         ldopts.emplace_back("-other-model");
+         ldopts.emplace_back("--only-export \"*:table\"");
+         ldopts.emplace_back("--only-export \"*:memory\"");
+         if (fuse_main_opt)
+            ldopts.emplace_back("-e main");
+         else
+            ldopts.emplace_back("-e initialize ");
+         ldopts.emplace_back("-export create_request ");
+         ldopts.emplace_back("-export decode_response ");
+         ldopts.emplace_back("-export describe_request ");
+         ldopts.emplace_back("-export describe_response ");
+         ldopts.emplace_back("--only-export \"initialize:function\"");
+         ldopts.emplace_back("--only-export \"create_request:function\"");
+         ldopts.emplace_back("--only-export \"decode_response:function\"");
+         ldopts.emplace_back("--only-export \"describe_request:function\"");
+         ldopts.emplace_back("--only-export \"describe_response:function\"");
+      } else {
+         if (fuse_main_opt)
+            ldopts.emplace_back("-e main");
+         else
+            ldopts.emplace_back("-e apply");
+         ldopts.emplace_back("--only-export \"apply:function\"");
+      }
+      ldopts.emplace_back("-lc++ -lc -leosio");
+      if (use_old_malloc_opt)
+         ldopts.emplace_back("-leosio_malloc");
+      else
+         ldopts.emplace_back("-leosio_dsm");
+
+      if (use_rt_opt || fquery_opt)
+         ldopts.emplace_back("-lrt -lsf");
+
    } else {
 #ifdef __APPLE__
       ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System");
 #endif
       ldopts.emplace_back("-static");
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
    }
 }
 #endif
@@ -449,6 +475,11 @@ static Options CreateOptions(bool add_defaults=true) {
       GetLdDefaults(ldopts);
 #endif
    }
+  
+#ifndef ONLY_LD 
+   if (fquery_opt)
+      ldopts.emplace_back("-fquery");
+#endif
 
    if (!pp_path_opt.empty())
       pp_dir = pp_path_opt;
@@ -763,38 +794,6 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fnative");
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
-#else
-   if (fnative_opt)
-      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
-   else {
-      ldopts.emplace_back("-lc++ -lc -leosio");
-      if (use_old_malloc_opt)
-         ldopts.emplace_back("-leosio_malloc");
-      else
-         ldopts.emplace_back("-leosio_dsm");
-
-      if (fquery_opt) {
-         ldopts.emplace_back("--export-table");
-         ldopts.emplace_back("-other-model");
-         ldopts.emplace_back("--only-export \"*:table\"");
-         ldopts.emplace_back("--only-export \"*:memory\"");
-         ldopts.emplace_back("-e initialize ");
-         ldopts.emplace_back("-export create_request ");
-         ldopts.emplace_back("-export decode_response ");
-         ldopts.emplace_back("-export describe_request ");
-         ldopts.emplace_back("-export describe_response ");
-         ldopts.emplace_back("--only-export \"initialize:function\"");
-         ldopts.emplace_back("--only-export \"create_request:function\"");
-         ldopts.emplace_back("--only-export \"decode_response:function\"");
-         ldopts.emplace_back("--only-export \"describe_request:function\"");
-         ldopts.emplace_back("--only-export \"describe_response:function\"");
-      } else {
-         ldopts.emplace_back("--only-export \"apply:function\"");
-      }
-
-   }
-   if ((use_rt_opt && !fnative_opt) || fquery_opt)
-      ldopts.emplace_back("-lrt -lsf");
 #endif
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
 }
