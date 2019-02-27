@@ -241,6 +241,18 @@ int main(int argc, const char **argv) {
       if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
          return -1;
       }
+
+// need to generate dSYM for mac OSX
+#ifdef __APPLE__
+      if (opts.native) {
+         if (opts.debug) {
+            if (!eosio::cdt::environment::exec_subprogram("dsymutil", std::vector<std::string>{opts.output_fn}, true)) {
+               return -1;
+            }
+         }
+      }
+#endif
    }
+
   return 0;
 }

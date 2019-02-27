@@ -147,6 +147,7 @@ static cl::opt<bool> g_opt(
       "g",
       cl::desc("debug build <ignored>"),
       cl::Hidden,
+      cl::ZeroOrMore,
       cl::cat(EosioCompilerToolCategory));
 static cl::opt<std::string> x_opt(
       "x",
@@ -337,6 +338,7 @@ struct Options {
    std::vector<std::string> ld_options;
    std::vector<std::string> abigen_options;
    std::vector<std::string> abigen_resources;
+   bool debug;
    bool native;
 };
 
@@ -459,6 +461,7 @@ static Options CreateOptions(bool add_defaults=true) {
    std::vector<std::string> ldopts;
    std::vector<std::string> agopts;
    bool link = true;
+   bool debug = false;
    std::string pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
@@ -468,6 +471,7 @@ static Options CreateOptions(bool add_defaults=true) {
 #else
    bool abigen = abigen_opt;
    abigen_output = abigen_output_opt;
+   debug = g_opt;
 #endif
 
    if (add_defaults) {
@@ -797,5 +801,5 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #endif
-   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 }
