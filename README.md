@@ -23,7 +23,7 @@ $ brew remove eosio.cdt
 #### Debian Package Install
 ```sh
 $ wget https://github.com/eosio/eosio.cdt/releases/download/v1.5.0/eosio.cdt_1.5.0-1_amd64.deb
-$ sudo apt install ./eosio.cdt-1.5.0-1_amd64.deb
+$ sudo apt install ./eosio.cdt_1.5.0-1_amd64.deb
 ```
 #### Debian Package Uninstall
 ```sh
