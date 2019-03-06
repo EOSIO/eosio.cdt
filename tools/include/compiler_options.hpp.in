@@ -420,23 +420,30 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("-other-model");
          ldopts.emplace_back("--only-export \"*:table\"");
          ldopts.emplace_back("--only-export \"*:memory\"");
-         if (fuse_main_opt)
+         if (fuse_main_opt) {
             ldopts.emplace_back("-e main");
-         else
+            ldopts.emplace_back("--only-export \"main:function\"");
+         }
+         else {
             ldopts.emplace_back("-e initialize ");
+            ldopts.emplace_back("--only-export \"initialize:function\"");
+         }
          if (fquery_server_opt)
             ldopts.emplace_back("-export run_query ");
-         ldopts.emplace_back("-export create_query_request ");
-         ldopts.emplace_back("-export decode_query_response ");
-         ldopts.emplace_back("-export describe_query_request ");
-         ldopts.emplace_back("-export describe_query_response ");
-         ldopts.emplace_back("--only-export \"initialize:function\"");
+         else {
+            ldopts.emplace_back("-export create_query_request ");
+            ldopts.emplace_back("-export decode_query_response ");
+            ldopts.emplace_back("-export describe_query_request ");
+            ldopts.emplace_back("-export describe_query_response ");
+         }
          if (fquery_server_opt)
             ldopts.emplace_back("--only-export \"run_query:function\"");
-         ldopts.emplace_back("--only-export \"create_query_request:function\"");
-         ldopts.emplace_back("--only-export \"decode_query_response:function\"");
-         ldopts.emplace_back("--only-export \"describe_query_request:function\"");
-         ldopts.emplace_back("--only-export \"describe_query_response:function\"");
+         else {
+            ldopts.emplace_back("--only-export \"create_query_request:function\"");
+            ldopts.emplace_back("--only-export \"decode_query_response:function\"");
+            ldopts.emplace_back("--only-export \"describe_query_request:function\"");
+            ldopts.emplace_back("--only-export \"describe_query_response:function\"");
+         }
       } else {
          if (fuse_main_opt)
             ldopts.emplace_back("-e main");
