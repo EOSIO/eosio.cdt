@@ -25,8 +25,10 @@
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
+#include <boost/fusion/adapted/std_tuple.hpp>
+#include <boost/fusion/include/std_tuple.hpp>
 
-#include <boost/pfr.hpp>
+#include <boost/mp11/tuple.hpp>#include <boost/pfr.hpp>
 
 #warning "<eosiolib/datastream.hpp> is deprecated use <eosio/datastream.hpp>"
 
