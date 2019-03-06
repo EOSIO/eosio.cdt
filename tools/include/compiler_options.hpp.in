@@ -416,17 +416,17 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.emplace_back("-e main");
          else
             ldopts.emplace_back("-e initialize ");
-         ldopts.emplace_back("-export startup ");
-         ldopts.emplace_back("-export create_request ");
-         ldopts.emplace_back("-export decode_response ");
-         ldopts.emplace_back("-export describe_request ");
-         ldopts.emplace_back("-export describe_response ");
+         ldopts.emplace_back("-export run_query ");
+         ldopts.emplace_back("-export create_query_request ");
+         ldopts.emplace_back("-export decode_query_response ");
+         ldopts.emplace_back("-export describe_query_request ");
+         ldopts.emplace_back("-export describe_query_response ");
          ldopts.emplace_back("--only-export \"initialize:function\"");
-         ldopts.emplace_back("--only-export \"startup:function\"");
-         ldopts.emplace_back("--only-export \"create_request:function\"");
-         ldopts.emplace_back("--only-export \"decode_response:function\"");
-         ldopts.emplace_back("--only-export \"describe_request:function\"");
-         ldopts.emplace_back("--only-export \"describe_response:function\"");
+         ldopts.emplace_back("--only-export \"run_query:function\"");
+         ldopts.emplace_back("--only-export \"create_query_request:function\"");
+         ldopts.emplace_back("--only-export \"decode_query_response:function\"");
+         ldopts.emplace_back("--only-export \"describe_query_request:function\"");
+         ldopts.emplace_back("--only-export \"describe_query_response:function\"");
       } else {
          if (fuse_main_opt)
             ldopts.emplace_back("-e main");
