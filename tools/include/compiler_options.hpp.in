@@ -23,6 +23,14 @@ static cl::opt<bool> fquery_opt(
     "fquery",
     cl::desc("Produce binaries for wasmql"),
     cl::cat(LD_CAT));
+static cl::opt<bool> fquery_server_opt(
+    "fquery-server",
+    cl::desc("Produce binaries for wasmql"),
+    cl::cat(LD_CAT));
+static cl::opt<bool> fquery_client_opt(
+    "fquery-client",
+    cl::desc("Produce binaries for wasmql"),
+    cl::cat(LD_CAT));
 static cl::opt<bool> use_old_malloc_opt(
     "use-freeing-malloc",
     cl::desc("Set the malloc implementation to the old freeing malloc"),
@@ -407,7 +415,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("-zstack-size="+std::string("${EOSIO_STACK_SIZE}"));
       ldopts.emplace_back("--merge-data-segments");
-      if (fquery_opt) {
+      if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
          ldopts.emplace_back("--only-export \"*:table\"");
@@ -416,13 +424,15 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.emplace_back("-e main");
          else
             ldopts.emplace_back("-e initialize ");
-         ldopts.emplace_back("-export run_query ");
+         if (fquery_server_opt)
+            ldopts.emplace_back("-export run_query ");
          ldopts.emplace_back("-export create_query_request ");
          ldopts.emplace_back("-export decode_query_response ");
          ldopts.emplace_back("-export describe_query_request ");
          ldopts.emplace_back("-export describe_query_response ");
          ldopts.emplace_back("--only-export \"initialize:function\"");
-         ldopts.emplace_back("--only-export \"run_query:function\"");
+         if (fquery_server_opt)
+            ldopts.emplace_back("--only-export \"run_query:function\"");
          ldopts.emplace_back("--only-export \"create_query_request:function\"");
          ldopts.emplace_back("--only-export \"decode_query_response:function\"");
          ldopts.emplace_back("--only-export \"describe_query_request:function\"");
@@ -440,7 +450,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       else
          ldopts.emplace_back("-leosio_dsm");
 
-      if (use_rt_opt || fquery_opt)
+      if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-lrt -lsf");
 
    } else {
@@ -485,6 +495,10 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef ONLY_LD 
    if (fquery_opt)
       ldopts.emplace_back("-fquery");
+   if (fquery_server_opt)
+      ldopts.emplace_back("-fquery-server");
+   if (fquery_client_opt)
+      ldopts.emplace_back("-fquery-client");
 #endif
 
    if (!pp_path_opt.empty())
