@@ -5,13 +5,18 @@
 
 namespace eosio {
   /**
-   * @addtogroup time
-   * @ingroup cpp_api
-   * @{
+   *  @defgroup time
+   *  @ingroup core
+   *  @brief Classes for working with time.
    */
+
+
+
   class microseconds {
     public:
         explicit microseconds( int64_t c = 0) :_count(c){}
+
+        /// @cond INTERNAL
         static microseconds maximum() { return microseconds(0x7fffffffffffffffll); }
         friend microseconds operator + (const  microseconds& l, const microseconds& r ) { return microseconds(l._count+r._count); }
         friend microseconds operator - (const  microseconds& l, const microseconds& r ) { return microseconds(l._count-r._count); }
@@ -29,6 +34,7 @@ namespace eosio {
         int64_t to_seconds()const { return _count/1000000; }
 
         int64_t _count;
+        /// @endcond
         EOSLIB_SERIALIZE( microseconds, (_count) )
     private:
         friend class time_point;
@@ -40,11 +46,18 @@ namespace eosio {
   inline microseconds hours(int64_t h) { return minutes(60*h); }
   inline microseconds days(int64_t d) { return hours(24*d); }
 
+  /**
+   *  High resolution time point in microseconds
+   *
+   *  @ingroup time
+   */
   class time_point {
     public:
         explicit time_point( microseconds e = microseconds() ) :elapsed(e){}
         const microseconds& time_since_epoch()const { return elapsed; }
         uint32_t            sec_since_epoch()const  { return uint32_t(elapsed.count() / 1000000); }
+
+        /// @cond INTERNAL
         bool   operator > ( const time_point& t )const                              { return elapsed._count > t.elapsed._count; }
         bool   operator >=( const time_point& t )const                              { return elapsed._count >=t.elapsed._count; }
         bool   operator < ( const time_point& t )const                              { return elapsed._count < t.elapsed._count; }
@@ -58,11 +71,15 @@ namespace eosio {
         time_point   operator - (const microseconds& m) const { return time_point(elapsed-m); }
         microseconds operator - (const time_point& m) const { return microseconds(elapsed.count() - m.elapsed.count()); }
         microseconds elapsed;
+        /// @endcond
+
         EOSLIB_SERIALIZE( time_point, (elapsed) )
   };
 
   /**
    *  A lower resolution time_point accurate only to seconds from 1970
+   *
+   *  @ingroup time
    */
   class time_point_sec
   {
@@ -82,6 +99,7 @@ namespace eosio {
         operator time_point()const { return time_point( eosio::seconds( utc_seconds) ); }
         uint32_t sec_since_epoch()const { return utc_seconds; }
 
+        /// @cond INTERNAL
         time_point_sec operator = ( const eosio::time_point& t )
         {
           utc_seconds = uint32_t(t.time_since_epoch().count() / 1000000ll);
@@ -108,13 +126,17 @@ namespace eosio {
         friend microseconds operator - ( const time_point& t, const time_point_sec& m ) { return time_point(t) - time_point(m); }
         uint32_t utc_seconds;
 
+        /// @endcond
+
         EOSLIB_SERIALIZE( time_point_sec, (utc_seconds) )
   };
 
    /**
-   * This class is used in the block headers to represent the block time
-   * It is a parameterised class that takes an Epoch in milliseconds and
-   * and an interval in milliseconds and computes the number of slots.
+   *  This class is used in the block headers to represent the block time
+   *  It is a parameterised class that takes an Epoch in milliseconds and
+   *  and an interval in milliseconds and computes the number of slots.
+   *
+   *  @ingroup time
    **/
    class block_timestamp {
       public:
@@ -148,6 +170,7 @@ namespace eosio {
             return time_point(milliseconds(msec));
          }
 
+          /// @cond INTERNAL
          void operator = (const time_point& t ) {
             set_time_point(t);
          }
@@ -161,6 +184,7 @@ namespace eosio {
          uint32_t slot;
          static constexpr int32_t block_interval_ms = 500;
          static constexpr int64_t block_timestamp_epoch = 946684800000ll;  // epoch is year 2000
+         /// @endcond
 
          EOSLIB_SERIALIZE( block_timestamp, (slot) )
       private:
@@ -178,8 +202,9 @@ namespace eosio {
       }
    }; // block_timestamp
 
-
+   /**
+    *  @ingroup time
+    */
    typedef block_timestamp block_timestamp_type;
 
-   /// @}
 } // namespace eosio

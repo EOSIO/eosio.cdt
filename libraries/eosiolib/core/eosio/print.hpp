@@ -6,28 +6,7 @@
 #include <utility>
 #include <string>
 
-/**
-   *  @defgroup console Console C++ API
-   *  @ingroup core
-   *  @brief Defines C++ wrapper to log/print text messages
-   *
-   *  @details This API uses C++ variadic templates and type detection to
-   *  make it easy to print any native type. You can even overload
-   *  the `print()` method for your own custom types.
-   *
-   *  **Example:**
-   *  ```
-   *     print( "hello world, this is a number: ", 5 );
-   *  ```
-   *
-   *  @section override Overriding Print for your Types
-   *
-   *  There are two ways to overload print:
-   *  1. implement void print( const T& )
-   *  2. implement T::print()const
-   *
-   *  @{
-   */
+
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -68,8 +47,30 @@ namespace eosio {
    };
 
    /**
+    *  @defgroup console Console
+    *  @ingroup core
+    *  @brief Defines C++ wrapper to log/print text messages
+    *
+    *  @details This API uses C++ variadic templates and type detection to
+    *  make it easy to print any native type. You can even overload
+    *  the `print()` method for your own custom types.
+    *
+    *  **Example:**
+    *  ```
+    *     print( "hello world, this is a number: ", 5 );
+    *  ```
+    *
+    *  @section override Overriding Print for your Types
+    *
+    *  There are two ways to overload print:
+    *  1. implement void print( const T& )
+    *  2. implement T::print()const
+    */
+
+   /**
     *  Prints a block of bytes in hexadecimal
     *
+    *  @ingroup console
     *  @param ptr  - pointer to bytes of interest
     *  @param size - number of bytes to print
     */
@@ -80,6 +81,7 @@ namespace eosio {
    /**
     *  Prints string to a given length
     *
+    *  @ingroup console
     *  @param ptr - a string
     *  @param len - number of chars to print
     */
@@ -90,6 +92,7 @@ namespace eosio {
    /**
     *  Prints string
     *
+    *  @ingroup console
     *  @param ptr - a null terminated string
     */
    inline void print( const char* ptr ) {
@@ -101,7 +104,7 @@ namespace eosio {
     *
     * @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value &&
                                           std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, int128_t>::value)
@@ -113,11 +116,11 @@ namespace eosio {
    }
 
    /**
-    * Prints 8-128 bit unsigned integer
+    *  Prints 8-128 bit unsigned integer
     *
-    * @param num to be printed
+    *  @param num to be printed
     */
-   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value && 
+   template <typename T, std::enable_if_t<std::is_integral<std::decay_t<T>>::value &&
                                           !std::is_signed<std::decay_t<T>>::value, int> = 0>
    inline void print( T num ) {
       if constexpr(std::is_same<T, uint128_t>::value)
@@ -129,31 +132,35 @@ namespace eosio {
    }
 
    /**
-    * Prints single-precision floating point number (i.e. float)
+    *  Prints single-precision floating point number (i.e. float)
     *
-    * @param num to be printed
+    *  @ingroup console
+    *  @param num to be printed
     */
    inline void print( float num ) { internal_use_do_not_use::printsf( num ); }
 
    /**
-    * Prints double-precision floating point number (i.e. double)
+    *  Prints double-precision floating point number (i.e. double)
     *
-    * @param num to be printed
+    *  @ingroup console
+    *  @param num to be printed
     */
    inline void print( double num ) { internal_use_do_not_use::printdf( num ); }
 
    /**
-    * Prints quadruple-precision floating point number (i.e. long double)
+    *  Prints quadruple-precision floating point number (i.e. long double)
     *
-    * @param num to be printed
+    *  @ingroup console
+    *  @param num to be printed
     */
    inline void print( long double num ) { internal_use_do_not_use::printqf( &num ); }
 
   /**
-    * Prints class object
+    *  Prints class object
     *
-    * @param t to be printed
-    * @pre T must implements print() function
+    *  @ingroup console
+    *  @param t to be printed
+    *  @pre T must implements print() function
     */
    template<typename T, std::enable_if_t<!std::is_integral<std::decay_t<T>>::value, int> = 0>
    inline void print( T&& t ) {
@@ -166,27 +173,28 @@ namespace eosio {
    }
 
    /**
-    * Prints null terminated string
+    *  Prints null terminated string
     *
-    * @param s null terminated string to be printed
+    *  @ingroup console
+    *  @param s null terminated string to be printed
     */
    inline void print_f( const char* s ) {
      internal_use_do_not_use::prints(s);
    }
 
    /**
-    * Prints formatted string. It behaves similar to C printf/
+    *  Prints formatted string. It behaves similar to C printf/
     *
-    * @tparam Arg - Type of the value used to replace the format specifier
-    * @tparam Args - Type of the value used to replace the format specifier
-    * @param s - Null terminated string with to be printed (it can contains format specifier)
-    * @param val - The value used to replace the format specifier
-    * @param rest - The values used to replace the format specifier
+    *  @tparam Arg - Type of the value used to replace the format specifier
+    *  @tparam Args - Type of the value used to replace the format specifier
+    *  @param s - Null terminated string with to be printed (it can contains format specifier)
+    *  @param val - The value used to replace the format specifier
+    *  @param rest - The values used to replace the format specifier
     *
-    * Example:
-    * @code
-    * print_f("Number of apples: %", 10);
-    * @endcode
+    *  Example:
+    *  @code
+    *  print_f("Number of apples: %", 10);
+    *  @endcode
     */
    template <typename Arg, typename... Args>
    inline void print_f( const char* s, Arg val, Args... rest ) {
@@ -228,8 +236,12 @@ namespace eosio {
 
    /**
     * Simulate C++ style streams
+    *
+    * @ingroup console
     */
    class iostream {};
+
+   /// @cond OPERATORS
 
    /**
     *  Overload c++ iostream
@@ -257,7 +269,7 @@ namespace eosio {
       return out;
    }
 
-   static iostream cout;
+   /// @endcond
 
-   /// @} consolecppapi
+   static iostream cout;
 }

@@ -15,15 +15,15 @@ namespace eosio {
   }
 
   /**
-   *  @addtogroup system System C++ API
+   *  @addtogroup system System
    *  @ingroup contracts
-   *  @brief Defines time related functions and eosio_exit 
-   *  @{
+   *  @brief Defines time related functions and eosio_exit
    */
 
    /**
     *  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
     *
+    *  @ingroup system
     *  @param code - the exit code
     *  Example:
     *
@@ -41,6 +41,7 @@ namespace eosio {
    /**
    *  Returns the time in microseconds from 1970 of the current block as a time_point
    *
+   *  @ingroup system
    *  @return time in microseconds from 1970 of the current block as a time_point
    */
    time_point current_time_point();
@@ -48,6 +49,7 @@ namespace eosio {
    /**
    *  Returns the time in microseconds from 1970 of the current block as a block_timestamp
    *
+   *  @ingroup system
    *  @return time in microseconds from 1970 of the current block as a block_timestamp
    */
    block_timestamp current_block_time();

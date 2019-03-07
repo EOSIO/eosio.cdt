@@ -4,12 +4,17 @@
 
 namespace eosio {
    /**
-    * @brief Tells the datastream to ignore this type, but allows the abi generator to add the correct type.
-    * 
+    * @defgroup ignore
+    * @ingroup core
+    * @brief Enables telling the datastream to ignore this type, but allowing abi generator to add the correct type.
+    */
+
+   /**
+    * Tells the datastream to ignore this type, but allows the abi generator to add the correct type.
+    *
+    * @ingroup ignore
     * @details Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
-    * @note This restriction will be relaxed in a later release.
-    * Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
-    * This restriction will be relaxed in a later release.
+    * @note This restriction will be relaxed in a later release. Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
     */
    template <typename T>
    struct [[eosio::ignore]] ignore {};
@@ -70,4 +75,4 @@ namespace eosio {
    inline DataStream& operator>>(DataStream& ds, ::eosio::ignore<T>&) {
      return ds;
    }
-} //ns eosio
+}

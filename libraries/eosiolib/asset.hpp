@@ -11,8 +11,8 @@
 
 namespace eosio {
   /**
-   *  Defines %CPP API for managing assets
-   *  @addtogroup asset Asset CPP API
+   *  Defines C++ API for managing assets
+   *  @addtogroup asset Asset C++ API
    *  @ingroup core
    *  @{
    */

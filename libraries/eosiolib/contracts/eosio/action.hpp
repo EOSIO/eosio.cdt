@@ -56,17 +56,14 @@ namespace eosio {
    };
 
    /**
-    *  @addtogroup action Action C++ API
+    *  @defgroup action Action
     *  @ingroup contracts
     *  @brief Defines type-safe C++ wrapers for querying action and sending action
-    *
     *  @note There are some methods from the @ref action that can be used directly from C++
-    *  @{
     */
 
    /**
-    *
-    *  @brief Interpret the action body as type T.
+    *  @ingroup action
     *  @return Unpacked action data casted as T.
     *
     *  Example:
@@ -82,7 +79,6 @@ namespace eosio {
     *  dummy_action msg = unpack_action_data<dummy_action>();
     *  @endcode
     */
-
    template<typename T>
    T unpack_action_data() {
       constexpr size_t max_stack_buffer_size = 512;
@@ -95,6 +91,7 @@ namespace eosio {
    /**
     *  Add the specified account to set of accounts to be notified
     *
+    *  @ingroup action
     *  @brief Add the specified account to set of accounts to be notified
     *  @param notify_account - name of the account to be verified
     */
@@ -108,11 +105,10 @@ namespace eosio {
     *  This helper method enables you to add multiple accounts to accounts to be notified list with a single
     *  call rather than having to call the similar C API multiple times.
     *
-    *  @note action.code is also considered as part of the set of notified accounts
-    *
-    *  @brief Notify an account for this action
+    *  @ingroup action
     *  @param notify_account account to be notified
     *  @param remaining_accounts accounts to be notified
+    *  @note action.code is also considered as part of the set of notified accounts
     *
     *  Example:
     *
@@ -129,7 +125,7 @@ namespace eosio {
    /**
     *  Verifies that @ref name exists in the set of provided auths on a action. Fails if not found.
     *
-    *  @brief Verify specified account exists in the set of provided auths
+    *  @ingroup action
     *  @param name - name of the account to be verified
     */
    inline void require_auth( name n ) {
@@ -138,7 +134,8 @@ namespace eosio {
 
    /**
    *  Returns the time in microseconds from 1970 of the publication_time
-   *  @brief Get the publication time
+   *
+   *  @ingroup action
    *  @return the time in microseconds from 1970 of the publication_time
    */
    inline time_point  publication_time() {
@@ -147,7 +144,6 @@ namespace eosio {
 
    /**
    *  Get the current receiver of the action
-   *  @brief Get the current receiver of the action
    *  @return the account which specifies the current receiver of the action
    */
    inline name current_receiver() {
@@ -157,7 +153,7 @@ namespace eosio {
    /**
     *  Copy up to length bytes of current action data to the specified location
     *
-    *  @brief Copy current action data to the specified location
+    *  @ingroup action
     *  @param msg - a pointer where up to length bytes of the current action data will be copied
     *  @param len - len of the current action data to be copied, 0 to report required size
     *  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
@@ -171,7 +167,6 @@ namespace eosio {
    /**
     * Get the length of the current action's data field. This method is useful for dynamically sized actions
     *
-    * @brief Get the length of current action's data field
     * @return the length of the current action's data field
     */
    inline uint32_t action_data_size() {
@@ -180,13 +175,12 @@ namespace eosio {
    /**
     * Packed representation of a permission level (Authorization)
     *
-    * @brief Packed representation of a permission level (Authorization)
+    * @ingroup action
     */
    struct permission_level {
       /**
        * Construct a new permission level object with actor name and permission name
        *
-       * @brief Construct a new permission level object
        * @param a - Name of the account who owns this authorization
        * @param p - Name of the permission
        */
@@ -195,27 +189,21 @@ namespace eosio {
       /**
        * Default Constructor
        *
-       * @brief Construct a new permission level object
        */
       permission_level(){}
 
       /**
        * Name of the account who owns this permission
-       *
-       * @brief Name of the account who owns this permission
        */
       name    actor;
       /**
        * Name of the permission
-       *
-       * @brief Name of the permission
        */
       name    permission;
 
       /**
        * Check equality of two permissions
        *
-       * @brief Check equality of two permissions
        * @param a - first permission to compare
        * @param b - second permission to compare
        * @return true if equal
@@ -229,11 +217,10 @@ namespace eosio {
    };
 
    /**
-    * Require the specified authorization for this action. If this action doesn't contain the specified auth, it will fail.
+    *  Require the specified authorization for this action. If this action doesn't contain the specified auth, it will fail.
     *
-    * @brief Require the specified authorization for this action
-    *
-    * @param level - Authorization to be required
+    *  @ingroup action
+    *  @param level - Authorization to be required
     */
    inline void require_auth( const permission_level& level ) {
       internal_use_do_not_use::require_auth2( level.actor.value, level.permission.value );
@@ -242,7 +229,7 @@ namespace eosio {
    /**
     *  Verifies that @ref n has auth.
     *
-    *  @brief Verifies that @ref n has auth.
+    *  @ingroup action
     *  @param n - name of the account to be verified
     */
    inline bool has_auth( name n ) {
@@ -252,7 +239,7 @@ namespace eosio {
    /**
     *  Verifies that @ref n is an existing account.
     *
-    *  @brief Verifies that @ref n is an existing account.
+    *  @ingroup action
     *  @param n - name of the account to check
     */
    inline bool is_account( name n ) {
@@ -260,51 +247,40 @@ namespace eosio {
    }
 
    /**
-    * This is the packed representation of an action along with
-    * meta-data about the authorization levels.
+    *  This is the packed representation of an action along with
+    *  meta-data about the authorization levels.
     *
-    * @brief Packed representation of an action
+    *  @ingroup action
     */
    struct action {
       /**
-       * Name of the account the action is intended for
-       *
-       * @brief Name of the account the action is intended for
+       *  Name of the account the action is intended for
        */
       name                       account;
 
       /**
-       * Name of the action
-       *
-       * @brief Name of the action
+       *  Name of the action
        */
       name                       name;
 
       /**
-       * List of permissions that authorize this action
-       *
-       * @brief List of permissions that authorize this action
+       *  List of permissions that authorize this action
        */
       std::vector<permission_level>   authorization;
 
       /**
-       * Payload data
-       *
-       * @brief Payload data
+       *  Payload data
        */
       std::vector<char>               data;
 
       /**
-       * Default Constructor
-       *
-       * @brief Construct a new action object
+       *  Default Constructor
        */
       action() = default;
 
       /**
-       * Construct a new action object with the given action struct
+       * Construct a new action object with the given permission, action receiver, action name, action struct
        *
-       * @brief Construct a new action object with the given permission, action receiver, action name, action struct
        * @tparam T  - Type of action struct, must be serializable by `pack(...)`
        * @param auth - The permissions that authorizes this action
        * @param a -  The name of the account this action is intended for (action receiver)
@@ -316,9 +292,8 @@ namespace eosio {
       :account(a), name(n), authorization(1,auth), data(pack(std::forward<T>(value))) {}
 
       /**
-       * Construct a new action object with the given action struct
+       * Construct a new action object with the given list of permissions, action receiver, action name, action struct
        *
-       * @brief Construct a new action object with the given list of permissions, action receiver, action name, action struct
        * @tparam T  - Type of action struct, must be serializable by `pack(...)`
        * @param auths - The list of permissions that authorize this action
        * @param a -  The name of the account this action is intended for (action receiver)
@@ -329,12 +304,14 @@ namespace eosio {
       action( std::vector<permission_level> auths, struct name a, struct name n, T&& value )
       :account(a), name(n), authorization(std::move(auths)), data(pack(std::forward<T>(value))) {}
 
+      /// @cond INTERNAL
+
       EOSLIB_SERIALIZE( action, (account)(name)(authorization)(data) )
+
+      /// @endcond
 
       /**
        * Send the action as inline action
-       *
-       * @brief Send the action as inline action
        */
       void send() const {
          auto serialize = pack(*this);
@@ -344,7 +321,6 @@ namespace eosio {
       /**
        * Send the action as inline context free action
        *
-       * @brief Send the action as inline context free action
        * @pre This action should not contain any authorizations
        */
       void send_context_free() const {
@@ -356,7 +332,6 @@ namespace eosio {
       /**
        * Retrieve the unpacked data as T
        *
-       * @brief Retrieve the unpacked data as T
        * @tparam T expected type of data
        * @return the action data
        */
@@ -367,9 +342,12 @@ namespace eosio {
 
    };
 
-   ///@} actioncpp api
-   //
+
+
    namespace detail {
+
+      /// @cond INTERNAL
+
       template <typename T>
       struct unwrap { typedef T type; };
 
@@ -436,7 +414,11 @@ namespace eosio {
          static_assert(sizeof...(Ts) == std::tuple_size<deduced<Action>>::value);
          return check_types<Action, 0, Ts...>::value;
       }
+
+      /// @endcond
    }
+
+
 
    template <eosio::name::raw Name, auto Action>
    struct action_wrapper {
@@ -560,14 +542,9 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define INLINE_ACTION_SENDER(...) BOOST_PP_OVERLOAD(INLINE_ACTION_SENDER,__VA_ARGS__)(__VA_ARGS__)
 
 /**
- * @addtogroup action
- * @{
- */
-
-/**
- * Send inline action
+ * Send an inline-action from inside a contract.
  *
- * @brief Send inline action
+ * @ingroup action
  * @param CONTRACT - The account this action is intended for
  * @param NAME - The name of the action
  * @param ... - The member of the action specified as ("action_member1_name", action_member1_value)("action_member2_name", action_member2_value)
@@ -575,5 +552,3 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
 BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );
-
-   /// @}

@@ -7,16 +7,17 @@
 namespace eosio {
    /**
     * @defgroup varint Variable Length Integer Type
-    * @brief Defines variable length integer type which provides more efficient serialization
     * @ingroup core
-    * @{/
+    * @ingroup types
+    * @brief Defines variable length integer type which provides more efficient serialization
     */
+
    /**
-    * Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int.
-    * It serialuzes a 32-bit unsigned integer in as few bytes as possible
-    * `varuint32` is unsigned and uses [VLQ or Base-128 encoding](https://en.wikipedia.org/wiki/Variable-length_quantity)
+    *  Variable Length Unsigned Integer. This provides more efficient serialization of 32-bit unsigned int.
+    *  It serialuzes a 32-bit unsigned integer in as few bytes as possible
+    *  `varuint32` is unsigned and uses [VLQ or Base-128 encoding](https://en.wikipedia.org/wiki/Variable-length_quantity)
     *
-    * @brief Variable Length Unsigned Integer
+    *  @ingroup varint
     */
    struct unsigned_int {
        /**
@@ -48,6 +49,8 @@ namespace eosio {
        template<typename T>
        operator T()const { return static_cast<T>(value); }
 
+       /// @cond OPERATORS
+
        /**
         * Assign 32-bit unsigned integer
         *
@@ -56,10 +59,14 @@ namespace eosio {
         */
        unsigned_int& operator=( uint32_t v ) { value = v; return *this; }
 
+       /// @endcond
+
        /**
         * Contained value
         */
        uint32_t value;
+
+       /// @cond OPERATORS
 
        /**
         * Check equality between a unsigned_int object and 32-bit unsigned integer
@@ -181,6 +188,11 @@ namespace eosio {
         */
        friend bool operator>=( const unsigned_int& i, const unsigned_int& v ) { return i.value >= v.value; }
 
+
+       /// @endcond
+
+       /// @cond IMPLEMENTATIONS
+
        /**
         *  Serialize an unsigned_int object with as few bytes as possible
         *
@@ -220,13 +232,16 @@ namespace eosio {
          vi.value = static_cast<uint32_t>(v);
          return ds;
        }
+
+       /// @endcond
    };
 
    /**
-    * Variable Length Signed Integer. This provides more efficient serialization of 32-bit signed int.
-    * It serializes a 32-bit signed integer in as few bytes as possible.
+    *  Variable Length Signed Integer. This provides more efficient serialization of 32-bit signed int.
+    *  It serializes a 32-bit signed integer in as few bytes as possible.
     *
-    * @note `varint32' is signed and uses [Zig-Zag encoding](https://developers.google.com/protocol-buffers/docs/encoding#signed-integers)
+    *  @ingroup varint
+    *  @note `varint32' is signed and uses [Zig-Zag encoding](https://developers.google.com/protocol-buffers/docs/encoding#signed-integers)
     */
    struct signed_int {
        /**
@@ -235,6 +250,8 @@ namespace eosio {
         * @param v - Source
         */
        signed_int( int32_t v = 0 ):value(v){}
+
+       /// @cond OPERATORS
 
        /**
         * Convert signed_int to primitive 32-bit signed integer
@@ -268,10 +285,14 @@ namespace eosio {
         */
        signed_int& operator++(){ ++value; return *this; }
 
+       /// @endcond
+
        /**
         * Contained value
         */
        int32_t value;
+
+       /// @cond OPERATORS
 
        /**
         * Check equality between a signed_int object and 32-bit integer
@@ -395,6 +416,9 @@ namespace eosio {
         */
        friend bool operator>=( const signed_int& i, const signed_int& v ) { return i.value >= v.value; }
 
+       /// @endcond
+
+       /// @cond IMPLEMENTATIONS
 
        /**
         *  Serialize an signed_int object with as few bytes as possible
@@ -432,9 +456,10 @@ namespace eosio {
             v |= uint32_t(uint8_t(b) & 0x7f) << by;
             by += 7;
          } while( uint8_t(b) & 0x80 );
-         vi.value = (v>>1) ^ (~(v&1)+1ull);         
+         vi.value = (v>>1) ^ (~(v&1)+1ull);
          return ds;
        }
+
+       /// @endcond
    };
-   /// @}
 }
