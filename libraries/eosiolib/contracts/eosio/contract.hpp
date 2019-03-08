@@ -7,12 +7,13 @@
 /**
  * @defgroup contract Contract
  * @ingroup contracts
+ * @ingroup types
  * @brief Defines contract type which is %base class for every EOSIO contract
- * @{
  */
 
 /**
  * Helper macros to reduce the verbosity for common contracts
+ * @ingroup contract
  */
 #define CONTRACT class [[eosio::contract]]
 #define ACTION   [[eosio::action]] void
@@ -21,7 +22,9 @@
 namespace eosio {
 
 /**
- * @brief %Base class for EOSIO contract.
+ * %Base class for EOSIO contract.
+ *
+ * @ingroup contract
  * @details %Base class for EOSIO contract. %A new contract should derive from this class, so it can make use of EOSIO_ABI macro.
  */
 class contract {

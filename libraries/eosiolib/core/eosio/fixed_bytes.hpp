@@ -12,6 +12,8 @@
 
 namespace eosio {
 
+   /// @cond IMPLEMENTATIONS
+
    template<size_t Size>
    class fixed_bytes;
 
@@ -33,20 +35,20 @@ namespace eosio {
    template<size_t Size>
    bool operator <=(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2);
 
+   /// @endcond
+
     /**
-    *  @defgroup fixed_bytes Fixed Size Byte Array
-    *  @ingroup core 
-    *  @brief Fixed size array of bytes sorted lexicographically
-    *  @ingroup types
-    *  @{
-    */
+     *  @defgroup fixed_bytes Fixed Size Byte Array
+     *  @ingroup core
+     *  @ingroup types
+     *  @brief Fixed size array of bytes sorted lexicographically
+     */
 
    /**
     *  Fixed size byte array sorted lexicographically
     *
-    *  @brief Fixed size array of bytes sorted lexicographically
+    *  @ingroup fixed_bytes
     *  @tparam Size - Size of the fixed_bytes object
-    *  @ingroup core 
     */
    template<size_t Size>
    class fixed_bytes {
@@ -93,8 +95,6 @@ namespace eosio {
 
          /**
           * Get number of words contained in this fixed_bytes object. A word is defined to be 16 bytes in size
-          *
-          * @brief Get number of words contained in this fixed_bytes object
           */
 
          static constexpr size_t num_words() { return (Size + sizeof(word_t) - 1) / sizeof(word_t); }
@@ -102,22 +102,17 @@ namespace eosio {
          /**
           * Get number of padded bytes contained in this fixed_bytes object. Padded bytes are the remaining bytes
           * inside the fixed_bytes object after all the words are allocated
-          *
-          * @brief Get number of padded bytes contained in this fixed_bytes object
           */
          static constexpr size_t padded_bytes() { return num_words() * sizeof(word_t) - Size; }
 
          /**
-         * @brief Default constructor to fixed_bytes object
-         *
-         * @details Default constructor to fixed_bytes object which initializes all bytes to zero
+         * Default constructor to fixed_bytes object which initializes all bytes to zero
          */
          constexpr fixed_bytes() : _data() {}
 
          /**
-         * @brief Constructor to fixed_bytes object from std::array of num_words() word_t types
+         * Constructor to fixed_bytes object from std::array of num_words() word_t types
          *
-         * @details Constructor to fixed_bytes object from std::array of num_words() word_t types
          * @param arr    data
          */
          fixed_bytes(const std::array<word_t, num_words()>& arr)
@@ -126,9 +121,8 @@ namespace eosio {
          }
 
          /**
-         * @brief Constructor to fixed_bytes object from std::array of Word types smaller in size than word_t
+         * Constructor to fixed_bytes object from std::array of Word types smaller in size than word_t
          *
-         * @details Constructor to fixed_bytes object from std::array of Word types smaller in size than word_t
          * @param arr - Source data
          */
          template<typename Word, size_t NumWords,
@@ -146,9 +140,8 @@ namespace eosio {
          }
 
          /**
-         * @brief Constructor to fixed_bytes object from fixed-sized C array of Word types smaller in size than word_t
+         * Constructor to fixed_bytes object from fixed-sized C array of Word types smaller in size than word_t
          *
-         * @details Constructor to fixed_bytes object from fixed-sized C array of Word types smaller in size than word_t
          * @param arr - Source data
          */
          template<typename Word, size_t NumWords,
@@ -166,13 +159,12 @@ namespace eosio {
          }
 
          /**
-         * @brief Create a new fixed_bytes object from a sequence of words
+         *  Create a new fixed_bytes object from a sequence of words
          *
-         * @details Create a new fixed_bytes object from a sequence of words
-         * @tparam FirstWord - The type of the first word in the sequence
-         * @tparam Rest - The type of the remaining words in the sequence
-         * @param first_word - The first word in the sequence
-         * @param rest - The remaining words in the sequence
+         *  @tparam FirstWord - The type of the first word in the sequence
+         *  @tparam Rest - The type of the remaining words in the sequence
+         *  @param first_word - The first word in the sequence
+         *  @param rest - The remaining words in the sequence
          */
          template<typename FirstWord, typename... Rest>
          static
@@ -197,32 +189,32 @@ namespace eosio {
 
          /**
           * Get the contained std::array
-          * @brief Get the contained std::array
           */
          const auto& get_array()const { return _data; }
 
          /**
           * Get the underlying data of the contained std::array
-          * @brief Get the underlying data of the contained std::array
           */
          auto data() { return _data.data(); }
 
+         /// @cond INTERNAL
+
          /**
           * Get the underlying data of the contained std::array
-          * @brief Get the underlying data of the contained std::array
           */
          auto data()const { return _data.data(); }
 
+         /// @endcond
+
          /**
           * Get the size of the contained std::array
-          * @brief Get the size of the contained std::array
           */
          auto size()const { return _data.size(); }
 
 
          /**
           * Extract the contained data as an array of bytes
-          * @brief Extract the contained data as an array of bytes
+          *
           * @return - the extracted data as array of bytes
           */
          std::array<uint8_t, Size> extract_as_byte_array()const {
@@ -250,11 +242,10 @@ namespace eosio {
 
             return arr;
          }
-         
+
          /**
           * Prints fixed_bytes as a hexidecimal string
           *
-          * @brief Prints fixed_bytes as a hexidecimal string
           * @param val to be printed
           */
          inline void print()const {
@@ -262,7 +253,8 @@ namespace eosio {
             printhex(static_cast<const void*>(arr.data()), arr.size());
          }
 
-         // Comparison operators
+         /// @cond OPERATORS
+
          friend bool operator == <>(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2);
 
          friend bool operator != <>(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2);
@@ -275,15 +267,18 @@ namespace eosio {
 
          friend bool operator <= <>(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2);
 
+         /// @endcond
+
       private:
 
          std::array<word_t, num_words()> _data;
     };
 
+  /// @cond IMPLEMENTATIONS
+
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 == c2, return true, otherwise false
@@ -294,9 +289,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 != c2, return true, otherwise false
@@ -307,9 +301,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 > c2, return true, otherwise false
@@ -320,9 +313,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 < c2, return true, otherwise false
@@ -333,9 +325,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 >= c2, return true, otherwise false
@@ -346,9 +337,8 @@ namespace eosio {
    }
 
    /**
-    * @brief Compares two fixed_bytes variables c1 and c2
+    * Lexicographically compares two fixed_bytes variables c1 and c2
     *
-    * @details Lexicographically compares two fixed_bytes variables c1 and c2
     * @param c1 - First fixed_bytes object to compare
     * @param c2 - Second fixed_bytes object to compare
     * @return if c1 <= c2, return true, otherwise false
@@ -358,7 +348,6 @@ namespace eosio {
       return c1._data <= c2._data;
    }
 
-   /// @} fixed_bytes
 
    using checksum160 = fixed_bytes<20>;
    using checksum256 = fixed_bytes<32>;
@@ -396,4 +385,6 @@ namespace eosio {
       d = fixed_bytes<Size>( arr );
       return ds;
    }
+
+   /// @endcond
 }

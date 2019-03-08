@@ -4,18 +4,17 @@
 
 namespace eosio {
     /**
+    *  @defgroup binary_extension Binary Extension
+    *  @ingroup core
+    *  @ingroup types
+    *  @brief Container to hold a binary payload for an extension
+    */
+
+    /**
     *  Container to hold a binary payload for an extension
     *
-    *  @defgroup binary_extension Binary Extension
-    *  @ingroup core 
-    *  @ingroup types
-    *  @{
-    */
-     /**
-    *  Binary Extension
-    *  @brief container to hold a binary payload for an extension
+    *  @ingroup binary_extension
     *  @tparam T - Contained typed
-    *  @ingroup types
     */
    template <typename T>
    class binary_extension {
@@ -70,6 +69,9 @@ namespace eosio {
             }
             return _get();
          }
+
+         /// @cond INTERNAL
+
           /** get the contained value */
          constexpr const T& value()const & {
             if (!_has_value) {
@@ -149,6 +151,8 @@ namespace eosio {
             }
          }
 
+         /// @endcond
+
        private:
          bool _has_value = false;
          typename std::aligned_storage<sizeof(T), alignof(T)>::type _data;
@@ -162,9 +166,12 @@ namespace eosio {
          }
    };
 
+   /// @cond IMPLEMENTATIONS
+
    /**
     *  Serialize a binary_extension into a stream
     *
+    *  @ingroup binary_extension
     *  @brief Serialize a binary_extension
     *  @param ds - The stream to write
     *  @param opt - The value to serialize
@@ -180,6 +187,7 @@ namespace eosio {
    /**
     *  Deserialize a binary_extension from a stream
     *
+    *  @ingroup binary_extension
     *  @brief Deserialize a binary_extension
     *  @param ds - The stream to read
     *  @param opt - The destination for deserialized value
@@ -195,5 +203,7 @@ namespace eosio {
      }
      return ds;
    }
+
+   /// @endcond
 
 } // namespace eosio

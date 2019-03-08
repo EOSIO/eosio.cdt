@@ -10,16 +10,16 @@
 
 namespace eosio {
   /**
-   *  Defines %CPP API for managing assets
-   *  @addtogroup asset Asset CPP API
-   *  @ingroup core 
-   *  @{
+   *  @defgroup asset Asset
+   *  @ingroup core
+   *  @brief Defines C++ API for managing assets
    */
 
    /**
-    * @struct Stores information for owner of asset
+    *  Stores information for owner of asset
+    *
+    *  @ingroup asset
     */
-
    struct asset {
       /**
        * The amount of the asset
@@ -76,6 +76,8 @@ namespace eosio {
          amount = a;
          eosio::check( is_amount_within_range(), "magnitude of asset amount must be less than 2^62" );
       }
+
+      /// @cond OPERATORS
 
       /**
        * Unary minus operator
@@ -145,7 +147,7 @@ namespace eosio {
       }
 
       /**
-       * @brief Multiplication assignment operator, with a number
+       * Multiplication assignment operator, with a number
        *
        * @details Multiplication assignment operator. Multiply the amount of this asset with a number and then assign the value to itself.
        * @param a - The multiplier for the asset's amount
@@ -313,6 +315,8 @@ namespace eosio {
          return a.amount >= b.amount;
       }
 
+      /// @endcond
+
       /**
        * %asset to std::string
        *
@@ -365,7 +369,9 @@ namespace eosio {
    };
 
   /**
-   * @struct Extended asset which stores the information of the owner of the asset
+   *  Extended asset which stores the information of the owner of the asset
+   *
+   *  @ingroup asset
    */
    struct extended_asset {
       /**
@@ -407,38 +413,20 @@ namespace eosio {
          ::eosio::print("@", contract);
       }
 
-       /**
-       *  Unary minus operator
-       *
-       *  @return extended_asset - New extended asset with its amount is the negative amount of this extended asset
-       */
+      /// @cond OPERATORS
+
+      // Unary minus operator
       extended_asset operator-()const {
          return {-quantity, contract};
       }
 
-      /**
-       * @brief Subtraction operator
-       *
-       * @details Subtraction operator. This subtracts the amount of the extended asset.
-       * @param a - The extended asset to be subtracted
-       * @param b - The extended asset used to subtract
-       * @return extended_asset - New extended asset as the result of subtraction
-       * @pre The owner of both extended asset need to be the same
-       */
+      // Subtraction operator
       friend extended_asset operator - ( const extended_asset& a, const extended_asset& b ) {
          eosio::check( a.contract == b.contract, "type mismatch" );
          return {a.quantity - b.quantity, a.contract};
       }
 
-      /**
-       * @brief Addition operator
-       *
-       * @details Addition operator. This adds the amount of the extended asset.
-       * @param a - The extended asset to be added
-       * @param b - The extended asset to be added
-       * @return extended_asset - New extended asset as the result of addition
-       * @pre The owner of both extended asset need to be the same
-       */
+      // Addition operator
       friend extended_asset operator + ( const extended_asset& a, const extended_asset& b ) {
          eosio::check( a.contract == b.contract, "type mismatch" );
          return {a.quantity + b.quantity, a.contract};
@@ -487,8 +475,8 @@ namespace eosio {
          return a.quantity >= b.quantity;
       }
 
+      /// @endcond
+
       EOSLIB_SERIALIZE( extended_asset, (quantity)(contract) )
    };
-
-/// @} asset type
 }
