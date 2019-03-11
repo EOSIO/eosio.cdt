@@ -3,6 +3,7 @@
 #include <variant>
 #include <set>
 #include <stack>
+#include <string_view>
 #include "check.hpp"
 
 namespace eosio {
@@ -93,6 +94,11 @@ namespace eosio {
             size += strlen(s)-1;
          }
 
+         rope(std::string_view s = "") {
+            root = new rope_node(concat_t{new rope_node(str_t{s.begin(),s.size()}), nullptr});
+            size += s.size();
+         }
+
          template <size_t N> 
          inline constexpr void append(const char (&s)[N]) {
             append(s, N);
@@ -173,6 +179,10 @@ namespace eosio {
             }
             ret[size] = '\0';
             return ret;
+         }
+
+         std::string_view sv()const {
+            return {c_str(), size};
          }
    };
 } // ns eosio
