@@ -54,6 +54,7 @@ compiler options:
   -fno-lto                 - Disable LTO
   -fno-post-pass           - Don't run post processing pass
   -fno-stack-first         - Don't set the stack first in memory
+  -stack-size              - Specifies the maximum stack size for the contract
   -fstack-protector        - Enable stack protectors for functions potentially vulnerable to stack smashing
   -fstack-protector-all    - Force the usage of stack protectors for all functions
   -fstack-protector-strong - Use a strong heuristic to apply stack protectors to functions
