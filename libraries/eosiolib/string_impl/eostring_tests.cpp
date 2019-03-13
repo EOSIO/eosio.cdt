@@ -271,12 +271,11 @@ int main()
    assert(--iter == &eostr[eostr.size()-1]);
    }
 
-   // BIG PROBLEMS HERE
    //// bool eostring::empty() const
-   // eostring eostr{};
-   // assert(eostr.empty() == true);
-   // eostr += 'c';
-   // assert(eostr.empty() == false);
+   eostring eostr{};
+   assert(eostr.empty() == true);
+   eostr += 'c';
+   assert(eostr.empty() == false);
 
    //// size_t eostring::size() const
    {
@@ -360,7 +359,105 @@ int main()
    assert((eostr0 >= eostr0) == true);
    assert((eostr1 >= eostr1) == true);
    assert((eostr0 >= eostr1) == false);
-   }  
+   }
+
+   //// void eostring::clear()
+   {
+   eostring eostr{"abcdef"};
+   assert(eostr.empty() == false);
+   eostr.clear();
+   assert(eostr.empty() == true);
+   }
+
+   //// void reserve(size_t n)
+   {
+   eostring eostr{"abcdef"};
+   assert(eostr.capacity() == 6);
+   eostr.reserve(10);
+   assert(eostr.capacity() == 10);
+   }
+
+   //// void shrink_to_fit()
+   {
+   eostring eostr{"abcdef"};
+   assert(eostr.size()     == 6);
+   assert(eostr.capacity() == 6);
+   eostr.reserve(10);
+   assert(eostr.size()     == 6);
+   assert(eostr.capacity() == 10);
+
+   eostr += 'g';
+   assert(eostr.size()     == 7);
+   eostr.shrink_to_fit();
+   assert(eostr.size()     == 7);
+   assert(eostr.capacity() == 7);
+   }
+
+   //// eostring& insert(size_t pos, const eostring& s)
+   {
+   eostring eostr{"abc"};
+   eostring eostr_ins{"defghi"};
+   assert(strcmp(eostr.data(), "abc") == 0);
+
+   cout << "size:     " << eostr.size()     << endl;
+   cout << "capacity: " << eostr.capacity() << endl;
+   for (int i = 0; i < 10; ++i)
+      cout << eostr.data()[i] << ' ';
+   cout << endl;
+   
+   eostr.insert(2, eostr_ins);
+
+   cout << "size:     " << eostr.size()     << endl;
+   cout << "capacity: " << eostr.capacity() << endl;
+   for (int i = 0; i < 10; ++i)
+      cout << eostr.data()[i] << ' ';
+   cout << endl;
+   
+   assert(strcmp(eostr.data(), "abcdef") == 0);
+   }
+
+   //// eostring& erase(size_t pos = 0, size_t len = npos)
+
+
+   //// void push_back(char c)
+
+
+   //// void pop_back()
+
+
+   //// eostring& append(const eostring& s)
+
+
+   //// eostring& operator+=(const eostring& s)
+   {
+   eostring eostr{"a"};
+   assert(eostr.size() == 1);
+   eostr += "b";
+   assert(eostr.size() == 2);
+   assert(strcmp(eostr.data(), "ab") == 0);
+   }
+   
+   {
+   eostring eostr{"abc"};
+   assert(eostr.size() == 3);
+   eostr += "def";
+   assert(eostr.size() == 6);
+   assert(strcmp(eostr.data(), "abcdef") == 0);
+   }
+
+   //// eostring& replace (size_t pos,  size_t len,  const eostring& s)
+
+
+   //// eostring substr (size_t pos = 0, size_t len = npos) const
+
+
+   //// size_t copy (char* s, size_t len, size_t pos = 0) const
+
+
+   //// void resize (size_t n)
+
+
+   //// void swap (eostring& str)
 
    return 0;
 }

@@ -45,23 +45,19 @@ public:
    size_t max_size() const;
    size_t capacity() const;
    void clear();
-   // assign
-   // shrink_to_fit
-   // reserve
-   // insert
-   // erase
-   // push_back
-   // pop_back
-   // append
-   // operator+=
-   // compare
-   // starts_with
-   // ends_with
-   // replace
-   // substr
-   // copy
-   // resize
-   // swap
+   void reserve(size_t n);
+   void shrink_to_fit();
+   eostring& insert(size_t pos, const eostring& s);
+   // eostring& erase(size_t pos = 0, size_t len = npos);
+   // void push_back(char c);
+   // void pop_back();
+   // eostring& append(const eostring& s);
+   eostring& operator+=(const eostring& rhs);
+   // eostring& replace (size_t pos,  size_t len,  const eostring& s);
+   // eostring substr (size_t pos = 0, size_t len = npos) const;
+   // size_t copy (char* s, size_t len, size_t pos = 0) const;
+   // void resize (size_t n);
+   // void swap (eostring& str);
 
    friend bool operator+ (const eostring& lhs, const eostring& rhs);
    friend bool operator==(const eostring& lhs, const eostring& rhs);

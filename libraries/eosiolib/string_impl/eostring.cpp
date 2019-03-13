@@ -12,8 +12,7 @@ using namespace std;
 
 eostring::eostring()
    : _size{0}, _capacity{0}, _begin{nullptr}
-{
-}
+{ }
 
 // TODO
 // Bucky's template compile-time constructor
@@ -142,6 +141,14 @@ eostring& eostring::operator=(char c)
 }
 
 eostring& eostring::operator+=(char c) {
+   if(!_size) {
+      _size = 2;
+      _capacity = 2;
+      _begin = new char[_size+1];
+      memcpy(_begin, &c, 1);
+      _begin[_size] = '\0';
+   }
+   
    if((c) && (_size < npos)) { // Does `c` really need to be valid?
       _begin[_size] = c;
       ++_size;
@@ -275,40 +282,111 @@ bool operator!=(const eostring& lhs, const eostring& rhs) {
    return !(lhs == rhs);
 }
 
-// void eostring::clear()
-// {
-//    if(_size <= _sso_max)
-//    {
-//       memset(_begin, '\0', _sso_max);
-//       _size = 0;
-//       _begin = _sso_str;
+void eostring::clear()
+{
+   _size = 0;
+   _capacity = 0;
+   delete[] _begin;
+}
+
+void eostring::reserve(size_t n) {
+   if(n >= _capacity)
+      _capacity = n;
+   else
+      return;
+}
+void eostring::shrink_to_fit() {
+   if(_capacity > _size) {
+      _capacity = _size;
+      char* begin{new char[_size+1]};
+      memcpy(begin, _begin, _size);
+      _begin[_size] = '\0';
+
+      delete[] _begin;
+      _begin = begin;
+   }
+   else
+      return;
+}
+
+eostring& eostring::insert(size_t pos, const eostring& s) {
+   assert(pos >= 0);
+   assert(pos <= _size-1);
+   
+   char* begin = new char[_size + s._size];
+   _size += s._size;
+   _capacity += _size;
+   memcpy(begin, _begin, pos+1);
+   memcpy(begin+pos, s._begin, s._size);
+
+   delete[] _begin;
+   _begin = begin;
+   _begin[_size] = '\0';
+   return *this;
+}
+
+//// eostring& erase(size_t pos = 0, size_t len = npos)
+
+
+//// void push_back(char c)
+
+
+//// void pop_back()
+
+
+//// eostring& append(const eostring& s)
+
+eostring& eostring::operator+=(const eostring& rhs) {
+   for (size_t i{0}; i < rhs.size(); ++i) {
+      *this += rhs[i];
+   }
+   return *this;
+}
+
+//// eostring& operator+=(const eostring& s)
+
+
+//// eostring& replace (size_t pos,  size_t len,  const eostring& s)
+
+
+//// eostring substr (size_t pos = 0, size_t len = npos) const
+
+
+//// size_t copy (char* s, size_t len, size_t pos = 0) const
+
+
+//// void resize (size_t n)
+
+
+//// void swap (eostring& str)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// eostring& operator+=(eostring& lhs, const eostring& rhs) {
+//    for (size_t i{0}; i < rhs.size(); ++i) {
+//       lhs += rhs[i];
 //    }
-//    else
-//    {
-//       delete[] _begin;
-//       memset(_begin, '\0', _sso_max);
-//       _begin = _sso_str;
-//       _size = 0;
-//    }
+//    return lhs;
 // }
 
-// assign
-// reserve
-// shrink_to_fit
-// insert
-// forward_iter insert
-// forward_iter erase
-// void push_back
-// void push_back
-// void pop_back
-// append
-// operator+=
-// compare
-// starts_with
-// ends_with
-// replace
-// substr
-// copy
-// resize
-// resize
-// swap
+// eostring operator+(const eostring& lhs, const eostring& rhs) {
+//     eostring res{lhs};
+//     res += rhs;
+//     return res;
+// }
