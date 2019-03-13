@@ -58,7 +58,7 @@ namespace eosio {
    /**
     *  @defgroup action Action
     *  @ingroup contracts
-    *  @brief Defines type-safe C++ wrapers for querying action and sending action
+    *  @brief Defines type-safe C++ wrappers for querying action and sending action
     *  @note There are some methods from the @ref action that can be used directly from C++
     */
 
@@ -418,8 +418,21 @@ namespace eosio {
       /// @endcond
    }
 
-
-
+   /**
+    * Wrapper for an action object. 
+    *
+    * @brief Used to wrap an a particular action to simplify the process of other contracts sending inline actions to "wrapped" action. 
+    * Example:
+    * @code
+    * // defined by contract writer of the actions
+    * using transfer act = action_wrapper<"transfer"_n, &token::transfer>;( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
+    * // usage by different contract writer
+    * transfer_act{"eosio.token"_n, {st.issuer, "active"_n}}.send(st.issuer, to, quantity, memo);
+    * // or
+    * transfer_act trans_action{ "eosio.token"_n, {st.issuer, "active"_n}};
+    * trans_action.send(st.issuer, to, quantity, memo);
+    * @endcode
+    */
    template <eosio::name::raw Name, auto Action>
    struct action_wrapper {
       template <typename Code>
@@ -544,11 +557,29 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 /**
  * Send an inline-action from inside a contract.
  *
- * @ingroup action
- * @param CONTRACT - The account this action is intended for
- * @param NAME - The name of the action
- * @param ... - The member of the action specified as ("action_member1_name", action_member1_value)("action_member2_name", action_member2_value)
+ * @brief A macro to simplify calling inline actions
+ * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling new actions from existing actions 
+ * EOSIO supports two communication models, inline and deferred. Inline actions are executed as part of the current transaction. This macro
+ * creates an @ref action using the supplied parameters and automatically calls action.send() on this newly created action.
+ *
+ * Example:
+ * @code
+ * SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
+ * @endcode
+ * 
+ * The example above is taken from eosio.token. 
+ * This example:  
+ *       uses the passed in, dereferenced `this` pointer, to call this.get_self() i.e. the eosio.token contract; 
+ *       calls the eosio.token::transfer() action; 
+ *       uses the active permission of the "issuer" account;
+ *       uses parameters st.issuer, to, quantity and memo. 
+ * This macro creates an action struct used to 'send()' (call) transfer(account_name from, account_name to, asset quantity, string memo)
+ * 
+ * @param CONTRACT - The contract to call, which contains the action being sent, maps to the @ref account
+ * @param NAME - The name of the action to be called, maps to a @ref name
+ * @param ... - The authorising permission, maps to an @ref authorization , followed by the parameters of the action, maps to a @ref data.
  */
+
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
 BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );
