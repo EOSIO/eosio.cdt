@@ -15,7 +15,7 @@ static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 
 /**
  * @defgroup core Core API
- * @brief C++ Core API for chain-agnostic smart-contract functionality 
+ * @brief C++ Core API for chain-agnostic smart-contract functionality
  */
 
  /**

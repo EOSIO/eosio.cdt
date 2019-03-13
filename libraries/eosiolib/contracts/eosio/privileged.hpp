@@ -32,14 +32,14 @@ namespace eosio {
    }
 
   /**
-   * @addtogroup privileged Privileged C++ API
-   * @ingroup contracts
-   * Defines C++ Privileged API
-   * @{
+   *  @defgroup privileged Privileged
+   *  @ingroup contracts
+   *  @brief Defines C++ Privileged API
    */
 
    /**
-    * Tunable blockchain configuration that can be changed via consensus
+    *  Tunable blockchain configuration that can be changed via consensus
+    *  @ingroup privileged
     */
    struct blockchain_parameters {
 
@@ -160,73 +160,79 @@ namespace eosio {
    };
 
    /**
-    * @brief Set the blockchain parameters
-    * Set the blockchain parameters
-    * @param params - New blockchain parameters to set
+    *  Set the blockchain parameters
+    *
+    *  @ingroup privileged
+    *  @param params - New blockchain parameters to set
     */
    void set_blockchain_parameters(const eosio::blockchain_parameters& params);
 
    /**
-    * @brief Retrieve the blolckchain parameters
-    * Retrieve the blolckchain parameters
-    * @param params - It will be replaced with the retrieved blockchain params
+    *  Retrieve the blolckchain parameters
+    *
+    *  @ingroup privileged
+    *  @param params - It will be replaced with the retrieved blockchain params
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
 
     /**
-    * Get the resource limits of an account
+    *  Get the resource limits of an account
     *
-    * @param account - name of the account whose resource limit to get
-    * @param ram_bytes -  output to hold retrieved ram limit in absolute bytes
-    * @param net_weight - output to hold net limit
-    * @param cpu_weight - output to hold cpu limit
+    *  @ingroup privileged
+    *  @param account - name of the account whose resource limit to get
+    *  @param ram_bytes -  output to hold retrieved ram limit in absolute bytes
+    *  @param net_weight - output to hold net limit
+    *  @param cpu_weight - output to hold cpu limit
     */
    inline void get_resource_limits( name account, int64_t& ram_bytes, int64_t& net_weight, int64_t& cpu_weight ) {
       internal_use_do_not_use::get_resource_limits( account.value, &ram_bytes, &net_weight, &cpu_weight );
    }
 
    /**
-    * Set the resource limits of an account
+    *  Set the resource limits of an account
     *
-    * @param account - name of the account whose resource limit to be set
-    * @param ram_bytes - ram limit in absolute bytes
-    * @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
-    * @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
+    *  @ingroup privileged
+    *  @param account - name of the account whose resource limit to be set
+    *  @param ram_bytes - ram limit in absolute bytes
+    *  @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
+    *  @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
     */
    inline void set_resource_limits( name account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight ) {
       internal_use_do_not_use::set_resource_limits( account.value, ram_bytes, net_weight, cpu_weight );
    }
 
    /**
-    * Proposes a schedule change
+    *  Proposes a schedule change
     *
-    * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
-    * @param producers - vector of producer keys 
+    *  @ingroup privileged
+    *  @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
+    *  @param producers - vector of producer keys
     *
-    * @return an optional value of the version of the new proposed schedule if successful
+    *  @return an optional value of the version of the new proposed schedule if successful
     */
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods );
 
    /**
-    * Check if an account is privileged
+    *  Check if an account is privileged
     *
-    * @param account - name of the account to be checked
-    * @return true if the account is privileged
-    * @return false if the account is not privileged
+    *  @ingroup privileged
+    *  @param account - name of the account to be checked
+    *  @return true if the account is privileged
+    *  @return false if the account is not privileged
     */
    inline bool is_privileged( name account ) {
       return internal_use_do_not_use::is_privileged( account.value );
    }
 
    /**
-    * Set the privileged status of an account
+    *  Set the privileged status of an account
     *
-    * @param account - name of the account whose privileged account to be set
-    * @param is_priv - privileged status
+    *  @ingroup privileged
+    *  @param account - name of the account whose privileged account to be set
+    *  @param is_priv - privileged status
     */
    inline void set_privileged( name account, bool is_priv ) {
       internal_use_do_not_use::set_privileged( account.value, is_priv );
    }
 
-   ///@}
 }

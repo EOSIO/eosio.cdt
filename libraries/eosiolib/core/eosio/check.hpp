@@ -8,7 +8,7 @@
 #include <string>
 
 namespace eosio {
-   
+
    namespace internal_use_do_not_use {
       extern "C" {
          __attribute__((eosio_wasm_import))
@@ -23,19 +23,17 @@ namespace eosio {
    }
 
    /**
-    *  @addtogroup system System C++ API
+    *  @defgroup system System
     *  @ingroup core
-    *  @brief Defines wrappers over eosio_assert 
-    *
-    *  @{
+    *  @brief Defines wrappers over eosio_assert
     */
 
    /**
+    *  Assert if the predicate fails and use the supplied message.
     *
-    *  @brief Assert if the predicate fails and use the supplied message.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  eosio::check(a == b, "a does not equal b");
     *  @endcode
@@ -47,11 +45,11 @@ namespace eosio {
    }
 
     /**
+    *  Assert if the predicate fails and use the supplied message.
     *
-    *  @brief Assert if the predicate fails and use the supplied message.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  eosio::check(a == b, "a does not equal b");
     *  @endcode
@@ -63,11 +61,11 @@ namespace eosio {
    }
 
    /**
+    *  Assert if the predicate fails and use the supplied message.
     *
-    *  @brief Assert if the predicate fails and use the supplied message.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  eosio::check(a == b, "a does not equal b");
     *  @endcode
@@ -79,11 +77,11 @@ namespace eosio {
    }
 
    /**
+    *  Assert if the predicate fails and use a subset of the supplied message.
     *
-    *  @brief Assert if the predicate fails and use a subset of the supplied message.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  const char* msg = "a does not equal b b does not equal a";
     *  eosio::check(a == b, "a does not equal b", 18);
@@ -96,11 +94,11 @@ namespace eosio {
    }
 
    /**
+    *  Assert if the predicate fails and use a subset of the supplied message.
     *
-    *  @brief Assert if the predicate fails and use a subset of the supplied message.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  std::string msg = "a does not equal b b does not equal a";
     *  eosio::check(a == b, msg, 18);
@@ -113,11 +111,11 @@ namespace eosio {
    }
 
     /**
+    *  Assert if the predicate fails and use the supplied error code.
     *
-    *  @brief Assert if the predicate fails and use the supplied error code.
+    *  @ingroup system
     *
     *  Example:
-    *
     *  @code
     *  eosio::check(a == b, 13);
     *  @endcode
@@ -128,4 +126,3 @@ namespace eosio {
       }
    }
 } // namespace eosio
-/// @}

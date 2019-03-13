@@ -6,46 +6,56 @@
 namespace eosio {
 
   /**
-   *  @defgroup producer_key
-   *  @ingroup  contracts
-   *  @{
+   *  @defgroup producer_key Producer Key
+   *  @ingroup contracts
+   *  @ingroup types
+   *  @brief Maps producer with its signing key, used for producer schedule
    */
 
   /**
-   * Maps producer with its signing key, used for producer schedule
+   *  Maps producer with its signing key, used for producer schedule
    *
-   * @brief Maps producer with its signing key
+   *  @ingroup producer_key
    */
   struct producer_key {
 
     /**
-     * Name of the producer
+     *  Name of the producer
      *
-     * @brief Name of the producer
+     *  @ingroup producer_key
      */
     name             producer_name;
 
     /**
-     * Block signing key used by this producer
+     *  Block signing key used by this producer
      *
-     * @brief Block signing key used by this producer
+     *  @ingroup producer_key
      */
     public_key       block_signing_key;
+
+    /// @cond OPERATORS
 
     friend constexpr bool operator < ( const producer_key& a, const producer_key& b ) {
       return a.producer_name < b.producer_name;
     }
 
+    /// @endcond
+
     EOSLIB_SERIALIZE( producer_key, (producer_name)(block_signing_key) )
   };
 
    /**
-   *  @defgroup producer_schedule
-   *  @ingroup contracts 
-   *  @brief Defines both the order, account name, and signing keys of the active set of producers.
-   *
-   *  @{
-   */
+    *  @defgroup producer_schedule Producer Schedule
+    *  @ingroup contracts
+    *  @ingroup types
+    *  @brief Defines both the order, account name, and signing keys of the active set of producers.
+    */
+
+   /**
+    * Defines both the order, account name, and signing keys of the active set of producers.
+    *
+    * @ingroup producer_schedule
+    */
    struct producer_schedule {
       /**
        * Version number of the schedule. It is sequentially incrementing version number
@@ -57,13 +67,11 @@ namespace eosio {
        */
       std::vector<producer_key>    producers;
    };
-   /// @} producer_schedule
 
    /**
-    *  @ingroup contracts 
-    *  @brief Returns back the list of active producer names.
+    *  Returns back the list of active producer names.
     *
-    *  @{
+    *  @ingroup producer_schedule
     */
    std::vector<name> get_active_producers();
 

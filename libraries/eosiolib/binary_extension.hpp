@@ -33,6 +33,9 @@
          {
             ::new (&_data) T(std::move(ext));
          }
+
+         /// @cond IMPLEMENTATIONS
+
           /** construct contained type in place */
          template <typename... Args>
          constexpr binary_extension( std::in_place_t, Args&&... args )
@@ -40,6 +43,8 @@
          {
             ::new (&_data) T(std::forward<Args>(args)...);
          }
+
+         /// @endcond
 
          ~binary_extension() { reset(); }
 
@@ -60,6 +65,7 @@
 
          /** test if container is holding a value */
          constexpr explicit operator bool()const { return _has_value; }
+
          /** test if container is holding a value */
          constexpr bool has_value()const { return _has_value; }
 
@@ -78,9 +84,14 @@
             return _get();
          }
 
-          /** get the contained value or a user specified default
-          * @pre def should be convertible to type T
-          * */
+
+          /// @cond OPERATORS
+
+        /**
+         * Get the contained value or a user specified default
+         *
+         * @pre def should be convertible to type T
+         **/
          template <typename U>
          constexpr auto value_or( U&& def ) -> std::enable_if_t<std::is_convertible<U, T>::value, T&>& {
             if (_has_value)
@@ -130,6 +141,10 @@
             return std::move(_get());
          }
 
+         /// @endcond
+
+         /// @cond IMPLEMENTATIONS
+
          template<typename ...Args>
          T& emplace(Args&& ... args)& {
             if (_has_value) {
@@ -148,6 +163,8 @@
                _has_value = false;
             }
          }
+
+         /// @endcond
 
          /**
            *  Serialize a binary_extension into a stream
@@ -182,6 +199,8 @@
             }
             return ds;
          }
+
+
 
        private:
          bool _has_value = false;

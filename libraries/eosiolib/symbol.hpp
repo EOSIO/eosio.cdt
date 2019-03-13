@@ -17,9 +17,9 @@
 namespace eosio {
 
   /**
-   *  @addtogroup symbol Symbol CPP API
+   *  @addtogroup symbol Symbol C++ API
    *  @ingroup core
-   *  @brief Defines %CPP API for managing symbols
+   *  @brief Defines C++ API for managing symbols
    *  @{
    */
 

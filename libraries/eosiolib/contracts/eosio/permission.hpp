@@ -34,6 +34,7 @@ namespace eosio {
 
    /**
    *  Checks if a transaction is authorized by a provided set of keys and permissions
+   *  @ingroup permission
    *
    *  @param trx_data - pointer to the start of the serialized transaction
    *  @param trx_size - size (in bytes) of the serialized transaction
@@ -44,7 +45,7 @@ namespace eosio {
    *
    *  @return 1 if the transaction is authorized, 0 otherwise
    */
-   bool 
+   bool
    check_transaction_authorization( const char* trx_data,     uint32_t trx_size,
                                     const char* pubkeys_data, uint32_t pubkeys_size,
                                     const char* perms_data,   uint32_t perms_size ) {
@@ -53,6 +54,7 @@ namespace eosio {
 
    /**
    *  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
+   *  @ingroup permission
    *
    *  @param account - the account owner of the permission
    *  @param permission - the name of the permission to check for authorization
@@ -77,14 +79,15 @@ namespace eosio {
 
 
   /**
-   * @addtogroup permission Permission C++ API
-   * @brief Defines C++ API functions for validating authorization of keys and permissions
+   * @defgroup permission Permission
    * @ingroup contracts
-   * @{
+   * @ingroup types
+   * @brief Defines C++ API functions for validating authorization of keys and permissions
    */
 
    /**
     *  Checks if a transaction is authorized by a provided set of keys and permissions
+    *  @ingroup permission
     *
     *  @param trx - the transaction for which to check authorizations
     *  @param provided_permissions - the set of permissions which have authorized the transaction (empty permission name acts as wildcard)
@@ -125,6 +128,8 @@ namespace eosio {
 
    /**
     *  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
+    *
+    *  @ingroup permission
     *
     *  @param account    - the account owner of the permission
     *  @param permission - the permission name to check for authorization
@@ -171,6 +176,8 @@ namespace eosio {
    /**
     *  Returns the last used time of a permission
     *
+    *  @ingroup permission
+    *
     *  @param account    - the account owner of the permission
     *  @param permission - the name of the permission
     *
@@ -185,6 +192,8 @@ namespace eosio {
 
    /**
     *  Returns the creation time of an account
+    *
+    *  @ingroup permission
     *
     *  @param account - the account
     *

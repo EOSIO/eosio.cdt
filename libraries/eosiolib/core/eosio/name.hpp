@@ -20,14 +20,17 @@ namespace eosio {
 
    /**
     * @defgroup name
-    * @ingroup core 
-    * @brief EOSIO Types
-    * @{
+    * @ingroup core
+    * @ingroup types
+    * @brief EOSIO Name Type
     */
+
    /**
     * Wraps a %uint64_t to ensure it is only passed to methods that expect a %name.
     * Ensures value is only passed to methods that expect a %name and that no mathematical
     * operations occur.  Also enables specialization of print
+    *
+    * @ingroup name
     */
    struct name {
    public:
@@ -229,6 +232,8 @@ namespace eosio {
         internal_use_do_not_use::printn(value);
       }
 
+      /// @cond INTERNAL
+
       /**
        * Equivalency operator. Returns true if a == b (are the same)
        *
@@ -256,6 +261,7 @@ namespace eosio {
          return a.value < b.value;
       }
 
+      /// @endcond
 
       uint64_t value = 0;
 
@@ -270,9 +276,12 @@ namespace eosio {
    } /// namespace detail
 } /// namespace eosio
 
+/// @cond IMPLEMENTATIONS
+
 /**
  * %name literal operator
  *
+ * @ingroup name
  * @brief "foo"_n is a shortcut for name("foo")
  */
 #pragma clang diagnostic push
@@ -283,3 +292,5 @@ inline constexpr eosio::name operator""_n() {
    return x;
 }
 #pragma clang diagnostic pop
+
+/// @endcond
