@@ -5,6 +5,7 @@
 #include <stack>
 #include <string_view>
 #include "check.hpp"
+#include "print.hpp"
 
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

@@ -459,6 +459,8 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 
       if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-lrt -lsf");
+      if (fquery_opt || fquery_server_opt || fquery_client_opt)
+         ldopts.emplace_back("-leosio_cmem");
 
    } else {
 #ifdef __APPLE__
