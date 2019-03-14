@@ -2,15 +2,7 @@
 #include "eostring.hpp"
 using namespace std;
 int main()
-{
-   //// char* eostring_impl::allocate(const char* s, size_t n)
-   // const char* s{"hello"};
-   // char* begin{eostring_impl::allocate(s, 6)};
-   // for (int i = 0; i < 20; ++i) cout << begin[i]; cout << endl;
-   
-   //// size_t ratio(size_t n)
-   // cout << eostring_impl::ratio(2) <<endl;
-   
+{  
    //// eostring()
    assert(eostring{}.size()     == 0);
    assert(eostring{}.capacity() == 0);

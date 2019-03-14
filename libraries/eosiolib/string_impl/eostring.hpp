@@ -1,10 +1,5 @@
 static constexpr size_t npos{std::numeric_limits<size_t>::max()};
 
-namespace eostring_impl {
-   size_t ratio(size_t n);
-   char* allocate(const char* s, size_t n);
-}
-
 class eostring
 {
 public:
