@@ -1,5 +1,10 @@
 static constexpr size_t npos{std::numeric_limits<size_t>::max()};
 
+namespace eostring_impl {
+   size_t ratio(size_t n);
+   char* allocate(const char* s, size_t n);
+}
+
 class eostring
 {
 public:
@@ -48,14 +53,13 @@ public:
    void reserve(size_t n);
    void shrink_to_fit();
    eostring& insert(size_t pos, const eostring& s);
-   // eostring& erase(size_t pos = 0, size_t len = npos);
-   // void push_back(char c);
-   // void pop_back();
-   // eostring& append(const eostring& s);
+   eostring& erase(size_t pos = 0, size_t len = npos);
+   void push_back(char c);
+   void pop_back();
    eostring& operator+=(const eostring& rhs);
-   // eostring& replace (size_t pos,  size_t len,  const eostring& s);
-   // eostring substr (size_t pos = 0, size_t len = npos) const;
-   // size_t copy (char* s, size_t len, size_t pos = 0) const;
+   eostring& replace(size_t pos,  size_t len,  const eostring& s);
+   eostring substr (size_t pos = 0, size_t len = npos) const;
+   size_t copy (char* s, size_t len, size_t pos = 0) const;
    // void resize (size_t n);
    // void swap (eostring& str);
 
