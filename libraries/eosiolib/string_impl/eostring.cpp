@@ -1,5 +1,10 @@
 // TODO:
+// Asserts
 // Consider: explicit, inline, noexcept
+// Note:
+// that making an empty string and printing `data()` is valid; does not throw. Design this same functionality and test
+// Note:
+// Look at the standard to see what funcitons in question do.
 
 #include <cstring>   // memcpy, memset, strlen, strcpy     ???
 #include <limits>    // std::numeric_limits<size_t>::max() ???
@@ -16,33 +21,30 @@ eostring::eostring()
 
 eostring::eostring(const char* s)
    : _size{strlen(s)}, _capacity{_size*2} {
-   assert(0 < _size);
-   char* begin = new char[_capacity];
-   _begin = begin;
+   // assert(0 < _size);
+   _begin = new char[_capacity];
    memcpy(_begin, s, strlen(s));
-   _begin[strlen(s)] = '\0';
+   _begin[_size] = '\0';
 }
 
 eostring::eostring(const char* s, size_t n)
    : _size{n}, _capacity{_size*2} {
-   assert(0 < _size);
-   char* begin = new char[_capacity];
-   _begin = begin;
+   // assert(0 < _size);
+   _begin = new char[_capacity];
    memcpy(_begin, s, n);
-   _begin[n] = '\0';
+   _begin[_size] = '\0';
 }
 
 eostring::eostring(size_t n, char c)
    : _size{n}, _capacity{_size*2} {
-   assert(0 < _size);
-   char* begin = new char[_capacity];
-   _begin = begin;
+   // assert(0 < _size);
+   _begin = new char[_capacity];
    memset(_begin, c, n);
-   _begin[n] = '\0';
+   _begin[_size] = '\0';
 }
 
 eostring::eostring(const eostring& s) {
-   if(!s.empty()) {
+   if(s._capacity) {
       _size = s._size;
       _capacity = s._capacity;
       _begin = new char[_capacity];
@@ -52,7 +54,7 @@ eostring::eostring(const eostring& s) {
 }
 
 eostring::eostring(eostring&& s) {
-   if(!s.empty()) {
+   if(s._capacity) {
       _size = s._size;
       _capacity = s._capacity;
       _begin = s._begin;
@@ -63,17 +65,13 @@ eostring::eostring(eostring&& s) {
 }
 
 eostring::~eostring() {
-   if(!empty()) {
-      _size = 0;
-      _capacity = 0;
-   }
    delete[] _begin;
 }
 
-eostring& eostring::operator=(const eostring& s) {
+eostring& eostring::operator=(const eostring& s) { // Something is not right with these assig operators
    if(&s == this)
       return *this;
-   if(!s.empty()) {
+   if(s._capacity) {
       _size = s._size;
       _capacity = s._capacity;
       _begin = new char[s._capacity];
@@ -83,10 +81,10 @@ eostring& eostring::operator=(const eostring& s) {
    return *this;
 }
 
-eostring& eostring::operator=(eostring&& s) {
+eostring& eostring::operator=(eostring&& s) { // Something is not right with these assig operators
    if(&s == this)
       return *this;
-   if(s._size) {
+   if(s._capacity) {
       _size = s._size;
       _capacity = s._capacity;
       _begin = s._begin;
@@ -97,7 +95,7 @@ eostring& eostring::operator=(eostring&& s) {
    return *this;
 }
 
-eostring& eostring::operator=(const char* s) {
+eostring& eostring::operator=(const char* s) { // Something is not right with these assig operators
    if(strlen(s)) {
       _size = strlen(s);
       _capacity = _size*2;
@@ -109,7 +107,7 @@ eostring& eostring::operator=(const char* s) {
 }
 
 eostring& eostring::operator+=(char c) {
-   if(empty()) {
+   if(_capacity == 0) {
       _size = 2;
       _capacity = 2*2;
       _begin = new char[_capacity];
@@ -126,8 +124,7 @@ eostring& eostring::operator+=(char c) {
       _begin = begin;
    }
    else {
-      _begin[_size] = c;
-      ++_size;
+      _begin[_size++] = c;
       _begin[_size] = '\0';
    }
    return *this;
@@ -251,9 +248,9 @@ bool operator!=(const eostring& lhs, const eostring& rhs) {
    return !(lhs == rhs);
 }
 
-void eostring::clear() {
-   if(!empty())
-      this->~eostring();
+void eostring::clear() { // See top of file
+   if(_size)
+      _size = 0;
 }
 
 void eostring::reserve(size_t n) {
@@ -263,55 +260,71 @@ void eostring::reserve(size_t n) {
       return;
 }
 
-eostring& eostring::insert(size_t pos, const eostring& s) { // Look over this again
-   assert(pos >= 0);
+eostring& eostring::insert(size_t pos, const eostring& s) {
    assert(pos <= _size);
-   
-   char* begin = new char[_size + s._size]; // subtract `1` because there is only one null char
-   _size += s._size;
-   _capacity += _size;
-   memcpy(begin, _begin, pos);
-   memcpy(begin+pos, s._begin, s._size);
-
-   delete[] _begin;
-   _begin = begin;
-   _begin[_size] = '\0';
-   return *this;
-}
-
-eostring& eostring::erase(size_t pos, size_t len) { // Look over this again
-   _size -= len;
-   _capacity = _size;
-   char* begin = new char[_size];
-   memcpy(begin, _begin, pos);
-   memcpy(begin+pos, _begin+pos+len, _size-len);
-   delete[] _begin;
-   _begin = begin;
-   _begin[_size] = '\0';
-   return *this;
-}
-
-void eostring::push_back(char c) {
-   if(_size == _capacity) {
-      ++_size;
-      _capacity = _size;
-      char* begin = new char[_size+1];
-      memcpy(begin, _begin, _size-1);
-      begin[_size-1] = c;
-      begin[_size] = '\0';
-
+   if( _capacity == 0) {
+      assert(pos == 0);
+      _size = s._size;
+      _capacity = _size*2;
+      memcpy(_begin, s._begin, s._size);
+      _begin[_size] = '\n';
+   }
+   else if( _capacity < (_size + s._size + 1)) {
+      size_t orig_sz{_size};      
+      _size += s._size+1;
+      _capacity = _size*2;
+      char* begin = new char[_capacity];
+      memcpy(begin, _begin, pos);
+      memcpy(begin+pos, s._begin, s._size);
+      orig_sz -= pos;
+      if(orig_sz)
+         memcpy(begin+s._size+pos, _begin+pos, orig_sz);
       delete[] _begin;
       _begin = begin;
+      _begin[_size] = '\0';
+      
    }
+   else {
+      size_t orig_sz{_size};
+      _size += s._size+1;
+      char* begin = new char[_capacity];
+      memcpy(begin, _begin, pos);
+      memcpy(begin+pos, s._begin, s._size);
+      orig_sz -= pos;
+      if(orig_sz)
+         memcpy(begin+s._size+pos, _begin+pos, orig_sz);
+      delete[] _begin;
+      _begin = begin;
+      _begin[_size] = '\0';
+   }
+   return *this;
 }
 
-void eostring::pop_back() {
-   // for (int i = 0; i < 10; ++i) cout << _begin[i] << ' '; cout << endl;
-   --_size;
-   _capacity = _size;
-   erase(_size, 0);
-   _begin[_size] = '\0';
+// eostring& eostring::erase(size_t pos, size_t len) { // Look over this again
+//    assert(pos < )
+//    cout << len;
+//    _size -= len;
+//    _capacity = _size;
+//    char* begin = new char[_size];
+//    memcpy(begin, _begin, pos);
+//    memcpy(begin+pos, _begin+pos+len, _size-len);
+//    delete[] _begin;
+//    _begin = begin;
+//    _begin[_size] = '\0';
+//    return *this;
+// }
+
+void eostring::push_back(char c) {
+   *this += c;
 }
+
+// void eostring::pop_back() {
+//    // for (int i = 0; i < 10; ++i) cout << _begin[i] << ' '; cout << endl;
+//    --_size;
+//    _capacity = _size;
+//    erase(_size, 0);
+//    _begin[_size] = '\0';
+// }
 
 eostring& eostring::operator+=(const eostring& rhs) {
    for (size_t i{0}; i < rhs.size(); ++i)
@@ -336,29 +349,9 @@ eostring& eostring::operator+=(const eostring& rhs) {
 //    return len;
 // }
 
-
 //// void resize (size_t n)
 
-
 //// void swap (eostring& str)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // eostring& operator+=(eostring& lhs, const eostring& rhs) {
 //    for (size_t i{0}; i < rhs.size(); ++i) {

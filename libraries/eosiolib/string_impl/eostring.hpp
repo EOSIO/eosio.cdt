@@ -48,7 +48,7 @@ public:
    void reserve(size_t n);
    void shrink_to_fit();
    eostring& insert(size_t pos, const eostring& s);
-   eostring& erase(size_t pos = 0, size_t len = npos);
+   eostring& erase(size_t pos=0, size_t len=npos);
    void push_back(char c);
    void pop_back();
    eostring& operator+=(const eostring& rhs);
@@ -59,15 +59,15 @@ public:
    // void swap (eostring& str);
 
    friend bool operator+ (const eostring& lhs, const eostring& rhs);
-   friend bool operator==(const eostring& lhs, const eostring& rhs);
-   friend bool operator!=(const eostring& lhs, const eostring& rhs);
    friend bool operator< (const eostring& lhs, const eostring& rhs);
    friend bool operator> (const eostring& lhs, const eostring& rhs);
    friend bool operator<=(const eostring& lhs, const eostring& rhs);
    friend bool operator>=(const eostring& lhs, const eostring& rhs);
+   friend bool operator==(const eostring& lhs, const eostring& rhs);
+   friend bool operator!=(const eostring& lhs, const eostring& rhs);
 
 public:
-   size_t _size;
-   size_t _capacity;
+   size_t _size;     // uint32 or less
+   size_t _capacity; // uint32 or less
    char*  _begin;
 };
