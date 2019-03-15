@@ -15,6 +15,10 @@ using namespace std; ///
 
 #include "eostring.hpp"
 
+namespace eostring_impl {
+   
+}
+
 eostring::eostring()
    : _size{0}, _capacity{0}, _begin{nullptr}
 { }
@@ -262,14 +266,14 @@ void eostring::reserve(size_t n) {
 
 eostring& eostring::insert(size_t pos, const eostring& s) {
    assert(pos <= _size);
-   if( _capacity == 0) {
-      assert(pos == 0);
-      _size = s._size;
-      _capacity = _size*2;
-      memcpy(_begin, s._begin, s._size);
-      _begin[_size] = '\n';
-   }
-   else if( _capacity < (_size + s._size + 1)) {
+   // if( _capacity == 0) { // Don't need
+   //    assert(pos == 0);
+   //    _size = s._size;
+   //    _capacity = _size*2;
+   //    memcpy(_begin, s._begin, s._size);
+   //    _begin[_size] = '\n';
+   // }
+   if( _capacity < (_size + s._size + 1)) {
       size_t orig_sz{_size};      
       _size += s._size+1;
       _capacity = _size*2;
@@ -277,25 +281,25 @@ eostring& eostring::insert(size_t pos, const eostring& s) {
       memcpy(begin, _begin, pos);
       memcpy(begin+pos, s._begin, s._size);
       orig_sz -= pos;
-      if(orig_sz)
-         memcpy(begin+s._size+pos, _begin+pos, orig_sz);
+      memcpy(begin+s._size+pos, _begin+pos, orig_sz);
       delete[] _begin;
       _begin = begin;
       _begin[_size] = '\0';
-      
    }
    else {
-      size_t orig_sz{_size};
+      // size_t orig_sz{_size};
+      // _size += s._size+1;
+      // char* begin = new char[_capacity];
+      // memcpy(begin, _begin, pos);
+      // memcpy(begin+pos, s._begin, s._size);
+      // orig_sz -= pos;
+      // if(orig_sz)
+      //    memcpy(begin+s._size+pos, _begin+pos, orig_sz);
+      // delete[] _begin;
+      // _begin = begin;
+      // _begin[_size] = '\0';
       _size += s._size+1;
-      char* begin = new char[_capacity];
-      memcpy(begin, _begin, pos);
-      memcpy(begin+pos, s._begin, s._size);
-      orig_sz -= pos;
-      if(orig_sz)
-         memcpy(begin+s._size+pos, _begin+pos, orig_sz);
-      delete[] _begin;
-      _begin = begin;
-      _begin[_size] = '\0';
+      memmove(_begin+pos+s._size, s._begin, s._size);
    }
    return *this;
 }
