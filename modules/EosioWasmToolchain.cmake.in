@@ -14,6 +14,7 @@ set(EOSIO_WASMSDK_VERSION "@VERSION_FULL@")
 set(CMAKE_C_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
 set(CMAKE_CXX_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cpp")
 set(CMAKE_ASM_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
+set(CMAKE_AR "@CDT_ROOT_DIR@/bin/eosio-ar" CACHE FILEPATH "Archiver")
 
 set(CMAKE_C_FLAGS " -O3 ")
 set(CMAKE_CXX_FLAGS " -O3 ")
