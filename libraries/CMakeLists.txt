@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.5)
+
 project(eosio_libraries)
 
 list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN})
