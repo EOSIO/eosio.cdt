@@ -35,6 +35,7 @@ typedef uint64_t capi_name;
 struct capi_public_key {
    char data[34];
 };
+typedef struct capi_public_key capi_public_key;
 
 /**
  * EOSIO Signature. It is 66 bytes.
@@ -42,6 +43,7 @@ struct capi_public_key {
 struct capi_signature {
    uint8_t data[66];
 };
+typedef struct capi_signature capi_signature;
 
 /**
  * 256-bit hash
@@ -49,6 +51,7 @@ struct capi_signature {
 struct ALIGNED(capi_checksum256) {
    uint8_t hash[32];
 };
+typedef struct capi_checksum256 capi_checksum256;
 
 /**
  * 160-bit hash
@@ -56,6 +59,7 @@ struct ALIGNED(capi_checksum256) {
 struct ALIGNED(capi_checksum160) {
    uint8_t hash[20];
 };
+typedef struct capi_checksum160 capi_checksum160;
 
 /**
  * 512-bit hash
@@ -63,5 +67,6 @@ struct ALIGNED(capi_checksum160) {
 struct ALIGNED(capi_checksum512) {
    uint8_t hash[64];
 };
+typedef struct capi_checksum512 capi_checksum512;
 
 /// @}
