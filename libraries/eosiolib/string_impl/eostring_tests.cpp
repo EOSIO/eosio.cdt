@@ -2,110 +2,217 @@
 #include "eostring.hpp"
 using namespace std;
 int main()
-{  
+{
+    // auto f{ [](eostring& s){cout<<s.size()<<'\n'<<s.capacity()<<'\n'<<s.data()<<"\n\n";} };
+    
     //// eostring()
-    assert(eostring{}.size()     == 0);
-    assert(eostring{}.capacity() == 0);
-    assert(eostring{}.data()     == nullptr);  
+    {
+        static const eostring eostr{};
+        
+        assert(eostr.size()     == 0);
+        assert(eostr.capacity() == 0);
+        assert(eostr.data()     == nullptr);  
+    }
 
-    // //// eostring(const char* s)
-    assert(eostring{"a"}.size()              == 1);
-    assert(eostring{"a"}.capacity()          == 2);
-    assert(strcmp(eostring{"a"}.data(), "a") == 0);
+    //// template <size_t N> 
+    //// eostring(const char (&str)[N])
+    {
+        static const eostring eostr0{"a"};
+        static const eostring eostr1{"abcdef"};
+    
+        assert(eostr0.size()              == 1);
+        assert(eostr0.capacity()          == 2);
+        assert(strcmp(eostr0.data(), "a") == 0);
    
-    assert(eostring{"abc123"}.size()                   == 6);
-    assert(eostring{"abc123"}.capacity()               == 12);
-    assert(strcmp(eostring{"abc123"}.data(), "abc123") == 0);
+        assert(eostr1.size()                   == 6);
+        assert(eostr1.capacity()               == 12);
+        assert(strcmp(eostr1.data(), "abcdef") == 0);
+    }
 
-    // //// eostring(const char* s, size_t n)
-    eostring eostr0("a", 0);
-    eostring eostr1("a", 1);
-    eostring eostr2("abcdef", 3);
+    //// eostring(const char* s, const size_t n)
+    {
+        static const eostring eostr0("a", 0);
+        static const eostring eostr1("a", 1);
+        static const eostring eostr2("abcdef", 3);
+        static const eostring eostr3("abcdefghij", 30);
    
-    assert(eostr0.size()     == 0);
-    assert(eostr0.capacity() == 0);
-    // assert(eostr0.data()     == nullptr); // Need eyes here
+        assert(eostr0.size()             == 0);
+        assert(eostr0.capacity()         == 0);
+        assert(strcmp(eostr0.data(), "") == 0);
 
-    assert(eostr1.size()              == 1);
-    assert(eostr1.capacity()          == 2);
-    assert(strcmp(eostr1.data(), "a") == 0);
+        assert(eostr1.size()              == 1);
+        assert(eostr1.capacity()          == 2);
+        assert(strcmp(eostr1.data(), "a") == 0);
 
-    assert(eostr2.size()                == 3);
-    assert(eostr2.capacity()            == 6);
-    assert(strcmp(eostr2.data(), "abc") == 0);
+        assert(eostr2.size()                == 3);
+        assert(eostr2.capacity()            == 6);
+        assert(strcmp(eostr2.data(), "abc") == 0);
 
-    // assert(eostring("abcdef", 7).size()     == 0); // Edge-case; should throw
-    // assert(eostring("abcdef", 7).capacity() == 0); // Edge-case; should throw
-    // assert(eostring("abcdef", 7).data()     == 0); // Edge-case; should throw
+        ////////////////////////////////////////////////
+        // This is weird; same behavior with std::string
+        assert(eostr3.size()                       == 30);
+        assert(eostr3.capacity()                   == 60);
+        assert(strcmp(eostr3.data(), "abcdefghij") == 0);
+    }
 
-    //// eostring(size_t n, char c)
-    assert(eostring(0, 'c').size()     == 0);
-    assert(eostring(0, 'c').capacity() == 0);
-    // assert(eostring(0, 'c').data()     == nullptr);  // Need eyes here
+    //// eostring(const size_t n, const char c)
+    {
+        static const eostring eostr0(0, 'c');
+        static const eostring eostr1(1, 'c');
+        static const eostring eostr2(3, 'c');
+        
+        assert(eostr0.size()             == 0);
+        assert(eostr0.capacity()         == 0);
+        assert(strcmp(eostr0.data(), "") == 0);
 
-    assert(eostring(1, 'c').size()              == 1);
-    assert(eostring(1, 'c').capacity()          == 2);
-    assert(strcmp(eostring(1, 'c').data(), "c") == 0);
+        assert(eostr1.size()              == 1);
+        assert(eostr1.capacity()          == 2);
+        assert(strcmp(eostr1.data(), "c") == 0);
 
-    assert(eostring(3, 'c').size()                == 3);
-    assert(eostring(3, 'c').capacity()            == 6);
-    assert(strcmp(eostring(3, 'c').data(), "ccc") == 0);
+        assert(eostr2.size()                == 3);
+        assert(eostr2.capacity()            == 6);
+        assert(strcmp(eostr2.data(), "ccc") == 0);
+    }
+
+    //// eostring(const eostring& str, const size_t pos, const size_t n = eostring::npos)
+    {
+        static const eostring eostr{"abcdef"};
+        static const eostring eostr0_sub(eostr, 0, 0);
+        static const eostring eostr1_sub(eostr, 1, 0);
+        static const eostring eostr2_sub(eostr, 0, 1);
+        static const eostring eostr3_sub(eostr, 0, 3);
+        static const eostring eostr4_sub(eostr, 0, 8);
+        static const eostring eostr5_sub(eostr, 0, 7);
+        static const eostring eostr6_sub(eostr, 0, 6);
+        static const eostring eostr7_sub(eostr, 3, 3);
+        static const eostring eostr8_sub(eostr, 3, 2);
+
+        assert(eostr0_sub.size()             == 0);
+        assert(eostr0_sub.capacity()         == 0);
+        assert(strcmp(eostr0_sub.data(), "") == 0);
+
+        assert(eostr1_sub.size()             == 0);
+        assert(eostr1_sub.capacity()         == 0);
+        assert(strcmp(eostr1_sub.data(), "") == 0);
+
+        assert(eostr2_sub.size()              == 1);
+        assert(eostr2_sub.capacity()          == 2);
+        assert(strcmp(eostr2_sub.data(), "a") == 0);
+
+        assert(eostr3_sub.size()                == 3);
+        assert(eostr3_sub.capacity()            == 6);
+        assert(strcmp(eostr3_sub.data(), "abc") == 0);
+
+        assert(eostr4_sub.size()                   == 6);
+        assert(eostr4_sub.capacity()               == 12);
+        assert(strcmp(eostr4_sub.data(), "abcdef") == 0);
+
+        assert(eostr5_sub.size()                   == 6);
+        assert(eostr5_sub.capacity()               == 12);
+        assert(strcmp(eostr5_sub.data(), "abcdef") == 0);
+
+        assert(eostr6_sub.size()                   == 6);
+        assert(eostr6_sub.capacity()               == 12);
+        assert(strcmp(eostr6_sub.data(), "abcdef") == 0);
+
+        assert(eostr7_sub.size()                == 3);
+        assert(eostr7_sub.capacity()            == 6);
+        assert(strcmp(eostr7_sub.data(), "def") == 0);
+
+        assert(eostr8_sub.size()               == 2);
+        assert(eostr8_sub.capacity()           == 4);
+        assert(strcmp(eostr8_sub.data(), "de") == 0);
+    }
 
     //// eostring(const eostring& s)
     {
-        eostring eostr{"abcdef"};
-        eostring eostr_cpy(eostr);
+        static const eostring eostr{"abcdef"};
+        static const eostring eostr_cpy(eostr);
    
-        assert(eostr_cpy.size() == eostr.size() && (eostr_cpy.size() == 6));
+        assert(eostr_cpy.size()     == eostr.size()     && eostr_cpy.size()    == 6);
         assert(eostr_cpy.capacity() == eostr.capacity() && eostr_cpy.capacity() == 12);
         assert(strcmp(eostr_cpy.data(), "abcdef") == 0);
-        assert(eostr.data() != eostr_cpy.data()); // Need eyes here
+        assert(eostr.data() != eostr_cpy.data());
     }
 
     //// eostring(eostring&& s)
     {
-        eostring eostr{"abcdef"};
-        eostring eostr_mv(std::move(eostr));
+        static const eostring eostr0{"abcdef"};
+        static const eostring eostr0_mv{std::move(eostr0)};
 
-        assert(eostr_mv.size()     == 6);
-        assert(eostr.size()        == 0);
-        assert(eostr_mv.capacity() == 12);
-        assert(eostr.size()        == 0);
-        assert(strcmp(eostr_mv.data(), "abcdef") == 0);
-        assert(eostr.data() != eostr_mv.data()); // Need eyes here
+        assert(eostr0_mv.size()                   == 6);
+        assert(eostr0_mv.capacity()               == 12);
+        assert(strcmp(eostr0_mv.data(), "abcdef") == 0);
+        
+        assert(eostr0.size()                   == 6);
+        assert(eostr0.capacity()               == 12);
+        assert(strcmp(eostr0.data(), "abcdef") == 0);
+
+        assert(eostr0.data() != eostr0_mv.data());
+        
+        static eostring eostr1{"abcdef"};
+        static const eostring eostr1_mv{std::move(eostr1)};
+
+        assert(eostr1_mv.size()                   == 6);
+        assert(eostr1_mv.capacity()               == 12);
+        assert(strcmp(eostr1_mv.data(), "abcdef") == 0);
+        
+        assert(eostr1.size()     == 0);
+        assert(eostr1.capacity() == 0);
+        assert(eostr1.data()     == nullptr);
+        
+        assert(eostr1.data() != eostr1_mv.data());
     }
 
     //// eostring& operator=(const eostring& s);
     {
-        eostring eostr{"abcdef"};
-        eostring eostr_assig = eostr;
+        static const eostring eostr0{"abcdef"};
+        static const eostring eostr0_assig = eostr0;
 
-        assert(eostr_assig.size() == eostr.size() && (eostr_assig.size() == 6));
-        assert(eostr_assig.capacity() == eostr.capacity() && eostr_assig.capacity() == 12);
-        assert(strcmp(eostr_assig.data(), "abcdef") == 0);
-        assert(eostr.data() != eostr_assig.data()); // Need eyes here
+        assert(eostr0_assig.size()     == eostr0.size()     && eostr0_assig.size()     == 6);
+        assert(eostr0_assig.capacity() == eostr0.capacity() && eostr0_assig.capacity() == 12);
+        assert(strcmp(eostr0_assig.data(), "abcdef") == 0);
+        assert(eostr0.data() != eostr0_assig.data());
 
-        eostr_assig = eostr_assig;
-        assert(eostr_assig.size() == eostr.size() && (eostr_assig.size() == 6));
-        assert(eostr_assig.capacity() == eostr.capacity() && eostr_assig.capacity() == 12);
-        assert(strcmp(eostr_assig.data(), "abcdef") == 0);
-        assert(eostr.data() != eostr_assig.data()); // Need eyes here
+        eostring eostr1_assig{"abcdef"};
+
+        eostr1_assig = eostr1_assig;
+        assert(eostr1_assig.size()     == eostr0.size()     && eostr1_assig.size()     == 6);
+        assert(eostr1_assig.capacity() == eostr0.capacity() && eostr1_assig.capacity() == 12);
+        assert(strcmp(eostr1_assig.data(), "abcdef") == 0);
+        assert(eostr0.data() != eostr1_assig.data());
     }
    
-    //// eostring& operator=(eostring&& s);
+    //// eostring& operator=(eostring&& s)
     {
-        eostring eostr{"abcdef"};
-        eostring eostr_mv_assig = std::move(eostr);
+        static const eostring eostr0{"abcdef"};
+        static const eostring eostr0_mv_assig = std::move(eostr0);
 
-        assert(eostr_mv_assig.size()     == 6);
-        assert(eostr.size()              == 0);
-        assert(eostr_mv_assig.capacity() == 12);
-        assert(eostr.size()              == 0);
-        assert(strcmp(eostr_mv_assig.data(), "abcdef") == 0);
-        assert(eostr.data() != eostr_mv_assig.data()); // Need eyes here
+        assert(eostr0_mv_assig.size()                   == 6);
+        assert(eostr0_mv_assig.capacity()               == 12);
+        assert(strcmp(eostr0_mv_assig.data(), "abcdef") == 0);
+        
+        assert(eostr0.size()                   == 6);
+        assert(eostr0.capacity()               == 12);
+        assert(strcmp(eostr0.data(), "abcdef") == 0);
+
+        assert(eostr0.data() != eostr0_mv_assig.data());
+        
+        static eostring eostr1{"abcdef"};
+        static const eostring eostr1_mv_assig = std::move(eostr1);
+
+        assert(eostr1_mv_assig.size()                   == 6);
+        assert(eostr1_mv_assig.capacity()               == 12);
+        assert(strcmp(eostr1_mv_assig.data(), "abcdef") == 0);
+        
+        assert(eostr1.size()     == 0);
+        assert(eostr1.capacity() == 0);
+        assert(eostr1.data()     == nullptr);
+        
+        assert(eostr1.data() != eostr1_mv_assig.data());
     }
    
-    //// eostring& operator=(const char* s);
+    //// eostring& operator=(const char* s)
     {
         eostring eostr{};
         eostr = "abcdef";
@@ -120,76 +227,90 @@ int main()
         assert(strcmp(eostr.data(), "abcdef") == 0);
     }
 
-    //// eostring& operator+=(char c)
+    //// eostring& operator+=(const char c)
     {
-        eostring eostr{"abcdef"};
-        char c{'g'};
-        eostr += c;
+        static eostring eostr0{};
+        static eostring eostr1{"a"};
+        static eostring eostr2{"abcdef"};
+        
+        eostr0 += 'c';
+        assert(eostr0.size()              == 2);
+        assert(eostr0.capacity()          == 4);
+        assert(strcmp(eostr0.data(), "c") == 0);
 
-        assert(eostr.size()                    == 7);
-        assert(eostr.capacity()                == 12);
-        assert(strcmp(eostr.data(), "abcdefg") == 0);
+        eostr1 += 'c';
+        eostr1 += 'c';
+        assert(eostr1.size()                == 3);
+        assert(eostr1.capacity()            == 6);
+        assert(strcmp(eostr1.data(), "acc") == 0);
+
+        eostr2 += 'c';
+        assert(eostr2.size()                    == 7);
+        assert(eostr2.capacity()                == 12);
+        assert(strcmp(eostr2.data(), "abcdefc") == 0);
     }
 
-    //// char& at(size_t n)
+    //// char& at(const size_t n)
     {
-        eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.at(0) == 'a');
         assert(eostr.at(5) == 'f');
 
+        ////////////////////////////////////////////////////////
         // assert(eostr.at(6) == 0); // Edge-case; should throw
     }
       
-    //// const char& at(size_t n) const
+    //// const char& at(const size_t n) const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.at(0) == 'a');
         assert(eostr.at(5) == 'f');
 
+        ///////////////////////////////////////////////////////
         // assert(eostr.at(6) == 0); // Edge-case; should throw
     }
 
-    //// char& operator[](size_t n)
+    //// char& operator[](const size_t n)
     {
-        eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr[0] == 'a');
         assert(eostr[5] == 'f');
     }
       
-    //// const char& operator[](size_t n) const
+    //// const char& operator[](const size_t n) const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr[0] == 'a');
         assert(eostr[5] == 'f');
     }
    
     //// char& front()
     {
-        eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.front() == 'a');
     }
       
     //// const char& front() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.front() == 'a');
     }
       
     //// char& back()
     {
-        eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.back() == 'f');
     }
       
     //// const char& back() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(eostr.back() == 'f');
     }
       
     //// char* data()
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         assert(strcmp(eostr.data(), "abcdef") == 0);
 
         eostr = "abc";
@@ -198,19 +319,19 @@ int main()
       
     //// const char* data() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(strcmp(eostr.data(), "abcdef") == 0);
     }
       
     //// const char* c_str() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         assert(strcmp(eostr.c_str(), "abcdef") == 0);
     }
 
     //// iterator begin()
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         eostring::iterator iter{eostr.begin()};
         assert(iter   == &eostr[0]);
         assert(++iter == &eostr[1]);
@@ -218,7 +339,7 @@ int main()
    
     //// const_iterator cbegin() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         eostring::const_iterator iter{eostr.cbegin()};
         assert(iter   == &eostr[0]);
         assert(++iter == &eostr[1]);
@@ -226,7 +347,7 @@ int main()
    
     //// iterator end()
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         eostring::iterator iter{eostr.end()};
         assert(iter   == &eostr[eostr.size()]);
         assert(--iter == &eostr[eostr.size()-1]);
@@ -234,21 +355,21 @@ int main()
    
     //// const_iterator cend() const
     {
-        const eostring eostr{"abcdef"};
+        static const eostring eostr{"abcdef"};
         eostring::const_iterator iter{eostr.cend()};
         assert(iter   == &eostr[eostr.size()]);
         assert(--iter == &eostr[eostr.size()-1]);
     }
 
     //// bool eostring::empty() const
-    eostring eostr{};
+    static eostring eostr{};
     assert(eostr.empty() == true);
     eostr += 'c';
     assert(eostr.empty() == false);
 
     //// size_t eostring::size() const
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         assert(eostr.size() ==  6);
         eostr += 'g';
         assert(eostr.size() ==  7);
@@ -256,7 +377,7 @@ int main()
 
     //// size_t eostring::length() const
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         assert(eostr.length() ==  6);
         eostr += 'g';
         assert(eostr.length() ==  7);
@@ -264,7 +385,7 @@ int main()
 
     //// size_t eostring::capacity() const
     {
-        eostring eostr{"abc"};
+        static eostring eostr{"abc"};
         assert(eostr.capacity() ==  6);
         eostr += 'd', eostr += 'e', eostr += 'f';
         assert(eostr.capacity() ==  6);
@@ -274,14 +395,14 @@ int main()
 
     //// size_t eostring::max_size() const
     {
-        eostring eostr{"abcdef"};
-        assert(eostr.max_size() ==  npos);
+        static const eostring eostr{"abcdef"};
+        assert(eostr.max_size() ==  eostring::npos);
     }
    
     //// friend bool operator==(const eostring& lhs, const eostring& rhs)
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 == eostr0) == true);
         assert((eostr1 == eostr1) == true);
         assert((eostr0 == eostr1) == false);
@@ -289,8 +410,8 @@ int main()
    
     //// friend bool operator!=(const eostring& lhs, const eostring& rhs)
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 != eostr0) == false);
         assert((eostr1 != eostr1) == false);
         assert((eostr0 != eostr1) == true);
@@ -298,8 +419,8 @@ int main()
    
     //// friend bool operator< (const eostring& lhs, const eostring& rhs) // Make sure to double check this logic
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 < eostr0) == false);
         assert((eostr1 < eostr1) == false);
         assert((eostr0 < eostr1) == true);
@@ -307,8 +428,8 @@ int main()
    
     //// friend bool operator> (const eostring& lhs, const eostring& rhs)
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 > eostr0) == false);
         assert((eostr1 > eostr1) == false);
         assert((eostr0 > eostr1) == false);
@@ -316,8 +437,8 @@ int main()
    
     //// friend bool operator<=(const eostring& lhs, const eostring& rhs)
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 <= eostr0) == true);
         assert((eostr1 <= eostr1) == true);
         assert((eostr0 <= eostr1) == true);
@@ -325,8 +446,8 @@ int main()
    
     //// friend bool operator>=(const eostring& lhs, const eostring& rhs)
     {
-        eostring eostr0{"abc"};
-        eostring eostr1{"def"};
+        static const eostring eostr0{"abc"};
+        static const eostring eostr1{"def"};
         assert((eostr0 >= eostr0) == true);
         assert((eostr1 >= eostr1) == true);
         assert((eostr0 >= eostr1) == false);
@@ -334,16 +455,16 @@ int main()
 
     //// void eostring::clear()
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         assert(eostr.empty() == false);
         eostr.clear();
         assert(eostr.empty() == true);
         assert(eostr.size()  == 0);
     }
 
-    //// void reserve(size_t n)
+    //// void reserve(const size_t n)
     {
-        eostring eostr{"abcdef"};
+        static eostring eostr{"abcdef"};
         assert(eostr.capacity() == 12);
         eostr.reserve(10);
         assert(eostr.capacity() == 12);
@@ -351,7 +472,7 @@ int main()
         assert(eostr.capacity() == 24);
     }
 
-    //// eostring& insert(size_t pos, const eostring& s)
+    //// eostring& insert(const size_t pos, const eostring& s)
     {
         eostring eostr{"iii"};
         eostring eostr_ins{"ooo"};

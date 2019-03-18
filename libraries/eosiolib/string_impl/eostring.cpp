@@ -1,10 +1,14 @@
 // TODO:
+// Organize tests and implementation to be in line with doc
+// TODO:
 // Asserts
 // Consider: explicit, inline, noexcept
 // Note:
 // that making an empty string and printing `data()` is valid; does not throw. Design this same functionality and test
 // Note:
 // Look at the standard to see what funcitons in question do.
+// Note:
+// If an argument given is `eostring::npos` that value is the size of the given string
 
 #include <cstring>   // memcpy, memset, strlen, strcpy     ???
 #include <limits>    // std::numeric_limits<size_t>::max() ???
@@ -15,35 +19,30 @@ using namespace std; ///
 
 #include "eostring.hpp"
 
-namespace impl {
-    char* expand_mcpy(const size_t size, const size_t capacity, const char* str);
-    char* expand_mset(const size_t size, const size_t capacity, const char c);
-}
-
-eostring::eostring()
-    : _size{0}, _capacity{0}, _begin{nullptr}
+eostring::eostring() : _size{0}, _capacity{0}, _begin{nullptr}
 { }
 
-eostring::eostring(const char* str)
-    : _size{strlen(str)}, _capacity{_size*2} {
-        assert(str != nullptr);       
-        _begin = impl::expand_mcpy(_size, _capacity, str);
+eostring::eostring(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
+    _begin = impl::expand_mset(_size, _capacity, c);
 }
 
-eostring::eostring(const char* str, const size_t n)
-    : _size{n}, _capacity{_size*2} {
-        assert(str != nullptr);
-        _begin = impl::expand_mcpy(_size, _capacity, str);
+eostring::eostring(const eostring& str, size_t pos, size_t n) : _size{n}, _capacity{_size*2} {
+    if(n ==  eostring::npos || str._size < pos+n) {
+        _size     = str._size;
+        _capacity = _size*2;
+    }
+    
+    _begin = impl::expand_mcpy(_size, _capacity, str.data()+pos);
 }
 
-eostring::eostring(const size_t n, const char c)
-    : _size{n}, _capacity{_size*2} {
-        _begin = impl::expand_mset(_size, _capacity, c);
+eostring::eostring(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
+    assert(str != nullptr);
+    
+    _begin = impl::expand_mcpy(_size, _capacity, str);
 }
 
-eostring::eostring(const eostring& str)
-    : _size{str._size}, _capacity{str._capacity} {
-        _begin = impl::expand_mcpy(_size, _capacity, str._begin);
+eostring::eostring(const eostring& str) : _size{str._size}, _capacity{str._capacity} {
+    _begin = impl::expand_mcpy(_size, _capacity, str._begin);
 }
 
 eostring::eostring(eostring&& str) {
@@ -103,8 +102,8 @@ eostring& eostring::operator+=(const char c) {
         _begin    = impl::expand_mcpy(1, _capacity, &c);
     }
     else if(_size == _capacity) {
-        _capacity     = ++_size*2;
         _begin[_size] = c;
+        _capacity     = ++_size*2;
         _begin        = impl::expand_mcpy(_size, _capacity, this->_begin);
     }
     else {
@@ -115,23 +114,23 @@ eostring& eostring::operator+=(const char c) {
     return *this;
 }
 
-char& eostring::at(const size_t n) {
-    if(n < 0 || _size <= n)
-        throw std::out_of_range("eostring::at()");
+eostring::reference eostring::at(const size_t n) {
+    impl::check(*this, n);
+    
     return _begin[n];
 }
 
-const char& eostring::at(const size_t n) const {
-    if(n < 0 || _size <= n)
-        throw std::out_of_range("eostring::at()");
+eostring::const_reference eostring::at(const size_t n) const {
+    impl::check(*this, n);
+    
     return _begin[n];
 }
 
-char& eostring::operator[](const size_t n) {
+eostring::reference eostring::operator[](const size_t n) {
     return _begin[n];
 }
 
-const char& eostring::operator[](const size_t n) const {
+eostring::const_reference eostring::operator[](const size_t n) const {
     return _begin[n];
 }
 
@@ -233,13 +232,13 @@ bool operator!=(const eostring& lhs, const eostring& rhs) {
     return !(lhs == rhs);
 }
 
-void eostring::clear() { // See top of file
-    if(_size)
-        _size = 0;
+void eostring::clear() {
+    _size     = 0;
+    _begin[0] = '\0';
 }
 
 void eostring::reserve(const size_t n) {
-    if(_capacity <= n)
+    if(_capacity < n)
         _capacity = n;
     else
         return;
@@ -255,7 +254,7 @@ eostring& eostring::insert(size_t pos, const eostring& s) {
     //    _begin[_size] = '\n';
     // }
     if( _capacity < (_size + s._size + 1)) {
-        size_t orig_sz{_size};      
+        size_t orig_sz{_size};
         _size += s._size+1;
         _capacity = _size*2;
         char* begin = new char[_capacity];
@@ -364,5 +363,10 @@ namespace impl {
         memset(begin, c, size);
         begin[size] = '\0';
         return begin;
+    }
+
+    void check(const eostring& str, const size_t n) {
+        if(n < 0 || str.size() <= n) // should this be `<=` or `<` ?
+            throw std::out_of_range("eostring::at()");
     }
 }
