@@ -15,293 +15,274 @@ using namespace std; ///
 
 #include "eostring.hpp"
 
-namespace eostring_impl {
-   
+namespace impl {
+    char* expand_mcpy(const size_t size, const size_t capacity, const char* str);
+    char* expand_mset(const size_t size, const size_t capacity, const char c);
 }
 
 eostring::eostring()
-   : _size{0}, _capacity{0}, _begin{nullptr}
+    : _size{0}, _capacity{0}, _begin{nullptr}
 { }
 
-eostring::eostring(const char* s)
-   : _size{strlen(s)}, _capacity{_size*2} {
-   // assert(0 < _size);
-   _begin = new char[_capacity];
-   memcpy(_begin, s, strlen(s));
-   _begin[_size] = '\0';
+eostring::eostring(const char* str)
+    : _size{strlen(str)}, _capacity{_size*2} {
+        assert(str != nullptr);       
+        _begin = impl::expand_mcpy(_size, _capacity, str);
 }
 
-eostring::eostring(const char* s, size_t n)
-   : _size{n}, _capacity{_size*2} {
-   // assert(0 < _size);
-   _begin = new char[_capacity];
-   memcpy(_begin, s, n);
-   _begin[_size] = '\0';
+eostring::eostring(const char* str, const size_t n)
+    : _size{n}, _capacity{_size*2} {
+        assert(str != nullptr);
+        _begin = impl::expand_mcpy(_size, _capacity, str);
 }
 
-eostring::eostring(size_t n, char c)
-   : _size{n}, _capacity{_size*2} {
-   // assert(0 < _size);
-   _begin = new char[_capacity];
-   memset(_begin, c, n);
-   _begin[_size] = '\0';
+eostring::eostring(const size_t n, const char c)
+    : _size{n}, _capacity{_size*2} {
+        _begin = impl::expand_mset(_size, _capacity, c);
 }
 
-eostring::eostring(const eostring& s) {
-   if(s._capacity) {
-      _size = s._size;
-      _capacity = s._capacity;
-      _begin = new char[_capacity];
-      memcpy(_begin, s._begin, _size);
-      _begin[_size] = '\0';
-   }
+eostring::eostring(const eostring& str)
+    : _size{str._size}, _capacity{str._capacity} {
+        _begin = impl::expand_mcpy(_size, _capacity, str._begin);
 }
 
-eostring::eostring(eostring&& s) {
-   if(s._capacity) {
-      _size = s._size;
-      _capacity = s._capacity;
-      _begin = s._begin;
-      s._size = 0;
-      s._capacity = 0;
-      s._begin = nullptr;
-   }
+eostring::eostring(eostring&& str) {
+    _size         = str._size;
+    _capacity     = str._capacity;
+    _begin        = str._begin;
+    
+    str._size     = 0;
+    str._capacity = 0;
+    str._begin    = nullptr;
 }
 
 eostring::~eostring() {
-   delete[] _begin;
+    delete[] _begin;
 }
 
-eostring& eostring::operator=(const eostring& s) { // Something is not right with these assig operators
-   if(&s == this)
-      return *this;
-   if(s._capacity) {
-      _size = s._size;
-      _capacity = s._capacity;
-      _begin = new char[s._capacity];
-      memcpy(_begin, s._begin, _size);
-      _begin[_size] = '\0';
-   }
-   return *this;
+eostring& eostring::operator=(const eostring& str) {
+    if(&str == this)
+        return *this;
+    
+    _size     = str._size;
+    _capacity = str._capacity;
+    _begin    = impl::expand_mcpy(_size, _capacity, str._begin);
+    
+    return *this;
 }
 
-eostring& eostring::operator=(eostring&& s) { // Something is not right with these assig operators
-   if(&s == this)
-      return *this;
-   if(s._capacity) {
-      _size = s._size;
-      _capacity = s._capacity;
-      _begin = s._begin;
-      s._size = 0;
-      s._capacity = 0;
-      s._begin = nullptr;
-   }
-   return *this;
+eostring& eostring::operator=(eostring&& s) {
+    if(&s == this)
+        return *this;
+    
+    _size       = s._size;
+    _capacity   = s._capacity;
+    _begin      = s._begin;
+    
+    s._size     = 0;
+    s._capacity = 0;
+    s._begin    = nullptr;
+    
+    return *this;
 }
 
-eostring& eostring::operator=(const char* s) { // Something is not right with these assig operators
-   if(strlen(s)) {
-      _size = strlen(s);
-      _capacity = _size*2;
-      _begin = new char[_capacity];
-      memcpy(_begin, s, _size);
-      _begin[_size] = '\0';
-   }
-   return *this;
+eostring& eostring::operator=(const char* str) {
+    assert(str != nullptr);
+    
+    _size     = strlen(str);
+    _capacity = _size*2;
+    _begin    = impl::expand_mcpy(_size, _capacity, str);
+    
+    return *this;
 }
 
-eostring& eostring::operator+=(char c) {
-   if(_capacity == 0) {
-      _size = 2;
-      _capacity = 2*2;
-      _begin = new char[_capacity];
-      memcpy(_begin, &c, 1);
-      _begin[_size] = '\0';
-   }
-   else if(_size == _capacity) {
-      ++_size;
-      _capacity = _size*2;
-      _begin[_size] = c;
-      char* begin{new char[_capacity]};
-      memcpy(begin, _begin, _size);
-      begin[_size] = '\0';
-      _begin = begin;
-   }
-   else {
-      _begin[_size++] = c;
-      _begin[_size] = '\0';
-   }
-   return *this;
+eostring& eostring::operator+=(const char c) {
+    if(_capacity == 0) {
+        _size     = 2;
+        _capacity = 2*2;
+        _begin    = impl::expand_mcpy(1, _capacity, &c);
+    }
+    else if(_size == _capacity) {
+        _capacity     = ++_size*2;
+        _begin[_size] = c;
+        _begin        = impl::expand_mcpy(_size, _capacity, this->_begin);
+    }
+    else {
+        _begin[_size]   = c;
+        _begin[++_size] = '\0';
+    }
+    
+    return *this;
 }
 
-char& eostring::at(size_t n) {
-   if(n < 0 || _size <= n)
-      throw std::out_of_range("eostring::at()");
-   return _begin[n];
+char& eostring::at(const size_t n) {
+    if(n < 0 || _size <= n)
+        throw std::out_of_range("eostring::at()");
+    return _begin[n];
 }
 
-const char& eostring::at(size_t n) const {
-   if(n < 0 || _size <= n)
-      throw std::out_of_range("eostring::at()");
-   return _begin[n];
+const char& eostring::at(const size_t n) const {
+    if(n < 0 || _size <= n)
+        throw std::out_of_range("eostring::at()");
+    return _begin[n];
 }
 
-char& eostring::operator[](size_t n) {
-   return _begin[n];
+char& eostring::operator[](const size_t n) {
+    return _begin[n];
 }
 
-const char& eostring::operator[](size_t n) const {
-   return _begin[n];
+const char& eostring::operator[](const size_t n) const {
+    return _begin[n];
 }
 
 char& eostring::front() {
-   return _begin[0];
+    return _begin[0];
 }
 
 const char& eostring::front() const {
-   return _begin[0];
+    return _begin[0];
 }
 
 char& eostring::back() {
-   return _begin[_size-1];
+    return _begin[_size-1];
 }
 
 const char& eostring::back() const {
-   return _begin[_size-1];
+    return _begin[_size-1];
 }
 
 char* eostring::data() {
-   return _begin;
+    return _begin;
 }
 
 const char* eostring::data() const {
-   return _begin;
+    return _begin;
 }
 
 const char* eostring::c_str() const {
-   return _begin;
+    return _begin;
 }
 
 eostring::iterator eostring::begin() {
-   return &_begin[0];
+    return &_begin[0];
 }
 
 eostring::const_iterator eostring::cbegin() const {
-   return &_begin[0];
+    return &_begin[0];
 }
 
 eostring::iterator eostring::end() {
-   return &_begin[_size];
+    return &_begin[_size];
 }
 
 eostring::const_iterator eostring::cend() const {
-   return &_begin[_size];
+    return &_begin[_size];
 }
 
 bool eostring::empty() const {
-   return !_size;
+    return !_size;
 }
 
 size_t eostring::size() const {
-   return _size;
+    return _size;
 }
 
 size_t eostring::length() const {
-   return _size;
+    return _size;
 }
 
 size_t eostring::capacity() const {
-   return _capacity;
+    return _capacity;
 }
 
 size_t eostring::max_size() const {
-   return npos;
+    return npos;
 }
 
 bool operator< (const eostring& lhs, const eostring& rhs) {
-   const char* beg_lhs{lhs._begin}; const char* end_lhs{lhs._begin + lhs._size};
-   const char* beg_rhs{rhs._begin}; const char* end_rhs{rhs._begin + rhs._size};
+    const char* beg_lhs{lhs._begin}; const char* end_lhs{lhs._begin + lhs._size};
+    const char* beg_rhs{rhs._begin}; const char* end_rhs{rhs._begin + rhs._size};
    
-   for (; beg_lhs != end_lhs && beg_rhs != end_rhs; ++beg_lhs, ++beg_rhs) {
-      if (*beg_lhs < *beg_rhs)
-         return true;
-      if (*beg_rhs < *beg_lhs)
-         return false;
-   }
+    for (; beg_lhs != end_lhs && beg_rhs != end_rhs; ++beg_lhs, ++beg_rhs) {
+        if (*beg_lhs < *beg_rhs)
+            return true;
+        if (*beg_rhs < *beg_lhs)
+            return false;
+    }
    
-   return beg_lhs == end_lhs && beg_rhs != end_rhs;
+    return beg_lhs == end_lhs && beg_rhs != end_rhs;
 }
 
 bool operator> (const eostring& lhs, const eostring& rhs) {
-   return (rhs < lhs);
+    return (rhs < lhs);
 }
 
 bool operator<=(const eostring& lhs, const eostring& rhs) {
-   return !(rhs < lhs);
+    return !(rhs < lhs);
 }
 
 bool operator>=(const eostring& lhs, const eostring& rhs) {
-   return !(lhs < rhs);
+    return !(lhs < rhs);
 }
 
 bool operator==(const eostring& lhs, const eostring& rhs) {
-   return !(lhs < rhs) && !(rhs < lhs);
+    return !(lhs < rhs) && !(rhs < lhs);
 }
 
 bool operator!=(const eostring& lhs, const eostring& rhs) {
-   return !(lhs == rhs);
+    return !(lhs == rhs);
 }
 
 void eostring::clear() { // See top of file
-   if(_size)
-      _size = 0;
+    if(_size)
+        _size = 0;
 }
 
-void eostring::reserve(size_t n) {
-   if(_capacity <= n)
-      _capacity = n;
-   else
-      return;
+void eostring::reserve(const size_t n) {
+    if(_capacity <= n)
+        _capacity = n;
+    else
+        return;
 }
 
 eostring& eostring::insert(size_t pos, const eostring& s) {
-   assert(pos <= _size);
-   // if( _capacity == 0) { // Don't need
-   //    assert(pos == 0);
-   //    _size = s._size;
-   //    _capacity = _size*2;
-   //    memcpy(_begin, s._begin, s._size);
-   //    _begin[_size] = '\n';
-   // }
-   if( _capacity < (_size + s._size + 1)) {
-      size_t orig_sz{_size};      
-      _size += s._size+1;
-      _capacity = _size*2;
-      char* begin = new char[_capacity];
-      memcpy(begin, _begin, pos);
-      memcpy(begin+pos, s._begin, s._size);
-      orig_sz -= pos;
-      memcpy(begin+s._size+pos, _begin+pos, orig_sz);
-      delete[] _begin;
-      _begin = begin;
-      _begin[_size] = '\0';
-   }
-   else {
-      // size_t orig_sz{_size};
-      // _size += s._size+1;
-      // char* begin = new char[_capacity];
-      // memcpy(begin, _begin, pos);
-      // memcpy(begin+pos, s._begin, s._size);
-      // orig_sz -= pos;
-      // if(orig_sz)
-      //    memcpy(begin+s._size+pos, _begin+pos, orig_sz);
-      // delete[] _begin;
-      // _begin = begin;
-      // _begin[_size] = '\0';
-      _size += s._size+1;
-      memmove(_begin+pos+s._size, s._begin, s._size);
-   }
-   return *this;
+    assert(pos <= _size);
+    // if( _capacity == 0) { // Don't need
+    //    assert(pos == 0);
+    //    _size = s._size;
+    //    _capacity = _size*2;
+    //    memcpy(_begin, s._begin, s._size);
+    //    _begin[_size] = '\n';
+    // }
+    if( _capacity < (_size + s._size + 1)) {
+        size_t orig_sz{_size};      
+        _size += s._size+1;
+        _capacity = _size*2;
+        char* begin = new char[_capacity];
+        memcpy(begin, _begin, pos);
+        memcpy(begin+pos, s._begin, s._size);
+        orig_sz -= pos;
+        memcpy(begin+s._size+pos, _begin+pos, orig_sz);
+        delete[] _begin;
+        _begin = begin;
+        _begin[_size] = '\0';
+    }
+    else {
+        // size_t orig_sz{_size};
+        // _size += s._size+1;
+        // char* begin = new char[_capacity];
+        // memcpy(begin, _begin, pos);
+        // memcpy(begin+pos, s._begin, s._size);
+        // orig_sz -= pos;
+        // if(orig_sz)
+        //    memcpy(begin+s._size+pos, _begin+pos, orig_sz);
+        // delete[] _begin;
+        // _begin = begin;
+        // _begin[_size] = '\0';
+        _size += s._size+1;
+        memmove(_begin+pos+s._size, s._begin, s._size);
+    }
+    return *this;
 }
 
 // eostring& eostring::erase(size_t pos, size_t len) { // Look over this again
@@ -319,7 +300,7 @@ eostring& eostring::insert(size_t pos, const eostring& s) {
 // }
 
 void eostring::push_back(char c) {
-   *this += c;
+    *this += c;
 }
 
 // void eostring::pop_back() {
@@ -331,9 +312,9 @@ void eostring::push_back(char c) {
 // }
 
 eostring& eostring::operator+=(const eostring& rhs) {
-   for (size_t i{0}; i < rhs.size(); ++i)
-      *this += rhs[i];
-   return *this;
+    for (size_t i{0}; i < rhs.size(); ++i)
+        *this += rhs[i];
+    return *this;
 }
 
 // eostring& eostring::replace(size_t pos,  size_t len,  const eostring& s) {
@@ -369,3 +350,19 @@ eostring& eostring::operator+=(const eostring& rhs) {
 //     res += rhs;
 //     return res;
 // }
+
+namespace impl {
+    char* expand_mcpy(size_t size, size_t capacity, const char* str) {
+        char* begin{new char[capacity]};
+        memcpy(begin, str, size);
+        begin[size] = '\0';
+        return begin;
+    }
+
+    char* expand_mset(size_t size, size_t capacity, const char c) {
+        char* begin{new char[capacity]};
+        memset(begin, c, size);
+        begin[size] = '\0';
+        return begin;
+    }
+}
