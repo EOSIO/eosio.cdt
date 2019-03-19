@@ -9,10 +9,12 @@ namespace impl {
 class eostring
 {
 public:
-    static constexpr size_t npos{std::numeric_limits<size_t>::max()};
+    static constexpr size_t npos = -1;
     
     using iterator = char*;
     using const_iterator = const char*;
+    // using reverse_iterator = char*;
+    // using const_reverse_iterator = const char*;
     using reference = char&;
     using const_reference = const char&;
 
@@ -53,6 +55,10 @@ public:
     const_iterator cbegin() const;
     iterator end();
     const_iterator cend() const;
+    // reverse_iterator rbegin();
+    // const_reverse_iterator crbegin() const;
+    // reverse_iterator rend();
+    // const_reverse_iterator crend() const;
 
     bool empty() const;
     size_t size() const;

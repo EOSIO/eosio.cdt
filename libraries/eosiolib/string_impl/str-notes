@@ -1,3 +1,6 @@
+[✔] template <size_t N>
+constexpr eostring(const char (&str)[N]);
+
 [✔] basic_string();
 
 [✔] eostring( size_t count, char ch );
@@ -125,10 +128,9 @@ eostring& assign( const T& t, size_t pos, size_t count = npos);
 
 [✔] const_iterator cend() const;
 
-
 --------------------------------------------------------------------------------
 
-[X] everse_iterator rbegin();
+[X] reverse_iterator rbegin();
 
 [X] const_reverse_iterator rbegin() const;
 

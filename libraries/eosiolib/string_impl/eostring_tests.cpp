@@ -334,7 +334,8 @@ int main()
         static eostring eostr{"abcdef"};
         eostring::iterator iter{eostr.begin()};
         assert(iter   == &eostr[0]);
-        assert(++iter == &eostr[1]);
+        assert(iter+1 == &eostr[0]+1);
+        assert(iter-1 == &eostr[0]-1);
     }
    
     //// const_iterator cbegin() const
@@ -342,7 +343,8 @@ int main()
         static const eostring eostr{"abcdef"};
         eostring::const_iterator iter{eostr.cbegin()};
         assert(iter   == &eostr[0]);
-        assert(++iter == &eostr[1]);
+        assert(iter+1 == &eostr[0]+1);
+        assert(iter-1 == &eostr[0]-1);
     }
    
     //// iterator end()
@@ -350,7 +352,8 @@ int main()
         static eostring eostr{"abcdef"};
         eostring::iterator iter{eostr.end()};
         assert(iter   == &eostr[eostr.size()]);
-        assert(--iter == &eostr[eostr.size()-1]);
+        assert(iter+1 == &eostr[eostr.size()+1]);
+        assert(iter-1 == &eostr[eostr.size()-1]);
     }
    
     //// const_iterator cend() const
@@ -358,14 +361,53 @@ int main()
         static const eostring eostr{"abcdef"};
         eostring::const_iterator iter{eostr.cend()};
         assert(iter   == &eostr[eostr.size()]);
-        assert(--iter == &eostr[eostr.size()-1]);
+        assert(iter+1 == &eostr[eostr.size()+1]);
+        assert(iter-1 == &eostr[eostr.size()-1]);
+    }
+
+    //// reverse_iterator rbegin()
+    {
+        // eostring eostr{"abcdef"};
+        // eostring::reverse_iterator iter{eostr.rbegin()};
+        // assert(iter   == &eostr[eostr.size()-1]);
+        // assert(iter+1 == &eostr[eostr.size()-2]);
+        // assert(iter-1 == &eostr[eostr.size()]);
+    }
+   
+    //// const_reverse_iterator crbegin() const
+    {
+        // const eostring eostr{"abcdef"};
+        // eostring::const_reverse_iterator iter{eostr.crbegin()};
+        // assert(iter   == &eostr[eostr.size()-1]);
+        // assert(iter+1 == &eostr[eostr.size()-2]);
+        // assert(iter-1 == &eostr[eostr.size()]);
+    }
+   
+    //// reverse_iterator rend()
+    {
+        // eostring eostr{"abcdef"};
+        // eostring::reverse_iterator iter{eostr.rend()};
+        // assert(iter   == &eostr[0]-1);
+        // assert(iter+1 == &eostr[0]-2);
+        // assert(iter-1 == &eostr[0]);
+    }
+   
+    //// const_reverse_iterator crend() const
+    {
+        // const eostring eostr{"abcdef"};
+        // eostring::const_reverse_iterator iter{eostr.crend()};
+        // assert(iter   == &eostr[0]-1);
+        // assert(iter+1 == &eostr[0]-2);
+        // assert(iter-1 == &eostr[0]);
     }
 
     //// bool eostring::empty() const
-    static eostring eostr{};
-    assert(eostr.empty() == true);
-    eostr += 'c';
-    assert(eostr.empty() == false);
+    {
+        static eostring eostr{};
+        assert(eostr.empty() == true);
+        eostr += 'c';
+        assert(eostr.empty() == false);
+    }
 
     //// size_t eostring::size() const
     {

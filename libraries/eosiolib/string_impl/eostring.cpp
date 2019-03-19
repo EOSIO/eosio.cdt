@@ -11,8 +11,6 @@
 // If an argument given is `eostring::npos` that value is the size of the given string
 
 #include <cstring>   // memcpy, memset, strlen, strcpy     ???
-#include <limits>    // std::numeric_limits<size_t>::max() ???
-#include <stdexcept> // std::out_of_range                  ???
 
 #include <iostream>  ///
 using namespace std; ///
@@ -163,20 +161,36 @@ const char* eostring::c_str() const {
 }
 
 eostring::iterator eostring::begin() {
-    return &_begin[0];
+    return eostring::iterator{&_begin[0]};
 }
 
 eostring::const_iterator eostring::cbegin() const {
-    return &_begin[0];
+    return eostring::const_iterator{&_begin[0]};
 }
 
 eostring::iterator eostring::end() {
-    return &_begin[_size];
+    return eostring::iterator{&_begin[_size]};
 }
 
 eostring::const_iterator eostring::cend() const {
-    return &_begin[_size];
+    return eostring::const_iterator{&_begin[_size]};
 }
+
+// eostring::reverse_iterator eostring::rbegin() {
+//     return eostring::iterator{&_begin[_size]-1};
+// }
+
+// eostring::const_reverse_iterator eostring::crbegin() const {
+//     return eostring::const_reverse_iterator{&_begin[_size]-1};
+// }
+
+// eostring::reverse_iterator eostring::rend() {
+//     return eostring::reverse_iterator{&_begin[0]-1};
+// }
+
+// eostring::const_reverse_iterator eostring::crend() const {
+//     return eostring::const_reverse_iterator{&_begin[0]-1};
+// }
 
 bool eostring::empty() const {
     return !_size;
@@ -366,7 +380,7 @@ namespace impl {
     }
 
     void check(const eostring& str, const size_t n) {
-        if(n < 0 || str.size() <= n) // should this be `<=` or `<` ?
-            throw std::out_of_range("eostring::at()");
+        if(n < 0 || str.size() <= n)
+            throw "eostring::at()";
     }
 }
