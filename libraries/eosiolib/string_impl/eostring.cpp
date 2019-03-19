@@ -208,16 +208,13 @@ eostring& eostring::insert(const size_t pos, const char* str) {
     size_t str_sz{strlen(str)};
     
     if( _capacity < (_size+str_sz+1)) { // Case where we need to reallocate memory
-        size_t orig_sz{_size}; // Save the original size of the string for calculations
-        
         _size     += str_sz;
         _capacity = _size*2;
         
         char* begin{impl::expand_mcpy(pos, _capacity, _begin)};
         
         memcpy(begin+pos, str, str_sz);
-        orig_sz -= pos;
-        memcpy(begin+str_sz+pos, _begin+pos, orig_sz);
+        memcpy(begin+str_sz+pos, _begin+pos, _size-str_sz-pos);
 
         delete[] _begin;
 
@@ -225,8 +222,10 @@ eostring& eostring::insert(const size_t pos, const char* str) {
         _begin[_size] = '\0';
     }
     else { // Case where we need not reallocate memory
-        _size += str_sz+1;
-        memmove(_begin+pos+str_sz, str, str_sz);
+        _size += str_sz;
+        memmove(_begin+pos+str_sz, _begin+pos, _size-pos);
+        memcpy(_begin+pos, str, str_sz);
+        _begin[_size] = '\0';
     }
     
     return *this;

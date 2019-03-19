@@ -469,6 +469,33 @@ int main()
 
     //// eostring& insert(const size_t pos, const eostring& str)
     {
+        static eostring eostr{};
+        static const eostring str{"ooo"};
+        eostr.insert(0, str);
+        assert(eostr.size() == 3);
+        assert(eostr.capacity() == 6);
+        assert(strcmp(eostr.data(), "ooo") == 0);
+    }
+
+    {
+        static eostring eostr{"abc"};
+        static const eostring str{"d"};
+        eostr.insert(0, str);
+        assert(eostr.size() == 4);
+        assert(eostr.capacity() == 6);
+        assert(strcmp(eostr.data(), "dabc") == 0);
+    }
+
+    {
+        static eostring eostr{"abc"};
+        static const eostring str{"def"};
+        eostr.insert(0, str);
+        assert(eostr.size() == 6);
+        assert(eostr.capacity() == 12);
+        assert(strcmp(eostr.data(), "defabc") == 0);
+    }
+    
+    {
         static eostring eostr{"iii"};
         static const eostring str{"ooo"};
         eostr.insert(0, str);
@@ -638,13 +665,6 @@ int main()
         assert(strcmp(eostr.data(), "") == 0);
     }
 
-
-
-
-
-
-
-
     //// eostring& append(const char* str)
     {
         static eostring eostr{};
@@ -656,48 +676,32 @@ int main()
     }
 
     {
-        // static eostring eostr{"abcdefg"};
-        // static const char* str{"iii"};
-        // eostr.append(str);
-        // assert(eostr.size() == 11);
-        // assert(eostr.capacity() == 14);
-        // assert(strcmp(eostr.data(), "abcdefgiii") == 0);
+        static eostring eostr{"abcdefg"};
+        static const char* str{"iii"};
+        eostr.append(str);
+        assert(eostr.size() == 10);
+        assert(eostr.capacity() == 14);
+        assert(strcmp(eostr.data(), "abcdefgiii") == 0);
     }
     
     //// eostring& append(const eostring& str)
-    // {
-    //     static eostring eostr{};
-    //     static const eostring str{"iii"};
-    //     eostr.append(str);
-    //     assert(eostr.size() == 3);
-    //     assert(eostr.capacity() == 6);
-    //     assert(strcmp(eostr.data(), "iii") == 0);
-    // }
+    {
+        static eostring eostr{};
+        static const eostring str{"iii"};
+        eostr.append(str);
+        assert(eostr.size() == 3);
+        assert(eostr.capacity() == 6);
+        assert(strcmp(eostr.data(), "iii") == 0);
+    }
 
-    // {
-    //     static eostring eostr{"abcdefg"};
-    //     static const eostring str{"iii"};
-    //     eostr.append(str);
-    //     // cout << eostr.size() << endl;
-    //     // cout << eostr.capacity() << endl;
-    //     // cout << eostr.data() << endl;
-    //     assert(eostr.size() == 10);
-    //     assert(eostr.capacity() == 14);
-    //     assert(strcmp(eostr.data(), "abcdefgiii") == 0);
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
+    {
+        static eostring eostr{"abcdefg"};
+        static const eostring str{"iii"};
+        eostr.append(str);
+        assert(eostr.size() == 10);
+        assert(eostr.capacity() == 14);
+        assert(strcmp(eostr.data(), "abcdefgiii") == 0);
+    }
 
     //// eostring& operator+=(const char c)
     {
