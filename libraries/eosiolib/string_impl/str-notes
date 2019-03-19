@@ -1,362 +1,220 @@
-[✔] template <size_t N>
+[✔][✔] template <size_t N>
 constexpr eostring(const char (&str)[N]);
 
-[✔] basic_string();
+[✔][✔] basic_string();
 
-[✔] eostring( size_t count, char ch );
+[✔][✔] eostring( size_t count, char ch );
 
-[✔] eostring( const eostring& other, size_t pos, size_t count = std::eostring::npos );
+[✔][✔] eostring( const eostring& other, size_t pos, size_t count = std::eostring::npos );
 
-[✔] eostring( const eostring& other, size_t pos, size_t count );
+[✔][✔] eostring( const char* s, size_t count );
 
-[✔] eostring( const eostring& other, size_t pos );
+[✔][✔] eostring( const eostring& other );
 
-[✔] eostring( const char* s, size_t count );
-
-[✔] eostring( const char* s );
-
-[X] template< class InputIt >
-eostring( InputIt first, InputIt last );
-
-[✔] eostring( const eostring& other );
-
-[X] eostring( eostring&& other ) noexcept;
-
-[✔] eostring( eostring&& other );
-
-[X] eostring( std::initializer_list<char> ilist );
-
-[X] template < class T >
-explicit eostring( const T& t );
-
-[X] template < class T >
-eostring( const T& t, size_t pos, size_t n );
+[✔][✔] eostring( eostring&& other );
 
 --------------------------------------------------------------------------------
 
-[✔] eostring& operator=( const eostring& str );
+[✔][✔] eostring& operator=( const eostring& str );
 
-[✔] eostring& operator=( eostring&& str );
+[✔][✔] eostring& operator=( eostring&& str );
 
-[X] eostring& operator=( eostring&& str ) noexcept(/* see below */);
-
-[✔] eostring& operator=( const char* s );
-
-[X] eostring& operator=( char ch );
-
-[X] eostring& operator=( std::initializer_list<char> ilist );
-
-[X] template<class T>
-eostring& operator=( const T& t );
+[✔][✔] eostring& operator=( const char* s );
 
 --------------------------------------------------------------------------------
 
-[X] eostring& assign( size_t count, char ch );
+[✔][✔] reference       at( size_t pos );
 
-[X] eostring& assign( const eostring& str );
-
-[X] eostring& assign( const eostring& str, size_t pos, size_t count );
-
-[X] eostring& assign( const eostring& str, size_t pos, size_t count = npos);
-
-[X] eostring& assign( eostring&& str );
-
-[X] eostring& assign( eostring&& str ) noexcept(/* see below */);
-
-[X] eostring& assign( const char* s, size_t count );
-
-[X] eostring& assign( const char* s );
-
-[X] template< class InputIt >
-eostring& assign( InputIt first, InputIt last );
-
-[X] eostring& assign( std::initializer_list<char> ilist );
-
-[X] template < class T >
-eostring& assign( const T& t );
-
-[X] template < class T >
-eostring& assign( const T& t, size_t pos, size_t count = npos);
+[✔][✔] const_reference at( size_t pos ) const;
 
 --------------------------------------------------------------------------------
 
-[✔] reference       at( size_t pos );
+[✔][✔] reference       operator[]( size_t pos );
 
-[✔] const_reference at( size_t pos ) const;
-
---------------------------------------------------------------------------------
-
-[✔] reference       operator[]( size_t pos );
-
-[✔] const_reference operator[]( size_t pos ) const;
+[✔][✔] const_reference operator[]( size_t pos ) const;
 
 --------------------------------------------------------------------------------
 
-[✔] char& front();
+[✔][✔] char& front();
 
-[✔] const char& front() const;
-
---------------------------------------------------------------------------------
-
-[✔] char& back();
-
-[✔] const char& back() const;
+[✔][✔] const char& front() const;
 
 --------------------------------------------------------------------------------
 
-[✔] const char* data() const;
+[✔][✔] char& back();
 
-[✔] char* data();
-
---------------------------------------------------------------------------------
-
-[✔] const char* c_str() const;
+[✔][✔] const char& back() const;
 
 --------------------------------------------------------------------------------
 
-[✔] iterator begin();
+[✔][✔] char* data();
 
-[X] const_iterator begin() const;
-
-[✔] const_iterator cbegin() const;
+[✔][✔] const char* data() const;
 
 --------------------------------------------------------------------------------
 
-[✔] iterator end();
-
-[X] const_iterator end() const;
-
-[✔] const_iterator cend() const;
+[✔][✔] const char* c_str() const;
 
 --------------------------------------------------------------------------------
 
-[X] reverse_iterator rbegin();
+[✔][✔] iterator begin();
 
-[X] const_reverse_iterator rbegin() const;
-
-[X] const_reverse_iterator crbegin() const;
+[✔][✔] const_iterator cbegin() const;
 
 --------------------------------------------------------------------------------
 
-[X] reverse_iterator rend();
+[✔][✔] iterator end();
 
-[X] const_reverse_iterator rend() const;
-
-[X] const_reverse_iterator crend() const;
+[✔][✔] const_iterator cend() const;
 
 --------------------------------------------------------------------------------
 
-[✔] bool empty() const;
+[✔][✔] bool empty() const;
 
 --------------------------------------------------------------------------------
 
-[✔] size_t size() const;
+[✔][✔] size_t size() const;
 
-[X] size_t size() const noexcept;
-
-[✔] size_t length() const;
-
-[X] size_t length() const noexcept;
+[✔][✔] size_t length() const;
 
 --------------------------------------------------------------------------------
 
-[✔] size_t max_size() const;
+[✔][✔] size_t max_size() const;
 
 --------------------------------------------------------------------------------
 
-[X] void reserve( size_t new_cap = 0 );
-
-[✔] void reserve( size_t new_cap);
-
-[X] void reserve();
+[✔][✔] void reserve( size_t new_cap);
 
 --------------------------------------------------------------------------------
 
-[✔] size_t capacity() const;
+[✔][✔] size_t capacity() const;
 
 --------------------------------------------------------------------------------
 
-[ ] void shrink_to_fit();
+[✔][✔] void shrink_to_fit();
 
 --------------------------------------------------------------------------------
 
-[✔] void clear();
+[✔][✔] void clear();
 
 --------------------------------------------------------------------------------
 
-[ ] eostring& insert( size_t index, size_t count, char ch );
+[✔][✔] eostring& insert( size_t index, const char* s );
 
-[ ] eostring& insert( size_t index, const char* s );
-
-[ ] eostring& insert( size_t index, const char* s, size_t count );
-
-[ ] eostring& insert( size_t index, const eostring& str );
-
-[ ] eostring& insert( size_t index, const eostring& str, size_t index_str, size_t count );
-
-[ ] eostring& insert( size_t index, const eostring& str, size_t index_str, size_t count = npos);
-
-[ ] iterator insert( iterator pos, char ch );
-
-[ ] iterator insert( const_iterator pos, char ch );
-
-[ ] void insert( iterator pos, size_t count, char ch );
-
-[ ] iterator insert( const_iterator pos, size_t count, char ch );
-
-[ ] template< class InputIt >
-void insert( iterator pos, InputIt first, InputIt last );
-
-[ ] template< class InputIt >
-iterator insert( const_iterator pos, InputIt first, InputIt last );
-
-[ ] iterator insert( const_iterator pos, std::initializer_list<char> ilist );
-
-[ ] template < class T >
-eostring& insert( size_t pos, const T& t );
-
-[ ] template < class T >
-eostring& insert( size_t index, const T& t, size_t index_str, size_t count = npos);
+[✔][✔] eostring& insert( size_t index, const eostring& str );
 
 --------------------------------------------------------------------------------
 
-[ ] eostring& erase( size_t index = 0, size_t count = npos );
-
-[ ] iterator erase( iterator position );
-
-[ ] iterator erase( const_iterator position );
-
-[ ] iterator erase( iterator first, iterator last );
-
-[ ] iterator erase( const_iterator first, const_iterator last );
+[✔][✔] eostring& erase( size_t index = 0, size_t count = npos );
 
 --------------------------------------------------------------------------------
 
-[ ] void push_back( char ch );
+[✔][✔] void push_back( char ch );
 
 --------------------------------------------------------------------------------
 
-[ ] void pop_back();
+[✔][✔] void pop_back();
 
 --------------------------------------------------------------------------------
 
-[ ] eostring& append( size_t count, char ch );
+[✔][✔] eostring& append( const eostring& str );
 
-[ ] eostring& append( const eostring& str );
-
-[ ] eostring& append( const eostring& str, size_t pos, size_t count );
-
-[ ] eostring& append( const eostring& str, size_t pos, size_t count = npos );
-
-[ ] eostring& append( const char* s, size_t count );
-
-[ ] eostring& append( const char* s );
-
-[ ] template< class InputIt >
-eostring& append( InputIt first, InputIt last );
-
-[ ] eostring& append( std::initializer_list<char> ilist );
-
-[ ] template < class T >
-eostring& append( const T& t );
-
-[ ] template < class T >
-eostring& append( const T& t, size_t pos, size_t count = npos );
+[✔][✔] eostring& append( const char* s );
 
 --------------------------------------------------------------------------------
 
-[ ] eostring& operator+=( const eostring& str );
+[ ][ ] eostring& operator+=( const eostring& str );
 
-[ ] eostring& operator+=( char ch );
+[ ][ ] eostring& operator+=( char ch );
 
-[ ] eostring& operator+=( const char* s );
+[ ][ ] eostring& operator+=( const char* s );
 
-[ ] eostring& operator+=( std::initializer_list<char> ilist );
+[ ][ ] eostring& operator+=( std::initializer_list<char> ilist );
 
-[ ] template < class T > 
+[ ][ ] template < class T > 
 eostring& operator+=( const T& t );
 
 --------------------------------------------------------------------------------
 
-[ ] int compare( const eostring& str ) const;
+[ ][ ] int compare( const eostring& str ) const;
 
-[ ] int compare( const eostring& str ) const noexcept;
+[ ][ ] int compare( const eostring& str ) const noexcept;
 
-[ ] int compare( size_t pos1, size_t count1, const eostring& str ) const;
+[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str ) const;
 
-[ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 ) const;
+[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 ) const;
 
-[ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 = npos ) const;
+[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 = npos ) const;
 
-[ ] int compare( const char* s ) const;
+[ ][ ] int compare( const char* s ) const;
 
-[ ] int compare( size_t pos1, size_t count1, const char* s ) const;
+[ ][ ] int compare( size_t pos1, size_t count1, const char* s ) const;
 
-[ ] int compare( size_t pos1, size_t count1, const char* s, size_t count2 ) const;
+[ ][ ] int compare( size_t pos1, size_t count1, const char* s, size_t count2 ) const;
 
-[ ] template < class T >
+[ ][ ] template < class T >
 int compare( const T& t ) const noexcept(/* see below */);
 
-[ ] template < class T >
+[ ][ ] template < class T >
 int compare( size_t pos1, size_t count1, const T& t ) const;
 
-[ ] template < class T >
+[ ][ ] template < class T >
 int compare( size_t pos1, size_t count1, const T& t, size_t pos2, size_t count2 = npos) const;
 
 --------------------------------------------------------------------------------
 
-[ ] eostring& replace( size_t pos, size_t count, const eostring& str );
+[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str );
 
-[ ] eostring& replace( const_iterator first, const_iterator last, const eostring& str );
+[ ][ ] eostring& replace( const_iterator first, const_iterator last, const eostring& str );
 
-[ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 );
+[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 );
 
-[ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 = npos );
+[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 = npos );
 
-[ ] template< class InputIt >
+[ ][ ] template< class InputIt >
 eostring& replace( const_iterator first, const_iterator last, InputIt first2, InputIt last2 );
 
-[ ] eostring& replace( size_t pos, size_t count, const char* cstr, size_t count2 );
+[ ][ ] eostring& replace( size_t pos, size_t count, const char* cstr, size_t count2 );
 
-[ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr, size_t count2 );
+[ ][ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr, size_t count2 );
 
-[ ] eostring& replace( size_t pos, size_t count, const char* cstr );
+[ ][ ] eostring& replace( size_t pos, size_t count, const char* cstr );
 
-[ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr );
+[ ][ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr );
 
-[ ] eostring& replace( size_t pos, size_t count, size_t count2, char ch );
+[ ][ ] eostring& replace( size_t pos, size_t count, size_t count2, char ch );
 
-[ ] eostring& replace( const_iterator first, const_iterator last, size_t count2, char ch );
+[ ][ ] eostring& replace( const_iterator first, const_iterator last, size_t count2, char ch );
 
-[ ] eostring& replace( const_iterator first, const_iterator last, std::initializer_list<char> ilist );
+[ ][ ] eostring& replace( const_iterator first, const_iterator last, std::initializer_list<char> ilist );
 
-[ ] template < class T >
+[ ][ ] template < class T >
 eostring& replace( size_t pos, size_t count, const T& t );
 
-[ ] template < class T >
+[ ][ ] template < class T >
 eostring& replace( const_iterator first, const_iterator last, const T& t );
 
-[ ] template < class T >
+[ ][ ] template < class T >
 eostring& replace( size_t pos, size_t count, const T& t, size_t pos2, size_t count2 = npos );
 
 --------------------------------------------------------------------------------
 
-[ ] eostring substr( size_t pos = 0, size_t count = npos ) const;
+[ ][ ] eostring substr( size_t pos = 0, size_t count = npos ) const;
 
 --------------------------------------------------------------------------------
 
-[ ] size_t copy( char* dest, size_t count, size_t pos = 0) const;
+[ ][ ] size_t copy( char* dest, size_t count, size_t pos = 0) const;
 
 --------------------------------------------------------------------------------
 
-[ ] void resize( size_t count );
+[ ][ ] void resize( size_t count );
 
-[ ] void resize( size_t count, char ch );
+[ ][ ] void resize( size_t count, char ch );
 
 --------------------------------------------------------------------------------
 
-[ ] void swap( eostring& other );
+[ ][ ] void swap( eostring& other );
 
-[ ] void swap( eostring& other ) noexcept(/* see below */);
+[ ][ ] void swap( eostring& other ) noexcept(/* see below */);
 
 --------------------------------------------------------------------------------

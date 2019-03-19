@@ -13,8 +13,6 @@ public:
     
     using iterator = char*;
     using const_iterator = const char*;
-    // using reverse_iterator = char*;
-    // using const_reverse_iterator = const char*;
     using reference = char&;
     using const_reference = const char&;
 
@@ -24,58 +22,57 @@ public:
     }
    
     eostring();
-    eostring(const char* s, const size_t n);
     eostring(const size_t n, const char c);
     eostring(const eostring& str, const size_t pos, const size_t n = eostring::npos);
-    eostring(const eostring& s);
-    eostring(eostring&& s);
+    eostring(const char* str, const size_t n);
+    eostring(const eostring& str);
+    eostring(eostring&& str);
     ~eostring();
     
-    eostring& operator=(const eostring& s);
-    eostring& operator=(eostring&& s);
-    eostring& operator=(const char* s);
-    eostring& operator=(const char c);
-
-    eostring& operator+=(const char c);
+    eostring& operator=(const eostring& str);
+    eostring& operator=(eostring&& str);
+    eostring& operator=(const char* str);
 
     reference at(const size_t n);
     const_reference at(const size_t n) const;
     reference operator[](const size_t n);
     const_reference operator[](const size_t n) const;
-    
+
     char& front();
     const char& front() const;
     char& back();
-    const char& back() const;
+    const char& back()  const;
     char* data();
-    const char* data() const;
+    const char* data()  const;
     const char* c_str() const;
 
     iterator begin();
     const_iterator cbegin() const;
     iterator end();
-    const_iterator cend() const;
-    // reverse_iterator rbegin();
-    // const_reverse_iterator crbegin() const;
-    // reverse_iterator rend();
-    // const_reverse_iterator crend() const;
+    const_iterator cend()   const;
 
     bool empty() const;
     size_t size() const;
     size_t length() const;
     size_t max_size() const;
-    size_t capacity() const;
-    void clear();
     void reserve(const size_t n);
+    size_t capacity() const;
     void shrink_to_fit();
-    eostring& insert(const size_t pos, const eostring& s);
+    void clear();
+
+    eostring& insert(const size_t pos, const char* str);
+    eostring& insert(const size_t pos, const eostring& str);
     eostring& erase(const size_t pos=0, const size_t len=npos);
     void push_back(const char c);
     void pop_back();
+    eostring& append(const char* str);
+    eostring& append(const eostring& str);
+    
     eostring& operator+=(const eostring& rhs);
     eostring& replace(const size_t pos,  const size_t len,  const eostring& s);
     eostring substr (const size_t pos = 0, const size_t len = npos) const;
     size_t copy (char* s, size_t len, size_t pos = 0) const;
+    eostring& operator+=(const char c);
     // void resize (size_t n);
     // void swap (eostring& str);
 
