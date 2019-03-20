@@ -85,6 +85,17 @@ void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 __attribute__((eosio_wasm_import))
 uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
+
+/**
+* @brief Set the name list packed object
+* Set the name list packed object
+* @param list     blacklist type enum type value include 1-actor_blacklist_type  2-contract_blacklist_type 3-resource_greylist_type
+* @param action   list action type enum type value include 1- insert_type 2-remove_type
+* @param data     vector<string> fc pack  data  char* type
+* @param datalen  the length of the data.
+*/
+__attribute__((eosio_wasm_import))
+void set_blacklist_packed(int64_t list, int64_t action, char* data, uint32_t datalen);
 #ifdef __cplusplus
 }
 #endif
