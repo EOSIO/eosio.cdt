@@ -123,83 +123,21 @@ constexpr eostring(const char (&str)[N]);
 
 --------------------------------------------------------------------------------
 
-[ ][ ] eostring& operator+=( const eostring& str );
+[✔][✔] eostring& operator+=( char ch );
 
-[ ][ ] eostring& operator+=( char ch );
+[✔][✔] eostring& operator+=( const char* s );
 
-[ ][ ] eostring& operator+=( const char* s );
-
-[ ][ ] eostring& operator+=( std::initializer_list<char> ilist );
-
-[ ][ ] template < class T > 
-eostring& operator+=( const T& t );
+[✔][✔] eostring& operator+=( const eostring& str );
 
 --------------------------------------------------------------------------------
-
-[ ][ ] int compare( const eostring& str ) const;
-
-[ ][ ] int compare( const eostring& str ) const noexcept;
-
-[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str ) const;
-
-[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 ) const;
-
-[ ][ ] int compare( size_t pos1, size_t count1, const eostring& str, size_t pos2, size_t count2 = npos ) const;
-
-[ ][ ] int compare( const char* s ) const;
-
-[ ][ ] int compare( size_t pos1, size_t count1, const char* s ) const;
-
-[ ][ ] int compare( size_t pos1, size_t count1, const char* s, size_t count2 ) const;
-
-[ ][ ] template < class T >
-int compare( const T& t ) const noexcept(/* see below */);
-
-[ ][ ] template < class T >
-int compare( size_t pos1, size_t count1, const T& t ) const;
-
-[ ][ ] template < class T >
-int compare( size_t pos1, size_t count1, const T& t, size_t pos2, size_t count2 = npos) const;
-
---------------------------------------------------------------------------------
-
-[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str );
-
-[ ][ ] eostring& replace( const_iterator first, const_iterator last, const eostring& str );
-
-[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 );
-
-[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str, size_t pos2, size_t count2 = npos );
-
-[ ][ ] template< class InputIt >
-eostring& replace( const_iterator first, const_iterator last, InputIt first2, InputIt last2 );
-
-[ ][ ] eostring& replace( size_t pos, size_t count, const char* cstr, size_t count2 );
-
-[ ][ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr, size_t count2 );
 
 [ ][ ] eostring& replace( size_t pos, size_t count, const char* cstr );
 
-[ ][ ] eostring& replace( const_iterator first, const_iterator last, const char* cstr );
-
-[ ][ ] eostring& replace( size_t pos, size_t count, size_t count2, char ch );
-
-[ ][ ] eostring& replace( const_iterator first, const_iterator last, size_t count2, char ch );
-
-[ ][ ] eostring& replace( const_iterator first, const_iterator last, std::initializer_list<char> ilist );
-
-[ ][ ] template < class T >
-eostring& replace( size_t pos, size_t count, const T& t );
-
-[ ][ ] template < class T >
-eostring& replace( const_iterator first, const_iterator last, const T& t );
-
-[ ][ ] template < class T >
-eostring& replace( size_t pos, size_t count, const T& t, size_t pos2, size_t count2 = npos );
+[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str );
 
 --------------------------------------------------------------------------------
 
-[ ][ ] eostring substr( size_t pos = 0, size_t count = npos ) const;
+[✔][✔] eostring substr( size_t pos = 0, size_t count = npos ) const;
 
 --------------------------------------------------------------------------------
 
@@ -207,14 +145,10 @@ eostring& replace( size_t pos, size_t count, const T& t, size_t pos2, size_t cou
 
 --------------------------------------------------------------------------------
 
-[ ][ ] void resize( size_t count );
-
-[ ][ ] void resize( size_t count, char ch );
+[✔][✔] void resize( size_t count );
 
 --------------------------------------------------------------------------------
 
-[ ][ ] void swap( eostring& other );
-
-[ ][ ] void swap( eostring& other ) noexcept(/* see below */);
+[✔][✔] void swap( eostring& other );
 
 --------------------------------------------------------------------------------

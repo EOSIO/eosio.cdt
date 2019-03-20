@@ -33,10 +33,10 @@ public:
     eostring& operator=(eostring&& str);
     eostring& operator=(const char* str);
 
-    reference at(const size_t n);
-    const_reference at(const size_t n) const;
-    reference operator[](const size_t n);
-    const_reference operator[](const size_t n) const;
+    char& at(const size_t n);
+    const char at(const size_t n) const;
+    char& operator[](const size_t n);
+    const char operator[](const size_t n) const;
 
     char& front();
     const char& front() const;
@@ -46,10 +46,10 @@ public:
     const char* data()  const;
     const char* c_str() const;
 
-    iterator begin();
-    const_iterator cbegin() const;
-    iterator end();
-    const_iterator cend()   const;
+    char* begin();
+    const char* cbegin() const;
+    char* end();
+    const char* cend()   const;
 
     bool empty() const;
     size_t size() const;
@@ -62,19 +62,26 @@ public:
 
     eostring& insert(const size_t pos, const char* str);
     eostring& insert(const size_t pos, const eostring& str);
+    
     eostring& erase(const size_t pos=0, const size_t len=npos);
+    
     void push_back(const char c);
     void pop_back();
+    
     eostring& append(const char* str);
     eostring& append(const eostring& str);
-    
-    eostring& operator+=(const eostring& rhs);
-    eostring& replace(const size_t pos,  const size_t len,  const eostring& s);
-    eostring substr (const size_t pos = 0, const size_t len = npos) const;
-    size_t copy (char* s, size_t len, size_t pos = 0) const;
+
     eostring& operator+=(const char c);
-    // void resize (size_t n);
-    // void swap (eostring& str);
+    eostring& operator+=(const char* rhs);
+    eostring& operator+=(const eostring& rhs);
+
+    eostring& replace(const size_t pos,  const size_t len,  const char* str);
+    eostring& replace(const size_t pos,  const size_t len,  const eostring& str);
+    
+    eostring substr (const size_t pos = 0, const size_t len = npos) const;
+    size_t copy (char* s, const size_t len, const size_t pos = 0) const;
+    void resize (const size_t n);
+    void swap (eostring& str);
 
     friend bool operator+ (const eostring& lhs, const eostring& rhs);
     friend bool operator< (const eostring& lhs, const eostring& rhs);
