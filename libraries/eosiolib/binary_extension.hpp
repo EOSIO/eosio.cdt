@@ -1,12 +1,13 @@
 #pragma once
 #include "print.hpp"
 
+#warning "<eosiolib/binary_extension.hpp> is deprecated use <eosio/binary_extension.hpp>"
+
  namespace eosio {
     /**
     *  Container to hold a binary payload for an extension
     *
     *  @defgroup binary_extension Binary Extension
-    *  @ingroup cpp_api
     *  @ingroup types
     *  @{
     */
@@ -32,6 +33,9 @@
          {
             ::new (&_data) T(std::move(ext));
          }
+
+         /// @cond IMPLEMENTATIONS
+
           /** construct contained type in place */
          template <typename... Args>
          constexpr binary_extension( std::in_place_t, Args&&... args )
@@ -39,6 +43,8 @@
          {
             ::new (&_data) T(std::forward<Args>(args)...);
          }
+
+         /// @endcond
 
          ~binary_extension() { reset(); }
 
@@ -59,6 +65,7 @@
 
          /** test if container is holding a value */
          constexpr explicit operator bool()const { return _has_value; }
+
          /** test if container is holding a value */
          constexpr bool has_value()const { return _has_value; }
 
@@ -77,9 +84,14 @@
             return _get();
          }
 
-          /** get the contained value or a user specified default
-          * @pre def should be convertible to type T
-          * */
+
+          /// @cond OPERATORS
+
+        /**
+         * Get the contained value or a user specified default
+         *
+         * @pre def should be convertible to type T
+         **/
          template <typename U>
          constexpr auto value_or( U&& def ) -> std::enable_if_t<std::is_convertible<U, T>::value, T&>& {
             if (_has_value)
@@ -129,6 +141,10 @@
             return std::move(_get());
          }
 
+         /// @endcond
+
+         /// @cond IMPLEMENTATIONS
+
          template<typename ...Args>
          T& emplace(Args&& ... args)& {
             if (_has_value) {
@@ -147,6 +163,44 @@
                _has_value = false;
             }
          }
+
+         /// @endcond
+
+         /**
+           *  Serialize a binary_extension into a stream
+           *
+           *  @brief Serialize a binary_extension
+           *  @param ds - The stream to write
+           *  @param opt - The value to serialize
+           *  @tparam DataStream - Type of datastream buffer
+           *  @return DataStream& - Reference to the datastream
+           */
+         template<typename DataStream>
+         friend inline DataStream& operator<<(DataStream& ds, const eosio::binary_extension<T>& be) {
+            ds << be.value_or();
+            return ds;
+         }
+
+         /**
+           *  Deserialize a binary_extension from a stream
+           *
+           *  @brief Deserialize a binary_extension
+           *  @param ds - The stream to read
+           *  @param opt - The destination for deserialized value
+           *  @tparam DataStream - Type of datastream buffer
+           *  @return DataStream& - Reference to the datastream
+           */
+         template<typename DataStream>
+         friend inline DataStream& operator>>(DataStream& ds, eosio::binary_extension<T>& be) {
+            if( ds.remaining() ) {
+               T val;
+               ds >> val;
+               be.emplace(val);
+            }
+            return ds;
+         }
+
+
 
        private:
          bool _has_value = false;

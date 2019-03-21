@@ -6,7 +6,7 @@ Once you have your smart contract written then a test source file can be written
 
 `hello.hpp`
 ```c++ 
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 
 using namespace eosio;
 
@@ -24,8 +24,8 @@ CONTRACT hello : public eosio::contract {
 and then a quick test
 `hello_test.cpp`
 ```c++
-#include <eosiolib/eosio.hpp>
-#include <eosio/native/tester.hpp>
+#include <eosio/eosio.hpp>
+#include <eosio/tester.hpp>
 
 #include <hello.hpp>
 

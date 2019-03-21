@@ -7,6 +7,8 @@
 
 #include <boost/mp11/tuple.hpp>
 
+#warning "<eosiolib/dispatcher.hpp> is deprecated use <eosio/dispatcher.hpp>"
+
 namespace eosio {
 
    template<typename Contract, typename FirstAction>
@@ -40,7 +42,7 @@ namespace eosio {
 
    /**
     * @addtogroup dispatcher Dispatcher C++ API
-    * @ingroup cpp_api
+    * @ingroup core
     * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
     * @{
     */
@@ -84,9 +86,7 @@ namespace eosio {
       return true;
    }
 
-/// @}
-
-
+   /// @}
 
  // Helper macro for EOSIO_DISPATCH_INTERNAL
  #define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
@@ -97,8 +97,6 @@ namespace eosio {
  // Helper macro for EOSIO_DISPATCH
  #define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
     BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
-
-
 
 /**
  * @addtogroup dispatcher
@@ -115,6 +113,7 @@ namespace eosio {
  */
 #define EOSIO_DISPATCH( TYPE, MEMBERS ) \
 extern "C" { \
+   [[eosio::wasm_entry]] \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
       if( code == receiver ) { \
          switch( action ) { \

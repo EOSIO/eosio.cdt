@@ -3,21 +3,24 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
+#include <cstdlib>
+
 #include "action.h"
 #include "datastream.hpp"
 #include "serialize.hpp"
-#include "memory.hpp"
 
 #include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_tuple.hpp>
 #include <boost/preprocessor/tuple/enum.hpp>
 #include <boost/preprocessor/facilities/overload.hpp>
 
+#warning "<eosiolib/action.hpp> is deprecated use <eosio/action.hpp>"
+
 namespace eosio {
 
    /**
     *  @addtogroup action Action C++ API
-    *  @ingroup cpp_api
+    *  @ingroup core
     *  @brief Defines type-safe C++ wrapers for querying action and sending action
     *
     *  @note There are some methods from the @ref action that can be used directly from C++
@@ -131,6 +134,8 @@ namespace eosio {
        */
       name    permission;
 
+      /// @cond OPERATORS
+
       /**
        * Check equality of two permissions
        *
@@ -143,6 +148,8 @@ namespace eosio {
       friend constexpr bool operator == ( const permission_level& a, const permission_level& b ) {
          return std::tie( a.actor, a.permission ) == std::tie( b.actor, b.permission );
       }
+
+      /// @endcond
 
       EOSLIB_SERIALIZE( permission_level, (actor)(permission) )
    };
@@ -286,8 +293,6 @@ namespace eosio {
 
    };
 
-   ///@} actioncpp api
-   //
    namespace detail {
       template <typename T>
       struct unwrap { typedef T type; };

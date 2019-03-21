@@ -4,13 +4,14 @@
 #include <boost/preprocessor/seq/seq.hpp>
 #include <boost/preprocessor/stringize.hpp>
 
+#warning "<eosiolib/serialize.hpp> is deprecated use <eosio/serialize.hpp>"
 #define EOSLIB_REFLECT_MEMBER_OP( r, OP, elem ) \
   OP t.elem
 
 /**
  * @addtogroup serialize Serialize C++ API
  * @brief Defines C++ API to serialize and deserialize object
- * @ingroup cpp_api
+ * @ingroup core
  * @{
  */
 
