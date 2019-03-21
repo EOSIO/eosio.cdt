@@ -12,16 +12,21 @@ namespace eosio {
    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
    namespace impl {
-      struct str_t {
-         const char* c_str;
-         size_t      size;
-      };
-      
+      struct str_t;
       struct concat_t;
       typedef std::variant<concat_t, str_t> rope_node;
+
+      struct str_t {
+         const char*              c_str;
+         size_t                   size;
+         mutable const rope_node* temp = nullptr;
+      };
+      
       struct concat_t {
-         rope_node* left  = nullptr;
-         rope_node* right = nullptr;
+         rope_node*               left      = nullptr;
+         rope_node*               right     = nullptr;
+         mutable const rope_node* temp      = nullptr;
+         mutable bool             temp_left = false;
       };
    }
 
@@ -38,20 +43,57 @@ namespace eosio {
             return i;
          }
          
-         void c_str(char* buffer, const rope_node* r, size_t& off)const {
+         static void c_str(char* buffer, const rope_node* r, size_t& off) {
+            bool going_down = true;
             if (r) {
-               std::visit(overloaded {
-                  [&](const concat_t& c) {
-                     if (c.left)
-                        c_str(buffer, c.left, off);
-                     if (c.right)
-                        c_str(buffer, c.right, off);
-                  },
-                  [&](const str_t& s) { 
-                     off -= s.size;
-                     memcpy(buffer+off, s.c_str, s.size);
-                  }
+               std::visit([](const auto& n) {
+                  n.temp = nullptr;
                }, *r);
+            }
+            while (r) {
+               if (going_down) {
+                  std::visit(overloaded {
+                     [&](const concat_t& c) {
+                        if (c.left) {
+                           c.temp_left = true;
+                           std::visit([&](const auto& n){
+                              n.temp = r;
+                           }, *c.left);
+                           going_down = true;
+                           r = c.left;
+                        } else if (c.right) {
+                           c.temp_left = false;
+                           std::visit([&](const auto& n){
+                              n.temp = r;
+                           }, *c.right);
+                           going_down = true;
+                           r = c.right;
+                        } else {
+                           going_down = false;
+                           r = c.temp;
+                        }
+                     },
+                     [&](const str_t& s) { 
+                        off -= s.size;
+                        memcpy(buffer+off, s.c_str, s.size);
+                        going_down = false;
+                        r = s.temp;
+                     }
+                  }, *r);
+               } else {
+                  const auto& c = std::get<concat_t>(*r);
+                  if (c.temp_left && c.right) {
+                     c.temp_left = false;
+                     std::visit([&](const auto& n){
+                        n.temp = r;
+                     }, *c.right);
+                     going_down = true;
+                     r = c.right;
+                  } else {
+                     going_down = false;
+                     r = c.temp;
+                  }
+               }
             }
          }
 
