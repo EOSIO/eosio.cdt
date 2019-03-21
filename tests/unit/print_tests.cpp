@@ -4,7 +4,7 @@
 using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(print_test)
-   silence_output(true);
+   silence_output(false);
    CHECK_PRINT("27", [](){ eosio::print((uint8_t)27); });
    CHECK_PRINT("34", [](){ eosio::print((int)34); });
    CHECK_PRINT([](std::string s){return s[0] == 'a';},  [](){ eosio::print((char)'a'); });

@@ -334,8 +334,8 @@ namespace _multi_index_detail {
 
 /**
  *  The indexed_by struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified.
- *  @brief The indexed_by struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified.
  *
+ *  @ingroup multiindex
  *  @tparam IndexName - is the name of the index. The name must be provided as an EOSIO base32 encoded 64-bit integer and must conform to the EOSIO naming requirements of a maximum of 13 characters, the first twelve from the lowercase characters a-z, digits 1-5, and ".", and if there is a 13th character, it is restricted to lowercase characters a-p and ".".
  *  @tparam Extractor - is a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type. It is recommended to use the `eosio::const_mem_fun` template, which is a type alias to the `boost::multi_index::const_mem_fun`. See the documentation for the Boost `const_mem_fun` key extractor for more details.
  *
@@ -372,9 +372,9 @@ struct indexed_by {
 
 /**
  *  @defgroup multiindex Multi Index Table
- *  @brief Defines EOSIO Multi Index Table
  *  @ingroup contracts
  *
+ *  @brief Defines EOSIO Multi Index Table
  *  @details EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
  *  EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,
  *  the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t.
@@ -425,7 +425,6 @@ struct indexed_by {
  *  }
  *  EOSIO_DISPATCH( mycontract, (myaction) )
  *  @endcode
- *  @{
  */
 
 template<name::raw TableName, typename T, typename... Indices>
@@ -806,7 +805,7 @@ class multi_index
    public:
       /**
        *  Constructs an instance of a Multi-Index table.
-       *  @brief Constructs an instance of a Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @param code - Account that owns table
        *  @param scope - Scope identifier within the code hierarchy
@@ -857,6 +856,7 @@ class multi_index
 
       /**
        *  Returns the `code` member property.
+       *  @ingroup multiindex
        *
        *  @return Account name of the Code that owns the Primary Table.
        *
@@ -877,6 +877,7 @@ class multi_index
 
       /**
        *  Returns the `scope` member property.
+       *  @ingroup multiindex
        *
        *  @return Scope id of the Scope within the Code of the Current Receiver under which the desired Primary Table instance can be found.
        *
@@ -960,6 +961,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
@@ -985,6 +987,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
@@ -1008,6 +1011,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1031,6 +1035,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1054,6 +1059,7 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1088,6 +1094,7 @@ class multi_index
 
       /**
        *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
@@ -1122,6 +1129,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
@@ -1157,6 +1165,7 @@ class multi_index
 
       /**
        *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
@@ -1192,6 +1201,7 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
+       *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the lower bound search.
        *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
@@ -1237,6 +1247,7 @@ class multi_index
 
       /**
        *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
+       *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
        *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
@@ -1280,6 +1291,7 @@ class multi_index
 
       /**
        *  Returns an available primary key.
+       *  @ingroup multiindex
        *
        *  @return An available (unused) primary key value.
        *
@@ -1329,6 +1341,7 @@ class multi_index
 
       /**
        *  Returns an appropriately typed Secondary Index.
+       *  @ingroup multiindex
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1382,6 +1395,7 @@ class multi_index
 
       /**
        *  Returns an appropriately typed Secondary Index.
+       *  @ingroup multiindex
        *
        *  @tparam IndexName - the ID of the desired secondary index
        *
@@ -1432,6 +1446,7 @@ class multi_index
 
       /**
        *  Returns an iterator to the given object in a Multi-Index table.
+       *  @ingroup multiindex
        *
        *  @param obj - A reference to the desired object
        *
@@ -1471,6 +1486,7 @@ class multi_index
       }
       /**
        *  Adds a new object (i.e., row) to the table.
+       *  @ingroup multiindex
        *
        *  @param payer - Account name of the payer for the Storage usage of the new object
        *  @param constructor - Lambda function that does an in-place initialization of the object to be created in the table
@@ -1552,6 +1568,7 @@ class multi_index
 
       /**
        *  Modifies an existing object in a table.
+       *  @ingroup multiindex
        *
        *  @param itr - an iterator pointing to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1598,6 +1615,7 @@ class multi_index
 
       /**
        *  Modifies an existing object in a table.
+       *  @ingroup multiindex
        *
        *  @param obj - a reference to the object to be updated
        *  @param payer - account name of the payer for the Storage usage of the updated row
@@ -1694,6 +1712,7 @@ class multi_index
 
       /**
        *  Retrieves an existing object from a table using its primary key.
+       *  @ingroup multiindex
        *
        *  @param primary - Primary key value of the object
        *  @return A constant reference to the object containing the specified primary key.
@@ -1724,6 +1743,7 @@ class multi_index
 
       /**
        *  Search for an existing object in a table using its primary key.
+       *  @ingroup multiindex
        *
        *  @param primary - Primary key value of the object
        *  @return An iterator to the found object which has a primary key equal to `primary` OR the `end` iterator of the referenced table if an object with primary key `primary` is not found.
@@ -1760,6 +1780,7 @@ class multi_index
 
       /**
        *  Search for an existing object in a table using its primary key.
+       *  @ingroup multiindex
        *
        *  @param primary - Primary key value of the object
        *  @param error_msg - error message if an object with primary key `primary` is not found.
@@ -1782,6 +1803,7 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
+       *  @ingroup multiindex
        *
        *  @param itr - An iterator pointing to the object to be removed
        *
@@ -1828,6 +1850,7 @@ class multi_index
 
       /**
        *  Remove an existing object from a table using its primary key.
+       *  @ingroup multiindex
        *
        *  @param obj - Object to be removed
        *
@@ -1889,5 +1912,4 @@ class multi_index
       }
 
 };
-  /// @}
 }  /// eosio

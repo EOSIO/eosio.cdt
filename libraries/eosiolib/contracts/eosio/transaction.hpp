@@ -43,42 +43,40 @@ namespace eosio {
    }
 
   /**
-   * @defgroup transaction Transaction C++ API
-   * @ingroup contracts 
-   * @brief Type-safe C++ wrappers for transaction C API
+   *  @defgroup transaction Transaction
+   *  @ingroup contracts
+   *  @brief Type-safe C++ wrappers for transaction C API
    *
-   * @details An inline message allows one contract to send another contract a message
-   * which is processed immediately after the current message's processing
-   * ends such that the success or failure of the parent transaction is
-   * dependent on the success of the message. If an inline message fails in
-   * processing then the whole tree of transactions and actions rooted in the
-   * block will me marked as failing and none of effects on the database will
-   * persist.
+   *  @details An inline message allows one contract to send another contract a message
+   *  which is processed immediately after the current message's processing
+   *  ends such that the success or failure of the parent transaction is
+   *  dependent on the success of the message. If an inline message fails in
+   *  processing then the whole tree of transactions and actions rooted in the
+   *  block will me marked as failing and none of effects on the database will
+   *  persist.
    *
-   * Inline actions and Deferred transactions must adhere to the permissions
-   * available to the parent transaction or, in the future, delegated to the
-   * contract account for future use.
+   *  Inline actions and Deferred transactions must adhere to the permissions
+   *  available to the parent transaction or, in the future, delegated to the
+   *  contract account for future use.
+   *
+   *  @note There are some methods from the @ref transactioncapi that can be used directly from C++
+   */
 
-   * @note There are some methods from the @ref transactioncapi that can be used directly from C++
-   * @{
+  /**
+   *  @ingroup transaction
    */
    typedef std::tuple<uint16_t, std::vector<char>> extension;
+
+   /**
+    *  @ingroup transaction
+    */
    typedef std::vector<extension> extensions_type;
 
-
    /**
-    * @defgroup transactioncppapi Transaction C++ API
-    * @ingroup transactionapi
-    * @brief Type-safe C++ wrappers for transaction C API
+    *  Class transaction_header contains details about the transaction
     *
-    * @note There are some methods from the @ref transactioncapi that can be used directly from C++
-    *
-    * @{
-    */
-
-   /**
-    * Class transaction_header contains details about the transaction
-    * @brief Contains details about the transaction
+    *  @ingroup transaction
+    *  @brief Contains details about the transaction
     */
 
    class transaction_header {
@@ -104,23 +102,22 @@ namespace eosio {
    };
 
    /**
-    * Class transaction contains the actions, context_free_actions and extensions type for a transaction
-    * @brief Contains the actions, context_free_actions and extensions type for a transaction
+    *  Class transaction contains the actions, context_free_actions and extensions type for a transaction
+    *
+    *  @ingroup transaction
     */
    class transaction : public transaction_header {
    public:
 
       /**
        * Construct a new transaction with an expiration of now + 60 seconds.
-       *
-       * @brief Construct a new transaction object initialising the transaction header expiration to now + 60 seconds
        */
       transaction(time_point_sec exp = time_point_sec(current_time_point()) + 60) : transaction_header( exp ) {}
 
       /**
        *  Sends this transaction, packs the transaction then sends it as a deferred transaction
        *
-       *  @brief Writes the symbol_code as a string to the provided char buffer
+       *  @details Writes the symbol_code as a string to the provided char buffer
        *  @param sender_id - ID of sender
        *  @param payer - Account paying for RAM
        *  @param replace_existing - Defaults to false, if this is `0`/false then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
@@ -138,24 +135,25 @@ namespace eosio {
    };
 
    /**
-    * Struct onerror contains and sender id and packed transaction
-    * @brief  Contains and sender id and packed transaction
+    *  Struct onerror contains and sender id and packed transaction
+    *
+    *  @ingroup transaction
     */
    struct onerror {
       uint128_t          sender_id;
       std::vector<char> sent_trx;
 
      /**
-      * from_current_action unpacks and returns a onerror struct
-      * @brief Unpacks and returns a onerror struct
+      *  from_current_action unpacks and returns a onerror struct
+      *
+      *  @ingroup transaction
       */
       static onerror from_current_action() {
          return unpack_action_data<onerror>();
       }
 
      /**
-      * unpack_sent_trx unpacks and returns a transaction
-      * @brief Unpacks and returns a transaction
+      * Unpacks and returns a transaction
       */
       transaction unpack_sent_trx() const {
          return unpack<transaction>(sent_trx);
@@ -164,15 +162,26 @@ namespace eosio {
       EOSLIB_SERIALIZE( onerror, (sender_id)(sent_trx) )
    };
 
+   /**
+    *  Send a deferred transaction
+    *
+    *  @ingroup transaction
+    *  @param sender_id - Account name of the sender of this deferred transaction
+    *  @param payer - Account name responsible for paying the RAM for this deferred transaction
+    *  @param serialized_transaction - The packed transaction to be deferred
+    *  @param size - The size of the packed transaction, required for persistence.
+    *  @param replace - If true, will replace an existing transaction.
+    */
    void send_deferred(const uint128_t& sender_id, name payer, const char* serialized_transaction, size_t size, bool replace = false) {
      internal_use_do_not_use::send_deferred(sender_id, payer.value, serialized_transaction, size, replace);
    }
    /**
-    * Retrieve the indicated action from the active transaction.
+    *  Retrieve the indicated action from the active transaction.
     *
-    * @param type - 0 for context free action, 1 for action
-    * @param index - the index of the requested action
-    * @return the indicated action
+    *  @ingroup transaction
+    *  @param type - 0 for context free action, 1 for action
+    *  @param index - the index of the requested action
+    *  @return the indicated action
     */
    inline action get_action( uint32_t type, uint32_t index ) {
       constexpr size_t max_stack_buffer_size = 512;
@@ -186,10 +195,10 @@ namespace eosio {
    }
 
    /**
-    * Access a copy of the currently executing transaction.
+    *  Access a copy of the currently executing transaction.
     *
-    * @brief Access a copy of the currently executing transaction.
-    * @return the currently executing transaction
+    *  @ingroup transaction
+    *  @return the currently executing transaction
     */
    inline size_t read_transaction(char* ptr, size_t sz) {
       return internal_use_do_not_use::read_transaction( ptr, sz );
@@ -198,7 +207,7 @@ namespace eosio {
     /**
      *  Cancels a deferred transaction.
      *
-     *  @brief Cancels a deferred transaction.
+     *  @ingroup transaction
      *  @param sender_id - The id of the sender
      *
      *  @pre The deferred transaction ID exists.
@@ -219,48 +228,49 @@ namespace eosio {
    }
 
    /**
-    * Gets the size of the currently executing transaction.
+    *  Gets the size of the currently executing transaction.
     *
-    * @brief Gets the size of the currently executing transaction.
-    * @return size of the currently executing transaction
+    *  @ingroup transaction
+    *  @return size of the currently executing transaction
     */
    inline size_t transaction_size() {
       return internal_use_do_not_use::transaction_size();
    }
 
    /**
-    * Gets the block number used for TAPOS on the currently executing transaction.
+    *  Gets the block number used for TAPOS on the currently executing transaction.
     *
-    * @brief Gets the block number used for TAPOS on the currently executing transaction.
-    * @return block number used for TAPOS on the currently executing transaction
-    * Example:
-    * @code
-    * int tbn = tapos_block_num();
-    * @endcode
+    *  @ingroup transaction
+    *  @return block number used for TAPOS on the currently executing transaction
+    *  Example:
+    *  @code
+    *  int tbn = tapos_block_num();
+    *  @endcode
     */
    inline int tapos_block_num() {
       return internal_use_do_not_use::tapos_block_num();
    }
 
    /**
-    * Gets the block prefix used for TAPOS on the currently executing transaction.
+    *  Gets the block prefix used for TAPOS on the currently executing transaction.
     *
-    * @brief Gets the block prefix used for TAPOS on the currently executing transaction.
-    * @return block prefix used for TAPOS on the currently executing transaction
-    * Example:
-    * @code
-    * int tbp = tapos_block_prefix();
-    * @endcode
+    *  @ingroup transaction
+    *  @return block prefix used for TAPOS on the currently executing transaction
+    *  Example:
+    *  @code
+    *  int tbp = tapos_block_prefix();
+    *  @endcode
     */
    inline int tapos_block_prefix() {
       return internal_use_do_not_use::tapos_block_prefix();
    }
 
    /**
-    * Gets the expiration of the currently executing transaction.
+    *  Gets the expiration of the currently executing transaction.
     *
-    * @brief Gets the expiration of the currently executing transaction.
-    * @return expiration of the currently executing transaction in seconds since Unix epoch
+    *  @ingroup transaction
+    *  @brief Gets the expiration of the currently executing transaction.
+    *  @return expiration of the currently executing transaction in seconds since Unix epoch
     */
    inline uint32_t expiration() {
       return internal_use_do_not_use::expiration();
@@ -269,14 +279,13 @@ namespace eosio {
    /**
     * Retrieve the signed_transaction.context_free_data[index].
     *
-    * @brief Retrieve the signed_transaction.context_free_data[index].
-    * @param index - the index of the context_free_data entry to retrieve
-    * @param buff - output buff of the context_free_data entry
-    * @param size - amount of context_free_data[index] to retrieve into buff, 0 to report required size
-    * @return size copied, or context_free_data[index].size() if 0 passed for size, or -1 if index not valid
+    *  @ingroup transaction
+    *  @param index - the index of the context_free_data entry to retrieve
+    *  @param buff - output buff of the context_free_data entry
+    *  @param size - amount of context_free_data[index] to retrieve into buff, 0 to report required size
+    *  @return size copied, or context_free_data[index].size() if 0 passed for size, or -1 if index not valid
     */
    inline int get_context_free_data( uint32_t index, char* buff, size_t size ) {
       return internal_use_do_not_use::get_context_free_data(index, buff, size);
    }
-   ///}@
 }

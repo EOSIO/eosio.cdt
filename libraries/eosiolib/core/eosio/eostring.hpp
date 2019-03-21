@@ -1,13 +1,9 @@
 #pragma once
 
-#include <cassert> // assert
 #include <cstring> // memcpy, memset, strlen
-#include <utility> // std::move
-#include <vector>  // std::vector
 
-// #include "datastream.hpp" // eosio::datastream
-#include "eostring.hpp"
-// #include "varint.hpp" // eosio::unsigned_int
+#include "datastream.hpp" // eosio::datastream
+#include "varint.hpp"     // eosio::unsigned_int
 
 namespace eosio {
 
@@ -16,7 +12,6 @@ namespace eosio {
    namespace impl {
       char* expand_mcpy(const size_t size, const size_t capacity, const char* str);
       char* expand_mset(const size_t size, const size_t capacity, const char c);
-      void check(const eostring& str, const size_t n);
    }
 
    class eostring
@@ -24,12 +19,11 @@ namespace eosio {
    public:
       static constexpr size_t npos = -1;
 
-      template <size_t N> 
-      constexpr eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2} {
-         _begin = impl::expand_mcpy(_size, _capacity, str);
-      }
+      template <size_t N>
+      constexpr eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2}, _begin{&str}
+      { }
    
-      eostring() : _size{0}, _capacity{0}, _begin{nullptr}
+      constexpr eostring() : _size{0}, _capacity{0}, _begin{""}
       { }
       
       eostring(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
@@ -46,7 +40,7 @@ namespace eosio {
       }
       
       eostring(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
-         assert(str != nullptr);
+         eosio::check(str != nullptr, "eostring::eostring(const char* str, const size_t n)");
     
          _begin = impl::expand_mcpy(_size, _capacity, str);
       }
@@ -56,13 +50,9 @@ namespace eosio {
       }
       
       eostring(eostring&& str) {
-         _size         = str._size;
-         _capacity     = str._capacity;
-         _begin        = str._begin;
-    
-         str._size     = 0;
-         str._capacity = 0;
-         str._begin    = nullptr;
+         _size     = str._size;
+         _capacity = str._capacity;
+         _begin    = str._begin;
       }
       
       ~eostring() {
@@ -88,15 +78,11 @@ namespace eosio {
          _capacity   = s._capacity;
          _begin      = s._begin;
     
-         s._size     = 0;
-         s._capacity = 0;
-         s._begin    = nullptr;
-    
          return *this;
       }
 
       eostring& operator=(const char* str) {
-         assert(str != nullptr);
+         eosio::check(str != nullptr, "adsf");
     
          _size     = strlen(str);
          _capacity = _size*2;
@@ -106,13 +92,13 @@ namespace eosio {
       }
 
       char& at(const size_t n) {
-         impl::check(*this, n);
+         eosio::check((n >= 0 && _size > n), "eostring::at()");
     
          return _begin[n];
       }
 
       const char at(const size_t n) const {
-         impl::check(*this, n);
+         eosio::check((n >= 0 && _size > n), "eostring::at()");
     
          return _begin[n];
       }
@@ -126,18 +112,22 @@ namespace eosio {
       }
 
       char& front() {
+         eosio::check(_size > 0);
          return _begin[0];
       }
 
       const char front() const {
+         eosio::check(_size > 0);
          return _begin[0];
       }
 
       char& back() {
+         eosio::check(_size > 0);
          return _begin[_size-1];
       }
 
       const char back() const {
+         eosio::check(_size > 0);
          return _begin[_size-1];
       }
 
@@ -154,23 +144,19 @@ namespace eosio {
       }
 
       char* begin() {
-         char* begin{&_begin[0]};
-         return begin;
+         return _begin;
       }
 
       const char* cbegin() const {
-         const char* begin{&_begin[0]};
-         return begin;
+         return _begin;
       }
 
       char* end() {
-         char* end{&_begin[_size]};
-         return end;
+         return &_begin[_size];
       }
 
       const char* cend() const {
-         const char* end{&_begin[_size]};
-         return end;
+         return &_begin[_size];
       }
 
       bool empty() const {
@@ -226,10 +212,10 @@ namespace eosio {
       }
 
       void swap(eostring& str) {
-         eostring temp = std::move(*this);
+         eostring temp = *this;
     
-         *this = std::move(str);
-         str   = std::move(temp);
+         *this = str;
+         str   = temp;
       }
 
       void push_back(const char c) {
@@ -253,19 +239,21 @@ namespace eosio {
       }
 
       eostring& insert(const size_t pos, const char* str) {
-         assert(str != nullptr);
-         assert(0 <= pos && pos <= _size);
-
-         size_t str_sz{strlen(str)};
+         return insert(pos, str, strlen(str));
+      }
+      
+      eostring& insert(const size_t pos, const char* str, const size_t len) {
+         eosio::check(str != nullptr, "asdf");
+         eosio::check(0 <= pos && pos <= _size, "asdf");
     
-         if( _capacity < (_size+str_sz+1)) { // Case where we need to reallocate memory
-            _size     += str_sz;
+         if( _capacity < (_size+len+1)) { // Case where we need to reallocate memory
+            _size     += len;
             _capacity = _size*2;
         
             char* begin{impl::expand_mcpy(pos, _capacity, _begin)};
         
-            memcpy(begin+pos, str, str_sz);
-            memcpy(begin+str_sz+pos, _begin+pos, _size-str_sz-pos);
+            memcpy(begin+pos, str, len);
+            memcpy(begin+len+pos, _begin+pos, _size-len-pos);
 
             delete[] _begin;
 
@@ -273,9 +261,9 @@ namespace eosio {
             _begin[_size] = '\0';
          }
          else { // Case where we need not reallocate memory
-            _size += str_sz;
-            memmove(_begin+pos+str_sz, _begin+pos, _size-pos);
-            memcpy(_begin+pos, str, str_sz);
+            _size += len;
+            memmove(_begin+pos+len, _begin+pos, _size-pos);
+            memcpy(_begin+pos, str, len);
             _begin[_size] = '\0';
          }
     
@@ -283,7 +271,7 @@ namespace eosio {
       }
 
       eostring& insert(const size_t pos, const eostring& str) {
-         assert(0 <= pos && pos <= _size);
+         eosio::check(0 <= pos && pos <= _size, "asdf");
 
          this->insert(pos, str.c_str());
     
@@ -291,7 +279,7 @@ namespace eosio {
       }
 
       eostring& erase(size_t pos = 0, size_t len = npos) {
-         assert(0 <= pos && pos <= _size);
+         eosio::check(0 <= pos && pos <= _size, "asdf");
 
          if(len == eostring::npos)
             len = _size-pos;
@@ -304,7 +292,7 @@ namespace eosio {
       }
 
       eostring& append(const char* str) {
-         assert(str != nullptr);
+         eosio::check(str != nullptr, "asdf");
          this->insert(_size, str);
     
          return *this;
@@ -421,30 +409,25 @@ namespace eosio {
         
          return begin;
       }
-
-      void check(const eostring& str, const size_t n) {
-         if(n < 0 || str.size() <= n)
-            throw "eostring::at()";
-      }
    }
    
-   // template<typename DataStream>
-   // DataStream& operator<<(DataStream& ds, const eostring& str) {
-   //    ds << unsigned_int(str.size());
-   //    if (str.size())
-   //       ds.write(str.data(), str.size());
-   //    return ds;
-   // }
+   template<typename DataStream>
+   DataStream& operator<<(DataStream& ds, const eostring& str) {
+      ds << unsigned_int(str.size());
+      if (str.size())
+         ds.write(str.data(), str.size());
+      
+      return ds;
+   }
    
-   // template<typename DataStream>
-   // DataStream& operator>>(DataStream& ds, eostring& str) {
-   //    std::vector<char> vec;
-   //    ds >> vec;
-   //    if(vec.size())
-   //       str = eostring(vec.data(),vec.data()+vec.size());
-   //    else
-   //       str = eostring();
-   //    return ds;
-   // }
+   template<typename DataStream>
+   DataStream& operator>>(DataStream& ds, eostring& str) {
+      unsigned_int size;
+      ds >> size;
+      str.insert(0, ds.pos(), size.value);
+      ds.seekp(size.value);
+      
+      return ds;
+   }
    
 } // namespace eosio

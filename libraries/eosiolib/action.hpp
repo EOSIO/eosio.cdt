@@ -134,6 +134,8 @@ namespace eosio {
        */
       name    permission;
 
+      /// @cond OPERATORS
+
       /**
        * Check equality of two permissions
        *
@@ -146,6 +148,8 @@ namespace eosio {
       friend constexpr bool operator == ( const permission_level& a, const permission_level& b ) {
          return std::tie( a.actor, a.permission ) == std::tie( b.actor, b.permission );
       }
+
+      /// @endcond
 
       EOSLIB_SERIALIZE( permission_level, (actor)(permission) )
    };
@@ -289,8 +293,6 @@ namespace eosio {
 
    };
 
-   ///@} actioncpp api
-   //
    namespace detail {
       template <typename T>
       struct unwrap { typedef T type; };

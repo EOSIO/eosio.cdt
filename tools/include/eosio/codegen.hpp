@@ -41,7 +41,7 @@ using namespace eosio;
 using namespace eosio::cdt;
 
 namespace eosio { namespace cdt {
-   // replace with std::quoted and std::make_unique when we can get better C++14 support for Centos 
+   // replace with std::quoted and std::make_unique when we can get better C++14 support for Centos
    std::string _quoted(const std::string& instr) {
       std::stringstream ss;
       for (char c : instr) {
@@ -106,7 +106,7 @@ namespace eosio { namespace cdt {
    };
 
    std::map<std::string, std::vector<include_double>>  global_includes;
-   
+
    // remove after v1.7.0
    bool has_eosiolib = false;
 
@@ -133,11 +133,11 @@ namespace eosio { namespace cdt {
                      (search_path + llvm::sys::path::get_separator() + file_name).str(),
                      filename_range.getAsRange());
             }
-            
+
             if ( file_name.find("eosiolib") != StringRef::npos )
                has_eosiolib = true;
          }
-   
+
          std::string fn;
          SourceManager& sources;
    };
@@ -165,7 +165,7 @@ namespace eosio { namespace cdt {
          void set_main_name(StringRef mn) {
             main_name = mn;
          }
-         
+
          Rewriter& get_rewriter() {
             return rewriter;
          }
@@ -241,9 +241,11 @@ namespace eosio { namespace cdt {
                ss << func_name << nm;
                ss << "\"))) void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
                ss << "size_t as = ::action_data_size();\n";
-               ss << "if (as <= 0) return;\n";
-               ss << "void* buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
+               ss << "void* buff = nullptr;\n";
+               ss << "if (as > 0) {\n";
+               ss << "buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
                ss << "::read_action_data(buff, as);\n";
+               ss << "}\n";
                ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
                int i=0;
                for (auto param : decl->parameters()) {
@@ -387,7 +389,7 @@ namespace eosio { namespace cdt {
       public:
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
             : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
-         
+
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
@@ -410,21 +412,19 @@ namespace eosio { namespace cdt {
                      visitor->get_rewriter().ReplaceText(inc.range,
                            std::string("\"")+inc.file_name+"\"\n");
                   }
-                  if (!cg.abi.empty()) {
-                     // generate apply stub with abi
-                     std::stringstream ss;
-                     ss << "extern \"C\" {\n";
-                     ss << "void eosio_assert_code(uint32_t, uint64_t);";
-                     ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
-                     std::string abi = cg.abi;
-                     ss << "\"" << _quoted(abi) << "\"";
-                     ss << ")))\n";
-                     ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
-                     ss << "eosio_assert_code(false, 1);";
-                     ss << "}\n";
-                     ss << "}";
-                     visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
-                  }
+                  // generate apply stub with abi
+                  std::stringstream ss;
+                  ss << "extern \"C\" {\n";
+                  ss << "void eosio_assert_code(uint32_t, uint64_t);";
+                  ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
+                  std::string abi = cg.abi;
+                  ss << "\"" << _quoted(abi) << "\"";
+                  ss << ")))\n";
+                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
+                  ss << "eosio_assert_code(false, 1);";
+                  ss << "}\n";
+                  ss << "}";
+                  visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
                   out << std::string(RewriteBuf.begin(), RewriteBuf.end());
                   cg.tmp_files.emplace(main_file, fn.str());
