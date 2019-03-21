@@ -131,17 +131,11 @@ constexpr eostring(const char (&str)[N]);
 
 --------------------------------------------------------------------------------
 
-[ ][ ] eostring& replace( size_t pos, size_t count, const char* cstr );
-
-[ ][ ] eostring& replace( size_t pos, size_t count, const eostring& str );
-
---------------------------------------------------------------------------------
-
 [✔][✔] eostring substr( size_t pos = 0, size_t count = npos ) const;
 
 --------------------------------------------------------------------------------
 
-[ ][ ] size_t copy( char* dest, size_t count, size_t pos = 0) const;
+[✔][✔] size_t copy( char* dest, size_t count, size_t pos = 0) const;
 
 --------------------------------------------------------------------------------
 
