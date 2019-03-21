@@ -1,3 +1,4 @@
+#add_test(eostring_tests ${CMAKE_BINARY_DIR}/tests/unit/eostring_tests)
 add_test(name_tests ${CMAKE_BINARY_DIR}/tests/unit/name_tests)
 add_test(rope_tests ${CMAKE_BINARY_DIR}/tests/unit/rope_tests)
 add_test(print_tests ${CMAKE_BINARY_DIR}/tests/unit/print_tests)

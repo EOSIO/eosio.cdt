@@ -253,21 +253,19 @@ namespace eosio {
       }
 
       eostring& insert(const size_t pos, const char* str) {
-         return insert(pos, str, strlen(str));
-      }
-      
-      eostring& insert(const size_t pos, const char* str, const size_t len) {
          assert(str != nullptr);
          assert(0 <= pos && pos <= _size);
+
+         size_t str_sz{strlen(str)};
     
-         if( _capacity < (_size+len+1)) { // Case where we need to reallocate memory
-            _size     += len;
+         if( _capacity < (_size+str_sz+1)) { // Case where we need to reallocate memory
+            _size     += str_sz;
             _capacity = _size*2;
         
             char* begin{impl::expand_mcpy(pos, _capacity, _begin)};
         
-            memcpy(begin+pos, str, len);
-            memcpy(begin+len+pos, _begin+pos, _size-len-pos);
+            memcpy(begin+pos, str, str_sz);
+            memcpy(begin+str_sz+pos, _begin+pos, _size-str_sz-pos);
 
             delete[] _begin;
 
@@ -275,9 +273,9 @@ namespace eosio {
             _begin[_size] = '\0';
          }
          else { // Case where we need not reallocate memory
-            _size += len;
-            memmove(_begin+pos+len, _begin+pos, _size-pos);
-            memcpy(_begin+pos, str, len);
+            _size += str_sz;
+            memmove(_begin+pos+str_sz, _begin+pos, _size-pos);
+            memcpy(_begin+pos, str, str_sz);
             _begin[_size] = '\0';
          }
     
@@ -425,24 +423,28 @@ namespace eosio {
       }
 
       void check(const eostring& str, const size_t n) {
-         eosio::check((n >= 0 && str.size() > n), "eosstring::at()");
+         if(n < 0 || str.size() <= n)
+            throw "eostring::at()";
       }
    }
    
-   template<typename DataStream>
-   DataStream& operator<<(DataStream& ds, const eostring& str) {
-      ds << unsigned_int(str.size());
-      if (str.size())
-         ds.write(str.data(), str.size());
-      return ds;
-   }
+   // template<typename DataStream>
+   // DataStream& operator<<(DataStream& ds, const eostring& str) {
+   //    ds << unsigned_int(str.size());
+   //    if (str.size())
+   //       ds.write(str.data(), str.size());
+   //    return ds;
+   // }
    
-   template<typename DataStream>
-   DataStream& operator>>(DataStream& ds, eostring& str) {
-      unsigned_int size;
-      ds >> size;
-      str.insert(0, ds.pos(), size.value);
-      ds.seekp(size.value);
-   }
+   // template<typename DataStream>
+   // DataStream& operator>>(DataStream& ds, eostring& str) {
+   //    std::vector<char> vec;
+   //    ds >> vec;
+   //    if(vec.size())
+   //       str = eostring(vec.data(),vec.data()+vec.size());
+   //    else
+   //       str = eostring();
+   //    return ds;
+   // }
    
 } // namespace eosio
