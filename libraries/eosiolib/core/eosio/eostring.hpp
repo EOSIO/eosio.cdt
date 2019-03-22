@@ -1,3 +1,8 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #pragma once
 
 #include <cstring> // memcpy, memset, strlen
@@ -10,6 +15,7 @@ namespace eosio {
    class eostring;
    
    namespace impl {
+      char empty_str[1]{'\0'};
       char* expand_mcpy(const size_t size, const size_t capacity, const char* str);
       char* expand_mset(const size_t size, const size_t capacity, const char c);
    }
@@ -20,10 +26,10 @@ namespace eosio {
       static constexpr size_t npos = -1;
 
       template <size_t N>
-      constexpr eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2}, _begin{&str}
+      eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2}, _begin{&str}
       { }
    
-      constexpr eostring() : _size{0}, _capacity{0}, _begin{""}
+      eostring() : _size{0}, _capacity{0}, _begin{impl::empty_str}
       { }
       
       eostring(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
@@ -40,7 +46,7 @@ namespace eosio {
       }
       
       eostring(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
-         eosio::check(str != nullptr, "eostring::eostring(const char* str, const size_t n)");
+         eosio::check(str != nullptr, "eostring::eostring");
     
          _begin = impl::expand_mcpy(_size, _capacity, str);
       }
@@ -82,7 +88,7 @@ namespace eosio {
       }
 
       eostring& operator=(const char* str) {
-         eosio::check(str != nullptr, "adsf");
+         eosio::check(str != nullptr, "eostring::operator=");
     
          _size     = strlen(str);
          _capacity = _size*2;
@@ -92,13 +98,13 @@ namespace eosio {
       }
 
       char& at(const size_t n) {
-         eosio::check((n >= 0 && _size > n), "eostring::at()");
+         eosio::check(0 <= n && n < _size, "eostring::at");
     
          return _begin[n];
       }
 
       const char at(const size_t n) const {
-         eosio::check((n >= 0 && _size > n), "eostring::at()");
+         eosio::check(0 <= n && n < _size, "eostring::at const");
     
          return _begin[n];
       }
@@ -112,22 +118,22 @@ namespace eosio {
       }
 
       char& front() {
-         eosio::check(_size > 0);
+         eosio::check(0 < _size, "eostring::front");
          return _begin[0];
       }
 
       const char front() const {
-         eosio::check(_size > 0);
+         eosio::check(0 < _size, "eostring::front const");
          return _begin[0];
       }
 
       char& back() {
-         eosio::check(_size > 0);
+         eosio::check(0 < _size, "eostring::back");
          return _begin[_size-1];
       }
 
       const char back() const {
-         eosio::check(_size > 0);
+         eosio::check(0 < _size, "eostring::back const");
          return _begin[_size-1];
       }
 
@@ -243,8 +249,8 @@ namespace eosio {
       }
       
       eostring& insert(const size_t pos, const char* str, const size_t len) {
-         eosio::check(str != nullptr, "asdf");
-         eosio::check(0 <= pos && pos <= _size, "asdf");
+         eosio::check(str != nullptr, "eostring::insert");
+         eosio::check(0 <= pos && pos <= _size, "eostring::insert");
     
          if( _capacity < (_size+len+1)) { // Case where we need to reallocate memory
             _size     += len;
@@ -271,7 +277,7 @@ namespace eosio {
       }
 
       eostring& insert(const size_t pos, const eostring& str) {
-         eosio::check(0 <= pos && pos <= _size, "asdf");
+         eosio::check(0 <= pos && pos <= _size, "eostring::insert");
 
          this->insert(pos, str.c_str());
     
@@ -279,7 +285,7 @@ namespace eosio {
       }
 
       eostring& erase(size_t pos = 0, size_t len = npos) {
-         eosio::check(0 <= pos && pos <= _size, "asdf");
+         eosio::check(0 <= pos && pos <= _size, "eostring::erase");
 
          if(len == eostring::npos)
             len = _size-pos;
@@ -292,7 +298,7 @@ namespace eosio {
       }
 
       eostring& append(const char* str) {
-         eosio::check(str != nullptr, "asdf");
+         eosio::check(str != nullptr, "eostring::append");
          this->insert(_size, str);
     
          return *this;
@@ -354,17 +360,17 @@ namespace eosio {
    };
 
    bool operator< (const eostring& lhs, const eostring& rhs) {
-   const char* beg_lhs{lhs._begin}; const char* end_lhs{lhs._begin + lhs._size};
-   const char* beg_rhs{rhs._begin}; const char* end_rhs{rhs._begin + rhs._size};
+      const char* beg_lhs{lhs._begin}; const char* end_lhs{lhs._begin + lhs._size};
+      const char* beg_rhs{rhs._begin}; const char* end_rhs{rhs._begin + rhs._size};
    
-   for (; beg_lhs != end_lhs && beg_rhs != end_rhs; ++beg_lhs, ++beg_rhs) {
-      if (*beg_lhs < *beg_rhs)
-         return true;
-      if (*beg_rhs < *beg_lhs)
-         return false;
-   }
+      for(; beg_lhs != end_lhs && beg_rhs != end_rhs; ++beg_lhs, ++beg_rhs) {
+         if (*beg_lhs < *beg_rhs)
+            return true;
+         if (*beg_rhs < *beg_lhs)
+            return false;
+      }
    
-   return beg_lhs == end_lhs && beg_rhs != end_rhs;
+      return beg_lhs == end_lhs && beg_rhs != end_rhs;
    }
 
    bool operator> (const eostring& lhs, const eostring& rhs) {
@@ -416,7 +422,6 @@ namespace eosio {
       ds << unsigned_int(str.size());
       if (str.size())
          ds.write(str.data(), str.size());
-      
       return ds;
    }
    
@@ -425,8 +430,7 @@ namespace eosio {
       unsigned_int size;
       ds >> size;
       str.insert(0, ds.pos(), size.value);
-      ds.seekp(size.value);
-      
+      ds.seekp(size.value);      
       return ds;
    }
    
