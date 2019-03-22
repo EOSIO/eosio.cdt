@@ -1,7 +1,7 @@
 list( APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN} )
 include( EosioCDTMacros )
 
-#add_native_executable(eostring_tests eostring_tests.cpp)
+add_native_executable(eostring_tests eostring_tests.cpp)
 add_native_executable( asset_tests asset_tests.cpp )
 add_native_executable( binary_extension_tests binary_extension_tests.cpp )
 add_native_executable( crypto_tests crypto_tests.cpp )

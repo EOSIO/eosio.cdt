@@ -1,4 +1,4 @@
-#add_test(eostring_tests ${CMAKE_BINARY_DIR}/tests/unit/eostring_tests)
+add_test(eostring_tests ${CMAKE_BINARY_DIR}/tests/unit/eostring_tests)
 add_test( asset_tests ${CMAKE_BINARY_DIR}/tests/unit/asset_tests )
 add_test( binary_extension_tests ${CMAKE_BINARY_DIR}/tests/unit/binary_extension_tests )
 add_test( crypto_tests ${CMAKE_BINARY_DIR}/tests/unit/crypto_tests )

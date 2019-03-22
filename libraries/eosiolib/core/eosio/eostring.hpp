@@ -25,11 +25,15 @@ namespace eosio {
    public:
       static constexpr size_t npos = -1;
 
-      template <size_t N>
-      eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2}, _begin{&str}
+      template <typename T>
+      constexpr eostring(T&& str)
       { }
-   
-      eostring() : _size{0}, _capacity{0}, _begin{impl::empty_str}
+
+      template <size_t N>
+      eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size*2}, _begin{str}
+      { }
+
+      constexpr eostring() : _size{0}, _capacity{0}, _begin{""}
       { }
       
       eostring(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
@@ -43,26 +47,6 @@ namespace eosio {
          }
     
          _begin = impl::expand_mcpy(_size, _capacity, str.data()+pos);
-      }
-      
-      eostring(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
-         eosio::check(str != nullptr, "eostring::eostring");
-    
-         _begin = impl::expand_mcpy(_size, _capacity, str);
-      }
-      
-      eostring(const eostring& str) : _size{str._size}, _capacity{str._capacity} {
-         _begin = impl::expand_mcpy(_size, _capacity, str._begin);
-      }
-      
-      eostring(eostring&& str) {
-         _size     = str._size;
-         _capacity = str._capacity;
-         _begin    = str._begin;
-      }
-      
-      ~eostring() {
-         delete[] _begin;
       }
     
       eostring& operator=(const eostring& str) {
@@ -97,72 +81,84 @@ namespace eosio {
          return *this;
       }
 
+      char& operator[](const size_t n) {
+         return std::holds_alternative<const char*>(_begin) ?
+            std::get<const char*>(_begin)[n] :
+            std::get<std::unique_ptr<char[]>(_begin).get()[n];
+      }
+
+      const char operator[](const size_t n) const {
+         return std::holds_alternative<const char*>(_begin) ?
+            std::get<const char*>(_begin)[n] :
+            std::get<std::unique_ptr<char[]>(_begin).get()[n];
+      }
+
       char& at(const size_t n) {
          eosio::check(0 <= n && n < _size, "eostring::at");
     
-         return _begin[n];
+         return std::holds_alternative<const char*>(_begin) ?
+            std::get<const char*>(_begin)[n] :
+            std::get<std::unique_ptr<char[]>(_begin).get()[n];
       }
 
       const char at(const size_t n) const {
          eosio::check(0 <= n && n < _size, "eostring::at const");
     
-         return _begin[n];
-      }
-
-      char& operator[](const size_t n) {
-         return _begin[n];
-      }
-
-      const char operator[](const size_t n) const {
-         return _begin[n];
+         return std::holds_alternative<const char*>(_begin) ?
+            std::get<const char*>(_begin)[n] :
+            std::get<std::unique_ptr<char[]>(_begin).get()[n];
       }
 
       char& front() {
-         eosio::check(0 < _size, "eostring::front");
-         return _begin[0];
+         return at(0);
       }
 
       const char front() const {
-         eosio::check(0 < _size, "eostring::front const");
-         return _begin[0];
+         return at(0);
       }
 
       char& back() {
-         eosio::check(0 < _size, "eostring::back");
-         return _begin[_size-1];
+         return at(_size-1);
       }
 
       const char back() const {
-         eosio::check(0 < _size, "eostring::back const");
-         return _begin[_size-1];
+         return at(_size-1);
       }
 
       char* data() {
-         return _begin;
+         return begin();
       }
 
       const char* data() const {
-         return _begin;
+         return begin();
       }
 
       const char* c_str() const {
-         return _begin;
+         return begin();
       }
 
       char* begin() {
-         return _begin;
+         if (std::holds_alternative<const char*>(_begin)) {
+            auto tmp = std::make_unique<char[]>(_size);
+            memcpy(tmp.get(), std::get<const char*>(_begin), _size);
+         }
+         
+         return std::get<std::unique_ptr<char[]>>(_begin).get();
       }
 
       const char* cbegin() const {
-         return _begin;
+         if (std::holds_alternative<const char*>(_begin))
+            return std::get<const char*>(_begin);
+         
+         return std::get<std::unique_ptr<char[]>>(_begin).get();
       }
 
       char* end() {
-         return &_begin[_size];
+         return &[_size];
       }
 
       const char* cend() const {
-         return &_begin[_size];
+         return &[_size];
       }
 
       bool empty() const {
@@ -279,7 +275,7 @@ namespace eosio {
       eostring& insert(const size_t pos, const eostring& str) {
          eosio::check(0 <= pos && pos <= _size, "eostring::insert");
 
-         this->insert(pos, str.c_str());
+         insert(pos, str.c_str());
     
          return *this;
       }
@@ -299,13 +295,13 @@ namespace eosio {
 
       eostring& append(const char* str) {
          eosio::check(str != nullptr, "eostring::append");
-         this->insert(_size, str);
+         insert(_size, str);
     
          return *this;
       }
     
       eostring& append(const eostring& str) {
-         this->insert(_size, str);
+         insert(_size, str);
          return *this;
       }
 
@@ -318,7 +314,7 @@ namespace eosio {
          else if(_size == _capacity) {
             _begin[_size] = c;
             _capacity     = ++_size*2;
-            _begin        = impl::expand_mcpy(_size, _capacity, this->_begin);
+            _begin        = impl::expand_mcpy(_size, _capacity, _begin);
          }
          else {
             _begin[_size]   = c;
@@ -356,7 +352,7 @@ namespace eosio {
    public:
       size_t _size;
       size_t _capacity;
-      char*  _begin;
+      std::variant<const char*, std::unique_ptr<char[]>> _begin;
    };
 
    bool operator< (const eostring& lhs, const eostring& rhs) {
