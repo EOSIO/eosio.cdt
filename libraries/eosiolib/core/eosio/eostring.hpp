@@ -1,3 +1,17 @@
+// TODO:
+// Check uses of `.data()` vs `._begin`
+// TODO:
+// Check the null terminator
+// TODO:
+// `cbegin` and `cend`
+// Test with `static const eostring` as well
+// TODO:
+// Ask Bucky if the `c_str()` function is a good practice
+// TODO:
+// Make sure memset functionality is working as planned
+// TODO:
+// Check previous `memcpy` and if it should be added back in there
+
 /**
  *  @file
  *  @copyright defined in eosio.cdt/LICENSE.txt
@@ -8,6 +22,7 @@
 #include <cstring> // memcpy, memset, strlen
 
 #include "datastream.hpp" // eosio::datastream
+// #include "datastream.hpp" // eosio::datastream
 #include "varint.hpp"     // eosio::unsigned_int
 
 namespace eosio {
@@ -95,57 +110,52 @@ namespace eosio {
 
       eostring& operator=(const char* str) {
          eosio::check(str != nullptr, "eostring::operator=");
-    
+         
          _size     = strlen(str);
-         _capacity = _size*2;
-         _begin    = expand_mcpy(_size, _capacity, str);
+         _capacity = _size;
+         _begin    = str;
     
          return *this;
       }
 
-      // char& operator[](const size_t n) {
-      //    return std::holds_alternative<const char*>(_begin) ?
-      //       std::get<const char*>(_begin)[n] :
-      //       std::get<std::unique_ptr<char[]>(_begin).get()[n];
-      // }
+      char& operator[](const size_t n) {
+         if(std::holds_alternative<const char*>(_begin))
+            clone(_size, _capacity, std::get<const char*>(_begin));
+         return std::get<std::unique_ptr<char[]>>(_begin).get()[n];
+      }
 
-      // const char operator[](const size_t n) const {
-      //    return std::holds_alternative<const char*>(_begin) ?
-      //       std::get<const char*>(_begin)[n] :
-      //       std::get<std::unique_ptr<char[]>(_begin).get()[n];
-      // }
+      const char operator[](const size_t n) const {
+         if(std::holds_alternative<const char*>(_begin))
+            return std::get<const char*>(_begin)[n];
+         else
+            return std::get<std::unique_ptr<char[]>>(_begin).get()[n];
+      }
 
-      // char& at(const size_t n) {
-      //    eosio::check(0 <= n && n < _size, "eostring::at");
-    
-      //    return std::holds_alternative<const char*>(_begin) ?
-      //       std::get<const char*>(_begin)[n] :
-      //       std::get<std::unique_ptr<char[]>(_begin).get()[n];
-      // }
+      char& at(const size_t n) {
+         eosio::check(0 <= n && n < _size, "eostring::at");
+         return operator[](n);
+      }
 
-      // const char at(const size_t n) const {
-      //    eosio::check(0 <= n && n < _size, "eostring::at const");
-    
-      //    return std::holds_alternative<const char*>(_begin) ?
-      //       std::get<const char*>(_begin)[n] :
-      //       std::get<std::unique_ptr<char[]>(_begin).get()[n];
-      // }
+      const char at(const size_t n) const {
+         eosio::check(0 <= n && n < _size, "eostring::at const");
+         return operator[](n);
+      }
 
-      // char& front() {
-      //    return at(0);
-      // }
+      char& front() {
+         return at(0);
+      }
 
-      // const char front() const {
-      //    return at(0);
-      // }
+      const char front() const {
+         return at(0);
+      }
 
-      // char& back() {
-      //    return at(_size-1);
-      // }
+      char& back() {
+         return at(_size-1);
+      }
 
-      // const char back() const {
-      //    return at(_size-1);
-      // }
+      const char back() const {
+         return at(_size-1);
+      }
 
       char* data() {
          return begin();
@@ -155,13 +165,23 @@ namespace eosio {
          return cbegin();
       }
 
-      // const char* c_str() const {
-      //    return begin();
-      // }
+      const char* c_str() const {
+         char* str = new char[_size+1];
+         
+         if (std::holds_alternative<const char*>(_begin))
+            memcpy(str, std::get<const char*>(_begin), _size);
+         else
+            memcpy(str, std::get<std::unique_ptr<char[]>>(_begin).get(), _size);
+         
+         str[_size] = '\0';
+         return str;
+      }
 
       char* begin() {
-         if (std::holds_alternative<const char*>(_begin))
+         if (std::holds_alternative<const char*>(_begin)) {
+            _capacity *= 2;
             clone(_size, _capacity, std::get<const char*>(_begin));
+         }
          return std::get<std::unique_ptr<char[]>>(_begin).get();
       }
 
@@ -171,13 +191,13 @@ namespace eosio {
          return std::get<std::unique_ptr<char[]>>(_begin).get();
       }
 
-      // char* end() {
-      //    return &[_size];
-      // }
+      char* end() {
+         return begin()+_size;
+      }
 
-      // const char* cend() const {
-      //    return &[_size];
-      // }
+      const char* cend() const {
+         return cbegin()+_size;
+      }
 
       bool empty() const {
          return !_size;
@@ -195,48 +215,58 @@ namespace eosio {
          return _capacity;
       }
 
-      // size_t max_size() const {
-      //    return npos;
-      // }
+      size_t max_size() const {
+         return npos;
+      }
    
-      // void reserve(const size_t n) {
-      //    if(_capacity < n) {
-      //       _capacity = n;
-      //       _begin = expand_mcpy(_size, _capacity, _begin);
-      //    }
-      //    else
-      //       return;
-      // }
+      void reserve(const size_t n) {
+         if(_capacity < n) {
+            _capacity = n;
 
-      // void shrink_to_fit() {
-      //    _capacity = _size;
-      // }
+            if(std::holds_alternative<const char*>(_begin))
+               clone(_size, _capacity, std::get<const char*>(_begin));
+            else
+               clone(_size, _capacity, std::get<std::unique_ptr<char[]>>(_begin).get());
+         }
+         else
+            return;
+      }
 
-      // void clear() {
-      //    _size     = 0;
-      //    _begin[0] = '\0';
-      // }
+      void shrink_to_fit() {
+         _capacity = _size;
+      }
 
-      // void resize(const size_t n) {
-      //    if(_capacity < n) {
-      //       size_t old_sz{_size};
-        
-      //       _size     = n;
-      //       _capacity = _size*2;
-      //       _begin    = expand_mcpy(old_sz, _capacity, _begin);
-      //    }
-      //    else {
-      //       memset(_begin+n, '\0', _size);
-      //       _size = n;
-      //    }
-      // }
+      void clear() {
+         _size     = 0;
 
-      // void swap(eostring& str) {
-      //    eostring temp = *this;
+         if(std::holds_alternative<const char*>(_begin))
+            clone(_size, _capacity, std::get<const char*>(_begin));
+         std::get<std::unique_ptr<char[]>>(_begin).get()[0] = '\0';
+      }
+
+      void resize(const size_t n) {
+         if(_capacity < n) {
+            size_t old_sz{_size};
+            
+            _size     = n;
+            _capacity = _size*2;
+
+            if(std::holds_alternative<const char*>(_begin))
+               clone(_size, _capacity, std::get<const char*>(_begin));
+         }
+         else {
+            clone(_size, _capacity, std::get<const char*>(_begin));
+            memset(_begin+n, '\0', _size);
+            _size = n;
+         }
+      }
+
+      void swap(eostring& str) {
+         eostring temp = *this;
     
-      //    *this = str;
-      //    str   = temp;
-      // }
+         *this = str;
+         str   = temp;
+      }
 
       // void push_back(const char c) {
       //    *this += c;
@@ -249,9 +279,9 @@ namespace eosio {
       //    _begin[_size] = '\0';
       // }
 
-      // eostring substr(size_t pos = 0, size_t len = npos) const {
-      //    return eostring(*this, pos, len);
-      // }
+      eostring substr(size_t pos = 0, size_t len = npos) const {
+         return eostring(*this, pos, len);
+      }
 
       // size_t copy(char* s, size_t len, size_t pos = 0) const {
       //    memcpy(s, substr(pos, len)._begin, substr(pos, len)._size);
@@ -327,16 +357,16 @@ namespace eosio {
       //    if(_capacity == 0) {
       //       _size     = 2;
       //       _capacity = 2*2;
-      //       _begin    = expand_mcpy(1, _capacity, &c);
+      //       clone(1, _capacity, &c);
       //    }
       //    else if(_size == _capacity) {
-      //       _begin[_size] = c;
+      //       std::get<std::unique_ptr<char[]>>(_begin).get()[_size] = c;
       //       _capacity     = ++_size*2;
-      //       _begin        = expand_mcpy(_size, _capacity, _begin);
+      //       clone(_size, _capacity, std::get<const char*>(_begin));
       //    }
       //    else {
-      //       _begin[_size]   = c;
-      //       _begin[++_size] = '\0';
+      //       std::get<std::unique_ptr<char[]>>(_begin).get()[_size]   = c;
+      //       std::get<std::unique_ptr<char[]>>(_begin).get()[++_size] = '\0';
       //    }
     
       //    return *this;
