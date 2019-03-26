@@ -245,20 +245,12 @@ namespace eosio {
       }
 
       void resize(const size_t n) {
-         if(_capacity < n) {
-            size_t old_sz{_size};
-            
-            _size     = n;
-            _capacity = _size*2;
-
-            if(std::holds_alternative<const char*>(_begin))
-               clone(_size, _capacity, std::get<const char*>(_begin));
-         }
-         else {
+         _size     = n;
+         _capacity = _size*2;
+         
+         if(std::holds_alternative<const char*>(_begin))
             clone(_size, _capacity, std::get<const char*>(_begin));
-            memset(_begin+n, '\0', _size);
-            _size = n;
-         }
+         clone(_size, _capacity, std::get<std::unique_ptr<char[]>>(_begin).get());
       }
 
       void swap(eostring& str) {
@@ -272,21 +264,25 @@ namespace eosio {
       //    *this += c;
       // }
 
-      // void pop_back() {
-      //    if(_size == 0)
-      //       return;
-      //    --_size;
-      //    _begin[_size] = '\0';
-      // }
+      void pop_back() {
+         if(_size == 0)
+            return;
+         --_size;
+      }
 
       eostring substr(size_t pos = 0, size_t len = npos) const {
          return eostring(*this, pos, len);
       }
 
-      // size_t copy(char* s, size_t len, size_t pos = 0) const {
-      //    memcpy(s, substr(pos, len)._begin, substr(pos, len)._size);
-      //    return (_size < pos+len) ? _size-pos : len;
-      // }
+      size_t copy(char* s, size_t len, size_t pos = 0) const {
+         memcpy(s, substr(pos, len)._begin, substr(pos, len)._size);
+         
+         // _size        = substr(pos, len)._size
+         // _capacity is = ...
+         
+         clone(_size, _capacity, std::get<const char*>(_begin));
+         return (_size < pos+len) ? _size-pos : len;
+      }
 
       // eostring& insert(const size_t pos, const char* str) {
       //    return insert(pos, str, strlen(str));

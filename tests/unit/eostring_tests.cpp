@@ -432,12 +432,12 @@ EOSIO_TEST_BEGIN(eostring_test)
 
       eostr.resize(3);
       CHECK_EQUAL( eostr.size(), 3 );
-      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( eostr.capacity(), 6 );
       CHECK_EQUAL( strcmp(eostr.data(), "abc"), 0 );
 
       eostr.resize(5);
       CHECK_EQUAL( eostr.size(), 5 );
-      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( eostr.capacity(), 10 );
       CHECK_EQUAL( strcmp(eostr.data(), "abc"), 0 );
 
       eostr.resize(13);
@@ -471,28 +471,28 @@ EOSIO_TEST_BEGIN(eostring_test)
    //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefg"), 0 );
    // }
 
-   // //// void pop_back()
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    CHECK_EQUAL( eostr.size(), 7 );
-   //    eostr.pop_back();
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdef"), 0 );
-   // }
+   //// void pop_back()
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      CHECK_EQUAL( eostr.size(), 7 );
+      eostr.pop_back();
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdef"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abc"};
-   //    CHECK_EQUAL( eostr.size(), 3 );
-   //    eostr.pop_back();
-   //    eostr.pop_back();
-   //    eostr.pop_back();
-   //    CHECK_EQUAL( eostr.size(), 0 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
+   {
+      static eosio::eostring eostr{"abc"};
+      CHECK_EQUAL( eostr.size(), 3 );
+      eostr.pop_back();
+      eostr.pop_back();
+      eostr.pop_back();
+      CHECK_EQUAL( eostr.size(), 0 );
+      CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
 
-   //    eostr.pop_back();
-   //    CHECK_EQUAL( eostr.size(), 0 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
-   // }
+      eostr.pop_back();
+      CHECK_EQUAL( eostr.size(), 0 );
+      CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
+   }
 
    //// eosio::eostring substr(size_t pos = 0, size_t len = npos) const
    {
