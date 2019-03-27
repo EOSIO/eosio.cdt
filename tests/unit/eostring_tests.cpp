@@ -4,15 +4,11 @@
  */
 
 // TODO:
-// test namepstace impl
-// test concat
 // test datastream
+
 #include <eosio/eosio.hpp>
 #include <eosio/tester.hpp>
 #include <eosio/eostring.hpp>
-
-#include <eosio/print.hpp> /// remove
-using namespace eosio;
 
 // Definitions found in `eosio.cdt/libraries/eosiolib/core/eosio/eostring.hpp`
 EOSIO_TEST_BEGIN(eostring_test)
@@ -342,39 +338,39 @@ EOSIO_TEST_BEGIN(eostring_test)
       CHECK_EQUAL( strcmp(eostr.data()+eostr.size(), iter), 0 );
    }
 
-   // //// bool eosio::eostring::empty() const
-   // {
-   //    static eosio::eostring eostr{};
-   //    CHECK_EQUAL( eostr.empty(), true );
-   //    eostr += 'c';
-   //    CHECK_EQUAL( eostr.empty(), false );
-   // }
+   //// bool eosio::eostring::empty() const
+   {
+      static eosio::eostring eostr{};
+      CHECK_EQUAL( eostr.empty(), true );
+      eostr += 'c';
+      CHECK_EQUAL( eostr.empty(), false );
+   }
 
-   // //// size_t eosio::eostring::size() const
-   // {
-   //    static eosio::eostring eostr{"abcdef"};
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    eostr += 'g';
-   //    CHECK_EQUAL( eostr.size(), 7 );
-   // }
+   //// size_t eosio::eostring::size() const
+   {
+      static eosio::eostring eostr{"abcdef"};
+      CHECK_EQUAL( eostr.size(), 6 );
+      eostr += 'g';
+      CHECK_EQUAL( eostr.size(), 7 );
+   }
 
-   // //// size_t eosio::eostring::length() const
-   // {
-   //    static eosio::eostring eostr{"abcdef"};
-   //    CHECK_EQUAL( eostr.length(), 6 );
-   //    eostr += 'g';
-   //    CHECK_EQUAL( eostr.length(), 7 );
-   // }
+   //// size_t eosio::eostring::length() const
+   {
+      static eosio::eostring eostr{"abcdef"};
+      CHECK_EQUAL( eostr.length(), 6 );
+      eostr += 'g';
+      CHECK_EQUAL( eostr.length(), 7 );
+   }
 
-   // //// size_t eosio::eostring::capacity() const
-   // {
-   //    static eosio::eostring eostr{"abc"};
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    eostr += 'd', eostr += 'e', eostr += 'f';
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    eostr += 'g';
-   //    CHECK_EQUAL( eostr.capacity(), 14 );
-   // }
+   //// size_t eosio::eostring::capacity() const
+   {
+      static eosio::eostring eostr{"abc"};
+      CHECK_EQUAL( eostr.capacity(), 3 );
+      eostr += 'd', eostr += 'e', eostr += 'f';
+      CHECK_EQUAL( eostr.capacity(), 8 );
+      eostr += 'g';
+      CHECK_EQUAL( eostr.capacity(), 8 );
+   }
 
    //// size_t eosio::eostring::max_size() const
    {
@@ -462,14 +458,15 @@ EOSIO_TEST_BEGIN(eostring_test)
       CHECK_EQUAL( strcmp(eostr_swap1.data(), "abc"), 0 );
    }
 
-   // //// void push_back(char c)
-   // {
-   //    static eosio::eostring eostr{"abcdef"};
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    eostr.push_back('g');
-   //    CHECK_EQUAL( eostr.size(), 7 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefg"), 0 );
-   // }
+   //// void push_back(char c)
+   {
+      static eosio::eostring eostr{"abcdef"};
+      CHECK_EQUAL( eostr.size(), 6 );
+      eostr.push_back('g');
+      CHECK_EQUAL( eostr.size(), 7 );
+      CHECK_EQUAL( eostr.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefg"), 0 );
+   }
 
    //// void pop_back()
    {
@@ -515,432 +512,439 @@ EOSIO_TEST_BEGIN(eostring_test)
       CHECK_EQUAL( strcmp(eostr.substr(1,6).data(), "bcdef"), 0 );
    }
 
-   // //// size_t copy(char* dest, size_t len, size_t pos = 0) const
-   // {
-   //    static const eosio::eostring eostr{"abcdef"};
-   //    static char str[7]{};
+   //// size_t copy(char* dest, size_t len, size_t pos = 0) const
+   {
+      static const eosio::eostring eostr{"abcdef"};
+      static char str[7]{};
+      
+      CHECK_EQUAL( eostr.copy(str, 0), 0 );
+      CHECK_EQUAL( strcmp(str, ""), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 0), 0 );
-   //    CHECK_EQUAL( strcmp(str, ""), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10), 6 );
+      CHECK_EQUAL( strcmp(str, "abcdef"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10), 6 );
-   //    CHECK_EQUAL( strcmp(str, "abcdef"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 0), 6 );
+      CHECK_EQUAL( strcmp(str, "abcdef"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 0), 6 );
-   //    CHECK_EQUAL( strcmp(str, "abcdef"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 1), 5 );
+      CHECK_EQUAL( strcmp(str, "bcdef"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 1), 5 );
-   //    CHECK_EQUAL( strcmp(str, "bcdef"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 2), 4 );
+      CHECK_EQUAL( strcmp(str, "cdef"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 2), 4 );
-   //    CHECK_EQUAL( strcmp(str, "cdef"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 3), 3 );
+      CHECK_EQUAL( strcmp(str, "def"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 3), 3 );
-   //    CHECK_EQUAL( strcmp(str, "def"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 4), 2 );
+      CHECK_EQUAL( strcmp(str, "ef"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 4), 2 );
-   //    CHECK_EQUAL( strcmp(str, "ef"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 5), 1 );
+      CHECK_EQUAL( strcmp(str, "f"), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 5), 1 );
-   //    CHECK_EQUAL( strcmp(str, "f"), 0 );
+      CHECK_EQUAL( eostr.copy(str, 10, 6), 0 );
+      CHECK_EQUAL( strcmp(str, ""), 0 );
 
-   //    CHECK_EQUAL( eostr.copy(str, 10, 6), 0 );
-   //    CHECK_EQUAL( strcmp(str, ""), 0 );
-   // }
+      {
+         static const eosio::eostring eostr{"abcdef"};
+         static char str[7]{};
+         CHECK_ASSERT( "eostring::copy", []() {eostr.copy(str, 1, eostr.size()+1);} )
+      }
+   }
 
-   // //// eosio::eostring& insert(const size_t pos, const char* str)
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const char* str{"ooo"};
-   //    eostr.insert(0, str);
-   //    CHECK_EQUAL( strcmp(eostr.data(), "oooiii"), 0 );
-   // }
+   //// eosio::eostring& insert(const size_t pos, const char* str)
+   {
+      static eosio::eostring eostr{"iii"};
+      static const char* str{"ooo"};
+      eostr.insert(0, str);
+      CHECK_EQUAL( strcmp(eostr.data(), "oooiii"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const char* str{"ooo"};
-   //    eostr.insert(1, str);
-   //    CHECK_EQUAL( strcmp(eostr.data(), "ioooii"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const char* str{"ooo"};
+      eostr.insert(1, str);
+      CHECK_EQUAL( strcmp(eostr.data(), "ioooii"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const char* str{"ooo"};
-   //    eostr.insert(2, str);
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iioooi"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const char* str{"ooo"};
+      eostr.insert(2, str);
+      CHECK_EQUAL( strcmp(eostr.data(), "iioooi"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const char* str{"ooo"};
-   //    eostr.insert(3, str);
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iiiooo"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const char* str{"ooo"};
+      eostr.insert(3, str);
+      CHECK_EQUAL( strcmp(eostr.data(), "iiiooo"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    static const char* null_man{nullptr};
-   //    CHECK_ASSERT( "eostring::insert", []() {eostr.insert(0, null_man, 1);} )
-   //    CHECK_ASSERT( "eostring::insert", []() {eostr.insert(-1, "ooo", 1);} )
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      static const char* null_man{nullptr};
+      CHECK_ASSERT( "eostring::insert", []() {eostr.insert(0, null_man, 1);} )
+      CHECK_ASSERT( "eostring::insert", []() {eostr.insert(-1, "ooo", 1);} )
+   }
 
-   // //// eosio::eostring& insert(const size_t pos, const eosio::eostring& str)
-   // {
-   //    static eosio::eostring eostr{};
-   //    static const eosio::eostring str{"ooo"};
-   //    eostr.insert(0, str);
-   //    CHECK_EQUAL( eostr.size(), 3 );
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "ooo"), 0 );
-   // }
+   //// eosio::eostring& insert(const size_t pos, const eosio::eostring& str)
+   {
+      static eosio::eostring eostr{};
+      static const eosio::eostring str{"ooo"};
+      eostr.insert(0, str);
+      CHECK_EQUAL( eostr.size(), 3 );
+      CHECK_EQUAL( eostr.capacity(), 6 );
+      CHECK_EQUAL( strcmp(eostr.data(), "ooo"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abc"};
-   //    static const eosio::eostring str{"d"};
-   //    eostr.insert(0, str);
-   //    CHECK_EQUAL( eostr.size(), 4 );
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "dabc"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abc"};
+      static const eosio::eostring str{"d"};
+      eostr.insert(0, str);
+      CHECK_EQUAL( eostr.size(), 4 );
+      CHECK_EQUAL( eostr.capacity(), 8 );
+      CHECK_EQUAL( strcmp(eostr.data(), "dabc"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abc"};
-   //    static const eosio::eostring str{"def"};
-   //    eostr.insert(0, str);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( eostr.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "defabc"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abc"};
+      static const eosio::eostring str{"def"};
+      eostr.insert(0, str);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( strcmp(eostr.data(), "defabc"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const eosio::eostring str{"ooo"};
-   //    eostr.insert(0, str);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( eostr.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "oooiii") , 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const eosio::eostring str{"ooo"};
+      eostr.insert(0, str);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( strcmp(eostr.data(), "oooiii") , 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const eosio::eostring str{"ooo"};
-   //    eostr.insert(1, str);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( eostr.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "ioooii") , 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const eosio::eostring str{"ooo"};
+      eostr.insert(1, str);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( strcmp(eostr.data(), "ioooii") , 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const eosio::eostring str{"ooo"};
-   //    eostr.insert(2, str);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( eostr.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iioooi") , 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const eosio::eostring str{"ooo"};
+      eostr.insert(2, str);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( strcmp(eostr.data(), "iioooi") , 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"iii"};
-   //    static const eosio::eostring str{"ooo"};
-   //    eostr.insert(3, str);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( eostr.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iiiooo") , 0 );
-   // }
+   {
+      static eosio::eostring eostr{"iii"};
+      static const eosio::eostring str{"ooo"};
+      eostr.insert(3, str);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( eostr.capacity(), 12 );
+      CHECK_EQUAL( strcmp(eostr.data(), "iiiooo") , 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    static const eosio::eostring str{"ooo"};
-   //    CHECK_ASSERT( "eostring::insert", []() {eostr.insert(-1, str);} )
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      static const eosio::eostring str{"ooo"};
+      CHECK_ASSERT( "eostring::insert", []() {eostr.insert(-1, str);} )
+   }
 
-   // //// eosio::eostring& erase(size_t pos = 0, size_t len = npos)
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase();
-   //    CHECK_EQUAL( eostr.size(), 0 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
-   // }
+   //// eosio::eostring& erase(size_t pos = 0, size_t len = npos)
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase();
+      CHECK_EQUAL( eostr.size(), 0 );
+      CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(0);
-   //    CHECK_EQUAL( eostr.size(), 0 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(0);
+      CHECK_EQUAL( eostr.size(), 0 );
+      CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(0, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 0 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(0, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 0 );
+      CHECK_EQUAL( strcmp(eostr.data(), ""), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(1, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 1 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "a"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(1, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 1 );
+      CHECK_EQUAL( strcmp(eostr.data(), "a"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(2, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 2 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "ab"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(2, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 2 );
+      CHECK_EQUAL( strcmp(eostr.data(), "ab"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(3, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 3 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abc"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(3, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 3 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abc"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(4, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 4 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcd"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(4, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 4 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcd"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(5, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 5 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcde"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(5, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 5 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcde"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(6, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdef"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(6, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 6 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdef"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(7, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 7 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefg"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(7, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 7 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefg"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(8, eosio::eostring::npos);
-   //    CHECK_EQUAL( eostr.size(), 8 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefgh"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(8, eosio::eostring::npos);
+      CHECK_EQUAL( eostr.size(), 8 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefgh"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefgh"};
-   //    eostr.erase(8, 0);
-   //    CHECK_EQUAL( eostr.size(), 8 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefgh"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefgh"};
+      eostr.erase(8, 0);
+      CHECK_EQUAL( eostr.size(), 8 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefgh"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    CHECK_ASSERT( "eostring::erase", []() {eostr.erase(-1, 1);} )
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      CHECK_ASSERT( "eostring::erase", []() {eostr.erase(-1, 1);} )
+   }
 
-   // //// eosio::eostring& append(const char* str)
-   // {
-   //    static eosio::eostring eostr{};
-   //    static const char* str{"iii"};
-   //    eostr.append(str);
-   //    CHECK_EQUAL( eostr.size(), 3 );
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iii"), 0 );
-   // }
+   //// eosio::eostring& append(const char* str)
+   {
+      static eosio::eostring eostr{};
+      static const char* str{"iii"};
+      eostr.append(str);
+      CHECK_EQUAL( eostr.size(), 3 );
+      CHECK_EQUAL( eostr.capacity(), 6 );
+      CHECK_EQUAL( strcmp(eostr.data(), "iii"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    static const char* str{"iii"};
-   //    eostr.append(str);
-   //    CHECK_EQUAL( eostr.size(), 10 );
-   //    CHECK_EQUAL( eostr.capacity(), 14 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefgiii"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      static const char* str{"iii"};
+      eostr.append(str);
+      CHECK_EQUAL( eostr.size(), 10 );
+      CHECK_EQUAL( eostr.capacity(), 20 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefgiii"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    static const char* null_man{nullptr};
-   //    CHECK_ASSERT( "eostring::append", []() {eostr.append(null_man);} )
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      static const char* null_man{nullptr};
+      CHECK_ASSERT( "eostring::append", []() {eostr.append(null_man);} )
+   }
 
-   // //// eosio::eostring& append(const eosio::eostring& str)
-   // {
-   //    static eosio::eostring eostr{};
-   //    static const eosio::eostring str{"iii"};
-   //    eostr.append(str);
-   //    CHECK_EQUAL( eostr.size(), 3 );
-   //    CHECK_EQUAL( eostr.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "iii"), 0 );
-   // }
+   //// eosio::eostring& append(const eosio::eostring& str)
+   {
+      static eosio::eostring eostr{};
+      static const eosio::eostring str{"iii"};
+      eostr.append(str);
+      CHECK_EQUAL( eostr.size(), 3 );
+      CHECK_EQUAL( eostr.capacity(), 6 );
+      CHECK_EQUAL( strcmp(eostr.data(), "iii"), 0 );
+   }
 
-   // {
-   //    static eosio::eostring eostr{"abcdefg"};
-   //    static const eosio::eostring str{"iii"};
-   //    eostr.append(str);
-   //    CHECK_EQUAL( eostr.size(), 10 );
-   //    CHECK_EQUAL( eostr.capacity(), 14 );
-   //    CHECK_EQUAL( strcmp(eostr.data(), "abcdefgiii"), 0 );
-   // }
+   {
+      static eosio::eostring eostr{"abcdefg"};
+      static const eosio::eostring str{"iii"};
+      eostr.append(str);
+      CHECK_EQUAL( eostr.size(), 10 );
+      CHECK_EQUAL( eostr.capacity(), 20 );
+      CHECK_EQUAL( strcmp(eostr.data(), "abcdefgiii"), 0 );
+   }
 
-   // //// eosio::eostring& operator+=(const char c)
-   // {
-   //    static eosio::eostring eostr0{};
-   //    static eosio::eostring eostr1{"a"};
-   //    static eosio::eostring eostr2{"abcdef"};
+   //// eosio::eostring& operator+=(const char c)
+   {
+      static eosio::eostring eostr0{};
+      static eosio::eostring eostr1{"a"};
+      static eosio::eostring eostr2{"abcdef"};
 
-   //    eostr0 += 'c';
-   //    CHECK_EQUAL( eostr0.size(), 2 );
-   //    CHECK_EQUAL( eostr0.capacity(), 4 );
-   //    CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
+      eostr0 += 'c';
+      CHECK_EQUAL( eostr0.size(), 1 );
+      CHECK_EQUAL( eostr0.capacity(), 2 );
+      CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
+      
+      eostr1 += 'c';
+      eostr1 += 'c';
+      CHECK_EQUAL( eostr1.size(), 3 );
+      CHECK_EQUAL( eostr1.capacity(), 4 );
+      CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
 
-   //    eostr1 += 'c';
-   //    eostr1 += 'c';
-   //    CHECK_EQUAL( eostr1.size(), 3 );
-   //    CHECK_EQUAL( eostr1.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
+      eostr2 += 'c';
+      CHECK_EQUAL( eostr2.size(), 7 );
+      CHECK_EQUAL( eostr2.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
+   }
 
-   //    eostr2 += 'c';
-   //    CHECK_EQUAL( eostr2.size(), 7 );
-   //    CHECK_EQUAL( eostr2.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
-   // }
+   //// eosio::eostring& operator+=(const char* rhs)
+   {
+      static eosio::eostring eostr0{};
+      static eosio::eostring eostr1{"a"};
+      static eosio::eostring eostr2{"abcdef"};
+      static eosio::eostring eostr3{"abcdef"};
 
-   // //// eosio::eostring& operator+=(const char* rhs)
-   // {
-   //    static eosio::eostring eostr0{};
-   //    static eosio::eostring eostr1{"a"};
-   //    static eosio::eostring eostr2{"abcdef"};
-   //    static eosio::eostring eostr3{"abcdef"};
+      eostr0 += "c";
+      CHECK_EQUAL( eostr0.size(), 1 );
+      CHECK_EQUAL( eostr0.capacity(), 2 );
+      CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
 
-   //    eostr0 += "c";
-   //    CHECK_EQUAL( eostr0.size(), 2 );
-   //    CHECK_EQUAL( eostr0.capacity(), 4 );
-   //    CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
+      eostr1 += "c";
+      eostr1 += "c";
+      CHECK_EQUAL( eostr1.size(), 3 );
+      CHECK_EQUAL( eostr1.capacity(), 4 );
+      CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
 
-   //    eostr1 += "c";
-   //    eostr1 += "c";
-   //    CHECK_EQUAL( eostr1.size(), 3 );
-   //    CHECK_EQUAL( eostr1.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
+      eostr2 += "c";
+      CHECK_EQUAL( eostr2.size(), 7 );
+      CHECK_EQUAL( eostr2.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
 
-   //    eostr2 += "c";
-   //    CHECK_EQUAL( eostr2.size(), 7 );
-   //    CHECK_EQUAL( eostr2.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
+      eostr3 += "ghijklm";
+      CHECK_EQUAL( eostr3.size(), 13 );
+      eosio::print(eostr3.capacity());
+      CHECK_EQUAL( eostr3.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr3.data(), "abcdefghijklm"), 0 );
+   }
 
-   //    eostr3 += "ghijklm";
-   //    CHECK_EQUAL( eostr3.size(), 13 );
-   //    CHECK_EQUAL( eostr3.capacity(), 26 );
-   //    CHECK_EQUAL( strcmp(eostr3.data(), "abcdefghijklm"), 0 );
-   // }
+   //// eosio::eostring& operator+=(const eosio::eostring& rhs)
+   {
+      static eosio::eostring eostr0{};
+      static eosio::eostring eostr1{"a"};
+      static eosio::eostring eostr2{"abcdef"};
+      static eosio::eostring eostr3{"abcdef"};
 
-   // //// eosio::eostring& operator+=(const eosio::eostring& rhs)
-   // {
-   //    static eosio::eostring eostr0{};
-   //    static eosio::eostring eostr1{"a"};
-   //    static eosio::eostring eostr2{"abcdef"};
-   //    static eosio::eostring eostr3{"abcdef"};
+      eostr0 += eosio::eostring{"c"};
+      CHECK_EQUAL( eostr0.size(), 1 );
+      CHECK_EQUAL( eostr0.capacity(), 2 );
+      CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
 
-   //    eostr0 += eosio::eostring{"c"};
-   //    CHECK_EQUAL( eostr0.size(), 2 );
-   //    CHECK_EQUAL( eostr0.capacity(), 4 );
-   //    CHECK_EQUAL( strcmp(eostr0.data(), "c"), 0 );
+      eostr1 += eosio::eostring{"c"};
+      eostr1 += eosio::eostring{"c"};
+      CHECK_EQUAL( eostr1.size(), 3 );
+      CHECK_EQUAL( eostr1.capacity(), 4 );
+      CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
 
-   //    eostr1 += eosio::eostring{"c"};
-   //    eostr1 += eosio::eostring{"c"};
-   //    CHECK_EQUAL( eostr1.size(), 3 );
-   //    CHECK_EQUAL( eostr1.capacity(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr1.data(), "acc"), 0 );
+      eostr2 += eosio::eostring{"c"};
+      CHECK_EQUAL( eostr2.size(), 7 );
+      CHECK_EQUAL( eostr2.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
 
-   //    eostr2 += eosio::eostring{"c"};
-   //    CHECK_EQUAL( eostr2.size(), 7 );
-   //    CHECK_EQUAL( eostr2.capacity(), 12 );
-   //    CHECK_EQUAL( strcmp(eostr2.data(), "abcdefc"), 0 );
+      eostr3 += eosio::eostring{"ghijklm"};
+      CHECK_EQUAL( eostr3.size(), 13 );
+      CHECK_EQUAL( eostr3.capacity(), 14 );
+      CHECK_EQUAL( strcmp(eostr3.data(), "abcdefghijklm"), 0 );
+   }
 
-   //    eostr3 += eosio::eostring{"ghijklm"};
-   //    CHECK_EQUAL( eostr3.size(), 13 );
-   //    CHECK_EQUAL( eostr3.capacity(), 26 );
-   //    CHECK_EQUAL( strcmp(eostr3.data(), "abcdefghijklm"), 0 );
-   // }
+   //// friend bool operator< (const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 < eostr0), false );
+      CHECK_EQUAL( (eostr1 < eostr1), false );
+      CHECK_EQUAL( (eostr0 < eostr1), true );
+   }
 
-   // //// friend bool operator< (const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 < eostr0), false );
-   //    CHECK_EQUAL( (eostr1 < eostr1), false );
-   //    CHECK_EQUAL( (eostr0 < eostr1), true );
-   // }
+   //// friend bool operator> (const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 > eostr0), false );
+      CHECK_EQUAL( (eostr1 > eostr1), false );
+      CHECK_EQUAL( (eostr0 > eostr1), false );
+   }
 
-   // //// friend bool operator> (const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 > eostr0), false );
-   //    CHECK_EQUAL( (eostr1 > eostr1), false );
-   //    CHECK_EQUAL( (eostr0 > eostr1), false );
-   // }
+   //// friend bool operator<=(const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 <= eostr0), true );
+      CHECK_EQUAL( (eostr1 <= eostr1), true );
+      CHECK_EQUAL( (eostr0 <= eostr1), true );
+   }
 
-   // //// friend bool operator<=(const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 <= eostr0), true );
-   //    CHECK_EQUAL( (eostr1 <= eostr1), true );
-   //    CHECK_EQUAL( (eostr0 <= eostr1), true );
-   // }
+   //// friend bool operator>=(const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 >= eostr0), true );
+      CHECK_EQUAL( (eostr1 >= eostr1), true );
+      CHECK_EQUAL( (eostr0 >= eostr1), false );
+   }
 
-   // //// friend bool operator>=(const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 >= eostr0), true );
-   //    CHECK_EQUAL( (eostr1 >= eostr1), true );
-   //    CHECK_EQUAL( (eostr0 >= eostr1), false );
-   // }
+   //// friend bool operator==(const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 == eostr0), true );
+      CHECK_EQUAL( (eostr1 == eostr1), true );
+      CHECK_EQUAL( (eostr0 == eostr1), false );
+   }
 
-   // //// friend bool operator==(const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 == eostr0), true );
-   //    CHECK_EQUAL( (eostr1 == eostr1), true );
-   //    CHECK_EQUAL( (eostr0 == eostr1), false );
-   // }
+   //// friend bool operator!=(const eosio::eostring& lhs, const eosio::eostring& rhs)
+   {
+      static const eosio::eostring eostr0{"abc"};
+      static const eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( (eostr0 != eostr0), false );
+      CHECK_EQUAL( (eostr1 != eostr1), false );
+      CHECK_EQUAL( (eostr0 != eostr1), true );
+   }
 
-   // //// friend bool operator!=(const eosio::eostring& lhs, const eosio::eostring& rhs)
-   // {
-   //    static const eosio::eostring eostr0{"abc"};
-   //    static const eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( (eostr0 != eostr0), false );
-   //    CHECK_EQUAL( (eostr1 != eostr1), false );
-   //    CHECK_EQUAL( (eostr0 != eostr1), true );
-   // }
+   //// eosio::eostring& operator+=(const eosio::eostring& s)
+   {
+      static eosio::eostring eostr0{"a"};
+      static eosio::eostring eostr1{"b"};
+      CHECK_EQUAL( eostr0.size(), 1 );
+      eostr0 += eostr1;
+      CHECK_EQUAL( eostr0.size(), 2 );
+      CHECK_EQUAL( strcmp(eostr0.data(), "ab"), 0 );
+   }
 
-   // //// eosio::eostring& operator+=(const eosio::eostring& s)
-   // {
-   //    static eosio::eostring eostr0{"a"};
-   //    static eosio::eostring eostr1{"b"};
-   //    CHECK_EQUAL( eostr0.size(), 1 );
-   //    eostr0 += eostr1;
-   //    CHECK_EQUAL( eostr0.size(), 2 );
-   //    CHECK_EQUAL( strcmp(eostr0.data(), "ab"), 0 );
-   // }
-
-   // {
-   //    static eosio::eostring eostr0{"abc"};
-   //    static eosio::eostring eostr1{"def"};
-   //    CHECK_EQUAL( eostr0.size(), 3 );
-   //    eostr0 += eostr1;
-   //    CHECK_EQUAL( eostr0.size(), 6 );
-   //    CHECK_EQUAL( strcmp(eostr0.data(), "abcdef"), 0 );
-   // }
+   {
+      static eosio::eostring eostr0{"abc"};
+      static eosio::eostring eostr1{"def"};
+      CHECK_EQUAL( eostr0.size(), 3 );
+      eostr0 += eostr1;
+      CHECK_EQUAL( eostr0.size(), 6 );
+      CHECK_EQUAL( strcmp(eostr0.data(), "abcdef"), 0 );
+   }
 
 silence_output(false);
 EOSIO_TEST_END
