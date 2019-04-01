@@ -4,7 +4,6 @@ printf "=========== eosio.cdt ===========\n\n"
 
 VERSION=2.1 # Build script version
 CMAKE_BUILD_TYPE=Release
-export DISK_MIN=20
 DOXYGEN=false
 ENABLE_COVERAGE_TESTING=false
 CORE_SYMBOL_NAME="SYS"
@@ -15,6 +14,7 @@ txtbld=$(tput bold)
 bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
+export DISK_MIN=5
 export SRC_LOCATION=${HOME}/src
 export OPT_LOCATION=${HOME}/opt
 export VAR_LOCATION=${HOME}/var
