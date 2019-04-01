@@ -49,7 +49,7 @@ if [ "${DISK_AVAIL}" -lt "$DISK_MIN" ]; then
 fi
 
 printf "Checking xcode-select installation\\n"
-if ! XCODESELECT=$( command -v xcode-select)
+if ! XCODESELECT=$(command -v xcode-select)
 then
 	printf "\\nXCode must be installed in order to proceed.\\n\\n"
 	printf "Exiting now.\\n"
@@ -58,35 +58,34 @@ fi
 printf "xcode-select installation found @ ${XCODESELECT}\\n"
 
 printf "Checking Ruby installation.\\n"
-if ! RUBY=$( command -v ruby)
-then
+if ! RUBY=$( command -v ruby); then
 	printf "\\nRuby must be installed in order to proceed.\\n\\n"
-	printf "Exiting now.\\n"
 	exit 1
+else
+	printf "Ruby installation found @ ${RUBY}\\n"
 fi
-printf "Ruby installation found @ ${RUBY}\\n"
 
 printf "Checking Home Brew installation...\\n"
-if ! BREW=$( command -v brew )
-then
+if ! BREW=$( command -v brew ); then
 	printf "Homebrew must be installed to compile EOS.IO!\\n"
-	if [ $1 == 0 ]; then read -p "Do you wish to install HomeBrew? (y/n)? " answer; fi
+	if [[ -z $1 ]] || [[ $1 == 0 ]]; then read -p "Do you wish to install Homebrew? (y/n) " answer; else answer=$1; fi
 	case ${answer} in
+		"" ) echo "Please type something...";;
 		1 | [Yy]* )
-			"${XCODESELECT}" --install 2>/dev/null;
+			"${XCODESELECT}" --install;
 			if ! "${RUBY}" -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; then
 				echo " - Unable to install homebrew at this time."
 				exit 1;
 			else
 				BREW=$( command -v brew )
 			fi
-		;;
-		[Nn]* ) echo "User aborted homebrew installation. Exiting now."; exit 1;;
-		* ) echo "Please type 'y' for yes or 'n' for no.";;
+			break;;
+		[Nn]* ) echo " - User aborting installation of required Homebrew."; exit;;
+		* ) echo " - Please type 'y' for yes or 'n' for no.";;
 	esac
-
+else
+	printf " - Home Brew installation found @ ${BREW}\\n"
 fi
-printf " - Home Brew installation found @ ${BREW}\\n"
 
 printf "\\nChecking dependencies...\\n"
 var_ifs="${IFS}"
