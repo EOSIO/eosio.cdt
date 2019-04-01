@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 printf "=========== eosio.cdt ===========\n\n"
 
@@ -13,6 +13,38 @@ TIME_BEGIN=$( date -u +%s )
 txtbld=$(tput bold)
 bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
+
+function usage() {
+   printf "Usage: %s \\n[Noninteractive -y]\\n\\n" "$0" 1>&2
+   exit 1
+}
+
+NONINTERACTIVE=0
+
+if [ $# -ne 0 ]; then
+   while getopts "y" opt; do
+      case "${opt}" in
+         y)
+            NONINTERACTIVE=1
+         ;;
+         \? )
+            printf "\\nInvalid Option: %s\\n" "-${OPTARG}" 1>&2
+            usage
+            exit 1
+         ;;
+         : )
+            printf "\\nInvalid Option: %s requires an argument.\\n" "-${OPTARG}" 1>&2
+            usage
+            exit 1
+         ;;
+         * )
+            usage
+            exit 1
+         ;;
+      esac
+   done
+fi
+
 
 export DISK_MIN=5
 export SRC_LOCATION=${HOME}/src
@@ -142,7 +174,7 @@ else
 fi
 
 cd $SRC_LOCATION
-. "$FILE" # Execute OS specific build file
+. "$FILE" $NONINTERACTIVE # Execute OS specific build file
 
 CORES_AVAIL=`getconf _NPROCESSORS_ONLN`
 MEM_CORES=$(( ${FREE_MEM}/4000000 )) # 4 gigabytes per core

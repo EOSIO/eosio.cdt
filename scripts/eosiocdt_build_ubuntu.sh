@@ -79,21 +79,22 @@ if [[ "${ENABLE_CODE_COVERAGE}" == true ]]; then
 	DEP_ARRAY+=(lcov)
 fi
 
-printf "Do you wish to update repositories with apt-get update?\\n\\n"
-select yn in "Yes" "No"; do
-	case $yn in
-		[Yy]* ) 
-			printf "\\n\\nUpdating...\\n\\n"
-			if ! sudo apt-get update; then
-				printf "\\nAPT update failed.\\n"
-				printf "\\nExiting now.\\n\\n"
+PACKAGE_MANAGER_UPDATE_COMMAND="apt-get update"
+while true; do
+	if [[ -z $1 ]] || [[ $1 == 0 ]]; then read -p "Do you wish to ${PACKAGE_MANAGER_UPDATE_COMMAND}? (y/n) " answer; else answer=$1; fi
+	case "${answer}" in
+		"" ) echo " - Please type something.";;
+		1 | [Yy]* )
+			printf "Updating...\\n\\n"
+			if ! sudo ${PACKAGE_MANAGER_UPDATE_COMMAND}; then
+				printf " - Update failed.\\n"
 				exit 1;
 			else
-				printf "\\nAPT update complete.\\n"
+				printf " - ${PACKAGE_MANAGER_UPDATE_COMMAND} complete.\\n"
 			fi
 		break;;
-		[Nn]* ) echo "Proceeding without update!";;
-		* ) echo "Please type 1 for yes or 2 for no.";;
+		[Nn]* ) echo " - Skipping."; break;;
+		* ) echo " - Please type 'y' for yes or 'n' for no.";;
 	esac
 done
 
@@ -111,31 +112,31 @@ do
 		printf "Package %s found.\\n" "${DEP_ARRAY[$i]}"
 		continue
 	fi
-done		
-
+done
+printf "\\n"
+PACKAGE_MANAGER_INSTALL_COMMAND="apt-get -y install"
 if [ "${COUNT}" -gt 1 ]; then
-	printf "\\nThe following dependencies are required to install EOSIO.\\n"
-	printf "\\n${DISPLAY}\\n\\n" 
-	printf "Do you wish to install these packages?\\n"
-	select yn in "Yes" "No"; do
-		case $yn in
-			[Yy]* ) 
-				printf "\\n\\nInstalling dependencies\\n\\n"
-				if ! sudo apt-get -y install ${DEP}
-				then
-					printf "\\nDPKG dependency failed.\\n"
-					printf "\\nExiting now.\\n"
+	printf "The following dependencies are required to install EOSIO:\\n"
+	printf "${DISPLAY}\\n\\n"
+	while true; do
+		if [[ -z $1 ]] || [[ $1 == 0 ]]; then read -p "Do you wish to install required dependencies? (y/n) " answer; else answer=$1; fi
+		case "${answer}" in
+			"" ) echo " - Please type something.";;
+			1 | [Yy]* )
+				printf "Installing dependencies...\\n"
+				if ! sudo ${PACKAGE_MANAGER_INSTALL_COMMAND} ${DEP}; then
+					printf " - ${DEP} dependency failed installation!\\n"
 					exit 1
 				else
-					printf "\\nDPKG dependencies installed successfully.\\n"
+					printf " - Dependencies installed successfully.\\n"
 				fi
 			break;;
-			[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
-			* ) echo "Please type 1 for yes or 2 for no.";;
+			[Nn]* ) echo " - User aborting installation of required dependencies."; exit;;
+			* ) echo " - Please type 'y' for yes or 'n' for no.";;
 		esac
 	done
-else 
-	printf "\\nNo required dpkg dependencies to install."
+else
+	printf " - No required dependencies to install.\\n"
 fi
 
 

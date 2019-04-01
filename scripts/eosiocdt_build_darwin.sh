@@ -119,40 +119,47 @@ fi
 if [ $COUNT -gt 1 ]; then
 	printf "\\nThe following dependencies are required to install EOSIO:\\n"
 	printf "${DISPLAY}\\n\\n"
-	if [ $1 == 0 ]; then read -p "Do you wish to install these packages? (y/n) " answer; fi
-	case ${answer} in
-		1 | [Yy]* )
-			"${XCODESELECT}" --install 2>/dev/null;
-			if [ $1 == 0 ]; then read -p "Do you wish to update homebrew packages first? (y/n) " answer; fi
-			case ${answer} in
-				1 | [Yy]* )
-					if ! brew update; then
-						printf " - Brew update failed.\\n"
+	while true; do
+		if [[ -z $1 ]] || [[ $1 == 0 ]]; then read -p "Do you wish to install these packages? (y/n) " answer; else answer=$1; fi
+		case ${answer} in
+			"" ) echo "Please type something...";;
+			1 | [Yy]* )
+				"${XCODESELECT}" --install 2>/dev/null;
+				while true; do
+					if [[ -z $1 ]] || [[ $1 == 0 ]]; then read -p "Do you wish to update homebrew packages first? (y/n) " answer; fi
+					case ${answer} in
+						"" ) echo " - Please type something.";;
+						1 | [Yy]* )
+							if ! brew update; then
+								printf " - Brew update failed.\\n"
+								exit 1;
+							else
+								printf " - Brew update complete.\\n"
+							fi
+							break
+						;;
+						[Nn]* ) echo " - Proceeding without update!"; break;;
+						* ) echo " - Please type 'y' for yes or 'n' for no.";;
+					esac
+				done
+				brew tap eosio/eosio
+				printf "\\nInstalling Dependencies...\\n"
+				# DON'T INSTALL llvm@4 WITH --force!
+				OIFS="$IFS"
+				IFS=$','
+				for DEP in $DEPS; do
+					# Eval to support string/arguments with $DEP
+					if ! eval $BREW install $DEP; then
+						printf " - Homebrew exited with the above errors!\\n"
 						exit 1;
-					else
-						printf " - Brew update complete.\\n"
 					fi
-				;;
-				[Nn]* ) echo "Proceeding without update!";;
-				* ) echo "Please type 'y' for yes or 'n' for no."; exit;;
-			esac
-			brew tap eosio/eosio
-			printf "\\nInstalling Dependencies...\\n"
-			# DON'T INSTALL llvm@4 WITH --force!
-			OIFS="$IFS"
-			IFS=$','
-			for DEP in $DEPS; do
-				# Eval to support string/arguments with $DEP
-				if ! eval $BREW install $DEP; then
-					printf " - Homebrew exited with the above errors!\\n"
-					exit 1;
-				fi
-			done
-			IFS="$OIFS"
-		;;
-		[Nn]* ) echo "User aborting installation of required dependencies, Exiting now."; exit;;
-		* ) echo "Please type 'y' for yes or 'n' for no."; exit;;
-	esac
+				done
+				IFS="$OIFS"
+				break;;
+			[Nn]* ) echo " - User aborting installation of required dependencies..."; exit;;
+			* ) echo " - Please type 'y' for yes or 'n' for no.";;
+		esac
+	done
 else
 	printf "\\n - No required Home Brew dependencies to install.\\n"
 fi
