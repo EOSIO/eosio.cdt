@@ -149,8 +149,12 @@ namespace eosio { namespace cdt {
          StringRef main_name;
          Rewriter  rewriter;
          CompilerInstance* ci;
+         bool apply_was_found = false;
 
       public:
+         std::vector<CXXMethodDecl*> action_decls;
+         std::vector<CXXMethodDecl*> notify_decls;
+
          explicit eosio_codegen_visitor(CompilerInstance *CI)
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
@@ -351,6 +355,15 @@ namespace eosio { namespace cdt {
             //cg.cxx_methods.emplace(name, decl);
             return true;
          }
+
+         virtual bool VisitDecl(clang::Decl* decl) {
+            if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
+               if (fd->getNameInfo().getAsString() == "apply")
+                  apply_was_found = true;
+            }
+            return true;
+         }
+
          /*
          virtual bool VisitRecordDecl(RecordDecl* decl) {
             static std::set<std::string> _action_set; //used for validations
@@ -401,6 +414,12 @@ namespace eosio { namespace cdt {
                visitor->set_main_fid(fid);
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
+               for (auto ad : visitor->action_decls)
+                  visitor->create_action_dispatch(ad);
+               
+               for (auto nd : visitor->notify_decls)
+                  visitor->create_notify_dispatch(nd);
+
                int fd;
                llvm::SmallString<128> fn;
                try {
