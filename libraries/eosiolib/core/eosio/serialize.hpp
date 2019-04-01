@@ -8,17 +8,15 @@
   OP t.elem
 
 /**
- * @addtogroup serialize Serialize C++ API
- * @brief Defines C++ API to serialize and deserialize object
- * @ingroup core 
- * @{
+ *  @defgroup serialize Serialize
+ *  @ingroup core
+ *  @brief Defines C++ API to serialize and deserialize object
  */
 
 /**
  *  Defines serialization and deserialization for a class
  *
- *  @brief Defines serialization and deserialization for a class
- *
+ *  @ingroup serialize
  *  @param TYPE - the class to have its serialization and deserialization defined
  *  @param MEMBERS - a sequence of member names.  (field1)(field2)(field3)
  */
@@ -36,9 +34,7 @@
  *  Defines serialization and deserialization for a class which inherits from other classes that
  *  have their serialization and deserialization defined
  *
- *  @brief Defines serialization and deserialization for a class which inherits from other classes that
- *  have their serialization and deserialization defined
- *
+ *  @ingroup serialize
  *  @param TYPE - the class to have its serialization and deserialization defined
  *  @param BASE - a sequence of base class names (basea)(baseb)(basec)
  *  @param MEMBERS - a sequence of member names.  (field1)(field2)(field3)
@@ -54,4 +50,3 @@
     ds >> static_cast<BASE&>(t); \
     return ds BOOST_PP_SEQ_FOR_EACH( EOSLIB_REFLECT_MEMBER_OP, >>, MEMBERS );\
  }
-///@} serializecpp

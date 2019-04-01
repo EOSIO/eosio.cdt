@@ -8,6 +8,15 @@
 
 namespace eosio {
 
+  /**
+   * @defgroup dispatcher Dispatcher
+   * @ingroup contracts
+   * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
+   */
+
+
+   /// @cond IMPLEMENTATIONS
+
    template<typename Contract, typename FirstAction>
    bool dispatch( uint64_t code, uint64_t act ) {
       if( code == FirstAction::get_account() && FirstAction::get_name() == act ) {
@@ -17,6 +26,7 @@ namespace eosio {
       return false;
    }
 
+   /// @endcond
 
    /**
     * This method will dynamically dispatch an incoming set of actions to
@@ -26,6 +36,8 @@ namespace eosio {
     * ```
     *
     * For this to work the Actions must be derived from eosio::contract
+    *
+    * @ingroup dispatcher
     *
     */
    template<typename Contract, typename FirstAction, typename SecondAction, typename... Actions>
@@ -37,16 +49,13 @@ namespace eosio {
       return eosio::dispatch<Contract,SecondAction,Actions...>( code, act );
    }
 
-   /**
-    * @addtogroup dispatcher Dispatcher C++ API
-    * @ingroup contracts
-    * @brief Defines C++ functions to dispatch action to proper action handler inside a contract
-    * @{
-    */
+
+
 
    /**
     * Unpack the received action and execute the correponding action handler
     *
+    * @ingroup dispatcher
     * @tparam T - The contract class that has the correponding action handler, this contract should be derived from eosio::contract
     * @tparam Q - The namespace of the action handler function
     * @tparam Args - The arguments that the action handler accepts, i.e. members of the action
@@ -83,9 +92,7 @@ namespace eosio {
       return true;
    }
 
-/// @}
-
-
+  /// @cond INTERNAL
 
  // Helper macro for EOSIO_DISPATCH_INTERNAL
  #define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
@@ -97,12 +104,12 @@ namespace eosio {
  #define EOSIO_DISPATCH_HELPER( TYPE,  MEMBERS ) \
     BOOST_PP_SEQ_FOR_EACH( EOSIO_DISPATCH_INTERNAL, TYPE, MEMBERS )
 
-
+/// @endcond
 
 /**
- * @addtogroup dispatcher
  * Convenient macro to create contract apply handler
  *
+ * @ingroup dispatcher
  * @note To be able to use this macro, the contract needs to be derived from eosio::contract
  * @param TYPE - The class name of the contract
  * @param MEMBERS - The sequence of available actions supported by this contract

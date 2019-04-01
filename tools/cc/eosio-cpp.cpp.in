@@ -156,17 +156,15 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
 
    int tool_run = -1;
-   if (abigen) {
-      tool_run = ctool.run(newFrontendActionFactory(&finder).get());
-      if (tool_run != 0) {
-         throw std::runtime_error("abigen error");
-      }
-      std::string abi_s;
-      if (get_abigen_ref().is_empty())
-         return;
-      get_abigen_ref().to_json().dump(abi_s);
-      codegen::get().set_abi(abi_s);
+   tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+   if (tool_run != 0) {
+      throw std::runtime_error("abigen error");
    }
+   std::string abi_s;
+   if (get_abigen_ref().is_empty())
+      return;
+   get_abigen_ref().to_json().dump(abi_s);
+   codegen::get().set_abi(abi_s);
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("codegen error");
@@ -243,6 +241,18 @@ int main(int argc, const char **argv) {
       if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
          return -1;
       }
+
+// need to generate dSYM for mac OSX
+#ifdef __APPLE__
+      if (opts.native) {
+         if (opts.debug) {
+            if (!eosio::cdt::environment::exec_subprogram("dsymutil", std::vector<std::string>{opts.output_fn}, true)) {
+               return -1;
+            }
+         }
+      }
+#endif
    }
+
   return 0;
 }

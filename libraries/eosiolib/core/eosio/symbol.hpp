@@ -16,15 +16,15 @@
 
 namespace eosio {
   /**
-   *  @addtogroup symbol Symbol CPP API
+   *  @defgroup symbol Symbol
    *  @ingroup core
-   *  @brief Defines %CPP API for managing symbols
-   *  @{
+   *  @brief Defines C++ API for managing symbols
    */
 
    /**
-    * @class Stores the symbol code
-    * @brief Stores the symbol code as a uint64_t value
+    *  Stores the symbol code as a uint64_t value
+    *
+    *  @ingroup symbol
     */
    class symbol_code {
    public:
@@ -149,9 +149,7 @@ namespace eosio {
       }
 
       /**
-       *  Returns the symbol_code as a string.
-       *
-       *  @brief Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
+       *  Returns the name value as a string by calling write_as_string() and returning the buffer produced by write_as_string()
        */
       std::string to_string()const {
          char buffer[7];
@@ -174,7 +172,6 @@ namespace eosio {
       /**
        * Equivalency operator. Returns true if a == b (are the same)
        *
-       * @brief Equivalency operator
        * @return boolean - true if both provided symbol_codes are the same
        */
       friend constexpr bool operator == ( const symbol_code& a, const symbol_code& b ) {
@@ -184,7 +181,6 @@ namespace eosio {
       /**
        * Inverted equivalency operator. Returns true if a != b (are different)
        *
-       * @brief Inverted equivalency operator
        * @return boolean - true if both provided symbol_codes are not the same
        */
       friend constexpr bool operator != ( const symbol_code& a, const symbol_code& b ) {
@@ -207,7 +203,6 @@ namespace eosio {
    /**
     *  Serialize a symbol_code into a stream
     *
-    *  @brief Serialize a symbol_code
     *  @param ds - The stream to write
     *  @param sym - The value to serialize
     *  @tparam DataStream - Type of datastream buffer
@@ -223,7 +218,6 @@ namespace eosio {
    /**
     *  Deserialize a symbol_code from a stream
     *
-    *  @brief Deserialize a symbol_code
     *  @param ds - The stream to read
     *  @param symbol - The destination for deserialized value
     *  @tparam DataStream - Type of datastream buffer
@@ -238,36 +232,29 @@ namespace eosio {
    }
 
    /**
-    * @struct Stores information about a symbol, the symbol can be 7 characters long.
+    *  Stores information about a symbol, the symbol can be 7 characters long.
     *
-    * @brief Stores information about a symbol
+    *  @ingroup symbol
     */
    class symbol {
    public:
       /**
-       * Default constructor, construct a new symbol
-       *
-       * @brief Construct a new symbol object defaulting to a value of 0
-       *
+       * Construct a new symbol object defaulting to a value of 0
        */
       constexpr symbol() : value(0) {}
 
       /**
        * Construct a new symbol given a scoped enumerated type of raw (uint64_t).
        *
-       * @brief Construct a new symbol object initialising value with raw
        * @param raw - The raw value which is a scoped enumerated type of unit64_t
-       *
        */
       constexpr explicit symbol( uint64_t raw ) : value(raw) {}
 
       /**
        * Construct a new symbol given a symbol_code and a uint8_t precision.
        *
-       * @brief Construct a new symbol object initialising value with a symbol maximum of 7 characters, packs the symbol and precision into the uint64_t value.
        * @param sc - The symbol_code
        * @param precision - The number of decimal places used for the symbol
-       *
        */
       constexpr symbol( symbol_code sc, uint8_t precision )
       : value( (sc.raw() << 8) | static_cast<uint64_t>(precision) )
@@ -276,10 +263,8 @@ namespace eosio {
       /**
        * Construct a new symbol given a string and a uint8_t precision.
        *
-       * @brief Construct a new symbol object initialising value with a symbol maximum of 7 characters, packs the symbol and precision into the uint64_t value.
        * @param ss - The string containing the symbol
        * @param precision - The number of decimal places used for the symbol
-       *
        */
       constexpr symbol( std::string_view ss, uint8_t precision )
       : value( (symbol_code(ss).raw() << 8)  | static_cast<uint64_t>(precision) )
@@ -309,8 +294,6 @@ namespace eosio {
 
       /**
        * %Print the symbol
-       *
-       * @brief %Print the symbol
        */
       void print( bool show_precision = true )const {
          if( show_precision ){
@@ -325,7 +308,6 @@ namespace eosio {
       /**
        * Equivalency operator. Returns true if a == b (are the same)
        *
-       * @brief Equivalency operator
        * @return boolean - true if both provided symbols are the same
        */
       friend constexpr bool operator == ( const symbol& a, const symbol& b ) {
@@ -335,7 +317,6 @@ namespace eosio {
       /**
        * Inverted equivalency operator. Returns true if a != b (are different)
        *
-       * @brief Inverted equivalency operator
        * @return boolean - true if both provided symbols are not the same
        */
       friend constexpr bool operator != ( const symbol& a, const symbol& b ) {
@@ -389,8 +370,9 @@ namespace eosio {
    }
 
    /**
-    * @struct Extended asset which stores the information of the owner of the symbol
+    *  Extended asset which stores the information of the owner of the symbol
     *
+    *  @ingroup symbol
     */
    class extended_symbol
    {
@@ -398,19 +380,14 @@ namespace eosio {
 
       /**
        * Default constructor, construct a new extended_symbol
-       *
-       * @brief Construct a new empty extended_symbol object
-       *
        */
       constexpr extended_symbol() {}
 
       /**
-       * Construct a new symbol_code given a symbol and a name.
+       * Construct a new symbol_code object initialising symbol and contract with the passed in symbol and name
        *
-       * @brief Construct a new symbol_code object initialising symbol and contract with the passed in symbol and name
        * @param sym - The symbol
        * @param con - The name of the contract
-       *
        */
       constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}
 
@@ -441,7 +418,6 @@ namespace eosio {
       /**
        * Equivalency operator. Returns true if a == b (are the same)
        *
-       * @brief Equivalency operator
        * @return boolean - true if both provided extended_symbols are the same
        */
       friend constexpr bool operator == ( const extended_symbol& a, const extended_symbol& b ) {
@@ -451,7 +427,6 @@ namespace eosio {
       /**
        * Inverted equivalency operator. Returns true if a != b (are different)
        *
-       * @brief Inverted equivalency operator
        * @return boolean - true if both provided extended_symbols are not the same
        */
       friend constexpr bool operator != ( const extended_symbol& a, const extended_symbol& b ) {
@@ -460,7 +435,7 @@ namespace eosio {
 
       /**
        * Less than operator. Returns true if a < b.
-       * @brief Less than operator
+       *
        * @return boolean - true if extended_symbol `a` is less than `b`
        */
       friend constexpr bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
@@ -473,6 +448,4 @@ namespace eosio {
 
       EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
    };
-
-   /// @}
 }

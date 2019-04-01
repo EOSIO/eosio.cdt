@@ -18,10 +18,19 @@
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
+#include <boost/fusion/adapted/std_tuple.hpp>
+#include <boost/fusion/include/std_tuple.hpp>
 
+#include <boost/mp11/tuple.hpp>
 #include <boost/pfr.hpp>
 
 namespace eosio {
+
+/**
+ * @defgroup datastream Data Stream
+ * @ingroup core
+ * @brief Defines data stream for reading and writing data in the form of bytes
+ */
 
 /**
  *  A data stream for reading and writing data in the form of bytes
@@ -32,7 +41,7 @@ template<typename T>
 class datastream {
    public:
       /**
-       * @brief Construct a new datastream object
+       * Construct a new datastream object
        *
        * @details Construct a new datastream object given the size of the buffer and start position of the buffer
        * @param start - The start position of the buffer
@@ -170,7 +179,6 @@ class datastream {
 };
 
 /**
- * @brief Specialization of datastream used to help determine the final size of a serialized value.
  * Specialization of datastream used to help determine the final size of a serialized value
  */
 template<>
@@ -179,7 +187,6 @@ class datastream<size_t> {
       /**
        * Construct a new specialized datastream object given the initial size
        *
-       * @brief Construct a new specialized datastream object
        * @param init_size - The initial size
        */
      datastream( size_t init_size = 0):_size(init_size){}
@@ -187,7 +194,6 @@ class datastream<size_t> {
      /**
       *  Increment the size by s. This behaves the same as write( const char* ,size_t s ).
       *
-      *  @brief Increase the size by s
       *  @param s - The amount of size to increase
       *  @return true
       */
@@ -196,7 +202,6 @@ class datastream<size_t> {
      /**
       *  Increment the size by s. This behaves the same as skip( size_t s )
       *
-      *  @brief Increase the size by s
       *  @param s - The amount of size to increase
       *  @return true
       */
@@ -205,7 +210,6 @@ class datastream<size_t> {
      /**
       *  Increment the size by one
       *
-      *  @brief Increase the size by one
       *  @return true
       */
      inline bool     put(char )                      { ++_size; return  true;    }
@@ -213,7 +217,6 @@ class datastream<size_t> {
      /**
       *  Check validity. It's always valid
       *
-      *  @brief Check validity
       *  @return true
       */
      inline bool     valid()const                     { return true;              }
@@ -230,7 +233,6 @@ class datastream<size_t> {
      /**
       * Get the size
       *
-      * @brief Get the size
       * @return size_t - The size
       */
      inline size_t   tellp()const                     { return _size;             }
@@ -238,15 +240,12 @@ class datastream<size_t> {
      /**
       * Always returns 0
       *
-      * @brief Always returns 0
       * @return size_t - 0
       */
      inline size_t   remaining()const                 { return 0;                 }
   private:
      /**
       * The size used to determine the final size of a serialized value.
-      *
-      * @brief The size used to determine the final size of a serialized value.
       */
      size_t _size;
 };
@@ -254,7 +253,6 @@ class datastream<size_t> {
 /**
  *  Serialize an std::list into a stream
  *
- *  @brief Serialize an std::list 
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -271,7 +269,6 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::list<T>
 /**
  *  Deserialize an std::list from a stream
  *
- *  @brief Deserialize an std::list
  *  @param ds - The stream to read
  *  @param opt - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -290,7 +287,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::list<T>& l) {
 /**
  *  Serialize an std::deque into a stream
  *
- *  @brief Serialize an std::queue 
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -307,7 +303,6 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::deque<T
 /**
  *  Deserialize an std::deque from a stream
  *
- *  @brief Deserialize an std::deque
  *  @param ds - The stream to read
  *  @param opt - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -326,7 +321,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::deque<T>& d) 
 /**
  *  Serialize an std::variant into a stream
  *
- *  @brief Serialize an std::variant
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -358,7 +352,6 @@ void deserialize(datastream<Stream>& ds, std::variant<Ts...>& var, int i) {
 /**
  *  Deserialize an std::variant from a stream
  *
- *  @brief Deserialize an std::variant
  *  @param ds - The stream to read
  *  @param opt - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -375,7 +368,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::variant<Ts...
 /**
  *  Serialize an std::pair
  *
- *  @brief Serialize an std::pair
  *  @param ds - The stream to write
  *  @param t - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -392,7 +384,6 @@ DataStream& operator<<( DataStream& ds, const std::pair<T1, T2>& t ) {
 /**
  *  Deserialize an std::pair
  *
- *  @brief Deserialize an std::pair
  *  @param ds - The stream to read
  *  @param t - The destination for deserialized value
  *  @tparam DataStream - Type of datastream
@@ -412,7 +403,6 @@ DataStream& operator>>( DataStream& ds, std::pair<T1, T2>& t ) {
 /**
  *  Serialize an optional into a stream
  *
- *  @brief Serialize an optional
  *  @param ds - The stream to write
  *  @param opt - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -430,7 +420,6 @@ inline datastream<Stream>& operator<<(datastream<Stream>& ds, const std::optiona
 /**
  *  Deserialize an optional from a stream
  *
- *  @brief Deserialize an optional
  *  @param ds - The stream to read
  *  @param opt - The destination for deserialized value
  *  @tparam Stream - Type of datastream buffer
@@ -452,7 +441,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, std::optional<T>& 
 /**
  *  Serialize a bool into a stream
  *
- *  @brief  Serialize a bool into a stream
  *  @param ds - The stream to read
  *  @param d - The value to serialize
  *  @tparam Stream - Type of datastream buffer
@@ -483,7 +471,6 @@ inline datastream<Stream>& operator>>(datastream<Stream>& ds, bool& d) {
 /**
  *  Serialize a string into a stream
  *
- *  @brief Serialize a string
  *  @param ds - The stream to write
  *  @param v - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -500,7 +487,6 @@ DataStream& operator << ( DataStream& ds, const std::string& v ) {
 /**
  *  Deserialize a string from a stream
  *
- *  @brief Deserialize a string
  *  @param ds - The stream to read
  *  @param v - The destination for deserialized value
  *  @tparam DataStream - Type of datastream
@@ -520,7 +506,6 @@ DataStream& operator >> ( DataStream& ds, std::string& v ) {
 /**
  *  Serialize a fixed size std::array
  *
- *  @brief Serialize a fixed size std::array
  *  @param ds - The stream to write
  *  @param v - The value to serialize
  *  @tparam DataStream - Type of datastream
@@ -947,16 +932,9 @@ DataStream& operator>>( DataStream& ds, T& v ) {
 }
 
 /**
- * Defines data stream for reading and writing data in the form of bytes
- *
- * @addtogroup datastream Data Stream
- * @ingroup core
- * @{
- */
-
-/**
  * Unpack data inside a fixed size buffer as T
  *
+ * @ingroup datastream
  * @brief Unpack data inside a fixed size buffer as T
  * @tparam T - Type of the unpacked data
  * @param buffer - Pointer to the buffer
@@ -974,6 +952,7 @@ T unpack( const char* buffer, size_t len ) {
 /**
  * Unpack data inside a variable size buffer as T
  *
+ * @ingroup datastream
  * @brief Unpack data inside a variable size buffer as T
  * @tparam T - Type of the unpacked data
  * @param bytes - Buffer
@@ -987,6 +966,7 @@ T unpack( const std::vector<char>& bytes ) {
 /**
  * Get the size of the packed data
  *
+ * @ingroup datastream
  * @brief Get the size of the packed data
  * @tparam T - Type of the data to be packed
  * @param value - Data to be packed
@@ -1002,6 +982,7 @@ size_t pack_size( const T& value ) {
 /**
  * Get packed data
  *
+ * @ingroup datastream
  * @brief Get packed data
  * @tparam T - Type of the data to be packed
  * @param value - Data to be packed
@@ -1016,6 +997,4 @@ std::vector<char> pack( const T& value ) {
   ds << value;
   return result;
 }
-
-///@}
 }

@@ -147,7 +147,8 @@ extern "C" {
    }
    
    extern "C" void* memset(void*, int, size_t);
-   extern "C" void __bzero(void *to, size_t cnt) {
-      memset( to, 0, cnt );
+   extern "C" void __bzero(void* to, size_t cnt) {
+      char* cp{static_cast<char*>(to)};
+      while (cnt--) *cp++ = 0;
    }
 }
