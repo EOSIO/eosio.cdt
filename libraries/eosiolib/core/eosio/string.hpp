@@ -16,31 +16,31 @@
 
 namespace eosio {
 
-   class eostring {
+   class string {
    public:
       static constexpr size_t npos = -1;
 
       template <size_t N>
-      constexpr eostring(const char (&str)[N]) : _size{N-1}, _capacity{_size}, _begin{str}
+      constexpr string(const char (&str)[N]) : _size{N-1}, _capacity{_size}, _begin{str}
       { }
 
-      constexpr eostring() : _size{0}, _capacity{0}, _begin{""}
+      constexpr string() : _size{0}, _capacity{0}, _begin{""}
       { }
 
-      constexpr eostring(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
+      constexpr string(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
          char* begin{new char[_capacity]};
          memcpy(begin, str, _size);
          _begin = begin;
       }
 
-      constexpr eostring(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
+      constexpr string(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
          char* begin{new char[_capacity]};
          memset(begin, c, _size);
          _begin = begin;
       }
 
-      constexpr eostring(const eostring& str, const size_t pos, const size_t n) : _size{n}, _capacity{_size*2} {
-         if (n == eostring::npos || str._size < pos+n) {
+      constexpr string(const string& str, const size_t pos, const size_t n) : _size{n}, _capacity{_size*2} {
+         if (n == string::npos || str._size < pos+n) {
             _size     = str._size;
             _capacity = _size*2;
          }
@@ -48,28 +48,28 @@ namespace eosio {
          clone(_size, _capacity, str.data()+pos);
       }
 
-      constexpr eostring(const eostring& str) : _size{str._size}, _capacity{str._capacity} {
-         if (str.is_sso())
+      constexpr string(const string& str) : _size{str._size}, _capacity{str._capacity} {
+         if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
             clone(str._size, str._capacity, str.data());
       }
 
-      constexpr eostring(eostring&& str) : _size{str._size}, _capacity{str._capacity} {
-         if (str.is_sso())
+      constexpr string(string&& str) : _size{str._size}, _capacity{str._capacity} {
+         if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
             _begin = std::move(std::get<uptr>(str._begin));
       }
 
-      eostring& operator=(const eostring& str) {
+      string& operator=(const string& str) {
          if (&str == this)
             return *this;
 
          _size     = str._size;
          _capacity = str._capacity;
 
-         if (str.is_sso())
+         if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
             clone(_size, _capacity, str.data());
@@ -77,14 +77,14 @@ namespace eosio {
          return *this;
       }
 
-      eostring& operator=(eostring&& str) {
+      string& operator=(string&& str) {
          if (&str == this)
             return *this;
 
          _size     = str._size;
          _capacity = str._capacity;
 
-         if (str.is_sso())
+         if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
             _begin = std::move(std::get<uptr>(str._begin));
@@ -92,7 +92,7 @@ namespace eosio {
          return *this;
       }
 
-      eostring& operator=(const char* str) {
+      string& operator=(const char* str) {
          _size     = strlen(str);
          _capacity = _size;
          _begin    = str;
@@ -101,22 +101,22 @@ namespace eosio {
       }
 
       char& operator[](const size_t n) {
-         if (is_sso())
+         if (is_literal())
             clone(_size, _capacity, std::get<const char*>(_begin));
          return std::get<uptr>(_begin).get()[n];
       }
 
       const char operator[](const size_t n) const {
-         return (is_sso()) ? std::get<const char*>(_begin)[n] : std::get<uptr>(_begin).get()[n];
+         return (is_literal()) ? std::get<const char*>(_begin)[n] : std::get<uptr>(_begin).get()[n];
       }
 
       char& at(const size_t n) {
-         eosio::check(0 <= n && n < _size, "eostring::at");
+         eosio::check(0 <= n && n < _size, "eosio::string::at");
          return operator[](n);
       }
 
       const char at(const size_t n) const {
-         eosio::check(0 <= n && n < _size, "eostring::at const");
+         eosio::check(0 <= n && n < _size, "eosio::string::at const");
          return operator[](n);
       }
 
@@ -147,7 +147,7 @@ namespace eosio {
       const char* c_str() const {
          // Why is `str` static? Because without it being static, there would be a memory leak.
          static uptr str{std::make_unique<char[]>(_size+1)};
-         const char* tmp{(is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+         const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
 
          memcpy(str.get(), tmp, _size);
          str[_size] = '\0';
@@ -156,7 +156,7 @@ namespace eosio {
       }
 
       char* begin() {
-         if (is_sso()) {
+         if (is_literal()) {
             // You might be thinking, why aren't we setting `_size` as well?
             // Well, there's no need to set `_size`, because it is already at its proper value.
             _capacity *= 2;
@@ -167,7 +167,7 @@ namespace eosio {
       }
 
       const char* cbegin() const {
-         return (is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get();
+         return (is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get();
       }
 
       char* end() {
@@ -202,7 +202,7 @@ namespace eosio {
          if (_capacity < n) {
             _capacity = n;
 
-            const char* tmp{(is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+            const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
             clone(_size, _capacity, tmp);
          }
          else
@@ -216,13 +216,13 @@ namespace eosio {
       void clear() {
          _size = 0;
 
-         if (is_sso())
+         if (is_literal())
             clone(_size, _capacity, std::get<const char*>(_begin));
          std::get<uptr>(_begin).get()[0] = '\0';
       }
 
       void resize(const size_t n) {
-         if (is_sso())
+         if (is_literal())
             clone(n, _capacity, std::get<const char*>(_begin));
          else {
             _size = n;
@@ -235,7 +235,7 @@ namespace eosio {
          }
       }
 
-      void swap(eostring& str) {
+      void swap(string& str) {
          std::swap(*this, str);
       }
 
@@ -249,26 +249,26 @@ namespace eosio {
          --_size;
       }
 
-      eostring substr(size_t pos = 0, size_t len = npos) const {
-         return eostring(*this, pos, len);
+      string substr(size_t pos = 0, size_t len = npos) const {
+         return string(*this, pos, len);
       }
 
       size_t copy(char* s, size_t len, size_t pos = 0) const {
-         eosio::check(pos <= _size, "eostring::copy");
+         eosio::check(pos <= _size, "eosio::string::copy");
          len = (_size < pos+len) ? _size : len;
 
-         const char* tmp{(is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+         const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
          memcpy(s, tmp+pos, len);
 
          return (_size < pos+len) ? _size-pos : len;
       }
 
-      eostring& insert(const size_t pos, const char* str) {
+      string& insert(const size_t pos, const char* str) {
          return insert(pos, str, strlen(str));
       }
 
-      eostring& insert(const size_t pos, const char* str, const size_t len) {
-         eosio::check((str != nullptr) && (0 <= pos && pos <= _size), "eostring::insert");
+      string& insert(const size_t pos, const char* str, const size_t len) {
+         eosio::check((str != nullptr) && (0 <= pos && pos <= _size), "eosio::string::insert");
 
          // If `insert` causes the string to exceed its `_capacity`, a new string will have to be constructed.
          // Else, the next branch will be taken; determining if a new string has to be constructed.
@@ -284,7 +284,7 @@ namespace eosio {
             _begin = std::move(begin);
          }
          else {
-            if(is_sso())
+            if(is_literal())
                clone(_size, _capacity, std::get<const char*>(_begin));
             _size += len;
             memmove(std::get<uptr>(_begin).get()+pos+len, std::get<uptr>(_begin).get()+pos, _size-pos);
@@ -294,39 +294,39 @@ namespace eosio {
          return *this;
       }
 
-      eostring& insert(const size_t pos, const eostring& str) {
+      string& insert(const size_t pos, const string& str) {
          insert(pos, str.c_str());
          return *this;
       }
 
-      eostring& erase(size_t pos = 0, size_t len = npos) {
-         eosio::check(0 <= pos && pos <= _size, "eostring::erase");
+      string& erase(size_t pos = 0, size_t len = npos) {
+         eosio::check(0 <= pos && pos <= _size, "eosio::string::erase");
 
-         if (len == eostring::npos)
+         if (len == string::npos)
             len = _size-pos;
 
          _size -= len;
 
-         if (is_sso())
+         if (is_literal())
             clone(_size, _capacity, std::get<const char*>(_begin));
          memmove(std::get<uptr>(_begin).get()+pos+len, std::get<uptr>(_begin).get(), len);
 
          return *this;
       }
 
-      eostring& append(const char* str) {
-         eosio::check(str != nullptr, "eostring::append");
+      string& append(const char* str) {
+         eosio::check(str != nullptr, "eosio::string::append");
          insert(_size, str);
 
          return *this;
       }
 
-      eostring& append(const eostring& str) {
+      string& append(const string& str) {
          insert(_size, str);
          return *this;
       }
 
-      eostring& operator+=(const char c) {
+      string& operator+=(const char c) {
          if (_capacity == 0) {
             _size     = 1;
             _capacity = 2;
@@ -335,7 +335,7 @@ namespace eosio {
          else if (_size == _capacity) {
             _capacity = ++_size*2;
 
-            const char* tmp{(is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+            const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
             clone(_size, _capacity, tmp);
             std::get<uptr>(_begin).get()[_size-1] = c;
          }
@@ -345,29 +345,29 @@ namespace eosio {
          return *this;
       }
 
-      eostring& operator+=(const char* rhs) {
+      string& operator+=(const char* rhs) {
          append(rhs);
          return *this;
       }
 
-      eostring& operator+=(const eostring& rhs) {
+      string& operator+=(const string& rhs) {
          append(rhs);
          return *this;
       }
 
       inline void print() const {
-         const char* tmp{(is_sso()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+         const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
          internal_use_do_not_use::prints_l(tmp, _size);
       }
 
-      friend bool operator< (const eostring& lhs, const eostring& rhs);
-      friend bool operator> (const eostring& lhs, const eostring& rhs);
-      friend bool operator<=(const eostring& lhs, const eostring& rhs);
-      friend bool operator>=(const eostring& lhs, const eostring& rhs);
-      friend bool operator==(const eostring& lhs, const eostring& rhs);
-      friend bool operator!=(const eostring& lhs, const eostring& rhs);
+      friend bool operator< (const string& lhs, const string& rhs);
+      friend bool operator> (const string& lhs, const string& rhs);
+      friend bool operator<=(const string& lhs, const string& rhs);
+      friend bool operator>=(const string& lhs, const string& rhs);
+      friend bool operator==(const string& lhs, const string& rhs);
+      friend bool operator!=(const string& lhs, const string& rhs);
 
-      friend eostring operator+ (const eostring& lhs, const eostring& rhs);
+      friend string operator+ (const string& lhs, const string& rhs);
 
    private:
       using uptr    = std::unique_ptr<char[]>;
@@ -386,12 +386,12 @@ namespace eosio {
          _begin = std::move(begin);
       }
 
-      constexpr bool is_sso() const {
+      constexpr bool is_literal() const {
          return (std::holds_alternative<const char*>(_begin)) ? true : false;
       }
    };
 
-   bool operator< (const eostring& lhs, const eostring& rhs) {
+   bool operator< (const string& lhs, const string& rhs) {
       const char* beg_lhs{lhs.cbegin()}; const char* end_lhs{lhs.cend()};
       const char* beg_rhs{rhs.cbegin()}; const char* end_rhs{rhs.cend()};
 
@@ -405,34 +405,34 @@ namespace eosio {
       return beg_lhs == end_lhs && beg_rhs != end_rhs;
    }
 
-   bool operator> (const eostring& lhs, const eostring& rhs) {
+   bool operator> (const string& lhs, const string& rhs) {
       return (rhs < lhs);
    }
 
-   bool operator<=(const eostring& lhs, const eostring& rhs) {
+   bool operator<=(const string& lhs, const string& rhs) {
       return !(rhs < lhs);
    }
 
-   bool operator>=(const eostring& lhs, const eostring& rhs) {
+   bool operator>=(const string& lhs, const string& rhs) {
       return !(lhs < rhs);
    }
 
-   bool operator==(const eostring& lhs, const eostring& rhs) {
+   bool operator==(const string& lhs, const string& rhs) {
       return !(lhs < rhs) && !(rhs < lhs);
    }
 
-   bool operator!=(const eostring& lhs, const eostring& rhs) {
+   bool operator!=(const string& lhs, const string& rhs) {
       return !(lhs == rhs);
    }
 
-   eostring operator+(const eostring& lhs, const eostring& rhs) {
-      eostring res{lhs};
+   string operator+(const string& lhs, const string& rhs) {
+      string res{lhs};
       res += rhs;
       return res;
    }
 
    template<typename DataStream>
-   DataStream& operator<<(DataStream& ds, const eostring& str) {
+   DataStream& operator<<(DataStream& ds, const string& str) {
       ds << unsigned_int(str.size());
       if (str.size())
          ds.write(str.data(), str.size());
@@ -440,10 +440,10 @@ namespace eosio {
    }
 
    template<typename DataStream>
-   DataStream& operator>>(DataStream& ds, eostring& str) {
+   DataStream& operator>>(DataStream& ds, string& str) {
       std::vector<char> tmp;
       ds >> tmp;
-      str = (tmp.size()) ? eostring(tmp.data(), tmp.size()) : eostring();
+      str = (tmp.size()) ? string(tmp.data(), tmp.size()) : string();
       return ds;
    }
 
