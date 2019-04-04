@@ -1019,6 +1019,19 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_ASSERT( "eostring::string::insert", []() {eostr.insert(-1, str);} )
    }
 
+   {  // Bucky's test for bug he caught; PR #459.
+      static string eostr = "hello";
+      eostr.insert(0, "0", 1); /// `_capacity` is now 12; `_begin` now holds `std::unique_ptr<char[]>`
+      CHECK_EQUAL( eostr.size(), 6 )
+      CHECK_EQUAL( eostr.capacity(), 12 )
+      CHECK_EQUAL( strcmp(eostr.c_str(), "0hello") , 0 )
+         
+      eostr.insert(0, "h", 1);
+      CHECK_EQUAL( eostr.size(), 7 )
+      CHECK_EQUAL( eostr.capacity(), 12 )
+      CHECK_EQUAL( strcmp(eostr.c_str(), "h0hello") , 0 )
+   }
+
    //// string& erase(size_t pos = 0, size_t len = npos)
    {
       static string eostr{"abcdefgh"};
