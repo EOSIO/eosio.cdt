@@ -145,20 +145,29 @@ namespace eosio {
       }
 
       const char* c_str() const {
-         // Why is `str` static? Because without it being static, there would be a memory leak.
-         static uptr str{std::make_unique<char[]>(_size+1)};
-         const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
-
-         memcpy(str.get(), tmp, _size);
-         str[_size] = '\0';
-
-         return str.get();
+         static size_t prev_size{0};
+         char* raw_ptr{nullptr};
+         
+         if (is_literal())
+            return std::get<const char*>(_begin);
+         
+         if (_size == prev_size)
+            return std::get<uptr>(_begin).get();
+         else if (_size < prev_size)
+            raw_ptr = std::get<uptr>(_begin).get();
+         else {
+            uptr tmp  = std::make_unique<char[]>(_size+1);
+            raw_ptr   = tmp.get();
+            prev_size = _size;
+            memcpy(raw_ptr, std::get<uptr>(_begin).get(), _size);
+         }
+         
+         raw_ptr[_size+1] = '\0';
+         return raw_ptr;
       }
 
       char* begin() {
          if (is_literal()) {
-            // You might be thinking, why aren't we setting `_size` as well?
-            // Well, there's no need to set `_size`, because it is already at its proper value.
             _capacity *= 2;
             clone(_size, _capacity, std::get<const char*>(_begin));
          }
@@ -270,16 +279,16 @@ namespace eosio {
       string& insert(const size_t pos, const char* str, const size_t len) {
          eosio::check((str != nullptr) && (0 <= pos && pos <= _size), "eosio::string::insert");
 
-         // If `insert` causes the string to exceed its `_capacity`, a new string will have to be constructed.
-         // Else, the next branch will be taken; determining if a new string has to be constructed.
          if (_capacity < (_size+len)) {
             _size      += len;
             _capacity  = _size*2;
 
             uptr begin{std::make_unique<char[]>(_capacity)};
-            memcpy(begin.get(), std::get<const char*>(_begin), pos);
+            const char* tmp{(is_literal()) ? std::get<const char*>(_begin) : std::get<uptr>(_begin).get()};
+
+            memcpy(begin.get(), tmp, pos);
             memcpy(begin.get()+pos, str, len);
-            memcpy(begin.get()+len+pos, std::get<const char*>(_begin)+pos, _size-len-pos);
+            memcpy(begin.get()+len+pos, tmp+pos, _size-len-pos);
 
             _begin = std::move(begin);
          }
