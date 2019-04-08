@@ -357,8 +357,11 @@ namespace eosio {
 
       template <auto Action, typename... Ts>
       constexpr bool type_check() {
-         static_assert(sizeof...(Ts) == std::tuple_size<deduced<Action>>::value);
-         return check_types<Action, 0, Ts...>::value;
+         constexpr auto param_size = sizeof...(Ts);
+         static_assert(param_size == std::tuple_size<deduced<Action>>::value);
+         if constexpr (param_size != 0)
+            return check_types<Action, 0, Ts...>::value;
+         return true;
       }
    }
 
