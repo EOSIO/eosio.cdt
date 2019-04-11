@@ -1,0 +1,2 @@
+# eosio.depman
+Dependency Manager
