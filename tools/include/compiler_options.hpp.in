@@ -544,6 +544,7 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
+   copts.emplace_back("-I./");
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
@@ -555,7 +556,7 @@ static Options CreateOptions(bool add_defaults=true) {
         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/native");
       }
 #ifndef CPP_COMP
-        copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
+      copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
 #endif
       copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/core");
       copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/contracts");
