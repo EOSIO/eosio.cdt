@@ -1,2 +1,2 @@
 # dependencies to pull for cdt integration tests, by branch, tag, or commit hash
-eosio=release/1.7.x
+eosio=zach-1.7-centos-lib # change back to "release/1.7.x" when eos pull request 7140 is merged: https://github.com/EOSIO/eos/pull/7140
