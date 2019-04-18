@@ -1,3 +1,4 @@
+set(CMAKE_BUILD_TYPE debug) 
 project(hello_tests)
 find_package(eosio.cdt)
 add_native_executable(hello_test hello_test.cpp ${CMAKE_SOURCE_DIR}/../src/hello.cpp)
