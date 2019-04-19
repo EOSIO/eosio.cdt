@@ -49,6 +49,10 @@ else
          export ARCH="Fedora"
          bash ./scripts/eosio_build_fedora.sh
          ;;
+      "Mageia")
+         export ARCH="Mageia"
+         bash ./scripts/eosio_build_mageia.sh
+         ;;
       "Linux Mint")
          export ARCH="Linux Mint"
          bash ./scripts/eosio_build_ubuntu.sh
