@@ -69,6 +69,97 @@ namespace eosio {
    };
 
    /**
+    *  @defgroup producer_authority Producer Authority
+    *  @ingroup contracts
+    *  @ingroup types
+    *  @brief Maps producer with its a flexible authority structure, used for producer schedule
+    */
+
+   /**
+    * pairs a public key with an integer weight
+    *
+    * @ingroup producer_authority
+    */
+   struct key_weight {
+      /**
+       * public key used in a weighted threshold multi-sig authority
+       *
+       * @brief public key used in a weighted threshold multi-sig authority
+       */
+      public_key_type key;
+
+      /**
+       * weight associated with a signature from the private key associated with the accompanying public key
+       *
+       * @brief weight of the public key
+       */
+      weight_type     weight;
+
+      EOSLIB_SERIALIZE( key_weight, (key)(weight) )
+   };
+
+   /**
+    * block signing authority version 0
+    * this authority allows for a weighted threshold multi-sig per-producer
+    *
+    * @ingroup producer_authority
+    *
+    * @brief weighted threshold multi-sig authority
+    */
+   struct block_signing_authority_v0 {
+      /**
+       * minimum threshold of accumulated weights from component keys that satisfies this authority
+       *
+       * @brief minimum threshold of accumulated weights from component keys that satisfies this authority
+       */
+      uint32_t                    threshold;
+
+      /**
+       * component keys and their associated weights
+       *
+       * @brief component keys and their associated weights
+       */
+      std::vector<key_weight>     keys;
+
+      EOSLIB_SERIALIZE( block_signing_authority_v0, (threshold)(keys) )
+   };
+
+   /**
+    * variant of all possible block signing authorities
+    *
+    * @ingroup producer_authority
+    */
+   using block_signing_authority = std::variant<block_signing_authority_v0>;
+
+   /**
+    * Maps producer with its signing key, used for producer schedule
+    *
+    * @ingroup producer_authority
+    *
+    * @brief Maps producer with its signing key
+    */
+   struct producer_authority {
+
+      /**
+       * Name of the producer
+       *
+       * @brief Name of the producer
+       */
+      name             producer_name;
+
+      /**
+       * The block signing authority used by this producer
+       */
+      block_signing_authority       block_signing_authority;
+
+      friend constexpr bool operator < ( const producer_authority& a, const producer_authority& b ) {
+         return a.producer_name < b.producer_name;
+      }
+
+      EOSLIB_SERIALIZE( producer_key, (producer_name)(block_signing_authority) )
+   };
+
+   /**
     *  Returns back the list of active producer names.
     *
     *  @ingroup producer_schedule

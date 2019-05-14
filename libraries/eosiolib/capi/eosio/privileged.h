@@ -35,6 +35,8 @@ void set_resource_limits( capi_name account, int64_t ram_bytes, int64_t net_weig
 /**
  * Proposes a schedule change
  *
+ * This is exactly equivalent to calling `set_proposed_producers_ex(0, producer_data, producer_data_size)`
+ *
  * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
  * @param producer_data - packed data of produce_keys in the appropriate producer schedule order
  * @param producer_data_size - size of the data buffer
@@ -43,6 +45,24 @@ void set_resource_limits( capi_name account, int64_t ram_bytes, int64_t net_weig
  */
 __attribute__((eosio_wasm_import))
 int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
+
+/**
+ * Proposes a schedule change with extended features
+ *
+ * Valid formats:
+ * 0 : serialized array of producer_key's. using this format is exactly equivalent to `set_proposed_producers(producer_data, producer_data_size)`
+ * 1 : serialized array of producer_authority's
+ *
+ * @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
+ * @param producer_data_format - format of the producer data blob
+ * @param producer_data - packed data of representing the producer schedule in the format indicated.
+ * @param producer_data_size - size of the data buffer
+ *
+ * @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
+ */
+__attribute__((eosio_wasm_import))
+int64_t set_proposed_producers_ex( int64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
+
 
 /**
  * Check if an account is privileged
