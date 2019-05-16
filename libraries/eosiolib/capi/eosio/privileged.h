@@ -61,7 +61,7 @@ int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size
  * @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
  */
 __attribute__((eosio_wasm_import))
-int64_t set_proposed_producers_ex( int64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
+int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
 
 
 /**
