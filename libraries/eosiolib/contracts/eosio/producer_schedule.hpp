@@ -86,14 +86,14 @@ namespace eosio {
        *
        * @brief public key used in a weighted threshold multi-sig authority
        */
-      public_key_type key;
+      public_key key;
 
       /**
        * weight associated with a signature from the private key associated with the accompanying public key
        *
        * @brief weight of the public key
        */
-      weight_type     weight;
+      uint16_t   weight;
 
       EOSLIB_SERIALIZE( key_weight, (key)(weight) )
    };
@@ -156,7 +156,7 @@ namespace eosio {
          return a.producer_name < b.producer_name;
       }
 
-      EOSLIB_SERIALIZE( producer_key, (producer_name)(block_signing_authority) )
+      EOSLIB_SERIALIZE( producer_authority, (producer_name)(block_signing_authority) )
    };
 
    /**
