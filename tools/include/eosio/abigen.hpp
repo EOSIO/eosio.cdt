@@ -392,6 +392,12 @@ namespace eosio { namespace cdt {
                   if (as.name == _translate_type(remove_suffix(f.type)))
                      return true;
                }
+               for ( auto v : _abi.variants ) {
+                  for ( auto vt : v.types ) {
+                     if (as.name == _translate_type(remove_suffix(vt)))
+                        return true;
+                  }
+               }
                if (s.base == as.name)
                   return true;
             }
