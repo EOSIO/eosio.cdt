@@ -150,13 +150,13 @@ namespace eosio {
       /**
        * The block signing authority used by this producer
        */
-      block_signing_authority       block_signing_authority;
+      block_signing_authority       authority;
 
       friend constexpr bool operator < ( const producer_authority& a, const producer_authority& b ) {
          return a.producer_name < b.producer_name;
       }
 
-      EOSLIB_SERIALIZE( producer_authority, (producer_name)(block_signing_authority) )
+      EOSLIB_SERIALIZE( producer_authority, (producer_name)(authority) )
    };
 
    /**
