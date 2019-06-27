@@ -14,8 +14,8 @@ macro( eosio_clang_install_and_symlink file symlink )
    install(FILES ${BINARY_DIR}/${file}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+   install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
-   install(CODE "message(\"-- Created Symlink : ${file} ${symlink}\")")
 endmacro( eosio_clang_install_and_symlink )
 
 macro( eosio_tool_install file )
