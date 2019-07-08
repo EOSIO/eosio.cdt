@@ -427,7 +427,7 @@ namespace eosio {
     * Example:
     * @code
     * // defined by contract writer of the actions
-    * using transfer act = action_wrapper<"transfer"_n, &token::transfer>;( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
+    * using transfer_act = action_wrapper<"transfer"_n, &token::transfer>;
     * // usage by different contract writer
     * transfer_act{"eosio.token"_n, {st.issuer, "active"_n}}.send(st.issuer, to, quantity, memo);
     * // or
