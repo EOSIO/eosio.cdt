@@ -172,7 +172,7 @@ namespace eosio {
     *  @param size - The size of the packed transaction, required for persistence.
     *  @param replace - If true, will replace an existing transaction.
     */
-   void send_deferred(const uint128_t& sender_id, name payer, const char* serialized_transaction, size_t size, bool replace = false) {
+   inline void send_deferred(const uint128_t& sender_id, name payer, const char* serialized_transaction, size_t size, bool replace = false) {
      internal_use_do_not_use::send_deferred(sender_id, payer.value, serialized_transaction, size, replace);
    }
    /**
