@@ -1,3 +1,8 @@
+/**
+ *  @file
+ *  @copyright defined in eosio.cdt/LICENSE.txt
+ */
+
 #include <eosio/eosio.hpp>
 #include <eosio/rope.hpp>
 #include <eosio/tester.hpp>

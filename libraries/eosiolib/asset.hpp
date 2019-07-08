@@ -11,8 +11,8 @@
 
 namespace eosio {
   /**
-   *  Defines %CPP API for managing assets
-   *  @addtogroup asset Asset CPP API
+   *  Defines C++ API for managing assets
+   *  @addtogroup asset Asset C++ API
    *  @ingroup core
    *  @{
    */
@@ -345,9 +345,11 @@ namespace eosio {
             change /= 10;
          }
          char str[p+32];
-         const char* fmt = negative ? "-%lld.%s %s" : "%lld.%s %s";
-         snprintf(str, sizeof(str), fmt,
-               (int64_t)(amount/p10), fraction, symbol.code().to_string().c_str());
+         snprintf(str, sizeof(str), "%lld%s%s %s",
+            (int64_t)(amount/p10),
+            (fraction[0]) ? "." : "",
+            fraction,
+            symbol.code().to_string().c_str());
          return {str};
       }
 

@@ -8,12 +8,12 @@ namespace  eosio {
     *  @defgroup singleton Singleton Table
     *  @ingroup contracts
     *  @brief Defines EOSIO Singleton Table used with %multiindex
-    *  @{
     */
 
    /**
     *  This wrapper uses a single table to store named objects various types.
     *
+    *  @ingroup singleton
     *  @tparam SingletonName - the name of this singleton variable
     *  @tparam T - the type of the singleton
     */
@@ -130,6 +130,4 @@ namespace  eosio {
       private:
          table _t;
    };
-
-/// @} singleton
 } /// namespace eosio
