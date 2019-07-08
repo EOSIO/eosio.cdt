@@ -780,9 +780,9 @@ class multi_index
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
       /**
-       *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  Returns a const iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  @return A const iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -805,9 +805,9 @@ class multi_index
       }
 
       /**
-       *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  Returns a const iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       *  @return A const iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -828,9 +828,9 @@ class multi_index
       const_iterator begin()const  { return cbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns a const iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return A const iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -851,9 +851,9 @@ class multi_index
       const_iterator cend()const   { return const_iterator( this ); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns a const iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return A const iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -874,9 +874,9 @@ class multi_index
       const_iterator end()const    { return cend(); }
 
       /**
-       *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns a const reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return A const reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -908,9 +908,9 @@ class multi_index
       const_reverse_iterator crbegin()const { return std::make_reverse_iterator(cend()); }
 
       /**
-       *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns a const reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return A const reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -942,9 +942,9 @@ class multi_index
       const_reverse_iterator rbegin()const  { return crbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  Returns a const reverse iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  @return A const reverse iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -977,9 +977,9 @@ class multi_index
       const_reverse_iterator crend()const   { return std::make_reverse_iterator(cbegin()); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  Returns a const reverse iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
-       *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       *  @return A const reverse iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
        *  Example:
        *
@@ -1015,7 +1015,7 @@ class multi_index
        *  Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the lower bound search.
-       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       *  @return A const iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
        *
        *  Example:
        *
@@ -1060,7 +1060,7 @@ class multi_index
        *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
-       *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       *  @return A const iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
        *
        *  Example:
        *
@@ -1256,7 +1256,7 @@ class multi_index
        *
        *  @param obj - A reference to the desired object
        *
-       *  @return An iterator to the given object
+       *  @return A const iterator to the given object
        *
        *  Example:
        *
