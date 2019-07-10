@@ -94,7 +94,7 @@ if [ -z "$CMAKE" ]; then
   CMAKE=$( command -v cmake )
 fi
 
-"$CMAKE" -DCMAKE_INSTALL_PREFIX=/usr/local/eosio.cdt ../
+"$CMAKE" ../
 if [ $? -ne 0 ]; then
    exit -1;
 fi
