@@ -63,6 +63,11 @@ static cl::opt<bool> fno_stack_first_opt(
       "fno-stack-first",
       cl::desc("Don't set the stack first in memory"),
       cl::cat(LD_CAT));
+static cl::opt<int> stack_size_opt(
+      "stack-size",
+      cl::desc("Specifies the maximum stack size for the contract. Defaults to ${EOSIO_STACK_SIZE} bytes."),
+      cl::init(${EOSIO_STACK_SIZE}),
+      cl::cat(LD_CAT));
 static cl::opt<bool> fno_post_pass_opt(
       "fno-post-pass",
       cl::desc("Don't run post processing pass"),
@@ -415,7 +420,6 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
-      ldopts.emplace_back("-zstack-size="+std::string("${EOSIO_STACK_SIZE}"));
       ldopts.emplace_back("--merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
@@ -544,6 +548,7 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
+   copts.emplace_back("-I./");
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
@@ -555,7 +560,7 @@ static Options CreateOptions(bool add_defaults=true) {
         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/native");
       }
 #ifndef CPP_COMP
-        copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
+      copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
 #endif
       copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/core");
       copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/contracts");
@@ -719,10 +724,12 @@ static Options CreateOptions(bool add_defaults=true) {
       else {
          ldopts.emplace_back("--lto-O3");
       }
+      ldopts.emplace_back("-zstack-size=" + std::to_string(stack_size_opt));
 #else
       if (fno_stack_first_opt) {
          ldopts.emplace_back("-fno-stack-first");
       }
+      ldopts.emplace_back("-stack-size=" + std::to_string(stack_size_opt));
       if (fno_lto_opt) {
          ldopts.emplace_back("-fno-lto-opt");
       }

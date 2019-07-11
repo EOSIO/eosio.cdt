@@ -45,6 +45,11 @@ int main(int argc, const char **argv) {
       std::string tmp_file = std::string(res.c_str())+"/"+input+"-tmp.c";
       std::string output;
 
+      auto src = SmallString<64>(input);
+      llvm::sys::path::remove_filename(src);
+      std::string source_path = src.str().empty() ? "." : src.str();
+      new_opts.insert(new_opts.begin(), "-I" + source_path);
+
       output = tmp_file+".o";
 
       new_opts.insert(new_opts.begin(), input);
