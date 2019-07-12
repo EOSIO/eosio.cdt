@@ -243,6 +243,11 @@ namespace eosio {
    class symbol {
    public:
       /**
+       * Maximum number of decimal places used for the symbol
+       */
+      static constexpr uint8_t max_precision = 18;
+
+      /**
        * Construct a new symbol object defaulting to a value of 0
        */
       constexpr symbol() : value(0) {}
@@ -277,7 +282,7 @@ namespace eosio {
       /**
        * Is this symbol valid
        */
-      constexpr bool is_valid()const                 { return code().is_valid(); }
+      constexpr bool is_valid()const                 { return precision() <= max_precision && code().is_valid(); }
 
       /**
        * This symbol's precision
