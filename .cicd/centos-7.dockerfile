@@ -1,6 +1,6 @@
 FROM centos:7
 
-# Yum install things.
+# YUM dependencies.
 RUN yum update -y \
   && yum --enablerepo=extras install -y centos-release-scl \
   && yum install -y devtoolset-7 \
@@ -8,6 +8,13 @@ RUN yum update -y \
   libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
   libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
   gmp-devel.x86_64 python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl
+
+# CCACHE
+RUN curl -LO http://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/c/ccache-3.3.4-1.el7.x86_64.rpm \
+  && yum install -y ccache-3.3.4-1.el7.x86_64.rpm
+
+## We need to tell ccache to actually use devtoolset-8 instead of the default system one (ccache resets anything set in PATH when it launches)
+ENV CCACHE_PATH="/opt/rh/devtoolset-7/root/usr/bin"
 
 # Build appropriate version of lcov.
 RUN git clone https://github.com/linux-test-project/lcov.git \
