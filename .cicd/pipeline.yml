@@ -1,0 +1,93 @@
+env:
+  BUILD_TIMEOUT: 120
+  TEST_TIMEOUT: 60
+  TIMEOUT: 120
+  VERBOSE: true
+
+steps:
+
+  - trigger: "eosio-dot-cdt-base-images-beta"
+    label: ":docker: Ensure base images exist"
+    build:
+      commit: "${BUILDKITE_COMMIT}"
+      branch: "${BUILDKITE_BRANCH}"
+
+  - wait
+
+  - label: ":aws: [Amazon] 2 Build"
+    command:
+      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          shell: ["/bin/bash", "-i", "-e", "-c"]
+          debug: $DEBUG
+          image: "eosio/producer:ci-amazonlinux-2-cdt-7ee7b42e8a6a076f072903479a064c1ae33106da"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_AMAZON_LINUX_2
+
+  - label: ":centos: [CentOS] 7 Build"
+    command:
+      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          shell: ["/bin/bash", "-i", "-e", "-c"]
+          debug: $DEBUG
+          image: "eosio/producer:ci-centos-7-cdt-26e11e06b77f1cfb79d4cc3d04b0aa07fdb69de2"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_CENTOS_7
+
+  - label: ":ubuntu: [Ubuntu] 16.04 Build"
+    command:
+      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          shell: ["/bin/bash", "-i", "-e", "-c"]
+          debug: $DEBUG
+          image: "eosio/producer:ci-ubuntu-16.04-cdt-27ed175c8fef3e1b067da0b1c45a4bb8c6410280"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_UBUNTU_16
+
+  - label: ":ubuntu: [Ubuntu] 18.04 Build"
+    command:
+      - "mkdir /workdir/build && cd /workdir/build && cmake -DCMAKE_BUILD_TYPE='Release' -DCORE_SYMBOL_NAME='SYS' -DOPENSSL_ROOT_DIR='/usr/include/openssl' -DBUILD_MONGO_DB_PLUGIN=true /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          shell: ["/bin/bash", "-i", "-e", "-c"]
+          debug: $DEBUG
+          image: "eosio/producer:ci-ubuntu-18.04-cdt-9dde8504baed466d1b70af0e396d9caa42c7a9a8"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_UBUNTU_18
+
+  - label: ":darwin: [Darwin] 10.14 Build"
+    command:
+      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov ccache"
+      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd eosio.cdt && mkdir build && cd build && cmake .. && make -j$(getconf _NPROCESSORS_ONLN)"
+      - "cd eosio.cdt/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    plugins:
+      - chef/anka#v0.5.1:
+          no-volume: true
+          inherit-environment-vars: true
+          vm-name: 10.14.4_6C_14G_40G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew"
+          modify-cpu: 12
+          modify-ram: 24
+          always-pull: true
+          debug: true
+          wait-network: true
+    agents:
+      - "queue=mac-anka-large-node-fleet"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_MOJAVE
