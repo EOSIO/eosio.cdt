@@ -16,7 +16,7 @@ steps:
 
   - label: ":aws: [Amazon] 2 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -30,7 +30,7 @@ steps:
 
   - label: ":centos: [CentOS] 7 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -44,7 +44,7 @@ steps:
 
   - label: ":ubuntu: [Ubuntu] 16.04 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -58,7 +58,7 @@ steps:
 
   - label: ":ubuntu: [Ubuntu] 18.04 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake -DCMAKE_BUILD_TYPE='Release' -DCORE_SYMBOL_NAME='SYS' -DOPENSSL_ROOT_DIR='/usr/include/openssl' -DBUILD_MONGO_DB_PLUGIN=true /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
