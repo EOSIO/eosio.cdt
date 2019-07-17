@@ -38,7 +38,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-centos-7-cdt-c06f9bfdbb704dc4e68b5b2a4856b76741533e2"
+          image: "eosio/producer:ci-centos-7-cdt-4c06f9bfdbb704dc4e68b5b2a4856b76741533e2"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_CENTOS_7
 
