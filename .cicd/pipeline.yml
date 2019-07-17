@@ -16,7 +16,7 @@ steps:
 
   - label: ":aws: [Amazon] 2 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -24,13 +24,13 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-amazonlinux-2-cdt-1aa6d221652e894d768210f7248941fe2754ed8a"
+          image: "eosio/producer:ci-amazonlinux-2-cdt-69bd00ad0031c2a87f4cd710d79e037f609ceb2a"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_AMAZON_LINUX_2
 
   - label: ":centos: [CentOS] 7 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -38,13 +38,13 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-centos-7-cdt-4c06f9bfdbb704dc4e68b5b2a4856b76741533e2"
+          image: "eosio/producer:ci-centos-7-cdt-858b7356721b0c40a5080994c512434827f88d24"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_CENTOS_7
 
   - label: ":ubuntu: [Ubuntu] 16.04 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -52,13 +52,13 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-16.04-cdt-c5b43e19403ce458082d9a9ecfe0d79a9d2902b6"
+          image: "eosio/producer:ci-ubuntu-16.04-cdt-0d4dbbff7f87bf4bd9a421d23603e0e9cbb1b32f"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_16
 
   - label: ":ubuntu: [Ubuntu] 18.04 Build"
     command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake -DEOSIO_RUN_INTEGRATION_TESTS=1 /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
+      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
       - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -66,7 +66,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-18.04-cdt-e9847795624994a7b9345cfd4663a4a6e066dad7"
+          image: "eosio/producer:ci-ubuntu-18.04-cdt-f3da3cea9e58d97e320fb6e96617181944117521"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_18
 
