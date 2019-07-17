@@ -72,7 +72,7 @@ steps:
 
   - label: ":darwin: [Darwin] 10.14 Build"
     command:
-      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov ccache"
+      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && mkdir build && cd build && cmake .. && make -j$(getconf _NPROCESSORS_ONLN)"
       - "cd eosio.cdt/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"

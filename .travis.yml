@@ -42,6 +42,7 @@ matrix:
             - doxygen
             - graphviz
             - lcov
+            - python@3
             - ccache
 before_cache: |
   ./.cicd/travis-before-cache.sh
