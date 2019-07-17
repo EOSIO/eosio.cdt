@@ -24,7 +24,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-amazonlinux-2-cdt-69bd00ad0031c2a87f4cd710d79e037f609ceb2a"
+          image: "eosio/producer:eosio.cdt-amazonlinux-2-69bd00ad0031c2a87f4cd710d79e037f609ceb2a"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_AMAZON_LINUX_2
 
@@ -38,7 +38,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-centos-7-cdt-858b7356721b0c40a5080994c512434827f88d24"
+          image: "eosio/producer:eosio.cdt-centos-7-858b7356721b0c40a5080994c512434827f88d24"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_CENTOS_7
 
@@ -52,7 +52,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-16.04-cdt-0d4dbbff7f87bf4bd9a421d23603e0e9cbb1b32f"
+          image: "eosio/producer:eosio.cdt-ubuntu-16.04-0d4dbbff7f87bf4bd9a421d23603e0e9cbb1b32f"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_16
 
@@ -66,7 +66,7 @@ steps:
       - docker#v3.2.0:
           shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-18.04-cdt-f3da3cea9e58d97e320fb6e96617181944117521"
+          image: "eosio/producer:eosio.cdt-ubuntu-18.04-f3da3cea9e58d97e320fb6e96617181944117521"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_18
 
