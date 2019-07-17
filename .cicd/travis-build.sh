@@ -22,7 +22,7 @@ if [[ "$(uname)" == Darwin ]]; then
     [[ ! -d build ]] && mkdir build
     cd build
     echo '$ cmake ..'
-    cmake /eosio.cdt
+    cmake ..
     echo "$ make -j $CPU_CORES"
     make -j $CPU_CORES
     ctest -j $CPU_CORES -L unit_tests -V -T Test
