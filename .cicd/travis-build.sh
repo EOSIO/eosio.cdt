@@ -5,7 +5,6 @@ cd $( dirname "${BASH_SOURCE[0]}" )/.. # Ensure we're in the repo root and not i
 
 function build() {
     # Per distro additions to docker command
-    [[ $IMAGE_TAG == centos-7 ]] && PRECOMMANDS="source /opt/rh/python33/enable && source /opt/rh/devtoolset-7/enable &&"
     # DOCKER
     docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG} bash -c " $PRECOMMANDS && \
         rm -f /workdir/modules/ClangExternalProject.txt && ln -s /tmp/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && \
@@ -16,8 +15,6 @@ function build() {
 CPU_CORES=$(getconf _NPROCESSORS_ONLN)
 
 if [[ "$(uname)" == Darwin ]]; then
-    ccache -s
-    export PATH="/usr/local/opt/ccache/libexec:$PATH"
     echo 'Detected Darwin, building natively.'
     [[ -d eosio.cdt ]] && cd eosio.cdt
     [[ ! -d build ]] && mkdir build
@@ -29,6 +26,5 @@ if [[ "$(uname)" == Darwin ]]; then
     ctest -j $CPU_CORES -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
-    echo "$ docker pull eosio/producer:ci-${IMAGE_TAG}-cdt"
-    build
+    execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
 fi
