@@ -33,4 +33,9 @@ RUN cd /opt && git clone https://github.com/EOSIO/eosio.cdt \
   && mkdir build && cd build \
   && cmake .. \
   && make -j$(nproc) \
-  && cd / \
+  && cd /
+
+CMD bash -c "\
+  rm -f /workdir/modules/ClangExternalProject.txt && ln -s /tmp/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && \
+  mkdir /workdir/build && cd /workdir/build && ln -s /opt/eosio.cdt/build/eosio_llvm/ /workdir/build/eosio_llvm && cmake .. && make -j $(getconf _NPROCESSORS_ONLN) && \
+  ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
