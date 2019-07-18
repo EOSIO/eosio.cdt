@@ -15,9 +15,6 @@ steps:
   - wait
 
   - label: ":aws: [Amazon] 2 Build"
-    command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
-      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
     plugins:
@@ -29,9 +26,6 @@ steps:
     skip: $SKIP_AMAZON_LINUX_2
 
   - label: ":centos: [CentOS] 7 Build"
-    command:
-      - "mkdir /workdir/build && cd /workdir/build && source /opt/rh/devtoolset-7/enable && source /opt/rh/python33/enable && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
-      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
     plugins:
@@ -43,9 +37,6 @@ steps:
     skip: $SKIP_CENTOS_7
 
   - label: ":ubuntu: [Ubuntu] 16.04 Build"
-    command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
-      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
     plugins:
@@ -57,9 +48,6 @@ steps:
     skip: $SKIP_UBUNTU_16
 
   - label: ":ubuntu: [Ubuntu] 18.04 Build"
-    command:
-      - "mkdir /workdir/build && cd /workdir/build && cmake /workdir && make -j $(getconf _NPROCESSORS_ONLN)"
-      - "cd /workdir/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
     agents:
       queue: "automation-eos-builder-fleet"
     plugins:
