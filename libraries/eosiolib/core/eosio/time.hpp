@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
+#include "check.hpp"
 #include "serialize.hpp"
 
 namespace eosio {
