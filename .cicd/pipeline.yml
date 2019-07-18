@@ -19,7 +19,6 @@ steps:
       queue: "automation-eos-builder-fleet"
     plugins:
       - docker#v3.2.0:
-          shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
           image: "eosio/producer:eosio.cdt-amazonlinux-2-6bb9f4740c3952a96731aaf92465ff57851c2680"
     timeout: $BUILD_TIMEOUT
@@ -30,7 +29,6 @@ steps:
       queue: "automation-eos-builder-fleet"
     plugins:
       - docker#v3.2.0:
-          shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
           image: "eosio/producer:eosio.cdt-centos-7-c4ec8b51c81035fc6ffb61500dd5750942aefeee"
     timeout: $BUILD_TIMEOUT
@@ -41,9 +39,8 @@ steps:
       queue: "automation-eos-builder-fleet"
     plugins:
       - docker#v3.2.0:
-          shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
-          image: "eosio/producer:eosio.cdt-ubuntu-16.04-a2b3bf6ac51a2d6243f146ae9a867aef5124700c"
+          image: "eosio/producer:eosio.cdt-ubuntu-16.04-744bb78ee5e540a5d7d8bf3f6e8e8c1c53a5e6bc"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_16
 
@@ -52,7 +49,6 @@ steps:
       queue: "automation-eos-builder-fleet"
     plugins:
       - docker#v3.2.0:
-          shell: ["/bin/bash", "-i", "-e", "-c"]
           debug: $DEBUG
           image: "eosio/producer:eosio.cdt-ubuntu-18.04-1bfb228a65c16a6fceab1b05bf99ae0b44fde352"
     timeout: $BUILD_TIMEOUT
