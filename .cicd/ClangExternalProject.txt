@@ -1,0 +1,16 @@
+include(ExternalProject)
+find_package(Git REQUIRED)
+include(GNUInstallDirs)
+
+ExternalProject_Add(
+  EosioClang
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/llvm -DCMAKE_BUILD_TYPE=Release -DEOSIO_TOOL_DIR=${CMAKE_SOURCE_DIR}/tools
+
+  SOURCE_DIR "/opt/eosio.cdt/eosio_llvm"
+  BINARY_DIR "/opt/eosio.cdt/build/eosio_llvm"
+  UPDATE_COMMAND ""
+  PATCH_COMMAND  ""
+  TEST_COMMAND   ""
+  INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
+)
