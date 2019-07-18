@@ -326,6 +326,7 @@ namespace eosio {
          int64_t p = (int64_t)symbol.precision();
          int64_t p10 = 1;
          int64_t invert = 1;
+         bool negative = false;
 
          while( p > 0  ) {
             p10 *= 10; --p;
@@ -337,6 +338,7 @@ namespace eosio {
 
          if (amount < 0) {
             invert = -1;
+            negative = true;
          }
 
          auto change = (amount % p10) * invert;
