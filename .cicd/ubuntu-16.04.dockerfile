@@ -1,5 +1,7 @@
 FROM ubuntu:16.04
 
+COPY ./ClangExternalProject.txt /tmp/ClangExternalProject.txt
+
 # APT-GET dependencies.
 RUN apt-get update && apt-get upgrade -y \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y git clang-4.0 \
