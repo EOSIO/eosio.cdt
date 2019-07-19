@@ -36,3 +36,6 @@
 
 # Build
 build/*
+
+# Editor Files
+.vscode/
