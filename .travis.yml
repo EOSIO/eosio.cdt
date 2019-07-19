@@ -27,25 +27,25 @@ matrix:
       services: docker
       env: 
         - IMAGE_TAG='centos-7'
-    - os: osx
-      osx_image: xcode10.2
-      addons:
-        homebrew:
-          update: true
-          packages:
-            - automake
-            - libtool
-            - wget
-            - cmake
-            - gmp
-            - gettext
-            - doxygen
-            - graphviz
-            - lcov
-            - python@3
-            - ccache
-      env:
-        - PATH="/usr/local/opt/ccache/libexec:$PATH"
+    # - os: osx
+    #   osx_image: xcode10.2
+    #   addons:
+    #     homebrew:
+    #       update: true
+    #       packages:
+    #         - automake
+    #         - libtool
+    #         - wget
+    #         - cmake
+    #         - gmp
+    #         - gettext
+    #         - doxygen
+    #         - graphviz
+    #         - lcov
+    #         - python@3
+    #         - ccache
+    #   env:
+    #     - PATH="/usr/local/opt/ccache/libexec:$PATH"
 script: |
   ./.cicd/travis-build.sh
 # notifications:
