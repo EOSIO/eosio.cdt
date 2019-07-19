@@ -420,6 +420,10 @@ namespace eosio { namespace cdt {
                for (auto nd : visitor->notify_decls)
                   visitor->create_notify_dispatch(nd);
 
+               if (cg.actions.size() < 1 && cg.notify_handlers.size() < 1) {
+                  return;
+               }
+
                int fd;
                llvm::SmallString<128> fn;
                try {
