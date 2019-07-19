@@ -7,7 +7,8 @@ EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate c
 As of this release two new repositories are under the suite of tools provided by **EOSIO.CDT**.  These are the [Ricardian Template Toolkit](https://github.com/eosio/ricardian-template-toolkit) and the [Ricardian Specification](https://github.com/eosio/ricardian-spec).  The **Ricardian Template Toolkit** is a set of libraries to facilitate smart contract writers in crafting their Ricardian contracts.  The Ricardian specification is the working specification for the above mentioned toolkit.  Please note that both projects are **alpha** releases and are subject to change.
 
 ## Important!
-EOSIO.CDT Version 1.3.x introduced quite a few breaking changes.  To have binary releases we needed to remove the concept of a core symbol from EOSIO.CDT. This meant drastic changes to symbol, asset and other types/functions that were connected to them. Since these changes would be disruptive, we decided to add as many disruptive changes needed for future contract writing, so that disruption should only occur once. Please read the **_Differences between Version 1.2.x and Version 1.3.x_** section of this readme.
+- Please see the [Upgrading Guide](https://eosio.github.io/eosio.cdt/1.6.0/upgrading/) between new versions of EOSIO.CDT to be aware of any breaking changes.
+- There is currently a known issue that a minimum of 2 CPU cores is required for using EOSIO.CDT
 
 ### Binary Releases
 EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Linux x86_64 RPM packages.
@@ -23,31 +24,20 @@ $ brew install eosio.cdt
 ```sh
 $ brew remove eosio.cdt
 ```
-#### Debian Package Install
+#### Ubuntu Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt_1.6.1-1_amd64.deb
-$ sudo apt install ./eosio.cdt_1.6.1-1_amd64.deb
+$ wget https://github.com/EOSIO/eosio.cdt/releases/download/v1.6.2/eosio.cdt_1.6.2-1-ubuntu-18.04_amd64.deb
+$ sudo apt install ./eosio.cdt_1.6.2-1-ubuntu-18.04_amd64.deb
 ```
-#### Debian Package Uninstall
+#### Ubuntu Package Uninstall
 ```sh
 $ sudo apt remove eosio.cdt
 ```
 
-#### Fedora RPM Package Install
-```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt-1.6.1-1.fedora-x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.1-1.fedora-x86_64.rpm
-```
-
-#### Fedora RPM Package Uninstall
-```sh
-$ sudo yum remove eosio.cdt
-```
-
 #### Centos RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt-1.6.1-1.centos-x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.1-1.centos-x86_64.rpm
+$ wget https://github.com/EOSIO/eosio.cdt/releases/download/v1.6.2/eosio.cdt-1.6.2-1.el7.x86_64.rpm
+$ sudo yum install ./eosio.cdt-1.6.2-1.el7.x86_64.rpm
 ```
 
 #### Centos RPM Package Uninstall
