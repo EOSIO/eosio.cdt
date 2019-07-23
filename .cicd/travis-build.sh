@@ -17,5 +17,5 @@ if [[ "$(uname)" == Darwin ]]; then
     ctest -j $CPU_CORES -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
-    travis_wait execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
+    execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
 fi
