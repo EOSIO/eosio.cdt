@@ -27,26 +27,7 @@ matrix:
     services: docker
     env:
     - IMAGE_TAG='centos-7'
-  - os: osx
-    osx_image: xcode10.2
-    addons:
-      homebrew:
-        update: true
-        packages:
-        - automake
-        - libtool
-        - wget
-        - cmake
-        - gmp
-        - gettext
-        - doxygen
-        - graphviz
-        - lcov
-        - python@3
-        - ccache
-    env:
-    - PATH="/usr/local/opt/ccache/libexec:$PATH"
 script: "./.cicd/travis-build.sh\n"
 notifications:
   webhooks:
-    secure: qSShvZrLB0eBv1xDXm4mzoQixhJtecg5VFSsAVXERe+rvssaeBhAbeTFFYOFgDhTo5q8EzaTiwNtA/SR6JHyZnUxldipfVGEw9Glcmj3mcnDLb+0p+hxOT9LcCPQEvr4rOrjy/ouSrH7t9CcDvriNTRJ2D777Zh4A8Uvwp79AlOsKTZoic4yBbLzP1OWQ8biDneyUaANTC9Nm1RlRB5zVAX+EMydc/RuXO4yXRBT7UdA9D2DCRljmy3gmicH7wSBTsWxmMCECwQ19EcA60ooIXr4noYmQeYCggdERIfWc3/qqdb+pxSXG4nHBUw4HxOpi1Y+vGz0bJxDch1z2nppLtrv3vw3hZN8siPK5haas11ppm9zTjiIVwHN5NuPmuBqRGDTCVUK4ETp/UKeV9dwWMroZKOyJvBJNcMySYUtyto0rV+TdNZ2gsCj4cJmjdy/73+Wff093ZysOFb9VJ9+yCFjG86x4Ja4DJ5g7g/kWSyvc0onSNIbhB2r58Ebq77hKe1xfkjJKkRXCzunV+IsaQEbhjFIfPa+735xkjoWSOltp7D9W/grH8773Ny8k0eV2cfB+3gie4ZU1La3at8lDwxcWOjmRg48ND0AGH511qwAOO9xfgYL+Y27pi/KWy4qTbrmIglS6KrO5AmEnB7Q1mKNFf1ptGysrRahLPo57Wg=
+    secure: uWSC4o1k5CD9J9rn01pz2WyUkOoBlXGR8gu8vKRJIpIh+39cF4HkXKUcuwpsNI5jW5A9TTHDvNkxyYM/thiBEIxauKA8APmpSgBKi8EPPqDGh0jN2P2JQ9f1AkDoUii88V7hs/k1rJRMIAM/fHO54EfYiUW3otX0/wnGvy8RocGAHCMN40ENMhmmmwbiHZ0OHa1XDLZl5bpkEcnF4SFK8LPHNpaR+q5XBEAZWHH3xgLGw67HPZ6TU2sRmeDpJGTuHFj1VYUi1a6UKXE0WkoetkjU1bjR8cbJ+YoXV3U75biYRJGIpXb8PXIAtSjiq7jxwGPUWW/dVeGWwVy4LyqW0YJF6A94RR8dVRGJ92Rh0M3T9MJlH68PEta47IkyhBnfuxHcuWZCHplnIYWiA7hGmVa0BwtumneW662NYbdZvIVS4YXouXW8fZEZiFHlOYN2/cImIzgRT0UaQoELNZpAY88Ggyx9hWn6f3KOjzZ0mZO/M5UyhzdD9G2npYA3rPwzWquuhO9LEkGWs0qxsCGY3mZAr69GCH+T4WAnNGKfG3i4YmukyKlSo/nJd8vyPuY6TiJIPKosd1OV+wwYzrreX3RafGWHhaGQy+VlMTVZXrKxxT7LkqKHlqAoobuA0rIj07oTGa7MqzgOi2crpppFmbPgn1JUM0YMeR/4MsDg5U4=
