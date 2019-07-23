@@ -13,7 +13,7 @@ if [[ "$(uname)" == Darwin ]]; then
     echo '$ cmake ..'
     cmake ..
     echo "$ make -j $CPU_CORES"
-    travis_wait 150 make -j $CPU_CORES
+    make -j $CPU_CORES
     ctest -j $CPU_CORES -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
