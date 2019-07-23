@@ -47,6 +47,3 @@ matrix:
     env:
     - PATH="/usr/local/opt/ccache/libexec:$PATH"
 script: "./.cicd/travis-build.sh\n"
-notifications:
-  webhooks:
-    secure: qSShvZrLB0eBv1xDXm4mzoQixhJtecg5VFSsAVXERe+rvssaeBhAbeTFFYOFgDhTo5q8EzaTiwNtA/SR6JHyZnUxldipfVGEw9Glcmj3mcnDLb+0p+hxOT9LcCPQEvr4rOrjy/ouSrH7t9CcDvriNTRJ2D777Zh4A8Uvwp79AlOsKTZoic4yBbLzP1OWQ8biDneyUaANTC9Nm1RlRB5zVAX+EMydc/RuXO4yXRBT7UdA9D2DCRljmy3gmicH7wSBTsWxmMCECwQ19EcA60ooIXr4noYmQeYCggdERIfWc3/qqdb+pxSXG4nHBUw4HxOpi1Y+vGz0bJxDch1z2nppLtrv3vw3hZN8siPK5haas11ppm9zTjiIVwHN5NuPmuBqRGDTCVUK4ETp/UKeV9dwWMroZKOyJvBJNcMySYUtyto0rV+TdNZ2gsCj4cJmjdy/73+Wff093ZysOFb9VJ9+yCFjG86x4Ja4DJ5g7g/kWSyvc0onSNIbhB2r58Ebq77hKe1xfkjJKkRXCzunV+IsaQEbhjFIfPa+735xkjoWSOltp7D9W/grH8773Ny8k0eV2cfB+3gie4ZU1La3at8lDwxcWOjmRg48ND0AGH511qwAOO9xfgYL+Y27pi/KWy4qTbrmIglS6KrO5AmEnB7Q1mKNFf1ptGysrRahLPo57Wg=
