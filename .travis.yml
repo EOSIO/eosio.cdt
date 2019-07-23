@@ -1,10 +1,10 @@
 language: cpp
 git:
   depth: false
-cache:
-  ccache: true
-  directories:
-  - "$HOME/Library/Caches/Homebrew"
+# cache:
+#   ccache: true
+#   directories:
+#   - "$HOME/Library/Caches/Homebrew"
 matrix:
   include:
   - os: linux
@@ -43,7 +43,7 @@ matrix:
         - graphviz
         - lcov
         - python@3
-        - ccache
-    env:
-    - PATH="/usr/local/opt/ccache/libexec:$PATH"
+        # - ccache
+    # env:
+    # - PATH="/usr/local/opt/ccache/libexec:$PATH"
 script: "./.cicd/travis-build.sh\n"
