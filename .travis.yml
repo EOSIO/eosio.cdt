@@ -38,6 +38,7 @@ matrix:
         - wget
         - cmake
         - gmp
+        - gettext
         - doxygen
         - graphviz
         - lcov
