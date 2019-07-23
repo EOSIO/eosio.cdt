@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/eosio_llvm/cmake/modules)
 find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
@@ -31,9 +32,12 @@ macro (add_tool name)
    include_directories(include)
    
    add_executable(${name} ${CMAKE_BINARY_DIR}/${name}.cpp)
+   add_dependencies(${name} clang)
    set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
-   target_include_directories(${name} PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
+   target_include_directories(${name} PUBLIC 
+	   ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include 
+	   ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
    target_link_libraries(${name}
      clangTooling
      clangBasic

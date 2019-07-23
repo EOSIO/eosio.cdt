@@ -12,7 +12,7 @@ ExternalProject_Add(
   TEST_COMMAND   ""
   INSTALL_COMMAND ""
   BUILD_ALWAYS 1
-  DEPENDS EosioWasmLibraries EosioTools
+  DEPENDS EosioWasmLibraries eosio-cpp eosio-ld eosio-cc
 )
 
 

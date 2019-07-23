@@ -28,7 +28,7 @@ endif()
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 6)
-set(VERSION_PATCH 1)
+set(VERSION_PATCH 2)
 #set(VERSION_SUFFIX rc2)
 
 if (VERSION_SUFFIX)
@@ -46,12 +46,24 @@ endif()
 
 include(GNUInstallDirs)
 
-include(modules/ClangExternalProject.txt)
-include(modules/ToolsExternalProject.txt)
+#include(modules/ClangExternalProject.txt)
+#include(modules/ToolsExternalProject.txt)
 
-set(WASM_SDK_BUILD true)
+####################################
+## Build clang, llvm and tools
+####################################
+### Add needed includes for llvm/clang and tools
+include_directories(${CMAKE_SOURCE_DIR}/tools/include 
+	            ${CMAKE_SOURCE_DIR}/eosio_llvm/include 
+		    ${CMAKE_BINARY_DIR}/eosio_llvm/include 
+		    ${CMAKE_BINARY_DIR}/eosio_llvm/tools/clang/include)
+set(EOSIO_TOOL_DIR ${CMAKE_SOURCE_DIR}/tools)
+add_subdirectory(eosio_llvm)
+add_subdirectory(tools)
 
-### Configure the EosioWasmToolchain.cmakes
+############################################
+## Configure the EosioWasmToolchain.cmakes
+############################################
 set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/eosio.cdt-config.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioCDTMacros.cmake @ONLY)
@@ -70,9 +82,36 @@ configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINAR
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
 
-include(modules/LibrariesExternalProject.txt)
-
+###################################################################
+## Setup for CDT installation and binary directory "installation" 
+###################################################################
 include(modules/InstallCDT.cmake)
+
+####################################
+## Build eosio libraries 
+####################################
+include(ExternalProject)
+find_package(Git REQUIRED)
+include(GNUInstallDirs)
+
+ExternalProject_Add(
+  EosioWasmLibraries
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/libraries"
+  BINARY_DIR "${CMAKE_BINARY_DIR}/libraries"
+  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake 
+             -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/ 
+	     -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR} 
+	     -D__APPLE=${APPLE}
+  UPDATE_COMMAND ""
+  PATCH_COMMAND  ""
+  TEST_COMMAND   ""
+  INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
+  DEPENDS eosio-cpp eosio-cc eosio-ld
+)
+
+set(WASM_SDK_BUILD true)
+
 
 configure_file(${CMAKE_SOURCE_DIR}/imports/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -99,7 +138,7 @@ configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DI
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/eosio.cdt.license COPYONLY)
 
-include(modules/TestsExternalProject.txt)
+#include(modules/TestsExternalProject.txt)
 
 include(CTest)
 enable_testing()
