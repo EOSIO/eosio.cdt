@@ -6,55 +6,55 @@ env:
 
 steps:
 
-  # - label: ":webhook: Trigger Travis CI Build"
-  #   command:
-  #     - "./.cicd/travis-trigger.sh"
-  #   agents:
-  #     queue: "automation-eos-builder-fleet"
+  - label: ":webhook: Trigger Travis CI Build"
+    command:
+      - "./.cicd/travis-trigger.sh"
+    agents:
+      queue: "automation-eos-builder-fleet"
 
-  # - trigger: "eosio-dot-cdt-base-images-beta"
-  #   label: ":docker: Ensure base images exist"
-  #   build:
-  #     commit: "${BUILDKITE_COMMIT}"
-  #     branch: "${BUILDKITE_BRANCH}"
+  - trigger: "eosio-dot-cdt-base-images-beta"
+    label: ":docker: Ensure base images exist"
+    build:
+      commit: "${BUILDKITE_COMMIT}"
+      branch: "${BUILDKITE_BRANCH}"
 
-  # - wait
+  - wait
 
-  # - label: ":aws: [Amazon] 2 Build"
-  #   agents:
-  #     queue: "automation-eos-builder-fleet"
-  #   plugins:
-  #     - docker#v3.2.0:
-  #         debug: $DEBUG
-  #         image: "eosio/producer:eosio.cdt-amazonlinux-2-6bb9f4740c3952a96731aaf92465ff57851c2680"
-  #         environment:
-  #           - "MAKE_PROC_LIMIT"
-  #   timeout: $BUILD_TIMEOUT
-  #   skip: $SKIP_AMAZON_LINUX_2
+  - label: ":aws: [Amazon] 2 Build"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          debug: $DEBUG
+          image: "eosio/producer:eosio.cdt-amazonlinux-2-6bb9f4740c3952a96731aaf92465ff57851c2680"
+          environment:
+            - "MAKE_PROC_LIMIT"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_AMAZON_LINUX_2
 
-  # - label: ":centos: [CentOS] 7 Build"
-  #   agents:
-  #     queue: "automation-eos-builder-fleet"
-  #   plugins:
-  #     - docker#v3.2.0:
-  #         debug: $DEBUG
-  #         image: "eosio/producer:eosio.cdt-centos-7-c4ec8b51c81035fc6ffb61500dd5750942aefeee"
-  #         environment:
-  #           - "MAKE_PROC_LIMIT"
-  #   timeout: $BUILD_TIMEOUT
-  #   skip: $SKIP_CENTOS_7
+  - label: ":centos: [CentOS] 7 Build"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          debug: $DEBUG
+          image: "eosio/producer:eosio.cdt-centos-7-c4ec8b51c81035fc6ffb61500dd5750942aefeee"
+          environment:
+            - "MAKE_PROC_LIMIT"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_CENTOS_7
 
-  # - label: ":ubuntu: [Ubuntu] 16.04 Build"
-  #   agents:
-  #     queue: "automation-eos-builder-fleet"
-  #   plugins:
-  #     - docker#v3.2.0:
-  #         debug: $DEBUG
-  #         image: "eosio/producer:eosio.cdt-ubuntu-16.04-744bb78ee5e540a5d7d8bf3f6e8e8c1c53a5e6bc"
-  #         environment:
-  #           - "MAKE_PROC_LIMIT"
-  #   timeout: $BUILD_TIMEOUT
-  #   skip: $SKIP_UBUNTU_16
+  - label: ":ubuntu: [Ubuntu] 16.04 Build"
+    agents:
+      queue: "automation-eos-builder-fleet"
+    plugins:
+      - docker#v3.2.0:
+          debug: $DEBUG
+          image: "eosio/producer:eosio.cdt-ubuntu-16.04-744bb78ee5e540a5d7d8bf3f6e8e8c1c53a5e6bc"
+          environment:
+            - "MAKE_PROC_LIMIT"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_UBUNTU_16
 
   - label: ":ubuntu: [Ubuntu] 18.04 Build"
     agents:
@@ -62,30 +62,30 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-18.04-cdt"
+          image: "eosio/producer:eosio.cdt-ubuntu-18.04-cdt1bfb228a65c16a6fceab1b05bf99ae0b44fde352"
           environment:
             - "MAKE_PROC_LIMIT"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_18
 
-  # - label: ":darwin: [Darwin] 10.14 Build"
-  #   command:
-  #     - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
-  #     - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
-  #     - "cd eosio.cdt && mkdir build && cd build && cmake .. && make -j$(getconf _NPROCESSORS_ONLN)"
-  #     - "cd eosio.cdt/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
-  #   plugins:
-  #     - chef/anka#v0.5.1:
-  #         no-volume: true
-  #         inherit-environment-vars: true
-  #         vm-name: 10.14.4_6C_14G_40G
-  #         vm-registry-tag: "clean::cicd::git-ssh::nas::brew"
-  #         modify-cpu: 12
-  #         modify-ram: 24
-  #         always-pull: true
-  #         debug: true
-  #         wait-network: true
-  #   agents:
-  #     - "queue=mac-anka-large-node-fleet"
-  #   timeout: $BUILD_TIMEOUT
-  #   skip: $SKIP_MOJAVE
+  - label: ":darwin: [Darwin] 10.14 Build"
+    command:
+      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
+      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd eosio.cdt && mkdir build && cd build && cmake .. && make -j$(getconf _NPROCESSORS_ONLN)"
+      - "cd eosio.cdt/build && ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+    plugins:
+      - chef/anka#v0.5.1:
+          no-volume: true
+          inherit-environment-vars: true
+          vm-name: 10.14.4_6C_14G_40G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew"
+          modify-cpu: 12
+          modify-ram: 24
+          always-pull: true
+          debug: true
+          wait-network: true
+    agents:
+      - "queue=mac-anka-large-node-fleet"
+    timeout: $BUILD_TIMEOUT
+    skip: $SKIP_MOJAVE
