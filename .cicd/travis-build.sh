@@ -3,8 +3,6 @@ set -eo pipefail
 cd $( dirname "${BASH_SOURCE[0]}" )/.. # Ensure we're in the repo root and not inside of scripts
 . ./.cicd/.helpers
 
-CPU_CORES=$(getconf _NPROCESSORS_ONLN)
-
 if [[ "$(uname)" == Darwin ]]; then
     echo 'Detected Darwin, building natively.'
     [[ -d eosio.cdt ]] && cd eosio.cdt
@@ -12,10 +10,16 @@ if [[ "$(uname)" == Darwin ]]; then
     cd build
     echo '$ cmake ..'
     cmake ..
-    echo "$ make -j $CPU_CORES"
-    travis_wait 120 make -j $CPU_CORES
-    ctest -j $CPU_CORES -L unit_tests -V -T Test
+    echo "$ make -j$MAKE_PROC_LIMIT"
+    travis_wait 120 make -j$MAKE_PROC_LIMIT
+    ctest -j$MAKE_PROC_LIMIT -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
-    travis_wait 120 execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
+    # Testing new core counts.
+    if [[ $IMAGE_TAG == "ubuntu-18.04" ]]; then
+        echo $($MAKE_PROC_LIMIT)
+        travis_wait 120 execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache -e MAKE_PROC_LIMIT eosio/producer:ci-ubuntu-18.04
+    else
+        travis_wait 120 execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
+    fi
 fi
