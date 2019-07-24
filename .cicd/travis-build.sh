@@ -16,9 +16,5 @@ if [[ "$(uname)" == Darwin ]]; then
 else # linux
     echo 'Detected Linux, building in Docker.'
     # Testing new core counts.
-    if [[ $IMAGE_TAG == "ubuntu-18.04" ]]; then
-        execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache -e MAKE_PROC_LIMIT eosio/producer:ci-ubuntu-18.04
-    else
-        execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
-    fi
+    docker run --rm -v $(pwd):/workdir -e MAKE_PROC_LIMIT eosio/producer:ci-ubuntu-18.04-cdt
 fi
