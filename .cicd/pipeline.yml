@@ -56,13 +56,12 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:ci-ubuntu-18.04-cdt"
+          image: "eosio/producer:eosio.cdt-ubuntu-18.04-1bfb228a65c16a6fceab1b05bf99ae0b44fde352"
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_18
 
   - label: ":darwin: [Darwin] 10.14 Build"
     command:
-      - "echo $(getconf _NPROCESSORS_ONLN)"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && mkdir build && cd build && cmake .. && make -j$(getconf _NPROCESSORS_ONLN)"
