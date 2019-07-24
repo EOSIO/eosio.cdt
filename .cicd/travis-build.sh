@@ -17,10 +17,5 @@ if [[ "$(uname)" == Darwin ]]; then
     ctest -j $CPU_CORES -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
-    # Test for CPU CORES value:
-    if [[ $IMAGE_TAG == "ubuntu-18.04" ]]; then
-        execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache eosio/producer:ci-ubuntu-18.04-cdt
-    else
-        execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
-    fi
+    travis_wait 30 execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
 fi

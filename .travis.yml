@@ -46,4 +46,6 @@ matrix:
         # - ccache
     # env:
     # - PATH="/usr/local/opt/ccache/libexec:$PATH"
-script: "./.cicd/travis-build.sh\n"
+script:
+  - "export -f travis_wait"
+  - "./.cicd/travis-build.sh\n"
