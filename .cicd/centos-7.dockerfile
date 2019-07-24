@@ -46,5 +46,5 @@ ENV PRECOMMANDS="source /opt/rh/python33/enable && source /opt/rh/devtoolset-7/e
 
 CMD bash -c " $PRECOMMANDS \
   rm -f /workdir/modules/ClangExternalProject.txt && ln -s /tmp/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && \
-  mkdir /workdir/build && cd /workdir/build && ln -s /opt/eosio.cdt/build/eosio_llvm/ /workdir/build/eosio_llvm && cmake .. && make -j $(getconf _NPROCESSORS_ONLN) && \
-  ctest -j$(getconf _NPROCESSORS_ONLN) -L unit_tests -V -T Test"
+  mkdir /workdir/build && cd /workdir/build && ln -s /opt/eosio.cdt/build/eosio_llvm/ /workdir/build/eosio_llvm && cmake .. && make -j$MAKE_PROC_LIMIT && \
+  ctest -j$MAKE_PROC_LIMIT -L unit_tests -V -T Test"
