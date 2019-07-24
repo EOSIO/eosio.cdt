@@ -16,5 +16,5 @@ if [[ "$(uname)" == Darwin ]]; then
 else # linux
     echo 'Detected Linux, building in Docker.'
     # Testing new core counts.
-    docker run --rm -v $(pwd):/workdir -e MAKE_PROC_LIMIT eosio/producer:ci-ubuntu-18.04-cdt
+    travis_wait 40 execute docker run --rm -v $(pwd):/workdir -v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e MAKE_PROC_LIMIT -e CCACHE_DIR=/opt/.ccache ${FULL_TAG}
 fi
