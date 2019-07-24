@@ -27,6 +27,8 @@ steps:
   #     - docker#v3.2.0:
   #         debug: $DEBUG
   #         image: "eosio/producer:eosio.cdt-amazonlinux-2-6bb9f4740c3952a96731aaf92465ff57851c2680"
+  #         environment:
+  #           - "MAKE_PROC_LIMIT"
   #   timeout: $BUILD_TIMEOUT
   #   skip: $SKIP_AMAZON_LINUX_2
 
@@ -37,6 +39,8 @@ steps:
   #     - docker#v3.2.0:
   #         debug: $DEBUG
   #         image: "eosio/producer:eosio.cdt-centos-7-c4ec8b51c81035fc6ffb61500dd5750942aefeee"
+  #         environment:
+  #           - "MAKE_PROC_LIMIT"
   #   timeout: $BUILD_TIMEOUT
   #   skip: $SKIP_CENTOS_7
 
@@ -47,6 +51,8 @@ steps:
   #     - docker#v3.2.0:
   #         debug: $DEBUG
   #         image: "eosio/producer:eosio.cdt-ubuntu-16.04-744bb78ee5e540a5d7d8bf3f6e8e8c1c53a5e6bc"
+  #         environment:
+  #           - "MAKE_PROC_LIMIT"
   #   timeout: $BUILD_TIMEOUT
   #   skip: $SKIP_UBUNTU_16
 
