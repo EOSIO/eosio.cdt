@@ -4,6 +4,7 @@ cd $( dirname "${BASH_SOURCE[0]}" )/.. # Ensure we're in the repo root and not i
 . ./.cicd/.helpers
 
 CPU_CORES=$(getconf _NPROCESSORS_ONLN)
+echo $CPU_CORES
 
 if [[ "$(uname)" == Darwin ]]; then
     echo 'Detected Darwin, building natively.'
