@@ -62,13 +62,9 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-<<<<<<< HEAD
-          image: "eosio/producer:eosio.cdt-ubuntu-18.04-1bfb228a65c16a6fceab1b05bf99ae0b44fde352"
-=======
           image: "eosio/producer:eosio.cdt-ubuntu-18.04-473afea250c03d0bbd6352bf3f4ee5277f2935eb"
           environment:
             - "MAKE_PROC_LIMIT"
->>>>>>> trav_poc_r1.6_proclimit
     timeout: $BUILD_TIMEOUT
     skip: $SKIP_UBUNTU_18
 
