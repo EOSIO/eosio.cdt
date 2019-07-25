@@ -54,4 +54,4 @@ matrix:
 script:
   - "export -f travis_wait"
   - "export -f travis_jigger"
-  - "./.cicd/travis-build.sh\n"
+  - "travis_retry ./.cicd/travis-build.sh"
