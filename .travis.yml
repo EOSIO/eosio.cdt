@@ -27,7 +27,7 @@ matrix:
     services: docker
     env:
     - IMAGE_TAG='centos-7'
-script: "./.cicd/travis-build.sh\n"
+script: "travis_retry ./.cicd/travis-build.sh"
 notifications:
   webhooks:
     secure: uWSC4o1k5CD9J9rn01pz2WyUkOoBlXGR8gu8vKRJIpIh+39cF4HkXKUcuwpsNI5jW5A9TTHDvNkxyYM/thiBEIxauKA8APmpSgBKi8EPPqDGh0jN2P2JQ9f1AkDoUii88V7hs/k1rJRMIAM/fHO54EfYiUW3otX0/wnGvy8RocGAHCMN40ENMhmmmwbiHZ0OHa1XDLZl5bpkEcnF4SFK8LPHNpaR+q5XBEAZWHH3xgLGw67HPZ6TU2sRmeDpJGTuHFj1VYUi1a6UKXE0WkoetkjU1bjR8cbJ+YoXV3U75biYRJGIpXb8PXIAtSjiq7jxwGPUWW/dVeGWwVy4LyqW0YJF6A94RR8dVRGJ92Rh0M3T9MJlH68PEta47IkyhBnfuxHcuWZCHplnIYWiA7hGmVa0BwtumneW662NYbdZvIVS4YXouXW8fZEZiFHlOYN2/cImIzgRT0UaQoELNZpAY88Ggyx9hWn6f3KOjzZ0mZO/M5UyhzdD9G2npYA3rPwzWquuhO9LEkGWs0qxsCGY3mZAr69GCH+T4WAnNGKfG3i4YmukyKlSo/nJd8vyPuY6TiJIPKosd1OV+wwYzrreX3RafGWHhaGQy+VlMTVZXrKxxT7LkqKHlqAoobuA0rIj07oTGa7MqzgOi2crpppFmbPgn1JUM0YMeR/4MsDg5U4=
