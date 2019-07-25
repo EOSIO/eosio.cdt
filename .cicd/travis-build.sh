@@ -11,7 +11,7 @@ if [[ "$(uname)" == Darwin ]]; then
     echo '$ cmake ..'
     cmake ..
     echo "$ make -j$MAKE_PROC_LIMIT"
-    travis_wait 150 make -j$MAKE_PROC_LIMIT
+    travis_wait 180 make -j$MAKE_PROC_LIMIT
     ctest -j$MAKE_PROC_LIMIT -L unit_tests -V -T Test
 else # linux
     echo 'Detected Linux, building in Docker.'
