@@ -26,7 +26,7 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:eosio.cdt-amazonlinux-2-6bb9f4740c3952a96731aaf92465ff57851c2680"
+          image: "eosio/producer:eosio.cdt-amazonlinux-2-ea0e784ba06b4e0c64b7ba808dbe1898ddcc958c"
           environment:
             - "MAKE_PROC_LIMIT"
     timeout: $BUILD_TIMEOUT
@@ -38,7 +38,7 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:eosio.cdt-centos-7-c4ec8b51c81035fc6ffb61500dd5750942aefeee"
+          image: "eosio/producer:eosio.cdt-centos-7-297228b12eb9cbeab202a1ab3de0ce192dd46741"
           environment:
             - "MAKE_PROC_LIMIT"
     timeout: $BUILD_TIMEOUT
@@ -50,7 +50,7 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:eosio.cdt-ubuntu-16.04-744bb78ee5e540a5d7d8bf3f6e8e8c1c53a5e6bc"
+          image: "eosio/producer:eosio.cdt-ubuntu-16.04-320d7b3ec428c13a058dfd1957d4629b32080478"
           environment:
             - "MAKE_PROC_LIMIT"
     timeout: $BUILD_TIMEOUT
@@ -62,7 +62,7 @@ steps:
     plugins:
       - docker#v3.2.0:
           debug: $DEBUG
-          image: "eosio/producer:eosio.cdt-ubuntu-18.04-cdt1bfb228a65c16a6fceab1b05bf99ae0b44fde352"
+          image: "eosio/producer:eosio.cdt-ubuntu-18.04-473afea250c03d0bbd6352bf3f4ee5277f2935eb"
           environment:
             - "MAKE_PROC_LIMIT"
     timeout: $BUILD_TIMEOUT
