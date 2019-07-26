@@ -3,6 +3,11 @@ set -eo pipefail
 cd $( dirname "${BASH_SOURCE[0]}" )/.. # Ensure we're in the repo root and not inside of scripts
 . ./.cicd/.helpers
 
+echo "Pull request branch: $TRAVIS_PULL_REQUEST_BRANCH"
+echo "Branch: $TRAVIS_BRANCH"
+echo "Pull request slug: $TRAVIS_PULL_REQUEST_SLUG"
+echo "Repo slug: $TRAVIS_REPO_SLUG"
+
 if [[ "$(uname)" == Darwin ]]; then
     echo 'Detected Darwin, building natively.'
     [[ -d eosio.cdt ]] && cd eosio.cdt
