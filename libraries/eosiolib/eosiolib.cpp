@@ -55,10 +55,11 @@ namespace eosio {
    }
 
    std::vector<name> get_active_producers() {
-      auto prod_cnt = get_active_producers(nullptr, 0)/8;
-     std::vector<name> active_prods(prod_cnt);
-     get_active_producers((uint64_t*)active_prods.data(), active_prods.size());
-     return active_prods;
+      const auto buffer_size = get_active_producers(nullptr, 0);
+      const auto prod_cnt = buffer_size / sizeof(name);
+      std::vector<name> active_prods(prod_cnt);
+      get_active_producers((uint64_t*)active_prods.data(), buffer_size);
+      return active_prods;
    }
 
    // powers.hpp
