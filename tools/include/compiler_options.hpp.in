@@ -19,6 +19,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> no_abigen_opt(
+    "no-abigen",
+    cl::desc("Disable ABI file generation"),
+    cl::cat(LD_CAT));
 static cl::opt<bool> fquery_opt(
     "fquery",
     cl::desc("Produce binaries for wasmql"),
@@ -495,6 +499,10 @@ static Options CreateOptions(bool add_defaults=true) {
    debug = g_opt;
 #endif
 
+   if (no_abigen_opt) {
+      ldopts.emplace_back("-no-abigen");
+   }
+
    if (add_defaults) {
       GetCompDefaults(copts);
       GetCompDefaults(agopts);
@@ -826,5 +834,6 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #endif
+   
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 }

@@ -53,6 +53,7 @@ create_symlink eosio-init eosio-init
 create_symlink eosio-abigen eosio-abigen
 create_symlink eosio-wasm2wast eosio-wasm2wast
 create_symlink eosio-wast2wasm eosio-wast2wasm
+create_symlink eosio-ar eosio-ar
 
 echo "Generating Tarball $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1

@@ -322,7 +322,6 @@ namespace eosio {
       std::string to_string()const {
          int64_t p = (int64_t)symbol.precision();
          int64_t p10 = 1;
-         bool negative = false;
          int64_t invert = 1;
 
          while( p > 0  ) {
@@ -335,7 +334,6 @@ namespace eosio {
 
          if (amount < 0) {
             invert = -1;
-            negative = true;
          }
 
          auto change = (amount % p10) * invert;

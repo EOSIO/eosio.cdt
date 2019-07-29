@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#define __STDC_FORMAT_MACROS
+#ifndef __STDC_FORMAT_MACROS
+# define __STDC_FORMAT_MACROS
+#endif
 #include <inttypes.h>
    
 template <uint8_t OS>

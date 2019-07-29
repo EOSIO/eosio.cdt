@@ -69,7 +69,8 @@ select yn in "Yes" "No"; do
 				printf "\\nYUM update complete.\\n"
 			fi
 		break;;
-		[Nn]* ) echo "Proceeding without update!";;
+		[Nn]* ) echo "Proceeding without update!"
+		break;;
 		* ) echo "Please type 1 for yes or 2 for no.";;
 	esac
 done

@@ -325,8 +325,8 @@ namespace eosio {
       std::string to_string()const {
          int64_t p = (int64_t)symbol.precision();
          int64_t p10 = 1;
-         bool negative = false;
          int64_t invert = 1;
+         bool negative = false;
 
          while( p > 0  ) {
             p10 *= 10; --p;
@@ -348,8 +348,14 @@ namespace eosio {
             change /= 10;
          }
          char str[p+32];
-         snprintf(str, sizeof(str), "%lld%s%s %s",
-            (int64_t)(amount/p10),
+
+         int64_t first = (int64_t)(amount/p10);
+         int64_t mask = first >> (sizeof(int64_t) * CHAR_BIT - 1);
+         int64_t abs = (mask ^ first) - mask;
+
+         snprintf(str, sizeof(str), "%s%lld%s%s %s",
+            negative ? "-" : "",
+            abs,
             (fraction[0]) ? "." : "",
             fraction,
             symbol.code().to_string().c_str());
