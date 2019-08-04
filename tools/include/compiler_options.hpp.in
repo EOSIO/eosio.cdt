@@ -548,7 +548,6 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
-   copts.emplace_back("-I./");
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
