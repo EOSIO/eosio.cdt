@@ -796,7 +796,6 @@ static Options CreateOptions(bool add_defaults=true) {
    } else {
       copts.emplace_back("--std=c++17");
       agopts.emplace_back("--std=c++17");
-
    }
 
    if (faligned_allocation_opt) {

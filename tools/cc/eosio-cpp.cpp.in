@@ -113,27 +113,10 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");
-   for (size_t i=1; i < base_options.size(); i++) {
+   for (size_t i=0; i < base_options.size(); i++) {
       options.push_back(base_options[i]);
    }
-   options.push_back("--target=wasm32");
-   options.push_back("-nostdlib");
-   options.push_back("-ffreestanding");
-   options.push_back("-fno-builtin");
-   options.push_back("-fno-rtti");
-   options.push_back("-fno-exceptions");
-   options.push_back("-I${Boost_INCLUDE_DIRS}");
-   options.push_back("-DBOOST_DISABLE_ASSERTS");
-   options.push_back("-DBOOST_EXCEPTION_DISABLE");
    options.push_back("-Wno-everything");
-   options.push_back("-std=c++17");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../include/libcxx");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../include/libc");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../include");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../../../../../libraries/libc++/libcxx/include");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../../../../../libraries/libc/musl/include");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../../../../../libraries");
-   options.push_back(std::string("-I")+eosio::cdt::whereami::where()+"/../../../../../libraries/boost/include");
 
    int size = options.size();
    const char** new_argv = new const char*[size];
