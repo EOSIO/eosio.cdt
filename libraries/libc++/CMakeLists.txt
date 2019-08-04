@@ -18,18 +18,10 @@ add_native_library(native_c++
 
 target_include_directories(c++
                            PUBLIC 
-                           ${CMAKE_SOURCE_DIR}/libc/musl/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                           ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
                            ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
 target_include_directories(native_c++
                            PUBLIC 
-                           ${CMAKE_SOURCE_DIR}/libc/musl/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                           ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
                            ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
 target_link_libraries(c++ c)
