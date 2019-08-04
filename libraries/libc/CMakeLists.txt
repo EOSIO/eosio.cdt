@@ -84,5 +84,3 @@ add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGE
 add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
