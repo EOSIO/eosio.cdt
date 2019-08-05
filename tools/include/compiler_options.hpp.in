@@ -17,6 +17,7 @@ static llvm::cl::OptionCategory EosioCompilerToolCategory("compiler options");
 #else
 static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
+static llvm::cl::OptionCategory EosioSourcePathsCategory("command-line options");
 
 /// begin ld options
 static cl::opt<bool> fquery_opt(
@@ -95,8 +96,8 @@ static cl::opt<std::string> o_opt(
 static cl::list<std::string> input_filename_opt(
       cl::Positional,
       cl::desc("<input file> ..."),
-      cl::cat(LD_CAT),
-      cl::OneOrMore);
+      cl::cat(EosioSourcePathsCategory),
+      cl::ZeroOrMore);
 static cl::opt<bool> fasm_opt(
     "fasm",
     cl::desc("Assemble file for x86-64"),

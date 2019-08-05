@@ -110,7 +110,6 @@ namespace eosio { namespace cdt {
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
-   options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");
    for (size_t i=1; i < base_options.size(); i++) {
