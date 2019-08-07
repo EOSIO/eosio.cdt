@@ -536,9 +536,8 @@ static Options CreateOptions(bool add_defaults=true) {
    for ( auto input_filename : input_filename_opt ) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
-#else
-      inputs.push_back(input_filename);
 #endif
+      inputs.push_back(input_filename);
    }
 
 #ifdef ONLY_LD
@@ -751,25 +750,23 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef ONLY_LD
       if (inputs.size() == 1) {
          llvm::SmallString<256> fn  = llvm::sys::path::filename(inputs[0]);
-         llvm::SmallString<256> fn2 = fn;
-         llvm::sys::path::replace_extension(fn, ".wasm");
+         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
-         llvm::SmallString<256> res;
-         llvm::sys::path::system_temp_directory(true, res);
-         ldopts.emplace_back(std::string(std::string(res.str())+"/"+std::string(fn2.str())+".o"));
       } else {
          ldopts.emplace_back("a.out");
       }
-#endif
+#else
       if (inputs.size() == 1) {      
          llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
-         llvm::sys::path::replace_extension(fn, ".wasm");
-         ldopts.emplace_back("-o "+output_fn);
+         llvm::sys::path::replace_extension(fn, "");
+         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
+         ldopts.emplace_back("-o "+output_fn);
       } else {
-         ldopts.emplace_back("-o a.out");
          output_fn = "a.out";
+         ldopts.emplace_back("-o "+output_fn);
       }
+#endif
    }
    else {
       ldopts.emplace_back("-o "+o_opt);
@@ -834,5 +831,13 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #endif
+<<<<<<< HEAD
+=======
+   
+#ifndef ONLY_LD
+>>>>>>> a153ef9c... Set default output filename
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+#else
+   return {output_fn, {}, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+#endif
 }
