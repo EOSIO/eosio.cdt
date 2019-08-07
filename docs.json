@@ -1,0 +1,23 @@
+{
+	"name": "eosio.cdt",
+	"generators": [
+    {
+			"name": "collate_markdown",
+			"options": {
+				"docs_dir": "docs"
+			}
+		},
+		{
+			"name": "doxygen_to_xml",
+			"options": {
+				"INPUT": "libraries/eosiolib",
+				"EXCLUDE": "libraries/eosiolib/memory.h libraries/eosiolib/memory.hpp libraries/eosiolib/action.h libraries/eosiolib/permission.h libraries/eosiolib/privileged.h libraries/eosiolib/print.h libraries/eosiolib/system.h",
+				"EXCLUDE_PATTERNS": "*.cpp *.c *.h"
+			}
+		},
+    {
+			"name": "doxybook",
+			"options": {}
+		}
+	]
+}
