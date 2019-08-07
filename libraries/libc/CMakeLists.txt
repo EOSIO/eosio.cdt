@@ -128,6 +128,15 @@ set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/values.h
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/wchar.h
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/wctype.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/atomic.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/floatscan.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/intscan.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/libc.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/libm.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/locale_impl.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/pthread_impl.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/shgetc.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/stdio_impl.h
 )
 
 add_library(c 
@@ -196,3 +205,4 @@ add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
 file(COPY ${HEADERS} DESTINATION ${BASE_BINARY_DIR}/include/libc/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/bits/ DESTINATION ${BASE_BINARY_DIR}/include/libc/bits/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/ DESTINATION ${BASE_BINARY_DIR}/include/libc/bits/)

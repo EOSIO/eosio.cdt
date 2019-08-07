@@ -17,12 +17,22 @@ add_native_library(native_c++
             ${SRC_FILES})
 
 target_include_directories(c++
-                           PUBLIC 
-                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
+   PUBLIC 
+      ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
+   PRIVATE
+      ${CMAKE_SOURCE_DIR}/libc/musl/include
+      ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
+      ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
+)
 
 target_include_directories(native_c++
-                           PUBLIC 
-                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
+   PUBLIC 
+      ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
+   PRIVATE
+      ${CMAKE_SOURCE_DIR}/libc/musl/include
+      ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
+      ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
+)
 
 target_link_libraries(c++ c)
 target_link_libraries(native_c++ native_c)
