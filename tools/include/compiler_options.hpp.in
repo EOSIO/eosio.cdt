@@ -548,8 +548,6 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
-   copts.emplace_back("-I./");
-
    if (!isystem_opt.empty()) {
       copts.emplace_back("-isystem="+isystem_opt);
    }
@@ -792,12 +790,11 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef ONLY_LD
 #ifdef CPP_COMP
    if (! std_opt.empty()) {
-      copts.emplace_back("--std="+std_opt);
-      agopts.emplace_back("--std="+std_opt);
+      copts.emplace_back("-std="+std_opt);
+      agopts.emplace_back("-std="+std_opt);
    } else {
-      copts.emplace_back("--std=c++17");
-      agopts.emplace_back("--std=c++17");
-
+      copts.emplace_back("-std=c++17");
+      agopts.emplace_back("-std=c++17");
    }
 
    if (faligned_allocation_opt) {
