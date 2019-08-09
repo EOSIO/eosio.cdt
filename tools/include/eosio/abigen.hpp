@@ -241,8 +241,10 @@ namespace eosio { namespace cdt {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr());
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
          var.name = get_type(t);
-         for (int i=0; i < tst->getNumArgs(); ++i)
+         for (int i=0; i < tst->getNumArgs(); ++i) {
             var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
+            add_type(get_template_argument( t, i ).getAsType());
+         }
          _abi.variants.insert(var); 
       }
 
@@ -391,6 +393,12 @@ namespace eosio { namespace cdt {
                for ( auto f : s.fields ) {
                   if (as.name == _translate_type(remove_suffix(f.type)))
                      return true;
+               }
+               for ( auto v : _abi.variants ) {
+                  for ( auto vt : v.types ) {
+                     if (as.name == _translate_type(remove_suffix(vt)))
+                        return true;
+                  }
                }
                if (s.base == as.name)
                   return true;

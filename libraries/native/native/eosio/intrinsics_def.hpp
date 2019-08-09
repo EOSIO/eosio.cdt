@@ -43,6 +43,7 @@ namespace eosio { namespace native {
 intrinsic_macro(get_resource_limits) \
 intrinsic_macro(set_resource_limits) \
 intrinsic_macro(set_proposed_producers) \
+intrinsic_macro(set_proposed_producers_ex) \
 intrinsic_macro(get_blockchain_parameters_packed) \
 intrinsic_macro(set_blockchain_parameters_packed) \
 intrinsic_macro(is_privileged) \
