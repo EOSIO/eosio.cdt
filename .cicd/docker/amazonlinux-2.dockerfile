@@ -1,7 +1,5 @@
 FROM amazonlinux:2
 
-COPY ./ClangExternalProject.txt /tmp/ClangExternalProject.txt
-
 # YUM dependencies.
 RUN yum update -y \
  && yum install -y git gcc.x86_64 gcc-c++.x86_64 autoconf automake libtool make bzip2 \
@@ -34,8 +32,3 @@ RUN cd /opt && git clone https://github.com/EOSIO/eosio.cdt \
   && cmake .. \
   && make -j$(nproc) \
   && cd /
-
-CMD bash -c " $PRECOMMANDS \
-  rm -f /workdir/modules/ClangExternalProject.txt && ln -s /tmp/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && \
-  mkdir /workdir/build && cd /workdir/build && ln -s /opt/eosio.cdt/build/eosio_llvm/ /workdir/build/eosio_llvm && cmake .. && make -j$MAKE_PROC_LIMIT && \
-  ctest -j$MAKE_PROC_LIMIT -L unit_tests -V -T Test"

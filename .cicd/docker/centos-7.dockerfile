@@ -1,7 +1,5 @@
 FROM centos:7
 
-COPY ./ClangExternalProject.txt /tmp/ClangExternalProject.txt
-
 # YUM dependencies.
 RUN yum update -y \
   && yum --enablerepo=extras install -y centos-release-scl \
@@ -41,10 +39,3 @@ RUN cd /opt && git clone https://github.com/EOSIO/eosio.cdt \
   && cmake .. \
   && make -j$(nproc) \
   && cd /
-
-ENV PRECOMMANDS="source /opt/rh/python33/enable && source /opt/rh/devtoolset-7/enable &&"
-
-CMD bash -c " $PRECOMMANDS \
-  rm -f /workdir/modules/ClangExternalProject.txt && ln -s /tmp/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && \
-  mkdir /workdir/build && cd /workdir/build && ln -s /opt/eosio.cdt/build/eosio_llvm/ /workdir/build/eosio_llvm && cmake .. && make -j$MAKE_PROC_LIMIT && \
-  ctest -j$MAKE_PROC_LIMIT -L unit_tests -V -T Test"
