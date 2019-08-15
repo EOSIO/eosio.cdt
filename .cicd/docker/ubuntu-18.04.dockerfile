@@ -10,7 +10,7 @@ RUN cd /opt && git clone https://github.com/EOSIO/eosio.cdt && \
     cd eosio.cdt && \
     git checkout master && \
     git submodule update --init --recursive && \
-    mkdir build && cd bui ld && \
+    mkdir build && cd build && \
     cmake .. && \
     make -j$(nproc) && \
     cd /

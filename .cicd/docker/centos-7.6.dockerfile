@@ -6,7 +6,7 @@ RUN yum update -y && \
     yum install -y python33.x86_64 git autoconf automake bzip2 \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
-    gmp-devel.x86_64 python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl\
+    gmp-devel.x86_64 python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl
 # build lcov
 RUN git clone https://github.com/linux-test-project/lcov.git && \
     source /opt/rh/python33/enable && \
