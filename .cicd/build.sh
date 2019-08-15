@@ -19,20 +19,17 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="rm -f $MOUNTED_DIR/modules/ClangExternalProject.txt && ln -s $MOUNTED_DIR/.cicd/helpers/ClangExternalProject.txt $MOUNTED_DIR/modules/ClangExternalProject.txt && ln -s /opt/eosio.cdt/build/eosio_llvm/ $MOUNTED_DIR/build/eosio_llvm && cd $MOUNTED_DIR/build"
-
     BUILD_COMMANDS="cmake .. && make -j$JOBS"
 
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
         # Generate Base Images
         $CICD_DIR/generate-base-images.sh
-        COMMANDS="$BUILD_COMMANDS"
     elif [[ $TRAVIS == true ]]; then
         ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache"
-        COMMANDS="$BUILD_COMMANDS"
     fi
 
-    COMMANDS="$PRE_COMMANDS && $COMMANDS"
+    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
 
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
