@@ -1,4 +1,4 @@
-SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp condition_variable.cpp functional.cpp
+SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp charconv.cpp condition_variable.cpp functional.cpp
                   future.cpp ios.cpp iostream.cpp locale.cpp memory.cpp mutex.cpp new.cpp optional.cpp
                   regex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp exception.cpp
                   typeinfo.cpp utility.cpp valarray.cpp variant.cpp vector.cpp eosio.cpp)
@@ -15,6 +15,8 @@ add_library(c++
 
 add_native_library(native_c++
             ${SRC_FILES})
+
+add_definitions(-D_LIBCPP_BUILDING_LIBRARY)
 
 target_include_directories(c++
    PUBLIC 
