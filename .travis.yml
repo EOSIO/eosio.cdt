@@ -47,4 +47,4 @@ matrix:
         # - ccache
     env:
       # - PATH="/usr/local/opt/ccache/libexec:$PATH"
-script: "./.cicd/build.sh"
+script: "./.cicd/build.sh && ./.cicd/tests.sh"
