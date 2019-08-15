@@ -18,7 +18,7 @@ else # Linux
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="rm -f $MOUNTED_DIR/modules/ClangExternalProject.txt && ln -s $MOUNTED_DIR/.cicd/helpers/ClangExternalProject.txt /workdir/modules/ClangExternalProject.txt && cd $MOUNTED_DIR/build"
+    PRE_COMMANDS="rm -f $MOUNTED_DIR/modules/ClangExternalProject.txt && ln -s $MOUNTED_DIR/.cicd/helpers/ClangExternalProject.txt $MOUNTED_DIR/modules/ClangExternalProject.txt && ln -s /opt/eosio.cdt/build/eosio_llvm/ $MOUNTED_DIR/build/eosio_llvm && cd $MOUNTED_DIR/build"
 
     BUILD_COMMANDS="cmake .. && make -j$JOBS"
 
