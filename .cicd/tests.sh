@@ -11,7 +11,8 @@ COMMANDS="$PRE_COMMANDS && $TEST"
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
-    bash -c "$COMMANDS"
+    cd $BUILD_DIR
+    bash -c "$TEST"
     
 else # Linux
 
