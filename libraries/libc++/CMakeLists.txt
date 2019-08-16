@@ -49,3 +49,11 @@ add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TAR
 add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${BASE_BINARY_DIR}/include/libcxx)
+
+set(UNSUPPORTED_HEADERS
+   ${BASE_BINARY_DIR}/include/libcxx/fstream
+   ${BASE_BINARY_DIR}/include/libcxx/future
+   ${BASE_BINARY_DIR}/include/libcxx/random
+   ${BASE_BINARY_DIR}/include/libcxx/shared_mutex
+)
+file(REMOVE ${UNSUPPORTED_HEADERS})
