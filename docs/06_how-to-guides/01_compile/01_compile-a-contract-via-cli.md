@@ -1,0 +1,1 @@
+Compile a contract with eosio-cpp
