@@ -5,12 +5,13 @@ set -eo pipefail
 mkdir -p $BUILD_DIR
 
 PRE_COMMANDS="cd $MOUNTED_DIR"
-COMMANDS="$PRE_COMMANDS && .cicd/package-builder.sh"
+PACKAGE_COMMANDS=".cicd/package-builder.sh"
+COMMANDS="$PRE_COMMANDS && $PACKAGE_COMMNADS"
 
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
-    bash -c "$COMMANDS"
+    bash -c "$PACKAGE_COMMANDS"
     
 else # Linux
 
