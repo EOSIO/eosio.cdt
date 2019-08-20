@@ -11,11 +11,13 @@ if [[ -z $RELEASE ]]; then
   RELEASE="1"
 fi
 
-NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
+NAME="${PACKAGE_NAME}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
 
 mkdir -p ${PROJECT}/DEBIAN
-echo "Package: ${PROJECT} 
+echo "Package: ${PACKAGE_NAME}
 Version: ${VERSION_NO_SUFFIX}-${RELEASE}
+Provides: ${PROJECT}
+Replaces: ${PROJECT}
 Section: devel
 Priority: optional
 Architecture: amd64
