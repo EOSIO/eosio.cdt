@@ -45,26 +45,26 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: $SKIP_UBUNTU_18
 
-  - label: ":darwin: macOS 10.14 - Build"
-    command:
-      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && ./.cicd/build.sh"
-      - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
-    plugins:
-      - chef/anka#v0.5.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.4_6C_14G_40G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
-          modify-cpu: 12
-          modify-ram: 24
-          always-pull: true
-          debug: true
-          wait-network: true
-    agents:
-      - "queue=mac-anka-large-node-fleet"
-    skip: $SKIP_MOJAVE
+  # - label: ":darwin: macOS 10.14 - Build"
+  #   command:
+  #     - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
+  #     - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
+  #     - "cd eosio.cdt && ./.cicd/build.sh"
+  #     - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
+  #   plugins:
+  #     - chef/anka#v0.5.1:
+  #         no-volume: true
+  #         inherit-environment-vars: true
+  #         vm-name: 10.14.4_6C_14G_40G
+  #         vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+  #         modify-cpu: 12
+  #         modify-ram: 24
+  #         always-pull: true
+  #         debug: true
+  #         wait-network: true
+  #   agents:
+  #     - "queue=mac-anka-large-node-fleet"
+  #   skip: $SKIP_MOJAVE
 
   - wait
 
