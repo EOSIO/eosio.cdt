@@ -36,3 +36,5 @@
 
 # Build
 build/*
+
+.vscode
