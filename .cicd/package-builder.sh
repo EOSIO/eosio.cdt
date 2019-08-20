@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -eo pipefail
-
 if [[ $(uname) == 'Darwin' ]]; then
     echo 'Darwin family detected, building for brew.'
     [[ -z $ARTIFACT ]] && ARTIFACT='*.rb;*.tar.gz'

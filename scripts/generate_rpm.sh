@@ -18,7 +18,7 @@ export SUBPREFIX
 export SPREFIX
 export SSUBPREFIX
 
-. ./generate_tarball.sh ${NAME}
+bash generate_tarball.sh ${NAME}.tar.gz
 
 RPMBUILD=`realpath ~/rpmbuild/BUILDROOT/${NAME}.x86_64`
 mkdir -p ${RPMBUILD} 

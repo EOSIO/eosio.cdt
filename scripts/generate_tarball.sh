@@ -41,10 +41,20 @@ ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake Eosio
 ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake EosioCDTMacros.cmake
 popd &> /dev/null
 
-for f in $(ls "${BUILD_DIR}/bin/"); do
-   bn=$(basename $f)
-   ln -sf ../${SUBPREFIX}/bin/$bn ${PREFIX}/bin/$bn || exit 1
-done
+create_symlink() {
+   pushd ${PREFIX}/bin &> /dev/null
+   ln -sf ../${SUBPREFIX}/bin/$1 $2
+   popd &> /dev/null
+}
 
-tar -cvzf $NAME.tar.gz ./${PREFIX}/*
+create_symlink "eosio-cc eosio-cc"
+create_symlink "eosio-cpp eosio-cpp"
+create_symlink "eosio-ld eosio-ld"
+create_symlink "eosio-pp eosio-pp"
+create_symlink "eosio-init eosio-init"
+create_symlink "eosio-abigen eosio-abigen"
+create_symlink "eosio-wasm2wast eosio-wasm2wast"
+create_symlink "eosio-wast2wasm eosio-wast2wasm"
+
+tar -cvzf $NAME ./${PREFIX}/*
 rm -r ${PREFIX}
