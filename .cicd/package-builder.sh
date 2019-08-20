@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -eo pipefail
+
+. ./.cicd/helpers/general.sh
+ln -s /opt/eosio.cdt/build/eosio_llvm/ $MOUNTED_DIR/build/eosio_llvm
+
 if [[ $(uname) == 'Darwin' ]]; then
     echo 'Darwin family detected, building for brew.'
     [[ -z $ARTIFACT ]] && ARTIFACT='*.rb;*.tar.gz'
