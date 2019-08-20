@@ -28,7 +28,7 @@ export SUBPREFIX
 export SPREFIX
 export SSUBPREFIX
 
-bash generate_tarball.sh ${NAME}.tar.gz
+. ./generate_tarball.sh ${NAME}
 
 tar -xvzf ${NAME}.tar.gz -C ${PROJECT} 
 dpkg-deb --build ${PROJECT} 

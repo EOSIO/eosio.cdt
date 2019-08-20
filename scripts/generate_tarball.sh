@@ -56,5 +56,5 @@ create_symlink "eosio-abigen eosio-abigen"
 create_symlink "eosio-wasm2wast eosio-wasm2wast"
 create_symlink "eosio-wast2wasm eosio-wast2wasm"
 
-tar -cvzf $NAME ./${PREFIX}/*
+tar -cvzf $NAME.tar.gz ./${PREFIX}/*
 rm -r ${PREFIX}

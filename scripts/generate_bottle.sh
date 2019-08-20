@@ -28,7 +28,7 @@ export SPREFIX
 export SUBPREFIX
 export SSUBPREFIX
 
-bash generate_tarball.sh ${NAME}
+. ./generate_tarball.sh ${NAME}
 
 hash=`openssl dgst -sha256 ${NAME} | awk 'NF>1{print $NF}'`
 
