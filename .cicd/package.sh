@@ -48,10 +48,8 @@ else # Linux
             evars="$evars --env ${var%%=*}"
         done < "$BUILDKITE_ENV_FILE"
     fi
-    
-    echo $(pwd)
-    ls -la
-    echo "docker run $ARGS $evars $FULL_TAG bash -c \\\"$COMMANDS\\\""
+
+    echo "docker run $ARGS $evars $FULL_TAG bash -c $COMMANDS"
     eval docker run $ARGS $evars $FULL_TAG bash -c \"pwd && ls -la\"
 
     cd build/packages
