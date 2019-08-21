@@ -52,7 +52,7 @@ else # Linux
     echo $(pwd)
     ls -la
     echo "docker run $ARGS $evars $FULL_TAG bash -c \\\"$COMMANDS\\\""
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"pwd && ls -la && $COMMANDS\"
+    eval docker run $ARGS $evars $FULL_TAG bash -c \"pwd && ls -la\"
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x
