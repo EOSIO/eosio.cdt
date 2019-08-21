@@ -4,30 +4,30 @@ set -eo pipefail
 
 mkdir -p $BUILD_DIR
 
-if [[ $(uname) == 'Darwin' ]]; then
+# if [[ $(uname) == 'Darwin' ]]; then
 
-    bash -c "cd build/packages && chmod 755 ./*.sh && ./generate_package.sh brew"
+#     bash -c "cd build/packages && chmod 755 ./*.sh && ./generate_package.sh brew"
 
-    ARTIFACT='*.rb;*.tar.gz'
-    cd build/packages
-    [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x
-    buildkite-agent artifact upload "./$ARTIFACT" --agent-access-token $BUILDKITE_AGENT_ACCESS_TOKEN
-    for A in $(echo $ARTIFACT | tr ';' ' '); do
-        if [[ $(ls $A | grep -c '') == 0 ]]; then
-            echo "+++ :no_entry: ERROR: Expected artifact \"$A\" not found!"
-            pwd
-            ls -la
-            exit 1
-        fi
-    done
+#     ARTIFACT='*.rb;*.tar.gz'
+#     cd build/packages
+#     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x
+#     buildkite-agent artifact upload "./$ARTIFACT" --agent-access-token $BUILDKITE_AGENT_ACCESS_TOKEN
+#     for A in $(echo $ARTIFACT | tr ';' ' '); do
+#         if [[ $(ls $A | grep -c '') == 0 ]]; then
+#             echo "+++ :no_entry: ERROR: Expected artifact \"$A\" not found!"
+#             pwd
+#             ls -la
+#             exit 1
+#         fi
+#     done
 
-else # Linux
+# else # Linux
 
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 
     . $HELPERS_DIR/docker-hash.sh
 
-    PRE_COMMANDS="cd $MOUNTED_DIR/build/packages && chmod 755 ./*.sh"
+    PRE_COMMANDS="cd $MOUNTED_DIR/build/packages && chmod +x $MOUNTED_DIR/build/packages/*.sh"
 
     if [[ "$IMAGE_TAG" =~ "ubuntu" ]]; then
         ARTIFACT='*.deb'
@@ -49,8 +49,7 @@ else # Linux
         done < "$BUILDKITE_ENV_FILE"
     fi
 
-    echo "docker run $ARGS $evars $FULL_TAG bash -c $COMMANDS"
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"pwd && ls -la\"
+    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x
@@ -64,4 +63,4 @@ else # Linux
         fi
     done
 
-fi
+# fi
