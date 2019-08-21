@@ -5,8 +5,8 @@ set -eo pipefail
 mkdir -p $BUILD_DIR
 
 PRE_COMMANDS="cd $MOUNTED_DIR"
-PACKAGE_COMMANDS=".cicd/package-builder.sh"
-COMMANDS="$PRE_COMMANDS && $PACKAGE_COMMNADS"
+PACKAGE_COMMANDS="./.cicd/package-builder.sh"
+COMMANDS="$PRE_COMMANDS && $PACKAGE_COMMANDS"
 
 if [[ $(uname) == 'Darwin' ]]; then
 
