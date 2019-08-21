@@ -49,6 +49,7 @@ else # Linux
         done < "$BUILDKITE_ENV_FILE"
     fi
 
+    echo "docker run $ARGS $evars $FULL_TAG bash -c \\\"$COMMANDS\\\""
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 
     cd build/packages
