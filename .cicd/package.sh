@@ -27,7 +27,7 @@ else # Linux
 
     . $HELPERS_DIR/docker-hash.sh
 
-    PRE_COMMANDS="cd $MOUNTED_DIR/build/packages && chmod +x $MOUNTED_DIR/build/packages/*.sh"
+    PRE_COMMANDS="cd $MOUNTED_DIR/build/packages && chmod 755 $MOUNTED_DIR/build/packages/*.sh"
 
     if [[ "$IMAGE_TAG" =~ "ubuntu" ]]; then
         ARTIFACT='*.deb'
