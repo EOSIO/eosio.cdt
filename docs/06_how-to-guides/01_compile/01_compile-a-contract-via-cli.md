@@ -1,1 +1,2 @@
-Compile a contract with eosio-cpp
+## How to compile a contract via CLI
+TO DO: add content

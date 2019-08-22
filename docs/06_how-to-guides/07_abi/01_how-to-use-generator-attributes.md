@@ -1,4 +1,4 @@
-## ABI/Code generator attributes
+## How to use ABI/Code generator attributes
 Unlike the old ABI generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
 
 #### [[eosio::action]]

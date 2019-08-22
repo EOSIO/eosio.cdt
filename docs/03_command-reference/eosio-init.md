@@ -1,3 +1,5 @@
+## eosio-init tool
+
 This tool is used to generate a skeleton smart contract and directory structure.
 To generate a new smart contract project you can either generate a "bare" project (no CMake) or the default is to generate a CMake project.
 Example:
