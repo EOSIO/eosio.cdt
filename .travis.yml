@@ -24,20 +24,4 @@ matrix:
     services: docker
     env:
     - IMAGE_TAG='centos-7.6'
-  - os: osx
-    osx_image: xcode10.2
-    addons:
-      homebrew:
-        update: true
-        packages:
-        - automake
-        - libtool
-        - wget
-        - cmake
-        - gmp
-        - gettext
-        - doxygen
-        - graphviz
-        - lcov
-        - python@3
 script: "./.cicd/build.sh && ./.cicd/tests.sh"
