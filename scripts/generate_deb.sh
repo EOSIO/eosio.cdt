@@ -11,7 +11,7 @@ if [[ -z $RELEASE ]]; then
   RELEASE="1"
 fi
 
-NAME="${PROJECT}-ubuntu-18.04_amd64"
+NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
 
 mkdir -p ${PROJECT}/DEBIAN
 echo "Package: ${PROJECT} 
