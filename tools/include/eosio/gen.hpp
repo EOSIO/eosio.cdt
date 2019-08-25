@@ -569,12 +569,16 @@ struct generation_utils {
    inline std::string get_type_alias_string( const clang::QualType& t ) {
       if (auto dt = llvm::dyn_cast<clang::TypedefType>(t.getTypePtr()))
          return get_type(dt->desugar());
+      else if (auto dt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr()))
+         return get_type_alias_string(dt->desugar());
       return get_type(t);
    }
 
    inline std::vector<clang::QualType> get_type_alias( const clang::QualType& t ) {
       if (auto dt = llvm::dyn_cast<clang::TypedefType>(t.getTypePtr()))
          return {dt->desugar()};
+      else if (auto dt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr()))
+         return get_type_alias(dt->desugar());
       return {};
    }
 
