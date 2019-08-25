@@ -161,7 +161,6 @@ namespace eosio { namespace cdt {
             ret.base = get_type(decl->bases_begin()->getType());
             add_type(decl->bases_begin()->getType());
          }
-         std::string sub_name = "";
          for ( auto field : decl->fields() ) {
             if ( field->getName() == "transaction_extensions") {
                abi_struct ext;
@@ -173,7 +172,6 @@ namespace eosio { namespace cdt {
             }
             else {
                ret.fields.push_back({field->getName().str(), get_type(field->getType())});
-               sub_name += "_" + get_type(field->getType());
                add_type(field->getType());
             }
          }
