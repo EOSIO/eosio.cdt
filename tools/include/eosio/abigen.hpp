@@ -159,7 +159,7 @@ namespace eosio { namespace cdt {
          abi_struct ret;
          if ( decl->getNumBases() == 1 ) {
             ret.base = get_type(decl->bases_begin()->getType());
-            add_struct(decl->bases_begin()->getType().getTypePtr()->getAsCXXRecordDecl());
+            add_type(decl->bases_begin()->getType());
          }
          std::string sub_name = "";
          for ( auto field : decl->fields() ) {
