@@ -384,6 +384,14 @@ namespace eosio { namespace cdt {
             set_of_tables.insert(t);
          }
 
+         std::function<std::string(const std::string&)> get_root_name;
+         get_root_name = [&] (const std::string& name) {
+            for (auto td : _abi.typedefs)
+               if (remove_suffix(name) == td.new_type_name)
+                  return get_root_name(td.type);
+            return name;
+         };
+
          auto validate_struct = [&]( abi_struct as ) {
             if ( is_builtin_type(_translate_type(as.name)) )
                return false;
@@ -398,7 +406,7 @@ namespace eosio { namespace cdt {
                         return true;
                   }
                }
-               if (s.base == as.name)
+               if (get_root_name(s.base) == as.name)
                   return true;
             }
             for ( auto a : _abi.actions ) {
@@ -418,10 +426,13 @@ namespace eosio { namespace cdt {
 
          auto validate_types = [&]( abi_typedef td ) {
             for ( auto as : _abi.structs )
-               if (validate_struct(as))
+               if (validate_struct(as)) {
                   for ( auto f : as.fields )
                      if ( remove_suffix(f.type) == td.new_type_name )
                         return true;
+                  if (as.base == td.new_type_name)
+                     return true;
+               }
             for ( auto t : _abi.tables )
                if ( t.type == td.new_type_name )
                   return true;
