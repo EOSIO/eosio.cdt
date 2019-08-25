@@ -249,6 +249,9 @@ namespace eosio { namespace cdt {
       }
 
       void add_type( const clang::QualType& t ) {
+         if (evaluated.count(t.getTypePtr()))
+            return;
+         evaluated.insert(t.getTypePtr());
          auto type = get_ignored_type(t);
          if (!is_builtin_type(translate_type(type))) {
             if (is_aliasing(type))
@@ -470,5 +473,6 @@ namespace eosio { namespace cdt {
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;
          std::map<std::string, std::string>    rcs;
+         std::set<const clang::Type*>          evaluated;
    };
 }} // ns eosio::cdt
