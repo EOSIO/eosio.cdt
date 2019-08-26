@@ -2,8 +2,8 @@
 
 PREFIX="usr"
 SPREFIX=${PREFIX}
-SUBPREFIX="opt/${PROJECT}/${VERSION}"
-SSUBPREFIX="opt\/${PROJECT}\/${VERSION}"
+SUBPREFIX="opt/${PACKAGE}/${VERSION}"
+SSUBPREFIX="opt\/${PACKAGE}\/${VERSION}"
 RELEASE="${VERSION_SUFFIX}"
 
 # default release to "1" if there is no suffix
@@ -11,19 +11,20 @@ if [[ -z $RELEASE ]]; then
   RELEASE="1"
 fi
 
-NAME="${PACKAGE_NAME}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
+NAME="${PACKAGE}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
 
-mkdir -p ${PROJECT}/DEBIAN
-echo "Package: ${PACKAGE_NAME}
+mkdir -p ${PACKAGE}/DEBIAN
+echo "Package: ${PACKAGE}
 Version: ${VERSION_NO_SUFFIX}-${RELEASE}
 Provides: ${PROJECT}
+Conflicts: ${PROJECT}
 Replaces: ${PROJECT}
 Section: devel
 Priority: optional
 Architecture: amd64
 Homepage: ${URL} 
 Maintainer: ${EMAIL} 
-Description: ${DESC}" &> ${PROJECT}/DEBIAN/control
+Description: ${DESC}" &> ${PACKAGE}/DEBIAN/control
 
 export PREFIX
 export SUBPREFIX
@@ -32,10 +33,10 @@ export SSUBPREFIX
 
 bash generate_tarball.sh ${NAME}.tar.gz
 
-tar -xvzf ${NAME}.tar.gz -C ${PROJECT} 
-dpkg-deb --build ${PROJECT} 
+tar -xvzf ${NAME}.tar.gz -C ${PACKAGE}
+dpkg-deb --build ${PACKAGE}
 BUILDSTATUS=$?
-mv ${PROJECT}.deb ${NAME}.deb
-rm -r ${PROJECT}
+mv ${PACKAGE}.deb ${NAME}.deb
+rm -r ${PACKAGE}
 
 exit $BUILDSTATUS

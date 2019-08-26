@@ -14,14 +14,14 @@ else
    MAC_VERSION="high_sierra"
 fi
 
-NAME="${PACKAGE_NAME}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
+NAME="${PACKAGE}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
 
-mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
+mkdir -p ${PACKAGE}/${VERSION}/opt/eosio_cdt/lib/cmake
 
-PREFIX="${PROJECT}/${VERSION}"
+PREFIX="${PACKAGE}/${VERSION}"
 SPREFIX="\/usr\/local"
-SUBPREFIX="opt/${PROJECT}"
-SSUBPREFIX="opt\/${PROJECT}"
+SUBPREFIX="opt/${PACKAGE}"
+SSUBPREFIX="opt\/${PACKAGE}"
 
 export PREFIX
 export SPREFIX
@@ -41,8 +41,6 @@ echo "class Eoscc < Formula
    
    option :universal
 
-   conflicts_with \"EosioCdt\", :because => "Provides same executables and libraries"
-
    depends_on \"cmake\" => :build
    depends_on \"automake\" => :build
    depends_on \"libtool\" => :build
@@ -60,10 +58,13 @@ echo "class Eoscc < Formula
       root_url \"https://github.com/turnpike2/eoscc/releases/download/v${VERSION}\"
       sha256 \"${hash}\" => :${MAC_VERSION}
    end
+
+   conflicts_with \"eosio.cdt\", :because => \"Provides same executables and libraries\"
+
    def install
       raise \"Error, only supporting binary packages at this time\"
    end
 end
-__END__" &> eosio.cdt.rb
+__END__" &> ${PACKAGE}.rb
 
-rm -r ${PROJECT}
+rm -r ${PACKAGE}
