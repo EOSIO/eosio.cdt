@@ -136,8 +136,31 @@ extern "C" {
             std::string s = eosio::name(nm).to_string();
             prints_l(s.c_str(), s.length());
          });
+      intrinsics::set_intrinsic<intrinsics::printhex>([](const void* data, uint32_t len) {
+            constexpr static uint32_t max_stack_buffer_size = 512;
+            const char* hex_characters = "0123456789abcdef";
 
-      jmp_ret = setjmp(env); 
+            uint32_t buffer_size = 2*len;
+            if(buffer_size < len) eosio_assert( false, "length passed into printhex is too large" );
+
+            void* buffer = (max_stack_buffer_size < buffer_size) ? malloc(buffer_size) : alloca(buffer_size);
+
+            char*          b = reinterpret_cast<char*>(buffer);
+            const uint8_t* d = reinterpret_cast<const uint8_t*>(data);
+            for( uint32_t i = 0; i < len; ++i ) {
+               *b = hex_characters[d[i] >> 4];
+               ++b;
+               *b = hex_characters[d[i] & 0x0f];
+               ++b;
+            }
+
+            prints_l(reinterpret_cast<const char*>(buffer), buffer_size);
+
+            if(max_stack_buffer_size < buffer_size) free(buffer);
+         });
+
+
+      jmp_ret = setjmp(env);
       if (jmp_ret == 0) {
          ret_val = main(argc, argv);
       } else {
