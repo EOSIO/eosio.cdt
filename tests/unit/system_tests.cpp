@@ -15,8 +15,6 @@ using eosio::check;
 
 // Definitions in `eosio.cdt/libraries/eosiolib/system.hpp`
 EOSIO_TEST_BEGIN(system_test)
-   silence_output(true);
-
    // ------------------------------------
    // inline void check(bool, const char*)
    CHECK_ASSERT( "asserted", []() { const char* str{"asserted"}; check(false, str);} );
@@ -43,11 +41,15 @@ EOSIO_TEST_BEGIN(system_test)
    CHECK_ASSERT("100", []() { check(false, 100);} );
    CHECK_ASSERT("18446744073709551615", []() { check(false, 18446744073709551615ULL);} );
    CHECK_ASSERT("18446744073709551615", []() { check(false, -1ULL);} );
-
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(system_test);
    return has_failed();
 }
