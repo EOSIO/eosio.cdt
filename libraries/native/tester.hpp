@@ -83,13 +83,13 @@ inline bool expect_print(bool check, const std::string& li, const char (&expecte
 }
 
 #define CHECK_ASSERT(...) \
-   ___has_failed |= expect_assert(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
+   ___has_failed &= expect_assert(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
 
 #define REQUIRE_ASSERT(...) \
    expect_assert(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
 
 #define CHECK_PRINT(...) \
-   ___has_failed |= expect_print(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
+   ___has_failed &= expect_print(true, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)), __VA_ARGS__);
 
 #define REQUIRE_PRINT(...) \
    expect_print(false, std::string(__FILE__)+":"+__func__+":"+(std::to_string(__LINE__)),  __VA_ARGS__);
