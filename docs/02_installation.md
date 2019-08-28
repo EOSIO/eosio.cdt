@@ -44,7 +44,7 @@ $ sudo yum install ./eosio.cdt-1.6.1-1.centos-x86_64.rpm
 $ sudo yum remove eosio.cdt
 ```
 
-## Guided Installation (Building from Scratch)
+## Guided Installation or Building from Scratch
 ```sh
 $ git clone --recursive https://github.com/eosio/eosio.cdt
 $ cd eosio.cdt
@@ -54,7 +54,6 @@ $ sudo ./install.sh
 
 ## Installed Tools
 ---
-TO DO: is below list correct? is any of them deprecated? eosio-abimerge should it be listed here?
 * eosio-cpp
 * eosio-cc
 * eosio-ld
@@ -67,14 +66,12 @@ TO DO: is below list correct? is any of them deprecated? eosio-abimerge should i
 * eosio-objdump
 * eosio-readelf
 
-TO DO: 
-these tools are not installed after brew install, how can I get them?
+Below tools are not installed after brew install, you get them only by building the repository and installing from scracth, [see here](#guided_installation_or_building_from_scratch)
 eosio-abidiff
 eosio-ranlib
 eosio-ar
 eosio-objdump
 eosio-readelf
-eosio-merge
 
 
 License

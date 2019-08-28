@@ -11,7 +11,7 @@ Follow these steps to compile your contract
 1. Navigate to the hello folder in examples (./examples/hello)
 2. You should then see the ./src/hello.cpp file
 3. Now run following commands:
-```
+```sh
 $ mkdir build
 $ cd build
 $ cmake ..
