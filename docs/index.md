@@ -11,19 +11,21 @@ EOSIO.CDT Version 1.3.x introduced quite a few breaking changes. To have binary 
 ## Concepts
 
 ### Dispatcher and Notifications
-TO DO: Add link to the dispatcher and notifications documentation, where can I find it?
 [Dispatcher API reference](https://eosio.github.io/eosio.cdt/1.6.0/group__dispatcher.html)
+[schemata:link to glossary]
 
 ### Multi Index Table and RAM
 [Multi Index Tables explained by example](https://developers.eos.io/eosio-cpp/docs/using-multi-index-tables)
+[schemata:link to glossary]
 
 ### Smart Contract
+[schemata:link to glossary]
 
 ### Action
+[schemata:link to glossary]
 
 ### Transaction and Deferred Transaction
-
-TO DO: Any other concepts that need to go here?
+[schemata:link to glossary]
 
 ## Contributing
 
