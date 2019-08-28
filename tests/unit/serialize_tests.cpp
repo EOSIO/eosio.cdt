@@ -52,8 +52,6 @@ struct D2 : public D1 {
 
 // Definitions in `eosio.cdt/libraries/eosio/serialize.hpp`
 EOSIO_TEST_BEGIN(serialize_test)
-   silence_output(true);
-
    static constexpr uint16_t buffer_size{256};
    char ds_buffer[buffer_size]{}; // Buffer for the datastream to point to
    char ds_expected_buffer[buffer_size]{}; // Buffer to compare `ds_buffer` with
@@ -81,7 +79,7 @@ EOSIO_TEST_BEGIN(serialize_test)
    ds_expected << d1.c << d1.i;
    ds << d1;
    REQUIRE_EQUAL( memcmp( ds_buffer, ds_expected_buffer, 256), 0 )
-   
+
    ds.seekp(0);
    ds >> dd1;
    REQUIRE_EQUAL( d1, dd1 )
@@ -97,15 +95,19 @@ EOSIO_TEST_BEGIN(serialize_test)
    ds_expected << d2.c << d2.i << d2.v;
    ds << d2;
    REQUIRE_EQUAL( memcmp( ds_buffer, ds_expected_buffer, 256), 0 )
-   
+
    ds.seekp(0);
    ds >> dd2;
    REQUIRE_EQUAL( d2, dd2 )
-   
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(serialize_test)
    return has_failed();
 }

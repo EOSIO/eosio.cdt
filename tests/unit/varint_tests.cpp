@@ -23,13 +23,11 @@ static constexpr int32_t i32max = numeric_limits<int32_t>::max(); //  2147483647
 
 // Defined in `eosio.cdt/libraries/eosio/varint.hpp`
 EOSIO_TEST_BEGIN(unsigned_int_type_test)
-   silence_output(false);
-
    //// unsigned_int(uint32_t)
    CHECK_EQUAL( unsigned_int{}.value, 0 )
    CHECK_EQUAL( unsigned_int{u32min}.value, 0 )
    CHECK_EQUAL( unsigned_int{u32max}.value, 4294967295 )
-   
+
    //// unsigned_int(T)
    CHECK_EQUAL( unsigned_int{uint8_t{0}}.value,  0 )
    CHECK_EQUAL( unsigned_int{uint16_t{1}}.value, 1 )
@@ -116,21 +114,17 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
    datastream<const char*> ds{datastream_buffer, buffer_size};
-   
+
    static const unsigned_int cui{42};
    unsigned_int ui{};
    ds << cui;
    ds.seekp(0);
    ds >> ui;
    CHECK_EQUAL( cui, ui)
-   
-   silence_output(false);
 EOSIO_TEST_END
 
 // Defined in `eosio.cdt/libraries/eosio/varint.hpp`
 EOSIO_TEST_BEGIN(signed_int_type_test)
-   silence_output(false);
-   
    //// signed_int(uint32_t)
    CHECK_EQUAL( signed_int{}.value, 0 )
    CHECK_EQUAL( signed_int{i32min}.value, -2147483648 )
@@ -256,11 +250,15 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
    CHECK_EQUAL( b, bb )
    CHECK_EQUAL( c, cc )
    CHECK_EQUAL( d, dd )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(unsigned_int_type_test)
    EOSIO_TEST(signed_int_type_test);
    return has_failed();

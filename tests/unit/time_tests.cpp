@@ -26,8 +26,6 @@ static constexpr uint32_t u32max = numeric_limits<uint32_t>::max(); // 429496729
 
 // Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(microseconds_type_test)
-silence_output(true);
-
    //// explicit microseconds(uint64_t)/int64_t count()
    CHECK_EQUAL( microseconds{}._count, 0ULL )
    CHECK_EQUAL( microseconds{i64max}._count, i64max )
@@ -120,20 +118,16 @@ silence_output(true);
    CHECK_EQUAL( days(0LL),  microseconds{0LL} )
    CHECK_EQUAL( days(1LL),  microseconds{24LL*60LL*60LL*1000000LL} )
    CHECK_EQUAL( days(60LL), microseconds{24LL*60LL*60LL*60LL*1000000LL} )
-   
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(time_point_type_test)
-   silence_output(true);
-
    static const microseconds ms0 { 0LL};
    static const microseconds ms1 { 1LL};
    static const microseconds msn1{-1LL};
    static const microseconds ms_min{i64min};
    static const microseconds ms_max{i64max};
-   
+
    //// explicit time_point(microseconds)
    // microseconds& time_since_epoch()
    CHECK_EQUAL( time_point{ms0}.time_since_epoch(), ms0 )
@@ -172,7 +166,7 @@ EOSIO_TEST_BEGIN(time_point_type_test)
    // time_point& operator+=(const microseconds&)
    CHECK_EQUAL( (time_point{ms0} += ms1), time_point{ms1}  )
    CHECK_EQUAL( (time_point{msn1} += ms1), time_point{ms0} )
-   
+
    // -------------------------------------------
    // time_point& operator-=(const microseconds&)
    CHECK_EQUAL( (time_point{ms0} -= ms1), time_point{msn1} )
@@ -207,14 +201,10 @@ EOSIO_TEST_BEGIN(time_point_type_test)
    // bool operator>=(const time_point&)
    CHECK_EQUAL( (time_point{ms1} >= time_point{ms1}), true  )
    CHECK_EQUAL( (time_point{ms0} >= time_point{ms1}), false )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(time_point_sec_type_test)
-   silence_output(true);
-
    static const microseconds ms0 { 0LL};
    static const microseconds ms1 { 1LL};
    static const microseconds msn1{-1LL};
@@ -255,7 +245,7 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    // operator time_point()const
    CHECK_EQUAL( time_point_sec{u32min}.operator time_point(), time_point{microseconds{static_cast<int64_t>(u32min)*1000000}} )
    CHECK_EQUAL( time_point_sec{u32max}.operator time_point(), time_point{microseconds{static_cast<int64_t>(u32max)*1000000}} )
-   
+
    // -------------------------------------------
    // time_point_sec operator=(const time_point&)
    CHECK_EQUAL( (time_point_sec{} = tp0), time_point_sec{} )
@@ -280,14 +270,14 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    CHECK_EQUAL( (time_point_sec{0} - microseconds{-1000000LL}), time_point{microseconds{ 1000000LL}} )
    CHECK_EQUAL( (time_point_sec{1} - microseconds{ 1000000LL}), time_point{microseconds{       0LL}} )
    CHECK_EQUAL( (time_point_sec{1} - microseconds{-1000000LL}), time_point{microseconds{ 2000000LL}} )
-   
+
    // ---------------------------------------------------------------------------
    // friend microseconds operator-(const time_point_sec&, const time_point_sec&)
    CHECK_EQUAL( (time_point_sec{0} - time_point_sec{0}), microseconds{       0LL} )
    CHECK_EQUAL( (time_point_sec{0} - time_point_sec{1}), microseconds{-1000000LL} )
    CHECK_EQUAL( (time_point_sec{1} - time_point_sec{0}), microseconds{ 1000000LL} )
    CHECK_EQUAL( (time_point_sec{1} - time_point_sec{1}), microseconds{       0LL} )
-   
+
    // -----------------------------------------------------------------------
    // friend microseconds operator-(const time_point&, const time_point_sec&)
    CHECK_EQUAL( (time_point{microseconds{0}} - time_point_sec{0}), microseconds{       0LL} )
@@ -374,14 +364,10 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    // friend bool operator>=(const time_point_sec&, const time_point_sec&)
    CHECK_EQUAL( (time_point_sec{1} >= time_point_sec{1}), true  )
    CHECK_EQUAL( (time_point_sec{1} >= time_point_sec{2}), false )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/time.hpp`
 EOSIO_TEST_BEGIN(block_timestamp_type_test)
-   silence_output(true);
-
    static const int64_t bt_epoch{946684800000LL};
 
    static const microseconds ms0{bt_epoch*1000};
@@ -402,7 +388,7 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    CHECK_EQUAL( block_timestamp{}.slot, 0 )
    CHECK_EQUAL( block_timestamp{u32min}.slot, u32min )
    CHECK_EQUAL( block_timestamp{u32max}.slot, u32max )
-   
+
    //// block_timestamp(const time_point&)
    // void set_time_point(const time_point&)
    CHECK_EQUAL( block_timestamp{tp0}.slot, 0 )
@@ -436,7 +422,7 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    CHECK_EQUAL( block_timestamp{1}.to_time_point(), time_point{microseconds{(1*500+bt_epoch)*1000}} )
    CHECK_EQUAL( block_timestamp{2}.to_time_point(), time_point{microseconds{(2*500+bt_epoch)*1000}} )
    CHECK_EQUAL( block_timestamp{3}.to_time_point(), time_point{microseconds{(3*500+bt_epoch)*1000}} )
-   
+
    // --------------------------
    // operator time_point()const
    CHECK_EQUAL( block_timestamp{1}.operator time_point(), time_point{microseconds{(1*500+bt_epoch)*1000}} )
@@ -482,11 +468,15 @@ EOSIO_TEST_BEGIN(block_timestamp_type_test)
    // bool operator>=(const block_timestamp&)
    CHECK_EQUAL( block_timestamp{1} >= block_timestamp{1}, true  )
    CHECK_EQUAL( block_timestamp{1} >= block_timestamp{2}, false )
-   
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(microseconds_type_test);
    EOSIO_TEST(time_point_type_test);
    EOSIO_TEST(time_point_sec_type_test);
