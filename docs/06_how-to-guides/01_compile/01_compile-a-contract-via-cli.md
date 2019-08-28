@@ -9,18 +9,14 @@ Follow these steps to compile your contract
 ---
 
 1. Navigate to the hello folder in examples (./examples/hello)
-2. You should then see the hello.cpp file
-3. Now run the compiler
-```
-$ eosio-cpp -abigen hello.cpp -o hello.wasm
-```
-4. Or with CMake
+2. You should then see the ./src/hello.cpp file
+3. Now run following commands:
 ```
 $ mkdir build
 $ cd build
-$ cmake ..
-$ make
+$ eosio-cpp -abigen ../src/hello.cpp -o hello.wasm -I ../include/
 ```
+
 This will generate two files:
 - The compiled binary wasm (hello.wasm)
 - The generated ABI file (hello.abi)
