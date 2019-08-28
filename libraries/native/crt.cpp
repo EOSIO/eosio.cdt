@@ -13,7 +13,7 @@ eosio::cdt::output_stream std_err;
 extern "C" {
    int main(int, char**);
    char* _mmap();
-   
+
    static jmp_buf env;
    static jmp_buf test_env;
    static volatile int jmp_ret;
@@ -25,7 +25,8 @@ extern "C" {
    void ___putc(char c);
    bool ___disable_output;
    bool ___has_failed;
-   
+   bool ___earlier_unit_test_has_failed;
+
    void* __get_heap_base() {
       return ___heap_base_ptr;
    }
@@ -79,6 +80,8 @@ extern "C" {
       ___pages = 1;
       ___disable_output = false;
       ___has_failed = false;
+      ___earlier_unit_test_has_failed = false;
+
       // preset the print functions
       intrinsics::set_intrinsic<intrinsics::prints_l>([](const char* cs, uint32_t l) {
             _prints_l(cs, l, eosio::cdt::output_stream_kind::std_out);
@@ -106,9 +109,9 @@ extern "C" {
             memcpy(buff, ret.c_str(), ret.size());
             v -= (int)v;
             buff[ret.size()] = '.';
-            size_t size = ret.size(); 
+            size_t size = ret.size();
             for (size_t i=size+1; i < size+10; i++) {
-               v *= 10; 
+               v *= 10;
                buff[i] = ((int)v)+'0';
                v -= (int)v;
             }
@@ -120,9 +123,9 @@ extern "C" {
             memcpy(buff, ret.c_str(), ret.size());
             v -= (long)v;
             buff[ret.size()] = '.';
-            size_t size = ret.size(); 
+            size_t size = ret.size();
             for (size_t i=size+1; i < size+10; i++) {
-               v *= 10; 
+               v *= 10;
                buff[i] = ((int)v)+'0';
                v -= (int)v;
             }
@@ -168,7 +171,7 @@ extern "C" {
       }
       return ret_val;
    }
-   
+
    extern "C" void* memset(void*, int, size_t);
    extern "C" void __bzero(void* to, size_t cnt) {
       char* cp{static_cast<char*>(to)};
