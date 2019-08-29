@@ -15,8 +15,6 @@ using eosio::string;
 
 // Definitions found in `eosio.cdt/libraries/eosiolib/core/eosio/string.hpp`
 EOSIO_TEST_BEGIN(string_test)
-   silence_output(false);
-
    //// template <size_t N>
    //// string(const char (&str)[N])
    {
@@ -1025,7 +1023,7 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_EQUAL( eostr.size(), 6 )
       CHECK_EQUAL( eostr.capacity(), 12 )
       CHECK_EQUAL( strcmp(eostr.c_str(), "0hello") , 0 )
-         
+
       eostr.insert(0, "h", 1);
       CHECK_EQUAL( eostr.size(), 7 )
       CHECK_EQUAL( eostr.capacity(), 12 )
@@ -1494,11 +1492,15 @@ EOSIO_TEST_BEGIN(string_test)
       ds >> str;
       CHECK_EQUAL( cstr, str )
    }
-
-silence_output(false);
 EOSIO_TEST_END
 
-int main() {
+int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(string_test)
    return has_failed();
 }
