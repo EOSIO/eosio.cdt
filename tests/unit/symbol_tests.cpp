@@ -192,12 +192,10 @@ EOSIO_TEST_BEGIN(symbol_type_test)
 
    // ---------------------
    // void print(bool)const
-   // Note:
-   // This function prints the length of the symbol at the very end
-   CHECK_PRINT( "0,A1", [&](){symbol{"A", 0}.print(true);} );
-   CHECK_PRINT( "0,Z1", [&](){symbol{"Z", 0}.print(true);} );
-   CHECK_PRINT( "255,AAAAAAA7", [&](){symbol{"AAAAAAA", 255}.print(true);} );
-   CHECK_PRINT( "255,ZZZZZZZ7", [&](){symbol{"ZZZZZZZ", 255}.print(true);} );
+   CHECK_PRINT( "0,A", [&](){symbol{"A", 0}.print(true);} );
+   CHECK_PRINT( "0,Z", [&](){symbol{"Z", 0}.print(true);} );
+   CHECK_PRINT( "255,AAAAAAA", [&](){symbol{"AAAAAAA", 255}.print(true);} );
+   CHECK_PRINT( "255,ZZZZZZZ", [&](){symbol{"ZZZZZZZ", 255}.print(true);} );
 
    // --------------------------------------------------------------
    // friend constexpr bool operator==(const symbol&, const symbol&)
