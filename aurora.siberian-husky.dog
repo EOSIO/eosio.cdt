@@ -1,4 +1,4 @@
-Automation Demo: Ship CDT Pipeline 2.0!
+Automation Demo: Travis CI Pipeline
 
 ## Change Description
 The purpose of this pull request is to show that pull requests opened from a community fork of [eosio.cdt](https://github.com/EOSIO/eosio.cdt) will trigger our new [Travis CI pipeline](https://travis-ci.com/EOSIO/eosio.cdt/pull_requests).  
