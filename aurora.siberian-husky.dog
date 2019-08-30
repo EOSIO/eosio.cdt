@@ -1,14 +1,1 @@
-Automation Demo: Ship CDT Buildkite Pipeline 2.0!
-
-## Change Description
-The purpose of this pull request is to show that pull requests opened from an internal branch on [eosio.cdt](https://github.com/EOSIO/eosio.cdt) will trigger our new [Buildkite pipeline 2.0](https://buildkite.com/EOSIO/eosio-dot-cdt).  
-   
-This pull request will be closed after automation demos. 
-
-## API Changes
-- [ ] API Changes
-None.
-
-## Documentation Additions
-- [ ] Documentation Additions
-None.
+I made some change here for our automation demos. Yay, automation is the best!
