@@ -52,3 +52,6 @@ __singleton_example.cpp__
       singleton_instance.get().secondary_value);
    }
 ```
+
+__Note__
+A full example project demonstrating the instantiation and usage of singleton can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/singleton_example).

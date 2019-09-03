@@ -1,6 +1,6 @@
 ## How to define a primary index
 
-How to declare and instantiate an instance of a multi index table can be found [here](./how-to-instantiate-a-multi_index-table.md), and as par of the definition of the multi index table, the definition of a primary index is mandatory. You can find in the how to section linked previously the full example of a multi index table including the primary index definition.
+How to declare and instantiate an instance of a multi index table can be found [here](./how-to-instantiate-a-multi-index-table.md), and as par of the definition of the multi index table, the definition of a primary index is mandatory. You can find in the how to section linked previously the full example of a multi index table including the primary index definition.
 
 For a quick reference of how a primary index is defined see below:
 
