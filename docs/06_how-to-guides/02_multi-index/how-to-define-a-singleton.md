@@ -2,6 +2,7 @@
 
 This an example of how you can define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`; the structure testtable can be extended to be defined by multiple data members, here we defined only two for demonstration purposes.
 
+__singleton_example.hpp__
 ```cpp
 #include <eosio/eosio.hpp>
 #include <eosio/name.hpp>
@@ -34,6 +35,7 @@ CONTRACT singleton_example : public contract {
 
 And below is a possible implementation for the two `get` and `set` actions defined above and demonstrate the usage of a couple of singleton methods. Note that the `set` action makes use of the singleton's `set` method for which parameter is the account to pay for the new value stored, in this case, the same account name that is stored in the primary value, however, it can be a different account if the so required.
 
+__singleton_example.cpp__
 ```cpp
    #include <singleton_example.hpp>
 
