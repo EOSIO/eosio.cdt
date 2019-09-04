@@ -1,6 +1,3 @@
 ## How to modify the structure of a multi index table
-TO DO: add content
-https://dash.readme.io/project/eosio-home/v2.3.9/docs/secondary-indices
 
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+Currently on EOSIO platform the multi index table structure can not be modified after the multi index table has been defined and deployed through a contract the first time. That is very important to know when you design your table structure based on your requirements. Subsequent versions of your contract if they will need to modify the table structure the only way to do it would be by creating an adition table with the new structure and either migrate the old data to the new table or use both tables. If a migration strategy of old data to the new table will be implemented very good care has to be employed while doing it to avoid loss of data.
