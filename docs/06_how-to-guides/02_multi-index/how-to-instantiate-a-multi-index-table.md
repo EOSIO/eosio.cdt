@@ -1,6 +1,6 @@
 ## How to instantiate a multi index table
 
-Prerequisites: To instantiate a multi index table you need to make use of the eosio::multi_index template, create a struct which can be stored in the multi index table, and define getters on the fields you want to index. Remember that one of these getters must be named "primary_key()", if you don't have this the compiler (eosio-cpp) will generate an error it can't find the field to use as the primary key.
+Prerequisites: To instantiate a multi index table you need to make use of the `eosio::multi_index` template, create a struct which can be stored in the multi index table, and define getters on the fields you want to index. Remember that one of these getters must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error it can't find the field to use as the primary key.
 
 One example to accomplish this is exemplified below.
 
