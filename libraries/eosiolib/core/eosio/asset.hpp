@@ -347,7 +347,7 @@ namespace eosio {
          }
 
          char* end_of_number = write_decimal( begin, end, false, abs_amount, precision, negative );
-         *(end_of_number) = ' ';;
+         *(end_of_number) = ' ';
 
          return symbol.code().write_as_string( end_of_number + 1, end );
       }
