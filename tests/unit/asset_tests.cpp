@@ -122,6 +122,18 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    CHECK_EQUAL( (asset{ 1LL, sym_no_prec}.to_string()),  "1 SYMBOLL" )
    CHECK_EQUAL( (asset{-1LL, sym_no_prec}.to_string()), "-1 SYMBOLL" )
+   CHECK_EQUAL( (asset{-1LL, symbol{"SYMBOLL", 1}}.to_string()), "-0.1 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 1LL, symbol{"SYMBOLL", 1}}.to_string()),  "0.1 SYMBOLL" )
+   CHECK_EQUAL( (asset{-12LL, sym_no_prec}.to_string()), "-12 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 12LL, sym_no_prec}.to_string()),  "12 SYMBOLL" )
+   CHECK_EQUAL( (asset{-123LL, sym_no_prec}.to_string()), "-123 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 123LL, sym_no_prec}.to_string()),  "123 SYMBOLL" )
+   CHECK_EQUAL( (asset{-12LL, symbol{"SYMBOLL", 2}}.to_string()), "-0.12 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 12LL, symbol{"SYMBOLL", 2}}.to_string()),  "0.12 SYMBOLL" )
+   CHECK_EQUAL( (asset{-12LL, symbol{"SYMBOLL", 1}}.to_string()), "-1.2 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 12LL, symbol{"SYMBOLL", 1}}.to_string()),  "1.2 SYMBOLL" )
+   CHECK_EQUAL( (asset{-123LL, symbol{"SYMBOLL", 2}}.to_string()), "-1.23 SYMBOLL" )
+   CHECK_EQUAL( (asset{ 123LL, symbol{"SYMBOLL", 2}}.to_string()),  "1.23 SYMBOLL" )
    CHECK_EQUAL( (asset{ 1LL, sym_prec}.to_string()),
                 "0.000000000000000000000000000000000000000000000000000000000000001 SYMBOLL" )
    CHECK_EQUAL( (asset{-1LL, sym_prec}.to_string()),
@@ -129,6 +141,8 @@ EOSIO_TEST_BEGIN(asset_type_test)
 
    CHECK_EQUAL( (asset{asset_min, sym_no_prec}.to_string()), "-4611686018427387903 SYMBOLL" )
    CHECK_EQUAL( (asset{asset_max, sym_no_prec}.to_string()),  "4611686018427387903 SYMBOLL" )
+   CHECK_EQUAL( (asset{asset_min, symbol{"SYMBOLL", 2}}.to_string()), "-46116860184273879.03 SYMBOLL" )
+   CHECK_EQUAL( (asset{asset_max, symbol{"SYMBOLL", 2}}.to_string()),  "46116860184273879.03 SYMBOLL" )
    CHECK_EQUAL( (asset{asset_min, sym_prec}.to_string()),
                 "-0.000000000000000000000000000000000000000000004611686018427387903 SYMBOLL" )
    CHECK_EQUAL( (asset{asset_max, sym_prec}.to_string()),
