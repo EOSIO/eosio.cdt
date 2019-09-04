@@ -27,8 +27,9 @@ __Second__, in the `test_table` alias definition (typedef), add the definition o
   typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 ```
 
-The full code with all the changes described above will look like this:
+The full contract definition code with all the changes described above will look like this:
 
+__multi_index_example.hpp__
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
