@@ -12,7 +12,7 @@ ACTION multi_index_example::set( name user ) {
 
 ACTION multi_index_example::print( name user ) {
    auto itr = testtab.find(user.value);
-   check( itr != testtab.end(), "test table not set" );
+   check( itr != testtab.end(), "user does not exist in table" );
    eosio::print_f("Test Table : {%, %, %}\n", itr->test_primary, itr->secondary, itr->datum);
 }
 
@@ -26,9 +26,22 @@ ACTION multi_index_example::bysec( name secid ) {
 
 ACTION multi_index_example::mod( name user, uint32_t n ) {
    auto itr = testtab.find(user.value);
-   check( itr != testtab.end(), "test table not set" );
+   check( itr != testtab.end(), "user does not exist in table" );
    testtab.modify( itr, _self, [&]( auto& row ) {
       row.secondary = user;
       row.datum = n;
    });
+}
+
+ACTION multi_index_example::del( name user ) {
+  // check if the user already exists
+  auto itr = testtab.find(user.value);
+  if ( itr == testtab.end() ) {
+    printf("user does not exist in table, nothing to delete" );
+    return;
+  }
+
+  // if we got so far it means user exists so we can delete it using 
+  // the iterator found based on its primary key
+  testtab.erase( itr );
 }
