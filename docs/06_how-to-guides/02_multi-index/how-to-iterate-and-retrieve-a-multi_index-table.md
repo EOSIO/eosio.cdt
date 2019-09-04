@@ -65,7 +65,7 @@ Let's add to the above multi index example contract an action `print` which gets
     auto itr = testtab.find(user.value);
     
     // asserts if the row was found for user parameter, if fails use the given message
-    check( itr != testtab.end(), "test table not set" );
+    check( itr != testtab.end(), "user does not exist in table" );
 
     // prints the test_primary and datum fields stored for user parameter
     eosio::print_f("Test Table : {%, %}\n", itr->test_primary, itr->datum);
@@ -141,7 +141,7 @@ ACTION multi_index_example::print( name user ) {
   auto itr = testtab.find(user.value);
   
   // asserts if the row was found for user parameter, if fails use the given message
-  check( itr != testtab.end(), "test table not set" );
+  check( itr != testtab.end(), "user does not exist in table" );
 
   // prints the test_primary and datum fields stored for user parameter
   eosio::print_f("Test Table : {%, %}\n", itr->test_primary, itr->datum);
