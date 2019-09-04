@@ -12,7 +12,7 @@ For a quick reference of how a primary index is defined see below:
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
-      // mandatory definition for primary index
+      // mandatory definition for primary key getter
       uint64_t primary_key( ) const { return test_primary.value; }
     };
     

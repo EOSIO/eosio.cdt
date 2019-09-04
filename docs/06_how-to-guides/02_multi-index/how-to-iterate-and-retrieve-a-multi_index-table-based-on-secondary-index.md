@@ -1,6 +1,8 @@
 ## How to iterate and retreive a multi index table based on secondary index
 
-Prerequisites: It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md), like below:
+Prerequisites: It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
+
+Let's work with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi index table with two indexes, a mandatory primary one and a secondary one:
 
 ```cpp
 #include <eosio/eosio.hpp>
@@ -26,12 +28,13 @@ CONTRACT multi_index_example : public contract {
         name secondary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 
@@ -98,12 +101,13 @@ CONTRACT multi_index_example : public contract {
         name secondary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 

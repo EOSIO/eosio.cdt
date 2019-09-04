@@ -15,7 +15,7 @@ __First__, you have to add a second field `secondary` to the data structure that
     name secondary;
     // additional data stored in table row
     uint64_t datum;
-    // mandatory definition for primary index
+    // mandatory definition for primary key getter
     uint64_t primary_key( ) const { return test_primary.value; }
     uint64_t by_secondary( ) const { return secondary.value; }
   };
@@ -54,12 +54,13 @@ CONTRACT multi_index_example : public contract {
         name secondary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 

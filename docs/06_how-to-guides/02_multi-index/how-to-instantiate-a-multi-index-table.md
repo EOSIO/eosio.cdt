@@ -1,6 +1,7 @@
 ## How to instantiate a multi index table
 
-Prerequisites: To instantiate a multi index table you need to make use of the eosio::multi_index template and to define the structure of the table row data first along with the primary index which has to be based on an existing field. The definition of the primary index is mandatory.
+Prerequisites: To instantiate a multi index table you need to make use of the eosio::multi_index template, create a struct which can be stored in the multi index table, and define getters on the fields you want to index. Remember that one of these getters must be named "primary_key()", if you don't have this the compiler (eosio-cpp) will generate an error it can't find the field to use as the primary key.
+
 One example to accomplish this is exemplified below.
 
 __multi_index_example.hpp__
@@ -27,11 +28,12 @@ CONTRACT multi_index_example : public contract {
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 

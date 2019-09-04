@@ -28,11 +28,12 @@ CONTRACT multi_index_example : public contract {
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 
@@ -97,11 +98,12 @@ CONTRACT multi_index_example : public contract {
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
-        // mandatory definition for primary index
+        // mandatory definition for primary key getter
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`
+      // for ease of use we define a type alias `test_tables`, based on the multi_index
+      // template type, parametarized with the test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 
       // here we declare a data member of type test_tables, it gets instantiated 
