@@ -33,12 +33,12 @@ CONTRACT multi_index_example : public contract {
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`, based on the multi_index
-      // template type, parametarized with the test_table data structure, and the secondary index
+      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // based on the multi_index template type, parametarized with a random name, the 
+      // test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
-      // here we declare a data member of type test_tables, it gets instantiated 
-      // in the constructor of our contract class
+      // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       ACTION set( name user );
@@ -106,12 +106,12 @@ CONTRACT multi_index_example : public contract {
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // for ease of use we define a type alias `test_tables`, based on the multi_index
-      // template type, parametarized with the test_table data structure, and the secondary index
+      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // based on the multi_index template type, parametarized with a random name, the 
+      // test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
-      // here we declare a data member of type test_tables, it gets instantiated 
-      // in the constructor of our contract class
+      // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       ACTION set( name user );
