@@ -16,7 +16,7 @@ If you want to keep the existing data there are two ways to do it:
 To learn how to modify the structure using binary extensions please read this [tutorial](../../09_tutorials/01_binary-extension.md).
 
 ### 2.2. Using ABI variants
-To learn how to modify the structure using ABI variants please read this [tutorial](../../09_tutorials/02_abi_variants.md).
+To learn how to modify the structure using ABI variants please read this [tutorial](../../09_tutorials/02_abi-variants.md).
 
 ### 2.3. Migrate the existing data to a second table
 
