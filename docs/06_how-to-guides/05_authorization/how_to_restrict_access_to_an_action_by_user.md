@@ -16,7 +16,7 @@ void hi( name user ) {
 
 ### Using require_auth2
 
-The below code is enforcing the action hi to be executed only by the account that is sent as paramater to the action and only if the permission used to sign the transaction is the 'active' one, that is, if the same user is signing the transaction with a different permission (e.g. code, owner) the execution of the action is halted.
+The below code is enforcing the action `hi` to be executed only by the account that is sent as paramater to the action and only if the permission used to sign the transaction is the 'active' one, that is, if the same user is signing the transaction with a different permission (e.g. code, owner) the execution of the action is halted.
 
 ```cpp
 #include <capi/eosio/action.h>
