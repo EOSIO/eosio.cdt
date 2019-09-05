@@ -1,29 +1,29 @@
-## How to modify the structure of a multi index table
+# How to modify the structure of a multi index table
 
 Modifying a multi index table structure that has already been deployed to an EOSIO based blockchain has to be done depending on your requirements by following different strategies which we are outlining below:
 
-### 1. If you don't mind to lose the existing data
+## 1. If you don't mind to lose the existing data
 
 If you don't mind to lose the data from the initial table you can follow these two steps:
 1.1. Erase all records from first table
 1.2.Deploy a new contract with modified table structure
 
-### 2. If you want to keep the existing data
+## 2. If you want to keep the existing data
 
 If you want to keep the existing data there are two ways to do it:
 
-#### 2.1. Using binary extentions
+### 2.1. Using binary extentions
 To learn how to modify the structure using binary extensions please read this [tutorial](../../09_tutorials/binary-extension.md).
 
-#### 2.2. Migrate the existing data to a second table
+### 2.2. Migrate the existing data to a second table
 
-##### 2.2.1. Migration without downtime, but slower
+#### 2.2.1. Migration without downtime, but slower
 
 1. Create the new version of your multi index table alongside the old one,
 2. Transfer data from the old table to the new one. You may do so as part of your normal access pattern, first checking the new table to see if the entry you seek is present and if not, check the original table, and if it's present, migrate it while adding the data for the new field, then remove it from the original table to save RAM costs, 
 3. You must retain both versions of your multi index table until you have completed this migration, at which point you may update your contract to remove the original version of your multi index table.
 
-##### 2.2.2. Migration with downtime, but faster
+#### 2.2.2. Migration with downtime, but faster
 
 If you prefer less code complexity and can accept downtime for your application:
 
