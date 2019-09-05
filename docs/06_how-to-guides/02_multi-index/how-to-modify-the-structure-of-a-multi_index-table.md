@@ -5,8 +5,8 @@ Modifying a multi index table structure that has already been deployed to an EOS
 ## 1. If you don't mind to lose the existing data
 
 If you don't mind to lose the data from the initial table you can follow these two steps:
-1.1. Erase all records from first table
-1.2.Deploy a new contract with modified table structure
+### 1.1. Erase all records from first table
+### 1.2.Deploy a new contract with modified table structure
 
 ## 2. If you want to keep the existing data
 
