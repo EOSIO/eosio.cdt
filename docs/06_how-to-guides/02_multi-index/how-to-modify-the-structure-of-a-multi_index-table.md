@@ -13,7 +13,7 @@ If you don't mind to lose the data from the initial table you can follow these t
 If you want to keep the existing data there are two ways to do it:
 
 ### 2.1. Using binary extentions
-To learn how to modify the structure using binary extensions please read this [tutorial](../../09_tutorials/binary-extension.md).
+To learn how to modify the structure using binary extensions please read this [tutorial](../../09_tutorials/01_binary-extension.md).
 
 ### 2.2. Migrate the existing data to a second table
 
