@@ -714,5 +714,7 @@ Nice! The smart contract is now backwards compatible for the future use of its t
 
 Just keep these simple rules in mind when upgrading a smart contract.
 If you are adding a new field to a struct currently in use by a `eosio::multi_index` be **SURE** to:
-- add the field at the end of the struct.
-- wrap the type using an `eosio::binary_extension` type.
+- add the field at the end of the struct,
+- and wrap the type using an `eosio::binary_extension` type.
+
+Also, there are a few restrictions you have to be aware of which are outlined [here](https://github.com/EOSIO/eos/issues/5600).

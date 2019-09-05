@@ -15,15 +15,18 @@ If you want to keep the existing data there are two ways to do it:
 ### 2.1. Using binary extentions
 To learn how to modify the structure using binary extensions please read this [tutorial](../../09_tutorials/01_binary-extension.md).
 
-### 2.2. Migrate the existing data to a second table
+### 2.2. Using ABI variants
+To learn how to modify the structure using ABI variants please read this [tutorial](../../09_tutorials/02_abi_variants.md).
 
-#### 2.2.1. Migration without downtime, but slower
+### 2.3. Migrate the existing data to a second table
+
+#### 2.3.1. Migration without downtime, but slower
 
 1. Create the new version of your multi index table alongside the old one,
 2. Transfer data from the old table to the new one. You may do so as part of your normal access pattern, first checking the new table to see if the entry you seek is present and if not, check the original table, and if it's present, migrate it while adding the data for the new field, then remove it from the original table to save RAM costs, 
 3. You must retain both versions of your multi index table until you have completed this migration, at which point you may update your contract to remove the original version of your multi index table.
 
-#### 2.2.2. Migration with downtime, but faster
+#### 2.3.2. Migration with downtime, but faster
 
 If you prefer less code complexity and can accept downtime for your application:
 
