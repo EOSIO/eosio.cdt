@@ -354,8 +354,7 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_EQUAL( eostr.at(0), 'a' )
       CHECK_EQUAL( eostr.at(5), 'f' )
 
-      CHECK_ASSERT( "eosio::string::at", []() {eostr.at(6);} )
-                    
+      CHECK_ASSERT( "eosio::string::at", []() {eostr.at(6);} )                    
    }
 
    //// const char& at(const size_t n) const
