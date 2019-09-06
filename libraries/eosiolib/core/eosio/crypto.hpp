@@ -20,37 +20,65 @@ namespace eosio {
     */
 
    /**
-    *  EOSIO Public Key
+    *  EOSIO ECC public key data
+    *
+    *  Fixed size representation of either a K1 or R1 compressed public key
+
+    *  @ingroup public_key
+    */
+   using ecc_public_key = std::array<char, 33>;
+
+   /**
+    *  EOSIO WebAuthN public key
     *
     *  @ingroup public_key
     */
-   struct public_key {
+   struct webauthn_public_key {
       /**
-       *  Type of the public key, could be either K1 or R1
+       * Enumeration of the various results of a Test of User Presence
+       * @see https://w3c.github.io/webauthn/#test-of-user-presence
        */
-      unsigned_int        type;
+      enum class user_presence_t : uint8_t {
+         USER_PRESENCE_NONE,
+         USER_PRESENCE_PRESENT,
+         USER_PRESENCE_VERIFIED
+      };
 
       /**
-       *  Bytes of the public key
+       * The ECC key material
        */
-      std::array<char,33> data;
+      ecc_public_key     key;
 
-      /// @cond OPERATORS
+      /**
+       * expected result of the test of user presence for a valid signature
+       * @see https://w3c.github.io/webauthn/#test-of-user-presence
+       */
+      user_presence_t    user_presence;
 
-      friend bool operator == ( const public_key& a, const public_key& b ) {
-        return std::tie(a.type,a.data) == std::tie(b.type,b.data);
-      }
-      friend bool operator != ( const public_key& a, const public_key& b ) {
-        return std::tie(a.type,a.data) != std::tie(b.type,b.data);
-      }
-
-      /// @cond
+      /**
+       * the Relying Party Identifier for WebAuthN
+       * @see https://w3c.github.io/webauthn/#relying-party-identifier
+       */
+      std::string        rpid;
    };
+
+   /**
+    *  EOSIO Public Key
+    *
+    *  A public key is a variant of
+    *   0 : a ECC K1 public key
+    *   1 : a ECC R1 public key
+    *   2 : a WebAuthN public key (requires the host chain to activate the WEBAUTHN_KEY consensus upgrade)
+    *
+    *  @ingroup public_key
+    */
+   using public_key = std::variant<ecc_public_key, ecc_public_key, webauthn_public_key>;
+
 
    /// @cond IMPLEMENTATIONS
 
    /**
-    *  Serialize an eosio::public_key into a stream
+    *  Serialize an eosio::webauthn_public_key into a stream
     *
     *  @ingroup public_key
     *  @param ds - The stream to write
@@ -59,14 +87,13 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream>
-   inline DataStream& operator<<(DataStream& ds, const eosio::public_key& pubkey) {
-      ds << pubkey.type;
-      ds.write( pubkey.data.data(), pubkey.data.size() );
+   inline DataStream& operator<<(DataStream& ds, const eosio::webauthn_public_key& pubkey) {
+      ds << pubkey.key << pubkey.user_presence << pubkey.rpid;
       return ds;
    }
 
    /**
-    *  Deserialize an eosio::public_key from a stream
+    *  Deserialize an eosio::webauthn_public_key from a stream
     *
     *  @ingroup public_key
     *  @param ds - The stream to read
@@ -75,9 +102,8 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream>
-   inline DataStream& operator>>(DataStream& ds, eosio::public_key& pubkey) {
-      ds >> pubkey.type;
-      ds.read( pubkey.data.data(), pubkey.data.size() );
+   inline DataStream& operator>>(DataStream& ds, eosio::webauthn_public_key& pubkey) {
+      ds >> pubkey.key >> pubkey.user_presence >> pubkey.rpid;
       return ds;
    }
 
@@ -91,38 +117,54 @@ namespace eosio {
     */
 
    /**
-    *  EOSIO Signature
+    *  EOSIO ECC signature data
+    *
+    *  Fixed size representation of either a K1 or R1 ECC compact signature
+
+    *  @ingroup signature
+    */
+   using ecc_signature = std::array<char, 65>;
+
+   /**
+    *  EOSIO WebAuthN signature
     *
     *  @ingroup signature
     */
-   struct signature {
+   struct webauthn_signature {
+      /**
+       * The ECC signature data
+       */
+      ecc_signature                     compact_signature;
 
       /**
-       *  Type of the signature, could be either K1 or R1
+       * The Encoded Authenticator Data returned from WebAuthN ceremony
+       * @see https://w3c.github.io/webauthn/#sctn-authenticator-data
        */
-      unsigned_int        type;
+      std::vector<uint8_t>              auth_data;
 
       /**
-       *  Bytes of the signature
+       * the JSON encoded Collected Client Data from a WebAuthN ceremony
+       * @see https://w3c.github.io/webauthn/#dictdef-collectedclientdata
        */
-      std::array<char,65> data;
-
-      /// @cond OPERATORS
-
-      friend bool operator == ( const signature& a, const signature& b ) {
-        return std::tie(a.type,a.data) == std::tie(b.type,b.data);
-      }
-      friend bool operator != ( const signature& a, const signature& b ) {
-        return std::tie(a.type,a.data) != std::tie(b.type,b.data);
-      }
-
-      /// @endcond
+      std::string                       client_json;
    };
+
+   /**
+    *  EOSIO Signature
+    *
+    *  A signature is a variant of
+    *   0 : a ECC K1 signature
+    *   1 : a ECC R1 signatre
+    *   2 : a WebAuthN signature (requires the host chain to activate the WEBAUTHN_KEY consensus upgrade)
+    *
+    *  @ingroup signature
+    */
+   using signature = std::variant<ecc_signature, ecc_signature, webauthn_signature>;
 
    /// @cond IMPLEMENTATIONS
 
    /**
-    *  Serialize an eosio::signature into a stream
+    *  Serialize an eosio::webauthn_signature into a stream
     *
     *  @param ds - The stream to write
     *  @param sig - The value to serialize
@@ -130,14 +172,13 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream>
-   inline DataStream& operator<<(DataStream& ds, const eosio::signature& sig) {
-      ds << sig.type;
-      ds.write( sig.data.data(), sig.data.size() );
+   inline DataStream& operator<<(DataStream& ds, const eosio::webauthn_signature& sig) {
+      ds << sig.compact_signature << sig.auth_data << sig.client_json;
       return ds;
    }
 
    /**
-    *  Deserialize an eosio::signature from a stream
+    *  Deserialize an eosio::webauthn_signature from a stream
     *
     *  @param ds - The stream to read
     *  @param sig - The destination for deserialized value
@@ -145,9 +186,8 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream>
-   inline DataStream& operator>>(DataStream& ds, eosio::signature& sig) {
-      ds >> sig.type;
-      ds.read( sig.data.data(), sig.data.size() );
+   inline DataStream& operator>>(DataStream& ds, eosio::webauthn_signature& sig) {
+      ds >> sig.compact_signature >> sig.auth_data >> sig.client_json;
       return ds;
    }
 
