@@ -60,6 +60,17 @@ namespace eosio {
        * @see https://w3c.github.io/webauthn/#relying-party-identifier
        */
       std::string        rpid;
+
+      /// @cond OPERATORS
+
+      friend bool operator == ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) == std::tie(b.key,b.user_presence,b.rpid);
+      }
+      friend bool operator != ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) != std::tie(b.key,b.user_presence,b.rpid);
+      }
+
+      /// @cond
    };
 
    /**
@@ -147,6 +158,17 @@ namespace eosio {
        * @see https://w3c.github.io/webauthn/#dictdef-collectedclientdata
        */
       std::string                       client_json;
+
+      /// @cond OPERATORS
+
+      friend bool operator == ( const webauthn_signature& a, const webauthn_signature& b ) {
+         return std::tie(a.compact_signature,a.auth_data,a.client_json) == std::tie(b.compact_signature,b.auth_data,b.client_json);
+      }
+      friend bool operator != ( const webauthn_signature& a, const webauthn_signature& b ) {
+         return std::tie(a.compact_signature,a.auth_data,a.client_json) != std::tie(b.compact_signature,b.auth_data,b.client_json);
+      }
+
+      /// @cond
    };
 
    /**
