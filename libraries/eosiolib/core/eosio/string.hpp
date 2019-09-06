@@ -22,10 +22,12 @@ namespace eosio {
 
       template <size_t N>
       constexpr string(const char (&str)[N]) : _size{N-1}, _capacity{_size}, _begin{str}
-      { }
+      {
+      }
 
       constexpr string() : _size{0}, _capacity{0}, _begin{""}
-      { }
+      {
+      }
 
       constexpr string(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
          char* begin{new char[_capacity]};
@@ -255,7 +257,7 @@ namespace eosio {
       void pop_back() {
          if (_size == 0)
             return;
-         --_size;
+         resize(--_size);
       }
 
       string substr(size_t pos = 0, size_t len = npos) const {
@@ -319,6 +321,7 @@ namespace eosio {
          if (is_literal())
             clone(_size, _capacity, std::get<const char*>(_begin));
          memmove(std::get<uptr>(_begin).get()+pos+len, std::get<uptr>(_begin).get(), len);
+         resize(_size);
 
          return *this;
       }
