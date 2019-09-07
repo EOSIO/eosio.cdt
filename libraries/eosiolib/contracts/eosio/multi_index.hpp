@@ -1246,7 +1246,7 @@ class multi_index
       }
 
       /**
-       *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
+       *  Searches for the `object_type` with the lowest primary key that is greater than a given primary key.
        *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
