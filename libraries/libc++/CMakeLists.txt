@@ -7,8 +7,9 @@ SET(SRC_FILES "")
 FOREACH(FN ${SRC_FILENAMES})
    LIST(APPEND SRC_FILES "libcxx/src/${FN}")
 ENDFOREACH(FN)
+LIST(APPEND SRC_FILES "libcxxabi/src/private_typeinfo.cpp")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything -frtti")
 
 add_library(c++
             ${SRC_FILES})
@@ -16,11 +17,12 @@ add_library(c++
 add_native_library(native_c++
             ${SRC_FILES})
 
-add_definitions(-D_LIBCPP_BUILDING_LIBRARY)
+add_definitions(-D_LIBCPP_BUILDING_LIBRARY -D_LIBCXXABI_BUILDING_LIBRARY)
 
 target_include_directories(c++
    PUBLIC 
       ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/libcxxabi/include
    PRIVATE
       ${CMAKE_SOURCE_DIR}/libc/musl/include
       ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
@@ -30,6 +32,7 @@ target_include_directories(c++
 target_include_directories(native_c++
    PUBLIC 
       ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/libcxxabi/include
    PRIVATE
       ${CMAKE_SOURCE_DIR}/libc/musl/include
       ${CMAKE_SOURCE_DIR}/libc/musl/src/internal

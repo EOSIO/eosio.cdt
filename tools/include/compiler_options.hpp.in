@@ -259,6 +259,11 @@ static cl::opt<bool> fstrict_vtable_pointers_opt(
     "fstrict-vtable-pointers",
     cl::desc("Enable optimizations based on the strict rules for overwriting polymorphic C++ objects"),
     cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> frtti_opt(
+    "frtti",
+    cl::desc("Enable run-time type information"),
+    cl::cat(EosioCompilerToolCategory),
+    cl::ZeroOrMore);
 static cl::list<std::string> include_opt(
     "include",
     cl::desc("Include file before parsing"),
@@ -385,7 +390,8 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-fno-threadsafe-statics");
 #ifdef CPP_COMP
       copts.emplace_back("-fno-exceptions");
-      copts.emplace_back("-fno-rtti");
+      if (!frtti_opt)
+         copts.emplace_back("-fno-rtti");
       copts.emplace_back("-fmodules-ts");
 #endif
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
