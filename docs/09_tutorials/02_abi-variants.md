@@ -1,72 +1,151 @@
 ## ABI variants
 
-ABI text format supports a section at the same level as `types`, `structs`, etc. named `variants`.
-__Example:__
+ABI variants give the flexibility of using more than one type for a defined variable or data member. 
+In EOSIO the variants are making use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi index table structure and have flexibility in doing it, and used in conjunction with ABI extensions it allows for modification of the structure of an exiting multi index table, a.k.a. table.
 
-```json
-"variants": [
-  {
-    "name": "operation_amount",
-    "types": [
-      "extended_asset",
-      "float64",
-      "time_point_sec"
-    ]
-  },
-  {
-    "name": "operation_subaccount",
-    "types": [
-      "name",
-      "extended_symbol",
-    ]
-  },
-  {
-    "name": "subop",
-    "types": [
-      "event",
-      "balance_change",
-      "set_value",
-      "error"
-    ]
-  }
-],
+### Use variant when building the multi index table the first time
+
+To define a `variant` for your table structure one example is shown below
+
+```cpp
+  std::variant<int8_t, uint16_t, uint32_t> variant_field;
 ```
 
-Once a table has a variant, it's safe to add more types to the variant over time. It works like a cpp union type, multiple types can be defined in a variant yet only one of those types data can be stored at a time. 
+This defines `variant` which can hold three different types, one at a time though. 
+So the contract interface could look like this:
 
-So this way, let's say I want to change the type of a column with variant `operation_subaccount` from `name` to `symbol_code` for my deployed table with the ABI text defined above, I can add the `symbol_code` type to the variant's `types` array and thus new rows inserted in the table can have data of type `symbol_code` for the column with variant `operation_subaccount`. 
-The ABI text section defining the variants would look like this:
+```diff
+#include <eosio/eosio.hpp>
+using namespace eosio;
 
-```json
-"variants": [
-  {
-    "name": "operation_amount",
-    "types": [
-      "extended_asset",
-      "float64",
-      "time_point_sec"
-    ]
-  },
-  {
-    "name": "operation_subaccount",
-    "types": [
-      "name",
-      "extended_symbol",
-      "symbol_code"
-    ]
-  },
-  {
-    "name": "subop",
-    "types": [
-      "event",
-      "balance_change",
-      "set_value",
-      "error"
-    ]
-  }
-],
+CONTRACT multi_index_example : public contract {
+   public:
+      using contract::contract;
+      multi_index_example( name receiver, name code, datastream<const char*> ds )
+         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+
+      TABLE test_table {
+         name test_primary;
+         name secondary;
+         uint64_t datum;
++         std::variant<int8_t, uint16_t, uint32_t> variant_field;
+
+         uint64_t primary_key()const { return test_primary.value; }
+         uint64_t by_secondary()const { return secondary.value; }
++         std::variant<int8_t, uint16_t, uint32_t> get_variant_field()const {
++            return std::visit(
++               [](auto&& arg) -> std::variant<int8_t, uint16_t, uint32_t> {
++                  return arg;
++               },
++            variant_field);
+         }
+      };
+
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+
+      test_tables testtab;
+
+      ACTION set(name user);
+      ACTION print( name user );
+
+      using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
+      using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
+};
 ```
 
-TO DO: Any restrictions, pitfalls, gotchas, things to be aware of?
+Notice above the declaration of the `variant_field` data memember and also the declaration and inline implementation for the `get_variant_field()` accessor for this data member.
 
-__Note__: The implementation for this section can be found [here](https://github.com/EOSIO/eos/pull/5652).
+In the future, this allows you the flexibility to store in the `variant_field` three different types of data `int8_t`, `int16_t`, and `int32_t`, and also allows you to add more types in the list of supported types for this field. One important thing to keep in mind is that you can only append at the end of the supported types, you can not modify the existing supported types order nor drop one of them, you can only append at the end of the list. That means if you want in the next version of your contract to add also type `int32_t` to the supported list types for this field your contract implementation could look like this:
+
+```diff
+#include <eosio/eosio.hpp>
+using namespace eosio;
+
+CONTRACT multi_index_example : public contract {
+   public:
+      using contract::contract;
+      multi_index_example( name receiver, name code, datastream<const char*> ds )
+         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+
+      TABLE test_table {
+         name test_primary;
+         name secondary;
+         uint64_t datum;
++         std::variant<int8_t, uint16_t, uint32_t, int32_t> variant_field;
+
+         uint64_t primary_key()const { return test_primary.value; }
+         uint64_t by_secondary()const { return secondary.value; }
++         std::variant<int8_t, uint16_t, uint32_t, int32_t> get_variant_field()const {
++            return std::visit(
++               [](auto&& arg) -> std::variant<int8_t, uint16_t, uint32_t, int32_t> {
++                  return arg;
++               },
++            variant_field);
+         }
+      };
+
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+
+      test_tables testtab;
+
+      ACTION set(name user);
+      ACTION print( name user );
+
+      using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
+      using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
+};
+```
+
+Now you can deploy the contract and it will be backwards compatible with the previous existing multi index table.
+
+### Use variant when changing an already deployed multi index table
+
+Prerequisites: For exemplification we are going to use the contract defined in this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md). We are assumming you deployed it and now we are going to change the table structure. 
+
+To change the existing table structure we are going to use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). Let's say you want to add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
+
+```cpp
+  eosio::binary_extension<std::variant<int8_t, uint16_t, uint32_t>> binary_extension_variant_key;
+```
+
+Notice, the use of the `eosio::binary_extension` template which wraps the `std::variant` template parameterized with the types we want to support for the new data field. The full contract implementation can look like this:
+
+```diff
+#include <eosio/eosio.hpp>
+#include <eosio/binary_extension.hpp>
+using namespace eosio;
+
+CONTRACT multi_index_example : public contract {
+   public:
+      using contract::contract;
+      multi_index_example( name receiver, name code, datastream<const char*> ds )
+         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+
+      TABLE test_table {
+         name test_primary;
+         name secondary;
+         uint64_t datum;
++         eosio::binary_extension<std::variant<int8_t, uint16_t, uint32_t>> binary_extension_variant_key;
+
+         uint64_t primary_key()const { return test_primary.value; }
+         uint64_t by_secondary()const { return secondary.value; }
++         eosio::binary_extension<std::variant<int8_t, uint16_t, uint32_t>>  get_binary_extension_variant_field()const {
++            return binary_extension_variant_key;
++         }
+      };
+
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+
+      test_tables testtab;
+
+      ACTION set(name user);
+      ACTION print( name user );
+
+      using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
+      using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
+};
+```
+
+N.B. Be aware that we do not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how to ABI gets generated!
+
+__Note__: The implementation for ABI `variants' section can be found [here](https://github.com/EOSIO/eos/pull/5652).
