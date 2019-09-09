@@ -22,11 +22,11 @@ In `test.cpp`:
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-CONTRACT test : public eosio::contract {
+class [[eosio::contract]] test : public eosio::contract {
 public:
    using contract::contract;
 
-   ACTION testact( name test ) {
+   [[eosio::action]] void testact( name test ) {
    }
 };
 

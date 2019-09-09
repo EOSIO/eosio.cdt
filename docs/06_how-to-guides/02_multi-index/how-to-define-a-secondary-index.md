@@ -9,7 +9,7 @@ __First__, you have to add a second field `secondary` to the data structure that
 ```cpp
   // the row structure of the multi index table, that is, each row of the table
   // will contain an instance of this type of structure
-  TABLE test_table {
+  struct [[eosio::table]] test_table {
     // this field is used later for definition of the primary index
     name test_primary;
     name secondary;
@@ -35,7 +35,7 @@ __multi_index_example.hpp__
 using namespace eosio;
 
 // multi index example contract class
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
 
@@ -48,7 +48,7 @@ CONTRACT multi_index_example : public contract {
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
         // this field is used later for definition of the primary index
         name test_primary;
         name secondary;
@@ -67,8 +67,8 @@ CONTRACT multi_index_example : public contract {
       // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
-      ACTION set( name user );
-      ACTION print( name user );
+      [[eosio::action]] void set( name user );
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;

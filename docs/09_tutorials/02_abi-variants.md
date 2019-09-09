@@ -18,13 +18,13 @@ So the contract interface could look like this:
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
          : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
 
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
          name test_primary;
          name secondary;
          uint64_t datum;
@@ -45,8 +45,8 @@ CONTRACT multi_index_example : public contract {
 
       test_tables testtab;
 
-      ACTION set(name user);
-      ACTION print( name user );
+      [[eosio::action]] void set(name user);
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -61,13 +61,13 @@ In the future, this allows you the flexibility to store in the `variant_field` t
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
          : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
 
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
          name test_primary;
          name secondary;
          uint64_t datum;
@@ -88,8 +88,8 @@ CONTRACT multi_index_example : public contract {
 
       test_tables testtab;
 
-      ACTION set(name user);
-      ACTION print( name user );
+      [[eosio::action]] void set(name user);
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -115,13 +115,13 @@ Notice, the use of the `eosio::binary_extension` template which wraps the `std::
 #include <eosio/binary_extension.hpp>
 using namespace eosio;
 
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
          : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
 
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
          name test_primary;
          name secondary;
          uint64_t datum;
@@ -138,8 +138,8 @@ CONTRACT multi_index_example : public contract {
 
       test_tables testtab;
 
-      ACTION set(name user);
-      ACTION print( name user );
+      [[eosio::action]] void set(name user);
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;

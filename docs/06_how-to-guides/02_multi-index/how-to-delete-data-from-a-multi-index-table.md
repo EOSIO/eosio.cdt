@@ -5,7 +5,7 @@ Prerequisites: it is assumed you already have a multi index table instance defin
 To delete data from a multi index table you make use of the multi index table iterator to find out if the data exists, and then use the `delete` method to delete the row from table, see below:
 
 ```cpp
-ACTION multi_index_example::del( name user ) {
+[[eosio::action]] void multi_index_example::del( name user ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
   if ( itr == testtab.end() ) {

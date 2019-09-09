@@ -10,7 +10,7 @@ __multi_index_example.hpp__
 using namespace eosio;
 
 // multi index example contract class
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
 
@@ -23,7 +23,7 @@ CONTRACT multi_index_example : public contract {
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
         // this field is used later for definition of the primary index
         name test_primary;
         // additional data stored in table row
@@ -40,7 +40,7 @@ CONTRACT multi_index_example : public contract {
       // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
-      ACTION set( name user );
+      [[eosio::action]] void set( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
 };
@@ -52,7 +52,7 @@ Let's add to the above multi index example contract an action `print` which gets
 1. In the contract definition __multi_index_example.hpp__ you have to add this:
 ```cpp
   // this is the print action we want to add
-  ACTION print( name user );
+  [[eosio::action]] void print( name user );
 
   // for ease of use, we are defining the action_wrapper for print action
   using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -60,7 +60,7 @@ Let's add to the above multi index example contract an action `print` which gets
 
 2. And in the contract implementation __multi_index_example.cpp__ add this:
 ```cpp
-  ACTION multi_index_example::print( name user ) {
+  [[eosio::action]] void multi_index_example::print( name user ) {
     // searches for the row that corresponds to the user parameter
     auto itr = testtab.find(user.value);
     
@@ -80,7 +80,7 @@ __multi_index_example.hpp__
 using namespace eosio;
 
 // multi index example contract class
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
 
@@ -93,7 +93,7 @@ CONTRACT multi_index_example : public contract {
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
         // this field is used later for definition of the primary index
         name test_primary;
         // additional data stored in table row
@@ -110,8 +110,8 @@ CONTRACT multi_index_example : public contract {
       // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
-      ACTION set( name user );
-      ACTION print( name user );
+      [[eosio::action]] void set( name user );
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -122,7 +122,7 @@ __multi_index_example.cpp__
 ```cpp
 #include <multi_index_example.hpp>
 
-ACTION multi_index_example::set( name user ) {
+[[eosio::action]] void multi_index_example::set( name user ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
 
@@ -136,7 +136,7 @@ ACTION multi_index_example::set( name user ) {
   }
 }
 
-ACTION multi_index_example::print( name user ) {
+[[eosio::action]] void multi_index_example::print( name user ) {
   // searches for the row that corresponds to the user parameter
   auto itr = testtab.find(user.value);
   

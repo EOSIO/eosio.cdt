@@ -5,7 +5,7 @@ Prerequisites: it is assumed you already have a multi index table instance defin
 To insert data into a multi index table you make use of the multi index table iterator to find out if the data doesn't already exist and then use the `emplace` method to make the insertion, see below:
 
 ```cpp
-ACTION multi_index_example::set( name user ) {
+[[eosio::action]] void multi_index_example::set( name user ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
 

@@ -8,7 +8,7 @@ For a quick reference of how a multi index table and the primary key index gette
   // ...
 
   // the data structure which defines each row of the table
-  TABLE test_table {
+  struct [[eosio::table]] test_table {
     // this field is used later for definition of the primary index
     name test_primary;
     // additional data stored in table row

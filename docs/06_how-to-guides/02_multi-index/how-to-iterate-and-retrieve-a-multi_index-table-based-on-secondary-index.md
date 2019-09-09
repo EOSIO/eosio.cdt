@@ -9,7 +9,7 @@ Let's work with this example below which shows the definition of a `multi_index_
 using namespace eosio;
 
 // multi index example contract class
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
 
@@ -22,7 +22,7 @@ CONTRACT multi_index_example : public contract {
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
         // this field is used later for definition of the primary index
         name test_primary;
         name secondary;
@@ -41,8 +41,8 @@ CONTRACT multi_index_example : public contract {
       // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
-      ACTION set( name user );
-      ACTION print( name user );
+      [[eosio::action]] void set( name user );
+      [[eosio::action]] void print( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -51,10 +51,10 @@ CONTRACT multi_index_example : public contract {
 
 To iterate and retreive the multi index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary` let's define a third action `bysec` which will do exactly that.
 
-1. In the contract definition add the new action definition, using the `ACTION` macro and the `eosio::action_wrapper` template like this:
+1. In the contract definition add the new action definition, using the `[[eosio::action]] void` and the `eosio::action_wrapper` template like this:
 
 ```cpp
-  ACTION bysec( name secid );
+  [[eosio::action]] void bysec( name secid );
 
   using bysec_action = action_wrapper<"bysec"_n, &multi_index_example::bysec>;
 ```
@@ -63,7 +63,7 @@ To iterate and retreive the multi index table `testtab` defined in `multi_index_
 
 ```cpp
 // iterates the multi index table rows using the secondary index and prints the row's values
-ACTION multi_index_example::bysec( name secid ) {
+[[eosio::action]] void multi_index_example::bysec( name secid ) {
   // access the secondary index
   auto idx = testtab.get_index<"secid"_n>();
   // iterate through secondary index
@@ -82,7 +82,7 @@ __multi_index_example.hpp__
 using namespace eosio;
 
 // multi index example contract class
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
 
@@ -95,7 +95,7 @@ CONTRACT multi_index_example : public contract {
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
         // this field is used later for definition of the primary index
         name test_primary;
         name secondary;
@@ -114,9 +114,9 @@ CONTRACT multi_index_example : public contract {
       // the multi index table instance declared as a data member of type test_tables
       test_tables testtab;
 
-      ACTION set( name user );
-      ACTION print( name user );
-      ACTION bysec( name secid );
+      [[eosio::action]] void set( name user );
+      [[eosio::action]] void print( name user );
+      [[eosio::action]] void bysec( name secid );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
@@ -128,7 +128,7 @@ __multi_index_example.cpp__
 ```cpp
 #include <multi_index_example.hpp>
 
-ACTION multi_index_example::set( name user ) {
+[[eosio::action]] void multi_index_example::set( name user ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
 
@@ -142,7 +142,7 @@ ACTION multi_index_example::set( name user ) {
   }
 }
 
-ACTION multi_index_example::print( name user ) {
+[[eosio::action]] void multi_index_example::print( name user ) {
   // searches for the row that corresponds to the user parameter
   auto itr = testtab.find(user.value);
   
@@ -154,7 +154,7 @@ ACTION multi_index_example::print( name user ) {
 }
 
 // iterates the multi index table rows using the secondary index and prints the row's values
-ACTION multi_index_example::bysec( name secid ) {
+[[eosio::action]] void multi_index_example::bysec( name secid ) {
   // access the secondary index
   auto idx = testtab.get_index<"secid"_n>();
 

@@ -9,7 +9,7 @@ __singleton_example.hpp__
 #include <eosio/singleton.hpp>
 using namespace eosio;
 
-CONTRACT singleton_example : public contract {
+class [[eosio::contract]] singleton_example : public contract {
    public:
       using contract::contract;
       singleton_example( name receiver, name code, datastream<const char*> ds ) :
@@ -17,10 +17,10 @@ CONTRACT singleton_example : public contract {
          singleton_instance(receiver, receiver.value)
          {}
 
-      ACTION set( name user, uint64_t value );
-      ACTION get( );
+      [[eosio::action]] void set( name user, uint64_t value );
+      [[eosio::action]] void get( );
 
-      TABLE testtable {
+      struct [[eosio::table]] testtable {
          name primary_value;
          uint64_t secondary_value;
       };
@@ -39,14 +39,14 @@ __singleton_example.cpp__
 ```cpp
    #include <singleton_example.hpp>
 
-   ACTION singleton_example::set( name user, uint64_t value ) {
+   [[eosio::action]] void singleton_example::set( name user, uint64_t value ) {
       auto entry_stored = singleton_instance.get();
       entry_stored.primary_value = user;
       entry_stored.secondary_value = value;
       singleton_instance.set(entry_stored, user);
    }
 
-   ACTION singleton_example::get( ) {
+   [[eosio::action]] void singleton_example::get( ) {
    eosio::print("Value stored for: {%} is {%}\n", 
       singleton_instance.get().primary_value.value,
       singleton_instance.get().secondary_value);

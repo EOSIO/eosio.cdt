@@ -5,7 +5,7 @@ Prerequisites: it is assumed you already have a multi index table instance defin
 To modify data from a multi index table you make use of the multi index table iterator to find out if the data exists, and then use the `modidfy` method to make the update, see below:
 
 ```cpp
-ACTION multi_index_example::mod( name user, uint32_t n ) {
+[[eosio::action]] void multi_index_example::mod( name user, uint32_t n ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
   check( itr != testtab.end(), "user does not exist in table" );
