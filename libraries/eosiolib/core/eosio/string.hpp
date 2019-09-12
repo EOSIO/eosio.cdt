@@ -21,25 +21,42 @@ namespace eosio {
       static constexpr size_t npos = -1;
 
       template <size_t N>
-      constexpr string(const char (&str)[N]) : _size{N-1}, _capacity{_size}, _begin{str}
-      { }
+      constexpr string(const char (&str)[N])
+         : _size{N-1}
+         , _capacity{_size}
+         , _begin{str}
+      {
+      }
 
-      constexpr string() : _size{0}, _capacity{0}, _begin{""}
-      { }
+      constexpr string()
+         : _size{0}
+         , _capacity{0}
+         , _begin{""}
+      {
+      }
 
-      constexpr string(const char* str, const size_t n) : _size{n}, _capacity{_size*2} {
+      constexpr string(const char* str, const size_t n)
+         : _size{n}
+         , _capacity{_size*2}
+      {
          char* begin{new char[_capacity]};
          memcpy(begin, str, _size);
          _begin = begin;
       }
 
-      constexpr string(const size_t n, const char c) : _size{n}, _capacity{_size*2} {
+      constexpr string(const size_t n, const char c)
+         : _size{n}
+         , _capacity{_size*2}
+      {
          char* begin{new char[_capacity]};
          memset(begin, c, _size);
          _begin = begin;
       }
 
-      constexpr string(const string& str, const size_t pos, const size_t n) : _size{n}, _capacity{_size*2} {
+      constexpr string(const string& str, const size_t pos, const size_t n)
+         : _size{n}
+         , _capacity{_size*2}
+      {
          if (n == string::npos || str._size < pos+n) {
             _size     = str._size;
             _capacity = _size*2;
@@ -48,14 +65,20 @@ namespace eosio {
          clone(_size, _capacity, str.data()+pos);
       }
 
-      constexpr string(const string& str) : _size{str._size}, _capacity{str._capacity} {
+      constexpr string(const string& str)
+         : _size{str._size}
+         , _capacity{str._capacity}
+      {
          if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
             clone(str._size, str._capacity, str.data());
       }
 
-      constexpr string(string&& str) : _size{str._size}, _capacity{str._capacity} {
+      constexpr string(string&& str)
+         : _size{str._size}
+         , _capacity{str._capacity}
+      {
          if (str.is_literal())
             _begin = std::get<const char*>(str._begin);
          else
@@ -255,7 +278,7 @@ namespace eosio {
       void pop_back() {
          if (_size == 0)
             return;
-         --_size;
+         resize(--_size);
       }
 
       string substr(size_t pos = 0, size_t len = npos) const {
@@ -319,6 +342,7 @@ namespace eosio {
          if (is_literal())
             clone(_size, _capacity, std::get<const char*>(_begin));
          memmove(std::get<uptr>(_begin).get()+pos+len, std::get<uptr>(_begin).get(), len);
+         resize(_size);
 
          return *this;
       }

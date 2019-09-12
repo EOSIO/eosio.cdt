@@ -15,8 +15,6 @@ using eosio::string;
 
 // Definitions found in `eosio.cdt/libraries/eosiolib/core/eosio/string.hpp`
 EOSIO_TEST_BEGIN(string_test)
-   silence_output(false);
-
    //// template <size_t N>
    //// string(const char (&str)[N])
    {
@@ -356,7 +354,7 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_EQUAL( eostr.at(0), 'a' )
       CHECK_EQUAL( eostr.at(5), 'f' )
 
-      CHECK_ASSERT( "eostring::string::at", []() {eostr.at(6);} )
+      CHECK_ASSERT( "eosio::string::at", []() {eostr.at(6);} )                    
    }
 
    //// const char& at(const size_t n) const
@@ -365,7 +363,7 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_EQUAL( eostr.at(0), 'a' )
       CHECK_EQUAL( eostr.at(5), 'f' )
 
-      CHECK_ASSERT( "eostring::string::at const", []() {eostr.at(6);} )
+      CHECK_ASSERT( "eosio::string::at const", []() {eostr.at(6);} )
    }
 
    {
@@ -796,7 +794,7 @@ EOSIO_TEST_BEGIN(string_test)
    {
       static const string eostr{"abcdef"};
       static char str[7]{};
-      CHECK_ASSERT( "eostring::string::copy", []() {eostr.copy(str, 1, eostr.size()+1);} )
+      CHECK_ASSERT( "eosio::string::copy", []() {eostr.copy(str, 1, eostr.size()+1);} )
    }
 
    //// string& insert(const size_t pos, const char* str)
@@ -863,8 +861,8 @@ EOSIO_TEST_BEGIN(string_test)
    {
       static string eostr{"abcdefg"};
       static const char* null_man{nullptr};
-      CHECK_ASSERT( "eostring::string::insert", []() {eostr.insert(0, null_man, 1);} )
-      CHECK_ASSERT( "eostring::string::insert", []() {eostr.insert(-1, "ooo", 1);} )
+      CHECK_ASSERT( "eosio::string::insert", []() {eostr.insert(0, null_man, 1);} )
+      CHECK_ASSERT( "eosio::string::insert", []() {eostr.insert(-1, "ooo", 1);} )
    }
 
    //// string& insert(const size_t pos, const string& str)
@@ -934,7 +932,7 @@ EOSIO_TEST_BEGIN(string_test)
    {
       static string eostr{"abcdefg"};
       static const string str{"ooo"};
-      CHECK_ASSERT( "eostring::string::insert", []() {eostr.insert(-1, str);} )
+      CHECK_ASSERT( "eosio::string::insert", []() {eostr.insert(-1, str);} )
    }
 
    {
@@ -1016,7 +1014,7 @@ EOSIO_TEST_BEGIN(string_test)
    {
       static string eostr{"abcdefg"};
       static string str{"ooo"};
-      CHECK_ASSERT( "eostring::string::insert", []() {eostr.insert(-1, str);} )
+      CHECK_ASSERT( "eosio::string::insert", []() {eostr.insert(-1, str);} )
    }
 
    {  // Bucky's test for bug he caught; PR #459.
@@ -1025,7 +1023,7 @@ EOSIO_TEST_BEGIN(string_test)
       CHECK_EQUAL( eostr.size(), 6 )
       CHECK_EQUAL( eostr.capacity(), 12 )
       CHECK_EQUAL( strcmp(eostr.c_str(), "0hello") , 0 )
-         
+
       eostr.insert(0, "h", 1);
       CHECK_EQUAL( eostr.size(), 7 )
       CHECK_EQUAL( eostr.capacity(), 12 )
@@ -1119,7 +1117,7 @@ EOSIO_TEST_BEGIN(string_test)
 
    {
       static string eostr{"abcdefg"};
-      CHECK_ASSERT( "eostring::string::erase", []() {eostr.erase(-1, 1);} )
+      CHECK_ASSERT( "eosio::string::erase", []() {eostr.erase(-1, 1);} )
    }
 
    {
@@ -1232,7 +1230,7 @@ EOSIO_TEST_BEGIN(string_test)
 
    {
       static string eostr{"abcdefg"};
-      CHECK_ASSERT( "eostring::string::erase", []() {eostr.erase(-1, 1);} )
+      CHECK_ASSERT( "eosio::string::erase", []() {eostr.erase(-1, 1);} )
    }
 
    //// string& append(const char* str)
@@ -1257,7 +1255,7 @@ EOSIO_TEST_BEGIN(string_test)
    {
       static string eostr{"abcdefg"};
       static const char* null_man{nullptr};
-      CHECK_ASSERT( "eostring::string::append", []() {eostr.append(null_man);} )
+      CHECK_ASSERT( "eosio::string::append", []() {eostr.append(null_man);} )
    }
 
    //// string& append(const string& str)
@@ -1494,11 +1492,15 @@ EOSIO_TEST_BEGIN(string_test)
       ds >> str;
       CHECK_EQUAL( cstr, str )
    }
-
-silence_output(false);
 EOSIO_TEST_END
 
-int main() {
+int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(string_test)
    return has_failed();
 }
