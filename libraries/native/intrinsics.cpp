@@ -40,6 +40,12 @@ extern "C" {
    void set_privileged( capi_name account, bool is_priv ) {
       return intrinsics::get().call<intrinsics::set_privileged>(account, is_priv);
    }
+   bool is_feature_activated( const capi_checksum256* feature_digest ) {
+      return intrinsics::get().call<intrinsics::is_feature_activated>(feature_digest);
+   }
+   void preactivate_feature( const capi_checksum256* feature_digest ) {
+      return intrinsics::get().call<intrinsics::preactivate_feature>(feature_digest);
+   }
    uint32_t get_active_producers( capi_name* producers, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::get_active_producers>(producers, datalen);
    }
@@ -788,7 +794,7 @@ extern "C" {
    void printui(uint64_t value) {
       return intrinsics::get().call<intrinsics::printui>(value);
    }
-   
+
    void printi128(const int128_t* value) {
       return intrinsics::get().call<intrinsics::printi128>(value);
    }
@@ -796,7 +802,7 @@ extern "C" {
     void printui128(const uint128_t* value) {
       return intrinsics::get().call<intrinsics::printui128>(value);
    }
-  
+
    void printsf(float value) {
       return intrinsics::get().call<intrinsics::printsf>(value);
    }
@@ -808,11 +814,11 @@ extern "C" {
    void printqf(const long double* value) {
       return intrinsics::get().call<intrinsics::printqf>(value);
    }
-   
+
    void printn(uint64_t nm) {
       return intrinsics::get().call<intrinsics::printn>(nm);
    }
-   
+
    void printhex(const void* data, uint32_t len) {
       return intrinsics::get().call<intrinsics::printhex>(data, len);
    }
@@ -844,7 +850,7 @@ extern "C" {
          dest[i] = tmp_buf[i];
       return (void*)dest;
    }
-   
+
    void eosio_assert(uint32_t test, const char* msg) {
       if (test == 0) {
          _prints(msg, eosio::cdt::output_stream_kind::std_err);
@@ -870,9 +876,9 @@ extern "C" {
          longjmp(*___env_ptr, 1);
       }
    }
-   
+
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winvalid-noreturn" 
+#pragma clang diagnostic ignored "-Winvalid-noreturn"
    void abort() {
       eosio_assert(false, "abort");
    }

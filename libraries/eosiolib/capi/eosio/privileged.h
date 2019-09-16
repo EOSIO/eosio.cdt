@@ -1,5 +1,5 @@
 #pragma once
-
+#include "types.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -105,7 +105,14 @@ void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 __attribute__((eosio_wasm_import))
 uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
+/**
+ * Pre-activate protocol feature
+ *
+ * @param feature_digest - digest of the protocol feature to pre-activate
+ */
+__attribute__((eosio_wasm_import))
+void preactivate_feature( const capi_checksum256* feature_digest );
+
 #ifdef __cplusplus
 }
 #endif
-

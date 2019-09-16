@@ -76,6 +76,15 @@ void eosio_exit( int32_t code );
 __attribute__((eosio_wasm_import))
 uint64_t  current_time();
 
+/**
+ * Check if specified protocol feature has been activated
+ *
+ * @param feature_digest - digest of the protocol feature
+ * @return true if the specified protocol feature has been activated, false otherwise
+ */
+__attribute__((eosio_wasm_import))
+bool is_feature_activated( const capi_checksum256* feature_digest );
+
 #ifdef __cplusplus
 }
 #endif
