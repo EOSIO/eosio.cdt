@@ -20,6 +20,7 @@ ld options:
   -fno-lto          - Disable LTO
   -fno-post-pass    - Don't run post processing pass
   -fno-stack-first  - Don't set the stack first in memory
+  -stack-size       - Specifies the maximum stack size for the contract
   -fuse-main        - Use main as entry
   -l=<string>       - Root name of library to link
   -lto-opt=<string> - LTO Optimization level (O0-O3)
