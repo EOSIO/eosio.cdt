@@ -1,5 +1,6 @@
 #pragma once
 #include "producer_schedule.hpp"
+#include "system.hpp"
 #include "../../core/eosio/crypto.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/serialize.hpp"
@@ -11,23 +12,26 @@ namespace eosio {
          __attribute__((eosio_wasm_import))
          bool is_privileged( uint64_t account );
 
-        __attribute__((eosio_wasm_import))
-        void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
+         __attribute__((eosio_wasm_import))
+         void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
 
-        __attribute__((eosio_wasm_import))
-        void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
+         __attribute__((eosio_wasm_import))
+         void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
-        __attribute__((eosio_wasm_import))
-        void set_privileged( uint64_t account, bool is_priv );
+         __attribute__((eosio_wasm_import))
+         void set_privileged( uint64_t account, bool is_priv );
 
-        __attribute__((eosio_wasm_import))
-        void set_blockchain_parameters_packed( char* data, uint32_t datalen );
+         __attribute__((eosio_wasm_import))
+         void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-        __attribute__((eosio_wasm_import))
-        uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+         __attribute__((eosio_wasm_import))
+         uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-        __attribute((eosio_wasm_import))
-        int64_t set_proposed_producers( char*, uint32_t );
+         __attribute((eosio_wasm_import))
+         int64_t set_proposed_producers( char*, uint32_t );
+
+         __attribute__((eosio_wasm_import))
+         void preactivate_feature( const capi_checksum256* feature_digest );
       }
    }
 
@@ -244,6 +248,19 @@ namespace eosio {
     */
    inline void set_privileged( name account, bool is_priv ) {
       internal_use_do_not_use::set_privileged( account.value, is_priv );
+   }
+
+   /**
+    * Pre-activate protocol feature
+    *
+    * @ingroup privileged
+    * @param feature_digest - digest of the protocol feature to pre-activate
+    */
+   inline void preactivate_feature( const checksum256& feature_digest ) {
+      auto feature_digest_data = feature_digest.extract_as_byte_array();
+      internal_use_do_not_use::preactivate_feature(
+         reinterpret_cast<const internal_use_do_not_use::capi_checksum256*>( feature_digest_data.data() )
+      );
    }
 
 }
