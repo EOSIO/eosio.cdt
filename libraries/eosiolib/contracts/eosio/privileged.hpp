@@ -32,6 +32,9 @@ namespace eosio {
 
          __attribute__((eosio_wasm_import))
          void preactivate_feature( const capi_checksum256* feature_digest );
+
+         __attribute__((eosio_wasm_import))
+         int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
       }
    }
 
@@ -225,7 +228,13 @@ namespace eosio {
     *
     *  @return an optional value of the version of the new proposed schedule if successful
     */
-   std::optional<uint64_t> set_proposed_producers( const std::vector<producer_authority>& prods );
+   inline std::optional<uint64_t> set_proposed_producers( const std::vector<producer_authority>& prods ) {
+      auto packed_prods = eosio::pack( prods );
+      int64_t ret = internal_use_do_not_use::set_proposed_producers_ex(1, (char*)packed_prods.data(), packed_prods.size());
+      if (ret >= 0)
+        return static_cast<uint64_t>(ret);
+      return {};
+   }
 
    /**
     *  Check if an account is privileged
