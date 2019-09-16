@@ -16,8 +16,6 @@ namespace eosio {
      __attribute__((eosio_wasm_import))
      int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
      __attribute__((eosio_wasm_import))
-     int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
-     __attribute__((eosio_wasm_import))
      uint32_t get_active_producers(uint64_t*, uint32_t);
    }
 
@@ -40,14 +38,6 @@ namespace eosio {
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods ) {
       auto packed_prods = eosio::pack( prods );
       int64_t ret = set_proposed_producers((char*)packed_prods.data(), packed_prods.size());
-      if (ret >= 0)
-        return static_cast<uint64_t>(ret);
-      return {};
-   }
-
-   std::optional<uint64_t> set_proposed_producers( const std::vector<producer_authority>& prods ) {
-      auto packed_prods = eosio::pack( prods );
-      int64_t ret = set_proposed_producers_ex(1, (char*)packed_prods.data(), packed_prods.size());
       if (ret >= 0)
         return static_cast<uint64_t>(ret);
       return {};
