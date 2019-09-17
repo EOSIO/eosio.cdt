@@ -412,7 +412,9 @@ namespace eosio {
       template <auto Action, typename... Ts>
       constexpr bool type_check() {
          static_assert(sizeof...(Ts) == std::tuple_size<deduced<Action>>::value);
-         return check_types<Action, 0, Ts...>::value;
+         if constexpr (sizeof...(Ts) != 0)
+            return check_types<Action, 0, Ts...>::value;
+         return true;
       }
 
       /// @endcond
@@ -425,7 +427,7 @@ namespace eosio {
     * Example:
     * @code
     * // defined by contract writer of the actions
-    * using transfer act = action_wrapper<"transfer"_n, &token::transfer>;( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
+    * using transfer_act = action_wrapper<"transfer"_n, &token::transfer>;
     * // usage by different contract writer
     * transfer_act{"eosio.token"_n, {st.issuer, "active"_n}}.send(st.issuer, to, quantity, memo);
     * // or
@@ -450,6 +452,10 @@ namespace eosio {
       template <typename Code>
       constexpr action_wrapper(Code&& code, const eosio::permission_level& perm)
          : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
+
+      template <typename Code>
+      constexpr action_wrapper(Code&& code)
+         : code_name(std::forward<Code>(code)) {}
 
       static constexpr eosio::name action_name = eosio::name(Name);
       eosio::name code_name;

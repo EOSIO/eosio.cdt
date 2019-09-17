@@ -350,7 +350,7 @@ namespace _multi_index_detail {
  *       uint64_t    primary;
  *       uint128_t   secondary;
  *       uint64_t primary_key() const { return primary; }
- *       uint64_t get_secondary() const { return secondary; }
+ *       uint128_t get_secondary() const { return secondary; }
  *     };
  *    public:
  *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
