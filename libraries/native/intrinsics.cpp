@@ -340,6 +340,9 @@ extern "C" {
    int get_context_free_data( uint32_t index, char* buff, size_t size ) {
       return intrinsics::get().call<intrinsics::get_context_free_data>(index, buff, size);
    }
+   capi_name get_sender() {
+      return intrinsics::get().call<intrinsics::get_sender>();
+   }
 
    // softfloat
    static constexpr uint32_t inv_float_eps = 0x4B000000;

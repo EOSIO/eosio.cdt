@@ -6,6 +6,7 @@
 #include "../../core/eosio/time.hpp"
 #include "../../core/eosio/check.hpp"
 #include "../../core/eosio/fixed_bytes.hpp"
+#include "../../core/eosio/name.hpp"
 
 namespace eosio {
   namespace internal_use_do_not_use {
@@ -19,6 +20,9 @@ namespace eosio {
 
       __attribute__((eosio_wasm_import))
       bool is_feature_activated( const capi_checksum256* feature_digest );
+
+      __attribute__((eosio_wasm_import))
+      uint64_t get_sender();
     }
   }
 
@@ -75,5 +79,15 @@ namespace eosio {
       return internal_use_do_not_use::is_feature_activated(
          reinterpret_cast<const internal_use_do_not_use::capi_checksum256*>( feature_digest_data.data() )
       );
+   }
+
+   /**
+    * Return name of account that sent current inline action
+    *
+    * @ingroup system
+    * @return name of account that sent the current inline action (empty name if not called from inline action)
+    */
+   inline name get_sender() {
+      return name( internal_use_do_not_use::get_sender() );
    }
 }
