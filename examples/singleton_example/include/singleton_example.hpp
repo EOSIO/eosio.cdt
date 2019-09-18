@@ -3,7 +3,7 @@
 #include <eosio/singleton.hpp>
 using namespace eosio;
 
-CONTRACT singleton_example : public contract {
+class [[eosio::contract]] singleton_example : public contract {
    public:
       using contract::contract;
       singleton_example( name receiver, name code, datastream<const char*> ds ) :
@@ -11,10 +11,10 @@ CONTRACT singleton_example : public contract {
          singleton_instance(receiver, receiver.value)
          {}
 
-      ACTION set( name user, uint64_t value );
-      ACTION get( );
+      [[eosio::action]] void set( name user, uint64_t value );
+      [[eosio::action]] void get( );
 
-      TABLE testtable {
+      struct [[eosio::table]] testtable {
          name primary_value;
          uint64_t secondary_value;
          uint64_t primary_key() const { return primary_value.value; }

@@ -1,13 +1,13 @@
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-CONTRACT multi_index_example : public contract {
+class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
          : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
 
-      TABLE test_table {
+      struct [[eosio::table]] test_table {
          name test_primary;
          name secondary;
          uint64_t datum;
@@ -19,11 +19,11 @@ CONTRACT multi_index_example : public contract {
 
       test_tables testtab;
 
-      ACTION set(name user);
-      ACTION print( name user );
-      ACTION bysec( name secid );
-      ACTION mod( name user, uint32_t n );
-      ACTION del( name user );
+      [[eosio::action]] void set(name user);
+      [[eosio::action]] void print( name user );
+      [[eosio::action]] void bysec( name secid );
+      [[eosio::action]] void mod( name user, uint32_t n );
+      [[eosio::action]] void del( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
