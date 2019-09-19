@@ -8,15 +8,13 @@ For details on how to create your first contract follow [this tutorial here](htt
 Follow these steps to compile your contract
 ---
 
-1. Navigate to the hello folder in examples (./examples/hello)
-2. You should then see the ./src/hello.cpp file
-3. Now run following commands:
+1. Navigate to the hello folder in examples (./examples/hello), you should then see the ./src/hello.cpp file
+2. Now run following commands:
 ```sh
 $ mkdir build
 $ cd build
 $ eosio-cpp -abigen ../src/hello.cpp -o hello.wasm -I ../include/
 ```
-
-This will generate two files:
-- The compiled binary wasm (hello.wasm)
-- The generated ABI file (hello.abi)
+3. This will generate two files:
+- The compiled binary wasm, hello.wasm
+- The generated ABI file, hello.abi
