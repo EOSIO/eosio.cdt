@@ -47,10 +47,10 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-The steps below show how to iterate and retrieve a multi index table. 
-Let's add to the above multi index example contract an action `print` which gets as parameter an acount name, searches for it in the multi index table using the primary index and prints out the value stored in that row for field `datum` if found, otherwise asserts with a custom message.
+The steps below show how to iterate and retrieve a multi index table.
 
-1. In the contract definition __multi_index_example.hpp__ you have to add this:
+1. Let's add to the above multi index example contract an action `print` which gets as parameter an acount name
+
 ```cpp
   // this is the print action we want to add
   [[eosio::action]] void print( name user );
@@ -59,7 +59,7 @@ Let's add to the above multi index example contract an action `print` which gets
   using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
 ```
 
-2. And in the contract implementation __multi_index_example.cpp__ add this:
+2. Now let's implement the action code, by searching for the `user` name in the multi index table using the primary index and print out the value stored in that row for field `datum` if found, otherwise asserts with a custom message.In the contract definition:
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {
     // searches for the row that corresponds to the user parameter

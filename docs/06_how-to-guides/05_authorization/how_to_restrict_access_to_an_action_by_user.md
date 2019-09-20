@@ -27,7 +27,7 @@ void hi( name user ) {
 }
 ```
 
-Don't forget to inlcude the right libraries to your include path, for example your build command line should look like this
+__Note__ Don't forget to inlcude the right libraries to your include path, for example your build command line should look like this
 ```sh
 cd /local_path_to/eosio.cdt/examples/hello/
 mkdir build
