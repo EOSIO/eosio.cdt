@@ -19,12 +19,13 @@ class [[eosio::contract]] multi_index_example : public contract {
          // contract base class contructor
          contract(receiver, code, ds),
          // instantiate multi index instance as data member (find it defined below)
-         testtab(receiver, receiver.value) { }
+         testtab(receiver, receiver.value)
+         { }
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field is used later for definition of the primary index
+        // this field stores a name for each row of the multi index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -89,12 +90,13 @@ class [[eosio::contract]] multi_index_example : public contract {
          // contract base class contructor
          contract(receiver, code, ds),
          // instantiate multi index instance as data member (find it defined below)
-         testtab(receiver, receiver.value) { }
+         testtab(receiver, receiver.value)
+         { }
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field is used later for definition of the primary index
+        // this field stores a name for each row of the multi index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;

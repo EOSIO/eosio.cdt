@@ -1,8 +1,86 @@
 ## How to instantiate a multi index table
 
-Prerequisites: To instantiate a multi index table you need to make use of the `eosio::multi_index` template, create a struct which can be stored in the multi index table, and define getters on the fields you want to index. Remember that one of these getters must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error it can't find the field to use as the primary key.
+1. Include the `eosio.hpp` header and declare the `eosio` namespace usage
+```
+#include <eosio/eosio.hpp>
+using namespace eosio;
+```
+2. Define the data structure for the multi index table
+```cpp
+  // the data structure in which we will define each row of the table
+  struct [[eosio::table]] test_table {
+  };
+```
+3. Add to the data structure the fields which define the multi index table
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
++    // this field stores a name for each row of the multi index table
++    name test_primary;
++    // additional data stored in table row, e.g. an uint64_t type data
++    uint64_t datum;
+  };
+```
+4. Add definition of the primary index for the multi index table. The primary index type must be uint64_t, it must be unique and and it must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error saying it can't find the field to use as the primary key:
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
+    name test_primary;
+    // additional data stored in table row
+    uint64_t datum;
++    // mandatory definition for primary key getter
++    uint64_t primary_key( ) const { return test_primary.value; }
+  };
+```
 
-One example to accomplish this is exemplified below.
+__Note__ Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
+
+5. For ease of use we define a type alias `test_tables` based on the multi_index template type, parametarized with a random name and the test_table data structure defined above
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
+    name test_primary;
+    // additional data stored in table row
+    uint64_t datum;
+    // mandatory definition for primary key getter
+    uint64_t primary_key( ) const { return test_primary.value; }
+  };
+  
++  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
+```
+
+6. Define the multi index table data member of type `test_tables` defined in the privious step
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
+    name test_primary;
+    // additional data stored in table row
+    uint64_t datum;
+    // mandatory definition for primary key getter
+    uint64_t primary_key( ) const { return test_primary.value; }
+  };
+  
+  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
++  test_tables testtab;
+```
+
+7. Instantiate the data member `testtab` by passing in its constructor a `code` and a `scope`, these two combined with "tablename" provide access to the partition of the RAM cache used by this multi index table, in our example we will initialize the `testtab` data member in the smart contract constructor
+
+```diff
+// contract class constructor
+multi_index_example( name receiver, name code, datastream<const char*> ds ) :
+   // contract base class contructor
+   contract(receiver, code, ds),
+   // instantiate multi index instance as data member (find it defined below)
++   testtab(receiver, receiver.value)
+   { }
+```
+Now you have instantiated the `testtab` variable as a multi index table which has a primary index defined for its `test_primary` data member.
+
+Here is how the definition of a `multi_index_example` contract containing a multi index table could look like after following all the steps above.
 
 __multi_index_example.hpp__
 ```cpp
@@ -19,12 +97,13 @@ class [[eosio::contract]] multi_index_example : public contract {
          // contract base class contructor
          contract(receiver, code, ds),
          // instantiate multi index instance as data member (find it defined below)
-         testtab(receiver, receiver.value) { }
+         testtab(receiver, receiver.value)
+         { }
 
       // the row structure of the multi index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field is used later for definition of the primary index
+        // this field stores a name for each row of the multi index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;

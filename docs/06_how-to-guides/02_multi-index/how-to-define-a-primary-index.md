@@ -1,6 +1,6 @@
 ## How to define a primary index
 
-To define a primary index for a multi index data structure it is mandatory when definint a multi index table structure. See for exemplification the following steps:
+To define a primary index for a multi index data structure it is mandatory when defining a multi index table structure. See for exemplification the following steps:
 
 1. Include the `eosio.hpp` header and declare the `eosio` namespace usage
 ```

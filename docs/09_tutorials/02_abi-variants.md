@@ -22,7 +22,8 @@ class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
-         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+         : contract(receiver, code, ds), testtab(receiver, receiver.value)
+         { }
 
       struct [[eosio::table]] test_table {
          name test_primary;
@@ -65,7 +66,8 @@ class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
-         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+         : contract(receiver, code, ds), testtab(receiver, receiver.value)
+         { }
 
       struct [[eosio::table]] test_table {
          name test_primary;
@@ -119,7 +121,8 @@ class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
       multi_index_example( name receiver, name code, datastream<const char*> ds )
-         : contract(receiver, code, ds), testtab(receiver, receiver.value) {}
+         : contract(receiver, code, ds), testtab(receiver, receiver.value)
+         { }
 
       struct [[eosio::table]] test_table {
          name test_primary;
