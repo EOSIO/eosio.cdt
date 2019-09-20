@@ -1,15 +1,48 @@
 ## How to define a primary index
 
-How to declare and instantiate a multi index table can be found [here](./how-to-instantiate-a-multi-index-table.md), and as par of the definition of the multi index table, the definition of a primary index key getter is mandatory. You can find in the section linked previously the full example of a multi index table including the primary index definition.
+To define a primary index for a multi index data structure it is mandatory when definint a multi index table structure. See for exemplification the following steps:
 
-For a quick reference of how a multi index table and the primary key index getter are defined see below:
-
+1. Include the `eosio.hpp` header and declare the `eosio` namespace usage
+```
+#include <eosio/eosio.hpp>
+using namespace eosio;
+```
+2. Define the data structure for the multi index table
 ```cpp
-  // ...
-
+  // the data structure in which we will define each row of the table
+  struct [[eosio::table]] test_table {
+  };
+```
+3. Add to the data structure the fields which define the multi index table
+```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
-    // this field is used later for definition of the primary index
++    // this field stores a name for each row of the multi index table
++    name test_primary;
++    // additional data stored in table row, e.g. an uint64_t type data
++    uint64_t datum;
+  };
+```
+4. Add definition of the primary index for the multi index table. The primary index type must be uint64_t and must be unique
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
+    name test_primary;
+    // additional data stored in table row
+    uint64_t datum;
++    // mandatory definition for primary key getter
++    uint64_t primary_key( ) const { return test_primary.value; }
+  };
+```
+
+__Note__ Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
+
+5. For ease of use we define a type alias `test_tables` based on the multi_index template type, parametarized with a random name and the test_table data structure defined above
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
     name test_primary;
     // additional data stored in table row
     uint64_t datum;
@@ -17,16 +50,26 @@ For a quick reference of how a multi index table and the primary key index gette
     uint64_t primary_key( ) const { return test_primary.value; }
   };
   
-  // ...
-
-  // the multi index type definition, for ease of use we define a type alias `test_tables`, 
-  // based on the multi_index template type, parametarized with a random name and 
-  // the test_table data structure
-  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
-
-  // the multi index table instance declared as a data member of type test_tables
-  test_tables testtab;
++  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 ```
+
+6. Define the multi index table instance declared as a data member of type `test_tables` defined in the privious step
+```diff
+  // the data structure which defines each row of the table
+  struct [[eosio::table]] test_table {
+    // this field stores a name for each row of the multi index table
+    name test_primary;
+    // additional data stored in table row
+    uint64_t datum;
+    // mandatory definition for primary key getter
+    uint64_t primary_key( ) const { return test_primary.value; }
+  };
+  
+  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
++  test_tables testtab;
+```
+
+Now you have instantiated the `testtab` as a multi index table which has a primary index defined for its `test_primary` data member.
 
 __Note__
 A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
