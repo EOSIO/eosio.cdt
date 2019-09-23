@@ -1,44 +1,40 @@
 ## How to create and use action wrappers
 
-### Create action wrappers
-
-This is how are defined the action wrappers for the following actions `create`, `issue`, `transfer` in token contract:
-
+1. Let's assume you have a contract `multi_index_example` with an action `mod` defined like below in file `multi_index_example.hpp`, it modifies
 ```cpp
-[[eosio::action]]
-void create( name issuer, asset  maximum_supply );
-
-[[eosio::action]]
-void issue( name to, asset quantity, string memo );
-
-[[eosio::action]]
-void transfer( name    from,
-              name    to,
-              asset   quantity,
-              string  memo );
-
-// The first parameter of the action wrapper template is the action eosio::name and second parameter is the reference to the action method
-using create_action = eosio::action_wrapper<"create"_n, &token::create>;
-using issue_action = eosio::action_wrapper<"issue"_n, &token::issue>;
-using transfer_action = eosio::action_wrapper<"transfer"_n, &token::transfer>;
-
-// ...
+class [[eosio::contract]] multi_index_example : public contract {
+  // ...
+  [[eosio::action]] void mod( name user, uint32_t n );
+  // ...
+}
 ```
-__Note__: // The first parameter of the action wrapper template is the action eosio::name and second parameter is the reference to the action method.
-
-
-### Use action wrappers
-And this is how you use the previously created action wrapper for `transfer` action:
+2. To define an action wrapper for the `mod` action, make use of the `eosio::action_wrapper` template, with  the first parameter the action name as a `eosio::name` and second parameter as the reference to the action method
+```diff
+class [[eosio::contract]] multi_index_example : public contract {
+  // ...
+  [[eosio::action]] void mod(name user);
+  // ...
++  using mod_action = action_wrapper<"mod"_n, &multi_index_example::mod>;
+  // ...
+}
+```
+3. To use the action wrapper, you have to include the header file where the action wrapper is defined
 ```cpp
-#include <eosio_token/include/eosio_token.hpp>
+#include <multi_index_example.hpp>
+```
+4. And then instantiate the `mod_action` defined above specifying the contract to send the action to as the first argument, in this case we assume the contract is deployed to `multiindexex` account, and a stucture which is defined by self account and the `active` permission, you can modify these based on your requirements.
+```diff
+#include <multi_index_example.hpp>
 
-// specify the contract to send the action to as the first argument
-token::transfer_action payout("eosio.token"_n, {get_self(), "active"_n});
++multi_index_example::mod_action modaction("multiindexex"_n, {get_self(), "active"_n});
+```
+5. And finally call the `send` method of the action wrapper and pass in the `mod` action's parameters as positional arguments
+```diff
+#include <multi_index_example.hpp>
 
-// specify the transfer arguments as postional arguments
-payout.send(get_self(), to, quantity, memo);
+multi_index_example::mod_action modaction("multiindexex"_n, {get_self(), 1});
+
++modaction.send(get_self(), "eostutorial"_n, 1, memo);
 ```
 
-__Note:__ You have to include the header file where the action wrappers are defined.
-
-For a full example of using and creating actions wrappers see the 
+For a full example see the [`multi_index` contract implementation](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
