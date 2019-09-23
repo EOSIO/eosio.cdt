@@ -22,27 +22,9 @@ To delete data from a multi index table follow the steps below:
 +    return;
 +  }
 
-+  // if we got so far it means user exists so we can delete it using 
-+  // the iterator found based on its primary key
 +  testtab.erase( itr );
 }
 ```
 
-Here's how the full code looks like after following the steps above:
-```cpp
-[[eosio::action]] void multi_index_example::del( name user ) {
-  // check if the user already exists
-  auto itr = testtab.find(user.value);
-  if ( itr == testtab.end() ) {
-    printf("user does not exist in table, nothing to delete" );
-    return;
-  }
-
-  // if we got so far it means user exists so we can delete it using 
-  // the iterator found based on its primary key
-  testtab.erase( itr );
-}
-```
-
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

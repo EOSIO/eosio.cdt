@@ -4,4 +4,5 @@ Deferred communication conceptually takes the form of action notifications sent 
 
 As already mentioned, deferred communication will get scheduled later at the producer's discretion. From the perspective of the originating transaction, i.e., the transaction that creates the deferred transaction, it can only determine whether the create request was submitted successfully or whether it failed (if it fails, it will fail immediately). Deferred transactions carry the authority of the contract that sends them. A transaction can cancel a deferred transaction.
 
-Because of all considerations mentioned above we do not reccommend the use of deferred transactions and we are considering to deprecate them in the future versions.
+[[warning | Warning about deferred transaction usage]]
+| Because of all considerations mentioned above it is not reccommended the use of `deferred transactions` and it is very seriousely taken in consideration the option to be deprecated in the future versions.

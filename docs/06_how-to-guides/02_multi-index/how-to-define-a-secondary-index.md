@@ -1,13 +1,11 @@
-## How to define a secondady index
+## How to define a secondary index
 
 Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 The steps below show how to add a secondary index to the existing multi index table.
 
-1. Add a second field let's say `secondary` to the data structure that defines the row of the table, in our case `test_table`
+1. Add a second field, `secondary`, to the data structure that defines the row of the table, in your case `test_table`
 ```diff
-  // the row structure of the multi index table, that is, each row of the table
-  // will contain an instance of this type of structure
   struct [[eosio::table]] test_table {
     // this field stores a name for each row of the multi index table
     name test_primary;
@@ -21,8 +19,6 @@ The steps below show how to add a secondary index to the existing multi index ta
 
 2. Add `by_secondary( )` method which is the index accessor method to the new field value added. The secondary index, that will be added in step 3, will index this new data structure field.
 ```diff
-  // the row structure of the multi index table, that is, each row of the table
-  // will contain an instance of this type of structure
   struct [[eosio::table]] test_table {
     // this field stores a name for each row of the multi index table
     name test_primary;
@@ -62,8 +58,6 @@ class [[eosio::contract]] multi_index_example : public contract {
          testtab(receiver, receiver.value) 
          { }
 
-      // the row structure of the multi index table, that is, each row of the table
-      // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
         // this field stores a name for each row of the multi index table
         name test_primary;
@@ -75,7 +69,7 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // the multi index type definition, for ease of use a type alias `test_tables` is defined, 
       // based on the multi_index template type, parametarized with a random name, the 
       // test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
@@ -91,5 +85,5 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

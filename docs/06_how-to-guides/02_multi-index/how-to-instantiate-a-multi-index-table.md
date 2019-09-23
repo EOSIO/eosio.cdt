@@ -7,7 +7,6 @@ using namespace eosio;
 ```
 2. Define the data structure for the multi index table
 ```cpp
-  // the data structure in which we will define each row of the table
   struct [[eosio::table]] test_table {
   };
 ```
@@ -34,9 +33,10 @@ using namespace eosio;
   };
 ```
 
-__Note__ Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
+[[Info | Additional indexes information]]
+| Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
 
-5. For ease of use we define a type alias `test_tables` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+5. For ease of use define a type alias `test_tables` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
@@ -67,7 +67,7 @@ __Note__ Other, secondary, indexes if they will be defined can have duplicates. 
 +  test_tables testtab;
 ```
 
-7. Instantiate the data member `testtab` by passing in its constructor the `scope` (in our case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi index table, in our example we will initialize the `testtab` data member in the smart contract constructor
+7. Instantiate the data member `testtab` by passing to its constructor the `scope` (in this case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi index table, in this example you will initialize the `testtab` data member in the smart contract constructor
 
 ```diff
 // contract class constructor
@@ -111,7 +111,7 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // the multi index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
@@ -127,5 +127,5 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

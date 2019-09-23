@@ -102,15 +102,15 @@ Now you can deploy the contract and it will be backwards compatible with the pre
 
 ### Use variant when changing an already deployed multi index table
 
-Prerequisites: For exemplification we are going to use the contract defined in this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md). We are assumming you deployed it and now we are going to change the table structure. 
+Prerequisites: For exemplification it will be used the contract defined in this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md). It is assumed you deployed it and now you are going to change the table structure. 
 
-To change the existing table structure we are going to use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). Let's say you want to add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
+To change the existing table structure you will use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). You will add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
 
 ```cpp
   eosio::binary_extension<std::variant<int8_t, uint16_t, uint32_t>> binary_extension_variant_key;
 ```
 
-Notice, the use of the `eosio::binary_extension` template which wraps the `std::variant` template parameterized with the types we want to support for the new data field. The full contract implementation can look like this:
+Notice, the use of the `eosio::binary_extension` template which wraps the `std::variant` template parameterized with the types you want to support for the new data field. The full contract implementation can look like this:
 
 ```diff
 #include <eosio/eosio.hpp>
@@ -149,6 +149,8 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-N.B. Be aware that we do not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how to ABI gets generated!
+[[warning | Not recommended warning]]
+| Be aware, it is not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how to ABI gets generated!
 
-__Note__: The implementation for ABI `variants' section can be found [here](https://github.com/EOSIO/eos/pull/5652).
+[[Info | Implemenatation location]]
+| The implementation for ABI `variants' section can be found [here](https://github.com/EOSIO/eos/pull/5652).

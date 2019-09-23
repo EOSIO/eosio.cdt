@@ -13,14 +13,13 @@ To insert data into a multi index table follow the following steps
 }
 ```
 
-2. Use the `emplace` method to make the insertion
+2. Use the `emplace` method to make the insertion if the user is not already in table
 ```diff
 [[eosio::action]] void multi_index_example::set( name user ) {
   // check if the user already exists
   auto itr = testtab.find(user.value);
 
 +  if ( itr == testtab.end() ) {
-+    // user is not already in table, we use emplace to insert a new row data structure in table
 +    testtab.emplace( _self, [&]( auto& u ) {
 +      u.test_primary = user;
 +      u.secondary = "second"_n;
@@ -30,22 +29,5 @@ To insert data into a multi index table follow the following steps
 }
 ```
 
-Here's how the full code looks like after following the steps above:
-```cpp
-[[eosio::action]] void multi_index_example::set( name user ) {
-  // check if the user already exists
-  auto itr = testtab.find(user.value);
-
-  if ( itr == testtab.end() ) {
-    // user is not already in table, we use emplace to insert a new row data structure in table
-    testtab.emplace( _self, [&]( auto& u ) {
-      u.test_primary = user;
-      u.secondary = "second"_n;
-      u.datum = 0;
-    });
-  }
-}
-```
-
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

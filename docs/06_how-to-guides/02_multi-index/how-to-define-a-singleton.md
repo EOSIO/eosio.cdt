@@ -1,6 +1,6 @@
 ## How to define a singleton
 
-This how you can define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`; the structure testtable can be extended to be defined by multiple data members, here we defined only two for demonstration purposes.
+To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable` follow the steps below:
 
 1. Include the `eosio.hpp` and `singleton.hpp` headers and declare the `eosio` namespace usage
 ```
@@ -16,7 +16,7 @@ struct [[eosio::table]] testtable {
 };
 ```
 
-3. For ease of use we define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testsingletona"` and the `testtable` data structure defined above
+3. For ease of use define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testsingletona"` and the `testtable` data structure defined above
 ```diff
 struct [[eosio::table]] testtable {
    name primary_value;
@@ -36,7 +36,7 @@ using singleton_type = eosio::singleton<"testsingletona"_n, testtable>;
 +singleton_type singleton_instance;
 ```
 
-5. Instantiate the data member `singleton_instance` by passing in its constructor the `receiver` and the `code` (in our case `receiver.value`) parameters, these two combined with "testsingletona" provide access to the partition of the RAM cache used by this singleton, in our example we will initialize the `singleton_instance` data member in the smart contract constructor, see below:
+5. Instantiate the data member `singleton_instance` by passing to its constructor the `receiver` and the `code` (in this case `receiver.value`) parameters; these two combined with "testsingletona" provide access to the partition of the RAM cache used by this singleton. In this example you will initialize the `singleton_instance` data member in the smart contract constructor, see below:
 ```diff
 // singleton contract constructor
 singleton_example( name receiver, name code, datastream<const char*> ds ) :
@@ -98,5 +98,6 @@ __singleton_example.cpp__
    }
 ```
 
-__Note__
-A full example project demonstrating the instantiation and usage of singleton can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/singleton_example).
+
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of singleton can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/singleton_example).

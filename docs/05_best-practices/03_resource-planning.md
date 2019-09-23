@@ -11,7 +11,7 @@ Once you have a fair idea of how your contract, blockchain application, and user
 Of course some aspects might differ from network to network, because each network might have altered its system contracts.  The EOSIO code base is open sourced and it can be tailored to each network's requirements. You need to be aware of these differences and take them into account if this is the case with a network you're testing on.
 
 The EOSIO community is also providing tools that can help you in this endeavor. One example is https://www.eosrp.io
-Because the RAM price varies and because the CPU and NET bandwidth allocations vary too, as we explained in the previous section, this tool can help you estimate how much of each resource you can allocate based on a specific amount of tokens and vice-versa.
+Because the RAM price varies and because the CPU and NET bandwidth allocations vary too, as it is explained in the previous section, this tool can help you estimate how much of each resource you can allocate based on a specific amount of tokens and vice-versa.
 
 Another aspect of resource planning involves making sure your contract is efficient, that is, not consuming resources unnecessarily. Therefore, it is beneficial for you to find answers to the following questions when writing your own smart contracts and blockchain applications:
 

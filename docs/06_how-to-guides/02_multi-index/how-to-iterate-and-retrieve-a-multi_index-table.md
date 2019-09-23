@@ -2,7 +2,7 @@
 
 Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
-Let's say we have the multi index contract definition example from below:
+For exemplification define the multi index contract definition like below:
 
 __multi_index_example.hpp__
 ```cpp
@@ -33,7 +33,7 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // the multi index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
@@ -49,17 +49,18 @@ class [[eosio::contract]] multi_index_example : public contract {
 
 The steps below show how to iterate and retrieve a multi index table.
 
-1. Let's add to the above multi index example contract an action `print` which gets as parameter an acount name
+1. Add to the above multi index example contract an action `print` which gets as parameter an acount name
 
 ```cpp
-  // this is the print action we want to add
-  [[eosio::action]] void print( name user );
-
-  // for ease of use, we are defining the action_wrapper for print action
-  using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
+[[eosio::action]] void print( name user );
 ```
+2. For ease of use add the action wrapper defition as well
+```diff
+[[eosio::action]] void print( name user );
 
-2. Now let's implement the action code, by searching for the `user` name in the multi index table using the primary index and print out the value stored in that row for field `datum` if found, otherwise asserts with a custom message.In the contract definition:
++using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
+```
+3. Implement the action code, by searching for the `user` name in the multi index table using the primary index and print out the value stored in that row for field `datum` if found, otherwise asserts with a custom message. In the contract definition add the folloing implementation for `print` action:
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {
     // searches for the row that corresponds to the user parameter
@@ -72,8 +73,7 @@ The steps below show how to iterate and retrieve a multi index table.
     eosio::print_f("Test Table : {%, %}\n", itr->test_primary, itr->datum);
 }
 ```
-
-3. Finally the whole definition and implementation files for the contract should look like this:
+4. Finally the whole definition and implementation files for the contract should look like this:
 
 __multi_index_example.hpp__
 ```cpp
@@ -104,7 +104,7 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi index type definition, for ease of use we define a type alias `test_tables`, 
+      // the multi index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
@@ -129,7 +129,7 @@ __multi_index_example.cpp__
   auto itr = testtab.find(user.value);
 
   if ( itr == testtab.end() ) {
-    // user is not already in table, we use emplace to insert a new row data structure in table
+    // user is not found in table, use emplace to insert a new row data structure in table
     testtab.emplace( _self, [&]( auto& u ) {
       u.test_primary = user;
       u.secondary = "second"_n;
@@ -150,5 +150,5 @@ __multi_index_example.cpp__
 }
 ```
 
-__Note__
-A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+[[Info | Full example location]]
+| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

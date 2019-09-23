@@ -1,6 +1,6 @@
 ## How to create and use action wrappers
 
-1. Let's assume you have a contract `multi_index_example` with an action `mod` defined like below in file `multi_index_example.hpp`, it modifies
+1. Start with a contract `multi_index_example` which has an action `mod` defined like below in file `multi_index_example.hpp`; the action modifies the integer value `n` stored for row with key `user`.
 ```cpp
 class [[eosio::contract]] multi_index_example : public contract {
   // ...
@@ -22,7 +22,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 ```cpp
 #include <multi_index_example.hpp>
 ```
-4. And then instantiate the `mod_action` defined above specifying the contract to send the action to as the first argument, in this case we assume the contract is deployed to `multiindexex` account, and a stucture which is defined by self account and the `active` permission, you can modify these based on your requirements.
+4. And then instantiate the `mod_action` defined above specifying the contract to send the action to as the first argument, in this case it is assumed the contract is deployed to `multiindexex` account, and a stucture which is defined to parameters: the self account and the `active` permission (you can modify these two parameters based on your requirements).
 ```diff
 #include <multi_index_example.hpp>
 

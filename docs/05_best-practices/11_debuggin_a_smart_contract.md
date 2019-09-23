@@ -9,7 +9,7 @@ The concept is the same, so for the following guide, debugging on the private te
 If you haven't set up your own local nodeos, please follow the [setup guide](https://developers.eos.io/eosio-home/docs/getting-the-software). By default, your local nodeos will just run in a private testnet unless you modify the config.ini file to connect with public testnet (or official testnet) nodes. 
 
 ## Method
-The main method used to debug smart contract is **Caveman Debugging**, where we utilize the printing functionality to inspect the value of a variable and check the flow of the contract. Printing in smart contract can be done through the Print API. The C++ API is the wrapper for C API, so most often we will just use the C++ API.
+The main method used to debug smart contract is **Caveman Debugging**, where it is utilized the printing functionality to inspect the value of a variable and check the flow of the contract. Printing in smart contract can be done through the Print API. The C++ API is the wrapper for C API, so most often it will be used the C++ API.
 
 ## Print
 Print C API supports the following data type that you can print:
@@ -32,7 +32,7 @@ While Print C++ API wraps some of the above C API by overriding the print() func
 - struct that has print() method
 
 ## Example
-Let's write a new contract as example for debugging
+Here's an example contract for debugging
 
 ### debug.hpp
 
@@ -98,7 +98,7 @@ extern "C" {
   ]
 }
 ```
-Let's deploy it and send a message to it. Assume that you have `debug` account created and have its key in your wallet.
+Deploy it and send a message to it. It is assumed that you have `debug` account created and have its key in your wallet.
 
 ```bash
 $ eosio-cpp -abigen debug.cpp -o debug.wasm

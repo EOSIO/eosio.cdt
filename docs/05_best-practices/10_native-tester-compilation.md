@@ -34,7 +34,7 @@ using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(hello_test)
    // These can be redefined by the user to suit there needs per unit test
-   // the idea is that in a future release we will have a base library that 
+   // the idea is that in a future release there will be a base library that 
    // initializes these to "useable" default implementations and probably 
    // helpers to more easily define read_action_data and action_data_size intrinsics
    // like these"
