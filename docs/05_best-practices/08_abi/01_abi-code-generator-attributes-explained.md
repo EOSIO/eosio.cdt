@@ -1,5 +1,5 @@
 ## ABI/Code generator attributes explained
-Unlike the old ABI generator tool, the new tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
+The new ABI generator tool uses C++11 or GNU style attributes to mark ```actions``` and ```tables```.
 
 ### [[eosio::action]]
 This attribute marks either a struct or a method as an action.
@@ -51,7 +51,7 @@ If you don't want to use the multi-index you can explicitly specify the name in 
 class [[eosio::contract("<any name you would like>")]] test_contract : public eosio::contract {
 };
 ```
-This will mark this `class` as being an `EOSIO` contract, this allows for namespacing of contracts, i.e. you can include headers like `eosio::token` and not have `eosio::token`'s actions/tables wind up in you ABI or generated dispatcher.
+The code above will mark this `class` as being an `EOSIO` contract, this allows for namespacing of contracts, i.e. you can include headers like `eosio::token` and not have `eosio::token`'s actions/tables wind up in you ABI or generated dispatcher.
 
 ### [[eosio::on_notify("\<valid eosio account name\>::\<valid eosio action name\>")]]
 ```
@@ -74,7 +74,7 @@ void some_function(...) {
 }
 ```
 
-This will mark an arbitrary function as an entry point, which will then wrap the function with global constructors (ctors) and global destructors (dtors).  This will allow for the eosio.cdt toolchain to produce WASM binaries for other ecosystems.
+The code above will mark an arbitrary function as an entry point, which will then wrap the function with global constructors (ctors) and global destructors (dtors).  This will allow for the eosio.cdt toolchain to produce WASM binaries for other ecosystems.
 
 ### [[eosio::wasm_import]]
 ```
@@ -84,5 +84,5 @@ extern "C" {
 }
 ```
 
-This will mark a function declaration as being a WebAssembly import.  This allows for other compilation modes to specify which functions are import only (i.e. do not link) without having to maintain a secondary file with duplicate declarations.
+The code above will mark a function declaration as being a WebAssembly import.  This allows for other compilation modes to specify which functions are import only (i.e. do not link) without having to maintain a secondary file with duplicate declarations.
 
