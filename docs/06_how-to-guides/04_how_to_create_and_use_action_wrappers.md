@@ -1,7 +1,6 @@
 ## How to create and use action wrappers
 
 ### Create action wrappers
-One of the good examples for creating action wrappers is the `eosio.token` contract [code](https://github.com/EOSIO/eosio.contracts/blob/867f6f291db05cb663505f21ba8f7c3adca20678/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L150).
 
 This is how are defined the action wrappers for the following actions `create`, `issue`, `transfer` in token contract:
 
@@ -41,3 +40,5 @@ payout.send(get_self(), to, quantity, memo);
 ```
 
 __Note:__ You have to include the header file where the action wrappers are defined.
+
+For a full example of using and creating actions wrappers see the 

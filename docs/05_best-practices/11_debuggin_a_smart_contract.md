@@ -1,4 +1,4 @@
-## How to debug a smart contract
+## Debugging a smart contract
 
 In order to be able to debug your smart contract, you will need to setup local nodeos node. This local nodeos node can be run as separate private testnet or as an extension of public testnet.  This local node also needs to be run with the contracts-console option on, either `--contracts-console` via the command line or `contracts-console = true` via the config.ini and/or by setting up logging on your running nodeos node and checking the output logs. See below for details on logging.
 
