@@ -33,4 +33,6 @@ If you prefer less code complexity and can accept downtime for your application:
 1. Deploy a version of your contract solely for migration purposes, and run migration transactions on every row of your table until complete. If the first table is big, e.g. has a large number of rows, the transaction time limit could be reached while running the  migration transactions. To mitigate this implement the migrate function to move a limited number of rows each time it runs;
 2. Deploy a new contract using only the new version of the table, at which point, your migration and downtime is complete.
 
-__Note__: Both of the above migration methods require some pre-planning (like the ability to put your contract into a maintenance mode for user feedback)
+[[caution]]
+| Both of the above migration methods require some pre-planning (like the ability to put your contract into a maintenance mode for user feedback)
+
