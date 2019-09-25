@@ -45,9 +45,13 @@ class Printer:
         if verbose and Printer.verbose:
             print_decorated(*text, fcolor="green", newline=newline)
 
-    # @staticmethod
-    # def yellow(*text, **kwargs):
-    # return decorate(*text, fcolor="yellow", **kwargs)
+    @staticmethod
+    def yellow(*text, verbose=False, newline=True):
+        if not verbose:
+            print_decorated(*text, fcolor="yellow", newline=newline)
+
+        if verbose and Printer.verbose:
+            print_decorated(*text, fcolor="yellow", newline=newline)
 
     # @staticmethod
     # def blue(*text, **kwargs):

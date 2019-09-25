@@ -4,6 +4,7 @@ import tempfile
 
 from multiprocessing import Pool
 from pathlib import Path
+from timeit import default_timer as timer
 
 from typing import Dict, List, Optional, Tuple
 
@@ -59,6 +60,8 @@ def main():
 
     test_directories: List[str] = []
 
+    start = timer()
+
     for f in os.listdir(abs_test_directory):
         abs_f = os.path.join(abs_test_directory, f)
 
@@ -84,7 +87,8 @@ def main():
     with Pool(args.jobs) as p:
         results_list = p.map(run_test, tests_to_run)
 
-    print_test_results(results_list)
+    end = timer()
+    print_test_results(results_list, end - start)
 
 
 def run_test(t: Test) -> Tuple[Test, Optional[TestFailure]]:
@@ -97,13 +101,15 @@ def run_test(t: Test) -> Tuple[Test, Optional[TestFailure]]:
     return (t, None)
 
 
-def print_test_results(results: List[Tuple[Test, Optional[TestFailure]]]) -> None:
-    # TODO:
-    # Replicate CTest output
+def print_test_results(
+    results: List[Tuple[Test, Optional[TestFailure]]], run_time: float
+) -> None:
     P.print("\n========= Results =========")
 
     failures = []
     successes = []
+
+    total_tests = len(results)
 
     for t, r in results:
         if r is not None:
@@ -114,15 +120,23 @@ def print_test_results(results: List[Tuple[Test, Optional[TestFailure]]]) -> Non
     if failures:
         for f in failures:
             P.red("Failure: ", newline=False)
-            P.print(f"{f.failing_test.name} failed with message: ", newline=False)
+            P.print(f"{f.failing_test.fullname} failed with message: ", newline=False)
             P.red(f"{f}")
         P.print()
 
         for s in successes:
             P.green("Success: ", newline=False)
-            P.print(f"{s.name}")
+            P.print(f"{s.fullname}")
+
+        num_failures = len(failures)
+        pct = 100 - (100 * num_failures / total_tests)
+        P.yellow(
+            f"\n{pct:.0f}% of tests passed, {num_failures} tests failed out of {total_tests}"
+        )
     else:
-        P.green("\tAll tests passed!")
+        P.green("\n100% of tests passed, 0 tests failed out of {total_tests}")
+
+    P.print(f"\nTotal Test discovery and run time = {run_time:.2f} sec")
 
 
 def build_test_suite_map(test_suites: List[TestSuite]) -> Dict[str, TestSuite]:
