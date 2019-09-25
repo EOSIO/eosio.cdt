@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
-from config import Config, TestFailure
+from config import Config, MissingAbiError, TestFailure
 from printer import Printer as P
 
 
@@ -85,14 +85,19 @@ class Test(ABC):
 
         if expected.get("abi"):
             e_abi = expected["abi"]
-            with open(self.abi_file) as f:
-                a_abi = f.read()
+            try:
+                f = open(self.abi_file)
+            except FileNotFoundError:
+                raise MissingAbiError(f"{self.abi_file} is missing and expected by {self.fullname}")
+            else:
+                with f:
+                    a_abi = f.read()
 
-            if e_abi != a_abi:
-                self.success = False
-                raise TestFailure(
-                    "actual abi did not match expected abi", failing_test=self
-                )
+                    if e_abi != a_abi:
+                        self.success = False
+                        raise TestFailure(
+                            "actual abi did not match expected abi", failing_test=self
+                        )
 
         if expected.get("wasm"):
             e_wasm = expected["wasm"]

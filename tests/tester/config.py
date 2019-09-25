@@ -30,13 +30,12 @@ class TestFailure(Exception):
         self.failing_test = failing_test
 
 
-class Failure(Exception):
-    pass
-
-
 class MissingCppError(Exception):
     pass
 
 
 class MissingJsonError(Exception):
+    pass
+
+class MissingAbiError(Exception):
     pass
