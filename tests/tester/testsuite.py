@@ -19,6 +19,7 @@ class TestSuite:
         self.test_type = self._get_test_type()
 
         test_files = []
+
         for f in os.listdir(self.directory):
             abs_f = os.path.join(self.directory, f)
 
@@ -43,7 +44,7 @@ class TestSuite:
 
                 cpp_file = os.path.join(self.directory, f"{name}.cpp")
 
-                args = [cpp_file, t, f"{self.name}/{name}_{i}", self]
+                args = [cpp_file, t, i, self]
 
                 if self.test_type == TestType.BUILD_PASS:
                     self.tests.append(tests.BuildPassTest(*args))

@@ -1,6 +1,7 @@
 import os
 import subprocess
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import List
 
 from config import Config, TestFailure
@@ -12,14 +13,18 @@ class Test(ABC):
     This class represents a singular test file.
     """
 
-    def __init__(self, cpp_file, test_json, name, test_suite):
+    def __init__(self, cpp_file, test_json, index, test_suite):
         self.cpp_file = cpp_file
         self.test_json = test_json
         self.test_suite = test_suite
-        self.name = name
 
-        self._name = self.cpp_file.split("/")[-1].split(".")[0]
-        self.out_wasm = f"{self._name}.wasm"
+        _name = cpp_file.split("/")[-1].split(".")[0]
+        self.abi_file = f"{Path(cpp_file).parent}/{_name}.abi"
+        self.name = f"{_name}_{index}"
+
+        self.fullname = f"{test_suite.name}/{self.name}"
+
+        self.out_wasm = f"{self.name}.wasm"
         self.success = False
 
     @abstractmethod
@@ -40,7 +45,7 @@ class Test(ABC):
         if expected_pass and res.returncode > 0:
             self.success = False
             raise TestFailure(
-                f"{self.name} failed with the following stderr {res.stderr}",
+                f"{self.fullname} failed with the following stderr {res.stderr}",
                 failing_test=self,
             )
 
@@ -80,8 +85,7 @@ class Test(ABC):
 
         if expected.get("abi"):
             e_abi = expected["abi"]
-            a_abi_file = f"{self._name}.abi"
-            with open(a_abi_file) as f:
+            with open(self.abi_file) as f:
                 a_abi = f.read()
 
             if e_abi != a_abi:
@@ -111,7 +115,7 @@ class Test(ABC):
         return self.__str__()
 
     def __str__(self):
-        return self.name
+        return self.fullname
 
 
 class BuildPassTest(Test):

@@ -89,7 +89,7 @@ def main():
 
 def run_test(t: Test) -> Tuple[Test, Optional[TestFailure]]:
     try:
-        P.print(f'Running {t.test_suite.name} {t.name}')
+        P.print(f"Running {t.fullname}")
         t.run()
     except TestFailure as f:
         return (t, f)
