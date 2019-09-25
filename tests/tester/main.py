@@ -88,7 +88,10 @@ def main():
         results_list = p.map(run_test, tests_to_run)
 
     end = timer()
-    print_test_results(results_list, end - start)
+    if args.format == "human":
+        print_test_results(results_list, end - start)
+    else:
+        print_test_results_machine(results_list, end - start)
 
 
 def run_test(t: Test) -> Tuple[Test, Optional[TestFailure]]:
@@ -137,6 +140,11 @@ def print_test_results(
         P.green("\n100% of tests passed, 0 tests failed out of {total_tests}")
 
     P.print(f"\nTotal Test discovery and run time = {run_time:.2f} sec")
+
+def print_test_results_machine(
+    results: List[Tuple[Test, Optional[TestFailure]]], run_time: float
+) -> None:
+    P.red("TODO")
 
 
 def build_test_suite_map(test_suites: List[TestSuite]) -> Dict[str, TestSuite]:
