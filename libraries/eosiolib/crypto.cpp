@@ -14,7 +14,7 @@ extern "C" {
 
    __attribute__((eosio_wasm_import))
    void assert_sha1( const char* data, uint32_t length, const capi_checksum160* hash );
-   
+
    __attribute__((eosio_wasm_import))
    void assert_sha512( const char* data, uint32_t length, const capi_checksum512* hash );
 
@@ -34,11 +34,11 @@ extern "C" {
    void ripemd160( const char* data, uint32_t length, capi_checksum160* hash );
 
    __attribute__((eosio_wasm_import))
-   int recover_key( const capi_checksum256* digest, const char* sig, 
+   int recover_key( const capi_checksum256* digest, const char* sig,
                     size_t siglen, char* pub, size_t publen );
 
    __attribute__((eosio_wasm_import))
-   void assert_recover_key( const capi_checksum256* digest, const char* sig, 
+   void assert_recover_key( const capi_checksum256* digest, const char* sig,
                             size_t siglen, const char* pub, size_t publen );
 
 }
@@ -101,15 +101,21 @@ namespace eosio {
 
       eosio::public_key pubkey;
       if ( pubkey_size <= sizeof(optimistic_pubkey_data) ) {
-         eosio::datastream<char*> pubkey_ds( optimistic_pubkey_data, pubkey_size );
+         eosio::datastream<const char*> pubkey_ds( optimistic_pubkey_data, pubkey_size );
          pubkey_ds >> pubkey;
       } else {
-         char pubkey_data[pubkey_size];
+         constexpr static size_t max_stack_buffer_size = 512;
+         void* pubkey_data = (max_stack_buffer_size < pubkey_size) ? malloc(pubkey_size) : alloca(pubkey_size);
+
          ::recover_key( reinterpret_cast<const capi_checksum256*>(digest_data.data()),
                         sig_data.data(), sig_data.size(),
-                        pubkey_data, pubkey_size );
-         eosio::datastream<char*> pubkey_ds( pubkey_data, pubkey_size );
+                        reinterpret_cast<char*>(pubkey_data), pubkey_size );
+         eosio::datastream<const char*> pubkey_ds( reinterpret_cast<const char*>(pubkey_data), pubkey_size );
          pubkey_ds >> pubkey;
+
+         if( max_stack_buffer_size < pubkey_size ) {
+            free(pubkey_data);
+         }
       }
       return pubkey;
    }
