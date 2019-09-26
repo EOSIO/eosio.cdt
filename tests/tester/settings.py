@@ -37,5 +37,6 @@ class MissingCppError(Exception):
 class MissingJsonError(Exception):
     pass
 
+
 class MissingAbiError(Exception):
     pass

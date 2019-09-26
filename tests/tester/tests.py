@@ -1,12 +1,12 @@
+
 import os
 import subprocess
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
-from settings import Config, MissingAbiError, TestFailure
 from printer import Printer as P
-
+from settings import Config, MissingAbiError, TestFailure
 
 class Test(ABC):
     """
@@ -52,7 +52,7 @@ class Test(ABC):
         if not expected_pass and res.returncode == 0:
             self.success = False
             raise TestFailure(
-                "expected to fail compilationg/linking but didn't.", failing_test=self
+                "expected to fail compilation/linking but didn't.", failing_test=self
             )
 
         if not self.test_json.get("expected"):
@@ -74,41 +74,44 @@ class Test(ABC):
                 )
 
         if expected.get("stderr"):
-            e_stderr = expected["stderr"]
-            a_stderr = res.stderr.decode("utf-8")
+            expected_stderr = expected["stderr"]
+            actual_stderr = res.stderr.decode("utf-8")
 
-            if e_stderr not in a_stderr:
+            if expected_stderr not in actual_stderr:
                 self.success = False
                 raise TestFailure(
-                    f"expected {e_stderr} stderr but got {a_stderr}", failing_test=self
+                    f"expected {expected_stderr} stderr but got {actual_stderr}",
+                    failing_test=self,
                 )
 
         if expected.get("abi"):
-            e_abi = expected["abi"]
+            expected_abi = expected["abi"]
             try:
                 f = open(self.abi_file)
             except FileNotFoundError:
-                raise MissingAbiError(f"{self.abi_file} is missing and expected by {self.fullname}")
+                raise MissingAbiError(
+                    f"{self.abi_file} is missing and expected by {self.fullname}"
+                )
             else:
                 with f:
-                    a_abi = f.read()
+                    actual_abi = f.read()
 
-                    if e_abi != a_abi:
+                    if expected_abi != actual_abi:
                         self.success = False
                         raise TestFailure(
                             "actual abi did not match expected abi", failing_test=self
                         )
 
         if expected.get("wasm"):
-            e_wasm = expected["wasm"]
+            expected_wasm = expected["wasm"]
 
             xxd = subprocess.Popen(("xxd", "-p", self.out_wasm), stdout=subprocess.PIPE)
             tr = subprocess.check_output(("tr", "-d", "\n"), stdin=xxd.stdout)
             xxd.wait()
 
-            a_wasm = tr.decode("utf-8")
+            actual_wasm = tr.decode("utf-8")
 
-            if e_wasm != a_wasm:
+            if expected_wasm != actual_wasm:
                 self.success = False
                 raise TestFailure(
                     "actual wasm did not match expected wasm", failing_test=self
