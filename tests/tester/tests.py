@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
-from config import Config, MissingAbiError, TestFailure
+from settings import Config, MissingAbiError, TestFailure
 from printer import Printer as P
 
 

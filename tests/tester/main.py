@@ -8,7 +8,7 @@ from timeit import default_timer as timer
 
 from typing import Dict, List, Optional, Tuple
 
-from config import Config, TestFailure
+from settings import Config, TestFailure
 from printer import Printer as P
 from testsuite import TestSuite
 from tests import Test

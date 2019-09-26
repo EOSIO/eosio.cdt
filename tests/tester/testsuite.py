@@ -3,7 +3,7 @@ import os
 from typing import List
 
 import tests
-from config import MissingCppError, MissingJsonError, TestType
+from settings import MissingCppError, MissingJsonError, TestType
 
 
 class TestSuite:
