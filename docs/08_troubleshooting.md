@@ -49,6 +49,7 @@ Error 3160009: No wasm file found
 __Possible solution__: Verify that abi and wasm files exist in the directory specified in the `cleos set contract` command, and that their names match the directory name.
 
 5. __Problem__: Action triggers ram charge which cannot be initiated from a notification.
+
 __Possible solution__: The reason for this error is because the notification action doesn't have authorization to buy the needed RAM. In the context of multi index tables, there’s a table payer and a row payer. Only the contract can modify rows. The contract can create rows with a payer that didn’t authorize the action if the total amount of ram charged that payer doesn’t increase (e.g. delete a row and add another with the same payer). The table payer can’t change until the last row is deleted. For the purposes of billing, a table is identified by the tuple `contract, scope, table`. When you create a row for a `contract, scope, table` tuple that doesn’t exist, you create a table with the same payer. This can outlive the original row which created it, if other rows were created with that combination and this prevents the original payer from getting their ram back. Secondary indexes throw in more complexity since they use the lower 4 bits of the table name, producing additional `contract, scope, table` tuples combinations. Key takeaway: payer is about billing, not access control
 
 6. __Problem__: You successfuly re-deployed the contract code, but when you query the table you get the custom message that you coded when the table is not initialized (doesn't exist), or the system error message below in case you do not have code that checks first if table exist:
@@ -61,6 +62,7 @@ pending console output:
 __Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
 7. __Problem__: You successfuly re-deployed the contract code, but when you query the table you get the fields of the row values swapped, that is, it appears the values stored in table rows are the same only that they are swapped between fields/columns.
+
 __Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
 8. __Problem__: You successfuly re-deployed the contract code, but when you query the table you get a parse error, like the one below, or the returned data seems to be garbage.
@@ -71,9 +73,11 @@ Couldn't parse type_name
 __Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
 9. __Problem__: eosio-cpp process never completes.
+
 __Possible solution__: make sure you have at least 2 cores on the host that executes the eosio-cpp (e.g. docker container, VM, local sub-system)
 
 10. __Problem__: You can not find the `now()` time function, or the result of the `current_time_point` functions are not what you expected them to be.
+
 __Possible solution__: The `now()` function has been replaced by `current_time_point().sec_since_epoch()`, it returns the time in microseconds from 1970 of the `current block` as a time_point. There's also available `current_block_time()` which returns the time in microseconds from 1970 of the `current block` as a `block_timestamp`. Be aware that for time base functions, the assumption is when you call something like `now()` or `current_time()` you will get the exact now/current time, however that is not the case with EOSIO, you get __the block time__, and only ever get __the block time__ from the available `sec_since_epoch()` or `current_block_time()` no matter how many times you call it.
 
 11. __Problem__: You successfuly re-deployed the contract code, but when you broadcast one of the contracts methods to the blockchain you get below error message:
@@ -85,6 +89,7 @@ assertion failure with error code: 8000000000000000000
 __Possible solution__: If you are referincing a smart contract from another smart contract and each of them have at least one action with the same name you will experience the above error when sending to the blockchain one of those actions, so what you have to do is to make sure the action names between those two contracts are not common.
 
 12. __Problem__: Print statements from smart contract code are not seen in the output.
+
 __Possible solution__: There are a few reasons print statements do not show up in the output. One reason could be because an error occurs, in which case the whole transaction is rolled back and the print statements output is replaced by the error that occurs instead; Another reason is if you are in a loop, iterrating through a table's rows for example and for each row you have a print statement that prints also the new line char at the `'\n'` only the chars before the new line char from the first iterration will be printed, nothing else after that, nothing from the second iterration onwards either.
 
 The below code will print just the first line of the iterration.
