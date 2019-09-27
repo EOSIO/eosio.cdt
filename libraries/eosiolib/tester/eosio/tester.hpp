@@ -3,6 +3,7 @@
 
 #include <eosio/asset.hpp>
 #include <eosio/chain_types.hpp>
+#include <eosio/crypto.hpp>
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
 #include <eosio/transaction.hpp>
@@ -249,6 +250,40 @@ inline void expect(const chain_types::transaction_trace& ttrace, const char* exp
    }
 }
 
+// TODO: move
+struct tester_key_weight {
+   eosio::public_key key    = {};
+   uint16_t          weight = {};
+
+   EOSLIB_SERIALIZE(tester_key_weight, (key)(weight))
+};
+
+// TODO: move
+struct tester_permission_level_weight {
+   permission_level permission = {};
+   uint16_t         weight     = {};
+
+   EOSLIB_SERIALIZE(tester_permission_level_weight, (permission)(weight))
+};
+
+// TODO: move
+struct tester_wait_weight {
+   uint32_t wait_sec = {};
+   uint16_t weight   = {};
+
+   EOSLIB_SERIALIZE(tester_wait_weight, (wait_sec)(weight))
+};
+
+// TODO: move
+struct tester_authority {
+   uint32_t                                    threshold = {};
+   std::vector<tester_key_weight>              keys      = {};
+   std::vector<tester_permission_level_weight> accounts  = {};
+   std::vector<tester_wait_weight>             waits     = {};
+
+   EOSLIB_SERIALIZE(tester_authority, (threshold)(keys)(accounts)(waits))
+};
+
 class test_chain {
  private:
    uint32_t                               id;
@@ -350,7 +385,7 @@ class test_chain {
 
    chain_types::transaction_trace create_account(name ac, const public_key& pub_key,
                                                  const char* expected_except = nullptr) {
-      authority simple_auth{
+      tester_authority simple_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
       };
@@ -367,11 +402,11 @@ class test_chain {
 
    chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key,
                                                       const char* expected_except = nullptr) {
-      authority simple_auth{
+      tester_authority simple_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
       };
-      authority code_auth{
+      tester_authority code_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
          .accounts  = { { { ac, "eosio.code"_n }, 1 } },
