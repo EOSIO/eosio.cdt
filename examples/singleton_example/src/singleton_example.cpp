@@ -1,6 +1,7 @@
 #include <singleton_example.hpp>
 
-[[eosio::action]] void singleton_example::set( name user, uint64_t value ) {
+[[eosio::action]]
+void singleton_example::set( name user, uint64_t value ) {
    if (!singleton_instance.exists())
    {
       singleton_instance.get_or_create(user, tt);
@@ -11,7 +12,8 @@
    singleton_instance.set(entry_stored, user);
 }
 
-[[eosio::action]] void singleton_example::get( ) {
+[[eosio::action]]
+void singleton_example::get( ) {
    if (singleton_instance.exists())
       eosio::print(
          "Value stored for: ", 

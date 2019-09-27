@@ -19,11 +19,16 @@ class [[eosio::contract]] multi_index_example : public contract {
 
       test_tables testtab;
 
-      [[eosio::action]] void set(name user);
-      [[eosio::action]] void print( name user );
-      [[eosio::action]] void bysec( name secid );
-      [[eosio::action]] void mod( name user, uint32_t n );
-      [[eosio::action]] void del( name user );
+      [[eosio::action]] 
+      void set(name user);
+      [[eosio::action]] 
+      void print( name user );
+      [[eosio::action]] 
+      void bysec( name secid );
+      [[eosio::action]] 
+      void mod( name user, uint32_t n );
+      [[eosio::action]] 
+      void del( name user );
 
       using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
       using print_action = action_wrapper<"print"_n, &multi_index_example::print>;

@@ -10,8 +10,10 @@ class [[eosio::contract]] singleton_example : public contract {
          singleton_instance(receiver, receiver.value)
          {}
 
-      [[eosio::action]] void set( name user, uint64_t value );
-      [[eosio::action]] void get( );
+      [[eosio::action]]
+      void set( name user, uint64_t value );
+      [[eosio::action]]
+      void get( );
 
       struct [[eosio::table]] testtable {
          name primary_value;
