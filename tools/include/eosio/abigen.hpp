@@ -110,7 +110,7 @@ namespace eosio { namespace cdt {
 
       void add_tuple(const clang::QualType& type) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
-         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>((pt) ? pt->desugar().getTypePtr() : type.getTypePtr());
          if (!tst)
             throw abigen_ex;
          abi_struct tup;
@@ -247,6 +247,9 @@ namespace eosio { namespace cdt {
       }
 
       void add_type( const clang::QualType& t ) {
+         if (evaluated.count(t.getTypePtr()))
+            return;
+         evaluated.insert(t.getTypePtr());
          auto type = get_ignored_type(t);
          if (!is_builtin_type(translate_type(type))) {
             if (is_aliasing(type))
@@ -433,6 +436,12 @@ namespace eosio { namespace cdt {
                   if (as.base == td.new_type_name)
                      return true;
                }
+            for ( auto v : _abi.variants ) {
+               for ( auto vt : v.types ) {
+                  if ( remove_suffix(vt) == td.new_type_name )
+                     return true;
+               }
+            }
             for ( auto t : _abi.tables )
                if ( t.type == td.new_type_name )
                   return true;
@@ -479,5 +488,6 @@ namespace eosio { namespace cdt {
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;
          std::map<std::string, std::string>    rcs;
+         std::set<const clang::Type*>          evaluated;
    };
 }} // ns eosio::cdt
