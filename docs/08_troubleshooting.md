@@ -76,7 +76,7 @@ __Possible solution__: make sure you have at least 2 cores on the host that exec
 10. __Problem__: You can not find the `now()` time function, or the result of the `current_time_point` functions are not what you expected them to be.
 __Possible solution__: The `now()` function has been replaced by `current_time_point().sec_since_epoch()`, it returns the time in microseconds from 1970 of the `current block` as a time_point. There's also available `current_block_time()` which returns the time in microseconds from 1970 of the `current block` as a `block_timestamp`. Be aware that for time base functions, the assumption is when you call something like `now()` or `current_time()` you will get the exact now/current time, however that is not the case with EOSIO, you get __the block time__, and only ever get __the block time__ from the available `sec_since_epoch()` or `current_block_time()` no matter how many times you call it.
 
-10. __Problem__: You successfuly re-deployed the contract code, but when you broadcast one of the contracts methods to the blockchain you get below error message:
+11. __Problem__: You successfuly re-deployed the contract code, but when you broadcast one of the contracts methods to the blockchain you get below error message:
 ```sh
 Error 3050004: eosio_assert_code assertion failure
 Error Details:
@@ -84,7 +84,7 @@ assertion failure with error code: 8000000000000000000
 ```
 __Possible solution__: If you are referincing a smart contract from another smart contract and each of them have at least one action with the same name you will experience the above error when sending to the blockchain one of those actions, so what you have to do is to make sure the action names between those two contracts are not common.
 
-11. __Problem__: Print statements from smart contract code are not seen in the output.
+12. __Problem__: Print statements from smart contract code are not seen in the output.
 __Possible solution__: There are a few reasons print statements do not show up in the output. One reason could be because an error occurs, in which case the whole transaction is rolled back and the print statements output is replaced by the error that occurs instead; Another reason is if you are in a loop, iterrating through a table's rows for example and for each row you have a print statement that prints also the new line char at the `'\n'` only the chars before the new line char from the first iterration will be printed, nothing else after that, nothing from the second iterration onwards either.
 
 The below code will print just the first line of the iterration.
