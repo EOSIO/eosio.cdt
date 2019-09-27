@@ -16,6 +16,7 @@ binaries=(
    eosio-ld
    eosio-abidiff
    eosio-init
+   eosio-tester
    llvm-readelf
    llvm-objdump
    llvm-ar

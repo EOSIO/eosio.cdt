@@ -702,7 +702,7 @@ static void run(const char* wasm, const std::vector<std::string>& args) {
    backend(&cb, "env", "start", 0);
 }
 
-const char usage[] = "usage: tester [-h or --help] [-v or --verbose] file.wasm [args for wasm]\n";
+const char usage[] = "usage: eosio-tester [-h or --help] [-v or --verbose] file.wasm [args for wasm]\n";
 
 int main(int argc, char* argv[]) {
    fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::off);

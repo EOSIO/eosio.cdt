@@ -89,3 +89,5 @@ target_link_libraries(eosio-tester
     eosio_chain wabt Runtime Platform Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
+
+set_target_properties(eosio-tester PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)

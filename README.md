@@ -66,6 +66,7 @@ $ sudo ./install.sh
 * eosio-ar
 * eosio-objdump
 * eosio-readelf
+* eosio-tester
 
 ## Contributing
 
