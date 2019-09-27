@@ -1,6 +1,7 @@
 # Prevents an import at runtime so there's no cyclical dependency
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from tests import Test
 
@@ -41,10 +42,8 @@ def print_test_results(
     if failures:
         for f in failures:
             Printer.red("Failure: ", newline=False)
-            Printer.print(
-                f"{f.failing_test.fullname} failed with message: ", newline=False
-            )
-            Printer.red(f"{f}")
+            Printer.print(f"{f.failing_test.fullname} failed with message: ")
+            Printer.red(f"\t{f}")
         Printer.print()
 
         for s in successes:
