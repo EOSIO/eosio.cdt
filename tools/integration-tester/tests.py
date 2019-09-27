@@ -39,13 +39,16 @@ class Test(ABC):
         self._run(eosio_cpp, args)
 
     def handle_test_result(self, res: subprocess.CompletedProcess, expected_pass=True):
-        P.print(res.stdout.decode("utf-8").strip(), verbose=True)
-        P.print(res.stderr.decode("utf-8").strip(), verbose=True)
+        stdout = res.stdout.decode("utf-8").strip()
+        stderr = res.stderr.decode("utf-8").strip()
+
+        P.print(stdout, verbose=True)
+        P.print(stderr, verbose=True)
 
         if expected_pass and res.returncode > 0:
             self.success = False
             raise TestFailure(
-                f"{self.fullname} failed with the following stderr {res.stderr}",
+                f"{self.fullname} failed with the following stderr {stderr}",
                 failing_test=self,
             )
 
