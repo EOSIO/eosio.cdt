@@ -13,7 +13,7 @@ eosio::cdt::output_stream std_err;
 extern "C" {
    int main(int, char**);
    char* _mmap();
-   
+
    static jmp_buf env;
    static jmp_buf test_env;
    static volatile int jmp_ret;
@@ -25,7 +25,8 @@ extern "C" {
    void ___putc(char c);
    bool ___disable_output;
    bool ___has_failed;
-   
+   bool ___earlier_unit_test_has_failed;
+
    void* __get_heap_base() {
       return ___heap_base_ptr;
    }
@@ -79,6 +80,8 @@ extern "C" {
       ___pages = 1;
       ___disable_output = false;
       ___has_failed = false;
+      ___earlier_unit_test_has_failed = false;
+
       // preset the print functions
       intrinsics::set_intrinsic<intrinsics::prints_l>([](const char* cs, uint32_t l) {
             _prints_l(cs, l, eosio::cdt::output_stream_kind::std_out);
@@ -106,9 +109,9 @@ extern "C" {
             memcpy(buff, ret.c_str(), ret.size());
             v -= (int)v;
             buff[ret.size()] = '.';
-            size_t size = ret.size(); 
+            size_t size = ret.size();
             for (size_t i=size+1; i < size+10; i++) {
-               v *= 10; 
+               v *= 10;
                buff[i] = ((int)v)+'0';
                v -= (int)v;
             }
@@ -120,9 +123,9 @@ extern "C" {
             memcpy(buff, ret.c_str(), ret.size());
             v -= (long)v;
             buff[ret.size()] = '.';
-            size_t size = ret.size(); 
+            size_t size = ret.size();
             for (size_t i=size+1; i < size+10; i++) {
-               v *= 10; 
+               v *= 10;
                buff[i] = ((int)v)+'0';
                v -= (int)v;
             }
@@ -136,8 +139,31 @@ extern "C" {
             std::string s = eosio::name(nm).to_string();
             prints_l(s.c_str(), s.length());
          });
+      intrinsics::set_intrinsic<intrinsics::printhex>([](const void* data, uint32_t len) {
+            constexpr static uint32_t max_stack_buffer_size = 512;
+            const char* hex_characters = "0123456789abcdef";
 
-      jmp_ret = setjmp(env); 
+            uint32_t buffer_size = 2*len;
+            if(buffer_size < len) eosio_assert( false, "length passed into printhex is too large" );
+
+            void* buffer = (max_stack_buffer_size < buffer_size) ? malloc(buffer_size) : alloca(buffer_size);
+
+            char*          b = reinterpret_cast<char*>(buffer);
+            const uint8_t* d = reinterpret_cast<const uint8_t*>(data);
+            for( uint32_t i = 0; i < len; ++i ) {
+               *b = hex_characters[d[i] >> 4];
+               ++b;
+               *b = hex_characters[d[i] & 0x0f];
+               ++b;
+            }
+
+            prints_l(reinterpret_cast<const char*>(buffer), buffer_size);
+
+            if(max_stack_buffer_size < buffer_size) free(buffer);
+         });
+
+
+      jmp_ret = setjmp(env);
       if (jmp_ret == 0) {
          ret_val = main(argc, argv);
       } else {
@@ -145,7 +171,7 @@ extern "C" {
       }
       return ret_val;
    }
-   
+
    extern "C" void* memset(void*, int, size_t);
    extern "C" void __bzero(void* to, size_t cnt) {
       char* cp{static_cast<char*>(to)};

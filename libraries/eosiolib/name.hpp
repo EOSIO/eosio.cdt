@@ -179,21 +179,24 @@ namespace eosio {
       /**
        *  Writes the %name as a string to the provided char buffer
        *
-       *  @pre Appropriate Size Precondition: (begin + 13) <= end and (begin + 13) does not overflow
-       *  @pre Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to.
+       *  @pre The range [begin, end) must be a valid range of memory to write to.
        *  @param begin - The start of the char buffer
        *  @param end - Just past the end of the char buffer
-       *  @return char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied)
-       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the %name.
+       *  @param dry_run - If true, do not actually write anything into the range.
+       *  @return char* - Just past the end of the last character that would be written assuming dry_run == false and end was large enough to provide sufficient space. (Meaning only applies if returned pointer >= begin.)
+       *  @post If the output string fits within the range [begin, end) and dry_run == false, the range [begin, returned pointer) contains the string representation of the %name. Nothing is written if dry_run == true or returned pointer > end (insufficient space) or if returned pointer < begin (overflow in calculating desired end).
        */
-      char* write_as_string( char* begin, char* end )const {
+      char* write_as_string( char* begin, char* end, bool dry_run = false )const {
          static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
          constexpr uint64_t mask = 0xF800000000000000ull;
 
-         if( (begin + 13) < begin || (begin + 13) > end ) return begin;
+         if( dry_run || (begin + 13 < begin) || (begin + 13 > end) ) {
+            char* actual_end = begin + length();
+            if( dry_run || (actual_end < begin) || (actual_end > end) ) return actual_end;
+         }
 
          auto v = value;
-         for( auto i = 0;   i < 13; ++i, v <<= 5 ) {
+         for( auto i = 0; i < 13; ++i, v <<= 5 ) {
             if( v == 0 ) return begin;
 
             auto indx = (v & mask) >> (i == 12 ? 60 : 59);

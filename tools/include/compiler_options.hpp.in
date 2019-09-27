@@ -473,7 +473,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System");
 #endif
       ldopts.emplace_back("-static");
-      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative");
+      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative -lnative_rt");
    }
 }
 #endif
@@ -587,6 +587,10 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if(g_opt)
       copts.emplace_back("-g");
+   if (!x_opt.empty()) {
+      // x_opt should precede input files
+      copts.insert(copts.begin(), "-x"+x_opt);
+   }
    if (color_diag_opt) {
       copts.emplace_back("-fcolor-diagnostics");
    }
