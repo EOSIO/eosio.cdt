@@ -1,10 +1,10 @@
 #pragma once
 #define FMT_HEADER_ONLY
 
+#include <eosio/asset.hpp>
 #include <eosio/chain_types.hpp>
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
-#include <eosio/temp_placeholders.hpp>
 #include <eosio/transaction.hpp>
 #include <wchar.h>
 
@@ -26,31 +26,33 @@ inline int fputws(const wchar_t* ws, FILE* stream) { return ::fputws(ws, stream)
    if (!(ACTUAL))                                                                                                      \
       eosio::check(false, "expected value doesn't match at " __FILE__ ":" TESTER_STRINGIFY(__LINE__));
 
+#define TESTER_INTRINSIC extern "C" __attribute__((eosio_wasm_import))
+
 namespace eosio {
 namespace internal_use_do_not_use {
 
-   extern "C" void    get_args(void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" bool    reenter(const char* args_begin, const char* args_end, void (*cb)(), void* cb_alloc_data,
-                              void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" int32_t open_file(const char* filename_begin, const char* filename_end, const char* mode_begin,
-                                const char* mode_end);
-   extern "C" void    close_file(int32_t file_index);
-   extern "C" bool    write_file(int32_t file_index, const char* content_begin, const char* content_end);
-   extern "C" bool    read_whole_file(const char* filename_begin, const char* filename_end, void* cb_alloc_data,
-                                      void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" int32_t execute(const char* command_begin, const char* command_end);
+   TESTER_INTRINSIC void get_args(void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC bool reenter(const char* args_begin, const char* args_end, void (*cb)(), void* cb_alloc_data,
+                                 void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC int32_t open_file(const char* filename_begin, const char* filename_end, const char* mode_begin,
+                                      const char* mode_end);
+   TESTER_INTRINSIC void    close_file(int32_t file_index);
+   TESTER_INTRINSIC bool    write_file(int32_t file_index, const char* content_begin, const char* content_end);
+   TESTER_INTRINSIC bool    read_whole_file(const char* filename_begin, const char* filename_end, void* cb_alloc_data,
+                                            void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC int32_t execute(const char* command_begin, const char* command_end);
 
-   extern "C" uint32_t create_chain();
-   extern "C" void     destroy_chain(uint32_t chain);
-   extern "C" void     start_block(uint32_t chain, int64_t skip_miliseconds);
-   extern "C" void     finish_block(uint32_t chain);
-   extern "C" void     get_head_block_info(uint32_t chain, void* cb_alloc_data,
-                                           void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" void push_transaction(uint32_t chain, const char* args_begin, const char* args_end, void* cb_alloc_data,
-                                    void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" void query_database_chain(uint32_t chain, void* req_begin, void* req_end, void* cb_alloc_data,
-                                        void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   extern "C" void select_chain_for_db(uint32_t chain_index);
+   TESTER_INTRINSIC uint32_t create_chain();
+   TESTER_INTRINSIC void     destroy_chain(uint32_t chain);
+   TESTER_INTRINSIC void     start_block(uint32_t chain, int64_t skip_miliseconds);
+   TESTER_INTRINSIC void     finish_block(uint32_t chain);
+   TESTER_INTRINSIC void     get_head_block_info(uint32_t chain, void* cb_alloc_data,
+                                                 void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC void     push_transaction(uint32_t chain, const char* args_begin, const char* args_end,
+                                              void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC void     query_database_chain(uint32_t chain, void* req_begin, void* req_end, void* cb_alloc_data,
+                                                  void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC void     select_chain_for_db(uint32_t chain_index);
 
    template <typename Alloc_fn>
    inline void get_args(Alloc_fn alloc_fn) {
@@ -263,32 +265,6 @@ class test_chain {
 
    test_chain& operator=(const test_chain&) = delete;
    test_chain& operator=(test_chain&&) = default;
-
-   // TODO: move definition to someplace else
-   struct key_weight {
-      public_key key    = {};
-      uint16_t   weight = {};
-   };
-
-   // TODO: move definition to someplace else
-   struct permission_level_weight {
-      permission_level permission = {};
-      uint16_t         weight     = {};
-   };
-
-   // TODO: move definition to someplace else
-   struct wait_weight {
-      uint32_t wait_sec = {};
-      uint16_t weight   = {};
-   };
-
-   // TODO: move definition to someplace else
-   struct authority {
-      uint32_t                             threshold = {};
-      std::vector<key_weight>              keys      = {};
-      std::vector<permission_level_weight> accounts  = {};
-      std::vector<wait_weight>             waits     = {};
-   };
 
    void start_block(int64_t skip_miliseconds = 0) {
       head_block_info.reset();
@@ -567,4 +543,4 @@ inline void run_tests(void (*f)()) {
 
 #define TEST_ENTRY                                                                                                     \
    extern "C" __attribute__((eosio_wasm_entry)) void initialize() {}                                                   \
-   extern "C" __attribute__((eosio_wasm_entry)) void run_query(void (*f)()) { eosio::run_tests(f); }
+   extern "C" __attribute__((eosio_wasm_entry)) void start(void (*f)()) { eosio::run_tests(f); }

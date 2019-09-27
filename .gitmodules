@@ -21,3 +21,6 @@
 [submodule "libraries/eos-vm"]
 	path = libraries/eos-vm
 	url = https://github.com/EOSIO/eos-vm.git
+[submodule "libraries/fmt"]
+	path = libraries/fmt
+	url = https://github.com/fmtlib/fmt.git

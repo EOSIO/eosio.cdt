@@ -433,8 +433,8 @@ struct callbacks {
 
          rhf_t::resolve(backend.get_module());
          backend.initialize(&cb);
-         backend(&cb, "env", "initialize");
-         backend(&cb, "env", "run_query", f);
+         // backend(&cb, "env", "initialize"); // todo: needs change to eosio-cpp
+         backend(&cb, "env", "start", f);
          return true;
       } catch (::assert_exception& e) {
          set_data(cb_alloc_data, cb_alloc, std::string_view{ std::string("assert failed: ") + e.what() });
@@ -698,8 +698,8 @@ static void run(const char* wasm, const std::vector<std::string>& args) {
 
    rhf_t::resolve(backend.get_module());
    backend.initialize(&cb);
-   // backend(&cb, "env", "initialize");   todo: reenable after CDT change
-   backend(&cb, "env", "run_query", 0);
+   // backend(&cb, "env", "initialize"); // todo: needs change to eosio-cpp
+   backend(&cb, "env", "start", 0);
 }
 
 const char usage[] = "usage: tester [-h or --help] [-v or --verbose] file.wasm [args for wasm]\n";
