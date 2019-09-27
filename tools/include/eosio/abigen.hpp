@@ -159,9 +159,8 @@ namespace eosio { namespace cdt {
          abi_struct ret;
          if ( decl->getNumBases() == 1 ) {
             ret.base = get_type(decl->bases_begin()->getType());
-            add_struct(decl->bases_begin()->getType().getTypePtr()->getAsCXXRecordDecl());
+            add_type(decl->bases_begin()->getType());
          }
-         std::string sub_name = "";
          for ( auto field : decl->fields() ) {
             if ( field->getName() == "transaction_extensions") {
                abi_struct ext;
@@ -173,7 +172,6 @@ namespace eosio { namespace cdt {
             }
             else {
                ret.fields.push_back({field->getName().str(), get_type(field->getType())});
-               sub_name += "_" + get_type(field->getType());
                add_type(field->getType());
             }
          }
@@ -389,6 +387,14 @@ namespace eosio { namespace cdt {
             set_of_tables.insert(t);
          }
 
+         std::function<std::string(const std::string&)> get_root_name;
+         get_root_name = [&] (const std::string& name) {
+            for (auto td : _abi.typedefs)
+               if (remove_suffix(name) == td.new_type_name)
+                  return get_root_name(td.type);
+            return name;
+         };
+
          auto validate_struct = [&]( abi_struct as ) {
             if ( is_builtin_type(_translate_type(as.name)) )
                return false;
@@ -403,7 +409,7 @@ namespace eosio { namespace cdt {
                         return true;
                   }
                }
-               if (s.base == as.name)
+               if (get_root_name(s.base) == as.name)
                   return true;
             }
             for ( auto a : _abi.actions ) {
@@ -423,10 +429,14 @@ namespace eosio { namespace cdt {
 
          auto validate_types = [&]( abi_typedef td ) {
             for ( auto as : _abi.structs )
-               if (validate_struct(as))
+               if (validate_struct(as)) {
                   for ( auto f : as.fields )
                      if ( remove_suffix(f.type) == td.new_type_name )
                         return true;
+                  if (as.base == td.new_type_name)
+                     return true;
+               }
+
             for ( auto v : _abi.variants ) {
                for ( auto vt : v.types ) {
                   if ( remove_suffix(vt) == td.new_type_name )
