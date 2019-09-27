@@ -15,10 +15,7 @@ class TestResult(NamedTuple):
 
 class TestRunner:
     def __init__(
-        self,
-        test_suites: List[TestSuite],
-        name_of_tests_to_run: str,
-        num_jobs: int,
+        self, test_suites: List[TestSuite], name_of_tests_to_run: str, num_jobs: int
     ):
         self.test_suites: List[TestSuite] = test_suites
         self.name_of_tests_to_run = name_of_tests_to_run
