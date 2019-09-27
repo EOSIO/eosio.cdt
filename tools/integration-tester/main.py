@@ -49,7 +49,6 @@ def main():
     args = parser.parse_args()
 
     Config.cdt_path = args.cdt
-    Config.verbose = args.verbose
     P.verbose = args.verbose
 
     abs_test_directory = os.path.abspath(args.test_directory)

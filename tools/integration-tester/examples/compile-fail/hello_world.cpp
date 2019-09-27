@@ -1,5 +1,3 @@
-// exit_code: 255
-
 #include <eosio/eosio.hpp>
 #include <iostream>
 using namespace eosio;
