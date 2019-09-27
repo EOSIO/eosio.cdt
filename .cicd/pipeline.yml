@@ -49,7 +49,8 @@ steps:
   - label: ":darwin: macOS 10.14 - Build"
     command:
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]] && git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]] && git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
