@@ -69,6 +69,18 @@ namespace eosio {
       friend bool operator != ( const webauthn_public_key& a, const webauthn_public_key& b ) {
          return std::tie(a.key,a.user_presence,a.rpid) != std::tie(b.key,b.user_presence,b.rpid);
       }
+      friend bool operator < ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) < std::tie(b.key,b.user_presence,b.rpid);
+      }
+      friend bool operator <= ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) <= std::tie(b.key,b.user_presence,b.rpid);
+      }
+      friend bool operator > ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) > std::tie(b.key,b.user_presence,b.rpid);
+      }
+      friend bool operator >= ( const webauthn_public_key& a, const webauthn_public_key& b ) {
+         return std::tie(a.key,a.user_presence,a.rpid) >= std::tie(b.key,b.user_presence,b.rpid);
+      }
 
       /// @cond
    };
