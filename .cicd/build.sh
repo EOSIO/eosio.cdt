@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Test building PRs via Buildkite.
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
