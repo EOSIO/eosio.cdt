@@ -1,30 +1,41 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from testsuite import TestSuite
+
+import difflib
+import json
 import os
 import subprocess
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from printer import Printer as P
-from settings import Config, MissingAbiError, TestFailure
+from settings import Config, TestFailure
+
 
 class Test(ABC):
     """
     This class represents a singular test file.
     """
 
-    def __init__(self, cpp_file, test_json, index, test_suite):
-        self.cpp_file = cpp_file
-        self.test_json = test_json
-        self.test_suite = test_suite
+    def __init__(
+        self, cpp_file: str, test_json: Dict, index: int, test_suite: TestSuite
+    ):
+        self.cpp_file: str = cpp_file
+        self.test_json: Dict = test_json
+        self.test_suite: TestSuite = test_suite
 
-        _name = cpp_file.split("/")[-1].split(".")[0]
-        self.abi_file = f"{Path(cpp_file).parent}/{_name}.abi"
-        self.name = f"{_name}_{index}"
+        self._name = cpp_file.split("/")[-1].split(".")[0]
+        self.name: str = f"{self._name}_{index}"
 
-        self.fullname = f"{test_suite.name}/{self.name}"
+        self.fullname: str = f"{test_suite.name}/{self.name}"
 
-        self.out_wasm = f"{self.name}.wasm"
-        self.success = False
+        self.out_wasm: str = f"{self._name}.wasm"
+
+        self.success: bool = False
 
     @abstractmethod
     def _run(self, eosio_cpp: str, args: List[str]):
@@ -88,21 +99,22 @@ class Test(ABC):
 
         if expected.get("abi"):
             expected_abi = expected["abi"]
-            try:
-                f = open(self.abi_file)
-            except FileNotFoundError:
-                raise MissingAbiError(
-                    f"{self.abi_file} is missing and expected by {self.fullname}"
-                )
-            else:
-                with f:
-                    actual_abi = f.read()
+            with open(f"{self._name}.abi") as f:
+                actual_abi = f.read()
 
-                    if expected_abi != actual_abi:
-                        self.success = False
-                        raise TestFailure(
-                            "actual abi did not match expected abi", failing_test=self
-                        )
+                expected_abi_str = json.dumps(json.loads(expected_abi), indent=2)
+                actual_abi_str = json.dumps(json.loads(actual_abi), indent=2)
+
+                if expected_abi_str != actual_abi_str:
+                    d = difflib.Differ()
+                    diff = d.compare(
+                        expected_abi_str.splitlines(), actual_abi_str.splitlines()
+                    )
+                    P.print("\n".join(diff), verbose=True)
+                    self.success = False
+                    raise TestFailure(
+                        "actual abi did not match expected abi", failing_test=self
+                    )
 
         if expected.get("wasm"):
             expected_wasm = expected["wasm"]
@@ -150,7 +162,7 @@ class CompilePassTest(Test):
 
 class AbigenPassTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, "-abigen", self.cpp_file, "-o", self.out_wasm]
+        command = [eosio_cpp, self.cpp_file, "-o", self.out_wasm, "-abigen_output=''"]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
