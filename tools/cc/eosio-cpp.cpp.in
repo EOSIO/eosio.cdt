@@ -113,6 +113,8 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");
+   if (llvm::sys::path::extension(input).equals(".c"))
+      options.push_back("-xc++");
    for (size_t i=1; i < base_options.size(); i++) {
       options.push_back(base_options[i]);
    }
@@ -216,6 +218,9 @@ int main(int argc, const char **argv) {
 
          new_opts.insert(new_opts.begin(), "-o "+output);
          outputs.push_back(output);
+
+         if (llvm::sys::path::extension(input).equals(".c"))
+            new_opts.insert(new_opts.begin(), "-xc++");
 
          if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
             llvm::sys::fs::remove(tmp_file);
