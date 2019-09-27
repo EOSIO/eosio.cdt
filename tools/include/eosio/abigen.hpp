@@ -110,7 +110,7 @@ namespace eosio { namespace cdt {
 
       void add_tuple(const clang::QualType& type) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
-         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr());
+         auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>((pt) ? pt->desugar().getTypePtr() : type.getTypePtr());
          if (!tst)
             throw abigen_ex;
          abi_struct tup;
