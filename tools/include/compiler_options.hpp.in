@@ -831,11 +831,8 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #endif
-<<<<<<< HEAD
-=======
    
 #ifndef ONLY_LD
->>>>>>> a153ef9c... Set default output filename
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #else
    return {output_fn, {}, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};

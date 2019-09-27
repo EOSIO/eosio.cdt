@@ -33,6 +33,7 @@ extern "C" {
      *  @endcode
      */
    __attribute__((eosio_wasm_import))
+   [[deprecated("dep
    uint32_t get_active_producers( capi_name* producers, uint32_t datalen );
 }
 
