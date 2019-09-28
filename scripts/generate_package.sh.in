@@ -13,7 +13,6 @@ PROJECT="@PROJECT_NAME@"
 DESC="@DESC@"
 URL="@URL@"
 EMAIL="@EMAIL@"
-PACKAGE="@PACKAGE_NAME@"
 
 export BUILD_DIR
 export VERSION_NO_SUFFIX
@@ -24,7 +23,6 @@ export PROJECT
 export DESC
 export URL
 export EMAIL
-export PACKAGE
 
 mkdir tmp
 
