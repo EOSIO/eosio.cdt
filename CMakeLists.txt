@@ -26,6 +26,14 @@ endif()
 
 set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME})
 
+set(EOSIO_PREFIX eosio-)
+set(EOSIO_C_COMPILER ${EOSIO_PREFIX}cc)
+set(EOSIO_CXX_COMPILER ${EOSIO_PREFIX}cpp)
+set(EOSIO_LINKER ${EOSIO_PREFIX}ld)
+set(EOSIO_POSTPASS ${EOSIO_PREFIX}pp)
+set(EOSIO_AR ${EOSIO_PREFIX}ar)
+set(EOSIO_RANLIB ${EOSIO_PREFIX}ranlib)
+
 include(GNUInstallDirs)
 
 include(modules/ClangExternalProject.txt)
@@ -72,7 +80,7 @@ configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_BINARY
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_deb.sh ${CMAKE_BINARY_DIR}/packages/generate_deb.sh COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_bottle.sh ${CMAKE_BINARY_DIR}/packages/generate_bottle.sh COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_rpm.sh ${CMAKE_BINARY_DIR}/packages/generate_rpm.sh COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh ${CMAKE_BINARY_DIR}/packages/generate_tarball.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh.in ${CMAKE_BINARY_DIR}/packages/generate_tarball.sh @ONLY)
 
 # add licenses
 configure_file(${CMAKE_SOURCE_DIR}/eosio_llvm/LICENSE.TXT ${CMAKE_BINARY_DIR}/licenses/llvm.license COPYONLY)

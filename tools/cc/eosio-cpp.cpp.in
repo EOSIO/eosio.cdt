@@ -27,7 +27,8 @@ using namespace clang::tooling;
 using namespace llvm;
 
 #define CPP_COMP 1
-#define COMPILER_NAME "eosio-cpp"
+#define COMPILER_NAME "${EOSIO_CXX_COMPILER}"
+#define LINKER_NAME "${EOSIO_LINKER}"
 #include <compiler_options.hpp>
 
 #include <set>
@@ -222,7 +223,7 @@ int main(int argc, const char **argv) {
          new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
       }
    
-      if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
+      if (!eosio::cdt::environment::exec_subprogram(LINKER_NAME, new_opts)) {
          for (auto input : outputs) {
             llvm::sys::fs::remove(input);
          }

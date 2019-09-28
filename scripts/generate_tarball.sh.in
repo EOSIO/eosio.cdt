@@ -47,15 +47,16 @@ create_symlink() {
    popd &> /dev/null
 }
 
-create_symlink "eosio-cc eosio-cc"
-create_symlink "eosio-cpp eosio-cpp"
-create_symlink "eosio-ld eosio-ld"
-create_symlink "eosio-pp eosio-pp"
-create_symlink "eosio-init eosio-init"
-create_symlink "eosio-abigen eosio-abigen"
-create_symlink "eosio-wasm2wast eosio-wasm2wast"
-create_symlink "eosio-wast2wasm eosio-wast2wasm"
-create_symlink "eosio-ar eosio-ar"
+create_symlink "@EOSIO_C_COMPILER@ @EOSIO_C_COMPILER@"
+create_symlink "@EOSIO_CXX_COMPILER@ @EOSIO_CXX_COMPILER@"
+create_symlink "@EOSIO_LINKER@ @EOSIO_LINKER@"
+create_symlink "@EOSIO_POSTPASS@ @EOSIO_POSTPASS@"
+#create_symlink "eosio-init eosio-init"
+#create_symlink "eosio-abigen eosio-abigen"
+#create_symlink "eosio-wasm2wast eosio-wasm2wast"
+#create_symlink "eosio-wast2wasm eosio-wast2wasm"
+create_symlink "@EOSIO_AR@ @EOSIO_AR@"
+create_symlink "@EOSIO_RANLIB@ @EOSIO_RANLIB@"
 
 tar -cvzf $NAME ./${PREFIX}/*
 rm -r ${PREFIX}

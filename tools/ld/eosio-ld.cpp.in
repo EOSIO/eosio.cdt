@@ -10,7 +10,8 @@
 #include "llvm/Support/FileSystem.h"
 using namespace clang::tooling;
 using namespace llvm;
-#define LINKER_NAME "eosio-ld"
+#define LINKER_NAME "${EOSIO_LINKER}"
+#define POSTPASS_NAME "${EOSIO_POSTPASS}"
 #define ONLY_LD
 #include <compiler_options.hpp>
 
@@ -40,11 +41,11 @@ int main(int argc, const char **argv) {
 
   // finally any post processing
   if (!fno_post_pass_opt && !opts.native) {
-     if ( !llvm::sys::fs::exists( opts.eosio_pp_dir+"/eosio-pp" ) ) {
-        std::cout << "Error: eosio.pp not found! (Try reinstalling eosio.wasmsdk)" << std::endl;
+     if ( !llvm::sys::fs::exists( opts.eosio_pp_dir+"/"+POSTPASS_NAME ) ) {
+        std::cout << "Error: " << POSTPASS_NAME << " not found! (Try reinstalling eosio.wasmsdk)" << std::endl;
         return -1;
      }
-     if (!eosio::cdt::environment::exec_subprogram("eosio-pp", {opts.output_fn})) 
+     if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {opts.output_fn}))
         return -1;
      if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
         return -1;

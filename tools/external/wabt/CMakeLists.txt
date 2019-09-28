@@ -294,9 +294,9 @@ if (NOT EMSCRIPTEN)
       DEPENDS ${name}
     )
   endfunction()
-  wabt_executable(eosio-pp src/tools/postpass.cc)
-  add_custom_command( TARGET eosio-pp POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
-  add_custom_command( TARGET eosio-pp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio-pp> ${CMAKE_BINARY_DIR}/bin/ )
+  wabt_executable(${EOSIO_POSTPASS} src/tools/postpass.cc)
+  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EOSIO_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
 
   # wat2wasm
   wabt_executable(eosio-wast2wasm src/tools/wat2wasm.cc)
