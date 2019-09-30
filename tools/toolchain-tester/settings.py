@@ -36,4 +36,3 @@ class MissingCppError(Exception):
 
 class MissingJsonError(Exception):
     pass
-
