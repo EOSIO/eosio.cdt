@@ -11,10 +11,8 @@ class TestType(Enum):
     COMPILE_PASS = 2
     BUILD_FAIL = 3
     BUILD_PASS = 4
-    RUN_FAIL = 5
-    RUN_PASS = 6
-    ABIGEN_PASS = 7
-    ABIGEN_FAIL = 8
+    ABIGEN_PASS = 5
+    ABIGEN_FAIL = 6
 
     @staticmethod
     def from_str(s):
