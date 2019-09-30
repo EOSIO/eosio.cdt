@@ -142,7 +142,7 @@ class Test(ABC):
 
 class BuildPassTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file, "-o", self.out_wasm]
+        command = [eosio_cpp, self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -152,7 +152,7 @@ class BuildPassTest(Test):
 
 class CompilePassTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, "-c", self.cpp_file, "-o", self.out_wasm]
+        command = [eosio_cpp, "-c", self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -162,7 +162,7 @@ class CompilePassTest(Test):
 
 class AbigenPassTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file, "-o", self.out_wasm, "-abigen_output=''"]
+        command = [eosio_cpp, self.cpp_file, "-abigen_output=''"]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -172,7 +172,7 @@ class AbigenPassTest(Test):
 
 class BuildFailTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file, "-o", self.out_wasm]
+        command = [eosio_cpp, self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res, expected_pass=False)
@@ -182,7 +182,7 @@ class BuildFailTest(Test):
 
 class CompileFailTest(Test):
     def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, "-c", self.cpp_file, "-o", self.out_wasm]
+        command = [eosio_cpp, "-c", self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res, expected_pass=False)
