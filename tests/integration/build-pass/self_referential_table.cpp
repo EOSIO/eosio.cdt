@@ -23,9 +23,6 @@ CONTRACT self_referential_table : public contract {
          std::string	mdata;
 
          std::vector<testtab> container;
-         //std::vector<testtab *> container;
-         //std::vector<uint64_t> container;
-
 
          auto primary_key() const {
             return id;
