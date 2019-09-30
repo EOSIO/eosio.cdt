@@ -39,9 +39,8 @@ class TestSuite:
             with open(tf) as jf:
                 test_json = json.load(jf)
 
+            name = tf.split("/")[-1].split(".")[0]
             for i, t in enumerate(test_json["tests"]):
-                name = abs_f.split("/")[-1].split(".")[0]
-
                 cpp_file = os.path.join(self.directory, f"{name}.cpp")
 
                 args = [cpp_file, t, i, self]
