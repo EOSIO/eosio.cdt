@@ -18,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "test_directory", help="The directory where the integration tests are located."
+        "test_directory", help="The directory where the toolchain tests are located."
     )
 
     parser.add_argument(
