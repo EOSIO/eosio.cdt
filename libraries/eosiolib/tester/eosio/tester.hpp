@@ -51,6 +51,8 @@ namespace internal_use_do_not_use {
                                                  void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     push_transaction(uint32_t chain, const char* args_begin, const char* args_end,
                                               void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC bool     exec_deferred(uint32_t chain, void* cb_alloc_data,
+                                           void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     query_database_chain(uint32_t chain, void* req_begin, void* req_end, void* cb_alloc_data,
                                                   void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     select_chain_for_db(uint32_t chain_index);
@@ -99,6 +101,13 @@ namespace internal_use_do_not_use {
    template <typename Alloc_fn>
    inline void push_transaction(uint32_t chain, const char* args_begin, const char* args_end, Alloc_fn alloc_fn) {
       push_transaction(chain, args_begin, args_end, &alloc_fn, [](void* cb_alloc_data, size_t size) -> void* { //
+         return (*reinterpret_cast<Alloc_fn*>(cb_alloc_data))(size);
+      });
+   }
+
+   template <typename Alloc_fn>
+   inline bool exec_deferred(uint32_t chain, Alloc_fn alloc_fn) {
+      return exec_deferred(chain, &alloc_fn, [](void* cb_alloc_data, size_t size) -> void* { //
          return (*reinterpret_cast<Alloc_fn*>(cb_alloc_data))(size);
       });
    }
@@ -383,6 +392,16 @@ class test_chain {
       return transact(std::move(actions), { default_priv_key }, expected_except);
    }
 
+   std::optional<chain_types::transaction_trace> exec_deferred() {
+      std::vector<char> bin;
+      if (!internal_use_do_not_use::exec_deferred(id, [&](size_t size) {
+             bin.resize(size);
+             return bin.data();
+          }))
+         return {};
+      return chain_types::assert_bin_to_native<chain_types::transaction_trace>(bin);
+   }
+
    chain_types::transaction_trace create_account(name ac, const public_key& pub_key,
                                                  const char* expected_except = nullptr) {
       tester_authority simple_auth{
@@ -400,7 +419,7 @@ class test_chain {
       return create_account(ac, convert(default_pub_key), expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key,
+   chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key, bool is_priv = false,
                                                       const char* expected_except = nullptr) {
       tester_authority simple_auth{
          .threshold = 1,
@@ -411,15 +430,28 @@ class test_chain {
          .keys      = { { pub_key, 1 } },
          .accounts  = { { { ac, "eosio.code"_n }, 1 } },
       };
-      return transact({ action{ { { "eosio"_n, "active"_n } },
-                                "eosio"_n,
-                                "newaccount"_n,
-                                std::make_tuple("eosio"_n, ac, simple_auth, code_auth) } },
-                      expected_except);
+      return transact(
+            {
+                  action{ { { "eosio"_n, "active"_n } },
+                          "eosio"_n,
+                          "newaccount"_n,
+                          std::make_tuple("eosio"_n, ac, simple_auth, code_auth) },
+                  action{ { { "eosio"_n, "active"_n } }, "eosio"_n, "setpriv"_n, std::make_tuple(ac, is_priv) },
+            },
+            expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, const char* expected_except = nullptr) {
-      return create_code_account(ac, convert(default_pub_key), expected_except);
+   chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key, const char* expected_except) {
+      return create_code_account(ac, pub_key, false, expected_except);
+   }
+
+   chain_types::transaction_trace create_code_account(name ac, bool is_priv = false,
+                                                      const char* expected_except = nullptr) {
+      return create_code_account(ac, convert(default_pub_key), is_priv, expected_except);
+   }
+
+   chain_types::transaction_trace create_code_account(name ac, const char* expected_except) {
+      return create_code_account(ac, convert(default_pub_key), false, expected_except);
    }
 
    chain_types::transaction_trace set_code(name ac, const char* filename, const char* expected_except = nullptr) {

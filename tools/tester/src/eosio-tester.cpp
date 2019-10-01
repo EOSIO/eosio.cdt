@@ -3,6 +3,7 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/controller.hpp>
+#include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/webassembly/common.hpp>
 #include <eosio/vm/backend.hpp>
@@ -12,13 +13,18 @@
 
 using namespace abieos::literals;
 using namespace std::literals;
+using eosio::chain::builtin_protocol_feature_t;
+using eosio::chain::digest_type;
+using eosio::chain::protocol_feature_exception;
+using eosio::chain::protocol_feature_set;
 
 struct callbacks;
 using backend_t = eosio::vm::backend<callbacks>;
 using rhf_t     = eosio::vm::registered_host_functions<callbacks>;
 
-const static int block_interval_ms = 500;
-const static int block_interval_us = block_interval_ms * 1000;
+inline constexpr int      block_interval_ms   = 500;
+inline constexpr int      block_interval_us   = block_interval_ms * 1000;
+inline constexpr uint32_t billed_cpu_time_use = 2000;
 
 struct assert_exception : std::exception {
    std::string msg;
@@ -45,6 +51,33 @@ struct intrinsic_context {
    }
 };
 
+protocol_feature_set make_protocol_feature_set() {
+   protocol_feature_set                                        pfs;
+   std::map<builtin_protocol_feature_t, optional<digest_type>> visited_builtins;
+
+   std::function<digest_type(builtin_protocol_feature_t)> add_builtins =
+         [&pfs, &visited_builtins, &add_builtins](builtin_protocol_feature_t codename) -> digest_type {
+      auto res = visited_builtins.emplace(codename, optional<digest_type>());
+      if (!res.second) {
+         EOS_ASSERT(res.first->second, protocol_feature_exception,
+                    "invariant failure: cycle found in builtin protocol feature dependencies");
+         return *res.first->second;
+      }
+
+      auto f = protocol_feature_set::make_default_builtin_protocol_feature(
+            codename, [&add_builtins](builtin_protocol_feature_t d) { return add_builtins(d); });
+
+      const auto& pf    = pfs.add_feature(f);
+      res.first->second = pf.feature_digest;
+
+      return pf.feature_digest;
+   };
+
+   for (const auto& p : eosio::chain::builtin_protocol_feature_codenames) { add_builtins(p.first); }
+
+   return pfs;
+}
+
 struct test_chain {
    eosio::chain::private_key_type producer_key{ "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"s };
    std::unique_ptr<eosio::chain::controller::config> cfg;
@@ -61,12 +94,12 @@ struct test_chain {
       cfg->contracts_console         = true;
       cfg->genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
 
-      control = std::make_unique<eosio::chain::controller>(*cfg);
-
+      control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set());
       control->add_indices();
       control->startup([]() { return false; }, nullptr);
-
-      start_block();
+      control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
+                           { *control->get_protocol_feature_manager().get_builtin_digest(
+                                 eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
    }
 
    test_chain(const test_chain&) = delete;
@@ -542,7 +575,6 @@ struct callbacks {
       eosio::chain::signed_transaction signed_trx{ std::move(transaction), std::move(args.signatures),
                                                    std::move(args.context_free_data) };
       auto&                            chain = assert_chain(chain_index);
-      chain.mutating();
       chain.start_if_needed();
       for (auto& key : args.keys) signed_trx.sign(key, chain.control->get_chain_id());
       auto mtrx =
@@ -552,6 +584,21 @@ struct callbacks {
       auto result = chain.control->push_transaction(mtrx, fc::time_point::maximum(), 2000);
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
       set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(chain_types::transaction_trace{ convert(*result) }));
+   }
+
+   bool exec_deferred(uint32_t chain_index, uint32_t cb_alloc_data, uint32_t cb_alloc) {
+      auto& chain = assert_chain(chain_index);
+      chain.start_if_needed();
+      const auto& idx =
+            chain.control->db().get_index<eosio::chain::generated_transaction_multi_index, eosio::chain::by_delay>();
+      auto itr = idx.begin();
+      if (itr != idx.end() && itr->delay_until <= chain.control->pending_block_time()) {
+         auto trace =
+               chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(), billed_cpu_time_use);
+         set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(chain_types::transaction_trace{ convert(*trace) }));
+         return true;
+      }
+      return false;
    }
 
    void query_database(uint32_t chain_index, const char* req_begin, const char* req_end, uint32_t cb_alloc_data,
@@ -671,6 +718,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::finish_block, eosio::vm::wasm_allocator>("env", "finish_block");
    rhf_t::add<callbacks, &callbacks::get_head_block_info, eosio::vm::wasm_allocator>("env", "get_head_block_info");
    rhf_t::add<callbacks, &callbacks::push_transaction, eosio::vm::wasm_allocator>("env", "push_transaction");
+   rhf_t::add<callbacks, &callbacks::exec_deferred, eosio::vm::wasm_allocator>("env", "exec_deferred");
    rhf_t::add<callbacks, &callbacks::query_database, eosio::vm::wasm_allocator>("env", "query_database_chain");
    rhf_t::add<callbacks, &callbacks::select_chain_for_db, eosio::vm::wasm_allocator>("env", "select_chain_for_db");
 
