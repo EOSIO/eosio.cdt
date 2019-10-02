@@ -302,21 +302,11 @@ namespace eosio { namespace cdt {
                   if (*itr != name)
                      emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
                }
-               if (cg.actions.count(decl->getNameAsString()) == 0) {
-                  if (cg.actions.count(name) == 0)
-                     create_action_dispatch(decl);
-                  else
-                     emitError(*ci, decl->getLocation(), "action already defined elsewhere");
+               std::string full_action_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
+               if (cg.actions.count(full_action_name) == 0) {
+                  create_action_dispatch(decl);
                }
-               cg.actions.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
-               cg.actions.insert(name);
-               /*
-               for (auto param : decl->parameters()) {
-                  if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
-                     cg.datastream_uses.insert(tp->getQualifiedNameAsString());
-                  }
-               }
-               */
+               cg.actions.insert(full_action_name); // insert the method action, so we don't create the dispatcher twice
             }
             else if (decl->isEosioNotify()) {
 
@@ -335,24 +325,13 @@ namespace eosio { namespace cdt {
                      emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
                }
 
-               if (cg.notify_handlers.count(decl->getNameAsString()) == 0) {
-                  if (cg.notify_handlers.count(name) == 0)
-                     create_notify_dispatch(decl);
-                  else
-                     emitError(*ci, decl->getLocation(), "notification handler already defined elsewhere");
+               std::string full_notify_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
+               if (cg.notify_handlers.count(full_notify_name) == 0) {
+                  create_notify_dispatch(decl);
                }
-               cg.notify_handlers.insert(decl->getNameAsString()); // insert the method action, so we don't create the dispatcher twice
-               cg.notify_handlers.insert(name);
-               /*
-               for (auto param : decl->parameters()) {
-                  if (auto tp = dyn_cast<NamedDecl>(param->getOriginalType().getTypePtr()->getAsCXXRecordDecl())) {
-                     cg.datastream_uses.insert(tp->getQualifiedNameAsString());
-                  }
-               }
-               */
+               cg.notify_handlers.insert(full_notify_name); // insert the method action, so we don't create the dispatcher twice
             }
 
-            //cg.cxx_methods.emplace(name, decl);
             return true;
          }
 
