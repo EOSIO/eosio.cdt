@@ -121,6 +121,8 @@ namespace eosio {
        */
       std::vector<key_weight>     keys;
 
+      bool is_valid()const;
+
       EOSLIB_SERIALIZE( block_signing_authority_v0, (threshold)(keys) )
    };
 
