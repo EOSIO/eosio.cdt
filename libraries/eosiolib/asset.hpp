@@ -10,12 +10,15 @@
 #warning "<eosiolib/asset.hpp> is deprecated use <eosio/asset.hpp>"
 
 namespace eosio {
-  /**
-   *  Defines C++ API for managing assets
-   *  @addtogroup asset Asset C++ API
-   *  @ingroup core
-   *  @{
-   */
+
+   char* write_decimal( char* begin, char* end, bool dry_run, uint64_t number, uint8_t num_decimal_places, bool negative );
+
+   /**
+    *  Defines C++ API for managing assets
+    *  @addtogroup asset Asset C++ API
+    *  @ingroup core
+    *  @{
+    */
 
    /**
     * @struct Stores information for owner of asset
@@ -315,42 +318,49 @@ namespace eosio {
       }
 
       /**
+       *  Writes the asset as a string to the provided char buffer
+       *
+       *  @brief Writes the asset as a string to the provided char buffer
+       *  @pre is_valid() == true
+       *  @pre The range [begin, end) must be a valid range of memory to write to.
+       *  @param begin - The start of the char buffer
+       *  @param end - Just past the end of the char buffer
+       *  @param dry_run - If true, do not actually write anything into the range.
+       *  @return char* - Just past the end of the last character that would be written assuming dry_run == false and end was large enough to provide sufficient space. (Meaning only applies if returned pointer >= begin.)
+       *  @post If the output string fits within the range [begin, end) and dry_run == false, the range [begin, returned pointer) contains the string representation of the asset. Nothing is written if dry_run == true or returned pointer > end (insufficient space) or if returned pointer < begin (overflow in calculating desired end).
+       */
+      char* write_as_string( char* begin, char* end, bool dry_run = false )const {
+         bool negative = (amount < 0);
+         uint64_t abs_amount = static_cast<uint64_t>(negative ? -amount : amount);
+         // 0 <= abs_amount <= std::numeric_limits<int64_t>::max() < 10^19 < std::numeric_limits<uint64_t>::max()
+
+         uint8_t precision = symbol.precision();
+
+         int sufficient_size = std::max(static_cast<int>(precision), 19) + 11;
+         if( dry_run || (begin + sufficient_size < begin) || (begin + sufficient_size > end) ) {
+            char* start_of_symbol = write_decimal( begin, end, true, abs_amount, precision, negative ) + 1;
+            char* actual_end = symbol.code().write_as_string( start_of_symbol, end, true );
+            if( dry_run || (actual_end < begin) || (actual_end > end) ) return actual_end;
+         }
+
+         char* end_of_number = write_decimal( begin, end, false, abs_amount, precision, negative );
+         *(end_of_number) = ' ';
+
+         return symbol.code().write_as_string( end_of_number + 1, end );
+      }
+
+      /**
        * %asset to std::string
        *
        * @brief %asset to std::string
        */
       std::string to_string()const {
-         int64_t p = (int64_t)symbol.precision();
-         int64_t p10 = 1;
-         bool negative = false;
-         int64_t invert = 1;
+         int buffer_size = std::max(static_cast<int>(symbol.precision()), 19) + 11;
+         char buffer[buffer_size];
+         char* end = write_as_string( buffer, buffer + buffer_size );
+         check( end <= buffer + buffer_size, "insufficient space in buffer" ); // should never fail
 
-         while( p > 0  ) {
-            p10 *= 10; --p;
-         }
-         p = (int64_t)symbol.precision();
-
-         char fraction[p+1];
-         fraction[p] = '\0';
-
-         if (amount < 0) {
-            invert = -1;
-            negative = true;
-         }
-
-         auto change = (amount % p10) * invert;
-
-         for( int64_t i = p -1; i >= 0; --i ) {
-            fraction[i] = (change % 10) + '0';
-            change /= 10;
-         }
-         char str[p+32];
-         snprintf(str, sizeof(str), "%lld%s%s %s",
-            (int64_t)(amount/p10),
-            (fraction[0]) ? "." : "",
-            fraction,
-            symbol.code().to_string().c_str());
-         return {str};
+         return {buffer, end};
       }
 
       /**
@@ -359,7 +369,13 @@ namespace eosio {
        * @brief %Print the asset
        */
       void print()const {
-         eosio::print(to_string());
+         int buffer_size = std::max(static_cast<int>(symbol.precision()), 19) + 11;
+         char buffer[buffer_size];
+         char* end = write_as_string( buffer, buffer + buffer_size );
+         check( end <= buffer + buffer_size, "insufficient space in buffer" ); // should never fail
+
+         if( buffer < end )
+            printl( buffer, (end-buffer) );
       }
 
       EOSLIB_SERIALIZE( asset, (amount)(symbol) )

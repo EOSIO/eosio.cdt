@@ -21,6 +21,7 @@ else # Linux
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
     BUILD_COMMANDS="cmake .. && make -j$JOBS"
 
+    [[ $IMAGE_TAG == 'centos-7.6' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
         # Generate Base Images

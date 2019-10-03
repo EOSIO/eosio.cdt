@@ -19,8 +19,6 @@ static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 184467440
 
 // Definitions in `eosio.cdt/libraries/eosio/name.hpp`
 EOSIO_TEST_BEGIN(name_type_test)
-   silence_output(true);
-
    //// constexpr name()
    CHECK_EQUAL( name{}.value, 0ULL )
 
@@ -50,7 +48,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"123."}.value,          614178399182651392ULL )
    CHECK_EQUAL( name{"123........."}.value,  614178399182651392ULL )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}.value, 108209673814966320ULL )
-   
+
    CHECK_EQUAL( name{"abc.123"}.value, 3589369488740450304ULL )
    CHECK_EQUAL( name{"123.abc"}.value, 614181822271586304ULL )
 
@@ -86,14 +84,14 @@ EOSIO_TEST_BEGIN(name_type_test)
       CHECK_EQUAL( name::char_to_value(c), expected_value )
       ++expected_value;
    }
-   
+
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'-'});}) )
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'/'});}) )
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'6'});}) )
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'A'});}) )
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'Z'});}) )
    CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'`'});}) )
-   CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'{'});}) );  
+   CHECK_ASSERT( "character is not in allowed character set for names", ([]() {name::char_to_value(char{'{'});}) );
 
    // -------------------------------
    // constexpr uint8_t length()cosnt
@@ -113,7 +111,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"eosioaccountj"}.length(), 13 )
 
    CHECK_ASSERT( "string is too long to be a valid name", ([]() {name{"12345abcdefghj"}.length();}) )
-   
+
    // ----------------------------
    // constexpr name suffix()const
    CHECK_EQUAL( name{".eosioaccounj"}.suffix(), name{"eosioaccounj"} )
@@ -159,7 +157,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"555555555555j"}.operator name::raw(), static_cast<name::raw>(2975281302211218015ULL) )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"}.operator name::raw(), static_cast<name::raw>(3570337562653461615ULL) )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"}.operator name::raw(), static_cast<name::raw>(u64max) )
-     
+
    // ---------------------------------------
    // constexpr explicit operator bool()const
    // Note that I must be explicit about calling the operator because it is defined as `explicit`
@@ -177,7 +175,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    // char* write_as_string(char*, char*)const
    static constexpr uint8_t buffer_size{32};
    char buffer[buffer_size]{};
-   
+
    string str{"1"};
    name{str}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
@@ -242,7 +240,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"123."}.to_string(), "123" )
    CHECK_EQUAL( name{"123........."}.to_string(), "123" )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}.to_string(), ".a.b.c.1.2.3" )
-   
+
    CHECK_EQUAL( name{"abc.123"}.to_string(), "abc.123" )
    CHECK_EQUAL( name{"123.abc"}.to_string(), "123.abc" )
 
@@ -270,7 +268,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"123."} == name{"123"}, true )
    CHECK_EQUAL( name{"123........."} == name{"123"}, true )
    CHECK_EQUAL( name{".a.b.c.1.2.3."} == name{".a.b.c.1.2.3"}, true )
-   
+
    CHECK_EQUAL( name{"abc.123"} == name{"abc.123"}, true )
    CHECK_EQUAL( name{"123.abc"} == name{"123.abc"}, true )
 
@@ -298,7 +296,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"123."} != name{}, true )
    CHECK_EQUAL( name{"123........."} != name{}, true )
    CHECK_EQUAL( name{".a.b.c.1.2.3."} != name{}, true )
-   
+
    CHECK_EQUAL( name{"abc.123"} != name{}, true )
    CHECK_EQUAL( name{"123.abc"} != name{}, true )
 
@@ -326,7 +324,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{} < name{"123."}, true )
    CHECK_EQUAL( name{} < name{"123........."}, true )
    CHECK_EQUAL( name{} < name{".a.b.c.1.2.3."}, true )
-   
+
    CHECK_EQUAL( name{} < name{"abc.123"}, true )
    CHECK_EQUAL( name{} < name{"123.abc"}, true )
 
@@ -342,7 +340,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    // ------------------------------------
    // inline constexpr name operator""_n()
    CHECK_EQUAL( name{}, ""_n )
-   
+
    CHECK_EQUAL( name{"1"}, "1"_n )
    CHECK_EQUAL( name{"5"}, "5"_n )
    CHECK_EQUAL( name{"a"}, "a"_n )
@@ -356,7 +354,7 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"123."}, "123."_n )
    CHECK_EQUAL( name{"123........."}, "123........."_n )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}, ".a.b.c.1.2.3."_n )
-   
+
    CHECK_EQUAL( name{"abc.123"}, "abc.123"_n )
    CHECK_EQUAL( name{"123.abc"}, "123.abc"_n )
 
@@ -368,11 +366,15 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"555555555555j"}, "555555555555j"_n )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"}, "aaaaaaaaaaaaj"_n )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"}, "zzzzzzzzzzzzj"_n )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(name_type_test);
    return has_failed();
 }

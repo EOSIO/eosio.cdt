@@ -56,8 +56,6 @@ struct be_test {
 
 // Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_test)
-   silence_output(true);
-
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]{}; // Buffer for the datastream to point to
    char buffer[buffer_size]; // Buffer to compare `datastream_buffer` with
@@ -74,7 +72,7 @@ EOSIO_TEST_BEGIN(datastream_test)
    CHECK_EQUAL( ds.pos(), datastream_buffer+1 )
    ds.skip(-1);
    CHECK_EQUAL( ds.pos(), datastream_buffer )
-   
+
    // inline bool read(char*, size_t)
    CHECK_EQUAL( ds.read(buffer, 256), true )
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0)
@@ -104,7 +102,7 @@ EOSIO_TEST_BEGIN(datastream_test)
 
    ds.seekp(256);
    CHECK_ASSERT( "put", ([&]() {ds.put('c');}) )
-  
+
    // inline bool get(unsigned char&)
    unsigned char uch{};
 
@@ -141,14 +139,10 @@ EOSIO_TEST_BEGIN(datastream_test)
    CHECK_EQUAL( ds.remaining(), 0 )
    ds.seekp(257);
    CHECK_EQUAL( ds.remaining(), -1)
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_specialization_test)
-   silence_output(true);
-
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]{}; // Buffer for the datastream to point to
    char buffer[buffer_size]; // Buffer to compare `datastream_buffer` with
@@ -164,16 +158,16 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    // inline size_t tellp()const
    CHECK_EQUAL( ds.skip(0), true)
    CHECK_EQUAL( ds.tellp(), 256)
-   
+
    CHECK_EQUAL( ds.skip(1), true)
    CHECK_EQUAL( ds.tellp(), 257)
-   
+
    CHECK_EQUAL( ds.skip(255), true)
    CHECK_EQUAL( ds.tellp(), 512)
-   
+
    CHECK_EQUAL( ds.skip(1028), true)
    CHECK_EQUAL( ds.tellp(), 1540)
-   
+
    // inline bool seekp(size_t)
    ds.seekp(0);
    CHECK_EQUAL( ds.tellp(), 0)
@@ -187,7 +181,7 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
 
    // inline bool put(char)
    char ch{'c'};
-   
+
    ds.seekp(0);
    CHECK_EQUAL( ds.put(ch), true )
    CHECK_EQUAL( ds.tellp(), 1 )
@@ -217,14 +211,10 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
 
    ds.seekp(257);
    CHECK_EQUAL( ds.remaining(), 0 )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_stream_test)
-   silence_output(true);
-
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
@@ -315,7 +305,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> arr;
    CHECK_EQUAL( carr, arr )
-   
+
    // ----------
    // std::deque
    ds.seekp(0);
@@ -414,7 +404,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> v;
    CHECK_EQUAL( cv, v )
-   
+
    // -----------
    // std::vector
    struct vec_test {
@@ -553,7 +543,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> sym;
    CHECK_EQUAL( csym_prec, sym )
-   
+
    // ------------------
    // eosio::symbol_code
    ds.seekp(0);
@@ -564,14 +554,10 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> sc;
    CHECK_EQUAL( csc, sc )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(misc_datastream_test)
-   silence_output(true);
-
    // ---------------------------
    // vector<char> pack(const T&)
    static const string pack_str{"abcdefghi"};
@@ -604,11 +590,15 @@ EOSIO_TEST_BEGIN(misc_datastream_test)
       unpack_ch = unpack<char>(unpack_source_buffer+i, 9);
       CHECK_EQUAL( unpack_source_buffer[i], unpack_ch )
    }
-   
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(datastream_test);
    EOSIO_TEST(datastream_specialization_test);
    EOSIO_TEST(datastream_stream_test);

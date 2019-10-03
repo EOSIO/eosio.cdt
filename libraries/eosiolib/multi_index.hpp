@@ -1057,7 +1057,7 @@ class multi_index
       }
 
       /**
-       *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
+       *  Searches for the `object_type` with the lowest primary key that is greater than a given primary key.
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
        *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
