@@ -12,6 +12,7 @@
 #include "native/eosio/crt.hpp"
 #include <softfloat.hpp>
 #include <float.h>
+#include "intrinsics_impl.hpp"
 
 // Boilerplate
 using namespace eosio::native;
@@ -49,36 +50,226 @@ extern "C" {
    uint32_t get_active_producers( capi_name* producers, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::get_active_producers>(producers, datalen);
    }
+
+
+
+
+   static const int SHIFT_FOR_KEY = 24;
+   static const int ITERATOR_MASK = 0x00FFFFFF;
+
    int32_t db_idx64_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint64_t* secondary) {
-      return intrinsics::get().call<intrinsics::db_idx64_store>(scope, table, payer, id, secondary);
+      capi_name code = eosio::name { "test" }.value;
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;  // This shouldn't happen, db_store_i64 should have been called already
+      }
+
+      auto& tbl = key_to_table->at(key);
+      for (int i = 0; i < tbl.size(); ++i) {
+         auto& r = tbl[i];
+         if (r.primary_key == id) {
+            r.secondary_key = *secondary;
+            return i;
+         }
+      }
+
+      return -1;
    }
    void db_idx64_remove(int32_t iterator) {
-      return intrinsics::get().call<intrinsics::db_idx64_remove>(iterator);
+      // In naive implementation this is a no-op.
+      return;
    }
    void db_idx64_update(int32_t iterator, capi_name payer, const uint64_t* secondary) {
-      return intrinsics::get().call<intrinsics::db_idx64_update>(iterator, payer, secondary);
+      // In naive implementation this is a no-op.
+      return;
    }
    int32_t db_idx64_find_primary(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_find_primary>(code, scope, table, secondary, primary);
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tbl = key_to_table->at(key);
+
+      intrinsic_row match;
+      for (const auto& row : tbl) {
+         if (row.primary_key == primary) {
+            match = row;
+            break;
+         }
+      }
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            auto& r = val[i];
+            if (r == match) {
+               *secondary = r.secondary_key;
+               auto k = (key << SHIFT_FOR_KEY) + i;
+               return k;
+            }
+         }
+      }
+
+      return -1;
    }
+   // TODO: This isn't even used by multi_index??
    int32_t db_idx64_find_secondary(capi_name code, uint64_t scope, capi_name table, const uint64_t* secondary, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_find_secondary>(code, scope, table, secondary, primary);
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tbl = key_to_table->at(key);
+
+      intrinsic_row match;
+      for (const auto& row : tbl) {
+         if (row.secondary_key == *secondary) {
+            match = row;
+            break;
+         }
+      }
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            auto& r = val[i];
+            if (r == match) {
+               *primary = r.primary_key;
+               return (key << SHIFT_FOR_KEY) + i;
+            }
+         }
+      }
+
+      return -1;
    }
    int32_t db_idx64_lowerbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_lowerbound>(code, scope, table, secondary, primary);
+      std::vector<intrinsic_row> to_sort;
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto& tbl = key_to_table->at(key);
+
+      std::copy(tbl.begin(), tbl.end(), std::back_inserter(to_sort));
+
+      auto cmp = [](intrinsic_row a, intrinsic_row b) { return a.secondary_key < b.secondary_key; };
+      std::sort(to_sort.begin(), to_sort.end(), cmp);
+
+      auto tbls_itr = to_sort.begin();
+
+      intrinsic_row match;
+      while (tbls_itr != to_sort.end()) {
+         if (tbls_itr->secondary_key >= *secondary) {
+            *primary = tbls_itr->primary_key;
+            match = *tbls_itr;
+            break;
+         }
+
+         ++tbls_itr;
+      }
+
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            if (val[i] == match) {
+               auto k = (key << SHIFT_FOR_KEY) + i;
+               return k;
+            }
+         }
+      }
+      return -1;
    }
    int32_t db_idx64_upperbound(capi_name code, uint64_t scope, capi_name table, uint64_t* secondary, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_upperbound>(code, scope, table, secondary, primary);
+      std::vector<intrinsic_row> to_sort;
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto& tbl = key_to_table->at(key);
+
+      std::copy(tbl.begin(), tbl.end(), std::back_inserter(to_sort));
+
+      auto cmp = [](intrinsic_row a, intrinsic_row b) { return a.secondary_key < b.secondary_key; };
+      std::sort(to_sort.begin(), to_sort.end(), cmp);
+
+      auto tbls_itr = to_sort.begin();
+
+      intrinsic_row match;
+      while (tbls_itr != to_sort.end()) {
+         if (tbls_itr->secondary_key <= *secondary) {
+            *primary = tbls_itr->primary_key;
+            match = *tbls_itr;
+            break;
+         }
+
+         ++tbls_itr;
+      }
+
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            if (val[i] == match) {
+               auto k = (key << SHIFT_FOR_KEY) + i;
+               return k;
+            }
+         }
+      }
+      return -1;
    }
    int32_t db_idx64_end(capi_name code, uint64_t scope, capi_name table) {
-      return intrinsics::get().call<intrinsics::db_idx64_end>(code, scope, table);
+      prints("DB_IDX64_END\n");
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tb = key_to_table->at(key);
+      auto s = tb.size();
+      return s;
    }
    int32_t db_idx64_next(int32_t iterator, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_next>(iterator, primary);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      int32_t new_it = itr+1;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      if (new_it == tbl.size()) return -1;
+
+      auto row = tbl[new_it];
+      *primary = row.primary_key;
+      return iterator + 1;
    }
    int32_t db_idx64_previous(int32_t iterator, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_idx64_previous>(iterator, primary);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      int32_t new_it = itr-1;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      auto row = tbl[new_it];
+
+      if (new_it < 0) return -1;
+
+      *primary = row.primary_key;
+      return iterator - 1;
    }
+
+
+
    int32_t db_idx128_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* secondary) {
       return intrinsics::get().call<intrinsics::db_idx128_store>(scope, table, payer, id, secondary);
    }
@@ -109,6 +300,7 @@ extern "C" {
    int32_t db_idx128_previous(int32_t iterator, uint64_t* primary) {
       return intrinsics::get().call<intrinsics::db_idx128_previous>(iterator, primary);
    }
+
    int32_t db_idx256_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const uint128_t* data, uint32_t datalen) {
       return intrinsics::get().call<intrinsics::db_idx256_store>(scope, table, payer, id, data, datalen);
    }
@@ -139,6 +331,7 @@ extern "C" {
    int32_t db_idx256_previous(int32_t iterator, uint64_t* primary) {
       return intrinsics::get().call<intrinsics::db_idx256_previous>(iterator, primary);
    }
+
    int32_t db_idx_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const double* secondary) {
       return intrinsics::get().call<intrinsics::db_idx_double_store>(scope, table, payer, id, secondary);
    }
@@ -169,6 +362,7 @@ extern "C" {
    int32_t db_idx_double_previous(int32_t iterator, uint64_t* primary) {
       return intrinsics::get().call<intrinsics::db_idx_double_previous>(iterator, primary);
    }
+
    int32_t db_idx_long_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const long double* secondary) {
       return intrinsics::get().call<intrinsics::db_idx_long_double_store>(scope, table, payer, id, secondary);
    }
@@ -199,36 +393,235 @@ extern "C" {
    int32_t db_idx_long_double_previous(int32_t iterator, uint64_t* primary) {
       return intrinsics::get().call<intrinsics::db_idx_long_double_previous>(iterator, primary);
    }
+
+
+
+
    int32_t db_store_i64(uint64_t scope, capi_name table, capi_name payer, uint64_t id,  const void* data, uint32_t len) {
-      return intrinsics::get().call<intrinsics::db_store_i64>(scope, table, payer, id, data, len);
+      std::string key = TESTING_CODE.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      intrinsic_row row{ key, id, data, len };
+
+      auto tbl = key_to_table->find(key);
+      if (tbl == key_to_table->end()) {
+         std::vector<intrinsic_row> tbl;
+         tbl.push_back(row);
+         (*key_to_table)[key] = tbl;
+
+         int32_t table_key = iterator_to_table->size()+1;
+         int32_t iter = table_key<<SHIFT_FOR_KEY;
+
+         (*iterator_to_table)[table_key] = tbl;
+         return iter;
+      } else {
+         auto tbl = (*key_to_table)[key];
+         tbl.push_back(row);
+         (*key_to_table)[key] = tbl;
+
+         int32_t table_key;
+         auto front = tbl.front();
+         for(auto const& [key, val] : *iterator_to_table) {
+            for (auto const& r : val) {
+               if (r == front) {
+                  table_key = key;
+               }
+            }
+         }
+         (*iterator_to_table)[table_key] = tbl;
+         return (table_key<<SHIFT_FOR_KEY) + tbl.size()-1;
+      }
+
+      return -1;
    }
    void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t len) {
-      return intrinsics::get().call<intrinsics::db_update_i64>(iterator, payer, data, len);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      auto key = tbl[itr].table_key;
+
+      auto row = tbl[itr];
+      row.data = std::string((char*)data, len);
+
+      tbl[itr] = row;
+      (*iterator_to_table)[table_key] = tbl;
+
+      (*key_to_table)[key][itr] = row;
    }
    void db_remove_i64(int32_t iterator) {
-      return intrinsics::get().call<intrinsics::db_remove_i64>(iterator);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      auto key = tbl[itr].table_key;
+
+      tbl[itr] = NULLROW;
+      (*iterator_to_table)[table_key] = tbl;
+
+      (*key_to_table)[key][itr] = NULLROW;
    }
-   int32_t db_get_i64(int32_t iterator, const void* data, uint32_t len) {
-      return intrinsics::get().call<intrinsics::db_get_i64>(iterator, data, len);
+   int32_t db_get_i64(int32_t iterator, void* data, uint32_t len) {
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      auto row = tbl[itr];
+      auto s = row.buffer_size;
+
+      if (len == 0) return s;
+
+      auto copy_size = std::min(len, s);
+      memcpy(data, row.data.data(), copy_size);
+
+      return copy_size;
    }
    int32_t db_next_i64(int32_t iterator, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_next_i64>(iterator, primary);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      int32_t new_it = itr+1;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      if (new_it == tbl.size()) return -1;
+
+      auto row = tbl[new_it];
+      *primary = row.primary_key;
+      return iterator+1;
    }
    int32_t db_previous_i64(int32_t iterator, uint64_t* primary) {
-      return intrinsics::get().call<intrinsics::db_previous_i64>(iterator, primary);
+      int32_t table_key = iterator >> SHIFT_FOR_KEY;
+      int32_t itr  = iterator & ITERATOR_MASK;
+
+      int32_t new_it = itr-1;
+
+      auto tbl = (*iterator_to_table)[table_key];
+      auto row = tbl[new_it];
+
+      if (new_it < 0) return -1;
+
+      *primary = row.primary_key;
+      return iterator-1;
    }
    int32_t db_find_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id) {
-      return intrinsics::get().call<intrinsics::db_find_i64>(code, scope, table, id);
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tbl = key_to_table->at(key);
+
+      intrinsic_row match;
+      for (const auto& row : tbl) {
+         if (row.primary_key == id) {
+            match = row;
+            break;
+         }
+      }
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            if (val[i] == match) {
+               return (key << SHIFT_FOR_KEY) + i;
+            }
+         }
+      }
+
+      return -1;
    }
    int32_t db_lowerbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id) {
-      return intrinsics::get().call<intrinsics::db_lowerbound_i64>(code, scope, table, id);
+      std::vector<intrinsic_row> to_sort;
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tbl = key_to_table->at(key);
+
+      std::copy(tbl.begin(), tbl.end(), std::back_inserter(to_sort));
+      std::sort(to_sort.begin(), to_sort.end());
+
+      auto tbls_itr = to_sort.begin();
+
+      intrinsic_row match;
+      while (tbls_itr != to_sort.end()) {
+         if (tbls_itr->primary_key >= id) {
+            match = *tbls_itr;
+            break;
+         }
+
+         ++tbls_itr;
+      }
+
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            if (val[i] == match) {
+               return (key << SHIFT_FOR_KEY) + i;
+            }
+         }
+      }
+      return -1;
    }
    int32_t db_upperbound_i64(capi_name code, uint64_t scope, capi_name table, uint64_t id) {
-      return intrinsics::get().call<intrinsics::db_upperbound_i64>(code, scope, table, id);
+      std::vector<intrinsic_row> to_sort;
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tbl = key_to_table->at(key);
+
+      std::copy(tbl.begin(), tbl.end(), std::back_inserter(to_sort));
+      std::sort(to_sort.begin(), to_sort.end());
+
+      auto tbls_itr = to_sort.begin();
+
+      intrinsic_row match;
+      while (tbls_itr != to_sort.end()) {
+         if (tbls_itr->primary_key <= id) {
+            match = *tbls_itr;
+            break;
+         }
+
+         ++tbls_itr;
+      }
+
+
+      for(auto const& [key, val] : *iterator_to_table) {
+         for (int i = 0; i < val.size(); ++i) {
+            if (val[i] == match) {
+               return (key << SHIFT_FOR_KEY) + i;
+            }
+         }
+      }
+      return -1;
    }
    int32_t db_end_i64(capi_name code, uint64_t scope, capi_name table) {
-      return intrinsics::get().call<intrinsics::db_end_i64>(code, scope, table);
+      std::string key = eosio::name{ code }.to_string() + eosio::name{ scope }.to_string() + eosio::name{ table }.to_string();
+
+      auto t = key_to_table->find(key);
+      if (t == key_to_table->end()) {
+         return -1;
+      }
+
+      auto tb = key_to_table->at(key);
+      return tb.size();
    }
+
+
+
+
+
+
+
+
+
    void assert_recover_key( const capi_checksum256* digest, const char* sig, size_t siglen, const char* pub, size_t publen ) {
       return intrinsics::get().call<intrinsics::assert_recover_key>(digest, sig, siglen, pub, publen);
    }

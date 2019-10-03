@@ -60,13 +60,17 @@ inline bool expect_print(bool check, const std::string& li, Pred&& pred, F&& fun
    std_out.clear();
    func(args...);
    bool passed = pred(std_out.get());
+   auto actual = std::string(std_out.get());
    std_out.clear();
    bool disable_out = ___disable_output;
    silence_output(false);
-   if (!check)
-      eosio::check(passed, std::string("error : wrong print message {"+li+"}").c_str());
-   if (!passed)
-      eosio::print("error : wrong print message {"+li+"}\n");
+   if (!check) {
+      eosio::check(passed, std::string("error : wrong print message {"+li+"}\nGot: ") + actual);
+   }
+   if (!passed) {
+      eosio::print("Error : wrong print message {"+li+"}\n");
+      eosio::print("Got: " + actual + "\n");
+   }
    silence_output(disable_out);
    return passed;
 }
