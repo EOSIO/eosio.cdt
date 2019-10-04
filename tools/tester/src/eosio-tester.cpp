@@ -19,7 +19,7 @@ using eosio::chain::protocol_feature_exception;
 using eosio::chain::protocol_feature_set;
 
 struct callbacks;
-using backend_t = eosio::vm::backend<callbacks>;
+using backend_t = eosio::vm::backend<callbacks, eosio::vm::jit>;
 using rhf_t     = eosio::vm::registered_host_functions<callbacks>;
 
 inline constexpr int      block_interval_ms   = 500;
@@ -424,8 +424,11 @@ struct callbacks {
 
    char* alloc(uint32_t cb_alloc_data, uint32_t cb_alloc, uint32_t size) {
       // todo: verify cb_alloc isn't in imports
-      auto result = state.backend.get_context().execute_func_table(
-            this, eosio::vm::interpret_visitor(state.backend.get_context()), cb_alloc, cb_alloc_data, size);
+      if (state.backend.get_module().tables.size() < 0 || state.backend.get_module().tables[0].table.size() < cb_alloc)
+         throw std::runtime_error("cb_alloc is out of range");
+      auto result = state.backend.get_context().execute( //
+            this, eosio::vm::jit_visitor(42), state.backend.get_module().tables[0].table[cb_alloc], cb_alloc_data,
+            size);
       if (!result || !result->is_a<eosio::vm::i32_const_t>())
          throw std::runtime_error("cb_alloc returned incorrect type");
       char* begin = state.wa.get_base_ptr<char>() + result->to_ui32();
