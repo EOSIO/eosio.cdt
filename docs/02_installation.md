@@ -48,9 +48,27 @@ $ sudo yum remove eosio.cdt
 ```sh
 $ git clone --recursive https://github.com/eosio/eosio.cdt
 $ cd eosio.cdt
-$ ./build.sh
-$ sudo ./install.sh
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make -j8
 ```
+
+From here onward you can build your contracts code by simply exporting the `build` directory to your path, so you don't have to install globally (makes things cleaner).
+Or you can install globally by running this command
+
+```sh
+sudo make install
+```
+
+### Uninstall after manual installation
+
+```sh
+$ sudo rm -fr /usr/local/eosio.cdt
+$ sudo rm -fr /usr/local/lib/cmake/eosio.cdt
+$ sudo rm /usr/local/bin/eosio-*
+```
+
 
 ## Installed Tools
 ---
