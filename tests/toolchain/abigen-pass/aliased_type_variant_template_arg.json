@@ -1,0 +1,10 @@
+{
+    "tests": [
+        {
+            "expected": {
+                "abi": "{\n    \"____comment\": \"This file was generated with eosio-abigen. DO NOT EDIT \",\n    \"version\": \"eosio::abi\/1.1\",\n    \"types\": [\n        {\n            \"new_type_name\": \"str\",\n            \"type\": \"string\"\n        }\n    ],\n    \"structs\": [\n        {\n            \"name\": \"hi\",\n            \"base\": \"\",\n            \"fields\": [\n                {\n                    \"name\": \"v\",\n                    \"type\": \"variant_uint64_str\"\n                }\n            ]\n        }\n    ],\n    \"actions\": [\n        {\n            \"name\": \"hi\",\n            \"type\": \"hi\",\n            \"ricardian_contract\": \"\"\n        }\n    ],\n    \"tables\": [],\n    \"ricardian_clauses\": [],\n    \"variants\": [\n        {\n            \"name\": \"variant_uint64_str\",\n            \"types\": [\"uint64\",\"str\"]\n        }\n    ]\n}"
+            }
+        }
+    ]
+}
+

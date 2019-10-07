@@ -1,0 +1,9 @@
+{
+    "tests": [
+        {
+            "expected": {
+                "abi": "{\n    \"____comment\": \"This file was generated with eosio-abigen. DO NOT EDIT \",\n    \"version\": \"eosio::abi\/1.1\",\n    \"types\": [\n        {\n            \"new_type_name\": \"bar\",\n            \"type\": \"foo\"\n        }\n    ],\n    \"structs\": [\n        {\n            \"name\": \"baz\",\n            \"base\": \"bar\",\n            \"fields\": []\n        },\n        {\n            \"name\": \"foo\",\n            \"base\": \"\",\n            \"fields\": [\n                {\n                    \"name\": \"value\",\n                    \"type\": \"int32\"\n                }\n            ]\n        },\n        {\n            \"name\": \"hi\",\n            \"base\": \"\",\n            \"fields\": [\n                {\n                    \"name\": \"b\",\n                    \"type\": \"baz\"\n                }\n            ]\n        }\n    ],\n    \"actions\": [\n        {\n            \"name\": \"hi\",\n            \"type\": \"hi\",\n            \"ricardian_contract\": \"\"\n        }\n    ],\n    \"tables\": [],\n    \"ricardian_clauses\": [],\n    \"variants\": []\n}"
+            }
+        }
+    ]
+}
