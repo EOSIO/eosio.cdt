@@ -1,5 +1,5 @@
 ## How to use native tester/compilation
-As of v1.5.0 native compilation can be performed and a new set of libraries to facilitate native testing and native "scratch pad" compilation. `eosio-cc\cpp` and `eosio-ld` now support building "smart contracts" and unit tests natively for quick tests to help facilitate faster development \(note the default implementations of eosio `intrinsics` are currently asserts that state they are unavailable, these are user definable.\)
+As of v1.5.0 native compilation can be performed and a new set of libraries to facilitate native testing and native "scratch pad" compilation. [`eosio-cc`](../03_command-reference/eosio-cc.md), [`eosio-cpp`](../03_command-reference/eosio-cpp.md) and [`eosio-ld`](../03_command-reference/eosio-ld.md) now support building "smart contracts" and unit tests natively for quick tests to help facilitate faster development \(note the default implementations of eosio `intrinsics` are currently asserts that state they are unavailable, these are user definable.\)
 
 ### Getting Started
 Once you have your smart contract written then a test source file can be written.

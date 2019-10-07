@@ -1,12 +1,12 @@
-## eosio::binary_extension
+# eosio::binary_extension
 
-You can find the implementation of `eosio::binary_extension` in the `eosio.cdt` repository in file: `eosio.cdt/libraries/eosiolib/core/eosio/binary_extension.hpp`.
+You can find the implementation of `eosio::binary_extension` in the `eosio.cdt` repository in [binary_extension.hpp](https://github.com/EOSIO/eosio.cdt/blob/master/libraries/eosiolib/binary_extension.hpp).
 
 The primary concern when using this type is when you are adding a new field to a smart contract's data structure that is currently utilized in an `eosio::multi_index` type (AKA a _table_), or when adding a new parameter to an action declaration.
 
 By wrapping the new field in an `eosio::binary_extension`, you are enabling your contract to be backwards compatible for future use. Note that this new field/parameter **MUST** be appended at the end of a data structure (this is due to implementation details in `eosio::multi_index`, which relies on the `boost::multi_index` type), or at the end of the parameter list in an action declaration.
 
-If you don't wrap the new field in an `eosio::binary_extension`, the `eosio::multi_index` table will be reformatted in such a way that disallows reads to the former datum; or in an action's case, the function will be uncallable.
+If you don't wrap the new field in an `eosio::binary_extension`, the `eosio::multi_index` table will be reformatted in such a way that disallows reads to the former datum; or in an action's case, the function will be un-callable.
 
 <hr>How the `eosio::binary_extension` type works
 
@@ -527,7 +527,7 @@ Error Details:
 assertion failure with message: read
 ```
 
-Whoops! You aren't able to read the data you've previously written to table!
+Whoops, you aren't able to read the data you've previously written to table.
 
 ```
 ~/binary_extension_contract $ cleos push action eosio regpkey '{"primary_key":"eosio.name2"}' -p eosio
@@ -539,7 +539,7 @@ Error Details:
 Missing field 'secondary_key' in input object while processing struct 'regpkey'
 ```
 
-Whoops! you aren't able to write to table the original way with the upgraded action either!
+Whoops, you aren't able to write to table the original way with the upgraded action either.
 
 <hr>Ok, back up and wrap the new field and the new action parameter in an `eosio::binary_extension` type:
 
@@ -707,4 +707,81 @@ If you are adding a new field to a struct currently in use by a `eosio::multi_in
 - add the field at the end of the struct,
 - and wrap the type using an `eosio::binary_extension` type.
 
-Also, there are a few restrictions you have to be aware of which are outlined [here](https://github.com/EOSIO/eos/issues/5600).
+# There are a few restrictions you have to be aware of, and they are outlined below
+
+Binary extensions only operate correctly in certain locations.
+
+* ok: a non-embedded struct stored in a row may have binary extensions at its end
+* ok: an action may use binary extensions to add additional arguments to its end
+* ok: a struct with binary extensions may be used inside another struct, but only if the inner struct is the last field of the outer struct and the outer struct is allowed to contain binary extensions
+* not ok: a struct with binary extensions may not be used inside an array
+* not ok: a struct with binary extensions may not be used as a base of another struct
+* not ok: fields with types which don't end in `$` following fields with types which do
+* not ok: `$` used anywhere except in struct field types
+
+## ABI version string
+
+`eosio::abi/1.1`
+
+## ABI Text format
+
+Types may have a `$` suffix. During binary-to-json conversion, fields with a `$` type don't error out when end-of-data has been reached; instead they're omitted. During json-to-binary conversion, missing fields don't error out as long as no non-missing fields follow in the ABI. This omits the bytes from the output stream.
+
+e.g.
+
+```json
+    {
+      "name": "my_table_struct",
+      "base": "",
+      "fields": [
+        {
+          "name": "required_field_1",
+          "type": "string"
+        },
+        {
+          "name": "required_field_2",
+          "type": "float32[]"
+        },
+        {
+          "name": "optional_field_3",
+          "type": "float32[]$"
+        },
+        {
+          "name": "optional_field_4",
+          "type": "string$"
+        },
+      ]
+    },
+```
+
+## JSON representation
+
+Missing fields aren't included; null isn't used. E.g. all of these are valid JSON representations of `my_table_struct`:
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4]
+}
+```
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4],
+    "optional_field_3": [5,6,7,8]
+}
+```
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4],
+    "optional_field_3": [5,6,7,8],
+    "optional_field_4": "bar"
+}
+```
+
+## ABI Binary format
+
+`$` can be included in type strings. No other changes.

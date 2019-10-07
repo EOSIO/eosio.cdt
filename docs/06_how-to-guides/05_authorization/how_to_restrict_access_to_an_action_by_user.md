@@ -1,6 +1,6 @@
 ## How to restrict access to an action by a user
 
-### Preconditions: It is assumed you have the sources for a contract and one of the actions defined is getting as a parameter an account name and it is printing the account name.
+### Preconditions It is assumed you have the sources for a contract and one of the actions defined is getting as a parameter an account name and it is printing the account name.
 
 To restrict access to the `hi` action, you can do it in two ways:
 
