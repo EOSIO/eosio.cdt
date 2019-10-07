@@ -1,8 +1,8 @@
-## How to restrict access to an action by user
+## How to restrict access to an action by a user
 
-Prerequisites: It is assumed you have the sources for a contract and one of the actions defined is getting as parameter an account name and it is printing the account name.
+### Preconditions: It is assumed you have the sources for a contract and one of the actions defined is getting as a parameter an account name and it is printing the account name.
 
-To restrict access to the `hi` action you can do it in two ways, explained below.
+To restrict access to the `hi` action, you can do it in two ways:
 
 1. Using require_auth
 The below code is enforcing the action `hi` to be executed only by the account that is sent as parameter to the action, no matter what permission the account is using to sign the transaction (e.g. owner, active, code).

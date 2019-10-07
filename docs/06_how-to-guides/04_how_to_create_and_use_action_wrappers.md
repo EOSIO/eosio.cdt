@@ -22,7 +22,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 ```cpp
 #include <multi_index_example.hpp>
 ```
-4. And then instantiate the `mod_action` defined above specifying the contract to send the action to as the first argument, in this case it is assumed the contract is deployed to `multiindexex` account, and a stucture which is defined by two parameters: the self account and the `active` permission (you can modify these two parameters based on your requirements).
+4. Then instantiate the `mod_action` defined above, specifying the contract to send the action to as the first argument. In this case, it is assumed the contract is deployed to `multiindexex` account, and a structure which is defined by two parameters: the self account, obtained by `get_self()` call, and the `active` permission (you can modify these two parameters based on your requirements).
 ```diff
 #include <multi_index_example.hpp>
 

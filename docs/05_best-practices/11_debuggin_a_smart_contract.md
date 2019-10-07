@@ -1,6 +1,6 @@
 ## Debugging a smart contract
 
-In order to be able to debug your smart contract, you will need to setup local nodeos node. This local nodeos node can be run as separate private testnet or as an extension of public testnet.  This local node also needs to be run with the contracts-console option on, either `--contracts-console` via the command line or `contracts-console = true` via the config.ini and/or by setting up logging on your running nodeos node and checking the output logs. See below for details on logging.
+In order to be able to debug your smart contract, you will need to setup a local nodeos node. This local nodeos node can be run as separate private testnet or as an extension of a public testnet.  This local node also needs to be run with the contracts-console option on, either `--contracts-console` via the command line or `contracts-console = true` via the config.ini and/or by setting up logging on your running nodeos node and checking the output logs. See below for details on logging.
 
 When you are creating your smart contract for the first time, it is recommended to test and debug your smart contract on a private testnet first, since you have full control of the whole blockchain and can easily add suitable logging. This enables you to have unlimited amount of eos needed and you can just reset the state of the blockchain whenever you want. When it is ready for production, debugging  on the public testnet (or official testnet) can be done by connecting your local nodeos to the public testnet (or official testnet) so you can see the log of the testnet in your local nodeos.
 
@@ -9,7 +9,7 @@ The concept is the same, so for the following guide, debugging on the private te
 If you haven't set up your own local nodeos, please follow the [setup guide](https://developers.eos.io/eosio-home/docs/getting-the-software). By default, your local nodeos will just run in a private testnet unless you modify the config.ini file to connect with public testnet (or official testnet) nodes. 
 
 ## Method
-The main method used to debug smart contract is **Caveman Debugging**, where it is utilized the printing functionality to inspect the value of a variable and check the flow of the contract. Printing in smart contract can be done through the Print API. The C++ API is the wrapper for C API, so most often it will be used the C++ API.
+The main method used to debug smart contract is **Caveman Debugging**. Printing is utilized to inspect the value of a variable and check the flow of the contract. Printing in smart contracts can be done through the Print API. The C++ API is a wrapper for C API and is the recommended API.
 
 ## Print
 Print C API supports the following data type that you can print:
@@ -25,7 +25,7 @@ Print C API supports the following data type that you can print:
 - printn - 64 bit names as base32 encoded string
 - printhex - hex given binary of data and its size 
 
-While Print C++ API wraps some of the above C API by overriding the print() function so user doesn't need to determine which specific print function he needs to use. Print C++ API supports
+The Print C++ API wraps some of the above C API by overriding the print() function, so the user doesn't need to determine which specific print function to use. Print C++ API supports:
 - a null terminated char array (string)
 - integer (128-bit unsigned, 64-bit unsigned, 32-bit unsigned, signed, unsigned)
 - base32 string encoded as 64-bit unsigned integer
@@ -79,7 +79,7 @@ extern "C" {
 ```
 ### debug.abi
 
-```cpp
+```json
 {
   "structs": [{
       "name": "foo",
@@ -98,7 +98,7 @@ extern "C" {
   ]
 }
 ```
-Deploy it and send a message to it. It is assumed that you have `debug` account created and have its key in your wallet.
+Deploy it and push an action to it. It is assumed you have a `debug` account created and have its key in your wallet.
 
 ```bash
 $ eosio-cpp -abigen debug.cpp -o debug.wasm

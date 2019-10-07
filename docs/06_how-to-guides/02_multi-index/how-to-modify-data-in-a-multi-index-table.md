@@ -1,8 +1,8 @@
 ## How to modify data in a multi index table
 
-Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+### Preconditions: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
-To modify data in the multi index table defined in the above tutorial you will implement an action `mod` which it will receive as parameter the `user` which is the key of the row you want to modify and the `value` param which is the value to update with the row.
+To modify data in the multi index table defined in the above tutorial, you will implement an action `mod` which it will receive as parameter the `user` which is the key of the row you want to modify and the `value` param which is the value to update with the row.
 
 1. Make use of the multi index table iterator to find out if the data exists
 ```cpp
@@ -11,7 +11,7 @@ To modify data in the multi index table defined in the above tutorial you will i
 }
 ```
 
-2. If the row you want to update is not found then assert by using the `check` method and yield an error message
+2. If the row you want to update is not found, then assert by using the `check` method and yield an error message
 ```diff
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
   auto itr = testtab.find(user.value);

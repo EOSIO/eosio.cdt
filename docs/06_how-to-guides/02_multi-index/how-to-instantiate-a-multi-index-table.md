@@ -36,7 +36,7 @@ using namespace eosio;
 [[Info | Additional indexes information]]
 | Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
 
-5. For ease of use define a type alias `test_tables` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+5. For ease of use, define a type alias `test_tables` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {

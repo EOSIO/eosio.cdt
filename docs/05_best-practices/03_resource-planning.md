@@ -4,7 +4,7 @@ How much RAM do I need? This is not an easy question to answer, and there's real
 
 *Ok, you say, but how much?*
 
-You need to test and simulate various business scenarios that apply to your blockchain application and measure their resource usage.  Hence, the existence of the public test networks. These allow you to measure how much RAM, CPU, and NET each action consume, and measure worst and best case business scenarios. You can then extrapolate and build a fairly good view of your blockchain application's resource needs.
+You need to test and simulate various business scenarios that apply to your blockchain application and measure their resource usage.  Hence, the existence of the public test networks. These allow you to measure how much RAM, CPU, and NET each action consumes, and to measure worst and best case business scenarios. You can then extrapolate and build a fairly good view of your blockchain application's resource needs.
 
 Once you have a fair idea of how your contract, blockchain application, and user base are consuming blockchain resources on a public test-net you can estimate what you'll need to start with on any EOSIO-based networks, public or private.  From that point onward, as with any other application, it is advisable to have monitors that tell you statistics and metrics about your application performance.
 
@@ -18,4 +18,4 @@ Another aspect of resource planning involves making sure your contract is effici
   * Is your smart contract storing only the information that is necessary to be stored on a blockchain and for the rest is using alternative ways for storing data (e.g. IPFS)?
   * If you have multiple smart contracts, are they communicating between them too much via inline actions? Could some of the smart contracts be merged into one and thus eliminate the need to spawn inline actions between them, reducing the overall inline actions count and thus resource consumption?
   * Could you change your smart contracts so that your clients pay for some parts of the RAM used? Recall how originally the addressbook contract was making each new account added to the book pay for the RAM needed to store its individual data? 
-  * Or conversely, are you making your clients pay too much RAM or CPU in order to access your contracts actions, to the point where you are prohibiting their use of your smart contract? Would it be better for your blockchain application's growth and success to take on some of those costs?
+  * Or conversely, are you making your clients pay too much RAM or CPU in order to access your contracts' actions, to the point where you are prohibiting their use of your smart contract? Would it be better for your blockchain application's growth and success to take on some of those costs?

@@ -1,4 +1,4 @@
-## Errors handling
+## Error handling
 
 Contracts are able to use `uint64_t` error codes as an alternative (and cheaper) means of signaling error conditions as opposed to string error messages. However, EOSIO and EOSIO.CDT reserve certain ranges of the `uint64_t` value space for their own purposes. They assume that the contract develop respects the following restrictions:
 

@@ -1,6 +1,6 @@
 ## How to define a secondary index
 
-Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+### Preconditions: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 The steps below show how to add a secondary index to the existing multi index table.
 
@@ -17,7 +17,7 @@ The steps below show how to add a secondary index to the existing multi index ta
   };
 ```
 
-2. Add `by_secondary( )` method which is the index accessor method to the new field value added. The secondary index, that will be added in step 3, will index this new data structure field.
+2. Add `by_secondary( )` method, which is the index accessor method to the new field value added. The secondary index, that will be added in step 3, will index this new data structure field.
 ```diff
   struct [[eosio::table]] test_table {
     // this field stores a name for each row of the multi index table
@@ -31,7 +31,7 @@ The steps below show how to add a secondary index to the existing multi index ta
   };
 ```
 
-3. In `test_table` alias definition (typedef), add the definition of the secondary index by making use of the `eosio::indexed_by` template, which needs two parameters, the name of the index `"secid"_n`, and a function call operator which extracts the value from the `secondary` data member as an index key, this is achieved by employing the `eosio::const_mem_fun` template which receives two paras: the data structure `test_table` and the reference to the getter function member `by_secondary`.
+3. In the `test_table` alias definition (typedef), add the definition of the secondary index by making use of the `eosio::indexed_by` template. `eosio::index_by` needs two parameters: the name of the index, `"secid"_n`, and a function call operator which extracts the value from the secondary data member as an index key. The function call operator is achieved by employing the `eosio::const_mem_fun` template which receives two parameters: the data structure `test_table` and the reference to the getter function member `by_secondary`.
 
 ```diff
 -  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;

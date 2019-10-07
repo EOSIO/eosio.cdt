@@ -1,7 +1,7 @@
 ## ABI variants
 
 ABI variants give the flexibility of using more than one type for a defined variable or data member. 
-In EOSIO the variants are making use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi index table structure and have flexibility in doing it, and used in conjunction with ABI extensions it allows for modification of the structure of an exiting multi index table, a.k.a. table.
+In EOSIO, the variants make use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an exiting multi index table, a.k.a. table.
 
 ### Use variant when building the multi index table the first time
 
@@ -56,7 +56,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 
 Notice above the declaration of the `variant_field` data memember and also the declaration and inline implementation for the `get_variant_field()` accessor for this data member.
 
-In the future, this allows you the flexibility to store in the `variant_field` three different types of data `int8_t`, `int16_t`, and `int32_t`, and also allows you to add more types in the list of supported types for this field. One important thing to keep in mind is that you can only append at the end of the supported types, you can not modify the existing supported types order nor drop one of them, you can only append at the end of the list. That means if you want in the next version of your contract to add also type `int32_t` to the supported list types for this field your contract implementation could look like this:
+In the future, this allows you the flexibility to store in the `variant_field` three different types of data `int8_t`, `int16_t`, and `int32_t`, and also allows you to add more types in the list of supported types for this field. One important thing to keep in mind is that you can only append at the end of the supported types, you can not modify the existing supported types order nor drop one of them. That means if you want in the next version of your contract to add also type `int32_t` to the supported list types for this field, your contract implementation could look like this:
 
 ```diff
 #include <eosio/eosio.hpp>
@@ -102,9 +102,9 @@ Now you can deploy the contract and it will be backwards compatible with the pre
 
 ### Use variant when changing an already deployed multi index table
 
-Prerequisites: For exemplification it will be used the contract defined in this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md). It is assumed you deployed it and now you are going to change the table structure. 
+#### Preconditions: The contract defined in the this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md) will be used. It is assumed you deployed it and now you are going to change the table structure. 
 
-To change the existing table structure you will use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). You will add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
+To change the existing table structure, you will use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). You will add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
 
 ```cpp
   eosio::binary_extension<std::variant<int8_t, uint16_t, uint32_t>> binary_extension_variant_key;

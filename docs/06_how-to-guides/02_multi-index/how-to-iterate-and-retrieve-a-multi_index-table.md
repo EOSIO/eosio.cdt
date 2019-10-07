@@ -1,6 +1,6 @@
 ## How to iterate and retrieve a multi index table
 
-Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+### Preconditions: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 For exemplification define the multi index contract definition like below:
 
@@ -60,7 +60,7 @@ The steps below show how to iterate and retrieve a multi index table.
 
 +using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
 ```
-3. Implement the action code, by searching for the `user` name in the multi index table using the primary index and print out the value stored in that row for field `datum` if found, otherwise asserts with a custom message. In the contract definition add the folloing implementation for `print` action:
+3. Implement the action code, by searching for the `user` name in the multi index table using the primary index. If found, print out the value stored in that row for field `datum`. Otherwise asserts with a custom message. In the contract definition add the following implementation for `print` action:
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {
     // searches for the row that corresponds to the user parameter

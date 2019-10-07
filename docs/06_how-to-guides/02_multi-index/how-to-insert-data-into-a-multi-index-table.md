@@ -1,6 +1,6 @@
 ## How to insert data into a multi index table
 
-Prerequisites: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+### Preconditions: it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 To insert data into a multi index table follow the following steps
 

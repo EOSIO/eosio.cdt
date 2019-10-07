@@ -8,38 +8,30 @@ EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Li
 $ brew tap eosio/eosio.cdt
 $ brew install eosio.cdt
 ```
+
 ### Mac OS X Brew Uninstall
 ```sh
 $ brew remove eosio.cdt
 ```
+
 ### Debian Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt_1.6.1-1_amd64.deb
-$ sudo apt install ./eosio.cdt_1.6.1-1_amd64.deb
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
+$ sudo apt install ./eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
 ```
+
 ### Debian Package Uninstall
 ```sh
 $ sudo apt remove eosio.cdt
 ```
 
-### Fedora RPM Package Install
+### RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt-1.6.1-1.fedora-x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.1-1.fedora-x86_64.rpm
+$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt-1.6.3-1.el7.x86_64.rpm
+$ sudo yum install ./eosio.cdt-1.6.3-1.el7.x86_64.rpm
 ```
 
-### Fedora RPM Package Uninstall
-```sh
-$ sudo yum remove eosio.cdt
-```
-
-### Centos RPM Package Install
-```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.1/eosio.cdt-1.6.1-1.centos-x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.1-1.centos-x86_64.rpm
-```
-
-### Centos RPM Package Uninstall
+### RPM Package Uninstall
 ```sh
 $ sudo yum remove eosio.cdt
 ```
@@ -94,4 +86,4 @@ eosio-readelf
 
 License
 ----
-[MIT](../LICENCE)
+[MIT](../LICENSE)

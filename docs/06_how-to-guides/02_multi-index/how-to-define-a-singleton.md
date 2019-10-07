@@ -1,10 +1,11 @@
 ## How to define a singleton
 
-To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable` follow the steps below:
+To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`, follow the steps below:
 
 1. Include the `eosio.hpp` and `singleton.hpp` headers and declare the `eosio` namespace usage
 ```
 #include <eosio/eosio.hpp>
+#include <eosio/singleton.hpp>
 using namespace eosio;
 ```
 
@@ -16,7 +17,7 @@ struct [[eosio::table]] testtable {
 };
 ```
 
-3. For ease of use define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testsingletona"` and the `testtable` data structure defined above
+3. For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testsingletona"` and the `testtable` data structure defined above
 ```diff
 struct [[eosio::table]] testtable {
    name primary_value;
@@ -46,7 +47,7 @@ singleton_example( name receiver, name code, datastream<const char*> ds ) :
 }
 ```
 
-Now you have defined and instantiated a singleton. Below you can find exemplified a possible implementation for the full class singleton example contract.
+Now you have defined and instantiated a singleton. Below you can find a possible implementation for the full class singleton example contract.
 
 __singleton_example.hpp__
 ```cpp
@@ -78,7 +79,7 @@ class [[eosio::contract]] singleton_example : public contract {
 };
 ```
 
-And below is a possible implementation for the two `get` and `set` actions defined above and demonstrate the usage of a couple of singleton methods. Note that the `set` action makes use of the singleton's `set` method for which parameter is the account to pay for the new value stored, in this case, the same account name that is stored in the primary value, however, it can be a different account if the so required.
+And below is a possible implementation for the two `get` and `set` actions defined above. It also demonstrates the usage of a couple of singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which parameter is the account to pay for the new value stored. In this case, the same account name that is stored in the primary value is the payer. However, it can be a different account if so required.
 
 __singleton_example.cpp__
 ```cpp

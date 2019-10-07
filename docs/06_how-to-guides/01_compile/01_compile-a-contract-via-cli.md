@@ -1,8 +1,8 @@
 ## How to compile a contract via CLI
 
-Prerequisites:
+### Preconditions:
 ---
-You have the source of your contrat saved in one of your local folders, e.g. `./examples/hello`
+You have the source of your contract saved in one of your local folders, e.g. `./examples/hello`
 For details on how to create your first contract follow [this tutorial here](https://developers.eos.io/eosio-home/docs/your-first-contract)
 
 Follow these steps to compile your contract

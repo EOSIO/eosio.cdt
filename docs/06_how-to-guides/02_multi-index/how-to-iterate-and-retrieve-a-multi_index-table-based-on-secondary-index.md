@@ -1,6 +1,6 @@
 ## How to iterate and retreive a multi index table based on secondary index
 
-Prerequisites: It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
+### Preconditions: It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
 
 You'll start with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi index table with two indexes, a mandatory primary one and a secondary one:
 
@@ -50,9 +50,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-To iterate and retreive the multi index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary` define a third action `bysec` which will do exactly that.
+To iterate and retreive the multi index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary`, define a third action `bysec` which will do exactly that.
 
-1. In the contract definition add the new action definition, using the `[[eosio::action]] void` and the `eosio::action_wrapper` template like this:
+1. In the contract definition, add the new action definition, using the `[[eosio::action]] void` and the `eosio::action_wrapper` template like this:
 
 ```cpp
   [[eosio::action]] void bysec( name secid );
