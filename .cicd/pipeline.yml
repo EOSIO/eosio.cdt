@@ -161,7 +161,7 @@ steps:
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
       IMAGE_TAG: "centos-7.6"
-      OS: "centos" # OS and PKGTYPE required for lambdas
+      OS: "el7" # OS and PKGTYPE required for lambdas
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eos-builder-fleet"
