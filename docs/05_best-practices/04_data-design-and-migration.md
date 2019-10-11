@@ -17,10 +17,10 @@ If you don't mind losing the data from the initial table you can follow these tw
 If you want to keep the existing data there are two ways to do it:
 
 ### 2.1. Using binary extentions
-To learn how to modify the structure using binary extensions please read this [tutorial](../09_tutorials/01_binary-extension.md).
+To learn how to modify the structure using binary extensions read this [tutorial](../09_tutorials/01_binary-extension.md).
 
 ### 2.2. Using ABI variants
-To learn how to modify the structure using ABI variants please read this [tutorial](../09_tutorials/02_abi-variants.md).
+To learn how to modify the structure using ABI variants read this [tutorial](../09_tutorials/02_abi-variants.md).
 
 ### 2.3. Migrate the existing data to a second table
 

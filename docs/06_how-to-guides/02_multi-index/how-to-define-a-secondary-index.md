@@ -1,6 +1,7 @@
 ## How to define a secondary index
 
-### Preconditions it is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+### Preconditions
+- It is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 The steps below show how to add a secondary index to the existing multi index table.
 

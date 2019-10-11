@@ -102,7 +102,8 @@ Now you can deploy the contract and it will be backwards compatible with the pre
 
 ### Use variant when changing an already deployed multi index table
 
-#### Preconditions The contract defined in the this section [here](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md) will be used. It is assumed you deployed it and now you are going to change the table structure. 
+#### Preconditions
+- It is assumed you deployed the contract defined in [this section](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md) and now you are going to change its table structure. 
 
 To change the existing table structure, you will use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). You will add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
 

@@ -1,6 +1,6 @@
 ## Troubleshooting
 
-1. __Problem__: When sending an action to the blockchain you get the error below
+### When sending an action to the blockchain you get the error below
 ```{
     "code":500,
     "message":"Internal Service Error",
@@ -19,9 +19,9 @@
     }
 }
 ```
-__Possbile solution__: Verify if you did not forget to set code for contract, is it possible that you only set the `abi` for the contract but not the code as well?
+__Possible solution__: Verify if you did not forget to set code for contract, is it possible that you only set the `abi` for the contract but not the code as well?
 
-2. __Problem__: When sending an action to the blockchain an error similar to the one below is encountered:
+### When sending an action to the blockchain an error similar to the one below is encountered:
 ```sh
 Error 3015014: Pack data exception
 Error Details:
@@ -33,14 +33,14 @@ cleos push action eostutorial1 get '[]' -p eostutorial1@active
 ```
 The command above is one way of sending correctly `get` action with no parameters to the blockchain.
 
-3. __Problem__: When sending an action to the blockchain an error similar to the one below is encountered:
+### When sending an action to the blockchain an error similar to the one below is encountered:
 ```sh
 error 2019-09-25T07:38:14.859 thread-0  main.cpp:3449                 main                 ] Failed with error: Assert Exception (10)
 !action_type.empty(): Unknown action action_name in contract eostutorial1
 ```
 __Possible solution__: Verify if the action attribute `[[eosio::action]]` is used when defining and/or declaring the action `action_name` for the contract.
 
-4. __Problem__: When deploying a contract code to the blockchain a similar error with the ones below is encountered:
+### When deploying a contract code to the blockchain a similar error with the ones below is encountered:
 ```sh
 Error 3160010: No abi file found
 or
@@ -48,11 +48,11 @@ Error 3160009: No wasm file found
 ```
 __Possible solution__: Verify that `abi` and `wasm` files exist in the directory specified in the `cleos set contract` command, and that their names match the directory name.
 
-5. __Problem__: Action triggers ram charge which cannot be initiated from a notification.
+### Action triggers ram charge which cannot be initiated from a notification.
 
 __Possible solution__: The reason for this error is because the notification action doesn't have authorization to buy the needed RAM. In the context of multi index tables, there’s a table payer and a row payer. Only the contract can modify rows. The contract can create rows with a payer that didn’t authorize the action if the total amount of ram charged that payer doesn’t increase (e.g. delete a row and add another with the same payer). The table payer can’t change until the last row is deleted. For the purposes of billing, a table is identified by the tuple `contract, scope, table`. When you create a row for a `contract, scope, table` tuple that doesn’t exist, you create a table with the same payer. This can outlive the original row which created it, if other rows were created with that combination and this prevents the original payer from getting their ram back. Secondary indexes throw in more complexity since they use the lower 4 bits of the table name, producing additional `contract, scope, table` tuples combinations. Key takeaway: payer is about billing, not access control
 
-6. __Problem__: You successfully re-deployed the contract code, but when you query the table you get the custom message that you coded when the table is not initialized (doesn't exist), or the system error message below in case you do not have code that checks first if table exist:
+### You successfully re-deployed the contract code, but when you query the table you get the custom message that you coded when the table is not initialized (doesn't exist), or the system error message below in case you do not have code that checks first if table exist:
 ```sh
 Error 3050003: eosio_assert_message assertion failure
 Error Details:
@@ -61,26 +61,26 @@ pending console output:
 ```
 __Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
-7. __Problem__: You successfully re-deployed the contract code, but when you query the table you get the fields of the row values swapped, that is, it appears the values stored in table rows are the same only that they are swapped between fields/columns.
+### You successfully re-deployed the contract code, but when you query the table you get the fields of the row values swapped, that is, it appears the values stored in table rows are the same only that they are swapped between fields/columns.
 
 __Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
-8. __Problem__: You successfully re-deployed the contract code, but when you query the table you get a parse error, like the one below, or the returned data seems to be garbage.
+### You successfully re-deployed the contract code, but when you query the table you get a parse error, like the one below, or the returned data seems to be garbage.
 ```sh
 error 2019-09-26T07:05:54.825 thread-0  main.cpp:3449                 main                 ] Failed with error: Parse Error (4)
 Couldn't parse type_name
 ```
 __Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
 
-9. __Problem__: eosio-cpp process never completes.
+### eosio-cpp process never completes.
 
 __Possible solution__: make sure you have at least 2 cores on the host that executes the eosio-cpp (e.g. docker container, VM, local sub-system)
 
-10. __Problem__: You can not find the `now()` time function, or the result of the `current_time_point` functions are not what you expected them to be.
+### You can not find the `now()` time function, or the result of the `current_time_point` functions are not what you expected them to be.
 
 __Possible solution__: The `now()` function has been replaced by `current_time_point().sec_since_epoch()`, it returns the time in microseconds from 1970 of the `current block` as a time_point. There's also available `current_block_time()` which returns the time in microseconds from 1970 of the `current block` as a `block_timestamp`. Be aware that for time base functions, the assumption is when you call something like `now()` or `current_time()` you will get the exact now/current time, however that is not the case with EOSIO, you get __the block time__, and only ever get __the block time__ from the available `sec_since_epoch()` or `current_block_time()` no matter how many times you call it.
 
-11. __Problem__: You successfully re-deployed the contract code, but when you broadcast one of the contracts methods to the blockchain you get below error message:
+### You successfully re-deployed the contract code, but when you broadcast one of the contracts methods to the blockchain you get below error message:
 ```sh
 Error 3050004: eosio_assert_code assertion failure
 Error Details:
@@ -88,7 +88,7 @@ assertion failure with error code: 8000000000000000000
 ```
 __Possible solution__: If you are referencing a smart contract from another smart contract and each of them have at least one action with the same name you will experience the above error when sending to the blockchain one of those actions, so what you have to do is to make sure the action names between those two contracts are not common.
 
-12. __Problem__: Print statements from smart contract code are not seen in the output.
+### Print statements from smart contract code are not seen in the output.
 
 __Possible solution__: There are a few reasons print statements do not show up in the output. One reason could be because an error occurs, in which case the whole transaction is rolled back and the print statements output is replaced by the error that occurs instead; Another reason is if you are in a loop, iterating through a table's rows for example and for each row you have a print statement that prints also the new line char at the `'\n'` only the chars before the new line char from the first iteration will be printed, nothing else after that, nothing from the second iteration onwards either.
 
@@ -111,7 +111,7 @@ The below code will print all lines of the iteration separated by `'|'` char.
   }
 ```
 
-12. __Problem__: Print statements from smart contract code are not shown in the `expected order`.
+### Print statements from smart contract code are not shown in the `expected order`.
 
 __Possible solution__: The key point here is the `expected order` and what you think it should be. Although the EOSIO is single threaded, when looking at your smart contract action code implementation, which let's say it has a series of `print` (either `print_f` or `printf`) statements, they might not necessarily be outputted in the order the `apparent` code workflow is. One example is when inline transactions are sent from your smart contract action code, and you expect to see the `print` statements from within the inline action code outputted before the `print` statements made after the inline action `send` statement. For better exemplification let's look at the code below:
 

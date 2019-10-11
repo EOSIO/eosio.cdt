@@ -9,29 +9,10 @@ As of this release two new repositories are under the suite of tools provided by
 ## Important!
 EOSIO.CDT Version 1.3.x introduced quite a few breaking changes. To have binary releases we needed to remove the concept of a core symbol from EOSIO.CDT. This meant drastic changes to symbol, asset and other types/functions that were connected to them. Since these changes would be disruptive, we decided to add as many disruptive changes needed for future contract writing, so that disruption should only occur once. Please read the [Upgrade guide from 1.2 to 1.3](./upgrading/1.2-to-1.3) section of this readme.
 
-## Concepts
-
-### Dispatcher and Notifications
-[Dispatcher API reference](https://eosio.github.io/eosio.cdt/1.6.0/group__dispatcher.html)
-[schemata:link to glossary]
-
-### Multi Index Table and RAM
-[Multi Index Tables explained by example](https://developers.eos.io/eosio-cpp/docs/using-multi-index-tables)
-[schemata:link to glossary]
-
-### Smart Contract
-[schemata:link to glossary]
-
-### Action
-[schemata:link to glossary]
-
-### Transaction and Deferred Transaction
-[schemata:link to glossary]
-
 ## Binary Releases
 EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Linux x86_64 RPM packages.
 
-**If you have previously installed EOSIO.CDT, please run the `uninstall` script (it is in the directory where you cloned EOSIO.CDT) before downloading and using the binary releases.**
+**If you have previously installed EOSIO.CDT, run the `uninstall` script (it is in the directory where you cloned EOSIO.CDT) before downloading and using the binary releases.**
 
 ### Mac OS X Brew Install
 ```sh
