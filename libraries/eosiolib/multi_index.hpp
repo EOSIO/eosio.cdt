@@ -828,9 +828,9 @@ class multi_index
       const_iterator begin()const  { return cbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return An iterator referring to the `past-the-end` element in the multi index container.
        *
        *  Example:
        *
@@ -851,9 +851,9 @@ class multi_index
       const_iterator cend()const   { return const_iterator( this ); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return An iterator referring to the `past-the-end` element in the multi index container.
        *
        *  Example:
        *
