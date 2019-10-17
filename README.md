@@ -16,45 +16,45 @@ EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Li
 
 ### Mac OS X Brew Install
 ```sh
-$ brew tap eosio/eosio.cdt
-$ brew install eosio.cdt
+brew tap eosio/eosio.cdt
+brew install eosio.cdt
 ```
 
 ### Mac OS X Brew Uninstall
 ```sh
-$ brew remove eosio.cdt
+brew remove eosio.cdt
 ```
 
 ### Debian Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
-$ sudo apt install ./eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
+sudo apt install ./eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
 ```
 
 ### Debian Package Uninstall
 ```sh
-$ sudo apt remove eosio.cdt
+sudo apt remove eosio.cdt
 ```
 
 ### RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt-1.6.3-1.el7.x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.3-1.el7.x86_64.rpm
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt-1.6.3-1.el7.x86_64.rpm
+sudo yum install ./eosio.cdt-1.6.3-1.el7.x86_64.rpm
 ```
 
 ### RPM Package Uninstall
 ```sh
-$ sudo yum remove eosio.cdt
+sudo yum remove eosio.cdt
 ```
 
 ## Guided Installation or Building from Scratch
 ```sh
-$ git clone --recursive https://github.com/eosio/eosio.cdt
-$ cd eosio.cdt
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make -j8
+git clone --recursive https://github.com/eosio/eosio.cdt
+cd eosio.cdt
+mkdir build
+cd build
+cmake ..
+make -j8
 ```
 
 From here onward you can build your contracts code by simply exporting the `build` directory to your path, so you don't have to install globally (makes things cleaner).
@@ -67,9 +67,9 @@ sudo make install
 ### Uninstall after manual installation
 
 ```sh
-$ sudo rm -fr /usr/local/eosio.cdt
-$ sudo rm -fr /usr/local/lib/cmake/eosio.cdt
-$ sudo rm /usr/local/bin/eosio-*
+sudo rm -fr /usr/local/eosio.cdt
+sudo rm -fr /usr/local/lib/cmake/eosio.cdt
+sudo rm /usr/local/bin/eosio-*
 ```
 
 ## Installed Tools
