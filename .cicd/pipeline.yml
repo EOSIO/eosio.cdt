@@ -67,7 +67,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: $SKIP_MOJAVE
+    skip: $SKIP_MACOS_10_14
 
   - label: ":darwin: macOS 10.15 - Build"
     command:
@@ -90,7 +90,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: $SKIP_CATALINA
+    skip: $SKIP_MACOS_10_15
 
 
   - wait
@@ -160,7 +160,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_MACOS_10_14}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
     command:
@@ -183,7 +183,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_CATALINA}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_MACOS_10_15}${SKIP_UNIT_TESTS}
 
   - wait:
     continue_on_failure: true
@@ -248,7 +248,7 @@ steps:
     agents:
       - "queue=mac-anka-node-fleet"
     timeout: 10
-    skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_MACOS_10_14}${SKIP_PACKAGE_BUILDER}
 
   - label: ":darwin: Catalina - Package Builder"
     command:
@@ -269,7 +269,7 @@ steps:
     agents:
       - "queue=mac-anka-node-fleet"
     timeout: 10
-    skip: ${SKIP_CATALINA}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
