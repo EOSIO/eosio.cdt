@@ -90,7 +90,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: $SKIP_MOJAVE
+    skip: $SKIP_CATALINA
 
 
   - wait
@@ -183,7 +183,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_CATALINA}${SKIP_UNIT_TESTS}
 
   - wait:
     continue_on_failure: true
@@ -269,7 +269,7 @@ steps:
     agents:
       - "queue=mac-anka-node-fleet"
     timeout: 10
-    skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_CATALINA}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
