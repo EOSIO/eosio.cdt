@@ -69,7 +69,7 @@ steps:
       - "queue=mac-anka-large-node-fleet"
     skip: $SKIP_MOJAVE
 
-    - label: ":darwin: macOS 10.15 - Build"
+  - label: ":darwin: macOS 10.15 - Build"
     command:
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
@@ -168,7 +168,7 @@ steps:
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
+      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/tests.sh"
     plugins:
       - chef/anka#v0.5.1:
