@@ -38,4 +38,4 @@ RUN curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     ./configure --enable-optimizations && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -f Python-3.7.4 && rm -f Python-3.7.4.tgz
+    rm -rf Python-3.7.4 && rm -rf Python-3.7.4.tgz
