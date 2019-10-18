@@ -25,7 +25,7 @@ STYLES = {"reset": 0, "bold": 1, "italic": 3, "underline": 4}
 
 def print_test_results(
     results: List[Tuple[Test, Optional[TestFailure]]], run_time: float
-) -> None:
+) -> List[TestFailure]:
     Printer.print("\n========= Results =========")
 
     failures = []
@@ -59,6 +59,8 @@ def print_test_results(
         Printer.green(f"\n100% of tests passed, 0 tests failed out of {total_tests}")
 
     Printer.print(f"\nTotal Test discovery and run time = {run_time:.2f} sec")
+
+    return failures
 
 
 def print_test_results_machine(
