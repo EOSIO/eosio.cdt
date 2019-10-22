@@ -19,6 +19,33 @@ namespace eosio {
      uint32_t get_active_producers(uint64_t*, uint32_t);
    }
 
+   // producer_schedule.hpp
+   bool block_signing_authority_v0::is_valid()const {
+      uint32_t sum_weights = 0;
+      std::set<eosio::public_key> unique_keys;
+
+      for (const auto& kw: keys ) {
+         if( std::numeric_limits<uint32_t>::max() - sum_weights <= kw.weight ) {
+            sum_weights = std::numeric_limits<uint32_t>::max();
+         } else {
+            sum_weights += kw.weight;
+         }
+
+         unique_keys.insert(kw.key);
+      }
+
+      if( keys.size() != unique_keys.size() )
+         return false; // producer authority includes a duplicated key
+
+      if( threshold == 0 )
+         return false; // producer authority has a threshold of 0
+
+      if( sum_weights < threshold )
+         return false; // producer authority is unsatisfiable
+
+      return true;
+   }
+
    // privileged.hpp
    void set_blockchain_parameters(const eosio::blockchain_parameters& params) {
       char buf[sizeof(eosio::blockchain_parameters)];
@@ -55,10 +82,11 @@ namespace eosio {
    }
 
    std::vector<name> get_active_producers() {
-      auto prod_cnt = get_active_producers(nullptr, 0)/8;
-     std::vector<name> active_prods(prod_cnt);
-     get_active_producers((uint64_t*)active_prods.data(), active_prods.size());
-     return active_prods;
+      const auto buffer_size = get_active_producers(nullptr, 0);
+      const auto prod_cnt = buffer_size / sizeof(name);
+      std::vector<name> active_prods(prod_cnt);
+      get_active_producers((uint64_t*)active_prods.data(), buffer_size);
+      return active_prods;
    }
 
    // powers.hpp

@@ -49,14 +49,16 @@ steps:
   - label: ":darwin: macOS 10.14 - Build"
     command:
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
       - chef/anka#v0.5.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.4_6C_14G_40G
+          vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
           modify-cpu: 12
           modify-ram: 24
@@ -116,14 +118,16 @@ steps:
   - label: ":darwin: macOS 10.14 - Unit Tests"
     command:
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/tests.sh"
     plugins:
       - chef/anka#v0.5.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.4_6C_14G_40G
+          vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
           modify-cpu: 12
           modify-ram: 24
@@ -157,7 +161,7 @@ steps:
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
       IMAGE_TAG: "centos-7.6"
-      OS: "centos" # OS and PKGTYPE required for lambdas
+      OS: "el7" # OS and PKGTYPE required for lambdas
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eos-builder-fleet"
@@ -180,14 +184,16 @@ steps:
 
   - label: ":darwin: Mojave - Package Builder"
     command:
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout $BUILDKITE_COMMIT"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/package.sh"
     plugins:
       - chef/anka#v0.5.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.4_6C_14G_40G
+          vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
           always-pull: true
           debug: true

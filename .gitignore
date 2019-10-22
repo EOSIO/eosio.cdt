@@ -37,5 +37,9 @@
 # Build
 build/*
 
+# Python
+__pycache__/
+.mypy_cache/
+
 # Editor Files
 .vscode/

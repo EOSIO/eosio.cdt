@@ -563,9 +563,8 @@ static Options CreateOptions(bool add_defaults=true) {
    for ( auto input_filename : input_filename_opt ) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
-#else
-      inputs.push_back(input_filename);
 #endif
+      inputs.push_back(input_filename);
    }
 
 #ifdef ONLY_LD
@@ -575,7 +574,96 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
-   copts.emplace_back("-I./");
+   if (!isystem_opt.empty()) {
+      copts.emplace_back("-isystem="+isystem_opt);
+   }
+   if (CC_opt) {
+      copts.emplace_back("-CC");
+   }
+   if (C_opt) {
+      copts.emplace_back("-C");
+   }
+
+   copts.emplace_back("-c");
+
+   if (c_opt) {
+      link = false;
+   }
+   if (dD_opt) {
+      copts.emplace_back("-dD");
+   }
+   if (dI_opt) {
+      copts.emplace_back("-dI");
+   }
+   if (dM_opt) {
+      copts.emplace_back("-dM");
+   }
+   for ( auto define : D_opt ) {
+      copts.emplace_back("-D"+define);
+   }
+   if (emit_ast_opt) {
+      copts.emplace_back("-emit-ast");
+   }
+   if (emit_llvm_opt) {
+      copts.emplace_back("-emit-llvm");
+   }
+   if (E_opt) {
+      link = false;
+      copts.emplace_back("-E");
+   }
+   if(g_opt)
+      copts.emplace_back("-g");
+   if (!x_opt.empty()) {
+      // x_opt should precede input files
+      copts.insert(copts.begin(), "-x"+x_opt);
+   }
+   if (color_diag_opt) {
+      copts.emplace_back("-fcolor-diagnostics");
+   }
+   if (!MF_opt.empty()) {
+      copts.emplace_back("-MF "+MF_opt);
+   }
+   if (MD_opt) {
+      copts.emplace_back("-MD");
+   }
+   if (MMD_opt) {
+      copts.emplace_back("-MMD");
+   }
+   if (!MT_opt.empty()) {
+      copts.emplace_back("-MT "+MT_opt);
+   }
+   if (finline_functions_opt) {
+      copts.emplace_back("-finline-functions");
+   }
+   if (finline_hint_functions_opt) {
+      copts.emplace_back("-finline-hint-functions");
+   }
+   if (fmerge_all_constants_opt) {
+      copts.emplace_back("-fmerge-all-constants");
+   }
+   if (fstack_protector_all_opt) {
+      copts.emplace_back("-fstack-protector-all");
+   }
+   if (fstack_protector_strong_opt) {
+      copts.emplace_back("-fstack-protector-strong");
+   }
+   if (fstack_protector_opt) {
+      copts.emplace_back("-fstack-protector");
+   }
+   if (fstrict_enums_opt) {
+      copts.emplace_back("-fstrict-enums");
+   }
+   if (fstrict_return_opt) {
+      copts.emplace_back("-fstrict-return");
+   }
+   for ( auto include : include_opt ) {
+      copts.emplace_back("-include="+include);
+      agopts.emplace_back("-include="+include);
+   }
+   for ( auto inc_dir : I_opt ) {
+      copts.emplace_back("-I"+inc_dir);
+      agopts.emplace_back("-I"+inc_dir);
+   }
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
@@ -635,93 +723,6 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef __APPLE__
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
 #endif
-   }
-
-   if (!isystem_opt.empty()) {
-      copts.emplace_back("-isystem="+isystem_opt);
-   }
-   if (CC_opt) {
-      copts.emplace_back("-CC");
-   }
-   if (C_opt) {
-      copts.emplace_back("-C");
-   }
-
-   copts.emplace_back("-c");
-
-   if (c_opt) {
-      link = false;
-   }
-   if (dD_opt) {
-      copts.emplace_back("-dD");
-   }
-   if (dI_opt) {
-      copts.emplace_back("-dI");
-   }
-   if (dM_opt) {
-      copts.emplace_back("-dM");
-   }
-   for ( auto define : D_opt ) {
-      copts.emplace_back("-D"+define);
-   }
-   if (emit_ast_opt) {
-      copts.emplace_back("-emit-ast");
-   }
-   if (emit_llvm_opt) {
-      copts.emplace_back("-emit-llvm");
-   }
-   if (E_opt) {
-      link = false;
-      copts.emplace_back("-E");
-   }
-   if(g_opt)
-      copts.emplace_back("-g");
-   if (color_diag_opt) {
-      copts.emplace_back("-fcolor-diagnostics");
-   }
-   if (!MF_opt.empty()) {
-      copts.emplace_back("-MF "+MF_opt);
-   }
-   if (MD_opt) {
-      copts.emplace_back("-MD");
-   }
-   if (MMD_opt) {
-      copts.emplace_back("-MMD");
-   }
-   if (!MT_opt.empty()) {
-      copts.emplace_back("-MT "+MT_opt);
-   }
-   if (finline_functions_opt) {
-      copts.emplace_back("-finline-functions");
-   }
-   if (finline_hint_functions_opt) {
-      copts.emplace_back("-finline-hint-functions");
-   }
-   if (fmerge_all_constants_opt) {
-      copts.emplace_back("-fmerge-all-constants");
-   }
-   if (fstack_protector_all_opt) {
-      copts.emplace_back("-fstack-protector-all");
-   }
-   if (fstack_protector_strong_opt) {
-      copts.emplace_back("-fstack-protector-strong");
-   }
-   if (fstack_protector_opt) {
-      copts.emplace_back("-fstack-protector");
-   }
-   if (fstrict_enums_opt) {
-      copts.emplace_back("-fstrict-enums");
-   }
-   if (fstrict_return_opt) {
-      copts.emplace_back("-fstrict-return");
-   }
-   for ( auto include : include_opt ) {
-      copts.emplace_back("-include="+include);
-      agopts.emplace_back("-include="+include);
-   }
-   for ( auto inc_dir : I_opt ) {
-      copts.emplace_back("-I"+inc_dir);
-      agopts.emplace_back("-I"+inc_dir);
    }
    if (O_opt.empty() && !g_opt) {
       copts.emplace_back("-O3");
@@ -790,25 +791,23 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef ONLY_LD
       if (inputs.size() == 1) {
          llvm::SmallString<256> fn  = llvm::sys::path::filename(inputs[0]);
-         llvm::SmallString<256> fn2 = fn;
-         llvm::sys::path::replace_extension(fn, ".wasm");
+         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
-         llvm::SmallString<256> res;
-         llvm::sys::path::system_temp_directory(true, res);
-         ldopts.emplace_back(std::string(std::string(res.str())+"/"+std::string(fn2.str())+".o"));
       } else {
          ldopts.emplace_back("a.out");
       }
-#endif
+#else
       if (inputs.size() == 1) {      
          llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
-         llvm::sys::path::replace_extension(fn, ".wasm");
-         ldopts.emplace_back("-o "+output_fn);
+         llvm::sys::path::replace_extension(fn, "");
+         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
+         ldopts.emplace_back("-o "+output_fn);
       } else {
-         ldopts.emplace_back("-o a.out");
          output_fn = "a.out";
+         ldopts.emplace_back("-o "+output_fn);
       }
+#endif
    }
    else {
       ldopts.emplace_back("-o "+o_opt);
@@ -833,12 +832,11 @@ static Options CreateOptions(bool add_defaults=true) {
 #ifndef ONLY_LD
 #ifdef CPP_COMP
    if (! std_opt.empty()) {
-      copts.emplace_back("--std="+std_opt);
-      agopts.emplace_back("--std="+std_opt);
+      copts.emplace_back("-std="+std_opt);
+      agopts.emplace_back("-std="+std_opt);
    } else {
-      copts.emplace_back("--std=c++17");
-      agopts.emplace_back("--std=c++17");
-
+      copts.emplace_back("-std=c++17");
+      agopts.emplace_back("-std=c++17");
    }
 
    if (faligned_allocation_opt) {
@@ -875,5 +873,9 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #endif
    
+#ifndef ONLY_LD
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+#else
+   return {output_fn, {}, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+#endif
 }
