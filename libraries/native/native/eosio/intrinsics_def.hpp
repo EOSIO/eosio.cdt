@@ -29,24 +29,27 @@ namespace eosio { namespace native {
    auto get_args(R(Args...)) {
        return std::tuple<std::decay_t<Args>...>{};
    }
-   
+
    template <typename R, typename Args, size_t... Is>
    auto create_function(std::index_sequence<Is...>) {
-      return std::function<R(typename std::tuple_element<Is, Args>::type ...)>{ 
-         [](typename std::tuple_element<Is, Args>::type ...) { 
+      return std::function<R(typename std::tuple_element<Is, Args>::type ...)>{
+         [](typename std::tuple_element<Is, Args>::type ...) {
             eosio_assert(false, "unsupported intrinsic"); return (R)0;
          }
       };
-   }   
+   }
 
 #define INTRINSICS(intrinsic_macro) \
 intrinsic_macro(get_resource_limits) \
 intrinsic_macro(set_resource_limits) \
 intrinsic_macro(set_proposed_producers) \
+intrinsic_macro(set_proposed_producers_ex) \
 intrinsic_macro(get_blockchain_parameters_packed) \
 intrinsic_macro(set_blockchain_parameters_packed) \
 intrinsic_macro(is_privileged) \
 intrinsic_macro(set_privileged) \
+intrinsic_macro(is_feature_activated) \
+intrinsic_macro(preactivate_feature) \
 intrinsic_macro(get_active_producers) \
 intrinsic_macro(db_idx64_store) \
 intrinsic_macro(db_idx64_remove) \
@@ -153,7 +156,8 @@ intrinsic_macro(send_inline) \
 intrinsic_macro(send_context_free_inline) \
 intrinsic_macro(send_deferred) \
 intrinsic_macro(cancel_deferred) \
-intrinsic_macro(get_context_free_data) 
+intrinsic_macro(get_context_free_data) \
+intrinsic_macro(get_sender) 
 
 #define CREATE_ENUM(name) \
    name,

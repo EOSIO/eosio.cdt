@@ -22,8 +22,6 @@ static constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 184467440
 
 // Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_code_type_test)
-   silence_output(true);
-
    //// constexpr symbol_code()
    // constexpr uint64_t raw()const
    CHECK_EQUAL( symbol_code{}.raw(), 0ULL )
@@ -119,14 +117,10 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    CHECK_EQUAL( symbol_code{} < symbol_code{"Z"}, true )
    CHECK_EQUAL( symbol_code{} < symbol_code{"AAAAAAA"}, true )
    CHECK_EQUAL( symbol_code{} < symbol_code{"ZZZZZZZ"}, true )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(symbol_type_test)
-   silence_output(true);
-
    static constexpr symbol_code sc0{"A"};
    static constexpr symbol_code sc1{"Z"};
    static constexpr symbol_code sc2{"AAAAAAA"};
@@ -195,15 +189,13 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    CHECK_EQUAL( (symbol{"SYMBOLL", 0}.operator bool()), true )
    CHECK_EQUAL( (!symbol{"", 0}.operator bool()), true )
    CHECK_EQUAL( (!symbol{"SYMBOLL", 0}.operator bool()), false )
-   
+
    // ---------------------
    // void print(bool)const
-   // Note:
-   // This function prints the length of the symbol at the very end
-   CHECK_PRINT( "0,A1", [&](){symbol{"A", 0}.print(true);} );
-   CHECK_PRINT( "0,Z1", [&](){symbol{"Z", 0}.print(true);} );
-   CHECK_PRINT( "255,AAAAAAA7", [&](){symbol{"AAAAAAA", 255}.print(true);} );
-   CHECK_PRINT( "255,ZZZZZZZ7", [&](){symbol{"ZZZZZZZ", 255}.print(true);} );
+   CHECK_PRINT( "0,A", [&](){symbol{"A", 0}.print(true);} );
+   CHECK_PRINT( "0,Z", [&](){symbol{"Z", 0}.print(true);} );
+   CHECK_PRINT( "255,AAAAAAA", [&](){symbol{"AAAAAAA", 255}.print(true);} );
+   CHECK_PRINT( "255,ZZZZZZZ", [&](){symbol{"ZZZZZZZ", 255}.print(true);} );
 
    // --------------------------------------------------------------
    // friend constexpr bool operator==(const symbol&, const symbol&)
@@ -225,14 +217,10 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    CHECK_EQUAL( (symbol{} < symbol{sc1, 0}), true )
    CHECK_EQUAL( (symbol{} < symbol{sc2, 0}), true )
    CHECK_EQUAL( (symbol{} < symbol{sc3, 0}), true )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/symbol.hpp`
 EOSIO_TEST_BEGIN(extended_symbol_type_test)
-   silence_output(true);
-
    static constexpr name n0{"1"};
    static constexpr name n1{"5"};
    static constexpr name n2{"a"};
@@ -252,7 +240,7 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    // constexpr name get_contract()
    CHECK_EQUAL( (extended_symbol{{}, {}}.get_symbol().raw()), 0ULL )
    CHECK_EQUAL( (extended_symbol{{}, {}}.get_contract().value), 0ULL )
-   
+
    //// constexpr extended_symbol(symbol, name)
    CHECK_EQUAL( (extended_symbol{s0, n0}.get_symbol().raw()), 16640ULL )
    CHECK_EQUAL( (extended_symbol{s0, n1}.get_symbol().code().raw()), 65ULL )
@@ -270,7 +258,7 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    CHECK_EQUAL( (extended_symbol{s2, n5}.get_contract().value), 2975281302211218015ULL )
    CHECK_EQUAL( (extended_symbol{s3, n6}.get_contract().value), 3570337562653461615ULL )
    CHECK_EQUAL( (extended_symbol{s3, n7}.get_contract().value), u64max )
-   
+
    // ---------------------
    // void print(bool)const
    // Note:
@@ -304,11 +292,15 @@ EOSIO_TEST_BEGIN(extended_symbol_type_test)
    CHECK_EQUAL( (extended_symbol{} < extended_symbol{s1, {}}), true )
    CHECK_EQUAL( (extended_symbol{} < extended_symbol{s2, {}}), true )
    CHECK_EQUAL( (extended_symbol{} < extended_symbol{s3, {}}), true )
-
-   silence_output(false);
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
+   bool verbose = false;
+   if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
+      verbose = true;
+   }
+   silence_output(!verbose);
+
    EOSIO_TEST(symbol_code_type_test);
    EOSIO_TEST(symbol_type_test);
    EOSIO_TEST(extended_symbol_type_test);

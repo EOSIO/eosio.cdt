@@ -14,7 +14,7 @@ extern "C" {
 
    __attribute__((eosio_wasm_import))
    void assert_sha1( const char* data, uint32_t length, const capi_checksum160* hash );
-   
+
    __attribute__((eosio_wasm_import))
    void assert_sha512( const char* data, uint32_t length, const capi_checksum512* hash );
 
@@ -34,11 +34,11 @@ extern "C" {
    void ripemd160( const char* data, uint32_t length, capi_checksum160* hash );
 
    __attribute__((eosio_wasm_import))
-   int recover_key( const capi_checksum256* digest, const char* sig, 
+   int recover_key( const capi_checksum256* digest, const char* sig,
                     size_t siglen, char* pub, size_t publen );
 
    __attribute__((eosio_wasm_import))
-   void assert_recover_key( const capi_checksum256* digest, const char* sig, 
+   void assert_recover_key( const capi_checksum256* digest, const char* sig,
                             size_t siglen, const char* pub, size_t publen );
 
 }
@@ -92,37 +92,43 @@ namespace eosio {
    eosio::public_key recover_key( const eosio::checksum256& digest, const eosio::signature& sig ) {
       auto digest_data = digest.extract_as_byte_array();
 
-      char sig_data[70];
-      eosio::datastream<char*> sig_ds( sig_data, sizeof(sig_data) );
-      auto sig_begin = sig_ds.pos();
-      sig_ds << sig;
+      auto sig_data = eosio::pack(sig);
 
-      char pubkey_data[38];
+      char optimistic_pubkey_data[256];
       size_t pubkey_size = ::recover_key( reinterpret_cast<const capi_checksum256*>(digest_data.data()),
-                                          sig_begin, (sig_ds.pos() - sig_begin),
-                                          pubkey_data, sizeof(pubkey_data) );
-      eosio::datastream<char*> pubkey_ds( pubkey_data, pubkey_size );
+                                          sig_data.data(), sig_data.size(),
+                                          optimistic_pubkey_data, sizeof(optimistic_pubkey_data) );
+
       eosio::public_key pubkey;
-      pubkey_ds >> pubkey;
+      if ( pubkey_size <= sizeof(optimistic_pubkey_data) ) {
+         eosio::datastream<const char*> pubkey_ds( optimistic_pubkey_data, pubkey_size );
+         pubkey_ds >> pubkey;
+      } else {
+         constexpr static size_t max_stack_buffer_size = 512;
+         void* pubkey_data = (max_stack_buffer_size < pubkey_size) ? malloc(pubkey_size) : alloca(pubkey_size);
+
+         ::recover_key( reinterpret_cast<const capi_checksum256*>(digest_data.data()),
+                        sig_data.data(), sig_data.size(),
+                        reinterpret_cast<char*>(pubkey_data), pubkey_size );
+         eosio::datastream<const char*> pubkey_ds( reinterpret_cast<const char*>(pubkey_data), pubkey_size );
+         pubkey_ds >> pubkey;
+
+         if( max_stack_buffer_size < pubkey_size ) {
+            free(pubkey_data);
+         }
+      }
       return pubkey;
    }
 
    void assert_recover_key( const eosio::checksum256& digest, const eosio::signature& sig, const eosio::public_key& pubkey ) {
       auto digest_data = digest.extract_as_byte_array();
 
-      char sig_data[70];
-      eosio::datastream<char*> sig_ds( sig_data, sizeof(sig_data) );
-      auto sig_begin = sig_ds.pos();
-      sig_ds << sig;
-
-      char pubkey_data[38];
-      eosio::datastream<char*> pubkey_ds( pubkey_data, sizeof(pubkey_data) );
-      auto pubkey_begin = pubkey_ds.pos();
-      pubkey_ds << pubkey;
+      auto sig_data = eosio::pack(sig);
+      auto pubkey_data = eosio::pack(pubkey);
 
       ::assert_recover_key( reinterpret_cast<const capi_checksum256*>(digest_data.data()),
-                            sig_begin, (sig_ds.pos() - sig_begin),
-                            pubkey_begin, (pubkey_ds.pos() - pubkey_begin) );
+                            sig_data.data(), sig_data.size(),
+                            pubkey_data.data(), pubkey_data.size() );
    }
 
 }

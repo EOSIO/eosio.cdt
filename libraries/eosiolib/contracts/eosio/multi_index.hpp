@@ -350,7 +350,7 @@ namespace _multi_index_detail {
  *       uint64_t    primary;
  *       uint128_t   secondary;
  *       uint64_t primary_key() const { return primary; }
- *       uint64_t get_secondary() const { return secondary; }
+ *       uint128_t get_secondary() const { return secondary; }
  *     };
  *    public:
  *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
@@ -1246,7 +1246,7 @@ class multi_index
       }
 
       /**
-       *  Searches for the `object_type` with the highest primary key that is less than or equal to a given primary key.
+       *  Searches for the `object_type` with the lowest primary key that is greater than a given primary key.
        *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search

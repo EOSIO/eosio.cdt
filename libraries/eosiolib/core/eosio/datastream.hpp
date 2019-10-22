@@ -340,7 +340,7 @@ void deserialize(datastream<Stream>& ds, std::variant<Ts...>& var, int i) {
       if (i == I) {
          std::variant_alternative_t<I, std::variant<Ts...>> tmp;
          ds >> tmp;
-         var = std::move(tmp);
+         var.template emplace<I>(std::move(tmp));
       } else {
          deserialize<I+1>(ds,var,i);
       }

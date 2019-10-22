@@ -138,7 +138,7 @@ if [ "$ARCH" == "Darwin" ]; then
    read -ra FREE_MEM <<< "$FREE_MEM"
    FREE_MEM=$((${FREE_MEM[2]%?}*(4096))) # free pages * page size
 else
-   FREE_MEM=`LC_ALL=C free | grep "Mem:" | awk '{print $4}'`
+   FREE_MEM=`LC_ALL=C free | grep "Mem:" | awk '{print $7}'`
 fi
 
 cd $SRC_LOCATION

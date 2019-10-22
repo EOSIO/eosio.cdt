@@ -125,17 +125,21 @@ namespace eosio {
        *
        *
        *  @brief Writes the symbol_code as a string to the provided char buffer
-       *  @pre Appropriate Size Precondition: (begin + 7) <= end and (begin + 7) does not overflow
-       *  @pre Valid Memory Region Precondition: The range [begin, end) must be a valid range of memory to write to.
+       *  @pre is_valid() == true
+       *  @pre The range [begin, end) must be a valid range of memory to write to.
        *  @param begin - The start of the char buffer
        *  @param end - Just past the end of the char buffer
-       *  @return char* - Just past the end of the last character written (returns begin if the Appropriate Size Precondition is not satisfied)
-       *  @post If the Appropriate Size Precondition is satisfied, the range [begin, returned pointer) contains the string representation of the symbol_code.
+       *  @param dry_run - If true, do not actually write anything into the range.
+       *  @return char* - Just past the end of the last character that would be written assuming dry_run == false and end was large enough to provide sufficient space. (Meaning only applies if returned pointer >= begin.)
+       *  @post If the output string fits within the range [begin, end) and dry_run == false, the range [begin, returned pointer) contains the string representation of the symbol_code. Nothing is written if dry_run == true or returned pointer > end (insufficient space) or if returned pointer < begin (overflow in calculating desired end).
        */
-      char* write_as_string( char* begin, char* end )const {
+      char* write_as_string( char* begin, char* end, bool dry_run = false )const {
          constexpr uint64_t mask = 0xFFull;
 
-         if( (begin + 7) < begin || (begin + 7) > end ) return begin;
+         if( dry_run || (begin + 7 < begin) || (begin + 7 > end) ) {
+            char* actual_end = begin + length();
+            if( dry_run || (actual_end < begin) || (actual_end > end) ) return actual_end;
+         }
 
          auto v = value;
          for( auto i = 0; i < 7; ++i, v >>= 8 ) {
@@ -302,7 +306,7 @@ namespace eosio {
          char buffer[7];
          auto end = code().write_as_string( buffer, buffer + sizeof(buffer) );
          if( buffer < end )
-            ::eosio::print( buffer, (end-buffer) );
+            printl( buffer, (end-buffer) );
       }
 
       /**

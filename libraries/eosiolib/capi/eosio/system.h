@@ -76,6 +76,23 @@ void eosio_exit( int32_t code );
 __attribute__((eosio_wasm_import))
 uint64_t  current_time();
 
+/**
+ * Check if specified protocol feature has been activated
+ *
+ * @param feature_digest - digest of the protocol feature
+ * @return true if the specified protocol feature has been activated, false otherwise
+ */
+__attribute__((eosio_wasm_import))
+bool is_feature_activated( const capi_checksum256* feature_digest );
+
+/**
+ * Return name of account that sent current inline action
+ *
+ * @return name of account that sent the current inline action (empty name if not called from inline action)
+ */
+__attribute__((eosio_wasm_import))
+capi_name get_sender();
+
 #ifdef __cplusplus
 }
 #endif
