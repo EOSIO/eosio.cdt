@@ -19,10 +19,14 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
-static cl::opt<std::string> only_export_opt(
+static cl::list<std::string> only_export_opt(
     "only-export",
     cl::desc("Export only this symbol"),
-    cl::cat(LD_CAT),
+    cl::Hidden,
+    cl::ZeroOrMore);
+static cl::list<std::string> export_opt(
+    "export",
+    cl::desc("Export this symbol"),
     cl::Hidden,
     cl::ZeroOrMore);
 static cl::opt<bool> no_abigen_opt(
@@ -477,8 +481,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("-lrt -lsf");
       if (fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-leosio_cmem");
-      if (!only_export_opt.empty()) {
-         ldopts.emplace_back("--only-export \""+only_export_opt+"\"");
+      for (auto e : only_export_opt) {
+         ldopts.emplace_back("--only-export \""+e+"\"");
+      }
+      for (auto e : export_opt) {
+         ldopts.emplace_back("-export \""+e+"\"");
       }
 
    } else {
@@ -531,6 +538,10 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fquery-server");
    if (fquery_client_opt)
       ldopts.emplace_back("-fquery-client");
+   for (auto e : only_export_opt)
+      ldopts.emplace_back("-only-export \""+e+"\"");
+   for (auto e : export_opt)
+      ldopts.emplace_back("-export \""+e+"\"");
 #endif
 
    if (!pp_path_opt.empty())
