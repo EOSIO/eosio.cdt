@@ -22,7 +22,9 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 static cl::opt<std::string> only_export_opt(
     "only-export",
     cl::desc("Export only this symbol"),
-    cl::cat(LD_CAT));
+    cl::cat(LD_CAT),
+    cl::Hidden,
+    cl::ZeroOrMore);
 static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
