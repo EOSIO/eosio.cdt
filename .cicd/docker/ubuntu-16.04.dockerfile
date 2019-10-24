@@ -4,7 +4,7 @@ RUN apt-get update && apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y git clang-4.0 \
     lldb-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
 	  libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
-    python3-dev autoconf libtool curl zlib1g-dev doxygen graphviz \
+    autoconf libtool curl zlib1g-dev doxygen graphviz \
     wget libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
 
 # install cmake
