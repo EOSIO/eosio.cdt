@@ -138,22 +138,6 @@ steps:
       - "queue=mac-anka-large-node-fleet"
     skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
 
-  - wait:
-    continue_on_failure: true
-
-  - label: ":bar_chart: Unit Tests Metrics"
-    command: |
-      echo '+++ :compression: Extracting Unit Tests Metrics Code'
-      tar -zxf .cicd/metrics/test-metrics.tar.gz
-      echo '+++ :javascript: Running test-metrics.js'
-      node --max-old-space-size=32768 test-metrics.js
-    agents:
-      queue: "automation-eos-builder-fleet"
-    timeout: 10
-    soft_fail: true
-
-  - wait
-
   - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':aws: Amazon_Linux 2 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -220,6 +204,20 @@ steps:
     agents:
       - "queue=mac-anka-large-node-fleet"
     skip: ${SKIP_MOJAVE}${SKIP_TOOLCHAIN_TESTS}
+
+  - wait:
+    continue_on_failure: true
+
+  - label: ":bar_chart: Unit Tests Metrics"
+    command: |
+      echo '+++ :compression: Extracting Unit Tests Metrics Code'
+      tar -zxf .cicd/metrics/test-metrics.tar.gz
+      echo '+++ :javascript: Running test-metrics.js'
+      node --max-old-space-size=32768 test-metrics.js
+    agents:
+      queue: "automation-eos-builder-fleet"
+    timeout: 10
+    soft_fail: true
 
   - wait
 
