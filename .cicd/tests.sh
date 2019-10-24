@@ -12,8 +12,11 @@ if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
+    set +e
     bash -c "$TEST"
-    
+    EXIT_STATUS=$?
+    cd $ROOT_DIR
+
 else # Linux
 
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
