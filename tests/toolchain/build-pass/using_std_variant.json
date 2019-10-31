@@ -1,0 +1,10 @@
+{
+    "tests": [
+        {
+            "expected": {
+                "exit-code": 0
+            }
+        }
+    ]
+}
+

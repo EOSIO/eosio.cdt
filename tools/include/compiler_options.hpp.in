@@ -19,6 +19,12 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<std::string> only_export_opt(
+    "only-export",
+    cl::desc("Export only this symbol"),
+    cl::cat(LD_CAT),
+    cl::Hidden,
+    cl::ZeroOrMore);
 static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
@@ -471,6 +477,9 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("-lrt -lsf");
       if (fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-leosio_cmem");
+      if (!only_export_opt.empty()) {
+         ldopts.emplace_back("--only-export \""+only_export_opt+"\"");
+      }
 
    } else {
 #ifdef __APPLE__
@@ -514,8 +523,8 @@ static Options CreateOptions(bool add_defaults=true) {
       GetLdDefaults(ldopts);
 #endif
    }
-  
-#ifndef ONLY_LD 
+
+#ifndef ONLY_LD
    if (fquery_opt)
       ldopts.emplace_back("-fquery");
    if (fquery_server_opt)
@@ -764,7 +773,7 @@ static Options CreateOptions(bool add_defaults=true) {
          ldopts.emplace_back("a.out");
       }
 #else
-      if (inputs.size() == 1) {      
+      if (inputs.size() == 1) {
          llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
          llvm::sys::path::replace_extension(fn, "");
          llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
@@ -839,7 +848,7 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
 #endif
-   
+
 #ifndef ONLY_LD
    return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #else
