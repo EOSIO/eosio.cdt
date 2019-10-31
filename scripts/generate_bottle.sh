@@ -1,15 +1,17 @@
 #! /bin/bash
 
-VERS=`sw_vers -productVersion | awk '/10\.14\..*/{print $0}'`
-if [[ -z "$VERS" ]]; then
-   VERS=`sw_vers -productVersion | awk '/10\.15.*/{print $0}'`
-   if [[ -z $VERS ]]; then
+VERS=`sw_vers -productVersion | awk '/10\.13\..*/{print $0}'`
+if [[ -z "$VERS" ]];
+then
+   VERS=`sw_vers -productVersion | awk '/10\.14.*/{print $0}'`
+   if [[ -z "$VERS" ]];
+   then
       echo "Error, unsupported OS X version"
       exit -1
    fi
-   MAC_VERSION="catalina"
-else
    MAC_VERSION="mojave"
+else
+   MAC_VERSION="high_sierra"
 fi
 
 NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle"
