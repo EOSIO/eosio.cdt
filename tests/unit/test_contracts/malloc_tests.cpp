@@ -2,90 +2,74 @@
 
 using namespace eosio;
 
-// simple macro to add line info to string
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define X(STR) \
-   STR " at line # " TOSTRING(__LINE__)
-
-CONTRACT malloc_tests : public contract{
+class [[eosio::contract]] malloc_tests : public contract{
    public:
       using contract::contract;
 
-      inline char* align(char* ptr, uint8_t align_amt) {
-         return (char*)((((size_t)ptr) + align_amt-1) & ~(align_amt-1));
-      }
-
-      inline size_t align(size_t ptr, uint8_t align_amt) {
-         return (ptr + align_amt-1) & ~(align_amt-1);
-      }
-
-      inline char* get_heap_base() {
-
-         volatile uintptr_t address = 0;
-         volatile char* heap_base = align(*(char**)address, 8);
-         return (char*)heap_base;
-      }
-
       static constexpr size_t max_heap = 33*1024*1024;
-   
-      ACTION mallocalot() {
-         char* ret = (char*)malloc(10);
-         char* last_ret = ret;
-         for (size_t i=0; i < ((max_heap-(64*1024))/align(10,8)); i++) {
-            last_ret = ret;
-            ret = (char*)malloc(10);
-            check(ret != last_ret, X("ret should not equal last_ret"));
-            check((size_t)ret%8 == 0, X("ret should be divisible by 8"));
-            check(ret == align(last_ret+10, 8), X("alloc(10) not as expected"));
-         }
+
+      [[eosio::action]]
+      void mallocpass() {
+         // make sure that malloc allocates non-overlapping writable memory
+         volatile char * ptr0 = (char*)malloc(1);
+         *ptr0 = 0x11;
+         volatile short * ptr1 = (short*)malloc(sizeof(short));
+         *ptr1 = 0x2222;
+         volatile int * ptr2 = (int*)malloc(sizeof(int));
+         *ptr2 = 0x33333333;
+         volatile long long *ptr3 = (long long*)malloc(sizeof(long long));
+         *ptr3 = 0x4444444444444444;
+         volatile __int128_t *ptr4 = (__int128_t*)malloc(sizeof(__int128_t));
+         *ptr4 = ((__int128_t(0x5555555555555555) << 64) | 0x5555555555555555);
+         volatile __int128_t *ptr5 = (__int128_t*)malloc(sizeof(__int128_t));
+         *ptr5 = ((__int128_t(0x6666666666666666) << 64) | 0x6666666666666666);
+         volatile __int128_t *ptr6 = (__int128_t*)malloc(sizeof(__int128_t) * 2);
+         ptr6[0] = ptr6[1] = ((__int128_t(0x7777777777777777) << 64) | 0x7777777777777777);
+         volatile __int128_t *ptr7 = (__int128_t*)malloc(sizeof(__int128_t) * 2);
+         ptr7[0] = ptr7[1] = ((__int128_t(0x8888888888888888) << 64) | 0x8888888888888888);
+         volatile long long *ptr8 = (long long*)malloc(sizeof(long long) * 3);
+         ptr8[0] = ptr8[1] = ptr8[2] = 0x9999999999999999;
+         volatile long long *ptr9 = (long long*)malloc(sizeof(long long) * 3);
+         ptr9[0] = ptr9[1] = ptr9[2] = 0xAAAAAAAAAAAAAAAA;
+         eosio::check(*ptr0 == 0x11, "wrong value for char");
+         eosio::check(*ptr1 == 0x2222, "wrong value for short");
+         eosio::check(*ptr2 == 0x33333333, "wrong value for int");
+         eosio::check(*ptr3 == 0x4444444444444444, "wrong value for long long");
+         eosio::check(*ptr4 == ((__int128_t(0x5555555555555555) << 64) | 0x5555555555555555), "wrong value for __int128 #1");
+         eosio::check(*ptr5 == ((__int128_t(0x6666666666666666) << 64) | 0x6666666666666666), "wrong value for __int128 #2");
+         eosio::check(ptr6[0] == ((__int128_t(0x7777777777777777) << 64) | 0x7777777777777777), "wrong value for __int128[2] #1");
+         eosio::check(ptr6[1] == ((__int128_t(0x7777777777777777) << 64) | 0x7777777777777777), "wrong value for __int128[2] #1");
+         eosio::check(ptr7[0] == ((__int128_t(0x8888888888888888) << 64) | 0x8888888888888888), "wrong value for __int128[2] #2");
+         eosio::check(ptr7[1] == ((__int128_t(0x8888888888888888) << 64) | 0x8888888888888888), "wrong value for __int128[2] #2");
+         eosio::check(ptr8[0] == 0x9999999999999999, "wrong value for long long[3] #1");
+         eosio::check(ptr8[1] == 0x9999999999999999, "wrong value for long long[3] #1");
+         eosio::check(ptr8[2] == 0x9999999999999999, "wrong value for long long[3] #1");
+         eosio::check(ptr9[0] == 0xAAAAAAAAAAAAAAAA, "wrong value for long long[3] #2");
+         eosio::check(ptr9[1] == 0xAAAAAAAAAAAAAAAA, "wrong value for long long[3] #2");
+         eosio::check(ptr9[2] == 0xAAAAAAAAAAAAAAAA, "wrong value for long long[3] #2");
       }
 
-      ACTION mallocpass() {
-         malloc(max_heap-(64*1024));
-         size_t diff = (64*1024)-(size_t)get_heap_base();
-         malloc(diff-align(1,8));
-      }
-
-      ACTION mallocpass2() {
-         char* ptr = (char*)malloc(max_heap-(64*1024));
-         size_t diff = (64*1024)-(size_t)get_heap_base();
-         malloc(diff-align(1,8));
-         for (size_t i=0; i < (max_heap-diff); i++) {
-            ptr[i] = 'a';
-         }
-         for (size_t i=0; i < (max_heap-diff); i++) {
-            eosio::check(ptr[i] == 'a', "should have written to memory");
-         }
-
-      }
-    
-      ACTION mallocfail() {
-         mallocpass();
+      template<typename T>
+      void malloc_align_test() {
+         eosio::check((uintptr_t)malloc(sizeof(T)) % alignof(T) == 0, "insufficient alignment");
          malloc(1);
+         eosio::check((uintptr_t)malloc(sizeof(T)) % alignof(T) == 0, "insufficient alignment");
+      }
+      [[eosio::action]]
+      void mallocalign() {
+         malloc_align_test<short>();
+         malloc_align_test<int>();
+         malloc_align_test<long>();
+         malloc_align_test<long long>();
+         malloc_align_test<void*>();
+         malloc_align_test<float>();
+         malloc_align_test<double>();
+         malloc_align_test<long double>();
+         malloc_align_test<__int128_t>();
       }
 
-      ACTION malloctest() {
-          char* ptr1 = (char*)malloc(0);
-          check(ptr1 == nullptr, "should not have allocated a 0 char buf");
-
-          // 20 chars - 20 + 4(header) which is divisible by 8
-          ptr1 = (char*)malloc(20);
-          check(ptr1 != nullptr, "should have allocated a 20 char buf");
-
-          // 20 chars allocated
-          char* ptr2 = (char*)malloc(20);
-          check(ptr2 != nullptr, "should have allocated another 20 char buf");
-          check(ptr1 + 20 < ptr2, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
-
-          // 20 chars allocated
-          char* ptr3 = (char*)malloc(20);
-          check(ptr3 != nullptr, "should have allocated another 20 char buf");
-          check(ptr2 + 20 < ptr3, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
-
-          // 20 chars allocated
-          char* ptr4 = (char*)malloc(20);
-          check(ptr4 != nullptr, "should have allocated another 20 char buf");
-          check(ptr3 + 20 < ptr4, "20 char buf should have been created after ptr1"); // test specific to implementation (can remove for refactor)
+      [[eosio::action]]
+      void mallocfail() {
+         malloc(max_heap);
       }
 };
