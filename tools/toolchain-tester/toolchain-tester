@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-REPO_ROOT=$(git rev-parse --show-toplevel)
-/usr/bin/env python3.7 "${REPO_ROOT}/tools/toolchain-tester/main.py" "$@"
