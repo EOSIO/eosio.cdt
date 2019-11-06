@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+/usr/bin/env python3.7 "${CMAKE_CURRENT_SOURCE_DIR}/main.py" "$@"
