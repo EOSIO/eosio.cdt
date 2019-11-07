@@ -27,13 +27,13 @@ namespace eosio {
 
       dsmalloc() {
          volatile uintptr_t heap_base = 0; // linker places this at address 0
-         heap = align(*(char**)heap_base, 8);
+         heap = align(*(char**)heap_base, 16);
          last_ptr = heap;
 
          next_page = CURRENT_MEMORY;
       }
        
-      char* operator()(size_t sz, uint8_t align_amt=8) {
+      char* operator()(size_t sz, uint8_t align_amt=16) {
          if (sz == 0)
             return NULL;
 
