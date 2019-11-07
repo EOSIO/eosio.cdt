@@ -434,59 +434,64 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
-         ldopts.emplace_back("--only-export \"*:table\"");
-         ldopts.emplace_back("--only-export \"*:memory\"");
+         ldopts.insert(ldopts.end(), { "--only-export", "*:table" });
+         ldopts.insert(ldopts.end(), { "--only-export", "*:memory" });
          if (fuse_main_opt) {
-            ldopts.emplace_back("-e main");
-            ldopts.emplace_back("--only-export \"main:function\"");
+            ldopts.insert(ldopts.end(), { "-e", "main" });
+            ldopts.insert(ldopts.end(), { "--only-export", "main:function" } );
          }
          else {
-            ldopts.emplace_back("-e initialize ");
-            ldopts.emplace_back("--only-export \"initialize:function\"");
-         }
-         if (fquery_server_opt)
-            ldopts.emplace_back("-export run_query ");
-         else {
-            ldopts.emplace_back("-export create_query_request ");
-            ldopts.emplace_back("-export decode_query_response ");
-            ldopts.emplace_back("-export describe_query_request ");
-            ldopts.emplace_back("-export describe_query_response ");
+            ldopts.insert(ldopts.end(), { "-e", "initialize " } );
+            ldopts.insert(ldopts.end(), { "--only-export", "initialize:function" } );
          }
          if (fquery_server_opt)
-            ldopts.emplace_back("--only-export \"run_query:function\"");
+            ldopts.insert(ldopts.end(), { "-export", "run_query " });
          else {
-            ldopts.emplace_back("--only-export \"create_query_request:function\"");
-            ldopts.emplace_back("--only-export \"decode_query_response:function\"");
-            ldopts.emplace_back("--only-export \"describe_query_request:function\"");
-            ldopts.emplace_back("--only-export \"describe_query_response:function\"");
+            ldopts.insert(ldopts.end(), { "-export", "create_query_request " });
+            ldopts.insert(ldopts.end(), { "-export", "decode_query_response " });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_request " });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_response " });
+         }
+         if (fquery_server_opt)
+            ldopts.insert(ldopts.end(), { "--only-export", "run_query:function" });
+         else {
+            ldopts.insert(ldopts.end(), { "--only-export", "create_query_request:function" });
+            ldopts.insert(ldopts.end(), { "--only-export", "decode_query_response:function" });
+            ldopts.insert(ldopts.end(), { "--only-export", "describe_query_request:function" });
+            ldopts.insert(ldopts.end(), { "--only-export", "describe_query_response:function" });
          }
       } else {
          if (fuse_main_opt)
-            ldopts.emplace_back("-e main");
+            ldopts.insert(ldopts.end(), { "-e", "main" });
          else
-            ldopts.emplace_back("-e apply");
-         ldopts.emplace_back("--only-export \"apply:function\"");
+            ldopts.insert(ldopts.end(), { "-e", "apply" });
+         ldopts.insert(ldopts.end(), { "--only-export", "apply:function" });
       }
-      ldopts.emplace_back("-lc++ -lc -leosio");
+      ldopts.emplace_back("-lc++");
+      ldopts.emplace_back("-lc");
+      ldopts.emplace_back("-leosio");
       if (use_old_malloc_opt)
          ldopts.emplace_back("-leosio_malloc");
       else
          ldopts.emplace_back("-leosio_dsm");
 
-      if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt)
-         ldopts.emplace_back("-lrt -lsf");
+      if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt) {
+         ldopts.emplace_back("-lrt");
+         ldopts.emplace_back("-lsf");
+      }
       if (fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-leosio_cmem");
       if (!only_export_opt.empty()) {
-         ldopts.emplace_back("--only-export \""+only_export_opt+"\"");
+         ldopts.emplace_back("--only-export");
+         ldopts.emplace_back(only_export_opt);
       }
 
    } else {
 #ifdef __APPLE__
-      ldopts.emplace_back("-arch x86_64 -macosx_version_min 10.13 -framework Foundation -framework System");
+      ldopts.insert(ldopts.end(), {"-arch", "x86_64", "-macosx_version_min", "10.13", "-framework", "Foundation", "-framework", "System"});
 #endif
       ldopts.emplace_back("-static");
-      ldopts.emplace_back("-lnative_c++ -lnative_c -lnative_eosio -lnative -lnative_rt");
+      ldopts.insert(ldopts.end(), {"-lnative_c++", "-lnative_c", "-lnative_eosio", "-lnative", "-lnative_rt"});
    }
 }
 #endif
@@ -611,7 +616,7 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-fcolor-diagnostics");
    }
    if (!MF_opt.empty()) {
-      copts.emplace_back("-MF "+MF_opt);
+      copts.insert(copts.end(), { "-MF", MF_opt });
    }
    if (MD_opt) {
       copts.emplace_back("-MD");
@@ -778,10 +783,10 @@ static Options CreateOptions(bool add_defaults=true) {
          llvm::sys::path::replace_extension(fn, "");
          llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
-         ldopts.emplace_back("-o "+output_fn);
+         ldopts.emplace_back("-o"+output_fn);
       } else {
          output_fn = "a.out";
-         ldopts.emplace_back("-o "+output_fn);
+         ldopts.emplace_back("-o"+output_fn);
       }
 #endif
    }

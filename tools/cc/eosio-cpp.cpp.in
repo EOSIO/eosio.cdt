@@ -201,7 +201,7 @@ int main(int argc, const char **argv) {
             output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
          }
 
-         new_opts.insert(new_opts.begin(), "-o "+output);
+         new_opts.insert(new_opts.begin(), {"-o", output});
          outputs.push_back(output);
 
          if (llvm::sys::path::extension(input).equals(".c"))
@@ -221,7 +221,7 @@ int main(int argc, const char **argv) {
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+         new_opts.insert(new_opts.begin(), input);
       }
    
       if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
