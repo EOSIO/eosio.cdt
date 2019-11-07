@@ -75,7 +75,13 @@ void* calloc(size_t count, size_t size) {
 }
 
 void* realloc(void* ptr, size_t size) {
-   return eosio::_dsmalloc(size);
+   if (void* result = eosio::_dsmalloc(size)) {
+      // May read out of bounds, but that's okay, as the
+      // contents of the memory are undefined anyway.
+      memmove(result, ptr, size);
+      return result;
+   }
+   return nullptr;
 }
 
 void free(void* ptr) {}
