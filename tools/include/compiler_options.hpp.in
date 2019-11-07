@@ -354,6 +354,7 @@ struct Options {
    std::vector<std::string> inputs;
    bool link;
    bool abigen;
+   bool pp_only;
    std::string eosio_pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
@@ -511,8 +512,10 @@ static Options CreateOptions(bool add_defaults=true) {
 
 #ifdef ONLY_LD
    bool abigen = false;
+   bool pp_only = false;
 #else
    bool abigen = abigen_opt;
+   bool pp_only = E_opt;
    abigen_output = abigen_output_opt;
    debug = g_opt;
 #endif
@@ -855,8 +858,8 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #else
-   return {output_fn, {}, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #endif
 }
