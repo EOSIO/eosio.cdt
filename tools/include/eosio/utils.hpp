@@ -134,14 +134,15 @@ struct environment {
      return env_table;
    }
    static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
-      std::stringstream args;
-      for (auto s : options)
-         args << s << " ";
+      std::vector<llvm::StringRef> args;
+      args.push_back(prog);
+      args.insert(args.end(), options.begin(), options.end());
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
-      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) )
-         std::system((*path+" "+args.str()).c_str());
+      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
+         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) != -1;
+      }
       else
          return false;
       return true; 
