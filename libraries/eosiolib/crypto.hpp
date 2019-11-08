@@ -5,6 +5,7 @@
 #pragma once
 
 #include "crypto.h"
+#include "base58.hpp"
 #include "fixed_bytes.hpp"
 #include "varint.hpp"
 #include "serialize.hpp"
@@ -40,6 +41,11 @@ namespace eosio {
        * @brief Bytes of the public key
        */
       std::array<char,33> data;
+
+      /**
+       * Human readable EOS-prefixed publickey string
+       */
+      std::string to_string();
 
       friend bool operator == ( const public_key& a, const public_key& b ) {
         return std::tie(a.type,a.data) == std::tie(b.type,b.data);
