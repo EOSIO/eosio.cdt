@@ -600,6 +600,7 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-D"+define);
    }
    if (emit_ast_opt) {
+      link = false;
       copts.emplace_back("-emit-ast");
    }
    if (emit_llvm_opt) {

@@ -185,7 +185,7 @@ int main(int argc, const char **argv) {
 
          if (!opts.pp_only) {
             auto tool_opts = opts.comp_options;
-            std::set<std::string> non_tool_opts = { "-S", "-emit-llvm" };
+            std::set<std::string> non_tool_opts = { "-S", "-emit-llvm", "-emit-ast" };
             tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
                                            [&](const auto& opt){ return non_tool_opts.count(opt); }),
                             tool_opts.end());
