@@ -795,7 +795,8 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
    }
    else {
-      ldopts.emplace_back("-o "+o_opt);
+      ldopts.emplace_back("-o");
+      ldopts.emplace_back(o_opt);
       output_fn = o_opt;
    }
 
