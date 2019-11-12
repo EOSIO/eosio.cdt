@@ -11,7 +11,7 @@ file(GLOB SEARCH_SOURCES "musl/src/search/*.c")
 file(GLOB STDIO_SOURCES "musl/src/stdio/*.c")
 file(GLOB STDLIB_SOURCES "musl/src/stdlib/*.c")
 file(GLOB STRING_SOURCES "musl/src/string/*.c")
-#file(GLOB TIME_SOURCES "musl/src/time/*.c")
+file(GLOB TIME_SOURCES "musl/src/time/*.c")
 file(GLOB THREAD_SOURCES "musl/src/thread/*.c") #only for __lock __unlock
 
 set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c musl/src/internal/shgetc.c musl/src/internal/libc.c)
