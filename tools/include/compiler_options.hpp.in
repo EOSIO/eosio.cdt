@@ -398,9 +398,11 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-fno-exceptions");
       copts.emplace_back("-fno-rtti");
       copts.emplace_back("-fmodules-ts");
+      copts.emplace_back("-D_GNU_SOURCE=1");
 #endif
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
+      copts.emplace_back("-U__APPLE__");
       if (!fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
