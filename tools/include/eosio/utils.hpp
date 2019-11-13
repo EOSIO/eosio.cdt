@@ -141,7 +141,7 @@ struct environment {
       if (root)
          find_path = "/usr/bin";
       if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
-         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) != -1;
+         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
       }
       else
          return false;
