@@ -105,6 +105,15 @@ inline bool expect_print(bool check, const std::string& li, const char (&expecte
 #define REQUIRE_EQUAL(X, Y) \
    eosio::check(X == Y, std::string(std::string("REQUIRE_EQUAL failed (")+#X+" != "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}").c_str());
 
+#define CHECK_NOT_EQUAL(X, Y) \
+   if (!(X != Y)) { \
+      ___has_failed = true; \
+      eosio::print(std::string("CHECK_NOT_EQUAL failed (")+#X+" == "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}\n"); \
+   }
+
+#define REQUIRE_NOT_EQUAL(X, Y) \
+   eosio::check(X != Y, std::string(std::string("REQUIRE_NOT_EQUAL failed (")+#X+" == "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}").c_str());
+
 #define EOSIO_TEST(X) \
    int X ## _ret = setjmp(*___env_ptr); \
    if ( X ## _ret == 0 ) \
@@ -134,3 +143,11 @@ inline bool expect_print(bool check, const std::string& li, const char (&expecte
       ___has_failed |= ___earlier_unit_test_has_failed; \
       ___earlier_unit_test_has_failed = ___has_failed; \
    }
+
+struct contract_state {
+   eosio::name code;
+};
+extern contract_state* global_state;
+void apply_state(contract_state* cs) {
+   global_state = cs;
+}
