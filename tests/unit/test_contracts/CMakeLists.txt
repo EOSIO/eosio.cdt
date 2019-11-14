@@ -3,6 +3,13 @@ add_contract(malloc_tests old_malloc_tests malloc_tests.cpp)
 add_contract(simple_tests simple_tests simple_tests.cpp)
 add_contract(transfer_contract transfer_contract transfer.cpp)
 add_contract(minimal_tests minimal_tests minimal_tests.cpp)
+add_contract(dispatch_hook dispatch_hook0 dispatch_hook0.cpp)
+add_contract(dispatch_hook dispatch_hook1 dispatch_hook1.cpp)
+add_contract(dispatch_hook dispatch_hook2 dispatch_hook2.cpp)
+add_contract(dispatch_hook dispatch_hook3 dispatch_hook3.cpp)
+add_contract(dispatch_hook dispatch_hook4 dispatch_hook4.cpp)
+add_contract(dispatch_hook dispatch_hook5 dispatch_hook5.cpp)
+add_contract(dispatch_notify dispatch_notify dispatch_notify.cpp)
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/simple_wrong.abi ${CMAKE_CURRENT_BINARY_DIR}/simple_wrong.abi COPYONLY )
 

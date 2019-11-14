@@ -16,6 +16,16 @@ struct contracts {
    static std::vector<uint8_t> transfer_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"); }
    static std::vector<char>    transfer_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.abi"); }
 
+   static std::vector<uint8_t> dispatch_hook0_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook0.wasm"); }
+   static std::vector<uint8_t> dispatch_hook1_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook1.wasm"); }
+   static std::vector<uint8_t> dispatch_hook2_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook2.wasm"); }
+   static std::vector<uint8_t> dispatch_hook3_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook3.wasm"); }
+   static std::vector<uint8_t> dispatch_hook4_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook4.wasm"); }
+   static std::vector<uint8_t> dispatch_hook5_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_hook5.wasm"); }
+
+   static std::vector<uint8_t> dispatch_notify_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_notify.wasm"); }
+   static std::vector<char>    dispatch_notify_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/dispatch_notify.abi"); }
+
 };
  
 }} //ns eosio::testing
