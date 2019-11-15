@@ -1,7 +1,7 @@
-## Native Tester/Compilation
-As of v1.5.0 native compilation can be performed and a new set of libraries to facilitate native testing and native "scratch pad" compilation.  `eosio-cc\cpp` and `eosio-ld` now support building "smart contracts" and unit tests natively for quick tests to help facilitate faster development \(note the default implementations of eosio `intrinsics` are currently asserts that state they are unavailable, these are user definable.\)
+## How to use native tester/compilation
+As of v1.5.0 native compilation can be performed and a new set of libraries to facilitate native testing and native "scratch pad" compilation. [`eosio-cc`](../03_command-reference/eosio-cc.md), [`eosio-cpp`](../03_command-reference/eosio-cpp.md) and [`eosio-ld`](../03_command-reference/eosio-ld.md) now support building "smart contracts" and unit tests natively for quick tests to help facilitate faster development \(note the default implementations of eosio `intrinsics` are currently asserts that state they are unavailable, these are user definable.\)
 
-#### Getting Started
+### Getting Started
 Once you have your smart contract written then a test source file can be written.
 
 `hello.hpp`
@@ -10,11 +10,11 @@ Once you have your smart contract written then a test source file can be written
 
 using namespace eosio;
 
-CONTRACT hello : public eosio::contract {
+class [[eosio::contract]] hello : public eosio::contract {
   public:
       using contract::contract;
 
-      ACTION hi( name user );
+      [[eosio::action]] void hi( name user );
 
       // accessor for external contracts to easily send inline actions to your contract
       using hi_action = action_wrapper<"hi"_n, &hello::hi>;
@@ -34,7 +34,7 @@ using namespace eosio::native;
 
 EOSIO_TEST_BEGIN(hello_test)
    // These can be redefined by the user to suit there needs per unit test
-   // the idea is that in a future release we will have a base library that 
+   // the idea is that in a future release there will be a base library that 
    // initializes these to "useable" default implementations and probably 
    // helpers to more easily define read_action_data and action_data_size intrinsics
    // like these"
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-Every `intrinsic` that is defined for eosio (prints, require_auth, etc.) is redefinable given the `intrinsics::set_intrinsics<intrinsics::the_intrinsic_name>()` functions.  These take a lambda whose arguments and return type should match that of the intrinsic you are trying to define.  This gives the contract writer the flexibility to modify behavior to suit the unit test being written. A sister function `intrinsics::get_intrinsics<intrinsics::the_intrinsic_name>()` will return the function object that currently defines the behavior for said intrinsic.  This pattern can be used to mock functionality and allow for easier testing of smart contracts.  For more information please see, either the `./tests` directory or `./examples/hello/tests/hello_test.cpp` for working examples.
+Every `intrinsic` that is defined for eosio (prints, require_auth, etc.) is re-definable given the `intrinsics::set_intrinsics<intrinsics::the_intrinsic_name>()` functions.  These take a lambda whose arguments and return type should match that of the intrinsic you are trying to define.  This gives the contract writer the flexibility to modify behavior to suit the unit test being written. A sister function `intrinsics::get_intrinsics<intrinsics::the_intrinsic_name>()` will return the function object that currently defines the behavior for said intrinsic.  This pattern can be used to mock functionality and allow for easier testing of smart contracts.  For more information see, either the [tests](https://github.com/EOSIO/eosio.cdt/blob/master/examples/hello/tests/) directory or [hello_test.cpp](https://github.com/EOSIO/eosio.cdt/blob/master/examples/hello/tests/hello_test.cpp) for working examples.
 
 ### Compiling Native Code
 - Raw `eosio-cpp` to compile the test or program the only addition needed to the command line is to add the flag `-fnative` this will then generate native code instead of `wasm` code.
