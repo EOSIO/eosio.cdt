@@ -40,6 +40,7 @@ if (ENABLE_NATIVE_COMPILER)
                               ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
 
    target_link_libraries(native_c++ native_c)
+   target_compile_definitions(native_c++ PUBLIC -D_LIBCPP_BUILDING_LIBRARY)
    target_compile_options(native_c++ PUBLIC -allow-sse)
    add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )
 endif()
