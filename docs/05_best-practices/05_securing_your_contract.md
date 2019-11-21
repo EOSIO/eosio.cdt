@@ -1,4 +1,7 @@
-## Securing your contract
+---
+content_title: Securing your contract
+---
+
 These are basic recommendations that should be the foundation of securing your smart contract:
 
 1. The master git branch has the `has_auth`, `require_auth`, `require_auth2` and `require_recipient` methods available in the EOSIO library.  They can be found in detail [here](https://eosio.github.io/eosio.cdt/1.6.0-rc1/group__action.html#function-requirerecipient) and implemented [here](https://github.com/EOSIO/eos/blob/3fddb727b8f3615917707281dfd3dd3cc5d3d66d/libraries/chain/apply_context.cpp#L144) (they end up calling the methods implemented in the `apply_context` class).

@@ -1,6 +1,8 @@
-## How to iterate and retreive a multi index table based on secondary index
+---
+content_title: How to iterate and retrieve a multi index table based on secondary index
+---
 
-### Preconditions
+## Preconditions
 - It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
 
 You'll start with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi index table with two indexes, a mandatory primary one and a secondary one:

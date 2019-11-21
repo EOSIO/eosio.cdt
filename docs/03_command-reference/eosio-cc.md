@@ -1,4 +1,6 @@
-## eosio-cc tool
+---
+content_title: eosio-cc tool
+---
 
 To manually compile the source code, use `eosio-cc` and `eosio-ld` as if it were __clang__ and __lld__. All the includes and options specific to EOSIO and CDT are baked in.
 

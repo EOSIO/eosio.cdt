@@ -1,4 +1,6 @@
-## How to instantiate a multi index table
+---
+content_title: How to instantiate a multi index table
+---
 
 1. Include the `eosio.hpp` header and declare the `eosio` namespace usage
 ```

@@ -1,8 +1,10 @@
-## How to configure CMake
+---
+content_title: How to configure CMake
+---
 
-### CMake Configuration
+## CMake Configuration
 
-#### Automatic generation of CMake configuration
+### Automatic generation of CMake configuration
 
 To compile an EOSIO smart contract with CMake, you'll need a CMake file. To use the new `eosio-init` tool to generate the directory structure stub .hpp/.cpp files and the cmake configuration files follow these steps:
 
@@ -16,7 +18,7 @@ To compile an EOSIO smart contract with CMake, you'll need a CMake file. To use 
 
 At this point, you'll have the `test_contract.abi` and `test_contract.wasm` files in `~/test_contract/test_contract`. These files are ready to be deployed.
 
-#### Manual generation of CMake configuration
+### Manual generation of CMake configuration
 
 To create manually the cmake configuration, the template `CMakeLists.txt` in the examples folder is a good boilerplate for manual usage.
 

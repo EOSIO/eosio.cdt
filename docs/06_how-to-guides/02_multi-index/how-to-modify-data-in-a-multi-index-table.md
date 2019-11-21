@@ -1,6 +1,8 @@
-## How to modify data in a multi index table
+---
+content_title: How to modify data in a multi index table
+---
 
-### Preconditions
+## Preconditions
 - It is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 To modify data in the multi index table defined in the above tutorial, you will implement an action `mod` which it will receive as parameter the `user` which is the key of the row you want to modify and the `value` param which is the value to update with the row.

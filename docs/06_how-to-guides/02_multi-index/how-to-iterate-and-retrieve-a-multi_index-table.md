@@ -1,6 +1,8 @@
-## How to iterate and retrieve a multi index table
+---
+content_title: How to iterate and retrieve a multi index table
+---
 
-### Preconditions
+## Preconditions
 - It is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 For exemplification define the multi index contract definition like below:
