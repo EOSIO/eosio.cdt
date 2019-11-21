@@ -1,4 +1,6 @@
-## Debugging a smart contract
+---
+content_title: Debugging a smart contract
+---
 
 In order to be able to debug your smart contract, you will need to setup a local nodeos node. This local nodeos node can be run as separate private testnet or as an extension of a public testnet.  This local node also needs to be run with the contracts-console option on, either `--contracts-console` via the command line or `contracts-console = true` via the config.ini and/or by setting up logging on your running nodeos node and checking the output logs. See below for details on logging.
 
@@ -8,10 +10,10 @@ The concept is the same, so for the following guide, debugging on the private te
 
 If you haven't set up your own local nodeos, follow the [setup guide](https://developers.eos.io/eosio-home/docs/getting-the-software). By default, your local nodeos will just run in a private testnet unless you modify the config.ini file to connect with public testnet (or official testnet) nodes. 
 
-## Method
+# Method
 The main method used to debug smart contract is **Caveman Debugging**. Printing is utilized to inspect the value of a variable and check the flow of the contract. Printing in smart contracts can be done through the Print API. The C++ API is a wrapper for C API and is the recommended API.
 
-## Print
+# Print
 Print C API supports the following data type that you can print:
 - prints - a null terminated char array (string)
 - prints_l - any char array (string) with given size
@@ -31,10 +33,10 @@ The Print C++ API wraps some of the above C API by overriding the print() functi
 - base32 string encoded as 64-bit unsigned integer
 - struct that has print() method
 
-## Example
+# Example
 Here's an example contract for debugging
 
-### debug.hpp
+## debug.hpp
 
 ```cpp
 namespace debug {
@@ -48,7 +50,7 @@ namespace debug {
     };
 }
 ```
-### debug.cpp
+## debug.cpp
 
 ```cpp
 #include <debug.hpp>
@@ -74,7 +76,7 @@ extern "C" {
     }
 } // extern "C"
 ```
-### debug.abi
+## debug.abi
 
 ```json
 {

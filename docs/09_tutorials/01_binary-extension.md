@@ -1,4 +1,6 @@
-# eosio::binary_extension
+---
+content_title: eosio::binary_extension
+---
 
 You can find the implementation of `eosio::binary_extension` in the `eosio.cdt` repository in [binary_extension.hpp](https://github.com/EOSIO/eosio.cdt/blob/master/libraries/eosiolib/binary_extension.hpp).
 

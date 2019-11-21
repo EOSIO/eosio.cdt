@@ -1,4 +1,6 @@
-## How to define a singleton
+---
+content_title: How to define a singleton
+---
 
 To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`, follow the steps below:
 

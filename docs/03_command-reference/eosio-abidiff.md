@@ -1,4 +1,6 @@
-## eosio-abidiff tool
+---
+content_title: eosio-abidiff tool
+---
 
 The eosio-abidiff tool is used to diff two ABI files to flag and output differences.
 To report differences with ```eosio-abidiff```, you only need to pass the two ABI file names as command line arguments.

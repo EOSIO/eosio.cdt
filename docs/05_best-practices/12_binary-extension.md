@@ -1,4 +1,6 @@
-## eosio::binary_extension
+---
+content_title: The eosio::binary_extension type
+---
 
 Let's fully explain what the `eosio::binary_extension` type is, what it does, and why we need it for contract upgrades in certain situations.
 

@@ -1,4 +1,6 @@
-## Resource planning
+---
+content_title: Resource planning
+---
 
 How much RAM do I need? This is not an easy question to answer, and there's really no perfect answer for it. You need to find out by measuring your contracts' actions and by planning accordingly based on your predictions on how fast and how much your blockchain application will grow. If your blockchain application growth is requiring more storage capacity you'll need to buy more RAM.  If it requires more actions to be executed in the 3 day window (the staking time) you need to stake more tokens for CPU bandwidth.  If your blockchain application growth means more actions will be stored on the blockchain then you also will need to expand your NET bandwidth maximum limit by staking more tokens for NET bandwidth.
 

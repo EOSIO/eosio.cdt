@@ -1,4 +1,6 @@
-## How to define a primary index
+---
+content_title: How to define a primary index
+---
 
 A primary key is required when defining a multi index table structure. See the following example:
 

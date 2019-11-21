@@ -1,4 +1,6 @@
-## eosio-ld tool
+---
+content_title: eosio-ld tool
+---
 
 The eosio-ld tool is a the custom web assembly linker for EOSIO platform smart contracts.
 
