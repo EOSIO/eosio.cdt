@@ -16,6 +16,9 @@ struct contracts {
    static std::vector<uint8_t> transfer_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"); }
    static std::vector<char>    transfer_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.abi"); }
 
+   static std::vector<uint8_t> capi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.wasm"); }
+   static std::vector<char>    capi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.abi"); }
+
 };
  
 }} //ns eosio::testing
