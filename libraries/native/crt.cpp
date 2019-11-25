@@ -11,9 +11,7 @@
 eosio::cdt::output_stream std_out;
 eosio::cdt::output_stream std_err;
 
-std::map<std::string, std::vector<intrinsic_row>>* key_to_table;
-std::map<int32_t, std::vector<intrinsic_row>>* iterator_to_table;
-
+primary_index_store* primary_index;
 secondary_index_store* secondary_indexes;
 
 contract_state* global_state;
@@ -90,9 +88,7 @@ extern "C" {
       ___has_failed = false;
       ___earlier_unit_test_has_failed = false;
 
-      key_to_table = new std::map<std::string, std::vector<intrinsic_row>>;
-      iterator_to_table = new std::map<int32_t, std::vector<intrinsic_row>>;
-
+      primary_index = new primary_index_store;
       secondary_indexes = new secondary_index_store;
 
       global_state = new contract_state;
