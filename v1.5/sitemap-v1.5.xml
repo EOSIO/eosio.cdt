@@ -6,7 +6,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/asset_8hpp</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/binary__extension_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -16,22 +16,22 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1binary__extension</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1contract</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1datastream</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1iostream</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1datastream_3_01size__t_01_4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1extended__symbol</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1fixed__bytes</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -41,7 +41,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1fixed__key</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1microseconds</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -51,22 +51,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1transaction__header</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/crypto_8hpp</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1time__point__sec</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/dir_bc0718b08fb2015b8e59c47b2805f60c</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1transaction__header</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -76,7 +66,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/eosio_8hpp</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/datastream_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -86,7 +76,17 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/eosio_8hpp</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/fixed__key_8hpp</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/fixedpoint_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -96,12 +96,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__action</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/classeosio_1_1multi__index</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__c__api</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -121,7 +116,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__multiindex</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__datastream</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -131,27 +126,22 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__name</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__privileged</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__serialize</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__producer__schedule</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__singleton</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__multiindex</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__symbol</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__system</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__signature</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -161,12 +151,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__varint</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__system</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/group__types</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -176,7 +166,17 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/namespaceeosio_1_1__datastream__detail</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/index</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/modules</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/name_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -196,12 +196,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/namespaceeosio_1_1detail</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/singleton_8hpp</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/producer__schedule_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -216,17 +211,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions_3_01eosio_1_1key256_01_4</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/struct_extended</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions_3_01eosio_1_1fixed__bytes_3_0132_01_4_01_4</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions_3_01uint64__t_01_4</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions_3_01long_01double_01_4</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -236,17 +226,22 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__key__traits</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__index__db__functions_3_01uint64__t_01_4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__key__traits_3_01eosio_1_1key256_01_4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__key__traits_3_01long_01double_01_4</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1__multi__index__detail_1_1secondary__key__traits_3_01eosio_1_1fixed__bytes_3_0132_01_4_01_4</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1action__wrapper</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -256,12 +251,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1asset</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1action</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1check__types_3_01_action_00_01_i_00_01_t_01_4</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1check__types</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -271,12 +266,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1is__same</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1blockchain__parameters</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1get__nth</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1get__nth__impl_3_01_n_00_01_n_00_01_arg_00_01_args_8_8_8_01_4</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -286,17 +281,17 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1is__same</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1to__const__char__arr</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1unwrap</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1detail_1_1unwrap_3_01ignore_3_01_t_01_4_01_4</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1fixed__bytes_1_1bool__pack</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -306,12 +301,22 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1fixed__point64</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1fixed__point128</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1fixed__point32</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1ignore__wrapper</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1inline__dispatcher_3_01void_07_t_1_1_5_08_07_args_8_8_8_08_00_01_name_01_4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1multi__index_1_1index_1_1const__iterator</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -321,22 +326,17 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1multi__index_1_1const__iterator</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1multi__index_1_1intc</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1multi__index_1_1item__ptr</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1multi__index_1_1index</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1onerror</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1name</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -346,7 +346,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1signature</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1producer__schedule</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structeosio_1_1variant__action__wrapper</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -356,22 +361,12 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/symbol_8hpp</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/structsigned__int</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/system_8hpp</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/varint_8hpp</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/time_8hpp</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/transaction_8hpp</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -386,7 +381,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/tools/eosio-init</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/tools/eosio-abigen</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -396,12 +391,17 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/tools/eosio-init</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://eosio.github.io//eosio.cdt/v1.5/guides/first-smart-contract</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://eosio.github.io//eosio.cdt/v1.5/guides/basic-usage</loc>
+    <loc>https://eosio.github.io//eosio.cdt/v1.5/guides/native-tester</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
