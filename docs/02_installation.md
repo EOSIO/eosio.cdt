@@ -66,7 +66,6 @@ $ sudo rm /usr/local/bin/eosio-*
 
 
 # Installed Tools
----
 * eosio-cpp
 * eosio-cc
 * eosio-ld
@@ -88,5 +87,4 @@ eosio-readelf
 
 
 License
-----
 [MIT](../LICENSE)
