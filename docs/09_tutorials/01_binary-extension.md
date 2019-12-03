@@ -1,18 +1,16 @@
-## eosio::binary_extension
+---
+content_title: eosio::binary_extension
+---
 
-Let's fully explain what the `eosio::binary_extension` type is, what it does, and why we need it for contract upgrades in certain situations.
+You can find the implementation of `eosio::binary_extension` in the `eosio.cdt` repository in [binary_extension.hpp](https://github.com/EOSIO/eosio.cdt/blob/master/libraries/eosiolib/binary_extension.hpp).
 
-You can find the implementation of `eosio::binary_extension` in the `eosio.cdt` repository in file: `eosio.cdt/libraries/eosiolib/core/eosio/binary_extension.hpp`.
-
-Our primary concern when using this type is when we are adding a new field to a smart contract's data structure that is currently utilized in an `eosio::multi_index` type (AKA a _table_), or when adding a new parameter to an action declaration.
+The primary concern when using this type is when you are adding a new field to a smart contract's data structure that is currently utilized in an `eosio::multi_index` type (AKA a _table_), or when adding a new parameter to an action declaration.
 
 By wrapping the new field in an `eosio::binary_extension`, you are enabling your contract to be backwards compatible for future use. Note that this new field/parameter **MUST** be appended at the end of a data structure (this is due to implementation details in `eosio::multi_index`, which relies on the `boost::multi_index` type), or at the end of the parameter list in an action declaration.
 
-If you don't wrap the new field in an `eosio::binary_extension`, the `eosio::multi_index` table will be reformatted in such a way that disallows reads to the former datum; or in an action's case, the function will be uncallable.
+If you don't wrap the new field in an `eosio::binary_extension`, the `eosio::multi_index` table will be reformatted in such a way that disallows reads to the former datum; or in an action's case, the function will be un-callable.
 
-<hr>
-
-But let's see how the `eosio::binary_extension` type works with a good example.
+<hr>How the `eosio::binary_extension` type works
 
 Take a moment to study this smart contract and its corresponding `.abi`.
 
@@ -283,7 +281,7 @@ using eosio::name;
 
 <hr>
 
-Take note of the action `regpkey`, and the struct `structure` in `con.hpp` and `con.cpp`; the parts of the contract we will be upgrading.
+Take note of the action `regpkey`, and the struct `structure` in `con.hpp` and `con.cpp`; the parts of the contract you will be upgrading.
 
 **binary_extension_contract.hpp**
 
@@ -359,9 +357,7 @@ And their corresponding sections in the `.abi` files:
 }
 ```
 
-<hr>
-
-Now, let's start up a blockchain instance, compile this smart contract, and test it out.
+<hr>Start up a blockchain instance, compile this smart contract, and test it out.
 
 ```
 ~/binary_extension_contract $ eosio-cpp binary_extension_contract.cpp -o binary_extension_contract.wasm
@@ -380,7 +376,7 @@ executed transaction: 6c5c7d869a5be67611869b5f300bc452bc57d258d11755f12ced99c7d7
 warning: transaction executed locally, but may not be confirmed by the network yet
 ```
 
-Next, let's push some data to our contract.
+Next, push some data to the contract defined.
 
 ```
 ~/binary_extension_contract $ cleos push action eosio regpkey '{"primary_key":"eosio.name"}' -p eosio
@@ -397,7 +393,7 @@ executed transaction: 3c708f10dcbf4412801d901eb82687e82287c2249a29a2f4e746d0116d
 warning: transaction executed locally, but may not be confirmed by the network yet
 ```
 
-Finally, let's read back the data we have just written.
+Finally, read back the data you have just written.
 
 ```
 ~/binary_extension_contract $ cleos push action eosio printbyp '{"primary_key":"eosio.name"}' -p eosio
@@ -415,9 +411,7 @@ executed transaction: e9b77d3cfba322a7a3a93970c0c883cb8b67e2072a26d714d46eef9d79
 warning: transaction executed locally, but may not be confirmed by the network yet
 ```
 
-<hr>
-
-Now, let's upgrade the smart contract by adding a new field to the table and a new parameter to an action while **NOT** wrapping the new field/parameter in an `eosio::binary_extension` type and see what happens:
+<hr>Upgrade the smart contract by adding a new field to the table and a new parameter to an action while **NOT** wrapping the new field/parameter in an `eosio::binary_extension` type and see what happens:
 
 **binary_extension_contract.hpp**
 
@@ -506,7 +500,7 @@ struct [[eosio::table]] structure {
 }
 ```
 
-Next, let's upgrade the contract and try to read from our table and write to our table the original way:
+Next, upgrade the contract and try to read from table and write to table the original way:
 
 ```
 ~/binary_extension_contract $ eosio-cpp binary_extension_contract.cpp -o binary_extension_contract.wasm
@@ -535,7 +529,7 @@ Error Details:
 assertion failure with message: read
 ```
 
-Whoops! We aren't able to read the data we've previously written to our table!
+Whoops, you aren't able to read the data you've previously written to table.
 
 ```
 ~/binary_extension_contract $ cleos push action eosio regpkey '{"primary_key":"eosio.name2"}' -p eosio
@@ -547,11 +541,9 @@ Error Details:
 Missing field 'secondary_key' in input object while processing struct 'regpkey'
 ```
 
-Whoops! We aren't able to write to our table the original way with the upgraded action either!
+Whoops, you aren't able to write to table the original way with the upgraded action either.
 
-<hr>
-
-Ok, let's back up and wrap the new field and the new action parameter in an `eosio::binary_extension` type:
+<hr>Ok, back up and wrap the new field and the new action parameter in an `eosio::binary_extension` type:
 
 **binary_extension_contract.hpp**
 
@@ -662,7 +654,7 @@ Note the `$` after the types now; this indicates that this type is an `eosio::bi
 }
 ```
 
-Now, let's upgrade the contract again and try to read/write from/to our table:
+Now, upgrade the contract again and try to read/write from/to table:
 
 ```
 ~/binary_extension_contract $ cleos set contract eosio ./
@@ -714,5 +706,84 @@ Nice! The smart contract is now backwards compatible for the future use of its t
 
 Just keep these simple rules in mind when upgrading a smart contract.
 If you are adding a new field to a struct currently in use by a `eosio::multi_index` be **SURE** to:
-- add the field at the end of the struct.
-- wrap the type using an `eosio::binary_extension` type.
+- add the field at the end of the struct,
+- and wrap the type using an `eosio::binary_extension` type.
+
+# There are a few restrictions you have to be aware of, and they are outlined below
+
+Binary extensions only operate correctly in certain locations.
+
+* ok: a non-embedded struct stored in a row may have binary extensions at its end
+* ok: an action may use binary extensions to add additional arguments to its end
+* ok: a struct with binary extensions may be used inside another struct, but only if the inner struct is the last field of the outer struct and the outer struct is allowed to contain binary extensions
+* not ok: a struct with binary extensions may not be used inside an array
+* not ok: a struct with binary extensions may not be used as a base of another struct
+* not ok: fields with types which don't end in `$` following fields with types which do
+* not ok: `$` used anywhere except in struct field types
+
+## ABI version string
+
+`eosio::abi/1.1`
+
+## ABI Text format
+
+Types may have a `$` suffix. During binary-to-json conversion, fields with a `$` type don't error out when end-of-data has been reached; instead they're omitted. During json-to-binary conversion, missing fields don't error out as long as no non-missing fields follow in the ABI. This omits the bytes from the output stream.
+
+e.g.
+
+```json
+    {
+      "name": "my_table_struct",
+      "base": "",
+      "fields": [
+        {
+          "name": "required_field_1",
+          "type": "string"
+        },
+        {
+          "name": "required_field_2",
+          "type": "float32[]"
+        },
+        {
+          "name": "optional_field_3",
+          "type": "float32[]$"
+        },
+        {
+          "name": "optional_field_4",
+          "type": "string$"
+        },
+      ]
+    },
+```
+
+## JSON representation
+
+Missing fields aren't included; null isn't used. E.g. all of these are valid JSON representations of `my_table_struct`:
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4]
+}
+```
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4],
+    "optional_field_3": [5,6,7,8]
+}
+```
+
+```json
+{
+    "required_field_1": "foo",
+    "required_field_2": [1,2,3,4],
+    "optional_field_3": [5,6,7,8],
+    "optional_field_4": "bar"
+}
+```
+
+## ABI Binary format
+
+`$` can be included in type strings. No other changes.

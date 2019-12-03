@@ -1,4 +1,6 @@
-# eosio-init
+---
+content_title: eosio-init tool
+---
 
 This tool is used to generate a skeleton smart contract and directory structure.
 To generate a new smart contract project you can either generate a "bare" project (no CMake) or the default is to generate a CMake project.
@@ -9,7 +11,6 @@ $ eosio-abigen hello.cpp --contract=hello --output=hello.abi
 
 This will generate one file:
 * The generated ABI file (hello.abi)
----
 ```
 USAGE: eosio-init [options]
 

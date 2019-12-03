@@ -1,5 +1,9 @@
-# eosio-abigen
-### This tool is deprecated, please use `eosio-cpp` for generation of your ABIs
+---
+content_title: eosio-abigen tool
+---
+
+## This tool is deprecated, use `eosio-cpp` for generation of your ABIs
+
 To generate an ABI with ```eosio-abigen```, only requires that you give the main '.cpp' file to compile and the output filename `--output` and generating against the contract name `--contract`.
 
 Example:
@@ -9,7 +13,6 @@ $ eosio-abigen hello.cpp --contract=hello --output=hello.abi
 
 This will generate one file:
 * The generated ABI file (hello.abi)
----
 ```
 USAGE: eosio-abigen [options] <source0> [... <sourceN>]
 
