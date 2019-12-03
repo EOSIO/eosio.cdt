@@ -11,7 +11,7 @@ $ eosio-abigen hello.cpp --contract=hello --output=hello.abi
 
 This will generate one file:
 * The generated ABI file (hello.abi)
----
+
 ```
 USAGE: eosio-init [options]
 

@@ -11,7 +11,7 @@ $ eosio-abidiff hello.abi old_hello.abi
 ```
 
 This will generate dump the report output to the console.
----
+
 ```
 OVERVIEW: eosio-abidiff
 USAGE: eosio-abidiff [options] <input file1> ... <input file2> ...
