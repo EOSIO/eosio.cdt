@@ -7,7 +7,7 @@ content_title: How to insert data into a multi index table
 
 To insert data into a multi index table follow the following steps
 
-1. Make use of the multi index table iterator to find out if the data doesn't already exist 
+1. Make use of the multi index table iterator to find out if the data doesn't already exist
 ```cpp
 [[eosio::action]] void multi_index_example::set( name user ) {
   // check if the user already exists
@@ -32,5 +32,5 @@ To insert data into a multi index table follow the following steps
 }
 ```
 
-[[Info | Full example location]]
+[[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
