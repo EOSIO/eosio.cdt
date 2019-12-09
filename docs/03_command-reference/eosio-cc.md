@@ -1,11 +1,11 @@
-### Usage
 ---
-To manually compile the source code, use `eosio-cpp/eosio-cc` and `eosio-ld` as if it were __clang__ and __lld__. All the includes and options specific to EOSIO and CDT are baked in.
+content_title: eosio-cc tool
+---
 
-###$ eosio-cpp
----
+To manually compile the source code, use `eosio-cc` and `eosio-ld` as if it were __clang__ and __lld__. All the includes and options specific to EOSIO and CDT are baked in.
+
 ```
-USAGE: eosio-cpp [options] <input file> ...
+USAGE: eosio-cc [options] <input file> ...
 
 OPTIONS:
 
@@ -41,10 +41,8 @@ compiler options:
   -dM                      - Print macro definitions in -E mode instead to normal output
   -emit-ast                - Emit Clang AST files for source inputs
   -emit-llvm               - Use the LLVM representation for assembler and object files
-  -faligned-allocation     - Enable C++17 aligned allocation functions
   -fasm                    - Assemble file for x86-64
   -fcolor-diagnostics      - Use colors in diagnostics
-  -fcoroutine-ts           - Enable support for the C++ Coroutines TS
   -finline-functions       - Inline suitable functions
   -finline-hint-functions  - Inline functions which are (explicitly or implicitly) marked inline
   -fmerge-all-constants    - Allow merging of constants
@@ -54,7 +52,9 @@ compiler options:
   -fno-lto                 - Disable LTO
   -fno-post-pass           - Don't run post processing pass
   -fno-stack-first         - Don't set the stack first in memory
-  -stack-size              - Specifies the maximum stack size for the contract
+  -fquery                  - Produce binaries for wasmql
+  -fquery-client           - Produce binaries for wasmql
+  -fquery-server           - Produce binaries for wasmql
   -fstack-protector        - Enable stack protectors for functions potentially vulnerable to stack smashing
   -fstack-protector-all    - Force the usage of stack protectors for all functions
   -fstack-protector-strong - Use a strong heuristic to apply stack protectors to functions
@@ -67,7 +67,7 @@ compiler options:
   -l=<string>              - Root name of library to link
   -lto-opt=<string>        - LTO Optimization level (O0-O3)
   -o=<string>              - Write output to <file>
-  -std=<string>            - Language standard to compile for
+  -stack-size=<int>        - Specifies the maximum stack size for the contract. Defaults to 8192 bytes.
   -sysroot=<string>        - Set the system root directory
   -v                       - Show commands to run and use verbose output
   -w                       - Suppress all warnings
