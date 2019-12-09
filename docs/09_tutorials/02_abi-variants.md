@@ -155,5 +155,5 @@ class [[eosio::contract]] multi_index_example : public contract {
 [[warning | Not recommended warning]]
 | Be aware, it is not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how to ABI gets generated!
 
-[[Info | Implemenatation location]]
+[[info | Implemenatation location]]
 | The implementation for ABI `variants' section can be found [here](https://github.com/EOSIO/eos/pull/5652).
