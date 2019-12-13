@@ -168,6 +168,16 @@ uint64_t  publication_time( void );
 __attribute__((eosio_wasm_import))
 capi_name current_receiver( void );
 
+/**
+ * Set the action return value which will be included in the action_receipt
+ * @brief Set the action return value
+ * @param return_value - serialized return value
+ * @param size - size of serialized return value in bytes
+ * @pre `return_value` is a valid pointer to an array at least `size` bytes long
+ */
+__attribute__((eosio_wasm_import))
+void set_action_return_value(char *return_value, size_t size);
+
 #ifdef __cplusplus
 }
 #endif
