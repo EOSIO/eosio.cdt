@@ -191,10 +191,13 @@ int main(int argc, const char **argv) {
                             tool_opts.end());
             generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
 
-            auto src = SmallString<64>(input);
-            llvm::sys::path::remove_filename(src);
-            std::string source_path = src.str().empty() ? "." : src.str();
-            new_opts.insert(new_opts.begin(), "-I" + source_path);
+            if (!opts.no_outputs) {
+               auto src = SmallString<64>(input);
+               llvm::sys::path::remove_filename(src);
+               std::string source_path = src.str().empty() ? "." : src.str();
+               new_opts.insert(new_opts.begin(), "-I" + source_path);
+            }
+            
 
             if (llvm::sys::fs::exists(tmp_file)) {
                input = tmp_file;
@@ -205,8 +208,10 @@ int main(int argc, const char **argv) {
                output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
             }
 
-            new_opts.insert(new_opts.begin(), {"-o", output});
-            outputs.push_back(output);
+            if (!opts.no_outputs) {
+               new_opts.insert(new_opts.begin(), {"-o", output});
+               outputs.push_back(output);
+            }
          }
          new_opts.insert(new_opts.begin(), input);
 
