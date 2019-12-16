@@ -9,8 +9,8 @@
 				"filters": [
 					{ "name": "sort" },
 					{ "name": "remove_extension" },
-					{ "name": "sanitize", "exclude": ["command-reference/*"] },
-					{ "name": "capitalize" }
+					{ "name": "sanitize", "options": { "exclude": ["command-reference/eosio-*.md"] } },
+					{ "name": "capitalize", "options": { "exclude": ["command-reference/eosio-*.md"] } }
 				]
 			}
 		},
