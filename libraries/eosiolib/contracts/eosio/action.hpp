@@ -52,6 +52,9 @@ namespace eosio {
 
          __attribute__((eosio_wasm_import))
          uint64_t current_receiver();
+
+         __attribute__((eosio_wasm_import))
+         void set_action_return_value(char *return_value, size_t size);
       }
    };
 
@@ -148,6 +151,18 @@ namespace eosio {
    */
    inline name current_receiver() {
      return name{internal_use_do_not_use::current_receiver()};
+   }
+
+   /**
+    * Set the action return value which will be included in action_receipt
+    * @ingroup action
+    * @tparam T type of return value
+    * @param v the return value to set
+    */
+   template<typename T>
+   inline void set_action_return_value( const T& v ) {
+      const auto packed_value = pack( v );
+      internal_use_do_not_use::set_action_return_value( &packed_value[0], packed_value.size() );
    }
 
    /**
