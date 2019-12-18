@@ -231,6 +231,7 @@ public:
 
          T value() {
             using namespace _key_value_detail;
+
             eosio::check(itr_stat != kv_it_stat::iterator_end, "Cannot read end iterator");
             eosio::check(data_size > 0, "Cannot read a value of size 0");
 

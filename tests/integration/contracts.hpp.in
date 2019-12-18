@@ -19,6 +19,11 @@ struct contracts {
    static std::vector<uint8_t> capi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.wasm"); }
    static std::vector<char>    capi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.abi"); }
 
+   static std::vector<uint8_t> kv_single_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_single_index_tests.wasm"); }
+   static std::vector<char>    kv_single_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_single_index_tests.abi"); }
+
+   static std::vector<uint8_t> kv_multi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_multiple_indices_tests.wasm"); }
+   static std::vector<char>    kv_multi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_multiple_indices_tests.abi"); }
 };
  
 }} //ns eosio::testing
