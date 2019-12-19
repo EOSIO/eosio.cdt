@@ -44,7 +44,7 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 # install dependencies
 yum --enablerepo=extras install -y centos-release-scl && \
     yum install -y devtoolset-8 && \
-    yum install -y git autoconf automake bzip2 \
+    yum install -y autoconf automake bzip2 \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl libffi-devel.x86_64

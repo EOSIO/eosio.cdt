@@ -42,8 +42,7 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 <!-- DAC DEPS -->
 ```sh
 # install dependencies
-brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3 || :
-
+brew install automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3 || :
 ```
 <!-- DAC DEPS END -->
 

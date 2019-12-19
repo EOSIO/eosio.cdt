@@ -42,8 +42,8 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 <!-- DAC DEPS -->
 ```sh
 # install dependencies
-apt-get install -y git clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
-	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
+apt-get install -y clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
+    libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
     libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
 PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
