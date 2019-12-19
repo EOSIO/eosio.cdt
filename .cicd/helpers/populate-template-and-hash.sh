@@ -62,7 +62,7 @@ else
 fi
 if [[ ! ${IMAGE_TAG:-$FILE_NAME} =~ 'macos' ]]; then # Linux / Docker
   ( [[ $DOCKERIZATION == true ]] || [[ $ONLYHASH == true ]] ) && POP_COMMANDS=$(echo "$POP_COMMANDS" | awk '{if ( $0 ~ /^[ ].*/ ) { print $0 } \
-  else if ( $0 ~ /^export EOSIO_CDT_INSTALL_LOCATION=/ ) { print "RUN mkdir -p $EOSIO_CDDT_INSTALL_LOCATION" } \
+  else if ( $0 ~ /^export EOSIO_CDT_INSTALL_LOCATION=/ ) { print "RUN mkdir -p $EOSIO_CDT_INSTALL_LOCATION" } \
   else if ( $0 ~ /^PATH/ ) { print "ENV " $0 } \
   else if ( $0 ~ /^cd[ ].*build$/ ) { gsub(/cd /,"",$0); print "WORKDIR " $0 } \
   else { print "RUN " $0 } }')

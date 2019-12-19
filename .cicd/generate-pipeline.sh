@@ -19,13 +19,7 @@ if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then
   PR_ID=$(echo $BUILDKITE_BRANCH | cut -d/ -f2)
   export GIT_FETCH="git fetch -v --prune origin refs/pull/$PR_ID/head &&"
 fi
-# Used for the package generation steps
-if [[ $PINNED == false ]]; then
-    export PLATFORM_TYPE="unpinned"
-else
-    export PLATFORM_TYPE="pinned"
-fi
-for FILE in $(ls $CICD_DIR/platform-templates/ | grep "\-$PLATFORM_TYPE"); do
+for FILE in $(ls $CICD_DIR/platform-templates/); do
     # skip mac or linux by not even creating the json block
     ( [[ $SKIP_MAC == true ]] && [[ $FILE =~ 'macos' ]] ) && continue
     ( [[ $SKIP_LINUX == true ]] && [[ ! $FILE =~ 'macos' ]] ) && continue
@@ -76,6 +70,7 @@ for FILE in $(ls $CICD_DIR/platform-templates/ | grep "\-$PLATFORM_TYPE"); do
         "ICON": env.ICON
     }]')
 done
+
 # set build_source whether triggered or not
 if [[ ! -z ${BUILDKITE_TRIGGERED_FROM_BUILD_ID} ]]; then
     export BUILD_SOURCE="--build \$BUILDKITE_TRIGGERED_FROM_BUILD_ID"
@@ -151,6 +146,7 @@ EOF
     timeout: ${TIMEOUT:-180}
     agents: "queue=mac-anka-large-node-fleet"
     skip: \${SKIP_$(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_UPCASE)_$(echo "$PLATFORM_JSON" | jq -r .VERSION_MAJOR)$(echo "$PLATFORM_JSON" | jq -r .VERSION_MINOR)}${SKIP_BUILD}
+
 EOF
     fi
     if [ "$BUILDKITE_SOURCE" = "schedule" ] && [[ $DISABLE_CONCURRENCY != true ]]; then
@@ -219,7 +215,7 @@ EOF
           cd: ~
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
-    agents: "queue=mac-anka-node-fleet"
+    agents: "queue=mac-anka-large-node-fleet"
     retry:
       manual:
         permit_on_passed: true
@@ -285,7 +281,7 @@ EOF
           cd: ~
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
-    agents: "queue=mac-anka-node-fleet"
+    agents: "queue=mac-anka-large-node-fleet"
     retry:
       manual:
         permit_on_passed: true

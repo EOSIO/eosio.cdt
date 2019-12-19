@@ -5,6 +5,15 @@ export HELPERS_DIR=$CICD_DIR/helpers
 export JOBS=${JOBS:-"$(getconf _NPROCESSORS_ONLN)"}
 export MOUNTED_DIR='/root/eosio/cdt'
 
+# capitalize each word in a string
+function capitalize()
+{
+    if [[ ! $1 =~ 'mac' ]]; then # Don't capitalize mac
+        echo $1 | awk '{$1=toupper(substr($1,1,1))substr($1,2)}1'
+    else
+        echo $1
+    fi
+}
 
 # load buildkite intrinsic environment variables for use in docker run
 function buildkite-intrinsics()
