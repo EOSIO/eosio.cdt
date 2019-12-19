@@ -6,13 +6,14 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
+#include <eosio/utils.hpp>
+#include <eosio/error_emitter.hpp>
 #include <functional>
 #include <vector>
 #include <string>
 #include <map>
 #include <utility>
 #include <regex>
-#include <eosio/utils.hpp>
 
 namespace eosio { namespace cdt {
 
@@ -103,10 +104,15 @@ struct simple_ricardian_tokenizer {
 struct generation_utils {
    std::function<void()> error_handler;
    std::vector<std::string> resource_dirs;
-   std::string contract_name;
+   std::string app_name;
 
    generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
    generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
+
+   static error_emitter& get_error_emitter() {
+      static error_emitter ee;
+      return ee;
+   }
 
    static inline bool is_ignorable( const clang::QualType& type ) {
       auto check = [&](const clang::Type* pt) {
@@ -145,8 +151,8 @@ struct generation_utils {
    }
 
 
-   inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
-   inline std::string get_contract_name()const { return contract_name; }
+   inline void set_app_name( const std::string& cn ) { app_name = cn; }
+   inline std::string get_app_name()const { return app_name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
@@ -194,10 +200,10 @@ struct generation_utils {
       return decl->getName();
    }
    inline std::string get_rc_filename() {
-      return contract_name+".contracts.md";
+      return app_name+".contracts.md";
    }
    inline std::string get_clauses_filename() {
-      return contract_name+".clauses.md";
+      return app_name+".clauses.md";
    }
 
    inline std::string read_file( const std::string& fname ) {
@@ -255,32 +261,31 @@ struct generation_utils {
       return clause_pairs;
    }
 
-   static inline bool is_eosio_contract( const clang::CXXMethodDecl* decl, const std::string& cn ) {
+   template <typename T>
+   static auto get_parent(const T* decl) {
+      if constexpr (std::is_same_v<T, clang::CXXRecordDecl>)
+         return llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
+      else
+         return decl->getParent();
+   }
+
+   template <typename T>
+   static inline bool is_eosio_contract( const T* decl ) { return decl->isEosioContract(); }
+
+   template <typename T>
+   static inline bool is_eosio_app( const T* decl ) { return decl->isEosioApp(); }
+
+   template <typename T>
+   static inline bool is_in_eosio_app( const T* decl, const std::string& cn) {
       std::string name = "";
-      if (decl->isEosioContract())
-         name = decl->getEosioContractAttr()->getName();
-      else if (decl->getParent()->isEosioContract())
-         name = decl->getParent()->getEosioContractAttr()->getName();
-      if (name.empty()) {
-         name = decl->getParent()->getName().str();
-      }
+      if (is_eosio_contract(decl) || is_eosio_app(decl))
+         name = decl->getEosioAppName();
+      else if (is_eosio_contract(get_parent(decl)) || is_eosio_app(get_parent(decl)))
+         name = get_parent(decl)->getEosioAppName();
+      if (name.empty())
+         name = get_parent(decl)->getName().str();
       return name == cn;
    }
-
-   static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
-      std::string name = "";
-      auto pd = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
-      if (decl->isEosioContract()) {
-         auto nm = decl->getEosioContractAttr()->getName().str();
-         name = nm.empty() ? decl->getName().str() : nm;
-      }
-      else if (pd && pd->isEosioContract()) {
-         auto nm = pd->getEosioContractAttr()->getName().str();
-         name = nm.empty() ? pd->getName().str() : nm;
-      }
-      return cn == name;
-   }
-
 
    inline bool is_template_specialization( const clang::QualType& type, const std::vector<std::string>& names ) {
       auto check = [&](const clang::Type* pt) {
@@ -412,7 +417,7 @@ struct generation_utils {
          {"fixed_bytes_32", "checksum256"},
          {"fixed_bytes_64", "checksum512"}
       };
-      
+
       auto ret = translation_table[t];
 
       if (ret == "")
@@ -438,7 +443,7 @@ struct generation_utils {
          auto arg = get_template_argument(type,i);
          if (arg.getAsExpr()) {
             auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
-            if (ce) { 
+            if (ce) {
                auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
                ret += std::to_string(il->getValue().getLimitedValue());
                if ( i < tst->getNumArgs()-1 )

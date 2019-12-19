@@ -133,11 +133,11 @@ namespace eosio { namespace cdt {
          abi_struct pair;
          pair.name = get_type(type);
          pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
-         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );   
+         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );
          add_type(get_template_argument(type).getAsType());
          add_type(get_template_argument(type, 1).getAsType());
          _abi.structs.insert(pair);
-      } 
+      }
 
       void add_map(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
@@ -149,7 +149,7 @@ namespace eosio { namespace cdt {
          std::string name = get_type(type);
          kv.name = name.substr(0, name.length() - 2);
          kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
-         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );   
+         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );
          add_type(get_template_argument(type).getAsType());
          add_type(get_template_argument(type, 1).getAsType());
          _abi.structs.insert(kv);
@@ -193,10 +193,6 @@ namespace eosio { namespace cdt {
          _abi.structs.insert(new_struct);
       }
 
-      std::string to_index_type( std::string t ) {
-         return "i64";
-      }
-
       void add_table( const clang::CXXRecordDecl* decl ) {
          tables.insert(decl);
          abi_table t;
@@ -216,7 +212,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( uint64_t name, const clang::CXXRecordDecl* decl ) {
-         if (!(decl->isEosioTable() && abigen::is_eosio_contract(decl, get_contract_name())))
+         if (!is_in_eosio_app(decl) && decl->isEosioTable())
             return;
          abi_table t;
          t.type = decl->getNameAsString();
@@ -243,7 +239,7 @@ namespace eosio { namespace cdt {
             var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
             add_type(get_template_argument( t, i ).getAsType());
          }
-         _abi.variants.insert(var); 
+         _abi.variants.insert(var);
       }
 
       void add_type( const clang::QualType& t ) {
@@ -277,7 +273,7 @@ namespace eosio { namespace cdt {
          std::stringstream ss;
          ss << "This file was generated with eosio-abigen.";
          ss << " DO NOT EDIT ";
-         return ss.str(); 
+         return ss.str();
       }
 
       ojson struct_to_json( const abi_struct& s ) {
@@ -335,7 +331,7 @@ namespace eosio { namespace cdt {
          o["key_types"] = ojson::array();
          return o;
       }
-      
+
       bool is_empty() {
          std::set<abi_table> set_of_tables;
          for ( auto t : ctables ) {
@@ -364,7 +360,7 @@ namespace eosio { namespace cdt {
          o["structs"]     = ojson::array();
          auto remove_suffix = [&]( std::string name ) {
             int i = name.length()-1;
-            for (; i >= 0; i--) 
+            for (; i >= 0; i--)
                if ( name[i] != '[' && name[i] != ']' && name[i] != '?' && name[i] != '$' )
                   break;
             return name.substr(0,i+1);
@@ -484,7 +480,7 @@ namespace eosio { namespace cdt {
          return o;
       }
 
-      private: 
+      private:
          abi                                   _abi;
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;

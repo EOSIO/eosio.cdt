@@ -3,6 +3,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/Support/Program.h"
+
 #include <stdlib.h>
 #if defined(__APPLE__)
 # include <crt_externs.h>
@@ -47,7 +48,7 @@ uint64_t string_to_name( const char* str )
 template <typename Lambda>
 void validate_name( const std::string& str, Lambda&& error_handler ) {
    const auto len = str.length();
-   if ( len > 13 ) { 
+   if ( len > 13 ) {
       std::cout << "Error, name {" << str << "} is more than 13 characters long\n";
       return error_handler();
    }
@@ -62,7 +63,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
       str2[12-i] = c;
       tmp >>= (i == 0 ? 4 : 5);
    }
-   
+
    auto trim = [](std::string& s) {
       int i;
       for (i = s.length()-1; i >= 0; i--)
@@ -145,7 +146,7 @@ struct environment {
       }
       else
          return false;
-      return true; 
+      return true;
    }
 
 };

@@ -185,13 +185,6 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         template <size_t N>
-         void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
-            FullSourceLoc full(loc, inst.getSourceManager());
-            unsigned id = inst.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err);
-            inst.getDiagnostics().Report(full, id);
-         }
-
          std::string get_base_type(const QualType& qt) {
             std::istringstream ss(qt.getAsString());
             std::vector<std::string> results((std::istream_iterator<std::string>(ss)),
@@ -296,13 +289,15 @@ namespace eosio { namespace cdt {
             static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
                name = generation_utils::get_action_name(decl);
-               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
+               validate_name(name, [&]() {
+                  CDT_ERROR("action not a valid eosio name");
+               });
+
                if (!_action_set.count(name))
                   _action_set.insert(name);
                else {
                   auto itr = _action_set.find(name);
-                  if (*itr != name)
-                     emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
+                  CDT_CHECK_ERROR(*itr == name, "action declaration doesn't match previous declaration");
                }
                std::string full_action_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
                if (cg.actions.count(full_action_name) == 0) {
@@ -315,16 +310,19 @@ namespace eosio { namespace cdt {
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
                if (first != "*")
-                  validate_name(first, [&]() {emitError(*ci, decl->getLocation(), "invalid contract name");});
+                  validate_name(first, [&]() {
+                     CDT_ERROR("invalid contract name");
+                  });
                auto second = name.substr(name.find("::")+2);
-               validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
+               validate_name(second, [&]() {
+                  CDT_ERROR("invalid action name");
+               });
 
                if (!_notify_set.count(name))
                   _notify_set.insert(name);
                else {
                   auto itr = _notify_set.find(name);
-                  if (*itr != name)
-                     emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
+                  CDT_CHECK_ERROR(*itr == name, "action declaration doesn't match previous declaration");
                }
 
                std::string full_notify_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
@@ -397,7 +395,7 @@ namespace eosio { namespace cdt {
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
-               
+
                for (auto nd : visitor->notify_decls)
                   visitor->create_notify_dispatch(nd);
 
