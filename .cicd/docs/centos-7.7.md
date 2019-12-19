@@ -43,7 +43,7 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 ```sh
 # install dependencies
 yum --enablerepo=extras install -y centos-release-scl && \
-    yum install -y devtoolset-8 && \
+    yum install -y devtoolset-7 && \
     yum install -y autoconf automake bzip2 \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
@@ -51,7 +51,7 @@ yum --enablerepo=extras install -y centos-release-scl && \
 PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build Python 3.7.4
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
-    source /opt/rh/devtoolset-8/enable && \
+    source /opt/rh/devtoolset-7/enable && \
     tar xzf Python-3.7.4.tgz && \
     cd Python-3.7.4 && \
     ./configure --enable-optimizations --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
@@ -59,13 +59,13 @@ cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://www.python.org/ftp/python/3.7
     rm -rf $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4 $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4.tgz
 # build lcov
 cd $EOSIO_CDT_INSTALL_LOCATION && git clone https://github.com/linux-test-project/lcov.git && \
-    source /opt/rh/devtoolset-8/enable && \
+    source /opt/rh/devtoolset-7/enable && \
     cd lcov && \
     make PREFIX=$EOSIO_CDT_INSTALL_LOCATION install && \
     rm -rf $EOSIO_CDT_INSTALL_LOCATION/lcov
 # build cmake
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
-    source /opt/rh/devtoolset-8/enable && \
+    source /opt/rh/devtoolset-7/enable && \
     tar -xzf cmake-3.10.2.tar.gz && \
     cd cmake-3.10.2 && \
     ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
@@ -81,7 +81,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 ```sh
 mkdir -p $EOSIO_CDT_LOCATION/build
 cd $EOSIO_CDT_LOCATION/build
-source /opt/rh/devtoolset-8/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
+source /opt/rh/devtoolset-7/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(nproc)
 ```
 <!-- DAC BUILD END -->

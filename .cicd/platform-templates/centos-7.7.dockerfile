@@ -11,6 +11,6 @@ RUN curl -LO http://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/c
     yum install -y ccache-3.3.4-1.el7.x86_64.rpm && rm ccache-3.3.4-1.el7.x86_64.rpm
 ## fix ccache for centos
 RUN cd /usr/lib64/ccache && ln -s ../../bin/ccache c++
-ENV CCACHE_PATH="/opt/rh/devtoolset-8/root/usr/bin"
+ENV CCACHE_PATH="/opt/rh/devtoolset-7/root/usr/bin"
 ## Cleanup EOSIO.CDT directory 
 RUN rm -rf ${EOSIO_CDT_LOCATION}
