@@ -447,7 +447,7 @@ namespace eosio {
       }
 
    private:
-      symbol symbol; ///< the symbol
+      symbol sym; ///< the symbol
       name   contract; ///< the token contract hosting the symbol
 
       EOSLIB_SERIALIZE( extended_symbol, (sym)(contract) )
