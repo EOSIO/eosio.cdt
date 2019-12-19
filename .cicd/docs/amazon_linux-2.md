@@ -49,7 +49,7 @@ PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build lcov
 cd $EOSIO_CDT_INSTALL_LOCATION && git clone https://github.com/linux-test-project/lcov.git && \
     cd lcov && \
-    make install && \
+    make PREFIX=$EOSIO_CDT_INSTALL_LOCATION install && \
     rm -rf $EOSIO_CDT_INSTALL_LOCATION/lcov
 # build cmake
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
