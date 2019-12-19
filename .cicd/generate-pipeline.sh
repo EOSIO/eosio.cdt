@@ -9,8 +9,8 @@ export PLATFORMS_JSON_ARRAY='[]'
 DISABLE_CONCURRENCY=${DISABLE_CONCURRENCY:-false}
 LINUX_CONCURRENCY='8'
 MAC_CONCURRENCY='2'
-LINUX_CONCURRENCY_GROUP='eos-scheduled-build'
-MAC_CONCURRENCY_GROUP='eos-scheduled-build-mac'
+LINUX_CONCURRENCY_GROUP='eos-cdt-scheduled-build'
+MAC_CONCURRENCY_GROUP='eos-cdt-scheduled-build-mac'
 BUILDKITE_BUILD_AGENT_QUEUE='automation-eks-eos-builder-fleet'
 BUILDKITE_TEST_AGENT_QUEUE='automation-eks-eos-tester-fleet'
 

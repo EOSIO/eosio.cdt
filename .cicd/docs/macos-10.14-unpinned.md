@@ -1,5 +1,5 @@
 ---
-content_title: MacOS 10.14 (native compiler)
+content_title: MacOS 10.14
 ---
 
 <!-- This document is aggregated by our internal documentation tool to generate EOSIO.CDT documentation. The code within the codeblocks below is used in our CI/CD. It will be converted line by line into statements inside of a temporary Dockerfile and used to build our docker tag for this OS. Therefore, COPY and other Dockerfile-isms are not permitted. Code changes will update hashes and regenerate new docker images, so use with caution and do not modify unless necessary. -->
@@ -43,9 +43,6 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 ```sh
 # install dependencies
 brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3 || :
-PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
-# install mongodb
-mkdir -p $EOSIO_CDT_INSTALL_LOCATION/bin
 
 ```
 <!-- DAC DEPS END -->
@@ -56,7 +53,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 ```sh
 mkdir -p $EOSIO_CDT_LOCATION/build
 cd $EOSIO_CDT_LOCATION/build
-cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION -DBUILD_MONGO_DB_PLUGIN=true ..
+cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(getconf _NPROCESSORS_ONLN)
 ```
 <!-- DAC BUILD END -->
@@ -73,7 +70,6 @@ make install
 These commands validate the EOSIO.CDT software installation on the specified OS. This task is optional but recommended. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first.
 <!-- DAC TEST -->
 ```sh
-$EOSIO_CDT_INSTALL_LOCATION/bin/mongod --fork --logpath $(pwd)/mongod.log --dbpath $(pwd)/mongodata
 make test
 ```
 <!-- DAC TEST END -->

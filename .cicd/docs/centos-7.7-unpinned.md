@@ -1,5 +1,5 @@
 ---
-content_title: Centos 7.7 (unpinned)
+content_title: Centos 7.7
 ---
 
 <!-- This document is aggregated by our internal documentation tool to generate EOSIO.CDT documentation. The code within the codeblocks below is used in our CI/CD. It will be converted line by line into statements inside of a temporary Dockerfile and used to build our docker tag for this OS. Therefore, COPY and other Dockerfile-isms are not permitted. Code changes will update hashes and regenerate new docker images, so use with caution and do not modify unless necessary. -->
@@ -43,38 +43,35 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 ```sh
 # install dependencies
 yum --enablerepo=extras install -y centos-release-scl && \
-    yum install -y devtoolset-7 && \
+    yum install -y devtoolset-8 && \
     yum install -y git autoconf automake bzip2 \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
-    gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl \
-    libffi-devel.x86_64
+    gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl libffi-devel.x86_64
+PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build Python 3.7.4
-curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
-    source /opt/rh/devtoolset-7/enable && \
+cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
+    source /opt/rh/devtoolset-8/enable && \
     tar xzf Python-3.7.4.tgz && \
     cd Python-3.7.4 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) altinstall && \
-    cd .. && \
-    rm -rf Python-3.7.4 && rm -rf Python-3.7.4.tgz
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4 $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4.tgz
 # build lcov
-git clone https://github.com/linux-test-project/lcov.git && \
-    source /opt/rh/devtoolset-7/enable && \
+cd $EOSIO_CDT_INSTALL_LOCATION && git clone https://github.com/linux-test-project/lcov.git && \
+    source /opt/rh/devtoolset-8/enable && \
     cd lcov && \
     make install && \
-    cd / && \
-    rm -rf lcov/
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/lcov
 # build cmake
-curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
-    source /opt/rh/devtoolset-7/enable && \
+cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
+    source /opt/rh/devtoolset-8/enable && \
     tar -xzf cmake-3.10.2.tar.gz && \
     cd cmake-3.10.2 && \
-    ./bootstrap --prefix=/usr/local && \
+    ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) && \
     make install && \
-    cd .. && \
-    rm -f cmake-3.10.2.tar.gz
+    rm -f $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz
 ```
 <!-- DAC DEPS END -->
 
@@ -84,7 +81,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 ```sh
 mkdir -p $EOSIO_CDT_LOCATION/build
 cd $EOSIO_CDT_LOCATION/build
-source /opt/rh/devtoolset-8/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DLLVM_DIR='/opt/rh/llvm-toolset-7.0/root/usr/lib64/cmake/llvm' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION -DBUILD_MONGO_DB_PLUGIN=true ..
+source /opt/rh/devtoolset-8/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(nproc)
 ```
 <!-- DAC BUILD END -->
@@ -101,8 +98,6 @@ make install
 These commands validate the EOSIO.CDT software installation on the specified OS. This task is optional but recommended. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first.
 <!-- DAC TEST -->
 ```sh
-source /opt/rh/rh-python36/enable
-$EOSIO_CDT_INSTALL_LOCATION/bin/mongod --fork --logpath $(pwd)/mongod.log --dbpath $(pwd)/mongodata
 make test
 ```
 <!-- DAC TEST END -->

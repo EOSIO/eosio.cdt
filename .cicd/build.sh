@@ -2,44 +2,57 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
-mkdir -p $BUILD_DIR
+function cleanup() {
+    if [[ "$(uname)" != 'Darwin' ]]; then
+        echo "[Cleaning up docker container]"
+        echo " - docker container kill $CONTAINER_NAME"
+        docker container kill $CONTAINER_NAME || true # -v and --mount don't work quite well when it's docker in docker, so we need to use docker's cp command to move the build script in
+    fi
+}
+trap cleanup 0
+
+export DOCKERIZATION=false
+[[ $ENABLE_INSTALL == true ]] && . ./.cicd/helpers/populate-template-and-hash.sh '<!-- DAC BUILD' '<!-- DAC INSTALL' || . ./.cicd/helpers/populate-template-and-hash.sh '<!-- DAC BUILD'
 
 if [[ $(uname) == 'Darwin' ]]; then
-
     # You can't use chained commands in execute
-    cd $BUILD_DIR
-    cmake ..
-    make -j$JOBS
-
+    if [[ $TRAVIS == true ]]; then
+        ccache -s
+        brew reinstall openssl@1.1 # Fixes issue where builds in Travis cannot find libcrypto.
+        sed -i -e 's/^cmake /cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache /g' /tmp/$POPULATED_FILE_NAME
+    fi
+    . $HELPERS_DIR/populate-template-and-hash.sh -h # obtain $FULL_TAG (and don't overwrite existing file)
+    cat /tmp/$POPULATED_FILE_NAME
+    . /tmp/$POPULATED_FILE_NAME # This file is populated from the platform's build documentation code block
 else # Linux
 
-    ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
-
-    . $HELPERS_DIR/docker-hash.sh
-
-    # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    BUILD_COMMANDS="cmake .. && make -j$JOBS"
-
-    [[ $IMAGE_TAG == 'centos-7.6' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
-    # Docker Commands
-    if [[ $BUILDKITE == true ]]; then
-        # Generate Base Images
-        $CICD_DIR/generate-base-images.sh
-    elif [[ $TRAVIS == true ]]; then
-        ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache"
+    if [[ $TRAVIS == true ]]; then
+        ARGS=${ARGS:-"-v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e JOBS -e TRAVIS -e CCACHE_DIR=/opt/.ccache"}
+        export CONTAINER_NAME=$TRAVIS_JOB_ID
+        [[ ! $IMAGE_TAG =~ 'unpinned' ]] && sed -i -e 's/^cmake /cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache /g' /tmp/$POPULATED_FILE_NAME
+        if [[ $IMAGE_TAG == 'amazon_linux-2-unpinned' ]]; then
+            PRE_COMMANDS="export PATH=/usr/lib64/ccache:\\\$PATH"
+        elif [[ $IMAGE_TAG == 'centos-7.7-unpinned' ]]; then
+            PRE_COMMANDS="export PATH=/usr/lib64/ccache:\\\$PATH"
+        elif [[ $IMAGE_TAG == 'ubuntu-16.04-unpinned' ]]; then
+            PRE_COMMANDS="export PATH=/usr/lib/ccache:\\\$PATH"
+        elif [[ $IMAGE_TAG == 'ubuntu-18.04-unpinned' ]]; then
+            PRE_COMMANDS="export PATH=/usr/lib/ccache:\\\$PATH"
+        fi
+        BUILD_COMMANDS="ccache -s && $PRE_COMMANDS && "
+    else
+        export CONTAINER_NAME=$BUILDKITE_JOB_ID
     fi
 
-    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
+    ARGS="$ARGS --rm -t -d --name $CONTAINER_NAME -v $(pwd):$MOUNTED_DIR"
 
-    # Load BUILDKITE Environment Variables for use in docker run
-    if [[ -f $BUILDKITE_ENV_FILE ]]; then
-        evars=""
-        while read -r var; do
-            evars="$evars --env ${var%%=*}"
-        done < "$BUILDKITE_ENV_FILE"
-    fi
-
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
-
+    BUILD_COMMANDS="$BUILD_COMMANDS/$POPULATED_FILE_NAME"
+    . $HELPERS_DIR/populate-template-and-hash.sh -h # obtain $FULL_TAG (and don't overwrite existing file)
+    echo "$ docker run $ARGS $(buildkite-intrinsics) $FULL_TAG"
+    eval docker run $ARGS $(buildkite-intrinsics) $FULL_TAG
+    echo "$ docker cp /tmp/$POPULATED_FILE_NAME $CONTAINER_NAME:/$POPULATED_FILE_NAME"
+    docker cp /tmp/$POPULATED_FILE_NAME $CONTAINER_NAME:/$POPULATED_FILE_NAME
+    cat /tmp/$POPULATED_FILE_NAME
+    echo "$ docker exec $CONTAINER_NAME bash -c \"$BUILD_COMMANDS\""
+    eval docker exec $CONTAINER_NAME bash -c \"$BUILD_COMMANDS\"
 fi

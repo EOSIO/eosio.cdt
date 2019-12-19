@@ -1,5 +1,5 @@
 ---
-content_title: Ubuntu 18.04 (unpinned)
+content_title: Ubuntu 18.04
 ---
 
 <!-- This document is aggregated by our internal documentation tool to generate EOSIO.CDT documentation. The code within the codeblocks below is used in our CI/CD. It will be converted line by line into statements inside of a temporary Dockerfile and used to build our docker tag for this OS. Therefore, COPY and other Dockerfile-isms are not permitted. Code changes will update hashes and regenerate new docker images, so use with caution and do not modify unless necessary. -->
@@ -42,20 +42,18 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 <!-- DAC DEPS -->
 ```sh
 # install dependencies
-apt-get install -y git clang-4.0 \
-    lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
+apt-get install -y git clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
 	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
     libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
+PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # install Python 3.7.4
 curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     tar xzf Python-3.7.4.tgz && \
     cd Python-3.7.4 && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) altinstall  && \
-    cd .. && \
-    rm -rf Python-3.7.4 && rm -rf Python-3.7.4.tar.gz
-
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4 $EOSIO_CDT_INSTALL_LOCATION/Python-3.7.4.tar.gz
 ```
 <!-- DAC DEPS END -->
 
@@ -65,7 +63,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 ```sh
 mkdir -p $EOSIO_CDT_LOCATION/build
 cd $EOSIO_CDT_LOCATION/build
-cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER='clang++-7' -DCMAKE_C_COMPILER='clang-7' -DLLVM_DIR='/usr/lib/llvm-7/lib/cmake/llvm' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION -DBUILD_MONGO_DB_PLUGIN=true ..
+cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(nproc)
 ```
 <!-- DAC BUILD END -->
@@ -82,7 +80,6 @@ make install
 These commands validate the EOSIO.CDT software installation on the specified OS. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first. (**Note**: This task is optional but recommended.)
 <!-- DAC TEST -->
 ```sh
-$EOSIO_CDT_INSTALL_LOCATION/bin/mongod --fork --logpath $(pwd)/mongod.log --dbpath $(pwd)/mongodata
 make test
 ```
 <!-- DAC TEST END -->

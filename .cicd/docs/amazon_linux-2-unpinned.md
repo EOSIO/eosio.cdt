@@ -1,5 +1,5 @@
 ---
-content_title: Amazon Linux 2 (unpinned)
+content_title: Amazon Linux 2
 ---
 
 <!-- This document is aggregated by our internal documentation tool to generate EOSIO.CDT documentation. The code within the codeblocks below is used in our CI/CD. It will be converted line by line into statements inside of a temporary Dockerfile and used to build our docker tag for this OS. Therefore, COPY and other Dockerfile-isms are not permitted. Code changes will update hashes and regenerate new docker images, so use with caution and do not modify unless necessary. -->
@@ -45,21 +45,20 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 yum install -y git gcc.x86_64 gcc-c++.x86_64 autoconf automake libtool make bzip2 \
     bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 libstdc++.x86_64 \
     python.x86_64 python3-devel.x86_64 libedit-devel.x86_64 doxygen.x86_64 graphviz.x86_64 perl
+PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build lcov
-git clone https://github.com/linux-test-project/lcov.git && \
+cd $EOSIO_CDT_INSTALL_LOCATION && git clone https://github.com/linux-test-project/lcov.git && \
     cd lcov && \
     make install && \
-    cd / && \
-    rm -rf lcov/
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/lcov
 # build cmake
-curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
+cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
     tar -xzf cmake-3.10.2.tar.gz && \
     cd cmake-3.10.2 && \
-    ./bootstrap --prefix=/usr/local && \
+    ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) && \
     make install && \
-    cd .. && \
-    rm -f cmake-3.10.2.tar.gz
+    rm -f $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz
 ```
 <!-- DAC DEPS END -->
 
@@ -69,7 +68,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 ```sh
 mkdir -p $EOSIO_CDT_LOCATION/build
 cd $EOSIO_CDT_LOCATION/build
-$EOSIO_CDT_INSTALL_LOCATION/bin/cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER='clang++' -DCMAKE_C_COMPILER='clang' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION -DBUILD_MONGO_DB_PLUGIN=true ..
+$EOSIO_CDT_INSTALL_LOCATION/bin/cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(nproc)
 ```
 <!-- DAC BUILD END -->
@@ -86,7 +85,6 @@ make install
 These commands validate the EOSIO.CDT software installation on the specified OS. This task is optional but recommended. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first.
 <!-- DAC TEST -->
 ```sh
-$EOSIO_CDT_INSTALL_LOCATION/bin/mongod --fork --logpath $(pwd)/mongod.log --dbpath $(pwd)/mongodata
 make test
 ```
 <!-- DAC TEST END -->
