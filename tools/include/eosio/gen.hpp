@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 #include <utility>
-#include <regex>
+//#include <regex>
 
 namespace eosio { namespace cdt {
 
@@ -102,12 +102,11 @@ struct simple_ricardian_tokenizer {
 };
 
 struct generation_utils {
-   std::function<void()> error_handler;
    std::vector<std::string> resource_dirs;
    std::string app_name;
 
-   generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
-   generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
+   generation_utils() : resource_dirs({"./"}) {}
+   generation_utils( const std::vector<std::string>& paths ) : resource_dirs(paths) {}
 
    static error_emitter& get_error_emitter() {
       static error_emitter ee;
@@ -319,8 +318,7 @@ struct generation_utils {
             auto arg = tst->getArg(index);
             return arg.getAsType();
          }
-         std::cout << "Internal error, wrong type of template specialization\n";
-         error_handler();
+         CDT_INTERNAL_ERROR("Wrong type of template specialization");
          return tst->getArg(index).getAsType();
       };
       if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()))

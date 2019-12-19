@@ -1,5 +1,20 @@
 #pragma once
 #include <eosio/gen.hpp>
+#include <eosio/ppcallbacks.hpp>
+
+#include "clang/Driver/Options.h"
+#include "clang/AST/AST.h"
+#include "clang/AST/ASTContext.h"
+#include "clang/AST/ASTConsumer.h"
+#include "clang/AST/RecursiveASTVisitor.h"
+#include "clang/AST/QualTypeNames.h"
+#include "clang/Frontend/ASTConsumers.h"
+#include "clang/Frontend/FrontendActions.h"
+#include "clang/Frontend/CompilerInstance.h"
+#include "clang/Tooling/CommonOptionsParser.h"
+#include "clang/Tooling/Tooling.h"
+#include "clang/Rewrite/Core/Rewriter.h"
+#include "clang/Rewrite/Frontend/Rewriters.h"
 
 #include <eosio/utils.hpp>
 #include <eosio/whereami/whereami.hpp>
@@ -22,17 +37,14 @@ using jsoncons::json;
 using jsoncons::ojson;
 
 namespace eosio { namespace cdt {
-   struct abigen_exception : public std::exception {
-      virtual const char* what() const throw() {
-         return "eosio.abigen fatal error";
-      }
-   };
-   extern abigen_exception abigen_ex;
-
    class abigen : public generation_utils {
+      std::set<std::string> checked_actions;
       public:
+      using generation_utils::generation_utils;
 
-      abigen() : generation_utils([&](){throw abigen_ex;}) {
+      static abigen& get() {
+         static abigen ag;
+         return ag;
       }
 
       void add_typedef( const clang::QualType& t ) {
@@ -51,27 +63,17 @@ namespace eosio { namespace cdt {
          abi_action ret;
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!checked_actions.insert(get_action_name(decl)).second)
+            CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
-            try {
-               validate_name( decl->getName().str(), error_handler );
-            } catch (...) {
-               std::cout << "Error, name <" <<decl->getName().str() << "> is an invalid EOSIO name.\n";
-               throw;
-            }
+            validate_name(decl->getName().str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
             ret.name = decl->getName().str();
          }
          else {
-            try {
-               validate_name( action_name.str(), error_handler );
-            } catch (...) {
-               std::cout << "Error, name <" << action_name.str() << "> is an invalid EOSIO name.\n";
-               throw;
-            }
+            validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
             ret.name = action_name.str();
          }
          ret.type = decl->getName().str();
@@ -83,25 +85,17 @@ namespace eosio { namespace cdt {
 
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!checked_actions.insert(get_action_name(decl)).second)
+            CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
-            try {
-               validate_name( decl->getNameAsString(), error_handler );
-            } catch (...) {
-               std::cout << "Error, name <" <<decl->getNameAsString() << "> is an invalid EOSIO name.\n";
-            }
+            validate_name( decl->getNameAsString(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             ret.name = decl->getNameAsString();
          }
          else {
-            try {
-               validate_name( action_name.str(), error_handler );
-            } catch (...) {
-               std::cout << "Error, name <" << action_name.str() << "> is an invalid EOSIO name.\n";
-            }
+            validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             ret.name = action_name.str();
          }
          ret.type = decl->getNameAsString();
@@ -112,7 +106,7 @@ namespace eosio { namespace cdt {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>((pt) ? pt->desugar().getTypePtr() : type.getTypePtr());
          if (!tst)
-            throw abigen_ex;
+            CDT_INTERNAL_ERROR("template specialization failure");
          abi_struct tup;
          tup.name = get_type(type);
          for (int i = 0; i < tst->getNumArgs(); ++i) {
@@ -199,10 +193,7 @@ namespace eosio { namespace cdt {
          t.type = decl->getNameAsString();
          auto table_name = decl->getEosioTableAttr()->getName();
          if (!table_name.empty()) {
-            try {
-               validate_name( table_name.str(), error_handler );
-            } catch (...) {
-            }
+            validate_name( table_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             t.name = table_name.str();
          }
          else {
@@ -212,7 +203,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( uint64_t name, const clang::CXXRecordDecl* decl ) {
-         if (!is_in_eosio_app(decl) && decl->isEosioTable())
+         if (!is_in_eosio_app(decl, get_app_name()) && decl->isEosioTable())
             return;
          abi_table t;
          t.type = decl->getNameAsString();
@@ -486,5 +477,101 @@ namespace eosio { namespace cdt {
          std::set<abi_table>                   ctables;
          std::map<std::string, std::string>    rcs;
          std::set<const clang::Type*>          evaluated;
+   };
+
+   class eosio_abigen_visitor : public RecursiveASTVisitor<eosio_abigen_visitor>, public generation_utils {
+      private:
+         bool has_added_clauses = false;
+         abigen& ag = abigen::get();
+
+      public:
+         explicit eosio_abigen_visitor(CompilerInstance *CI) {
+            set_app_name(ag.get_app_name());
+            get_error_emitter().set_compiler_instance(CI);
+         }
+
+         virtual bool VisitCXXMethodDecl(clang::CXXMethodDecl* decl) {
+            if (!has_added_clauses) {
+               ag.add_clauses(parse_clauses());
+               ag.add_contracts(parse_contracts());
+               has_added_clauses = true;
+            }
+            if (decl->isEosioAction() && is_in_eosio_app(decl, get_app_name())) {
+               ag.add_struct(decl);
+               ag.add_action(decl);
+               for (auto param : decl->parameters()) {
+                  ag.add_type( param->getType() );
+               }
+            }
+            return true;
+         }
+         virtual bool VisitCXXRecordDecl(clang::CXXRecordDecl* decl) {
+            if (!has_added_clauses) {
+               ag.add_clauses(parse_clauses());
+               ag.add_contracts(parse_contracts());
+               has_added_clauses = true;
+            }
+            if ((decl->isEosioAction() || decl->isEosioTable()) && is_in_eosio_app(decl, get_app_name())) {
+               ag.add_struct(decl);
+               if (decl->isEosioAction())
+                  ag.add_action(decl);
+               if (decl->isEosioTable())
+                  ag.add_table(decl);
+               for (auto field : decl->fields()) {
+                  ag.add_type( field->getType() );
+               }
+            }
+            return true;
+         }
+         virtual bool VisitDecl(clang::Decl* decl) {
+            if (const auto* d = dyn_cast<clang::ClassTemplateSpecializationDecl>(decl)) {
+               if (d->getName() == "multi_index") {
+                  ag.add_table(d->getTemplateArgs()[0].getAsIntegral().getExtValue(),
+                        (clang::CXXRecordDecl*)((clang::RecordType*)d->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
+               }
+            }
+            return true;
+         }
+   };
+
+   class eosio_abigen_consumer : public ASTConsumer {
+      private:
+         eosio_abigen_visitor *visitor;
+         std::string main_file;
+         CompilerInstance* ci;
+
+      public:
+         explicit eosio_abigen_consumer(CompilerInstance *CI, std::string file)
+            : visitor(new eosio_abigen_visitor(CI)), main_file(file), ci(CI) { }
+
+         virtual void HandleTranslationUnit(ASTContext &Context) {
+            auto& src_mgr = Context.getSourceManager();
+            auto& f_mgr = src_mgr.getFileManager();
+            auto main_fe = f_mgr.getFile(main_file);
+            if (main_fe) {
+               auto fid = src_mgr.getOrCreateFileID(f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
+               visitor->TraverseDecl(Context.getTranslationUnitDecl());
+               /*
+               for (auto ad : visitor->action_decls)
+                  visitor->create_action_dispatch(ad);
+
+               for (auto nd : visitor->notify_decls)
+                  visitor->create_notify_dispatch(nd);
+
+               if (cg.actions.size() < 1 && cg.notify_handlers.size() < 1) {
+                  return;
+               }
+               */
+            }
+         }
+
+      };
+
+      class eosio_abigen_frontend_action : public ASTFrontendAction {
+      public:
+         virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+            CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
+            return std::make_unique<eosio_abigen_consumer>(&CI, file);
+         }
    };
 }} // ns eosio::cdt
