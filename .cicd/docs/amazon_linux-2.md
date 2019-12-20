@@ -93,6 +93,7 @@ make test
 These commands uninstall the EOSIO.CDT software from the specified OS.
 <!-- DAC UNINSTALL -->
 ```sh
+awk '!seen[$0]++' $EOSIO_CDT_LOCATION/build/install_manifest.txt
 xargs rm < $EOSIO_CDT_LOCATION/build/install_manifest.txt
 rm -rf $EOSIO_CDT_LOCATION/build
 ```
