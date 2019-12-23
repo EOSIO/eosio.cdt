@@ -1,7 +1,6 @@
 #!/bin/bash
 set -eo pipefail
-export EOSIO_CDT_LOCATION=${EOSIO_CDT_LOCATION:-"/Users/anka/eosio/cdt"}
-export EOSIO_CDT_INSTALL_LOCATION=${EOSIO_CDT_INSTALL_LOCATION:-"/Users/anka/eosio/install"}
+HOME=/Users/anka
 VERSION=1
 # Commands from the documentation are inserted right below this line
 # Anything below here is exclusive to our CI/CD

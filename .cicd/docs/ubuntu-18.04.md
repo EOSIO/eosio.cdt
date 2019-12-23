@@ -26,8 +26,9 @@ These commands set the EOSIO.CDT directories, install git, and clone t
 <!-- DAC CLONE -->
 ```sh
 # set EOSIO.CDT directories
-export EOSIO_CDT_LOCATION=$HOME/eosio/cdt
-export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_CDT_LOCATION/../install
+export EOSIO_LOCATION=$HOME/eosio
+export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
+export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 apt-get update && apt-get upgrade -y && DEBIAN_FRONTEND=noninteractive apt-get install -y git
