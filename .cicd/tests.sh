@@ -8,6 +8,8 @@ PRE_COMMANDS="cd $MOUNTED_DIR/build"
 TEST="ctest -j$JOBS -L unit_tests -V -T Test"
 COMMANDS="$PRE_COMMANDS && $TEST"
 
+[[ $TRAVIS != true ]] && buildkite-agent artifact download build.tar.gz . --step "$PLATFORM_FULL_NAME - Build" && tar -xzf build.tar.gz
+
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute

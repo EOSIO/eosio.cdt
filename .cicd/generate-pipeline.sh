@@ -98,7 +98,6 @@ echo $PLATFORMS_JSON_ARRAY | jq -cr '.[]' | while read -r PLATFORM_JSON; do
     command:
       - "./.cicd/generate-base-images.sh"
       - "./.cicd/build.sh"
-      - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
     agents:
@@ -115,7 +114,6 @@ EOF
     command:
       - "git clone \$BUILDKITE_REPO eosio/cdt && cd eosio/cdt && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio/cdt && ./.cicd/build.sh"
-      - "cd eosio/cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
       - chef/anka#v0.5.5:
           no-volume: true
@@ -180,6 +178,7 @@ for ROUND in $(seq 1 $ROUNDS); do
       - "./.cicd/tests.sh"
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
+      PLATFORM_FULL_NAME: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL)"
     agents:
       queue: "$BUILDKITE_BUILD_AGENT_QUEUE"
     retry:
@@ -215,6 +214,7 @@ EOF
           cd: ~
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
+      PLATFORM_FULL_NAME: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL)"
     agents: "queue=mac-anka-large-node-fleet"
     retry:
       manual:
@@ -246,6 +246,7 @@ EOF
       - "./.cicd/toolchain-tests.sh"
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
+      PLATFORM_FULL_NAME: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL)"
     agents:
       queue: "$BUILDKITE_BUILD_AGENT_QUEUE"
     retry:
@@ -281,6 +282,7 @@ EOF
           cd: ~
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
+      PLATFORM_FULL_NAME: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL)"
     agents: "queue=mac-anka-large-node-fleet"
     retry:
       manual:

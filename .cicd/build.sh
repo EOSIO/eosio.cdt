@@ -56,3 +56,5 @@ else # Linux
     echo "$ docker exec $CONTAINER_NAME bash -c \"$BUILD_COMMANDS\""
     eval docker exec $CONTAINER_NAME bash -c \"$BUILD_COMMANDS\"
 fi
+
+cd $EOSIO_CDT_LOCATION && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz
