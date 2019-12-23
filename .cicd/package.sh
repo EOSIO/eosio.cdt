@@ -2,9 +2,11 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
-mkdir -p $BUILD_DIR
+[[ $TRAVIS != true ]] && buildkite-agent artifact download build.tar.gz . --step "$PLATFORM_FULL_NAME - Build"
 
 if [[ $(uname) == 'Darwin' ]]; then
+
+    tar -xzf build.tar.gz
 
     bash -c "cd build/packages && chmod 755 ./*.sh && ./generate_package.sh brew"
 
@@ -23,11 +25,9 @@ if [[ $(uname) == 'Darwin' ]]; then
 
 else # Linux
 
-    ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
+    ARGS=${ARGS:-"--rm --init $(buildkite-intrinsics) -v $(pwd):$(pwd)"}
 
-    . $HELPERS_DIR/docker-hash.sh
-
-    PRE_COMMANDS="cd $MOUNTED_DIR/build/packages && chmod 755 $MOUNTED_DIR/build/packages/*.sh"
+    PRE_COMMANDS="cd $(pwd)/build/packages && chmod 755 $(pwd)/build/packages/*.sh"
 
     if [[ "$IMAGE_TAG" =~ "ubuntu" ]]; then
         ARTIFACT='*.deb'
@@ -39,17 +39,10 @@ else # Linux
         PACKAGE_COMMANDS="mkdir -p ~/rpmbuild/BUILD && mkdir -p ~/rpmbuild/BUILDROOT && mkdir -p ~/rpmbuild/RPMS && mkdir -p ~/rpmbuild/SOURCES && mkdir -p ~/rpmbuild/SPECS && mkdir -p ~/rpmbuild/SRPMS && yum install -y rpm-build && ./generate_package.sh $PACKAGE_TYPE"
     fi
 
-    COMMANDS="$PRE_COMMANDS && $PACKAGE_COMMANDS"
-
-    # Load BUILDKITE Environment Variables for use in docker run
-    if [[ -f $BUILDKITE_ENV_FILE ]]; then
-        evars=""
-        while read -r var; do
-            evars="$evars --env ${var%%=*}"
-        done < "$BUILDKITE_ENV_FILE"
-    fi
-
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+    PACKAGE_COMMANDS="cd $(pwd) && tar -xzf build.tar.gz && $PRE_COMMANDS && $PACKAGE_COMMANDS"
+    . $HELPERS_DIR/populate-template-and-hash.sh -h # obtain $FULL_TAG (and don't overwrite existing file)
+    echo "$ docker run $ARGS $FULL_TAG bash -c \"$PACKAGE_COMMANDS\""
+    eval docker run $ARGS $FULL_TAG bash -c \"$PACKAGE_COMMANDS\"
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x

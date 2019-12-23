@@ -2,16 +2,15 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
-mkdir -p $BUILD_DIR
-
-PRE_COMMANDS="cd $MOUNTED_DIR/build"
+PRE_COMMANDS="cd $(pwd)/build"
 TEST="ctest -j$JOBS -L unit_tests -V -T Test"
-COMMANDS="$PRE_COMMANDS && $TEST"
+TESTS_COMMANDS="$PRE_COMMANDS && $TEST"
 
-[[ $TRAVIS != true ]] && buildkite-agent artifact download build.tar.gz . --step "$PLATFORM_FULL_NAME - Build" && tar -xzf build.tar.gz
+[[ $TRAVIS != true ]] && buildkite-agent artifact download build.tar.gz . --step "$PLATFORM_FULL_NAME - Build"
 
 if [[ $(uname) == 'Darwin' ]]; then
 
+    [[ $TRAVIS != true ]] && tar -xzf build.tar.gz
     # You can't use chained commands in execute
     cd $BUILD_DIR
     set +e
@@ -21,22 +20,14 @@ if [[ $(uname) == 'Darwin' ]]; then
 
 else # Linux
 
-    ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
-
-    . $HELPERS_DIR/docker-hash.sh
-
-    [[ $TRAVIS == true ]] && ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache"
-
-    # Load BUILDKITE Environment Variables for use in docker run
-    if [[ -f $BUILDKITE_ENV_FILE ]]; then
-        evars=""
-        while read -r var; do
-            evars="$evars --env ${var%%=*}"
-        done < "$BUILDKITE_ENV_FILE"
-    fi
+    ARGS=${ARGS:-"--rm --init $(buildkite-intrinsics) -v $(pwd):$(pwd)"}
+    [[ $TRAVIS == true ]] && ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache" || TESTS_COMMANDS="cd $(pwd) && tar -xzf build.tar.gz && $TESTS_COMMANDS"
+    . $HELPERS_DIR/populate-template-and-hash.sh -h # obtain $FULL_TAG (and don't overwrite existing file)
+    echo "$ docker run $ARGS $FULL_TAG bash -c \"$TESTS_COMMANDS\""
     set +e
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+    eval docker run $ARGS $FULL_TAG bash -c \"$TESTS_COMMANDS\"
     EXIT_STATUS=$?
+
 fi
 # buildkite
 if [[ "$BUILDKITE" == 'true' ]]; then

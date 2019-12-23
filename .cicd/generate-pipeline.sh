@@ -334,6 +334,7 @@ cat <<EOF
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
       IMAGE_TAG: "centos-7.6"
+      PLATFORM_FULL_NAME: ":centos: Centos 7.6"
       OS: "el7" # OS and PKGTYPE required for lambdas
       PKGTYPE: "rpm"
     agents:
@@ -348,6 +349,7 @@ cat <<EOF
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
       IMAGE_TAG: "ubuntu-18.04"
+      PLATFORM_FULL_NAME: ":ubuntu: Ubuntu 18.04"
       OS: "ubuntu-18.04" # OS and PKGTYPE required for lambdas
       PKGTYPE: "deb"
     agents:
@@ -373,6 +375,8 @@ cat <<EOF
           wait-network: true
     agents:
       - "queue=mac-anka-node-fleet"
+    env:
+      PLATFORM_FULL_NAME: ":darwin: macOS 10.14"
     timeout: 10
     skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
 

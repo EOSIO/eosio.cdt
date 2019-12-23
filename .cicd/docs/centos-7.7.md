@@ -80,8 +80,9 @@ cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3
 These commands build the EOSIO.CDT software on the specified OS. Make sure to [Install EOSIO.CDT Dependencies](#install-EOSIO.CDT-dependencies) first.
 <!-- DAC BUILD -->
 ```sh
-mkdir -p $EOSIO_CDT_LOCATION/build
-cd $EOSIO_CDT_LOCATION/build
+export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
+mkdir -p $EOSIO_CDT_BUILD_LOCATION
+cd $EOSIO_CDT_BUILD_LOCATION
 source /opt/rh/devtoolset-7/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 make -j$(nproc)
 ```
