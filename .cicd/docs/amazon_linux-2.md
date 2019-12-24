@@ -78,7 +78,7 @@ cd $EOSIO_CDT_BUILD_LOCATION && make -j$(nproc)
 This command installs the EOSIO.CDT software on the specified OS. Make sure to [Build EOSIO.CDT](#build-EOSIO.CDT) first.
 <!-- DAC INSTALL -->
 ```sh
-make install
+cd $EOSIO_CDT_BUILD_LOCATION && make install
 ```
 <!-- DAC INSTALL END -->
 
@@ -86,7 +86,7 @@ make install
 These commands validate the EOSIO.CDT software installation on the specified OS. This task is optional but recommended. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first.
 <!-- DAC TEST -->
 ```sh
-make test
+cd $EOSIO_CDT_BUILD_LOCATION && make test
 ```
 <!-- DAC TEST END -->
 
