@@ -29,6 +29,7 @@ These commands set the EOSIO.CDT directories, install git, and clone t
 export EOSIO_LOCATION=$HOME/eosio
 export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
 export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
+export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 yum update -y && yum install -y git
@@ -46,7 +47,6 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 yum install -y gcc.x86_64 gcc-c++.x86_64 autoconf automake libtool make bzip2 \
     bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 libstdc++.x86_64 \
     python.x86_64 python3-devel.x86_64 libedit-devel.x86_64 doxygen.x86_64 graphviz.x86_64 perl
-PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build lcov
 cd $EOSIO_CDT_INSTALL_LOCATION && git clone https://github.com/linux-test-project/lcov.git && \
     cd lcov && \

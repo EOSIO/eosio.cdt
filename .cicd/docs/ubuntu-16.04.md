@@ -29,6 +29,7 @@ These commands set the EOSIO.CDT directories, install git, and clone t
 export EOSIO_LOCATION=$HOME/eosio
 export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
 export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
+export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 apt-get update && apt-get upgrade -y && DEBIAN_FRONTEND=noninteractive apt-get install -y git
@@ -47,7 +48,6 @@ apt-get install -y clang-4.0 lldb-4.0 libclang-4.0-dev make automake libbz2-dev 
     libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
     wget libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
-PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # install cmake
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
     tar -xzf cmake-3.10.2.tar.gz && \

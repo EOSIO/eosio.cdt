@@ -29,6 +29,7 @@ These commands set the EOSIO.CDT directories, install git, and clone t
 export EOSIO_LOCATION=$HOME/eosio
 export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
 export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
+export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 yum update -y && yum install -y git
