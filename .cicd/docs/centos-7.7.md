@@ -50,7 +50,6 @@ yum --enablerepo=extras install -y centos-release-scl && \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl libffi-devel.x86_64
-PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 # build Python 3.7.4
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     source /opt/rh/devtoolset-7/enable && \
@@ -84,7 +83,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
 mkdir -p $EOSIO_CDT_BUILD_LOCATION
 cd $EOSIO_CDT_BUILD_LOCATION && source /opt/rh/devtoolset-7/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
-cd $EOSIO_CDT_BUILD_LOCATION && make -j$(nproc)
+cd $EOSIO_CDT_BUILD_LOCATION && source /opt/rh/devtoolset-7/enable && make -j$(nproc)
 ```
 <!-- DAC BUILD END -->
 
