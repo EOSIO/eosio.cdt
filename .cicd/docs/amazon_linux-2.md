@@ -84,11 +84,11 @@ cd $EOSIO_CDT_BUILD_LOCATION && make install
 
 ## Test EOSIO.CDT
 These commands validate the EOSIO.CDT software installation on the specified OS. This task is optional but recommended. Make sure to [Install EOSIO.CDT](#install-EOSIO.CDT) first.
-<!-- DAC TEST -->
+<!-- DAC IGNORE -->
 ```sh
 cd $EOSIO_CDT_BUILD_LOCATION && make test
 ```
-<!-- DAC TEST END -->
+<!-- DAC IGNORE END -->
 
 ## Uninstall EOSIO.CDT
 These commands uninstall the EOSIO.CDT software from the specified OS.
