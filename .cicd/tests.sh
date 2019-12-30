@@ -8,8 +8,8 @@ TEST="ctest -j$JOBS -L unit_tests -V -T Test"
 if [[ $(uname) == 'Darwin' ]]; then # macOS
     if [[ $TRAVIS == true ]]; then
         . /tmp/$POPULATED_FILE_NAME
-        cp -rfp $(pwd) $EOS_LOCATION
-        cd $EOS_LOCATION
+        cp -rfp $(pwd) $EOSIO_CDT_LOCATION
+        cd $EOSIO_CDT_LOCATION
         tar -xzf build.tar.gz
     fi
     set +e # defer error handling to end
@@ -18,10 +18,10 @@ if [[ $(uname) == 'Darwin' ]]; then # macOS
 else # Linux
     ARGS="--rm --init -v $(pwd):$(pwd) $(buildkite-intrinsics) -e JOBS"
     . $HELPERS_DIR/populate-template-and-hash.sh -h # Obtain the hash from the populated template 
-    echo "cp -rfp $(pwd) \$EOS_LOCATION && cd \$EOS_LOCATION" >> /tmp/$POPULATED_FILE_NAME # We don't need to clone twice
+    echo "cp -rfp $(pwd) \$EOSIO_CDT_LOCATION && cd \$EOSIO_CDT_LOCATION" >> /tmp/$POPULATED_FILE_NAME # We don't need to clone twice
     [[ $TRAVIS != true ]] && echo "tar -xzf build.tar.gz" >> /tmp/$POPULATED_FILE_NAME
     echo "$TEST" >> /tmp/$POPULATED_FILE_NAME
-    echo "cp -rfp \$EOS_LOCATION/build $(pwd)" >> /tmp/$POPULATED_FILE_NAME
+    echo "cp -rfp \$EOSIO_CDT_LOCATION/build $(pwd)" >> /tmp/$POPULATED_FILE_NAME
     TEST_COMMANDS="cd $(pwd) && ./$POPULATED_FILE_NAME"
     cat /tmp/$POPULATED_FILE_NAME
     mv /tmp/$POPULATED_FILE_NAME ./$POPULATED_FILE_NAME
