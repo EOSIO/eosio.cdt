@@ -21,15 +21,21 @@ Select a manual task below, then copy/paste the shell commands to a Unix termina
 [[info | Building EOSIO.CDT on another OS?]]
 | Visit the [Build EOSIO.CDT from Source](../index.md) section.
 
-## Download EOSIO.CDT Repository
-These commands set the EOSIO.CDT directories, install git, and clone the EOSIO.CDT repository.
-<!-- DAC CLONE -->
+## Set EOSIO.CDT Environment Variables
+<!-- DAC ENV -->
 ```sh
-# set EOSIO.CDT directories
 export EOSIO_LOCATION=$HOME/eosio
 export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
 export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
 export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
+export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
+```
+
+## Download EOSIO.CDT Repository
+These commands set the EOSIO.CDT directories, install git, and clone the EOSIO.CDT repository.
+<!-- DAC CLONE -->
+```sh
+# create EOSIO.CDT dependency directory
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 yum update -y && yum install -y git
@@ -67,7 +73,6 @@ cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3
 These commands build the EOSIO.CDT software on the specified OS. Make sure to [Install EOSIO.CDT Dependencies](#install-EOSIO.CDT-dependencies) first.
 <!-- DAC BUILD -->
 ```sh
-export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
 mkdir -p $EOSIO_CDT_BUILD_LOCATION
 cd $EOSIO_CDT_BUILD_LOCATION && $EOSIO_CDT_INSTALL_LOCATION/bin/cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 cd $EOSIO_CDT_BUILD_LOCATION && make -j$(nproc)

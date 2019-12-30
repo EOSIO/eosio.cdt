@@ -21,15 +21,21 @@ Select a manual task below, then copy/paste the shell commands to a Unix termina
 [[info | Building EOSIO.CDT on another OS?]]
 | Visit the [Build EOSIO.CDT from Source](../index.md) section.
 
-## Download EOSIO.CDT Repository
-These commands set the EOSIO.CDT directories, install git, and clone the EOSIO.CDT repository.
-<!-- DAC CLONE -->
+## Set EOSIO.CDT Environment Variables
+<!-- DAC ENV -->
 ```sh
-# set EOSIO.CDT directories
 export EOSIO_LOCATION=$HOME/eosio
 export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
 export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
 export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
+export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
+```
+
+## Download EOSIO.CDT Repository
+These commands set the EOSIO.CDT directories, install git, and clone the EOSIO.CDT repository.
+<!-- DAC CLONE -->
+```sh
+# create EOSIO.CDT dependency directory
 mkdir -p $EOSIO_CDT_INSTALL_LOCATION
 # install git
 yum update -y && yum install -y git

@@ -1,47 +1,54 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
-
-PRE_COMMANDS="cd $(pwd)/build"
+export DOCKERIZATION=false
 TEST="ctest -j$JOBS -L unit_tests -V -T Test"
-TESTS_COMMANDS="$PRE_COMMANDS && $TEST"
-
 [[ $TRAVIS != true ]] && buildkite-agent artifact download build.tar.gz . --step "$PLATFORM_FULL_NAME - Build"
-
-if [[ $(uname) == 'Darwin' ]]; then
-
-    [[ $TRAVIS != true ]] && tar -xzf build.tar.gz
-    # You can't use chained commands in execute
-    cd $BUILD_DIR
-    set +e
-    bash -c "$TEST"
+. ./.cicd/helpers/populate-template-and-hash.sh '<!-- DAC ENV'
+if [[ $(uname) == 'Darwin' ]]; then # macOS
+    if [[ $TRAVIS == true ]]; then
+        . /tmp/$POPULATED_FILE_NAME
+        cp -rfp $(pwd) $EOS_LOCATION
+        cd $EOS_LOCATION
+        tar -xzf build.tar.gz
+    fi
+    set +e # defer error handling to end
+    "$TEST"
     EXIT_STATUS=$?
-    cd $ROOT_DIR
-
 else # Linux
-
-    ARGS=${ARGS:-"--rm --init $(buildkite-intrinsics) -v $(pwd):$(pwd)"}
-    [[ $TRAVIS == true ]] && ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache" || TESTS_COMMANDS="cd $(pwd) && tar -xzf build.tar.gz && $TESTS_COMMANDS"
-    . $HELPERS_DIR/populate-template-and-hash.sh -h # obtain $FULL_TAG (and don't overwrite existing file)
-    echo "$ docker run $ARGS $FULL_TAG bash -c \"$TESTS_COMMANDS\""
-    set +e
-    eval docker run $ARGS $FULL_TAG bash -c \"$TESTS_COMMANDS\"
+    ARGS="--rm --init -v $(pwd):$(pwd) $(buildkite-intrinsics) -e JOBS"
+    . $HELPERS_DIR/populate-template-and-hash.sh -h # Obtain the hash from the populated template 
+    echo "cp -rfp $(pwd) \$EOS_LOCATION && cd \$EOS_LOCATION" >> /tmp/$POPULATED_FILE_NAME # We don't need to clone twice
+    [[ $TRAVIS != true ]] && echo "tar -xzf build.tar.gz" >> /tmp/$POPULATED_FILE_NAME
+    echo "$TEST" >> /tmp/$POPULATED_FILE_NAME
+    echo "cp -rfp \$EOS_LOCATION/build $(pwd)" >> /tmp/$POPULATED_FILE_NAME
+    TEST_COMMANDS="cd $(pwd) && ./$POPULATED_FILE_NAME"
+    cat /tmp/$POPULATED_FILE_NAME
+    mv /tmp/$POPULATED_FILE_NAME ./$POPULATED_FILE_NAME
+    echo "$ docker run $ARGS $FULL_TAG bash -c \"$TEST_COMMANDS\""
+    set +e # defer error handling to end
+    eval docker run $ARGS $FULL_TAG bash -c \"$TEST_COMMANDS\"
     EXIT_STATUS=$?
-
 fi
 # buildkite
-if [[ "$BUILDKITE" == 'true' ]]; then
+if [[ $BUILDKITE == true ]]; then
     cd build
     # upload artifacts
     echo '+++ :arrow_up: Uploading Artifacts'
+    echo 'Compressing core dumps...'
+    [[ $((`ls -1 core.* 2>/dev/null | wc -l`)) != 0 ]] && tar czf core.tar.gz core.* || : # collect core dumps
     echo 'Exporting xUnit XML'
     mv -f ./Testing/$(ls ./Testing/ | grep '2' | tail -n 1)/Test.xml test-results.xml
     echo 'Uploading artifacts'
+    [[ -f config.ini ]] && buildkite-agent artifact upload config.ini
+    [[ -f core.tar.gz ]] && buildkite-agent artifact upload core.tar.gz
+    [[ -f genesis.json ]] && buildkite-agent artifact upload genesis.json
+    [[ -f mongod.log ]] && buildkite-agent artifact upload mongod.log
     buildkite-agent artifact upload test-results.xml
     echo 'Done uploading artifacts.'
 fi
 # re-throw
-if [[ "$EXIT_STATUS" != 0 ]]; then
+if [[ $EXIT_STATUS != 0 ]]; then
     echo "Failing due to non-zero exit status from ctest: $EXIT_STATUS"
     exit $EXIT_STATUS
 fi

@@ -112,8 +112,8 @@ EOF
         cat <<EOF
   - label: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Build"
     command:
-      - "git clone \$BUILDKITE_REPO eosio/cdt && cd eosio/cdt && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio/cdt && ./.cicd/build.sh"
+      - "git clone \$BUILDKITE_REPO cdt-tmp && cd cdt-tmp && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd cdt-tmp && ./.cicd/build.sh"
     plugins:
       - chef/anka#v0.5.5:
           no-volume: true
@@ -139,7 +139,7 @@ EOF
       TEMPLATE: $MOJAVE_ANKA_TEMPLATE_NAME
       TEMPLATE_TAG: $MOJAVE_ANKA_TAG_BASE
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
-      TAG_COMMANDS: "sleep 10; brew install md5sha1sum && git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} cdt-tmp && cd cdt-tmp && $GIT_FETCH git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive && export IMAGE_TAG=$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && export BUILDKITE_COMMIT=$BUILDKITE_COMMIT && . ./.cicd/helpers/populate-template-and-hash.sh && cat /tmp/$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && . /tmp/$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && cd .. && rm -rf cdt-tmp"
+      TAG_COMMANDS: "sleep 10; brew install md5sha1sum && git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} ~/eos-tmp && cd ~/eos-tmp && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive && export IMAGE_TAG=$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && export BUILDKITE_COMMIT=\$BUILDKITE_COMMIT && . ./.cicd/helpers/populate-template-and-hash.sh && cat /tmp/$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && . /tmp/$(echo "$PLATFORM_JSON" | jq -r .FILE_NAME) && rm -rf ~/eos-tmp"
       PROJECT_TAG: $(echo "$PLATFORM_JSON" | jq -r .HASHED_IMAGE_TAG)
     timeout: ${TIMEOUT:-180}
     agents: "queue=mac-anka-large-node-fleet"
@@ -174,7 +174,6 @@ for ROUND in $(seq 1 $ROUNDS); do
             cat <<EOF
   - label: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Unit Tests"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step '$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Build' && tar -xzf build.tar.gz"
       - "./.cicd/tests.sh"
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
@@ -194,9 +193,8 @@ EOF
             cat <<EOF
   - label: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Unit Tests"
     command:
-      - "git clone \$BUILDKITE_REPO eosio/cdt && cd eosio/cdt && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio/cdt && buildkite-agent artifact download build.tar.gz . --step '$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Build' && tar -xzf build.tar.gz"
-      - "cd eosio/cdt && ./.cicd/tests.sh"
+      - "git clone \$BUILDKITE_REPO cdt-tmp && cd cdt-tmp && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd cdt-tmp && ./.cicd/tests.sh"
     plugins:
       - chef/anka#v0.5.4:
           no-volume: true
@@ -242,7 +240,6 @@ EOF
             cat <<EOF
   - label: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) -  Toolchain Tests"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step '$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Build' && tar -xzf build.tar.gz"
       - "./.cicd/toolchain-tests.sh"
     env:
       IMAGE_TAG: $(echo "$PLATFORM_JSON" | jq -r .FILE_NAME)
@@ -262,9 +259,8 @@ EOF
             cat <<EOF
   - label: "$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) -  Toolchain Tests"
     command:
-      - "git clone \$BUILDKITE_REPO eosio/cdt && cd eosio/cdt && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio/cdt && buildkite-agent artifact download build.tar.gz . --step '$(echo "$PLATFORM_JSON" | jq -r .ICON) $(echo "$PLATFORM_JSON" | jq -r .PLATFORM_NAME_FULL) - Build' && tar -xzf build.tar.gz"
-      - "cd eosio/cdt && ./.cicd/toolchain-tests.sh"
+      - "git clone \$BUILDKITE_REPO cdt-tmp && cd cdt-tmp && $GIT_FETCH git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd cdt-tmp && ./.cicd/toolchain-tests.sh"
     plugins:
       - chef/anka#v0.5.4:
           no-volume: true
@@ -329,7 +325,6 @@ cat <<EOF
 
   - label: ":centos: Centos 7.6 - Package Builder"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.6 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/package.sh"
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
@@ -344,7 +339,6 @@ cat <<EOF
 
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/package.sh"
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
@@ -359,11 +353,10 @@ cat <<EOF
 
   - label: ":darwin: Mojave - Package Builder"
     command:
-      - "git clone $BUILDKITE_REPO eosio/cdt"
-      - "cd eosio/cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio/cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio/cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
-      - "cd eosio/cdt && ./.cicd/package.sh"
+      - "git clone $BUILDKITE_REPO cdt-tmp"
+      - "cd cdt-tmp && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd cdt-tmp && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd cdt-tmp && ./.cicd/package.sh"
     plugins:
       - chef/anka#v0.5.1:
           no-volume: true
