@@ -69,9 +69,8 @@ curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
 These commands build the EOSIO.CDT software on the specified OS. Make sure to [Install EOSIO.CDT Dependencies](#install-EOSIO.CDT-dependencies) first.
 <!-- DAC BUILD -->
 ```sh
-export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
 mkdir -p $EOSIO_CDT_BUILD_LOCATION
-cd $EOSIO_CDT_BUILD_LOCATION && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
+cd $EOSIO_CDT_BUILD_LOCATION && cmake -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 cd $EOSIO_CDT_BUILD_LOCATION && make -j$(nproc)
 ```
 <!-- DAC BUILD END -->

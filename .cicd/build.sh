@@ -21,13 +21,13 @@ else # Linux
         ARGS=${ARGS:-"-v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e JOBS -e TRAVIS -e CCACHE_DIR=/opt/.ccache"}
         export CONTAINER_NAME=$TRAVIS_JOB_ID
         sed -i -e 's/^cmake /cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache /g' /tmp/$POPULATED_FILE_NAME
-        if [[ $IMAGE_TAG == 'amazon_linux-2-unpinned' ]]; then
+        if [[ $IMAGE_TAG == 'amazon_linux-2' ]]; then
             PRE_COMMANDS="export PATH=/usr/lib64/ccache:\\\$PATH"
-        elif [[ $IMAGE_TAG == 'centos-7.7-unpinned' ]]; then
+        elif [[ $IMAGE_TAG == 'centos-7.7' ]]; then
             PRE_COMMANDS="export PATH=/usr/lib64/ccache:\\\$PATH"
-        elif [[ $IMAGE_TAG == 'ubuntu-16.04-unpinned' ]]; then
+        elif [[ $IMAGE_TAG == 'ubuntu-16.04' ]]; then
             PRE_COMMANDS="export PATH=/usr/lib/ccache:\\\$PATH"
-        elif [[ $IMAGE_TAG == 'ubuntu-18.04-unpinned' ]]; then
+        elif [[ $IMAGE_TAG == 'ubuntu-18.04' ]]; then
             PRE_COMMANDS="export PATH=/usr/lib/ccache:\\\$PATH"
         fi
         BUILD_COMMANDS="ccache -s && $PRE_COMMANDS && "
