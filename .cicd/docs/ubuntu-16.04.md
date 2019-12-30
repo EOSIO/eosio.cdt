@@ -30,6 +30,7 @@ export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
 export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
 export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
 ```
+<!-- DAC ENV END -->
 
 ## Download EOSIO.CDT Repository
 These commands set the EOSIO.CDT directories, install git, and clone the EOSIO.CDT repository.
