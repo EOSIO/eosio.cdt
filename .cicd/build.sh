@@ -15,7 +15,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     cat /tmp/$POPULATED_FILE_NAME
     . /tmp/$POPULATED_FILE_NAME # This file is populated from the platform's build documentation code block
 else # Linux
-    sed -i 's/git clone https:\/\/github.com\/EOSIO.*/cp -rfp $(pwd) \$EOSIO_CDT_LOCATION \&\& cd \$EOSIO_CDT_LOCATION/g' /tmp/$POPULATED_FILE_NAME # We don't need to clone twice
+    sed -i 's/git clone https:\/\/github.com.*/cp -rfp $(pwd) \$EOSIO_CDT_LOCATION \&\& cd \$EOSIO_CDT_LOCATION/g' /tmp/$POPULATED_FILE_NAME # We don't need to clone twice
     ARGS=${ARGS:-"--rm --init -v $(pwd):$(pwd) $(buildkite-intrinsics) -e JOBS"} # We must mount $(pwd) in as itself to avoid https://stackoverflow.com/questions/31381322/docker-in-docker-cannot-mount-volume
     if [[ $TRAVIS == true ]]; then
         ARGS=${ARGS:-"-v /usr/lib/ccache -v $HOME/.ccache:/opt/.ccache -e JOBS -e TRAVIS -e CCACHE_DIR=/opt/.ccache"}
