@@ -81,7 +81,7 @@ struct project {
                                     "   @_project\n"
                                     "   SOURCE_DIR ${CMAKE_SOURCE_DIR}/src\n"
                                     "   BINARY_DIR ${CMAKE_BINARY_DIR}/@\n"
-                                    "   CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${EOSIO_CDT_ROOT}/lib/cmake/eosio/cdtioWasmToolchain.cmake\n"
+                                    "   CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake\n"
                                     "   UPDATE_COMMAND \"\"\n"
                                     "   PATCH_COMMAND \"\"\n"
                                     "   TEST_COMMAND \"\"\n"
