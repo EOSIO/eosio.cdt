@@ -88,7 +88,7 @@ These commands build the EOSIO.CDT software on the specified OS. Make sure to [I
 <!-- DAC BUILD -->
 ```sh
 mkdir -p $EOSIO_CDT_BUILD_LOCATION
-cd $EOSIO_CDT_BUILD_LOCATION && source /opt/rh/devtoolset-7/enable && cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
+cd $EOSIO_CDT_BUILD_LOCATION && source /opt/rh/devtoolset-7/enable && $EOSIO_CDT_INSTALL_LOCATION/bin/cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
 cd $EOSIO_CDT_BUILD_LOCATION && source /opt/rh/devtoolset-7/enable && make -j$(nproc)
 ```
 <!-- DAC BUILD END -->
