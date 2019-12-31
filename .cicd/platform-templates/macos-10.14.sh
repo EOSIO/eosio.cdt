@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 HOME=/Users/anka
-VERSION=1
+VERSION=2
 # Commands from the documentation are inserted right below this line
 # Anything below here is exclusive to our CI/CD
 ## Cleanup EOSIO.CDT directory 

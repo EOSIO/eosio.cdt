@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 ENV HOME=/root
-ENV VERSION 1
+ENV VERSION 2
 # Commands from the documentation are inserted right below this line
 # Anything below here is exclusive to our CI/CD
 ## Set WORKDIR to location we mount into the container
