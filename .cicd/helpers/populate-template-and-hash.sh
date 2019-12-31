@@ -80,6 +80,7 @@ else # Mac OSX
 fi
 
 echo "$POP_COMMANDS" > /tmp/commands
+[[ $DOCKERIZATION == false ]] && echo "#\!/bin/bash\nset -eo pipefail" > /tmp/$POPULATED_FILE_NAME
 if ( [[ $DOCKERIZATION == false ]] && [[ $ONLYHASH == false ]] ); then
   if [[ "$(uname)" == 'Darwin' ]]; then # Mac needs to use the template fr envs
     cat .cicd/platform-templates/${FILE:-"${IMAGE_TAG}$FILE_EXTENSION"} > /tmp/$POPULATED_FILE_NAME
@@ -87,13 +88,13 @@ if ( [[ $DOCKERIZATION == false ]] && [[ $ONLYHASH == false ]] ); then
     sed -i -e '/Anything below here is exclusive to our CI\/CD/,$d' /tmp/$POPULATED_FILE_NAME
     echo "$POP_COMMANDS" >> /tmp/$POPULATED_FILE_NAME
   else
-    echo "$POP_COMMANDS" > /tmp/$POPULATED_FILE_NAME
+    echo "$POP_COMMANDS" >> /tmp/$POPULATED_FILE_NAME
   fi
 else
-  awk "NR==$APPEND_LINE{print;system(\"cat /tmp/commands\");next} 1" .cicd/platform-templates/${FILE:-"${IMAGE_TAG}$FILE_EXTENSION"} > /tmp/$POPULATED_FILE_NAME
+  awk "NR==$APPEND_LINE{print;system(\"cat /tmp/commands\");next} 1" .cicd/platform-templates/${FILE:-"${IMAGE_TAG}$FILE_EXTENSION"} >> /tmp/$POPULATED_FILE_NAME
 fi
 export DETERMINED_HASH=$(sha1sum /tmp/$POPULATED_FILE_NAME | awk '{ print $1 }')
-export HASHED_IMAGE_TAG="eos-$(basename ${FILE_NAME:-$IMAGE_TAG} | awk '{split($0,a,/\.(d|s)/); print a[1] }')-${DETERMINED_HASH}"
+export HASHED_IMAGE_TAG="$(basename $(git rev-parse --show-toplevel) | sed 's/\./_/g')-$(basename ${FILE_NAME:-$IMAGE_TAG} | awk '{split($0,a,/\.(d|s)/); print a[1] }')-${DETERMINED_HASH}"
 export FULL_TAG="eosio/ci:$HASHED_IMAGE_TAG"
 if [[ $TRAVIS == true ]]; then
   sed -i -e 's/^HOME=\/Users\/anka/HOME=\/Users\/travis/g' /tmp/$POPULATED_FILE_NAME
