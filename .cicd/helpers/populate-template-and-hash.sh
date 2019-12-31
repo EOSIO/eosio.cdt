@@ -102,7 +102,7 @@ else
   COMMIT_ID=$BUILDKITE_COMMIT
 fi
 sed -i -e 's/&& brew install git/&& brew install git || true/g' /tmp/$POPULATED_FILE_NAME
-sed -i -e "s/eos.git \$EOSIO_CDT_LOCATION/eos.git \$EOSIO_CDT_LOCATION \&\& cd \$EOSIO_CDT_LOCATION \&\& git pull \&\& git checkout -f $COMMIT_ID/g" /tmp/$POPULATED_FILE_NAME # MUST BE AFTER WE GENERATE THE HASH
+sed -i -e "s/\.git \$EOSIO_CDT_LOCATION/\.git \$EOSIO_CDT_LOCATION \&\& cd \$EOSIO_CDT_LOCATION \&\& git pull \&\& git checkout -f $COMMIT_ID/g" /tmp/$POPULATED_FILE_NAME # MUST BE AFTER WE GENERATE THE HASH
 chmod +x /tmp/$POPULATED_FILE_NAME
 [[ $DEBUG == true ]] && cat /tmp/$POPULATED_FILE_NAME
 if [[ $ONLYHASH == true ]]; then
