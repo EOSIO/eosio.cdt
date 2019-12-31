@@ -80,7 +80,6 @@ else # Mac OSX
 fi
 
 echo "$POP_COMMANDS" > /tmp/commands
-[[ $DOCKERIZATION == false ]] && echo -e "#!/bin/bash\nset -eo pipefail" > /tmp/$POPULATED_FILE_NAME
 if ( [[ $DOCKERIZATION == false ]] && [[ $ONLYHASH == false ]] ); then
   if [[ "$(uname)" == 'Darwin' ]]; then # Mac needs to use the template fr envs
     cat .cicd/platform-templates/${FILE:-"${IMAGE_TAG}$FILE_EXTENSION"} > /tmp/$POPULATED_FILE_NAME
@@ -102,6 +101,7 @@ if [[ $TRAVIS == true ]]; then
 else
   COMMIT_ID=$BUILDKITE_COMMIT
 fi
+[[ $DOCKERIZATION == false ]] && echo -e "#!/bin/bash\nset -eo pipefail" > /tmp/$POPULATED_FILE_NAME
 sed -i -e 's/&& brew install git/&& brew install git || true/g' /tmp/$POPULATED_FILE_NAME
 sed -i -e "s/\.git \$EOSIO_CDT_LOCATION/\.git \$EOSIO_CDT_LOCATION \&\& cd \$EOSIO_CDT_LOCATION \&\& git pull \&\& git checkout -f $COMMIT_ID/g" /tmp/$POPULATED_FILE_NAME # MUST BE AFTER WE GENERATE THE HASH
 chmod +x /tmp/$POPULATED_FILE_NAME
