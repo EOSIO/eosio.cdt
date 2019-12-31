@@ -80,7 +80,7 @@ else # Mac OSX
 fi
 
 echo "$POP_COMMANDS" > /tmp/commands
-[[ $DOCKERIZATION == false ]] && echo "#\!/bin/bash\nset -eo pipefail" > /tmp/$POPULATED_FILE_NAME
+[[ $DOCKERIZATION == false ]] && echo -e "#!/bin/bash\nset -eo pipefail" > /tmp/$POPULATED_FILE_NAME
 if ( [[ $DOCKERIZATION == false ]] && [[ $ONLYHASH == false ]] ); then
   if [[ "$(uname)" == 'Darwin' ]]; then # Mac needs to use the template fr envs
     cat .cicd/platform-templates/${FILE:-"${IMAGE_TAG}$FILE_EXTENSION"} > /tmp/$POPULATED_FILE_NAME
