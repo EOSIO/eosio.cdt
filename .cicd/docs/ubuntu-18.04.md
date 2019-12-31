@@ -51,10 +51,18 @@ These commands install the EOSIO.CDT software dependencies. Make sure to [Down
 <!-- DAC DEPS -->
 ```sh
 # install dependencies
-apt-get install -y clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
+apt-get install -y clang-4.0 lldb-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
     libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
     libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
+# install cmake
+cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
+    tar -xzf cmake-3.10.2.tar.gz && \
+    cd cmake-3.10.2 && \
+    ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
+    make -j$(nproc) && \
+    make install && \
+    rm -f $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz
 # install Python 3.7.4
 curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     tar xzf Python-3.7.4.tgz && \
