@@ -88,5 +88,8 @@ These commands uninstall the EOSIO.CDT software from the specified OS.
 awk '!seen[$0]++' $EOSIO_CDT_LOCATION/build/install_manifest.txt > $EOSIO_CDT_LOCATION/build/install_manifest.txt_deduped && rm -f $EOSIO_CDT_LOCATION/build/install_manifest.txt && mv $EOSIO_CDT_LOCATION/build/install_manifest.txt_deduped $EOSIO_CDT_LOCATION/build/install_manifest.txt
 xargs rm < $EOSIO_CDT_LOCATION/build/install_manifest.txt
 rm -rf $EOSIO_CDT_LOCATION/build
+rm -rf $EOSIO_CDT_INSTALL_LOCATION/eosio.cdt
+rm -rf $EOSIO_CDT_INSTALL_LOCATION/lib/cmake/eosio.cdt
+for file in $(cat modules/InstallCDT.cmake | grep "eosio_.*symlink(" | cut -d" " -f2 | sed 's/)//g'); do rm -f $EOSIO_CDT_INSTALL_LOCATION/bin/$file; done
 ```
 <!-- DAC UNINSTALL END -->
