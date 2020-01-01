@@ -62,7 +62,7 @@ cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3
     ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) && \
     make install && \
-    rm -f $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2
 # install Python 3.7.4
 cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     tar xzf Python-3.7.4.tgz && \

@@ -79,7 +79,7 @@ cd $EOSIO_CDT_INSTALL_LOCATION && curl -LO https://cmake.org/files/v3.10/cmake-3
     ./bootstrap --prefix=$EOSIO_CDT_INSTALL_LOCATION && \
     make -j$(nproc) && \
     make install && \
-    rm -f $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2
+    rm -rf $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2.tar.gz $EOSIO_CDT_INSTALL_LOCATION/cmake-3.10.2
 ```
 <!-- DAC DEPS END -->
 
