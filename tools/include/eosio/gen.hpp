@@ -467,7 +467,7 @@ struct generation_utils {
       }
       else if ( is_template_specialization( type, {"optional"} ) )
          return translate_type(get_template_argument( type ).getAsType())+"?";
-      else if ( is_template_specialization( type, {"map"} )) {
+      else if ( is_template_specialization( type, {"map", "unordered_map"} )) {
          auto t0 = translate_type(get_template_argument( type ).getAsType());
          auto t1 = translate_type(get_template_argument( type, 1).getAsType());
          return replace_in_name("pair_" + t0 + "_" + t1 + "[]");
