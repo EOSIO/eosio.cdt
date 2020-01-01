@@ -27,15 +27,10 @@ add_native_library(native_eosio
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(eosio PUBLIC
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/include
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
-                                 ${CMAKE_SOURCE_DIR}/libcxx/include
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
-target_link_libraries( eosio c c++ )
+target_link_libraries( eosio c++ c )
 add_dependencies( native_eosio eosio )
 
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
