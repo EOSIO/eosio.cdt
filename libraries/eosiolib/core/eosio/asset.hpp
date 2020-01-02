@@ -4,13 +4,12 @@
 #include "print.hpp"
 #include "check.hpp"
 #include "symbol.hpp"
+#include "stringify.hpp"
 
 #include <tuple>
 #include <limits>
 
 namespace eosio {
-
-   char* write_decimal( char* begin, char* end, bool dry_run, uint64_t number, uint8_t num_decimal_places, bool negative );
 
    /**
     *  @defgroup asset Asset
