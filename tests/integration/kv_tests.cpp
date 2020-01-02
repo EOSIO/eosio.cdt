@@ -73,6 +73,17 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_find, tester) try {
     push_action(N(kvtest), N(find), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(multi_tests_find_i128, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(findi), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
     create_accounts( { N(kvtest) } );
     produce_block();
@@ -82,6 +93,17 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
 
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(iteration), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE(multi_tests_iteration_insensitive, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(iterationi), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(multi_tests_range, tester) try {

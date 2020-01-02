@@ -61,22 +61,21 @@ struct key_type {
    size_t size;
    std::string buffer;
 
-   bool operator==(key_type k){
-      return size == k.size && buffer == k.buffer;
+   bool operator==(const key_type& k) const {
+      return std::tie(size, buffer) == std::tie(k.size, k.buffer);
    }
-   bool operator!=(key_type k){
-      return !(size == k.size && buffer == k.buffer);
+   bool operator!=(const key_type& k) const {
+      return !(*this == k);
    }
 };
 
-namespace _key_value_detail {
+namespace detail {
    constexpr static size_t max_stack_buffer_size = 512;
 }
 
 /*
 Key transformations
 The key-value store could provide a lexicographical ordering of uint8_t on the keys. The contract can create an ordering on top by transforming its keys. Example transforms:
-
    [x] - uint?_t: Convert to big-endian
    [x] - int?_t: Invert the MSB then convert to big-endian
    [x] - strings: Convert 0x00 to (0x00, 0x01). Append (0x00, 0x00) to the end. This transform allows arbitrary-length strings.
@@ -109,7 +108,7 @@ inline T swap_endian(T u) {
 }
 
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
-   using namespace _key_value_detail;
+   using namespace detail;
 
    auto bige_table = swap_endian<uint64_t>(table_name.value);
    auto bige_index = swap_endian<uint64_t>(index_name.value);
@@ -117,7 +116,7 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
    size_t size_64 = sizeof(index_name);
 
    size_t buffer_size = (2 * size_64) + sizeof(status);
-   void* buffer = buffer_size > _key_value_detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
+   void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
 
    memcpy(buffer, &status, sizeof(status));
    memcpy(((char*)buffer) + sizeof(status), &bige_table, size_64);
@@ -125,25 +124,25 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
 
    std::string s((char*)buffer, buffer_size);
 
-   if (buffer_size > _key_value_detail::max_stack_buffer_size) {
+   if (buffer_size > detail::max_stack_buffer_size) {
       free(buffer);
    }
 
    return {buffer_size, s};
 }
 
-inline key_type table_key(key_type prefix, key_type key) {
-   using namespace _key_value_detail;
+inline key_type table_key(const key_type& prefix, const key_type& key) {
+   using namespace detail;
 
    size_t buffer_size = key.size + prefix.size;
-   void* buffer = buffer_size > _key_value_detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
+   void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
 
    memcpy(buffer, prefix.buffer.data(), prefix.size);
    memcpy(((char*)buffer) + prefix.size, key.buffer.data(), key.size);
 
    std::string s((char*)buffer, buffer_size);
 
-   if (buffer_size > _key_value_detail::max_stack_buffer_size) {
+   if (buffer_size > detail::max_stack_buffer_size) {
       free(buffer);
    }
 
@@ -158,7 +157,7 @@ inline I flip_msb(I val) {
 
 template <typename I>
 inline key_type make_key(I val) {
-   using namespace _key_value_detail;
+   using namespace detail;
 
    if (std::is_signed<I>::value) {
       val = flip_msb(val);
@@ -167,31 +166,30 @@ inline key_type make_key(I val) {
    auto big_endian = swap_endian<I>(val);
 
    size_t data_size = pack_size(big_endian);
-   void* data_buffer = data_size > _key_value_detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
    datastream<char*> data_ds((char*)data_buffer, data_size);
    data_ds << big_endian;
 
    std::string s((char*)data_buffer, data_size);
 
-   if (data_size > _key_value_detail::max_stack_buffer_size) {
+   if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
    }
    return {data_size, s};
 }
 
-inline key_type make_key(std::string val, bool case_insensitive=false) {
-   using namespace _key_value_detail;
+inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
+   using namespace detail;
+
+   size_t data_size = size + 3;
+   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
    if (case_insensitive) {
-      std::transform(val.begin(), val.end(), val.begin(), [](unsigned char c) -> unsigned char { return std::toupper(c); });
+      std::transform(str, str + size, (char*)data_buffer, [](unsigned char c) -> unsigned char { return std::toupper(c); });
+   } else {
+      memcpy(data_buffer, str, size);
    }
-
-   size_t data_size = pack_size(val) + 3;
-   void* data_buffer = data_size > _key_value_detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   datastream<char*> data_ds((char*)data_buffer, data_size);
-   data_ds << val;
 
    ((char*)data_buffer)[data_size - 3] = 0x01;
    ((char*)data_buffer)[data_size - 2] = 0x00;
@@ -199,13 +197,17 @@ inline key_type make_key(std::string val, bool case_insensitive=false) {
 
    std::string s((char*)data_buffer, data_size);
 
-   if (data_size > _key_value_detail::max_stack_buffer_size) {
+   if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
    }
    return {data_size, s};
 }
 
-inline key_type make_key(const char * str, bool case_insensitive=false) {
+inline key_type make_key(const std::string& val, bool case_insensitive=false) {
+   return make_key(val.data(), val.size(), case_insensitive);
+}
+
+inline key_type make_key(const char* str, bool case_insensitive=false) {
    return make_key(std::string{str}, case_insensitive);
 }
 
@@ -213,7 +215,7 @@ inline key_type make_key(eosio::name n) {
    return make_key(n.value);
 }
 
-template<typename T, uint64_t db = eosio::name{"eosio.kvram"}.value>
+template<typename T, eosio::name::raw TableName, eosio::name::raw DbName = eosio::name{"eosio.kvram"}>
 class kv_table {
 
    enum class kv_it_stat {
@@ -223,14 +225,14 @@ class kv_table {
    };
 
 public:
-   class index {
+   class kv_index {
       class iterator {
       public:
-         iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, size_t data_size, index* idx) :
+         iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, size_t data_size, kv_index* idx) :
                   contract_name{contract_name}, itr{itr}, itr_stat{itr_stat}, data_size{data_size}, idx{idx} {}
 
-         T value() {
-            using namespace _key_value_detail;
+         T value() const {
+            using namespace detail;
 
             eosio::check(itr_stat != kv_it_stat::iterator_end, "Cannot read end iterator");
             eosio::check(data_size > 0, "Cannot read a value of size 0");
@@ -238,7 +240,7 @@ public:
             uint32_t actual_value_size;
             uint32_t offset = 0;
 
-            void* buffer = data_size > _key_value_detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+            void* buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
             auto stat = internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, data_size, actual_value_size);
 
             eosio::check(static_cast<kv_it_stat>(stat) != kv_it_stat::iterator_end, "Error reading value");
@@ -248,7 +250,7 @@ public:
 
                T val;
                ds >> val;
-               if (data_size > _key_value_detail::max_stack_buffer_size) {
+               if (data_size > detail::max_stack_buffer_size) {
                   free(buffer);
                }
                return val;
@@ -257,7 +259,7 @@ public:
                auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)buffer, actual_value_size, actual_data_size);
                eosio::check(success, "failure getting primary key");
 
-               void* pk_buffer = actual_data_size > _key_value_detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
+               void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
                auto copy_size = internal_use_do_not_use::kv_get_data(db, 0, (char*)pk_buffer, actual_data_size);
 
                eosio::check(copy_size > 0, "failure getting primary index data");
@@ -267,10 +269,10 @@ public:
                T val;
                ds >> val;
 
-               if (actual_data_size > _key_value_detail::max_stack_buffer_size) {
+               if (actual_data_size > detail::max_stack_buffer_size) {
                   free(pk_buffer);
                }
-               if (data_size > _key_value_detail::max_stack_buffer_size) {
+               if (data_size > detail::max_stack_buffer_size) {
                   free(buffer);
                }
                return val;
@@ -283,25 +285,13 @@ public:
             return *this;
          }
 
-         iterator operator++(int) {
-            iterator copy(*this);
-            ++(*this);
-            return copy;
-         }
-
          iterator& operator--() {
             itr_stat = static_cast<kv_it_stat>(internal_use_do_not_use::kv_it_prev(itr));
             eosio::check(itr_stat != kv_it_stat::iterator_end, "incremented past the beginning");
             return *this;
          }
 
-         iterator operator--(int) {
-            iterator copy(*this);
-            --(*this);
-            return copy;
-         }
-
-         bool operator==(iterator b) {
+         bool operator==(const iterator& b) const {
             if (itr_stat == kv_it_stat::iterator_end) {
                return b.itr_stat == kv_it_stat::iterator_end;
             }
@@ -311,26 +301,24 @@ public:
             return key() == b.key();
          }
 
-         bool operator!=(iterator b) {
-            if (itr_stat == kv_it_stat::iterator_end) {
-               return b.itr_stat != kv_it_stat::iterator_end;
-            }
-            if (b.itr_stat == kv_it_stat::iterator_end) {
-               return true;
-            }
-            return key() != b.key();
+         bool operator!=(const iterator& b) const {
+            return !(*this == b);
+         }
+
+         bool operator<(const iterator& b) const {
+            return itr < b.itr;
          }
 
       private:
          eosio::name contract_name;
-         index* idx;
+         const kv_index* idx;
 
          size_t data_size;
 
          uint32_t itr;
          kv_it_stat itr_stat;
 
-         key_type key() {
+         key_type key() const {
             return idx->get_key(value());
          }
       };
@@ -342,9 +330,9 @@ public:
 
       kv_table* tbl;
 
-      index() = default;
+      kv_index() = default;
 
-      index(eosio::name name, key_type (T::*key_function)() const): name{name}, key_function{key_function} {}
+      kv_index(eosio::name name, key_type (T::*key_function)() const): name{name}, key_function{key_function} {}
 
       template <typename K>
       iterator find(K key) {
@@ -377,20 +365,15 @@ public:
       }
 
       iterator begin() {
-         using namespace _key_value_detail;
+         using namespace detail;
 
          auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
          uint32_t value_size;
-         uint64_t buffer_size = 1024*1024; // TODO:
-         void* buffer = buffer_size > _key_value_detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
-         internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, buffer_size, value_size);
-
-         if (buffer_size > _key_value_detail::max_stack_buffer_size) {
-            free(buffer);
-         }
+         char* buffer;
+         internal_use_do_not_use::kv_it_value(itr, 0, buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
@@ -415,15 +398,15 @@ public:
          return_values.push_back(begin_itr.value());
 
          iterator itr = begin_itr;
-         while(itr != end_itr){
-            itr++;
+         while(itr != end_itr) {
+            ++itr;
             return_values.push_back(itr.value());
          }
 
          return return_values;
       }
 
-      key_type get_key(T t) {
+      key_type get_key(T t) const {
          return (t.*key_function)(); 
       }
 
@@ -450,13 +433,12 @@ public:
    }
 
    template <typename ...Indices>
-   void init(eosio::name contract, eosio::name table, index* primary, Indices... indices) {
+   void init(eosio::name contract, kv_index* primary, Indices... indices) {
       contract_name = contract;
-      table_name = table;
 
       primary_index = primary;
       primary_index->contract_name = contract;
-      primary_index->table_name = table;
+      primary_index->table_name = table_name;
       primary_index->tbl = this;
 
       if constexpr (sizeof...(indices) > 0) {
@@ -464,13 +446,13 @@ public:
       }
    }
 
-   void upsert(T value) {
-      using namespace _key_value_detail;
+   void put(const T& value) {
+      using namespace detail;
 
-      auto t_key = table_key(make_prefix(table_name, primary_index->name), value.primary_key());
+      auto t_key = table_key(make_prefix(table_name, primary_index->name), primary_index->get_key(value));
 
       size_t data_size = pack_size(value);
-      void* data_buffer = data_size > _key_value_detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+      void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
       datastream<char*> data_ds((char*)data_buffer, data_size);
       data_ds << value;
 
@@ -481,7 +463,7 @@ public:
          internal_use_do_not_use::kv_set(db, contract_name.value, st_key.buffer.data(), st_key.size, t_key.buffer.data(), t_key.size);
       }
       
-      if (data_size > _key_value_detail::max_stack_buffer_size) {
+      if (data_size > detail::max_stack_buffer_size) {
          free(data_buffer);
       }
    }
@@ -500,10 +482,13 @@ public:
    }
 
 private:
-   eosio::name contract_name;
-   eosio::name table_name;
+   constexpr static uint64_t db = static_cast<uint64_t>(DbName);
+   constexpr static eosio::name table_name = static_cast<eosio::name>(TableName);
 
-   index* primary_index;
-   std::vector<index*> secondary_indices;
+   eosio::name contract_name;
+
+   kv_index* primary_index;
+   std::vector<kv_index*> secondary_indices;
+
 };
 } // eosio

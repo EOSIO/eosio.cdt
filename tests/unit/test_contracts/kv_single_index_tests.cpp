@@ -16,11 +16,11 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct> {
-   eosio::kv_table<my_struct>::index primary_index{eosio::name{"primary"}, &my_struct::primary_key};
+struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
+   kv_index primary_index{eosio::name{"primary"}, &my_struct::primary_key};
 
    my_table() {
-      init(eosio::name{"kvtest"}, eosio::name{"table"}, &primary_index);
+      init(eosio::name{"kvtest"}, &primary_index);
    }
 };
 
@@ -63,11 +63,11 @@ public:
    void setup() {
       my_table t;
 
-      t.upsert(s3);
-      t.upsert(s);
-      t.upsert(s4);
-      t.upsert(s2);
-      t.upsert(s5);
+      t.put(s3);
+      t.put(s);
+      t.put(s4);
+      t.put(s2);
+      t.put(s5);
    }
 
    [[eosio::action]]
@@ -118,32 +118,32 @@ public:
       auto itr = t.primary_index.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "alice"_n, "Got the wrong beginning");
-      itr++;
+      ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "billy"_n, "Got the wrong value");
-      itr++;
+      ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "bob"_n, "Got the wrong value");
-      itr++;
+      ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "joe"_n, "Got the wrong value");
-      itr++;
+      ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "john"_n, "Got the wrong value");
-      itr++;
+      ++itr;
       eosio::check(itr == end_itr, "Should be the end");
 
       // operator--
       // ----------
-      itr--;
+      --itr;
       eosio::check(itr != begin_itr, "Should not be the beginning");
-      itr--;
+      --itr;
       eosio::check(itr != begin_itr, "Should not be the beginning");
-      itr--;
+      --itr;
       eosio::check(itr != begin_itr, "Should not be the beginning");
-      itr--;
+      --itr;
       eosio::check(itr != begin_itr, "Should not be the beginning");
-      itr--;
+      --itr;
       eosio::check(itr == begin_itr, "Should be the beginning");
    }
 
