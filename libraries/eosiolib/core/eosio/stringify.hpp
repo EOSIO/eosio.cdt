@@ -21,7 +21,7 @@ namespace eosio {
     *  @return char* - Just past the end of the last character that would be written assuming dry_run == false and end was large enough to provide sufficient space. (Meaning only applies if returned pointer >= begin.)
     *  @post If the output string fits within the range [begin, end), the range [begin, returned pointer) contains the string representation of the number. Nothing is written if dry_run == true or returned pointer > end (insufficient space) or if returned pointer < begin (overflow in calculating desired end).
     */
-   char* write_decimal( char* begin, char* end, bool dry_run, uint64_t number, uint8_t num_decimal_places, bool negative ) {
+   inline char* write_decimal( char* begin, char* end, bool dry_run, uint64_t number, uint8_t num_decimal_places, bool negative ) {
       constexpr static uint8_t log10_max_uint64 = powers_of_base<10, uint64_t>.size() - 1; // 19
       const auto& powers_of_ten = powers_of_base<10, uint64_t>;
 
