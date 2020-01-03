@@ -161,7 +161,7 @@ namespace eosio {
     */
    template<typename T>
    inline void set_action_return_value( const T& v ) {
-      const auto packed_value = pack( v );
+      auto packed_value = pack( v );
       internal_use_do_not_use::set_action_return_value( &packed_value[0], packed_value.size() );
    }
 
