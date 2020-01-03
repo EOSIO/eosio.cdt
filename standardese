@@ -1,0 +1,33 @@
+#!/bin/bash
+
+CDT_DIR=/usr/local/eosio.cdt/eosio.cdt
+CDT_SRC_DIR=/root/eosio.cdt
+
+mkdir -p docs/standardese_generated
+pushd docs/standardese_generated
+pwd
+
+standardese \
+    --output.format commonmark \
+    --compilation.standard=c++17 \
+    --input.blacklist_file type_traits \
+    --input.blacklist_file fpconv.c \
+    --input.blacklist_file fpconv.h \
+    --input.blacklist_file fpconv.license \
+    --input.blacklist_file powers.h \
+    --input.blacklist_ext .md \
+    --input.blacklist_ext .txt \
+    --input.blacklist_ext .png \
+    --input.blacklist_ext .svg \
+    --input.blacklist_ext .in \
+    -DGENERATING_DOC \
+    -DLLP64 \
+    -DEOSIO_NATIVE \
+    -I $CDT_DIR/include/eosiolib/core/ \
+    -I $CDT_DIR/include/ \
+    -I $CDT_DIR/include/libc/ \
+    -I $CDT_DIR/include/libcxx/ \
+    -I $CDT_SRC_DIR/libraries/eosiolib/contracts \
+    ../../libraries/eosiolib/
+
+popd
