@@ -17,10 +17,12 @@ struct my_struct {
 };
 
 struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
-   kv_index primary_index{eosio::name{"primary"}, &my_struct::primary_key};
+   struct {
+      kv_index primary{eosio::name{"primary"}, &my_struct::primary_key};
+   } index;
 
    my_table() {
-      init(eosio::name{"kvtest"}, &primary_index);
+      init(eosio::name{"kvtest"}, &index);
    }
 };
 
@@ -73,27 +75,27 @@ public:
    [[eosio::action]]
    void find() {
       my_table t;
-      auto end_itr = t.primary_index.end();
+      auto end_itr = t.index.primary.end();
 
-      auto itr = t.primary_index.find("bob"_n);
+      auto itr = t.index.primary.find("bob"_n);
       auto val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(val.n1 == "bob"_n, "Got the wrong n1");
       eosio::check(val.n2 == "alice"_n, "Got the wrong n2");
 
-      itr = t.primary_index.find("joe"_n);
+      itr = t.index.primary.find("joe"_n);
       val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(val.n1 == "joe"_n, "Got the wrong n1");
       eosio::check(val.n2 == "john"_n, "Got the wrong n2");
 
-      itr = t.primary_index.find("alice"_n);
+      itr = t.index.primary.find("alice"_n);
       val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(val.n1 == "alice"_n, "Got the wrong n1");
       eosio::check(val.n2 == "bob"_n, "Got the wrong n2");
 
-      itr = t.primary_index.find("john"_n);
+      itr = t.index.primary.find("john"_n);
       val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(val.n1 == "john"_n, "Got the wrong n1");
@@ -103,19 +105,19 @@ public:
    [[eosio::action]]
    void finderror() {
       my_table t;
-      auto itr = t.primary_index.find("larry"_n);
+      auto itr = t.index.primary.find("larry"_n);
       auto val = itr.value();
    }
 
    [[eosio::action]]
    void iteration() {
       my_table t;
-      auto begin_itr = t.primary_index.begin();
-      auto end_itr = t.primary_index.end();
+      auto begin_itr = t.index.primary.begin();
+      auto end_itr = t.index.primary.end();
 
       // operator++
       // ----------
-      auto itr = t.primary_index.begin();
+      auto itr = t.index.primary.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().n1 == "alice"_n, "Got the wrong beginning");
       ++itr;
@@ -152,11 +154,11 @@ public:
       my_table t;
 
       std::vector<my_struct> expected{s, s4, s3};
-      auto vals = t.primary_index.range("bob"_n, "john"_n);
+      auto vals = t.index.primary.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
 
       expected = {s};
-      vals = t.primary_index.range("bob"_n, "bob"_n);
+      vals = t.index.primary.range("bob"_n, "bob"_n);
       eosio::check(vals == expected, "range did not return expected vector");
    }
 
@@ -164,21 +166,21 @@ public:
    void rangeerror() {
       my_table t;
       std::vector<my_struct> expected = {s4, s3, s2};
-      auto vals = t.primary_index.range("joe"_n, "alice"_n);
+      auto vals = t.index.primary.range("joe"_n, "alice"_n);
       eosio::check(vals == expected, "range did not return expected vector");
    }
 
    [[eosio::action]]
    void erase() {
       my_table t;
-      auto end_itr = t.primary_index.end();
+      auto end_itr = t.index.primary.end();
 
       t.erase("joe"_n);
-      auto itr = t.primary_index.find("joe"_n);
+      auto itr = t.index.primary.find("joe"_n);
       eosio::check(itr == end_itr, "key was not properly deleted");
 
       std::vector<my_struct> expected = {s, s3};
-      auto vals = t.primary_index.range("bob"_n, "john"_n);
+      auto vals = t.index.primary.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
    }
 };

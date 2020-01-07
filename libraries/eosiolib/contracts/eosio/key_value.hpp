@@ -2,6 +2,7 @@
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/print.hpp"
+#include "../../core/eosio/utility.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -87,25 +88,6 @@ The key-value store could provide a lexicographical ordering of uint8_t on the k
             NaN's and inf's end up with an unusual ordering
    [ ] - struct or tuple: transform each field in order. Concatenate results. (use tuples for composite keys)
 */
-
-template <typename T>
-inline T swap_endian(T u) {
-    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
-
-    union
-    {
-        T u;
-        unsigned char u8[sizeof(T)];
-    } source, dest;
-
-    source.u = u;
-
-    for (size_t k = 0; k < sizeof(T); k++) {
-        dest.u8[k] = source.u8[sizeof(T) - k - 1];
-    }
-
-    return dest.u;
-}
 
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
    using namespace detail;
@@ -332,6 +314,13 @@ public:
 
       kv_index() = default;
 
+      template <typename KF>
+      kv_index(eosio::name name, KF T::*key_field): name{name} {
+         key_field_function = [=](const T& t) {
+            return make_key(std::invoke(key_field, t));
+         };
+      }
+
       kv_index(eosio::name name, key_type (T::*key_function)() const): name{name}, key_function{key_function} {}
 
       template <typename K>
@@ -406,44 +395,43 @@ public:
          return return_values;
       }
 
-      key_type get_key(T t) const {
-         return (t.*key_function)(); 
+      key_type get_key(const T& t) const {
+         if (key_function) {
+            return std::invoke(key_function, t);
+         } else {
+            return key_field_function(t);
+         }
       }
 
    private:
-      key_type (T::*key_function)() const;
+      key_type (T::*key_function)() const = nullptr;
+      std::function<key_type(T)> key_field_function;
    };
 
-   template<typename I, typename ...Indices>
-   void setup_indices(I index, Indices... indices) {
-      index->contract_name = contract_name;
-      index->table_name = table_name;
-      index->tbl = this;
-
-      secondary_indices.push_back(index);
-      setup_indices(indices...);
-   }
-
-   template<typename I>
-   void setup_indices(I index) {
-      index->contract_name = contract_name;
-      index->table_name = table_name;
-      index->tbl = this;
-      secondary_indices.push_back(index);
-   }
-
-   template <typename ...Indices>
-   void init(eosio::name contract, kv_index* primary, Indices... indices) {
+   template <typename Indices>
+   void init(eosio::name contract, Indices indices) {
       contract_name = contract;
 
-      primary_index = primary;
-      primary_index->contract_name = contract;
+      auto& primary = get<0>(*indices);
+
+      primary_index = &primary;
+      primary_index->contract_name = contract_name;
       primary_index->table_name = table_name;
       primary_index->tbl = this;
 
-      if constexpr (sizeof...(indices) > 0) {
-         setup_indices(indices...);
-      }
+      for_each_field(*indices, [&](auto& idx) {
+         if (idx.name != primary.name) {
+            kv_index* si = &idx;
+            si->contract_name = contract_name;
+            si->table_name = table_name;
+            si->tbl = this;
+            secondary_indices.push_back(si);
+         }
+      });
+
+      // Makes sure the indexes are run in the correct order.
+      // This is mainly useful for debugging, this probably could be deleted.
+      std::reverse(std::begin(secondary_indices), std::end(secondary_indices));
    }
 
    void put(const T& value) {
@@ -490,5 +478,30 @@ private:
    kv_index* primary_index;
    std::vector<kv_index*> secondary_indices;
 
+   template <size_t I, typename U>
+   constexpr static auto& get(U& u) {
+      constexpr size_t kv_index_size = sizeof(kv_index);
+      static_assert(sizeof(U) % kv_index_size == 0);
+      kv_index* indices = (kv_index*)(&u);
+      return indices[I];
+   }
+
+   template <size_t S, typename U, typename F>
+   constexpr static void for_each_field(U& u, F&& f) {
+      f(get<S>(u));
+      if constexpr (S <= 0) {
+         return;
+      } else {
+         for_each_field<S-1>(u, f);
+      }
+   }
+
+   template <typename U, typename F>
+   constexpr static void for_each_field(U& u, F&& f) {
+      constexpr size_t kv_index_size = sizeof(kv_index);
+      static_assert(sizeof(U) % kv_index_size == 0);
+      constexpr size_t num_elems = (sizeof(U) / sizeof(kv_index)) - 1;
+      for_each_field<num_elems>(u, f);
+   }
 };
 } // eosio

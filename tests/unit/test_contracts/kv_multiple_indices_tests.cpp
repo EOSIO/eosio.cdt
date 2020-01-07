@@ -7,10 +7,6 @@ struct my_struct {
    int32_t baz;
    uint128_t i128;
 
-   auto pk() const { return eosio::make_key(primary_key); }
-   auto foo_key() const { return eosio::make_key(foo); }
-   auto bar_key() const { return eosio::make_key(bar); }
-   auto baz_key() const { return eosio::make_key(baz); }
    auto foo_i_key() const { return eosio::make_key(foo, true); }
    auto i128_key() const { return eosio::make_key(i128); }
 
@@ -24,15 +20,17 @@ struct my_struct {
 };
 
 struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
-   kv_index primary_index{eosio::name{"primary"}, &my_struct::pk};
-   kv_index foo_index{eosio::name{"foo"}, &my_struct::foo_key};
-   kv_index bar_index{eosio::name{"bar"}, &my_struct::bar_key};
-   kv_index baz_index{eosio::name{"baz"}, &my_struct::baz_key};
-   kv_index ifoo_index{eosio::name{"ifoo"}, &my_struct::foo_i_key};
-   kv_index i128_index{eosio::name{"ia"}, &my_struct::i128_key};
+   struct {
+      kv_index primary{eosio::name{"primary"}, &my_struct::primary_key};
+      kv_index foo{eosio::name{"foo"}, &my_struct::foo};
+      kv_index bar{eosio::name{"bar"}, &my_struct::bar};
+      kv_index baz{eosio::name{"baz"}, &my_struct::baz};
+      kv_index i128{eosio::name{"ia"}, &my_struct::i128};
+      kv_index ifoo{eosio::name{"ifoo"}, &my_struct::foo_i_key};
+   } index;
 
    my_table() {
-      init(eosio::name{"kvtest"}, &primary_index, &foo_index, &bar_index, &baz_index, &ifoo_index, &i128_index);
+      init(eosio::name{"kvtest"}, &index);
    }
 };
 
@@ -90,35 +88,35 @@ public:
    void find() {
       my_table t;
 
-      auto itr = t.primary_index.find("bob"_n);
+      auto itr = t.index.primary.find("bob"_n);
       auto val = itr.value();
       eosio::check(val.primary_key == "bob"_n, "Got the wrong primary_key");
 
-      itr = t.foo_index.find("C");
+      itr = t.index.foo.find("C");
       val = itr.value();
       eosio::check(val.primary_key == "alice"_n, "Got the wrong primary_key");
 
-      itr = t.bar_index.find((uint64_t)1);
+      itr = t.index.bar.find((uint64_t)1);
       val = itr.value();
       eosio::check(val.primary_key == "billy"_n, "Got the wrong primary_key");
 
-      itr = t.baz_index.find(0);
+      itr = t.index.baz.find(0);
       val = itr.value();
       eosio::check(val.primary_key == "bob"_n, "Got the wrong primary_key");
 
-      itr = t.baz_index.find(-1);
+      itr = t.index.baz.find(-1);
       val = itr.value();
       eosio::check(val.primary_key == "alice"_n, "Got the wrong primary_key");
 
-      itr = t.baz_index.find(2);
+      itr = t.index.baz.find(2);
       val = itr.value();
       eosio::check(val.primary_key == "billy"_n, "Got the wrong primary_key");
 
-      itr = t.baz_index.find(1);
+      itr = t.index.baz.find(1);
       val = itr.value();
       eosio::check(val.primary_key == "joe"_n, "Got the wrong primary_key");
 
-      itr = t.baz_index.find(-2);
+      itr = t.index.baz.find(-2);
       val = itr.value();
       eosio::check(val.primary_key == "john"_n, "Got the wrong primary_key");
    }
@@ -127,9 +125,9 @@ public:
    void findi() {
       my_table t;
 
-      auto end_itr = t.i128_index.end();
+      auto end_itr = t.index.i128.end();
 
-      auto itr = t.i128_index.begin();
+      auto itr = t.index.i128.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().i128 == s.i128, "Got the wrong value");
       ++itr;
@@ -148,12 +146,12 @@ public:
    void iteration() {
       my_table t;
 
-      auto begin_itr = t.foo_index.begin();
-      auto end_itr = t.foo_index.end();
+      auto begin_itr = t.index.foo.begin();
+      auto end_itr = t.index.foo.end();
 
       // operator++ (case sensitive string)
       // ----------
-      auto itr = t.foo_index.begin();
+      auto itr = t.index.foo.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().foo == "C", "Got the wrong value");
       ++itr;
@@ -182,7 +180,7 @@ public:
 
       // operator int32_t
       // ----------------
-      itr = t.baz_index.begin();
+      itr = t.index.baz.begin();
       eosio::check(itr.value().baz == -2, "Got the wrong value");
       ++itr;
       eosio::check(itr.value().baz == -1, "Got the wrong value");
@@ -198,12 +196,12 @@ public:
    void iterationi() {
       my_table t;
 
-      auto begin_itr = t.ifoo_index.begin();
-      auto end_itr = t.ifoo_index.end();
+      auto begin_itr = t.index.ifoo.begin();
+      auto end_itr = t.index.ifoo.end();
 
       // operator++ (case insensitive string)
       // ----------
-      auto itr = t.ifoo_index.begin();
+      auto itr = t.index.ifoo.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().foo == "a", "Got the wrong value");
       ++itr;
@@ -238,11 +236,11 @@ public:
       std::vector<my_struct> expected{s5, s4, s3};
       uint64_t b = 1;
       uint64_t e = 3;
-      auto vals = t.bar_index.range(b, e);
+      auto vals = t.index.bar.range(b, e);
       eosio::check(vals == expected, "range did not return expected vector");
 
       expected = {s3};
-      vals = t.bar_index.range(e, e);
+      vals = t.index.bar.range(e, e);
       eosio::check(vals == expected, "range did not return expected vector");
    }
 };
