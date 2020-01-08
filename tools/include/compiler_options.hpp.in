@@ -151,6 +151,10 @@ static cl::opt<bool> MMD_opt(
     "MMD",
     cl::desc("Write depfile containing user"),
     cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> M_opt(
+    "M",
+    cl::desc("Like -MD, but also implies -E and writes to stdout by default"),
+    cl::cat(EosioCompilerToolCategory));
 static cl::list<std::string> resources(
      "R",
      cl::Prefix,
@@ -355,6 +359,7 @@ struct Options {
    bool link;
    bool abigen;
    bool pp_only;
+   bool no_outputs;
    std::string eosio_pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
@@ -508,6 +513,7 @@ static Options CreateOptions(bool add_defaults=true) {
    std::vector<std::string> agopts;
    bool link = true;
    bool debug = false;
+   bool no_outputs = false;
    std::string pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
@@ -632,6 +638,10 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if (!MT_opt.empty()) {
       copts.emplace_back("-MT "+MT_opt);
+   }
+   if (M_opt) {
+      copts.emplace_back("-M ");
+      no_outputs = true;
    }
    if (finline_functions_opt) {
       copts.emplace_back("-finline-functions");
@@ -862,8 +872,8 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_only, no_outputs, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #else
-   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, {},     link, abigen, pp_only, no_outputs, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
 #endif
 }
