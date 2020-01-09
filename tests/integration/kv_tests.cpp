@@ -84,6 +84,17 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_find_i128, tester) try {
     push_action(N(kvtest), N(findi), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(multi_tests_find_float, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(findf), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
     create_accounts( { N(kvtest) } );
     produce_block();

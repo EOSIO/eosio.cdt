@@ -6,6 +6,7 @@ struct my_struct {
    uint64_t bar;
    int32_t baz;
    uint128_t i128;
+   float test_float;
 
    auto foo_i_key() const { return eosio::make_key(foo, true); }
    auto i128_key() const { return eosio::make_key(i128); }
@@ -27,6 +28,7 @@ struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
       kv_index baz{eosio::name{"baz"}, &my_struct::baz};
       kv_index i128{eosio::name{"ia"}, &my_struct::i128};
       kv_index ifoo{eosio::name{"ifoo"}, &my_struct::foo_i_key};
+      kv_index flt{eosio::name{"float"}, &my_struct::test_float};
    } index;
 
    my_table() {
@@ -42,35 +44,40 @@ public:
       .foo = "a",
       .bar = 5,
       .baz = 0,
-      .i128 = (static_cast<uint128_t>(1) << 127) - 5
+      .i128 = (static_cast<uint128_t>(1) << 127) - 5,
+      .test_float = 4.2574
    };
    my_struct s2{
       .primary_key = "alice"_n,
       .foo = "C",
       .bar = 4,
       .baz = -1,
-      .i128 = (static_cast<uint128_t>(1) << 127) - 4
+      .i128 = (static_cast<uint128_t>(1) << 127) - 4,
+      .test_float = 5.2574
    };
    my_struct s3{
       .primary_key = "john"_n,
       .foo = "e",
       .bar = 3,
       .baz = -2,
-      .i128 = (static_cast<uint128_t>(1) << 127) - 3
+      .i128 = (static_cast<uint128_t>(1) << 127) - 3,
+      .test_float = 187234
    };
    my_struct s4{
       .primary_key = "joe"_n,
       .foo = "g",
       .bar = 2,
       .baz = 1,
-      .i128 = (static_cast<uint128_t>(1) << 127) - 2
+      .i128 = (static_cast<uint128_t>(1) << 127) - 2,
+      .test_float = 0
    };
    my_struct s5{
       .primary_key = "billy"_n,
       .foo = "I",
       .bar = 1,
       .baz = 2,
-      .i128 = (static_cast<uint128_t>(1) << 127) - 1
+      .i128 = (static_cast<uint128_t>(1) << 127) - 1,
+      .test_float = -4.2574
    };
 
    [[eosio::action]]
@@ -138,6 +145,26 @@ public:
       eosio::check(itr.value().i128 == s4.i128, "Got the wrong value");
       ++itr;
       eosio::check(itr.value().i128 == s5.i128, "Got the wrong value");
+      ++itr;
+      eosio::check(itr == end_itr, "Should be the end");
+   }
+
+   [[eosio::action]]
+   void findf() {
+      my_table t;
+      auto end_itr = t.index.flt.end();
+
+      auto itr = t.index.flt.begin();
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().test_float == s5.test_float, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().test_float == s4.test_float, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().test_float == s.test_float, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().test_float == s2.test_float, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().test_float == s3.test_float, "Got the wrong value");
       ++itr;
       eosio::check(itr == end_itr, "Should be the end");
    }

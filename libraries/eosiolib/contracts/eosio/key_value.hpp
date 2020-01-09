@@ -74,21 +74,6 @@ namespace detail {
    constexpr static size_t max_stack_buffer_size = 512;
 }
 
-/*
-Key transformations
-The key-value store could provide a lexicographical ordering of uint8_t on the keys. The contract can create an ordering on top by transforming its keys. Example transforms:
-   [x] - uint?_t: Convert to big-endian
-   [x] - int?_t: Invert the MSB then convert to big-endian
-   [x] - strings: Convert 0x00 to (0x00, 0x01). Append (0x00, 0x00) to the end. This transform allows arbitrary-length strings.
-   [x] - case-insensitive strings: Convert to upper-case, then apply the above transform. Assumes ASCII.
-   [ ] - floating-point:
-         There's some bit manipulations, followed by an endian conversion
-         limitations:
-            Positive 0 and Negative 0 map to the same value
-            NaN's and inf's end up with an unusual ordering
-   [ ] - struct or tuple: transform each field in order. Concatenate results. (use tuples for composite keys)
-*/
-
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
    using namespace detail;
 
@@ -133,11 +118,19 @@ inline key_type table_key(const key_type& prefix, const key_type& key) {
 
 template <typename I>
 inline I flip_msb(I val) {
-   constexpr static size_t BITS = sizeof(I) * 8;
-   return val ^ (static_cast<I>(1) << (BITS - 1));
+   constexpr static size_t bits = sizeof(I) * 8;
+   return val ^ (static_cast<I>(1) << (bits - 1));
 }
 
 template <typename I>
+inline I get_msb(I val) {
+   constexpr static size_t bits = sizeof(I) * 8;
+   constexpr static I mask = static_cast<I>(0x08) << (bits - 4);
+   I masked = val & mask;
+   return masked >> (bits - 1);
+}
+
+template <typename I, typename std::enable_if_t<std::is_integral<I>::value, int> = 0>
 inline key_type make_key(I val) {
    using namespace detail;
 
@@ -159,6 +152,43 @@ inline key_type make_key(I val) {
       free(data_buffer);
    }
    return {data_size, s};
+}
+
+template <typename I, typename F>
+inline key_type make_floating_key(F val) {
+   auto* ival = reinterpret_cast<I*>(&val);
+   I bit_val;
+   auto msb = get_msb(*ival);
+   if (msb) {
+      // invert all the bits
+      bit_val = ~(*ival);
+   } else {
+      // invert just msb
+      bit_val = flip_msb(*ival);
+   }
+
+   auto big_endian = swap_endian<I>(bit_val);
+
+   char* bytes = reinterpret_cast<char*>(&big_endian);
+   constexpr size_t size = sizeof(big_endian);
+   std::string s(bytes, size);
+   return {size, s};
+}
+
+template <typename F, typename std::enable_if_t<std::is_floating_point<F>::value, int> = 0>
+inline key_type make_key(F val) {
+   static_assert(sizeof(F) != sizeof(long double), "long doubles are currently not supported by make_key");
+
+   if (val == -0) {
+      val = +0;
+   }
+
+   if (sizeof(F) == sizeof(float)) {
+      return make_floating_key<uint32_t>(val);
+   }
+   else {
+      return make_floating_key<uint64_t>(val);
+   }
 }
 
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
