@@ -110,7 +110,3 @@ namespace internal_use_do_not_use {
    } // extern "C"
 } // namespace internal_use_do_not_use
 } // namespace eosio
-
-namespace std {
-bool uncaught_exception() noexcept { return false; }
-} // namespace std

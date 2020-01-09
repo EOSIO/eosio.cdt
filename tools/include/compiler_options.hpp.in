@@ -475,12 +475,12 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       } else if (ftester_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
-         ldopts.emplace_back("--only-export \"*:table\"");
-         ldopts.emplace_back("--only-export \"*:memory\"");
-         ldopts.emplace_back("-e initialize ");
-         ldopts.emplace_back("--only-export \"initialize:function\"");
-         ldopts.emplace_back("-export start ");
-         ldopts.emplace_back("--only-export \"start:function\"");
+         ldopts.insert(ldopts.end(), {"--only-export", "*:table"});
+         ldopts.insert(ldopts.end(), {"--only-export", "*:memory"});
+         ldopts.insert(ldopts.end(), {"-e", "initialize"});
+         ldopts.insert(ldopts.end(), {"--only-export", "initialize:function"});
+         ldopts.insert(ldopts.end(), {"-export", "start"});
+         ldopts.insert(ldopts.end(), {"--only-export", "start:function"});
       } else {
          if (fuse_main_opt)
             ldopts.insert(ldopts.end(), { "-e", "main" });
