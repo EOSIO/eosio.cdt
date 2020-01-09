@@ -183,26 +183,32 @@ int main(int argc, const char **argv) {
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
          std::string output;
 
-         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
+         if (!opts.pp_only) {
+            auto tool_opts = opts.comp_options;
+            std::set<std::string> non_tool_opts = { "-S", "-emit-llvm", "-emit-ast" };
+            tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
+                                           [&](const auto& opt){ return non_tool_opts.count(opt); }),
+                            tool_opts.end());
+            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
 
-         auto src = SmallString<64>(input);
-         llvm::sys::path::remove_filename(src);
-         std::string source_path = src.str().empty() ? "." : src.str();
-         new_opts.insert(new_opts.begin(), "-I" + source_path);
+            auto src = SmallString<64>(input);
+            llvm::sys::path::remove_filename(src);
+            std::string source_path = src.str().empty() ? "." : src.str();
+            new_opts.insert(new_opts.begin(), "-I" + source_path);
 
-         if (llvm::sys::fs::exists(tmp_file)) {
-            input = tmp_file;
+            if (llvm::sys::fs::exists(tmp_file)) {
+               input = tmp_file;
+            }
+            output = tmp_file+".o";
+
+            if (!opts.link) {
+               output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
+            }
+
+            new_opts.insert(new_opts.begin(), {"-o", output});
+            outputs.push_back(output);
          }
-         output = tmp_file+".o";
-
          new_opts.insert(new_opts.begin(), input);
-         
-         if (!opts.link) {
-            output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
-         }
-
-         new_opts.insert(new_opts.begin(), "-o "+output);
-         outputs.push_back(output);
 
          if (llvm::sys::path::extension(input).equals(".c"))
             new_opts.insert(new_opts.begin(), "-xc++");
@@ -221,7 +227,7 @@ int main(int argc, const char **argv) {
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+         new_opts.insert(new_opts.begin(), input);
       }
    
       if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
