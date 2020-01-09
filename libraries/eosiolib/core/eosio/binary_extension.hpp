@@ -13,7 +13,6 @@ namespace eosio {
     /**
     *  Container to hold a binary payload for an extension
     *
-    *  @ingroup binary_extension
     *  @tparam T - Contained typed
     */
    template <typename T>
@@ -103,12 +102,12 @@ namespace eosio {
          }
          constexpr T value_or()& {
             if (!_has_value)
-               return T{};
+               return T();
             return _get();
          }
          constexpr T value_or()const& {
             if (!_has_value)
-               return T{};
+               return T();
             return _get();
          }
 
