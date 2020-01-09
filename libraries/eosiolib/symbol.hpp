@@ -372,14 +372,14 @@ namespace eosio {
        * @param con - The name of the contract
        *
        */
-      constexpr extended_symbol( symbol sym, name con ) : symbol(sym), contract(con) {}
+      constexpr extended_symbol( symbol s, name con ) : sym(s), contract(con) {}
 
       /**
        * Returns the symbol in the extended_contract
        *
        * @return symbol
        */
-      constexpr symbol get_symbol() const { return symbol; }
+      constexpr symbol get_symbol() const { return sym; }
 
       /**
        * Returns the name of the contract in the extended_symbol
@@ -394,7 +394,7 @@ namespace eosio {
        * @brief %Print the extended symbol
        */
       void print( bool show_precision = true )const {
-         symbol.print( show_precision );
+         sym.print( show_precision );
          prints("@");
          printn( contract.value );
       }
@@ -406,7 +406,7 @@ namespace eosio {
        * @return boolean - true if both provided extended_symbols are the same
        */
       friend constexpr bool operator == ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.symbol, a.contract ) == std::tie( b.symbol, b.contract );
+        return std::tie( a.sym, a.contract ) == std::tie( b.sym, b.contract );
       }
 
       /**
@@ -416,7 +416,7 @@ namespace eosio {
        * @return boolean - true if both provided extended_symbols are not the same
        */
       friend constexpr bool operator != ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.symbol, a.contract ) != std::tie( b.symbol, b.contract );
+        return std::tie( a.sym, a.contract ) != std::tie( b.sym, b.contract );
       }
 
       /**
@@ -425,14 +425,14 @@ namespace eosio {
        * @return boolean - true if extended_symbol `a` is less than `b`
        */
       friend constexpr bool operator < ( const extended_symbol& a, const extended_symbol& b ) {
-        return std::tie( a.symbol, a.contract ) < std::tie( b.symbol, b.contract );
+        return std::tie( a.sym, a.contract ) < std::tie( b.sym, b.contract );
       }
 
    private:
-      symbol symbol; ///< the symbol
+      symbol sym; ///< the symbol
       name   contract; ///< the token contract hosting the symbol
 
-      EOSLIB_SERIALIZE( extended_symbol, (symbol)(contract) )
+      EOSLIB_SERIALIZE( extended_symbol, (sym)(contract) )
    };
 
    /// @}
