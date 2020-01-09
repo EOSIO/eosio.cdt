@@ -13,6 +13,7 @@ namespace eosio {
     /**
     *  Container to hold a binary payload for an extension
     *
+    *  @ingroup binary_extension
     *  @tparam T - Contained typed
     */
    template <typename T>
