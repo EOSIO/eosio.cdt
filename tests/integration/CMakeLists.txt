@@ -42,7 +42,7 @@ foreach(TEST_SUITE ${INT_TESTS}) # create an independent target for each test su
     if(ctest_tests)
         string(APPEND ctest_tests "|")
     endif()
-    string(APPEND ctest_tests ${TRIMMED_SUITE_NAME}_unit_test_$RUNTIME)
+    string(APPEND ctest_tests ${TRIMMED_SUITE_NAME}_integration_test)
   endif()
 endforeach(TEST_SUITE)
 set(ctest_tests "'${ctest_tests}' -j8") # surround test list string in apostrophies
