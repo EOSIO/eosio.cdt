@@ -32,6 +32,19 @@ template<typename T>
 auto to_uint64_t(T n) -> std::enable_if_t<std::is_same_v<T, eosio::chain::name>, decltype(n.value)> { return n.value; }
 template<typename T>
 auto to_uint64_t(T n) -> std::enable_if_t<std::is_same_v<T, eosio::chain::name>, decltype(n.to_uint64_t())> { return n.to_uint64_t(); }
+
+template<typename C, typename F0, typename F1, typename G>
+auto do_startup(C&& control, F0&&, F1&& f1, G&&) -> std::enable_if_t<std::is_constructible_v<std::decay_t<decltype(*control)>, eosio::chain::controller::config, protocol_feature_set>> {
+   return control->startup([]() { return false; }, nullptr);
+}
+template<typename C, typename F0, typename F1, typename G>
+auto do_startup(C&& control, F0&&, F1&& f1, G&& genesis) -> decltype(control->startup(f1, genesis)) {
+   return control->startup([]() { return false; }, genesis);
+}
+template<typename C, typename F0, typename F1, typename G>
+auto do_startup(C&& control, F0&& f0, F1&& f1, G&& genesis) -> decltype(control->startup(f0, f1, genesis)) {
+   return control->startup(f0, f1, genesis);
+}
 }
 
 struct assert_exception : std::exception {
@@ -125,7 +138,7 @@ struct test_chain {
 
       control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
       control->add_indices();
-      control->startup([]{}, []() { return false; }, genesis);
+      do_startup(control, []{}, []() { return false; }, genesis);
       control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
                            { *control->get_protocol_feature_manager().get_builtin_digest(
                                  eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
