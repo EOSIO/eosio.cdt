@@ -30,4 +30,6 @@ BOOST_FIXTURE_TEST_CASE( malloc_tests, tester ) try {
    BOOST_CHECK_EXCEPTION( push_action(N(test), N(mallocfail), N(test), {}),
                           eosio_assert_message_exception,
                           eosio_assert_message_is("failed to allocate pages") );
-} FC_LOG_AND_RETHROW() }
+} FC_LOG_AND_RETHROW()
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -26,4 +26,6 @@ BOOST_FIXTURE_TEST_CASE( capi_tests, tester ) try {
    produce_blocks();
 
    push_action(N(test), N(act), N(test), {});
-} FC_LOG_AND_RETHROW() }
+} FC_LOG_AND_RETHROW()
+
+BOOST_AUTO_TEST_SUITE_END()
