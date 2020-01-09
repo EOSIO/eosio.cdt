@@ -74,13 +74,14 @@ namespace {
    };
 };
 
-struct intrinsic_context {
+template<typename ApplyContext, typename Enable=void>
+struct intrinsic_context_impl {
    eosio::chain::controller&                          control;
    eosio::chain::signed_transaction                   trx;
    std::unique_ptr<eosio::chain::transaction_context> trx_ctx;
    std::unique_ptr<eosio::chain::apply_context>       apply_context;
 
-   intrinsic_context(eosio::chain::controller& control) : control{ control } {
+   intrinsic_context_impl(eosio::chain::controller& control) : control{ control } {
       static transaction_checktime_factory xxx_timer;
 
       trx.actions.emplace_back();
@@ -91,6 +92,31 @@ struct intrinsic_context {
       apply_context = std::make_unique<eosio::chain::apply_context>(control, *trx_ctx, 1, 0);
    }
 };
+
+template<typename ApplyContext>
+struct intrinsic_context_impl<ApplyContext, std::void_t<typename ApplyContext::primary_index_read_only>> :
+   ApplyContext::primary_index_read_only
+{
+   typename ApplyContext::template generic_index_read_only<eosio::chain::index64_object>                            idx64;
+   typename ApplyContext::template generic_index_read_only<eosio::chain::index128_object>                           idx128;
+   typename ApplyContext::template generic_index_read_only<eosio::chain::index256_object,
+                                                          eosio::chain::uint128_t*, const eosio::chain::uint128_t*> idx256;
+   typename ApplyContext::template generic_index_read_only<eosio::chain::index_double_object>                       idx_double;
+   typename ApplyContext::template generic_index_read_only<eosio::chain::index_long_double_object>                  idx_long_double;
+   intrinsic_context_impl* apply_context;
+
+   intrinsic_context_impl(eosio::chain::controller& control) :
+      ApplyContext::primary_index_read_only{control.db()},
+      idx64{control.db()},
+      idx128{control.db()},
+      idx256{control.db()},
+      idx_double{control.db()},
+      idx_long_double{control.db()},
+      apply_context{this}
+   {}
+};
+
+using intrinsic_context = intrinsic_context_impl<eosio::chain::apply_context>;
 
 protocol_feature_set make_protocol_feature_set() {
    protocol_feature_set                                        pfs;
@@ -149,7 +175,7 @@ struct test_chain {
 
    void mutating() { intr_ctx.reset(); }
 
-   eosio::chain::apply_context& get_apply_context() {
+   auto& get_apply_context() {
       if (!intr_ctx) {
          start_if_needed();
          intr_ctx = std::make_unique<intrinsic_context>(*control);
@@ -708,7 +734,7 @@ struct callbacks {
       state.selected_chain_index = chain_index;
    }
 
-   eosio::chain::apply_context& selected() {
+   auto& selected() {
       if (!state.selected_chain_index || *state.selected_chain_index >= state.chains.size() ||
           !state.chains[*state.selected_chain_index])
          throw std::runtime_error("select_chain_for_db() must be called before using multi_index");
