@@ -26,12 +26,39 @@ inline constexpr int      block_interval_ms   = 500;
 inline constexpr int      block_interval_us   = block_interval_ms * 1000;
 inline constexpr uint32_t billed_cpu_time_use = 2000;
 
+// Handle eosio version differences
+namespace {
+template<typename T>
+auto to_uint64_t(T n) -> std::enable_if_t<std::is_same_v<T, eosio::chain::name>, decltype(n.value)> { return n.value; }
+template<typename T>
+auto to_uint64_t(T n) -> std::enable_if_t<std::is_same_v<T, eosio::chain::name>, decltype(n.to_uint64_t())> { return n.to_uint64_t(); }
+}
+
 struct assert_exception : std::exception {
    std::string msg;
 
    assert_exception(std::string&& msg) : msg(std::move(msg)) {}
 
    const char* what() const noexcept override { return msg.c_str(); }
+};
+
+// HACK: UB.  Unfortunately, I can't think of a way to allow a transaction_context
+// to be constructed outside of controller in 2.0 that doesn't have undefined behavior.
+// A better solution would be to factor database access out of apply_context, but
+// that can't really be backported to 2.0 at this point.
+namespace {
+   struct __attribute__((__may_alias__)) xxx_transaction_checktime_timer {
+      std::atomic_bool& expired;
+      eosio::chain::platform_timer& _timer;
+   };
+   struct transaction_checktime_factory {
+      eosio::chain::platform_timer timer;
+      std::atomic_bool expired;
+      eosio::chain::transaction_checktime_timer get() {
+         xxx_transaction_checktime_timer result{expired, timer};
+         return std::move(*reinterpret_cast<eosio::chain::transaction_checktime_timer*>(&result));
+      }
+   };
 };
 
 struct intrinsic_context {
@@ -41,10 +68,11 @@ struct intrinsic_context {
    std::unique_ptr<eosio::chain::apply_context>       apply_context;
 
    intrinsic_context(eosio::chain::controller& control) : control{ control } {
+      static transaction_checktime_factory xxx_timer;
 
       trx.actions.emplace_back();
       trx.actions.back().account = N(eosio.null);
-      trx_ctx = std::make_unique<eosio::chain::transaction_context>(control, trx, trx.id(), fc::time_point::now());
+      trx_ctx = std::make_unique<eosio::chain::transaction_context>(control, trx, trx.id(), xxx_timer.get(), fc::time_point::now());
       trx_ctx->init_for_implicit_trx(0);
       trx_ctx->exec();
       apply_context = std::make_unique<eosio::chain::apply_context>(control, *trx_ctx, 1, 0);
@@ -88,15 +116,16 @@ struct test_chain {
       std::string dir = "testchain-XXXXXX";
       if (mkdtemp(dir.data()) != dir.data())
          throw std::runtime_error("could not create directory " + dir);
+      eosio::chain::genesis_state genesis;
+      genesis.initial_timestamp      = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
       cfg                            = std::make_unique<eosio::chain::controller::config>();
       cfg->blocks_dir                = dir + "/blocks";
       cfg->state_dir                 = dir + "/state";
       cfg->contracts_console         = true;
-      cfg->genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
 
-      control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set());
+      control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
       control->add_indices();
-      control->startup([]() { return false; }, nullptr);
+      control->startup([]{}, []() { return false; }, genesis);
       control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
                            { *control->get_protocol_feature_manager().get_builtin_digest(
                                  eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
@@ -132,7 +161,7 @@ struct test_chain {
    void finish_block() {
       start_if_needed();
       ilog("finish block ${n}", ("n", control->head_block_num()));
-      control->finalize_block([&](eosio::chain::digest_type d) { return producer_key.sign(d); });
+      control->finalize_block([&](eosio::chain::digest_type d) { return std::vector{producer_key.sign(d)}; });
       control->commit_block();
    }
 };
@@ -146,18 +175,18 @@ abieos::checksum256 convert(const eosio::chain::checksum_type& obj) {
 
 chain_types::account_delta convert(const eosio::chain::account_delta& obj) {
    chain_types::account_delta result;
-   result.account.value = obj.account.value;
+   result.account.value = to_uint64_t(obj.account);
    result.delta         = obj.delta;
    return result;
 }
 
 chain_types::action_receipt_v0 convert(const eosio::chain::action_receipt& obj) {
    chain_types::action_receipt_v0 result;
-   result.receiver.value  = obj.receiver.value;
+   result.receiver.value  = to_uint64_t(obj.receiver);
    result.act_digest      = convert(obj.act_digest);
    result.global_sequence = obj.global_sequence;
    result.recv_sequence   = obj.recv_sequence;
-   for (auto& auth : obj.auth_sequence) result.auth_sequence.push_back({ abieos::name{ auth.first }, auth.second });
+   for (auto& auth : obj.auth_sequence) result.auth_sequence.push_back({ abieos::name{ to_uint64_t(auth.first) }, auth.second });
    result.code_sequence.value = obj.code_sequence.value;
    result.abi_sequence.value  = obj.abi_sequence.value;
    return result;
@@ -165,10 +194,10 @@ chain_types::action_receipt_v0 convert(const eosio::chain::action_receipt& obj) 
 
 chain_types::action convert(const eosio::chain::action& obj) {
    chain_types::action result;
-   result.account.value = obj.account.value;
-   result.name.value    = obj.name.value;
+   result.account.value = to_uint64_t(obj.account);
+   result.name.value    = to_uint64_t(obj.name);
    for (auto& auth : obj.authorization)
-      result.authorization.push_back({ abieos::name{ auth.actor.value }, abieos::name{ auth.permission.value } });
+      result.authorization.push_back({ abieos::name{ to_uint64_t(auth.actor) }, abieos::name{ to_uint64_t(auth.permission) } });
    result.data = { obj.data.data(), obj.data.data() + obj.data.size() };
    return result;
 }
@@ -179,7 +208,7 @@ chain_types::action_trace_v0 convert(const eosio::chain::action_trace& obj) {
    result.creator_action_ordinal.value = obj.creator_action_ordinal.value;
    if (obj.receipt)
       result.receipt = convert(*obj.receipt);
-   result.receiver.value = obj.receiver.value;
+   result.receiver.value = to_uint64_t(obj.receiver);
    result.act            = convert(obj.act);
    result.context_free   = obj.context_free;
    result.elapsed        = obj.elapsed.count();
@@ -580,11 +609,10 @@ struct callbacks {
       auto&                            chain = assert_chain(chain_index);
       chain.start_if_needed();
       for (auto& key : args.keys) signed_trx.sign(key, chain.control->get_chain_id());
-      auto mtrx =
-            std::make_shared<eosio::chain::transaction_metadata>(signed_trx, eosio::chain::packed_transaction::none);
-      eosio::chain::transaction_metadata::start_recover_keys(
-            mtrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
-      auto result = chain.control->push_transaction(mtrx, fc::time_point::maximum(), 2000);
+      auto ptrx = std::make_shared<eosio::chain::packed_transaction>(signed_trx, eosio::chain::packed_transaction::compression_type::none);
+      auto fut = eosio::chain::transaction_metadata::start_recover_keys(
+            ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
+      auto result = chain.control->push_transaction( fut.get(), fc::time_point::maximum(), 2000);
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
       set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(chain_types::transaction_trace{ convert(*result) }));
    }
@@ -651,11 +679,11 @@ struct callbacks {
             rows.emplace_back(abieos::native_to_bin(
                   contract_row{ uint32_t(0),
                                 bool(true),
-                                abieos::name{ table_it->code.value },
-                                abieos::name{ table_it->scope.value },
-                                abieos::name{ table_it->table.value },
+                                abieos::name{ to_uint64_t(table_it->code) },
+                                abieos::name{ to_uint64_t(table_it->scope) },
+                                abieos::name{ to_uint64_t(table_it->table) },
                                 kv_it->primary_key,
-                                abieos::name{ kv_it->payer.value },
+                                abieos::name{ to_uint64_t(kv_it->payer) },
                                 { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } }));
          };
       }
@@ -678,10 +706,10 @@ struct callbacks {
     int db_get_i64(int iterator, char* buffer, size_t buffer_size)                      {return selected().db_get_i64(iterator, buffer, buffer_size);}
     int db_next_i64(int iterator, uint64_t& primary)                                    {return selected().db_next_i64(iterator, primary);}
     int db_previous_i64(int iterator, uint64_t& primary)                                {return selected().db_previous_i64(iterator, primary);}
-    int db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)         {return selected().db_find_i64(code, scope, table, id);}
-    int db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)   {return selected().db_lowerbound_i64(code, scope, table, id);}
-    int db_upperbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)   {return selected().db_upperbound_i64(code, scope, table, id);}
-    int db_end_i64(uint64_t code, uint64_t scope, uint64_t table)                       {return selected().db_end_i64(code, scope, table);}
+    int db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)         {return selected().db_find_i64(eosio::chain::name{code}, eosio::chain::name{scope}, eosio::chain::name{table}, id);}
+    int db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)   {return selected().db_lowerbound_i64(eosio::chain::name{code}, eosio::chain::name{scope}, eosio::chain::name{table}, id);}
+    int db_upperbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)   {return selected().db_upperbound_i64(eosio::chain::name{code}, eosio::chain::name{scope}, eosio::chain::name{table}, id);}
+    int db_end_i64(uint64_t code, uint64_t scope, uint64_t table)                       {return selected().db_end_i64(eosio::chain::name{code}, eosio::chain::name{scope}, eosio::chain::name{table});}
 
     DB_WRAPPERS_SIMPLE_SECONDARY(idx64,  uint64_t)
     DB_WRAPPERS_SIMPLE_SECONDARY(idx128, unsigned __int128)
