@@ -112,12 +112,12 @@
          }
          constexpr T value_or()& {
             if (!_has_value)
-               return {};
+               return T();
             return _get();
          }
          constexpr T value_or()const& {
             if (!_has_value)
-               return {};
+               return T();
             return _get();
          }
 
