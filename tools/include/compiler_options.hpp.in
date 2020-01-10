@@ -444,16 +444,16 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.insert(ldopts.end(), { "--only-export", "main:function" } );
          }
          else {
-            ldopts.insert(ldopts.end(), { "-e", "initialize " } );
+            ldopts.insert(ldopts.end(), { "-e", "initialize" } );
             ldopts.insert(ldopts.end(), { "--only-export", "initialize:function" } );
          }
          if (fquery_server_opt)
-            ldopts.insert(ldopts.end(), { "-export", "run_query " });
+            ldopts.insert(ldopts.end(), { "-export", "run_query" });
          else {
-            ldopts.insert(ldopts.end(), { "-export", "create_query_request " });
-            ldopts.insert(ldopts.end(), { "-export", "decode_query_response " });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_request " });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_response " });
+            ldopts.insert(ldopts.end(), { "-export", "create_query_request" });
+            ldopts.insert(ldopts.end(), { "-export", "decode_query_response" });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_request" });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_response" });
          }
          if (fquery_server_opt)
             ldopts.insert(ldopts.end(), { "--only-export", "run_query:function" });
