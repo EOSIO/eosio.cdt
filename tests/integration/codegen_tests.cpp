@@ -92,4 +92,6 @@ BOOST_FIXTURE_TEST_CASE( simple_eosio_tests, tester ) try {
          ("arg0", 33)
          ("arg1", "some string"));
 
-} FC_LOG_AND_RETHROW() }
+} FC_LOG_AND_RETHROW()
+
+BOOST_AUTO_TEST_SUITE_END()
