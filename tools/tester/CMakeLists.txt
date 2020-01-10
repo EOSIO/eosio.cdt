@@ -54,7 +54,7 @@ include(SetupTargetMacros)
 include(GNUInstallDirs)
 include(VersionMacros)
 
-add_subdirectory(../../libraries/eos-vm eos-vm EXCLUDE_FROM_ALL)
+add_subdirectory(../../libraries/eos/libraries/eos-vm eos-vm EXCLUDE_FROM_ALL)
 
 set(EOSIO_ROOT_KEY "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV")
 set(EOSIO_WASM_OLD_BEHAVIOR "Off")
