@@ -145,11 +145,13 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    if (tool_run != 0) {
       throw std::runtime_error("abigen error");
    }
-   std::string abi_s;
-   if (get_abigen_ref().is_empty())
-      return;
-   get_abigen_ref().to_json().dump(abi_s);
-   codegen::get().set_abi(abi_s);
+
+   if (!get_abigen_ref().is_empty()) {
+      std::string abi_s;
+      get_abigen_ref().to_json().dump(abi_s);
+      codegen::get().set_abi(abi_s);
+   }
+
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("codegen error");

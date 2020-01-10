@@ -19,6 +19,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> no_abigen_opt(
+    "no-abigen",
+    cl::desc("Disable ABI file generation"),
+    cl::cat(LD_CAT));
 static cl::opt<bool> fquery_opt(
     "fquery",
     cl::desc("Produce binaries for wasmql"),
@@ -358,6 +362,11 @@ struct Options {
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
+   // add the define for whether this is compiling with CDT and version macros
+   copts.emplace_back("-D__eosio_cdt__");
+   copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_minor__=")+"${VERSION_MINOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_patchlevel__=")+"${VERSION_PATCH}");
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
@@ -376,6 +385,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       if (!fasm_opt) {
          copts.emplace_back("-fno-builtin");
          copts.emplace_back("-mstackrealign");
+         copts.emplace_back("-D__eosio_cdt_native__");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLLP64");
       }
@@ -498,6 +508,10 @@ static Options CreateOptions(bool add_defaults=true) {
    abigen_output = abigen_output_opt;
    debug = g_opt;
 #endif
+
+   if (no_abigen_opt) {
+      ldopts.emplace_back("-no-abigen");
+   }
 
    if (add_defaults) {
       GetCompDefaults(copts);
