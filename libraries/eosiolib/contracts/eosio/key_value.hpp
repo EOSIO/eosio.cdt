@@ -8,6 +8,8 @@
 #include <cctype>
 #include <functional>
 
+#include <boost/pfr.hpp>
+
 namespace eosio {
    namespace internal_use_do_not_use {
       extern "C" {
@@ -189,6 +191,32 @@ inline key_type make_key(F val) {
    else {
       return make_floating_key<uint64_t>(val);
    }
+}
+
+template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
+inline key_type make_key(S val) {
+   size_t data_size = 0;
+   size_t pos = 0;
+   void* data_buffer;
+
+   boost::pfr::for_each_field(val, [&](auto& field) {
+      data_size += pack_size(field);
+   });
+
+   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+   boost::pfr::for_each_field(val, [&](auto& field) {
+      auto kt = make_key(field);
+      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
+      pos += kt.size;
+   });
+
+   std::string s((char*)data_buffer, data_size);
+
+   if (data_size > detail::max_stack_buffer_size) {
+      free(data_buffer);
+   }
+   return {data_size, s};
 }
 
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
