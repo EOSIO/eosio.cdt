@@ -7,6 +7,7 @@ file(GLOB LOCALE_SOURCES "musl/src/locale/*.c")
 file(GLOB MATH_SOURCES  "musl/src/math/*.c")
 file(GLOB MBYTE_SOURCES  "musl/src/multibyte/*.c")
 file(GLOB MISC_SOURCES "musl/src/misc/*.c")
+file(GLOB PRNG_SOURCES "musl/src/prng/*.c")
 file(GLOB SEARCH_SOURCES "musl/src/search/*.c")
 file(GLOB STDIO_SOURCES "musl/src/stdio/*.c")
 file(GLOB STDLIB_SOURCES "musl/src/stdlib/*.c")
@@ -38,6 +39,7 @@ add_library(c
             ${MATH_SOURCES}
             ${MBYTE_SOURCES}
             ${MISC_SOURCES}
+            ${PRNG_SOURCES}
             ${SEARCH_SOURCES}
             ${STDIO_SOURCES}
             ${STDLIB_SOURCES}
@@ -59,6 +61,7 @@ add_native_library(native_c
             ${MATH_SOURCES}
             ${MBYTE_SOURCES}
             ${MISC_SOURCES}
+            ${PRNG_SOURCES}
             ${SEARCH_SOURCES}
             ${STDIO_SOURCES}
             ${STDLIB_SOURCES}

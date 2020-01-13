@@ -309,8 +309,9 @@ ABIEOS_REFLECT(contract_row) {
 
 struct file {
    FILE* f = nullptr;
+   bool owns;
 
-   file(FILE* f = nullptr) : f(f) {}
+   file(FILE* f = nullptr, bool owns = true) : f(f), owns(owns) {}
 
    file(const file&) = delete;
    file(file&& src) { *this = std::move(src); }
@@ -322,14 +323,17 @@ struct file {
    file& operator=(file&& src) {
       close();
       this->f = src.f;
+      this->owns = src.owns;
       src.f   = nullptr;
+      src.owns = false;
       return *this;
    }
 
    void close() {
-      if (f)
+      if (owns)
          fclose(f);
       f = nullptr;
+      owns = false;
    }
 };
 
@@ -524,6 +528,24 @@ struct callbacks {
 
    void get_args(uint32_t cb_alloc_data, uint32_t cb_alloc) { set_data(cb_alloc_data, cb_alloc, state.args); }
 
+   int32_t clock_gettime(int32_t id, void* data) {
+      check_bounds((char*)data, (char*)data+8);
+      std::chrono::nanoseconds result;
+      if(id == 0) { // CLOCK_REALTIME
+         result  = std::chrono::system_clock::now().time_since_epoch();
+      } else if(id == 1) { // CLOCK_MONOTONIC
+         result = std::chrono::steady_clock::now().time_since_epoch();
+      } else {
+         return -1;
+      }
+      int32_t sec = result.count()/1000000000;
+      int32_t nsec = result.count()%1000000000;
+      fc::datastream<char*> ds((char*)data, 8);
+      fc::raw::pack(ds, sec);
+      fc::raw::pack(ds, nsec);
+      return 0;
+   }
+
    bool reenter(const char* args_begin, const char* args_end, uint32_t f, uint32_t cb_alloc_data, uint32_t cb_alloc) {
       check_bounds(args_begin, args_end);
       try {
@@ -534,6 +556,9 @@ struct callbacks {
          ::state                   state{ this->state.wasm, wa, backend, { args_begin, args_end } };
          callbacks                 cb{ state };
          backend.set_wasm_allocator(&wa);
+         state.files.emplace_back(stdin, false);
+         state.files.emplace_back(stdout, false);
+         state.files.emplace_back(stderr, false);
 
          rhf_t::resolve(backend.get_module());
          backend.initialize(&cb);
@@ -570,6 +595,10 @@ struct callbacks {
       if (file_index < 0 || file_index >= state.files.size() || !state.files[file_index].f)
          throw std::runtime_error("file is not opened");
       return state.files[file_index];
+   }
+
+   bool isatty(int32_t file_index) {
+      return !assert_file(file_index).owns;
    }
 
    void close_file(int32_t file_index) { assert_file(file_index).close(); }
@@ -776,8 +805,10 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::eosio_assert_message, eosio::vm::wasm_allocator>("env", "eosio_assert_message");
    rhf_t::add<callbacks, &callbacks::print_range, eosio::vm::wasm_allocator>("env", "print_range");
    rhf_t::add<callbacks, &callbacks::get_args, eosio::vm::wasm_allocator>("env", "get_args");
+   rhf_t::add<callbacks, &callbacks::clock_gettime, eosio::vm::wasm_allocator>("env", "clock_gettime");
    rhf_t::add<callbacks, &callbacks::reenter, eosio::vm::wasm_allocator>("env", "reenter");
    rhf_t::add<callbacks, &callbacks::open_file, eosio::vm::wasm_allocator>("env", "open_file");
+   rhf_t::add<callbacks, &callbacks::isatty, eosio::vm::wasm_allocator>("env", "isatty");
    rhf_t::add<callbacks, &callbacks::close_file, eosio::vm::wasm_allocator>("env", "close_file");
    rhf_t::add<callbacks, &callbacks::write_file, eosio::vm::wasm_allocator>("env", "write_file");
    rhf_t::add<callbacks, &callbacks::read_whole_file, eosio::vm::wasm_allocator>("env", "read_whole_file");
@@ -812,6 +843,9 @@ static void run(const char* wasm, const std::vector<std::string>& args) {
    backend_t                 backend(code);
    ::state                   state{ wasm, wa, backend, abieos::native_to_bin(args) };
    callbacks                 cb{ state };
+   state.files.emplace_back(stdin, false);
+   state.files.emplace_back(stdout, false);
+   state.files.emplace_back(stderr, false);
    backend.set_wasm_allocator(&wa);
 
    rhf_t::resolve(backend.get_module());
