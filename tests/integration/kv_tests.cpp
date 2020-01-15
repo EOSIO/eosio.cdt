@@ -116,4 +116,5 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_range, tester) try {
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(range), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
-}
+
+BOOST_AUTO_TEST_SUITE_END()
