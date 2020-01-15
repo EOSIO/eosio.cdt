@@ -3,8 +3,6 @@
 
 int main(int argc, char** argv);
 
-eosio::internal_use_do_not_use::link::link() {}
-
 extern "C" __attribute__((eosio_wasm_entry)) void initialize() {}
 extern "C" __attribute__((eosio_wasm_entry)) void start(void (*f)()) {
   std::vector<std::string> args = eosio::get_args();
