@@ -23,6 +23,29 @@ add_library(eosio_tester
             tester/fpconv.c
             ${HEADERS})
 
+set(tester_includes -I${CMAKE_SOURCE_DIR}/libc++/libcxx/include
+                    -I${CMAKE_SOURCE_DIR}/libc/musl/include
+                    -I${CMAKE_SOURCE_DIR}/libc/musl/src/internal
+                    -I${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
+                    -I${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
+                    -I${CMAKE_SOURCE_DIR}/eosiolib/tester
+                    -I${CMAKE_SOURCE_DIR}/eosiolib/core
+                    -I${CMAKE_SOURCE_DIR}/eosiolib/contracts
+                    -I${CMAKE_SOURCE_DIR}/abieos/src
+                    -I${CMAKE_SOURCE_DIR}/abieos/external/date/include
+                    -I${CMAKE_SOURCE_DIR}/abieos/external/rapidjson/include
+                    -I${CMAKE_SOURCE_DIR}/Catch2/single_include
+                    -I${CMAKE_SOURCE_DIR}/fmt/include)
+
+add_custom_command(
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crt0.o
+   COMMAND ${CMAKE_CXX_COMPILER} -c -o ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${tester_includes} ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
+   DEPENDS ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
+   COMMENT "Building C++ object crt0.o"
+)
+add_custom_target(crt0.o.target DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crt0.o)
+add_dependencies(eosio_tester crt0.o.target)
+
 add_native_library(native_eosio
                    eosiolib.cpp
                    crypto.cpp
@@ -36,7 +59,7 @@ target_include_directories(eosio PUBLIC
                                  ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
                                  ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
                                  ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
-                                 ${CMAKE_SOURCE_DIR}/libcxx/include
+                                 ${CMAKE_SOURCE_DIR}/libc++/libcxx/include
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
@@ -49,6 +72,7 @@ add_custom_command( TARGET eosio_dsm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
 add_custom_command( TARGET eosio_cmem POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_cmem> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_tester> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.h DESTINATION ${BASE_BINARY_DIR}/include/abieos)
@@ -58,3 +82,4 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_ripemd160.hpp DESTINA
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/date/include/date DESTINATION ${BASE_BINARY_DIR}/include/date FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/rapidjson/include/rapidjson DESTINATION ${BASE_BINARY_DIR}/include/rapidjson FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../fmt/include/fmt DESTINATION ${BASE_BINARY_DIR}/include/fmt FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../Catch2/single_include/catch2 DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")

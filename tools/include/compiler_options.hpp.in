@@ -503,6 +503,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       if (fquery_opt || fquery_server_opt || fquery_client_opt || ftester_opt)
          ldopts.emplace_back("-leosio_cmem");
       if (ftester_opt) {
+         ldopts.emplace_back(eosio::cdt::whereami::where()+"/../lib/crt0.o");
          ldopts.emplace_back("-leosio_tester");
       }
       for (auto e : only_export_opt) {
@@ -750,6 +751,7 @@ static Options CreateOptions(bool add_defaults=true) {
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/date");
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/fmt");
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/rapidjson");
+         copts.emplace_back("-DCATCH_CONFIG_NO_POSIX_SIGNALS");
       }
 
 #ifndef __APPLE__

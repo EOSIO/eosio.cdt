@@ -475,8 +475,10 @@ struct callbacks {
    ::state& state;
 
    void check_bounds(const char* begin, const char* end) {
-      if (begin > end)
+      if (begin > end) {
+        std::cerr << (void*)begin << " " << (void*)end << std::endl;
          throw std::runtime_error("bad memory");
+      }
       // todo: check bounds
    }
 
@@ -609,6 +611,12 @@ struct callbacks {
       return fwrite(content_begin, content_end - content_begin, 1, f.f) == 1;
    }
 
+   int32_t read_file(int32_t file_index, char* content_begin, char * content_end) {
+      check_bounds(content_begin, content_end);
+      auto& f = assert_file(file_index);
+      return fread(content_begin, 1, content_end - content_begin, f.f);
+   }
+
    bool read_whole_file(const char* filename_begin, const char* filename_end, uint32_t cb_alloc_data,
                         uint32_t cb_alloc) {
       check_bounds(filename_begin, filename_end);
@@ -650,6 +658,9 @@ struct callbacks {
    void destroy_chain(uint32_t chain) {
       assert_chain(chain);
       state.chains[chain].reset();
+      while(!state.chains.empty() && !state.chains.back()) {
+         state.chains.pop_back();
+      }
    }
 
    void start_block(uint32_t chain_index, int64_t skip_miliseconds) {
@@ -811,6 +822,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::isatty, eosio::vm::wasm_allocator>("env", "isatty");
    rhf_t::add<callbacks, &callbacks::close_file, eosio::vm::wasm_allocator>("env", "close_file");
    rhf_t::add<callbacks, &callbacks::write_file, eosio::vm::wasm_allocator>("env", "write_file");
+   rhf_t::add<callbacks, &callbacks::read_file, eosio::vm::wasm_allocator>("env", "read_file");
    rhf_t::add<callbacks, &callbacks::read_whole_file, eosio::vm::wasm_allocator>("env", "read_whole_file");
    rhf_t::add<callbacks, &callbacks::execute, eosio::vm::wasm_allocator>("env", "execute");
    rhf_t::add<callbacks, &callbacks::create_chain, eosio::vm::wasm_allocator>("env", "create_chain");

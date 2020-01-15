@@ -7,25 +7,9 @@
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
 #include <eosio/transaction.hpp>
-#include <wchar.h>
-
-// TODO: move to <wchar.h>
-namespace std {
-inline int fputws(const wchar_t* ws, FILE* stream) { return ::fputws(ws, stream); }
-} // namespace std
+#include <cwchar>
 
 #include <fmt/format.h>
-
-#define TESTER_STRINGIFY1(x) #x
-#define TESTER_STRINGIFY(x) TESTER_STRINGIFY1(x)
-
-#define TESTER_REQUIRE_EQUAL(EXPECTED, ACTUAL)                                                                         \
-   if ((EXPECTED) != (ACTUAL))                                                                                         \
-      eosio::check(false, "expected value doesn't match at " __FILE__ ":" TESTER_STRINGIFY(__LINE__));
-
-#define TESTER_REQUIRE(ACTUAL)                                                                                         \
-   if (!(ACTUAL))                                                                                                      \
-      eosio::check(false, "expected value doesn't match at " __FILE__ ":" TESTER_STRINGIFY(__LINE__));
 
 #define TESTER_INTRINSIC extern "C" __attribute__((eosio_wasm_import))
 
@@ -147,56 +131,6 @@ bool reenter(void (*f)(), E e) {
       return true;
    e(error);
    return false;
-}
-
-inline int32_t open_file(std::string_view filename, std::string_view mode) {
-   return internal_use_do_not_use::open_file(filename.data(), filename.data() + filename.size(), mode.data(),
-                                             mode.data() + mode.size());
-}
-
-inline void close_file(int32_t file_index) { return internal_use_do_not_use::close_file(file_index); }
-
-inline bool write_file(int32_t file_index, std::string_view content) {
-   return internal_use_do_not_use::write_file(file_index, content.data(), content.data() + content.size());
-}
-
-struct file {
-   int32_t     file_index = -1;
-   std::string fmt_buffer;
-
-   file(std::string_view filename, std::string_view mode, bool check = true) {
-      file_index = open_file(filename, mode);
-      if (check && file_index < 0)
-         eosio::check(false, "open " + std::string(filename) + " failed");
-   }
-
-   file(const file&) = delete;
-   file(file&&)      = delete;
-
-   ~file() { close(); }
-
-   void close() {
-      if (file_index >= 0)
-         close_file(file_index);
-      file_index = -1;
-   }
-
-   void write(std::string_view content) { write_file(file_index, content); }
-
-   template <typename S, typename... Args>
-   void format(const S& format_str, Args&&... args) {
-      fmt_buffer.clear();
-      fmt::format_to(std::back_inserter(fmt_buffer), format_str, std::forward<Args>(args)...);
-      write(fmt_buffer);
-   }
-};
-
-template <typename S, typename... Args>
-inline void print_fmt(const S& format_str, Args&&... args) {
-   static std::string fmt_buffer;
-   fmt_buffer.clear();
-   fmt::format_to(std::back_inserter(fmt_buffer), format_str, std::forward<Args>(args)...);
-   print(fmt_buffer);
 }
 
 inline std::vector<char> read_whole_file(std::string_view filename) {
@@ -512,102 +446,4 @@ class test_chain {
    }
 };
 
-struct test_case {
-   const char* name;
-   void (*f)() = {};
-
-   test_case(const char* name, void (*f)()) : name{ name }, f{ f } { get_tests().push_back(this); }
-   test_case(const test_case&) = delete;
-   test_case(test_case&&)      = delete;
-
-   static std::vector<test_case*>& get_tests() {
-      static std::vector<test_case*> tests;
-      return tests;
-   }
-};
-#define TEST_CASE(N, ...) eosio::test_case N{ #N, __VA_ARGS__ };
-
-struct comparison_file {
-   std::string filename;
-   eosio::file file;
-
-   comparison_file(const std::string& filename) : filename(filename), file(filename + ".actual", "w") {}
-
-   ~comparison_file() { close(); }
-
-   void write(std::string_view content) { file.write(content); }
-
-   template <typename S, typename... Args>
-   void format(const S& format_str, Args&&... args) {
-      file.format(format_str, std::forward<Args>(args)...);
-   }
-
-   void close() {
-      file.close();
-      bool write = false;
-      for (auto& arg : get_args())
-         if (arg == "--write")
-            write = true;
-      if (write) {
-         auto cmd = "cp " + filename + ".actual " + filename + ".expected";
-         if (execute(cmd))
-            check(false, "copy failed");
-      } else {
-         check(!execute("colordiff -u " + filename + ".expected " + filename + ".actual"),
-               "files are different; use --write to overwrite");
-      }
-   }
-};
-
-inline void run_tests(void (*f)()) {
-   if (f)
-      return f();
-   int  num_passed = 0;
-   int  num_failed = 0;
-   auto run        = [&](auto& test) {
-      auto ok = reenter(test->f, [&](auto& error) { print(error, "\n"); });
-      if (ok) {
-         ++num_passed;
-         print_fmt("\033[96m{:60} \033[32mpassed\033[0m\n", std::string{ test->name });
-      } else {
-         ++num_failed;
-         print_fmt("\033[96m{:60} \033[31mfailed\033[0m\n", std::string{ test->name });
-      }
-   };
-   bool  manual = false;
-   auto& args   = get_args();
-   for (size_t i = 0; i + 1 < args.size(); ++i) {
-      if (args[i] == "-t") {
-         manual     = true;
-         bool found = false;
-         for (auto* test : test_case::get_tests()) {
-            if (test->name == args[i + 1]) {
-               found = true;
-               run(test);
-            }
-         }
-         if (!found) {
-            ++num_failed;
-            print_fmt("\033[96m{:60} \033[31mnot found\033[0m\n", args[i + 1]);
-         }
-      }
-   }
-   if (!manual)
-      for (auto* test : test_case::get_tests()) run(test);
-   if (num_passed)
-      print_fmt("\033[32m{} tests passed\033[0m", num_passed);
-   if (num_failed) {
-      if (num_passed)
-         print_fmt(", ");
-      print_fmt("\033[31m{} tests failed\033[0m\n", num_failed);
-      check(false, "test(s) failed");
-   } else {
-      print_fmt("\n");
-   }
-}
-
 } // namespace eosio
-
-#define TEST_ENTRY                                                                                                     \
-   extern "C" __attribute__((eosio_wasm_entry)) void initialize() {}                                                   \
-   extern "C" __attribute__((eosio_wasm_entry)) void start(void (*f)()) { eosio::run_tests(f); }
