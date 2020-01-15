@@ -21,6 +21,6 @@
 [submodule "libraries/fmt"]
 	path = libraries/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "external/Catch2"]
-	path = external/Catch2
+[submodule "libraries/Catch2"]
+	path = libraries/Catch2
 	url = https://github.com/catchorg/Catch2
