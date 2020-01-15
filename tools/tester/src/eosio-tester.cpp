@@ -146,20 +146,18 @@ protocol_feature_set make_protocol_feature_set() {
 }
 
 struct test_chain {
+   fc::temp_directory                                dir;
    eosio::chain::private_key_type producer_key{ "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"s };
    std::unique_ptr<eosio::chain::controller::config> cfg;
    std::unique_ptr<eosio::chain::controller>         control;
    std::unique_ptr<intrinsic_context>                intr_ctx;
 
    test_chain() {
-      std::string dir = "testchain-XXXXXX";
-      if (mkdtemp(dir.data()) != dir.data())
-         throw std::runtime_error("could not create directory " + dir);
       eosio::chain::genesis_state genesis;
       genesis.initial_timestamp      = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
       cfg                            = std::make_unique<eosio::chain::controller::config>();
-      cfg->blocks_dir                = dir + "/blocks";
-      cfg->state_dir                 = dir + "/state";
+      cfg->blocks_dir                = dir.path() / "blocks";
+      cfg->state_dir                 = dir.path() / "state";
       cfg->contracts_console         = true;
 
       control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
