@@ -174,6 +174,11 @@ inline symbol convert(abieos::symbol s) { return symbol(s.value); }
 inline asset  convert(const abieos::asset& a) { return { a.amount, convert(a.sym) }; }
 inline asset  s2a(const char* s) { return convert(string_to_asset(s)); }
 
+/**
+ * Validates the status of a transaction.  If expected_except is nullptr, then the
+ * transaction should succeed.  Otherwise it represents a string which should be
+ * part of the error message.
+ */
 inline void expect(const chain_types::transaction_trace& ttrace, const char* expected_except = nullptr) {
    auto& tt = std::get<0>(ttrace);
    if (expected_except) {
@@ -227,6 +232,11 @@ struct tester_authority {
    EOSLIB_SERIALIZE(tester_authority, (threshold)(keys)(accounts)(waits))
 };
 
+/**
+ * Manages a chain.
+ * Only one test_chain can exist at a time.
+ * The test chain uses simulated time starting at 2020-01-01T00:00:00.000.
+ */
 class test_chain {
  private:
    uint32_t                               id;
@@ -244,6 +254,11 @@ class test_chain {
    test_chain& operator=(const test_chain&) = delete;
    test_chain& operator=(test_chain&&) = default;
 
+   /**
+    * Start a new pending block.  If a block is currently pending, finishes it first.
+    *
+    * @param skip_milliseconds The amount of time to skip in addition to the 500 ms block time.
+    */
    void start_block(int64_t skip_miliseconds = 0) {
       head_block_info.reset();
       if (skip_miliseconds > 500) {
@@ -254,12 +269,13 @@ class test_chain {
       }
    }
 
+  /**
+   * Finish the current pending block.  If no block is pending, creates an empty block.
+   */
    void finish_block() {
       head_block_info.reset();
       internal_use_do_not_use::finish_block(id);
    }
-
-   void select_chain_for_db() { internal_use_do_not_use::select_chain_for_db(id); }
 
    const chain_types::block_info& get_head_block_info() {
       if (!head_block_info) {
@@ -293,6 +309,10 @@ class test_chain {
       return t;
    }
 
+   /**
+    * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
+    */
+   [[nodiscard]]
    chain_types::transaction_trace push_transaction(const transaction& trx, const std::vector<abieos::private_key>& keys,
                                                    const std::vector<std::vector<char>>& context_free_data = {},
                                                    const std::vector<abieos::signature>& signatures        = {}) {
@@ -311,10 +331,16 @@ class test_chain {
       return chain_types::assert_bin_to_native<chain_types::transaction_trace>(bin);
    }
 
+   [[nodiscard]]
    chain_types::transaction_trace push_transaction(const transaction& trx) {
       return push_transaction(trx, { default_priv_key });
    }
 
+   /**
+    * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
+    *
+    * Validates the transaction status according to @ref eosio::expect.
+    */
    chain_types::transaction_trace transact(std::vector<action>&& actions, const std::vector<abieos::private_key>& keys,
                                            const char* expected_except = nullptr) {
       auto trace = push_transaction(make_transaction(std::move(actions)), keys);
@@ -326,6 +352,14 @@ class test_chain {
       return transact(std::move(actions), { default_priv_key }, expected_except);
    }
 
+   /**
+    * Executes a single deferred transaction and returns the action trace.
+    * If there are no available deferred transactions that are ready to execute
+    * in the current pending block, returns an empty optional.
+    *
+    * If no block is currently pending, starts one.
+    */
+   [[nodiscard]]
    std::optional<chain_types::transaction_trace> exec_deferred() {
       std::vector<char> bin;
       if (!internal_use_do_not_use::exec_deferred(id, [&](size_t size) {
@@ -388,6 +422,10 @@ class test_chain {
       return create_code_account(ac, convert(default_pub_key), false, expected_except);
    }
 
+   /*
+    * Set the code for an account.
+    * Validates the transaction status as with @ref eosio::expect.
+    */
    chain_types::transaction_trace set_code(name ac, const char* filename, const char* expected_except = nullptr) {
       return transact({ action{ { { ac, "active"_n } },
                                 "eosio"_n,
