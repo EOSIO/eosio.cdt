@@ -650,6 +650,8 @@ struct callbacks {
       state.chains.push_back(std::make_unique<test_chain>());
       if (state.chains.size() == 1)
          state.selected_chain_index = 0;
+      else
+         throw std::runtime_error("Chain already exists");
       return state.chains.size() - 1;
    }
 
