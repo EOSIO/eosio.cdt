@@ -17,6 +17,7 @@ struct my_struct {
    uint128_t ti128;
    float tfloat;
    testing_struct tstruct;
+   std::tuple<uint64_t, float, std::string> ttuple;
 };
 
 struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
@@ -28,6 +29,7 @@ struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
       kv_index ti128{eosio::name{"e"}, &my_struct::ti128};
       kv_index tfloat{eosio::name{"f"}, &my_struct::tfloat};
       kv_index tstruct{eosio::name{"g"}, &my_struct::tstruct};
+      kv_index ttuple{eosio::name{"h"}, &my_struct::ttuple};
    } index;
 
    my_table() {
@@ -45,7 +47,8 @@ public:
       .ti32 = 0,
       .ti128 = (static_cast<uint128_t>(1) << 127) - 5,
       .tfloat = 4.2574,
-      .tstruct = { 1, 2 }
+      .tstruct = { 1, 2 },
+      .ttuple = { 100, 32.43, "abc"}
    };
    my_struct s2{
       .tname = "alice"_n,
@@ -54,7 +57,8 @@ public:
       .ti32 = -1,
       .ti128 = (static_cast<uint128_t>(1) << 127) - 4,
       .tfloat = 5.2574,
-      .tstruct = { 5, 6 }
+      .tstruct = { 5, 6 },
+      .ttuple = { 100, 32.44, "def"}
    };
    my_struct s3{
       .tname = "john"_n,
@@ -63,7 +67,8 @@ public:
       .ti32 = -2,
       .ti128 = (static_cast<uint128_t>(1) << 127) - 3,
       .tfloat = 187234,
-      .tstruct = { 3, 4 }
+      .tstruct = { 3, 4 },
+      .ttuple = { 100, 33.43, "abc"}
    };
    my_struct s4{
       .tname = "joe"_n,
@@ -72,7 +77,8 @@ public:
       .ti32 = 1,
       .ti128 = (static_cast<uint128_t>(1) << 127) - 2,
       .tfloat = 0,
-      .tstruct = { 7, 8 }
+      .tstruct = { 7, 8 },
+      .ttuple = { 101, 32.43, "abc"}
    };
    my_struct s5{
       .tname = "billy"_n,
@@ -81,7 +87,8 @@ public:
       .ti32 = 2,
       .ti128 = (static_cast<uint128_t>(1) << 127) - 1,
       .tfloat = -4.2574,
-      .tstruct = { 9, 10 }
+      .tstruct = { 9, 10 },
+      .ttuple = { 101, 34.43, "abc"}
    };
 
    [[eosio::action]]
@@ -238,6 +245,27 @@ public:
       eosio::check(itr.value().tstruct == s4.tstruct, "Got the wrong value");
       ++itr;
       eosio::check(itr.value().tstruct == s5.tstruct, "Got the wrong value");
+      ++itr;
+      eosio::check(itr == end_itr, "Should be the end");
+   }
+
+   [[eosio::action]]
+   void makekeytup() {
+      my_table t;
+
+      auto end_itr = t.index.ttuple.end();
+      auto itr = t.index.ttuple.begin();
+
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().ttuple == s1.ttuple, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().ttuple == s2.ttuple, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().ttuple == s3.ttuple, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().ttuple == s4.ttuple, "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().ttuple == s5.ttuple, "Got the wrong value");
       ++itr;
       eosio::check(itr == end_itr, "Should be the end");
    }

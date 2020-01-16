@@ -50,4 +50,8 @@ BOOST_AUTO_TEST_CASE(makekeystct) try {
    make_key_test(N(makekeystct));
 } FC_LOG_AND_RETHROW()
 
+BOOST_AUTO_TEST_CASE(makekeytup) try {
+   make_key_test(N(makekeytup));
+} FC_LOG_AND_RETHROW()
+
 BOOST_AUTO_TEST_SUITE_END()

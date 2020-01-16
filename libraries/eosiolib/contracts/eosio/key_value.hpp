@@ -193,32 +193,6 @@ inline key_type make_key(F val) {
    }
 }
 
-template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
-inline key_type make_key(S val) {
-   size_t data_size = 0;
-   size_t pos = 0;
-   void* data_buffer;
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      data_size += pack_size(field);
-   });
-
-   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
-      pos += kt.size;
-   });
-
-   std::string s((char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return {data_size, s};
-}
-
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
    using namespace detail;
 
@@ -253,6 +227,58 @@ inline key_type make_key(const char* str, bool case_insensitive=false) {
 
 inline key_type make_key(eosio::name n) {
    return make_key(n.value);
+}
+
+template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
+inline key_type make_key(S val) {
+   size_t data_size = 0;
+   size_t pos = 0;
+   void* data_buffer;
+
+   boost::pfr::for_each_field(val, [&](auto& field) {
+      data_size += pack_size(field);
+   });
+
+   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+   boost::pfr::for_each_field(val, [&](auto& field) {
+      auto kt = make_key(field);
+      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
+      pos += kt.size;
+   });
+
+   std::string s((char*)data_buffer, data_size);
+
+   if (data_size > detail::max_stack_buffer_size) {
+      free(data_buffer);
+   }
+   return {data_size, s};
+}
+
+template <typename... Args>
+inline key_type make_key(std::tuple<Args...> val) {
+   size_t data_size = 0;
+   size_t pos = 0;
+   void* data_buffer;
+
+   boost::fusion::for_each(val, [&](auto& field) {
+      data_size += pack_size(field);
+   });
+
+   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+   boost::fusion::for_each(val, [&](auto& field) {
+      auto kt = make_key(field);
+      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
+      pos += kt.size;
+   });
+
+   std::string s((char*)data_buffer, data_size);
+
+   if (data_size > detail::max_stack_buffer_size) {
+      free(data_buffer);
+   }
+   return {data_size, s};
 }
 
 template<typename T, eosio::name::raw TableName, eosio::name::raw DbName = eosio::name{"eosio.kvram"}>
