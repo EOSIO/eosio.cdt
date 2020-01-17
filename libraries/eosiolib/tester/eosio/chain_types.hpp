@@ -2,6 +2,9 @@
 
 #include <abieos.hpp>
 #include <eosio/stream.hpp>
+#include <eosio/from_bin.hpp>
+#include <eosio/to_bin.hpp>
+#include <eosio/reflection.hpp>
 
 #ifdef EOSIO_CDT_COMPILATION
 #   include <eosio/check.hpp>
@@ -30,7 +33,7 @@ auto assert_native_to_bin(const T& t) {
 
 struct extension {
    uint16_t             type = {};
-   abieos::input_buffer data = {};
+   eosio::input_stream  data = {};
 };
 
 EOSIO_REFLECT(extension, type, data);
@@ -131,7 +134,7 @@ struct action {
    abieos::name                  account       = {};
    abieos::name                  name          = {};
    std::vector<permission_level> authorization = {};
-   abieos::input_buffer          data          = {};
+   eosio::input_stream           data          = {};
 };
 
 EOSIO_REFLECT(action, account, name, authorization, data);
@@ -164,15 +167,13 @@ struct partial_transaction_v0 {
    abieos::varuint32                 delay_sec              = {};
    std::vector<extension>            transaction_extensions = {};
    std::vector<abieos::signature>    signatures             = {};
-   std::vector<abieos::input_buffer> context_free_data      = {};
+   std::vector<eosio::input_stream>  context_free_data      = {};
 };
 
 EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
               max_cpu_usage_ms, delay_sec, transaction_extensions, signatures, context_free_data);
 
 using partial_transaction = variant<partial_transaction_v0>;
-
-struct recurse_transaction_trace;
 
 struct transaction_trace_v0;
 using transaction_trace = variant<transaction_trace_v0>;
@@ -221,8 +222,8 @@ EOSIO_REFLECT(transaction_receipt_header, status, cpu_usage_us, net_usage_words)
 struct packed_transaction {
    std::vector<abieos::signature> signatures               = {};
    uint8_t                        compression              = {};
-   abieos::input_buffer           packed_context_free_data = {};
-   abieos::input_buffer           packed_trx               = {};
+   eosio::input_stream            packed_context_free_data = {};
+   eosio::input_stream            packed_trx               = {};
 };
 
 EOSIO_REFLECT(packed_transaction, signatures, compression, packed_context_free_data, packed_trx);
