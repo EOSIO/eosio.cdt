@@ -298,16 +298,7 @@ struct contract_row {
    abieos::input_buffer value       = {};
 };
 
-ABIEOS_REFLECT(contract_row) {
-   ABIEOS_MEMBER(contract_row, block_num);
-   ABIEOS_MEMBER(contract_row, present);
-   ABIEOS_MEMBER(contract_row, code);
-   ABIEOS_MEMBER(contract_row, scope);
-   ABIEOS_MEMBER(contract_row, table);
-   ABIEOS_MEMBER(contract_row, primary_key);
-   ABIEOS_MEMBER(contract_row, payer);
-   ABIEOS_MEMBER(contract_row, value);
-}
+EOSIO_REFLECT(contract_row, block_num, present, code, scope, table, primary_key, payer, value);
 
 struct file {
    FILE* f = nullptr;

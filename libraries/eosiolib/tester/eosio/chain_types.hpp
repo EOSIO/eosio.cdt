@@ -44,10 +44,7 @@ struct extension {
    abieos::input_buffer data = {};
 };
 
-ABIEOS_REFLECT(extension) {
-   ABIEOS_MEMBER(extension, type)
-   ABIEOS_MEMBER(extension, data)
-}
+EOSIO_REFLECT(extension, type, data);
 
 enum class transaction_status : uint8_t {
    executed  = 0, // succeed, no error handler executed
@@ -82,55 +79,26 @@ inline transaction_status get_transaction_status(const std::string& s) {
    report_error("unknown status: " + s);
 }
 
-#if 0
-inline bool bin_to_native(transaction_status& status, abieos::bin_to_native_state& state, bool) {
-   status = transaction_status(read_raw<uint8_t>(state.bin));
-   return true;
-}
-
-inline bool json_to_native(transaction_status&, abieos::json_to_native_state& state, abieos::event_type, bool) {
-   state.error = "json_to_native: transaction_status unsupported";
-   return false;
-}
-
-inline void native_to_bin(const transaction_status& obj, std::vector<char>& bin) {
-   abieos::push_raw(bin, static_cast<uint8_t>(obj));
-}
-#endif
-
 struct permission_level {
    abieos::name actor      = {};
    abieos::name permission = {};
 };
 
-ABIEOS_REFLECT(permission_level) {
-   ABIEOS_MEMBER(permission_level, actor)
-   ABIEOS_MEMBER(permission_level, permission)
-}
+EOSIO_REFLECT(permission_level, actor, permission);
 
 struct account_auth_sequence {
    abieos::name account  = {};
    uint64_t     sequence = {};
 };
 
-ABIEOS_REFLECT(account_auth_sequence) {
-   ABIEOS_MEMBER(account_auth_sequence, account)
-   ABIEOS_MEMBER(account_auth_sequence, sequence)
-}
+EOSIO_REFLECT(account_auth_sequence, account, sequence);
 
 struct account_delta {
    abieos::name account = {};
    int64_t      delta   = {};
 };
 
-EOSIO_REFLECT(account_delta, account, delta)
-
-#if 0
-ABIEOS_REFLECT(account_delta) {
-   ABIEOS_MEMBER(account_delta, account)
-   ABIEOS_MEMBER(account_delta, delta)
-}
-#endif
+EOSIO_REFLECT(account_delta, account, delta);
 
 struct action_receipt_v0 {
    abieos::name                       receiver        = {};
@@ -142,15 +110,7 @@ struct action_receipt_v0 {
    abieos::varuint32                  abi_sequence    = {};
 };
 
-ABIEOS_REFLECT(action_receipt_v0) {
-   ABIEOS_MEMBER(action_receipt_v0, receiver)
-   ABIEOS_MEMBER(action_receipt_v0, act_digest)
-   ABIEOS_MEMBER(action_receipt_v0, global_sequence)
-   ABIEOS_MEMBER(action_receipt_v0, recv_sequence)
-   ABIEOS_MEMBER(action_receipt_v0, auth_sequence)
-   ABIEOS_MEMBER(action_receipt_v0, code_sequence)
-   ABIEOS_MEMBER(action_receipt_v0, abi_sequence)
-}
+EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence, abi_sequence);
 
 using action_receipt = std::variant<action_receipt_v0>;
 
@@ -161,12 +121,7 @@ struct action {
    abieos::input_buffer          data          = {};
 };
 
-ABIEOS_REFLECT(action) {
-   ABIEOS_MEMBER(action, account)
-   ABIEOS_MEMBER(action, name)
-   ABIEOS_MEMBER(action, authorization)
-   ABIEOS_MEMBER(action, data)
-}
+EOSIO_REFLECT(action, account, name, authorization, data);
 
 struct action_trace_v0 {
    abieos::varuint32             action_ordinal         = {};
@@ -182,19 +137,8 @@ struct action_trace_v0 {
    std::optional<uint64_t>       error_code             = {};
 };
 
-ABIEOS_REFLECT(action_trace_v0) {
-   ABIEOS_MEMBER(action_trace_v0, action_ordinal)
-   ABIEOS_MEMBER(action_trace_v0, creator_action_ordinal)
-   ABIEOS_MEMBER(action_trace_v0, receipt)
-   ABIEOS_MEMBER(action_trace_v0, receiver)
-   ABIEOS_MEMBER(action_trace_v0, act)
-   ABIEOS_MEMBER(action_trace_v0, context_free)
-   ABIEOS_MEMBER(action_trace_v0, elapsed)
-   ABIEOS_MEMBER(action_trace_v0, console)
-   ABIEOS_MEMBER(action_trace_v0, account_ram_deltas)
-   ABIEOS_MEMBER(action_trace_v0, except)
-   ABIEOS_MEMBER(action_trace_v0, error_code)
-}
+EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act,
+              context_free, elapsed, console, account_ram_deltas, except, error_code);
 
 using action_trace = std::variant<action_trace_v0>;
 
@@ -210,17 +154,8 @@ struct partial_transaction_v0 {
    std::vector<abieos::input_buffer> context_free_data      = {};
 };
 
-ABIEOS_REFLECT(partial_transaction_v0) {
-   ABIEOS_MEMBER(partial_transaction_v0, expiration)
-   ABIEOS_MEMBER(partial_transaction_v0, ref_block_num)
-   ABIEOS_MEMBER(partial_transaction_v0, ref_block_prefix)
-   ABIEOS_MEMBER(partial_transaction_v0, max_net_usage_words)
-   ABIEOS_MEMBER(partial_transaction_v0, max_cpu_usage_ms)
-   ABIEOS_MEMBER(partial_transaction_v0, delay_sec)
-   ABIEOS_MEMBER(partial_transaction_v0, transaction_extensions)
-   ABIEOS_MEMBER(partial_transaction_v0, signatures)
-   ABIEOS_MEMBER(partial_transaction_v0, context_free_data)
-}
+EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
+              max_cpu_usage_ms, delay_sec, transaction_extensions, signatures, context_free_data);
 
 using partial_transaction = std::variant<partial_transaction_v0>;
 
@@ -242,21 +177,8 @@ struct transaction_trace_v0 {
    std::optional<partial_transaction>     reserved_do_not_use = {};
 };
 
-ABIEOS_REFLECT(transaction_trace_v0) {
-   ABIEOS_MEMBER(transaction_trace_v0, id)
-   ABIEOS_MEMBER(transaction_trace_v0, status)
-   ABIEOS_MEMBER(transaction_trace_v0, cpu_usage_us)
-   ABIEOS_MEMBER(transaction_trace_v0, net_usage_words)
-   ABIEOS_MEMBER(transaction_trace_v0, elapsed)
-   ABIEOS_MEMBER(transaction_trace_v0, net_usage)
-   ABIEOS_MEMBER(transaction_trace_v0, scheduled)
-   ABIEOS_MEMBER(transaction_trace_v0, action_traces)
-   ABIEOS_MEMBER(transaction_trace_v0, account_ram_delta)
-   ABIEOS_MEMBER(transaction_trace_v0, except)
-   ABIEOS_MEMBER(transaction_trace_v0, error_code)
-   ABIEOS_MEMBER(transaction_trace_v0, failed_dtrx_trace)
-   ABIEOS_MEMBER(transaction_trace_v0, reserved_do_not_use)
-}
+EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, elapsed, net_usage_words, scheduled, action_traces,
+              account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
 
 using transaction_trace = std::variant<transaction_trace_v0>;
 
@@ -274,40 +196,19 @@ eosio::result<void> to_bin(const recurse_transaction_trace& obj, S& stream) {
    return to_bin(obj.recurse, stream);
 }
 
-#if 0
-inline bool bin_to_native(recurse_transaction_trace& obj, abieos::bin_to_native_state& state, bool start) {
-   return abieos::bin_to_native(obj.recurse, state, start);
-}
-
-inline bool json_to_native(recurse_transaction_trace& obj, abieos::json_to_native_state& state,
-                           abieos::event_type event, bool start) {
-   return abieos::json_to_native(obj.recurse, state, event, start);
-}
-
-inline void native_to_bin(const recurse_transaction_trace& obj, std::vector<char>& bin) {
-   abieos::native_to_bin(obj.recurse, bin);
-}
-#endif
-
 struct producer_key {
    abieos::name       producer_name     = {};
    abieos::public_key block_signing_key = {};
 };
 
-ABIEOS_REFLECT(producer_key) {
-   ABIEOS_MEMBER(producer_key, producer_name)
-   ABIEOS_MEMBER(producer_key, block_signing_key)
-}
+EOSIO_REFLECT(producer_key, producer_name, block_signing_key);
 
 struct producer_schedule {
    uint32_t                  version   = {};
    std::vector<producer_key> producers = {};
 };
 
-ABIEOS_REFLECT(producer_schedule) {
-   ABIEOS_MEMBER(producer_schedule, version)
-   ABIEOS_MEMBER(producer_schedule, producers)
-}
+EOSIO_REFLECT(producer_schedule, version, producers);
 
 struct transaction_receipt_header {
    transaction_status status          = {};
@@ -315,11 +216,7 @@ struct transaction_receipt_header {
    abieos::varuint32  net_usage_words = {};
 };
 
-ABIEOS_REFLECT(transaction_receipt_header) {
-   ABIEOS_MEMBER(transaction_receipt_header, status)
-   ABIEOS_MEMBER(transaction_receipt_header, cpu_usage_us)
-   ABIEOS_MEMBER(transaction_receipt_header, net_usage_words)
-}
+EOSIO_REFLECT(transaction_receipt_header, status, cpu_usage_us, net_usage_words);
 
 struct packed_transaction {
    std::vector<abieos::signature> signatures               = {};
@@ -328,12 +225,7 @@ struct packed_transaction {
    abieos::input_buffer           packed_trx               = {};
 };
 
-ABIEOS_REFLECT(packed_transaction) {
-   ABIEOS_MEMBER(packed_transaction, signatures)
-   ABIEOS_MEMBER(packed_transaction, compression)
-   ABIEOS_MEMBER(packed_transaction, packed_context_free_data)
-   ABIEOS_MEMBER(packed_transaction, packed_trx)
-}
+EOSIO_REFLECT(packed_transaction, signatures, compression, packed_context_free_data, packed_trx);
 
 using transaction_variant = std::variant<abieos::checksum256, packed_transaction>;
 
@@ -364,21 +256,14 @@ struct signed_block_header : block_header {
    abieos::signature producer_signature = {};
 };
 
-ABIEOS_REFLECT(signed_block_header) {
-   ABIEOS_BASE(block_header)
-   ABIEOS_MEMBER(signed_block_header, producer_signature)
-}
+EOSIO_REFLECT(signed_block_header, base block_header, producer_signature);
 
 struct signed_block : signed_block_header {
    std::vector<transaction_receipt> transactions     = {};
    std::vector<extension>           block_extensions = {};
 };
 
-ABIEOS_REFLECT(signed_block) {
-   ABIEOS_BASE(signed_block_header)
-   ABIEOS_MEMBER(signed_block, transactions)
-   ABIEOS_MEMBER(signed_block, block_extensions)
-}
+EOSIO_REFLECT(signed_block, base signed_block_header, transactions, block_extensions);
 
 struct block_info {
    uint32_t                block_num = {};
@@ -386,10 +271,6 @@ struct block_info {
    abieos::block_timestamp timestamp = {};
 };
 
-ABIEOS_REFLECT(block_info) {
-   ABIEOS_MEMBER(block_info, block_num)
-   ABIEOS_MEMBER(block_info, block_id)
-   ABIEOS_MEMBER(block_info, timestamp)
-}
+EOSIO_REFLECT(block_info, block_num, block_id, timestamp);
 
 } // namespace chain_types
