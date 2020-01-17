@@ -18,17 +18,6 @@ namespace chain_types {
 [[noreturn]] inline void report_error(const std::string& s) { throw std::runtime_error(s); }
 #endif
 
-#if 0
-template <typename T>
-T read_raw(abieos::input_buffer& bin) {
-   T           result{};
-   std::string error;
-   if (!abieos::read_raw<T>(bin, error, result))
-      report_error(error);
-   return result;
-}
-#endif
-
 template <typename T>
 T assert_bin_to_native(const std::vector<char>& bin) {
    return eosio::check(eosio::convert_from_bin<T>(bin)).value();
@@ -112,7 +101,31 @@ struct action_receipt_v0 {
 
 EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence, abi_sequence);
 
-using action_receipt = std::variant<action_receipt_v0>;
+template<typename T>
+struct variant : T {
+   constexpr variant() = default;
+   constexpr variant(T&& obj) : T(std::move(obj)) {}
+   constexpr variant(const T& obj) : T(obj) {}
+};
+
+template<typename T, typename S>
+eosio::result<void> to_bin(const variant<T>& obj, S& stream) {
+   uint8_t idx = 0;
+   OUTCOME_TRY(to_bin(idx, stream));
+   return to_bin(static_cast<const T&>(obj), stream);
+}
+
+template<typename T, typename S>
+eosio::result<void> from_bin(variant<T>& obj, S& stream) {
+   uint8_t idx = 0;
+   OUTCOME_TRY(from_bin(idx, stream));
+   if(idx != 0) {
+      return eosio::stream_error::bad_variant_index;
+   }
+   return from_bin(static_cast<T&>(obj), stream);
+}
+
+using action_receipt = variant<action_receipt_v0>;
 
 struct action {
    abieos::name                  account       = {};
@@ -140,7 +153,7 @@ struct action_trace_v0 {
 EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act,
               context_free, elapsed, console, account_ram_deltas, except, error_code);
 
-using action_trace = std::variant<action_trace_v0>;
+using action_trace = variant<action_trace_v0>;
 
 struct partial_transaction_v0 {
    abieos::time_point_sec            expiration             = {};
@@ -157,9 +170,12 @@ struct partial_transaction_v0 {
 EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
               max_cpu_usage_ms, delay_sec, transaction_extensions, signatures, context_free_data);
 
-using partial_transaction = std::variant<partial_transaction_v0>;
+using partial_transaction = variant<partial_transaction_v0>;
 
 struct recurse_transaction_trace;
+
+struct transaction_trace_v0;
+using transaction_trace = variant<transaction_trace_v0>;
 
 struct transaction_trace_v0 {
    abieos::checksum256                    id                  = {};
@@ -173,28 +189,12 @@ struct transaction_trace_v0 {
    std::optional<account_delta>           account_ram_delta   = {};
    std::optional<std::string>             except              = {};
    std::optional<uint64_t>                error_code          = {};
-   std::vector<recurse_transaction_trace> failed_dtrx_trace   = {};
+   std::vector<transaction_trace>         failed_dtrx_trace   = {};
    std::optional<partial_transaction>     reserved_do_not_use = {};
 };
 
 EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, elapsed, net_usage_words, scheduled, action_traces,
               account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
-
-using transaction_trace = std::variant<transaction_trace_v0>;
-
-struct recurse_transaction_trace {
-   transaction_trace recurse = {};
-};
-
-template<typename S>
-eosio::result<void> from_bin(recurse_transaction_trace& obj, S& stream) {
-   return from_bin(obj.recurse, stream);
-}
-
-template<typename S>
-eosio::result<void> to_bin(const recurse_transaction_trace& obj, S& stream) {
-   return to_bin(obj.recurse, stream);
-}
 
 struct producer_key {
    abieos::name       producer_name     = {};

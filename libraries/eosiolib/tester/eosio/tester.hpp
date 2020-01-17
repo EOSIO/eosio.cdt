@@ -175,8 +175,7 @@ inline asset  s2a(const char* s) { return convert(string_to_asset(s)); }
  * transaction should succeed.  Otherwise it represents a string which should be
  * part of the error message.
  */
-inline void expect(const chain_types::transaction_trace& ttrace, const char* expected_except = nullptr) {
-   auto& tt = std::get<0>(ttrace);
+inline void expect(const chain_types::transaction_trace& tt, const char* expected_except = nullptr) {
    if (expected_except) {
       if (tt.status == chain_types::transaction_status::executed)
          eosio::check(false, "transaction succeeded, but was expected to fail with: " + std::string(expected_except));

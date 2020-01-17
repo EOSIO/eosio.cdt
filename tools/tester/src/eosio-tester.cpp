@@ -283,7 +283,7 @@ chain_types::transaction_trace_v0 convert(const eosio::chain::transaction_trace&
    if (obj.error_code)
       result.error_code = *obj.error_code;
    if (obj.failed_dtrx_trace)
-      result.failed_dtrx_trace.push_back({ chain_types::recurse_transaction_trace{ convert(*obj.failed_dtrx_trace) } });
+      result.failed_dtrx_trace.push_back({ convert(*obj.failed_dtrx_trace) });
    return result;
 }
 
