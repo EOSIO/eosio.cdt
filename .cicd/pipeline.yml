@@ -55,8 +55,9 @@ steps:
       - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.5.7:
           no-volume: true
+          pre-execute-ping-sleep: "8.8.8.8"
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
@@ -124,8 +125,9 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/tests.sh"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.5.7:
           no-volume: true
+          pre-execute-ping-sleep: "8.8.8.8"
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
@@ -191,8 +193,9 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/toolchain-tests.sh"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.5.7:
           no-volume: true
+          pre-execute-ping-sleep: "8.8.8.8"
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
@@ -257,8 +260,9 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/package.sh"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.5.7:
           no-volume: true
+          pre-execute-ping-sleep: "8.8.8.8"
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_40G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"

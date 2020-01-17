@@ -1,0 +1,13 @@
+#!/bin/bash
+set -eo pipefail
+export EOSIO_LOCATION=$HOME/eosio
+export EOSIO_CDT_LOCATION=$EOSIO_LOCATION/cdt
+export EOSIO_CDT_INSTALL_LOCATION=$EOSIO_LOCATION/install
+export PATH=$EOSIO_CDT_INSTALL_LOCATION/bin:$PATH
+export EOSIO_CDT_BUILD_LOCATION=$EOSIO_CDT_LOCATION/build
+mkdir -p $EOSIO_CDT_INSTALL_LOCATION
+git clone https://github.com/eosio/eosio.cdt.git $EOSIO_CDT_LOCATION && cd $EOSIO_CDT_LOCATION && git pull && git checkout -f 803ab4430d5dc157541bd5437c1680ac75a2cbe5
+cd $EOSIO_CDT_LOCATION && git submodule update --init --recursive
+mkdir -p $EOSIO_CDT_BUILD_LOCATION
+cd $EOSIO_CDT_BUILD_LOCATION && $EOSIO_CDT_INSTALL_LOCATION/bin/cmake -DCMAKE_BUILD_TYPE='Release' -DCMAKE_INSTALL_PREFIX=$EOSIO_CDT_INSTALL_LOCATION ..
+cd $EOSIO_CDT_BUILD_LOCATION && make -j6
