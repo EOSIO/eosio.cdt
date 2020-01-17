@@ -39,7 +39,7 @@ else # Linux
             evars="$evars --env ${var%%=*}"
         done < "$BUILDKITE_ENV_FILE"
     fi
-
+    echo "Testing contract CI retry."
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 
 fi
