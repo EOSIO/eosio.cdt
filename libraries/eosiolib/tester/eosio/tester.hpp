@@ -7,6 +7,7 @@
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
 #include <eosio/transaction.hpp>
+#include <eosio/from_string.hpp>
 #include <cwchar>
 
 #include <fmt/format.h>
@@ -111,10 +112,8 @@ inline const std::vector<std::string>& get_args() {
    static std::optional<std::vector<std::string>> args;
    if (!args) {
       auto&                bytes = internal_use_do_not_use::get_args();
-      abieos::input_buffer bin{ bytes.data(), bytes.data() + bytes.size() };
-      std::string          error;
       args.emplace();
-      check(abieos::bin_to_native<std::vector<std::string>>(*args, error, bin), error);
+      args = check(convert_from_bin<std::vector<std::string>>(bytes)).value();
    }
    return *args;
 }
@@ -161,13 +160,10 @@ inline abieos::private_key string_to_private_key(std::string_view s) {
    return result;
 }
 
-inline public_key convert(const abieos::public_key& k) { return unpack<public_key>(abieos::native_to_bin(k)); }
+inline public_key convert(const abieos::public_key& k) { return unpack<public_key>(check(convert_to_bin(k)).value()); }
 
 inline abieos::asset string_to_asset(const char* s) {
-   std::string   error;
-   abieos::asset result;
-   check(abieos::string_to_asset(result, error, s), error);
-   return result;
+   return check(eosio::convert_from_string<abieos::asset>(s)).value();
 }
 
 inline symbol convert(abieos::symbol s) { return symbol(s.value); }
@@ -284,7 +280,7 @@ class test_chain {
             bin.resize(size);
             return bin.data();
          });
-         head_block_info = chain_types::assert_bin_to_native<chain_types::block_info>(bin);
+         head_block_info = check(convert_from_bin<chain_types::block_info>(bin)).value();
       }
       return *head_block_info;
    }
@@ -319,16 +315,16 @@ class test_chain {
 
       std::vector<char> packed_trx = pack(trx);
       std::vector<char> args;
-      abieos::native_to_bin(packed_trx, args);
-      abieos::native_to_bin(context_free_data, args);
-      abieos::native_to_bin(signatures, args);
-      abieos::native_to_bin(keys, args);
+      check_discard(convert_to_bin(packed_trx, args));
+      check_discard(convert_to_bin(context_free_data, args));
+      check_discard(convert_to_bin(signatures, args));
+      check_discard(convert_to_bin(keys, args));
       std::vector<char> bin;
       internal_use_do_not_use::push_transaction(id, args.data(), args.data() + args.size(), [&](size_t size) {
          bin.resize(size);
          return bin.data();
       });
-      return chain_types::assert_bin_to_native<chain_types::transaction_trace>(bin);
+      return check(convert_from_bin<chain_types::transaction_trace>(bin)).value();
    }
 
    [[nodiscard]]
@@ -367,7 +363,7 @@ class test_chain {
              return bin.data();
           }))
          return {};
-      return chain_types::assert_bin_to_native<chain_types::transaction_trace>(bin);
+      return check(convert_from_bin<chain_types::transaction_trace>(bin)).value();
    }
 
    chain_types::transaction_trace create_account(name ac, const public_key& pub_key,
@@ -387,7 +383,14 @@ class test_chain {
       return create_account(ac, convert(default_pub_key), expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key, bool is_priv = false,
+   /**
+    * Create an account that can have a contract set on it.
+    * @param account The name of the account
+    * @param pub_key The public key to use for the account.  Defaults to default_pub_key.
+    * @param is_priv Determines whether the contract should be privileged.  Defaults to false.
+    * @param expected_except Used to validate the transaction status according to @ref eosio::expect.
+    */
+   chain_types::transaction_trace create_code_account(name account, const public_key& pub_key, bool is_priv = false,
                                                       const char* expected_except = nullptr) {
       tester_authority simple_auth{
          .threshold = 1,
@@ -396,15 +399,15 @@ class test_chain {
       tester_authority code_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
-         .accounts  = { { { ac, "eosio.code"_n }, 1 } },
+         .accounts  = { { { account, "eosio.code"_n }, 1 } },
       };
       return transact(
             {
                   action{ { { "eosio"_n, "active"_n } },
                           "eosio"_n,
                           "newaccount"_n,
-                          std::make_tuple("eosio"_n, ac, simple_auth, code_auth) },
-                  action{ { { "eosio"_n, "active"_n } }, "eosio"_n, "setpriv"_n, std::make_tuple(ac, is_priv) },
+                          std::make_tuple("eosio"_n, account, simple_auth, code_auth) },
+                  action{ { { "eosio"_n, "active"_n } }, "eosio"_n, "setpriv"_n, std::make_tuple(account, is_priv) },
             },
             expected_except);
    }
@@ -434,6 +437,10 @@ class test_chain {
                       expected_except);
    }
 
+   /**
+    * Creates a new token.
+    * The eosio.token contract should be deployed on the @c contract account.
+    */
    chain_types::transaction_trace create_token(name contract, name signer, name issuer, asset maxsupply,
                                                const char* expected_except = nullptr) {
       return transact(

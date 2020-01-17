@@ -1,6 +1,7 @@
 #pragma once
 
 #include <abieos.hpp>
+#include <eosio/stream.hpp>
 
 #ifdef EOSIO_CDT_COMPILATION
 #   include <eosio/check.hpp>
@@ -17,6 +18,7 @@ namespace chain_types {
 [[noreturn]] inline void report_error(const std::string& s) { throw std::runtime_error(s); }
 #endif
 
+#if 0
 template <typename T>
 T read_raw(abieos::input_buffer& bin) {
    T           result{};
@@ -25,15 +27,16 @@ T read_raw(abieos::input_buffer& bin) {
       report_error(error);
    return result;
 }
+#endif
 
 template <typename T>
 T assert_bin_to_native(const std::vector<char>& bin) {
-   T                    result{};
-   std::string          error;
-   abieos::input_buffer b{ bin.data(), bin.data() + bin.size() };
-   if (!abieos::bin_to_native<T>(result, error, b))
-      report_error(error);
-   return result;
+   return eosio::check(eosio::convert_from_bin<T>(bin)).value();
+}
+
+template<typename T>
+auto assert_native_to_bin(const T& t) {
+   return eosio::check(eosio::convert_to_bin(t)).value();
 }
 
 struct extension {
@@ -79,6 +82,7 @@ inline transaction_status get_transaction_status(const std::string& s) {
    report_error("unknown status: " + s);
 }
 
+#if 0
 inline bool bin_to_native(transaction_status& status, abieos::bin_to_native_state& state, bool) {
    status = transaction_status(read_raw<uint8_t>(state.bin));
    return true;
@@ -92,6 +96,7 @@ inline bool json_to_native(transaction_status&, abieos::json_to_native_state& st
 inline void native_to_bin(const transaction_status& obj, std::vector<char>& bin) {
    abieos::push_raw(bin, static_cast<uint8_t>(obj));
 }
+#endif
 
 struct permission_level {
    abieos::name actor      = {};
@@ -118,10 +123,14 @@ struct account_delta {
    int64_t      delta   = {};
 };
 
+EOSIO_REFLECT(account_delta, account, delta)
+
+#if 0
 ABIEOS_REFLECT(account_delta) {
    ABIEOS_MEMBER(account_delta, account)
    ABIEOS_MEMBER(account_delta, delta)
 }
+#endif
 
 struct action_receipt_v0 {
    abieos::name                       receiver        = {};
@@ -255,6 +264,17 @@ struct recurse_transaction_trace {
    transaction_trace recurse = {};
 };
 
+template<typename S>
+eosio::result<void> from_bin(recurse_transaction_trace& obj, S& stream) {
+   return from_bin(obj.recurse, stream);
+}
+
+template<typename S>
+eosio::result<void> to_bin(const recurse_transaction_trace& obj, S& stream) {
+   return to_bin(obj.recurse, stream);
+}
+
+#if 0
 inline bool bin_to_native(recurse_transaction_trace& obj, abieos::bin_to_native_state& state, bool start) {
    return abieos::bin_to_native(obj.recurse, state, start);
 }
@@ -267,6 +287,7 @@ inline bool json_to_native(recurse_transaction_trace& obj, abieos::json_to_nativ
 inline void native_to_bin(const recurse_transaction_trace& obj, std::vector<char>& bin) {
    abieos::native_to_bin(obj.recurse, bin);
 }
+#endif
 
 struct producer_key {
    abieos::name       producer_name     = {};
@@ -320,10 +341,7 @@ struct transaction_receipt : transaction_receipt_header {
    transaction_variant trx = {};
 };
 
-ABIEOS_REFLECT(transaction_receipt) {
-   ABIEOS_BASE(transaction_receipt_header)
-   ABIEOS_MEMBER(transaction_receipt, trx)
-}
+EOSIO_REFLECT(transaction_receipt, base transaction_receipt_header, trx);
 
 struct block_header {
    abieos::block_timestamp          timestamp         = {};
@@ -337,17 +355,10 @@ struct block_header {
    std::vector<extension>           header_extensions = {};
 };
 
-ABIEOS_REFLECT(block_header) {
-   ABIEOS_MEMBER(block_header, timestamp)
-   ABIEOS_MEMBER(block_header, producer)
-   ABIEOS_MEMBER(block_header, confirmed)
-   ABIEOS_MEMBER(block_header, previous)
-   ABIEOS_MEMBER(block_header, transaction_mroot)
-   ABIEOS_MEMBER(block_header, action_mroot)
-   ABIEOS_MEMBER(block_header, schedule_version)
-   ABIEOS_MEMBER(block_header, new_producers)
-   ABIEOS_MEMBER(block_header, header_extensions)
-}
+EOSIO_REFLECT(block_header,
+   timestamp, producer, confirmed, previous, transaction_mroot, action_mroot,
+   schedule_version, new_producers, header_extensions
+)
 
 struct signed_block_header : block_header {
    abieos::signature producer_signature = {};

@@ -74,7 +74,9 @@ target_include_directories(eosio_chain PUBLIC
 add_executable(eosio-tester src/eosio-tester.cpp)
 target_include_directories(eosio-tester
     PRIVATE
+        ../../libraries/abieos/include
         ../../libraries/abieos/src
+        ../../libraries/abieos/external/outcome/single-header
         ../../libraries/abieos/external/date/include
         ../../libraries/abieos/external/rapidjson/include
         ../../libraries/eos/libraries/chain/include

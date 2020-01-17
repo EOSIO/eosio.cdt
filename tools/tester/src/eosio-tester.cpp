@@ -7,6 +7,8 @@
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/webassembly/common.hpp>
 #include <eosio/vm/backend.hpp>
+#include <eosio/from_bin.hpp>
+#include <eosio/eosio_outcome.hpp>
 #include <fc/exception/exception.hpp>
 #include <fc/io/json.hpp>
 #include <stdio.h>
@@ -17,6 +19,8 @@ using eosio::chain::builtin_protocol_feature_t;
 using eosio::chain::digest_type;
 using eosio::chain::protocol_feature_exception;
 using eosio::chain::protocol_feature_set;
+using eosio::check;
+using eosio::convert_to_bin;
 
 struct callbacks;
 using backend_t = eosio::vm::backend<callbacks, eosio::vm::jit>;
@@ -675,7 +679,7 @@ struct callbacks {
       info.block_num      = chain.control->head_block_num();
       info.block_id       = convert(chain.control->head_block_id());
       info.timestamp.slot = chain.control->head_block_state()->header.timestamp.slot;
-      set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(info));
+      set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(info)).value());
    }
 
    void push_transaction(uint32_t chain_index, const char* args_begin, const char* args_end, uint32_t cb_alloc_data,
@@ -693,7 +697,7 @@ struct callbacks {
             ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
       auto result = chain.control->push_transaction( fut.get(), fc::time_point::maximum(), 2000);
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
-      set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(chain_types::transaction_trace{ convert(*result) }));
+      set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*result) })).value());
    }
 
    bool exec_deferred(uint32_t chain_index, uint32_t cb_alloc_data, uint32_t cb_alloc) {
@@ -705,7 +709,7 @@ struct callbacks {
       if (itr != idx.end() && itr->delay_until <= chain.control->pending_block_time()) {
          auto trace =
                chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(), billed_cpu_time_use);
-         set_data(cb_alloc_data, cb_alloc, abieos::native_to_bin(chain_types::transaction_trace{ convert(*trace) }));
+         set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*trace) })).value());
          return true;
       }
       return false;
@@ -715,25 +719,26 @@ struct callbacks {
                        uint32_t cb_alloc) {
       auto& chain = assert_chain(chain_index);
       check_bounds(req_begin, req_end);
-      abieos::input_buffer query_bin{ req_begin, req_end };
+      eosio::input_stream query_bin{ req_begin, req_end };
       abieos::name         query_name;
-      abieos::bin_to_native(query_name, query_bin);
+      eosio::check_discard(from_bin(query_name, query_bin));
       if (query_name == "cr.ctsp"_n)
          return set_data(cb_alloc_data, cb_alloc, query_contract_row_range_code_table_scope_pk(chain, query_bin));
       throw std::runtime_error("query_database: unknown query: " + (std::string)query_name);
    }
 
-   std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, abieos::input_buffer query_bin) {
-      auto snapshot_block    = abieos::bin_to_native<uint32_t>(query_bin);
-      auto first_code        = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto first_table       = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto first_scope       = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto first_primary_key = abieos::bin_to_native<uint64_t>(query_bin);
-      auto last_code         = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto last_table        = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto last_scope        = eosio::chain::name{ abieos::bin_to_native<abieos::name>(query_bin).value };
-      auto last_primary_key  = abieos::bin_to_native<uint64_t>(query_bin);
-      auto max_results       = abieos::bin_to_native<uint32_t>(query_bin);
+   std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, eosio::input_stream& query_bin) {
+      using eosio::from_bin; // ADL required
+      auto snapshot_block    = eosio::check(from_bin<uint32_t>(query_bin)).value();
+      auto first_code        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto first_table       = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto first_scope       = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto first_primary_key = eosio::check(from_bin<uint64_t>(query_bin)).value();
+      auto last_code         = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto last_table        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto last_scope        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto last_primary_key  = eosio::check(from_bin<uint64_t>(query_bin)).value();
+      auto max_results       = eosio::check(from_bin<uint32_t>(query_bin)).value();
 
       if (first_code != last_code)
          throw std::runtime_error("query_database: first.code != last.code");
@@ -755,7 +760,7 @@ struct callbacks {
               kv_it != kv_index.end(); ++kv_it) {
             if (kv_it->t_id != table_it->id || kv_it->primary_key > last_primary_key || rows.size() >= max_results)
                break;
-            rows.emplace_back(abieos::native_to_bin(
+            rows.emplace_back(eosio::check(eosio::convert_to_bin(
                   contract_row{ uint32_t(0),
                                 bool(true),
                                 abieos::name{ to_uint64_t(table_it->code) },
@@ -763,10 +768,10 @@ struct callbacks {
                                 abieos::name{ to_uint64_t(table_it->table) },
                                 kv_it->primary_key,
                                 abieos::name{ to_uint64_t(kv_it->payer) },
-                                { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } }));
+                                { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } })).value());
          };
       }
-      return abieos::native_to_bin(rows);
+      return eosio::check(eosio::convert_to_bin(rows)).value();
    } // query_contract_row_range_code_table_scope_pk
 
    void select_chain_for_db(uint32_t chain_index) {
@@ -853,7 +858,7 @@ static void run(const char* wasm, const std::vector<std::string>& args) {
    eosio::vm::wasm_allocator wa;
    auto                      code = backend_t::read_wasm(wasm);
    backend_t                 backend(code);
-   ::state                   state{ wasm, wa, backend, abieos::native_to_bin(args) };
+   ::state                   state{ wasm, wa, backend, eosio::check(eosio::convert_to_bin(args)).value() };
    callbacks                 cb{ state };
    state.files.emplace_back(stdin, false);
    state.files.emplace_back(stdout, false);

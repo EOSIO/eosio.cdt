@@ -23,4 +23,4 @@
 	url = https://github.com/fmtlib/fmt.git
 [submodule "libraries/Catch2"]
 	path = libraries/Catch2
-	url = https://github.com/catchorg/Catch2
+	url = https://github.com/catchorg/Catch2.git

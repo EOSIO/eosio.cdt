@@ -31,7 +31,9 @@ set(tester_includes -I${CMAKE_SOURCE_DIR}/libc++/libcxx/include
                     -I${CMAKE_SOURCE_DIR}/eosiolib/tester
                     -I${CMAKE_SOURCE_DIR}/eosiolib/core
                     -I${CMAKE_SOURCE_DIR}/eosiolib/contracts
+                    -I${CMAKE_SOURCE_DIR}/abieos/include
                     -I${CMAKE_SOURCE_DIR}/abieos/src
+                    -I${CMAKE_SOURCE_DIR}/abieos/external/outcome/single-header
                     -I${CMAKE_SOURCE_DIR}/abieos/external/date/include
                     -I${CMAKE_SOURCE_DIR}/abieos/external/rapidjson/include
                     -I${CMAKE_SOURCE_DIR}/Catch2/single_include
@@ -75,6 +77,7 @@ add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E c
 add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/include/eosio DESTINATION ${BASE_BINARY_DIR}/include/eosiolib/tester FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.h DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_numeric.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
@@ -83,3 +86,4 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/date/include/date DESTI
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/rapidjson/include/rapidjson DESTINATION ${BASE_BINARY_DIR}/include/rapidjson FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../fmt/include/fmt DESTINATION ${BASE_BINARY_DIR}/include/fmt FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../Catch2/single_include/catch2 DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/outcome/single-header/outcome-basic.hpp DESTINATION ${BASE_BINARY_DIR}/include)
