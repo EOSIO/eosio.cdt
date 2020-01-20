@@ -10,15 +10,16 @@
 #include "llvm/Support/FileSystem.h"
 using namespace clang::tooling;
 using namespace llvm;
+#define LINKER_NAME "eosio-ld"
 #define ONLY_LD
 #include <compiler_options.hpp>
 
 int main(int argc, const char **argv) {
 
   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-ld version " << "${VERSION_FULL}" << "\n";
+        os << LINKER_NAME << " version " << "${VERSION_FULL}" << "\n";
   });
-  cl::ParseCommandLineOptions(argc, argv, "eosio-ld (WebAssembly linker)");
+  cl::ParseCommandLineOptions(argc, argv, std::string(LINKER_NAME)+" (WebAssembly linker)");
   Options opts = CreateOptions();
 
   std::string line;
