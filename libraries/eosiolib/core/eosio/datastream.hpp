@@ -516,6 +516,7 @@ DataStream& operator >> ( DataStream& ds, std::string& v ) {
  */
 template<typename DataStream, typename T, std::size_t N>
 DataStream& operator << ( DataStream& ds, const std::array<T,N>& v ) {
+   ds << unsigned_int( N );
    for( const auto& i : v )
       ds << i;
    return ds;
@@ -535,6 +536,9 @@ DataStream& operator << ( DataStream& ds, const std::array<T,N>& v ) {
  */
 template<typename DataStream, typename T, std::size_t N>
 DataStream& operator >> ( DataStream& ds, std::array<T,N>& v ) {
+   unsigned_int s;
+   ds >> s;
+   eosio::check(N == s.value, "array size and unpacked size don't match");
    for( auto& i : v )
       ds >> i;
    return ds;

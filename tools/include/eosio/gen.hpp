@@ -461,7 +461,7 @@ struct generation_utils {
          auto t = translate_type(get_template_argument( type ).getAsType());
          return t+"$";
       }
-      else if ( is_template_specialization( type, {"vector", "set", "deque", "list"} ) ) {
+      else if ( is_template_specialization( type, {"vector", "set", "deque", "list", "array"} ) ) {
          auto t =translate_type(get_template_argument( type ).getAsType());
          return t=="int8" ? "bytes" : t+"[]";
       }

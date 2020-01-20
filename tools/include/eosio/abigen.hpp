@@ -254,7 +254,7 @@ namespace eosio { namespace cdt {
          if (!is_builtin_type(translate_type(type))) {
             if (is_aliasing(type))
                add_typedef(type);
-            else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
+            else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore", "array"})) {
                add_type(get_template_argument(type).getAsType());
             }
             else if (is_template_specialization(type, {"map", "unordered_map"}))
