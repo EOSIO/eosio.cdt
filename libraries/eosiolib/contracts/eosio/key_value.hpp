@@ -454,13 +454,11 @@ public:
       kv_index() = default;
 
       template <typename KF>
-      kv_index(KF T::*key_field) {
-         key_field_function = [=](const T& t) {
-            return make_key(std::invoke(key_field, t));
+      kv_index(KF&& kf) {
+         key_function = [=](const T& t) {
+            return make_key(std::invoke(kf, &t));
          };
       }
-
-      kv_index(key_type (T::*key_function)() const): key_function{key_function} {}
 
       template <typename K>
       iterator find(K key) {
@@ -534,17 +532,10 @@ public:
          return return_values;
       }
 
-      key_type get_key(const T& t) const {
-         if (key_function) {
-            return std::invoke(key_function, t);
-         } else {
-            return key_field_function(t);
-         }
-      }
+      key_type get_key(const T& inst) const { return key_function(inst); }
 
    private:
-      key_type (T::*key_function)() const = nullptr;
-      std::function<key_type(T)> key_field_function;
+      std::function<key_type(const T&)> key_function;
    };
 
    template <typename Indices>
