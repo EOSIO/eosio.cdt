@@ -331,6 +331,11 @@ inline key_type make_key(std::tuple<Args...> val) {
    return {data_size, s};
 }
 
+inline key_type make_insensitive(const std::string& val) {
+   return make_key(val, true);
+}
+
+
 template<typename Class, typename T, eosio::name::raw TableName, eosio::name::raw DbName = eosio::name{"eosio.kvram"}>
 class kv_table {
 

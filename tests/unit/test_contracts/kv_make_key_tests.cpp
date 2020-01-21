@@ -18,6 +18,8 @@ struct my_struct {
    float tfloat;
    testing_struct tstruct;
    std::tuple<uint64_t, float, std::string> ttuple;
+
+   auto itstring() const { return eosio::make_insensitive(tstring); }
 };
 
 DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
@@ -28,7 +30,8 @@ DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
       ti128,
       tfloat,
       tstruct,
-      ttuple
+      ttuple,
+      itstring
 )
 
 class [[eosio::contract]] kv_make_key_tests : public eosio::contract {
@@ -134,6 +137,27 @@ public:
       eosio::check(itr.value().tstring == s3.tstring, "Got the wrong value");
       ++itr;
       eosio::check(itr.value().tstring == s4.tstring, "Got the wrong value");
+      ++itr;
+      eosio::check(itr == end_itr, "Should be the end");
+   }
+
+   [[eosio::action]]
+   void makekeyistr() {
+      my_table t{"kvtest"_n};
+
+      auto end_itr = t.index.itstring.end();
+      auto itr = t.index.itstring.begin();
+
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().itstring() == s1.itstring(), "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().itstring() == s2.itstring(), "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().itstring() == s3.itstring(), "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().itstring() == s4.itstring(), "Got the wrong value");
+      ++itr;
+      eosio::check(itr.value().itstring() == s5.itstring(), "Got the wrong value");
       ++itr;
       eosio::check(itr == end_itr, "Should be the end");
    }

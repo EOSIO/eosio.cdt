@@ -13,9 +13,6 @@ struct my_struct {
       uint16_t b;
    } tstruct;
 
-   auto ifoo() const { return eosio::make_key(foo, true); }
-   auto i128_key() const { return eosio::make_key(i128); }
-
    bool operator==(const my_struct b) const {
       return primary_key == b.primary_key &&
              foo == b.foo &&
@@ -32,8 +29,7 @@ DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
       baz,
       i128,
       test_float,
-      tstruct,
-      ifoo
+      tstruct
 )
 
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
@@ -242,43 +238,6 @@ public:
       eosio::check(itr.value().baz == 1, "Got the wrong value");
       ++itr;
       eosio::check(itr.value().baz == 2, "Got the wrong value");
-   }
-
-   [[eosio::action]]
-   void iterationi() {
-      my_table t{"kvtest"_n};
-
-      auto begin_itr = t.index.ifoo.begin();
-      auto end_itr = t.index.ifoo.end();
-
-      // operator++ (case insensitive string)
-      // ----------
-      auto itr = t.index.ifoo.begin();
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().foo == "a", "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().foo == "C", "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().foo == "e", "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().foo == "g", "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().foo == "I", "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
-
-      // operator-- (case sensitive string)
-      // ----------
-      --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
-      --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
-      --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
-      --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
-      --itr;
-      eosio::check(itr == begin_itr, "Should be the beginning");
    }
 
    [[eosio::action]]

@@ -30,6 +30,10 @@ BOOST_AUTO_TEST_CASE(makekeystr) try {
    make_key_test(N(makekeystr));
 } FC_LOG_AND_RETHROW()
 
+BOOST_AUTO_TEST_CASE(makekeyistr) try {
+   make_key_test(N(makekeyistr));
+} FC_LOG_AND_RETHROW()
+
 BOOST_AUTO_TEST_CASE(makekeyuill) try {
    make_key_test(N(makekeyuill));
 } FC_LOG_AND_RETHROW()
