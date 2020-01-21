@@ -13,7 +13,7 @@ struct my_struct {
       uint16_t b;
    } tstruct;
 
-   auto foo_i_key() const { return eosio::make_key(foo, true); }
+   auto ifoo() const { return eosio::make_key(foo, true); }
    auto i128_key() const { return eosio::make_key(i128); }
 
    bool operator==(const my_struct b) const {
@@ -25,22 +25,16 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
-   struct {
-      kv_index primary{eosio::name{"primary"}, &my_struct::primary_key};
-      kv_index foo{eosio::name{"foo"}, &my_struct::foo};
-      kv_index bar{eosio::name{"bar"}, &my_struct::bar};
-      kv_index baz{eosio::name{"baz"}, &my_struct::baz};
-      kv_index i128{eosio::name{"ia"}, &my_struct::i128};
-      kv_index ifoo{eosio::name{"ifoo"}, &my_struct::foo_i_key};
-      kv_index flt{eosio::name{"float"}, &my_struct::test_float};
-      kv_index tstruct{eosio::name{"struct"}, &my_struct::tstruct};
-   } index;
-
-   my_table() {
-      init(eosio::name{"kvtest"}, &index);
-   }
-};
+DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
+      primary_key,
+      foo,
+      bar,
+      baz,
+      i128,
+      test_float,
+      tstruct,
+      ifoo
+)
 
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
@@ -93,7 +87,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       t.put(s);
       t.put(s2);
@@ -104,9 +98,9 @@ public:
 
    [[eosio::action]]
    void find() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
-      auto itr = t.index.primary.find("bob"_n);
+      auto itr = t.index.primary_key.find("bob"_n);
       auto val = itr.value();
       eosio::check(val.primary_key == "bob"_n, "Got the wrong primary_key");
 
@@ -141,7 +135,7 @@ public:
 
    [[eosio::action]]
    void findi() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.i128.end();
 
@@ -162,10 +156,10 @@ public:
 
    [[eosio::action]]
    void findf() {
-      my_table t;
-      auto end_itr = t.index.flt.end();
+      my_table t{"kvtest"_n};
+      auto end_itr = t.index.test_float.end();
 
-      auto itr = t.index.flt.begin();
+      auto itr = t.index.test_float.begin();
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(itr.value().test_float == s5.test_float, "Got the wrong value");
       ++itr;
@@ -182,7 +176,7 @@ public:
 
    [[eosio::action]]
    void finds() {
-      my_table t;
+      my_table t{"kvtest"_n};
       auto end_itr = t.index.tstruct.end();
 
       auto itr = t.index.tstruct.begin();
@@ -202,7 +196,7 @@ public:
 
    [[eosio::action]]
    void iteration() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto begin_itr = t.index.foo.begin();
       auto end_itr = t.index.foo.end();
@@ -252,7 +246,7 @@ public:
 
    [[eosio::action]]
    void iterationi() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto begin_itr = t.index.ifoo.begin();
       auto end_itr = t.index.ifoo.end();
@@ -289,7 +283,7 @@ public:
 
    [[eosio::action]]
    void range() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       std::vector<my_struct> expected{s5, s4, s3};
       uint64_t b = 1;

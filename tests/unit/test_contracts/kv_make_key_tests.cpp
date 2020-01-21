@@ -20,22 +20,16 @@ struct my_struct {
    std::tuple<uint64_t, float, std::string> ttuple;
 };
 
-struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
-   struct {
-      kv_index tname{eosio::name{"a"}, &my_struct::tname};
-      kv_index tstring{eosio::name{"b"}, &my_struct::tstring};
-      kv_index tui64{eosio::name{"c"}, &my_struct::tui64};
-      kv_index ti32{eosio::name{"d"}, &my_struct::ti32};
-      kv_index ti128{eosio::name{"e"}, &my_struct::ti128};
-      kv_index tfloat{eosio::name{"f"}, &my_struct::tfloat};
-      kv_index tstruct{eosio::name{"g"}, &my_struct::tstruct};
-      kv_index ttuple{eosio::name{"h"}, &my_struct::ttuple};
-   } index;
-
-   my_table() {
-      init(eosio::name{"kvtest"}, &index);
-   }
-};
+DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
+      tname,
+      tstring,
+      tui64,
+      ti32,
+      ti128,
+      tfloat,
+      tstruct,
+      ttuple
+)
 
 class [[eosio::contract]] kv_make_key_tests : public eosio::contract {
 public:
@@ -93,7 +87,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       t.put(s1);
       t.put(s2);
@@ -104,7 +98,7 @@ public:
 
    [[eosio::action]]
    void makekeyname() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.tname.end();
       auto itr = t.index.tname.begin();
@@ -125,7 +119,7 @@ public:
 
    [[eosio::action]]
    void makekeystr() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.tstring.end();
       auto itr = t.index.tstring.begin();
@@ -146,7 +140,7 @@ public:
 
    [[eosio::action]]
    void makekeyuill() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.tui64.end();
       auto itr = t.index.tui64.begin();
@@ -167,7 +161,7 @@ public:
 
    [[eosio::action]]
    void makekeyil() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.ti32.end();
       auto itr = t.index.ti32.begin();
@@ -188,7 +182,7 @@ public:
 
    [[eosio::action]]
    void makekeyilll() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.ti128.end();
       auto itr = t.index.ti128.begin();
@@ -209,7 +203,7 @@ public:
 
    [[eosio::action]]
    void makekeyflt() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.tfloat.end();
       auto itr = t.index.tfloat.begin();
@@ -230,7 +224,7 @@ public:
 
    [[eosio::action]]
    void makekeystct() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.tstruct.end();
       auto itr = t.index.tstruct.begin();
@@ -251,7 +245,7 @@ public:
 
    [[eosio::action]]
    void makekeytup() {
-      my_table t;
+      my_table t{"kvtest"_n};
 
       auto end_itr = t.index.ttuple.end();
       auto itr = t.index.ttuple.begin();
