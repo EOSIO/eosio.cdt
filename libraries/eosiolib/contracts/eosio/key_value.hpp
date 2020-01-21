@@ -192,18 +192,10 @@ inline key_type make_key(I val) {
 
    auto big_endian = swap_endian<I>(val);
 
-   size_t data_size = pack_size(big_endian);
-   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   datastream<char*> data_ds((char*)data_buffer, data_size);
-   data_ds << big_endian;
-
-   std::string s((char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return {data_size, s};
+   char* bytes = reinterpret_cast<char*>(&big_endian);
+   constexpr size_t size = sizeof(big_endian);
+   std::string s(bytes, size);
+   return {size, s};
 }
 
 template <typename I, typename F>
@@ -491,8 +483,6 @@ public:
       }
 
       iterator begin() {
-         using namespace detail;
-
          auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
@@ -594,7 +584,11 @@ public:
 
    template <typename K>
    void erase(K key) {
-      T val = primary_index->find(key).value();
+      auto primary_itr = primary_index->find(key);
+
+      eosio::check(primary_itr != primary_index->end(), "Attempted to erase non-existent key");
+
+      T val = primary_itr.value();
 
       auto k = table_key(make_prefix(table_name, primary_index->name), make_key(key));
       internal_use_do_not_use::kv_erase(db, contract_name.value, (const char*)k.buffer.data(), k.size);

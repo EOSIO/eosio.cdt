@@ -33,6 +33,14 @@ BOOST_FIXTURE_TEST_CASE(single_tests_iteration, tester) try {
 
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(iteration), N(kvtest), {});
+
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(itrerror1), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("cannot increment end iterator"));
+
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(itrerror2), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("incremented past the beginning"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(single_tests_range, tester) try {
@@ -44,9 +52,16 @@ BOOST_FIXTURE_TEST_CASE(single_tests_range, tester) try {
 
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(range), N(kvtest), {});
-    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(rangeerror), N(kvtest), {}),
+
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(rangeerror1), N(kvtest), {}),
                           eosio_assert_message_exception,
                           eosio_assert_message_is("Beginning of range should be less than or equal to end"));
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(rangeerror2), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("beginning of range is not in table"));
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(rangeerror3), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("end of range is not in table"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
@@ -58,6 +73,10 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
 
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(erase), N(kvtest), {});
+
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(eraseerror), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("Attempted to erase non-existent key"));
 } FC_LOG_AND_RETHROW()
 
 // Multi

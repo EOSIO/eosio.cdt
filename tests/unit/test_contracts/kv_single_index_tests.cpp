@@ -90,6 +90,12 @@ public:
       eosio::check(itr != end_itr, "Should not be the end");
       eosio::check(val.primary_key == "john"_n, "Got the wrong primary_key");
       eosio::check(val.n2 == "joe"_n, "Got the wrong n2");
+
+      itr = t.index.primary_key.find("billy"_n);
+      val = itr.value();
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(val.primary_key == "billy"_n, "Got the wrong primary_key");
+      eosio::check(val.n2 == "vincent"_n, "Got the wrong n2");
    }
 
    [[eosio::action]]
@@ -140,6 +146,20 @@ public:
    }
 
    [[eosio::action]]
+   void itrerror1() {
+      my_table t{"kvtest"_n};
+      auto end_itr = t.index.primary_key.end();
+      ++end_itr;
+   }
+
+   [[eosio::action]]
+   void itrerror2() {
+      my_table t{"kvtest"_n};
+      auto begin_itr = t.index.primary_key.begin();
+      --begin_itr;
+   }
+
+   [[eosio::action]]
    void range() {
       my_table t{"kvtest"_n};
 
@@ -153,11 +173,21 @@ public:
    }
 
    [[eosio::action]]
-   void rangeerror() {
+   void rangeerror1() {
       my_table t{"kvtest"_n};
-      std::vector<my_struct> expected = {s4, s3, s2};
       auto vals = t.index.primary_key.range("joe"_n, "alice"_n);
-      eosio::check(vals == expected, "range did not return expected vector");
+   }
+
+   [[eosio::action]]
+   void rangeerror2() {
+      my_table t{"kvtest"_n};
+      auto vals = t.index.primary_key.range("chris"_n, "joe"_n);
+   }
+
+   [[eosio::action]]
+   void rangeerror3() {
+      my_table t{"kvtest"_n};
+      auto vals = t.index.primary_key.range("alice"_n, "chris"_n);
    }
 
    [[eosio::action]]
@@ -172,5 +202,11 @@ public:
       std::vector<my_struct> expected = {s, s3};
       auto vals = t.index.primary_key.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
+   }
+
+   [[eosio::action]]
+   void eraseerror() {
+      my_table t{"kvtest"_n};
+      t.erase("chris"_n);
    }
 };
