@@ -143,6 +143,8 @@ namespace eosio {
       public:
          explicit block_timestamp( uint32_t s=0 ) :slot(s){}
 
+         block_timestamp():slot(0) {}
+
          block_timestamp(const time_point& t) {
             set_time_point(t);
          }
