@@ -405,13 +405,8 @@ public:
          }
 
          bool operator==(const iterator& b) const {
-            if (itr_stat == kv_it_stat::iterator_end) {
-               return b.itr_stat == kv_it_stat::iterator_end;
-            }
-            if (b.itr_stat == kv_it_stat::iterator_end) {
-               return false;
-            }
-            return key() == b.key();
+            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return cmp == 0;
          }
 
          bool operator!=(const iterator& b) const {
@@ -419,7 +414,23 @@ public:
          }
 
          bool operator<(const iterator& b) const {
-            return itr < b.itr;
+            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return cmp == -1;
+         }
+
+         bool operator<=(const iterator& b) const {
+            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return cmp <= 0;
+         }
+
+         bool operator>(const iterator& b) const {
+            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return cmp == 1;
+         }
+
+         bool operator>=(const iterator& b) const {
+            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return cmp >= 0;
          }
 
       private:
@@ -488,14 +499,21 @@ public:
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
          uint32_t value_size;
-         char* buffer;
-         internal_use_do_not_use::kv_it_value(itr, 0, buffer, 0, value_size);
+
+         // kv_it_value is just used to get the value_size
+         void* buffer = alloca(1);
+         internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
 
       template <typename K>
       std::vector<T> range(K begin, K end) {
+         auto begin_itr = find(begin);
+         auto end_itr = find(end);
+         eosio::check(begin_itr != this->end(), "beginning of range is not in table");
+         eosio::check(end_itr != this->end(), "end of range is not in table");
+
          eosio::check(begin <= end, "Beginning of range should be less than or equal to end");
 
          if (begin == end) {
@@ -504,13 +522,7 @@ public:
             return t;
          }
 
-         auto begin_itr = find(begin);
-         auto end_itr = find(end);
-         eosio::check(begin_itr != this->end(), "beginning of range is not in table");
-         eosio::check(end_itr != this->end(), "end of range is not in table");
-
          std::vector<T> return_values;
-
          return_values.push_back(begin_itr.value());
 
          iterator itr = begin_itr;
