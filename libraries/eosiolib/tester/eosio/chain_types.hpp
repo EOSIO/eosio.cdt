@@ -104,31 +104,7 @@ struct action_receipt_v0 {
 
 EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence, abi_sequence);
 
-template<typename T>
-struct variant : T {
-   constexpr variant() = default;
-   constexpr variant(T&& obj) : T(std::move(obj)) {}
-   constexpr variant(const T& obj) : T(obj) {}
-};
-
-template<typename T, typename S>
-eosio::result<void> to_bin(const variant<T>& obj, S& stream) {
-   uint8_t idx = 0;
-   OUTCOME_TRY(to_bin(idx, stream));
-   return to_bin(static_cast<const T&>(obj), stream);
-}
-
-template<typename T, typename S>
-eosio::result<void> from_bin(variant<T>& obj, S& stream) {
-   uint8_t idx = 0;
-   OUTCOME_TRY(from_bin(idx, stream));
-   if(idx != 0) {
-      return eosio::stream_error::bad_variant_index;
-   }
-   return from_bin(static_cast<T&>(obj), stream);
-}
-
-using action_receipt = variant<action_receipt_v0>;
+using action_receipt = std::variant<action_receipt_v0>;
 
 struct action {
    abieos::name                  account       = {};
@@ -156,7 +132,7 @@ struct action_trace_v0 {
 EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act,
               context_free, elapsed, console, account_ram_deltas, except, error_code);
 
-using action_trace = variant<action_trace_v0>;
+using action_trace = std::variant<action_trace_v0>;
 
 struct partial_transaction_v0 {
    abieos::time_point_sec            expiration             = {};
@@ -173,10 +149,10 @@ struct partial_transaction_v0 {
 EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
               max_cpu_usage_ms, delay_sec, transaction_extensions, signatures, context_free_data);
 
-using partial_transaction = variant<partial_transaction_v0>;
+using partial_transaction = std::variant<partial_transaction_v0>;
 
 struct transaction_trace_v0;
-using transaction_trace = variant<transaction_trace_v0>;
+using transaction_trace = std::variant<transaction_trace_v0>;
 
 struct transaction_trace_v0 {
    abieos::checksum256                    id                  = {};

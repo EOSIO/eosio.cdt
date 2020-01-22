@@ -170,29 +170,6 @@ inline symbol convert(abieos::symbol s) { return symbol(s.value); }
 inline asset  convert(const abieos::asset& a) { return { a.amount, convert(a.sym) }; }
 inline asset  s2a(const char* s) { return convert(string_to_asset(s)); }
 
-/**
- * Validates the status of a transaction.  If expected_except is nullptr, then the
- * transaction should succeed.  Otherwise it represents a string which should be
- * part of the error message.
- */
-inline void expect(const chain_types::transaction_trace& tt, const char* expected_except = nullptr) {
-   if (expected_except) {
-      if (tt.status == chain_types::transaction_status::executed)
-         eosio::check(false, "transaction succeeded, but was expected to fail with: " + std::string(expected_except));
-      if (!tt.except)
-         eosio::check(false, "transaction has no failure message. expected: " + std::string(expected_except));
-      if (tt.except->find(expected_except) == std::string::npos)
-         eosio::check(false, "transaction failed with <<<" + *tt.except + ">>>, but was expected to fail with: <<<" +
-                                   expected_except + ">>>");
-   } else {
-      if (tt.status == chain_types::transaction_status::executed)
-         return;
-      if (tt.except)
-         eosio::print(*tt.except, "\n");
-      eosio::check(false, "transaction has status " + to_string(tt.status));
-   }
-}
-
 // TODO: move
 struct tester_key_weight {
    eosio::public_key key    = {};
@@ -226,6 +203,104 @@ struct tester_authority {
 
    EOSLIB_SERIALIZE(tester_authority, (threshold)(keys)(accounts)(waits))
 };
+
+using chain_types::transaction_status;
+
+auto conversion_kind(chain_types::permission_level, permission_level) -> strict_conversion;
+auto conversion_kind(chain_types::action, action) -> strict_conversion;
+
+struct account_auth_sequence {
+   name account          = {};
+   uint64_t     sequence = {};
+};
+
+auto conversion_kind(chain_types::account_auth_sequence, account_auth_sequence) -> strict_conversion;
+
+struct account_delta {
+   name account         = {};
+   int64_t      delta   = {};
+};
+
+auto conversion_kind(chain_types::account_delta, account_delta) -> strict_conversion;
+
+template<std::size_t size, typename F>
+void convert(const abieos::fixed_binary<size>& src, eosio::fixed_bytes<size>& dst, F&& f) {
+   dst = src.value;
+}
+
+struct action_receipt {
+   name                               receiver        = {};
+   checksum256                        act_digest      = {};
+   uint64_t                           global_sequence = {};
+   uint64_t                           recv_sequence   = {};
+   std::vector<account_auth_sequence> auth_sequence   = {};
+   uint32_t                           code_sequence   = {};
+   uint32_t                           abi_sequence    = {};
+};
+
+template<typename F>
+void convert(const abieos::name& src, eosio::name& dst, F&&) {
+   dst.value = src.value;
+}
+
+auto conversion_kind(chain_types::action_receipt_v0, action_receipt) -> strict_conversion;
+
+struct action_trace {
+   uint32_t                      action_ordinal         = {};
+   uint32_t                      creator_action_ordinal = {};
+   std::optional<action_receipt> receipt                = {};
+   name                          receiver               = {};
+   action                        act                    = {};
+   bool                          context_free           = {};
+   int64_t                       elapsed                = {};
+   std::string                   console                = {};
+   std::vector<account_delta>    account_ram_deltas     = {};
+   std::optional<std::string>    except                 = {};
+   std::optional<uint64_t>       error_code             = {};
+};
+
+auto conversion_kind(chain_types::action_trace_v0, action_trace) -> strict_conversion;
+
+struct transaction_trace {
+   checksum256                            id                  = {};
+   transaction_status                     status              = {};
+   uint32_t                               cpu_usage_us        = {};
+   uint32_t                               net_usage_words     = {};
+   int64_t                                elapsed             = {};
+   uint64_t                               net_usage           = {};
+   bool                                   scheduled           = {};
+   std::vector<action_trace>              action_traces       = {};
+   std::optional<account_delta>           account_ram_delta   = {};
+   std::optional<std::string>             except              = {};
+   std::optional<uint64_t>                error_code          = {};
+   std::vector<transaction_trace>         failed_dtrx_trace   = {};
+};
+
+auto conversion_kind(chain_types::transaction_trace_v0, transaction_trace) -> narrowing_conversion;
+auto serialize_as(const transaction_trace&) -> chain_types::transaction_trace;
+
+/**
+ * Validates the status of a transaction.  If expected_except is nullptr, then the
+ * transaction should succeed.  Otherwise it represents a string which should be
+ * part of the error message.
+ */
+inline void expect(const transaction_trace& tt, const char* expected_except = nullptr) {
+   if (expected_except) {
+      if (tt.status == chain_types::transaction_status::executed)
+         eosio::check(false, "transaction succeeded, but was expected to fail with: " + std::string(expected_except));
+      if (!tt.except)
+         eosio::check(false, "transaction has no failure message. expected: " + std::string(expected_except));
+      if (tt.except->find(expected_except) == std::string::npos)
+         eosio::check(false, "transaction failed with <<<" + *tt.except + ">>>, but was expected to fail with: <<<" +
+                                   expected_except + ">>>");
+   } else {
+      if (tt.status == chain_types::transaction_status::executed)
+         return;
+      if (tt.except)
+         eosio::print(*tt.except, "\n");
+      eosio::check(false, "transaction has status " + to_string(tt.status));
+   }
+}
 
 /**
  * Manages a chain.
@@ -308,9 +383,9 @@ class test_chain {
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
     */
    [[nodiscard]]
-   chain_types::transaction_trace push_transaction(const transaction& trx, const std::vector<abieos::private_key>& keys,
-                                                   const std::vector<std::vector<char>>& context_free_data = {},
-                                                   const std::vector<abieos::signature>& signatures        = {}) {
+   transaction_trace push_transaction(const transaction& trx, const std::vector<abieos::private_key>& keys,
+                                      const std::vector<std::vector<char>>& context_free_data = {},
+                                      const std::vector<abieos::signature>& signatures        = {}) {
 
       std::vector<char> packed_trx = pack(trx);
       std::vector<char> args;
@@ -323,11 +398,11 @@ class test_chain {
          bin.resize(size);
          return bin.data();
       });
-      return check(convert_from_bin<chain_types::transaction_trace>(bin)).value();
+      return check(convert_from_bin<transaction_trace>(bin)).value();
    }
 
    [[nodiscard]]
-   chain_types::transaction_trace push_transaction(const transaction& trx) {
+   transaction_trace push_transaction(const transaction& trx) {
       return push_transaction(trx, { default_priv_key });
    }
 
@@ -336,14 +411,14 @@ class test_chain {
     *
     * Validates the transaction status according to @ref eosio::expect.
     */
-   chain_types::transaction_trace transact(std::vector<action>&& actions, const std::vector<abieos::private_key>& keys,
-                                           const char* expected_except = nullptr) {
+   transaction_trace transact(std::vector<action>&& actions, const std::vector<abieos::private_key>& keys,
+                              const char* expected_except = nullptr) {
       auto trace = push_transaction(make_transaction(std::move(actions)), keys);
       expect(trace, expected_except);
       return trace;
    }
 
-   chain_types::transaction_trace transact(std::vector<action>&& actions, const char* expected_except = nullptr) {
+   transaction_trace transact(std::vector<action>&& actions, const char* expected_except = nullptr) {
       return transact(std::move(actions), { default_priv_key }, expected_except);
    }
 
@@ -355,18 +430,18 @@ class test_chain {
     * If no block is currently pending, starts one.
     */
    [[nodiscard]]
-   std::optional<chain_types::transaction_trace> exec_deferred() {
+   std::optional<transaction_trace> exec_deferred() {
       std::vector<char> bin;
       if (!internal_use_do_not_use::exec_deferred(id, [&](size_t size) {
              bin.resize(size);
              return bin.data();
           }))
          return {};
-      return check(convert_from_bin<chain_types::transaction_trace>(bin)).value();
+      return check(convert_from_bin<transaction_trace>(bin)).value();
    }
 
-   chain_types::transaction_trace create_account(name ac, const public_key& pub_key,
-                                                 const char* expected_except = nullptr) {
+   transaction_trace create_account(name ac, const public_key& pub_key,
+                                    const char* expected_except = nullptr) {
       tester_authority simple_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
@@ -378,7 +453,7 @@ class test_chain {
                       expected_except);
    }
 
-   chain_types::transaction_trace create_account(name ac, const char* expected_except = nullptr) {
+   transaction_trace create_account(name ac, const char* expected_except = nullptr) {
       return create_account(ac, convert(default_pub_key), expected_except);
    }
 
@@ -389,8 +464,8 @@ class test_chain {
     * @param is_priv Determines whether the contract should be privileged.  Defaults to false.
     * @param expected_except Used to validate the transaction status according to @ref eosio::expect.
     */
-   chain_types::transaction_trace create_code_account(name account, const public_key& pub_key, bool is_priv = false,
-                                                      const char* expected_except = nullptr) {
+   transaction_trace create_code_account(name account, const public_key& pub_key, bool is_priv = false,
+                                         const char* expected_except = nullptr) {
       tester_authority simple_auth{
          .threshold = 1,
          .keys      = { { pub_key, 1 } },
@@ -411,16 +486,16 @@ class test_chain {
             expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, const public_key& pub_key, const char* expected_except) {
+   transaction_trace create_code_account(name ac, const public_key& pub_key, const char* expected_except) {
       return create_code_account(ac, pub_key, false, expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, bool is_priv = false,
-                                                      const char* expected_except = nullptr) {
+   transaction_trace create_code_account(name ac, bool is_priv = false,
+                                         const char* expected_except = nullptr) {
       return create_code_account(ac, convert(default_pub_key), is_priv, expected_except);
    }
 
-   chain_types::transaction_trace create_code_account(name ac, const char* expected_except) {
+   transaction_trace create_code_account(name ac, const char* expected_except) {
       return create_code_account(ac, convert(default_pub_key), false, expected_except);
    }
 
@@ -428,7 +503,7 @@ class test_chain {
     * Set the code for an account.
     * Validates the transaction status as with @ref eosio::expect.
     */
-   chain_types::transaction_trace set_code(name ac, const char* filename, const char* expected_except = nullptr) {
+   transaction_trace set_code(name ac, const char* filename, const char* expected_except = nullptr) {
       return transact({ action{ { { ac, "active"_n } },
                                 "eosio"_n,
                                 "setcode"_n,
@@ -440,15 +515,15 @@ class test_chain {
     * Creates a new token.
     * The eosio.token contract should be deployed on the @c contract account.
     */
-   chain_types::transaction_trace create_token(name contract, name signer, name issuer, asset maxsupply,
-                                               const char* expected_except = nullptr) {
+   transaction_trace create_token(name contract, name signer, name issuer, asset maxsupply,
+                                  const char* expected_except = nullptr) {
       return transact(
             { action{ { { signer, "active"_n } }, contract, "create"_n, std::make_tuple(issuer, maxsupply) } },
             expected_except);
    }
 
-   chain_types::transaction_trace issue(const name& contract, const name& issuer, const asset& amount,
-                                        const char* expected_except = nullptr) {
+   transaction_trace issue(const name& contract, const name& issuer, const asset& amount,
+                           const char* expected_except = nullptr) {
       return transact({ action{ { { issuer, "active"_n } },
                                 contract,
                                 "issue"_n,
@@ -456,17 +531,17 @@ class test_chain {
                       expected_except);
    }
 
-   chain_types::transaction_trace transfer(const name& contract, const name& from, const name& to, const asset& amount,
-                                           const std::string& memo = "", const char* expected_except = nullptr) {
+   transaction_trace transfer(const name& contract, const name& from, const name& to, const asset& amount,
+                              const std::string& memo = "", const char* expected_except = nullptr) {
 
       return transact(
             { action{ { { from, "active"_n } }, contract, "transfer"_n, std::make_tuple(from, to, amount, memo) } },
             expected_except);
    }
 
-   chain_types::transaction_trace issue_and_transfer(const name& contract, const name& issuer, const name& to,
-                                                     const asset& amount, const std::string& memo = "",
-                                                     const char* expected_except = nullptr) {
+   transaction_trace issue_and_transfer(const name& contract, const name& issuer, const name& to,
+                                        const asset& amount, const std::string& memo = "",
+                                        const char* expected_except = nullptr) {
       return transact(
             {
                   action{ { { issuer, "active"_n } },
