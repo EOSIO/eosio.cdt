@@ -279,6 +279,17 @@ struct transaction_trace {
 auto conversion_kind(chain_types::transaction_trace_v0, transaction_trace) -> narrowing_conversion;
 auto serialize_as(const transaction_trace&) -> chain_types::transaction_trace;
 
+auto conversion_kind(abieos::block_timestamp, block_timestamp) -> strict_conversion;
+
+struct block_info {
+   uint32_t                block_num = {};
+   checksum256             block_id  = {};
+   block_timestamp         timestamp;
+};
+
+auto conversion_kind(chain_types::block_info, block_info) -> strict_conversion;
+auto serialize_as(block_info) -> chain_types::block_info;
+
 /**
  * Validates the status of a transaction.  If expected_except is nullptr, then the
  * transaction should succeed.  Otherwise it represents a string which should be
@@ -286,7 +297,7 @@ auto serialize_as(const transaction_trace&) -> chain_types::transaction_trace;
  */
 inline void expect(const transaction_trace& tt, const char* expected_except = nullptr) {
    if (expected_except) {
-      if (tt.status == chain_types::transaction_status::executed)
+      if (tt.status == transaction_status::executed)
          eosio::check(false, "transaction succeeded, but was expected to fail with: " + std::string(expected_except));
       if (!tt.except)
          eosio::check(false, "transaction has no failure message. expected: " + std::string(expected_except));
@@ -294,7 +305,7 @@ inline void expect(const transaction_trace& tt, const char* expected_except = nu
          eosio::check(false, "transaction failed with <<<" + *tt.except + ">>>, but was expected to fail with: <<<" +
                                    expected_except + ">>>");
    } else {
-      if (tt.status == chain_types::transaction_status::executed)
+      if (tt.status == transaction_status::executed)
          return;
       if (tt.except)
          eosio::print(*tt.except, "\n");
@@ -310,7 +321,7 @@ inline void expect(const transaction_trace& tt, const char* expected_except = nu
 class test_chain {
  private:
    uint32_t                               id;
-   std::optional<chain_types::block_info> head_block_info;
+   std::optional<block_info>              head_block_info;
 
  public:
    abieos::public_key  default_pub_key  = string_to_public_key("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV");
@@ -347,23 +358,23 @@ class test_chain {
       internal_use_do_not_use::finish_block(id);
    }
 
-   const chain_types::block_info& get_head_block_info() {
+   const block_info& get_head_block_info() {
       if (!head_block_info) {
          std::vector<char> bin;
          internal_use_do_not_use::get_head_block_info(id, [&](size_t size) {
             bin.resize(size);
             return bin.data();
          });
-         head_block_info = check(convert_from_bin<chain_types::block_info>(bin)).value();
+         head_block_info = check(convert_from_bin<block_info>(bin)).value();
       }
       return *head_block_info;
    }
 
    void fill_tapos(transaction& t, uint32_t expire_sec = 1) {
       auto& info      = get_head_block_info();
-      t.expiration    = time_point_sec(((abieos::time_point)info.timestamp).microseconds / 1'000'000 + expire_sec);
+      t.expiration    = time_point_sec(info.timestamp) + expire_sec;
       t.ref_block_num = info.block_num;
-      memcpy(&t.ref_block_prefix, info.block_id.value.data() + 8, sizeof(t.ref_block_prefix));
+      memcpy(&t.ref_block_prefix, info.block_id.extract_as_byte_array().data() + 8, sizeof(t.ref_block_prefix));
    }
 
    transaction make_transaction() {
