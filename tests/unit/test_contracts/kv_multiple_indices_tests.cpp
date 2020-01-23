@@ -55,7 +55,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t{"kvtest"_n};
+      my_table t = my_table::open("kvtest"_n);
 
       t.put(s1);
       t.put(s2);
@@ -66,7 +66,7 @@ public:
 
    [[eosio::action]]
    void find() {
-      my_table t{"kvtest"_n};
+      my_table t = my_table::open("kvtest"_n);
 
       auto itr = t.index.primary_key.find("bob"_n);
       auto val = itr.value();
@@ -83,7 +83,7 @@ public:
 
    [[eosio::action]]
    void finderror() {
-      my_table t{"kvtest"_n};
+      my_table t = my_table::open("kvtest"_n);
 
       auto itr = t.index.primary_key.find("C");
       auto val = itr.value();
@@ -91,7 +91,7 @@ public:
 
    [[eosio::action]]
    void iteration() {
-      my_table t{"kvtest"_n};
+      my_table t = my_table::open("kvtest"_n);
 
       auto foo_begin_itr = t.index.foo.begin();
       auto foo_end_itr = t.index.foo.end();

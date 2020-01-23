@@ -623,6 +623,46 @@ public:
       }
    }
 
+   static Class open(eosio::name contract_name) {
+      Class c = Class(contract_name);
+      return c;
+   }
+
+protected:
+   kv_table() = default;
+
+   template <typename Indices>
+   void init(eosio::name contract, Indices indices) {
+      contract_name = contract;
+      uint64_t index_name = 1;
+
+      auto& primary = get<0>(*indices);
+
+      primary_index = &primary;
+      primary_index->name = eosio::name{index_name};
+      primary_index->contract_name = contract_name;
+      primary_index->table_name = table_name;
+      primary_index->tbl = this;
+
+      ++index_name;
+
+      for_each_field(*indices, [&](auto& idx) {
+         if (idx.name != primary.name) {
+            kv_index* si = &idx;
+            si->name = eosio::name{index_name};
+            si->contract_name = contract_name;
+            si->table_name = table_name;
+            si->tbl = this;
+            secondary_indices.push_back(si);
+            ++index_name;
+         }
+      });
+
+      // Makes sure the indexes are run in the correct order.
+      // This is mainly useful for debugging, this probably could be deleted.
+      std::reverse(std::begin(secondary_indices), std::end(secondary_indices));
+   }
+
 private:
    constexpr static uint64_t db = static_cast<uint64_t>(DbName);
    constexpr static eosio::name table_name = static_cast<eosio::name>(TableName);
