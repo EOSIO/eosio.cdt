@@ -46,3 +46,16 @@ if (eosio_FOUND AND EOSIO_RUN_INTEGRATION_TESTS)
    add_test(integration_tests ${CMAKE_BINARY_DIR}/tests/integration/integration_tests)
    set_property(TEST integration_tests PROPERTY LABELS integration_tests)
 endif()
+
+ExternalProject_Add(
+   TesterTests
+   SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/tester"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/tests/tester"
+   CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/ -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR} -D__APPLE=${APPLE}
+   UPDATE_COMMAND ""
+   PATCH_COMMAND  ""
+   TEST_COMMAND   ""
+   INSTALL_COMMAND ""
+   BUILD_ALWAYS 1
+   DEPENDS tester EosioTools EosioWasmLibraries
+)

@@ -363,7 +363,7 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream, size_t Size>
-   inline DataStream& operator<<(DataStream& ds, const fixed_bytes<Size>& d) {
+   inline datastream<DataStream>& operator<<(datastream<DataStream>& ds, const fixed_bytes<Size>& d) {
       auto arr = d.extract_as_byte_array();
       ds.write( (const char*)arr.data(), arr.size() );
       return ds;
@@ -379,7 +379,7 @@ namespace eosio {
     *  @return DataStream& - Reference to the datastream
     */
    template<typename DataStream, size_t Size>
-   inline DataStream& operator>>(DataStream& ds, fixed_bytes<Size>& d) {
+   inline datastream<DataStream>& operator>>(datastream<DataStream>& ds, fixed_bytes<Size>& d) {
       std::array<uint8_t, Size> arr;
       ds.read( (char*)arr.data(), arr.size() );
       d = fixed_bytes<Size>( arr );

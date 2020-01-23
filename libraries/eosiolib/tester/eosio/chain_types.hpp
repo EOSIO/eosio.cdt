@@ -21,16 +21,6 @@ namespace chain_types {
 [[noreturn]] inline void report_error(const std::string& s) { throw std::runtime_error(s); }
 #endif
 
-template <typename T>
-T assert_bin_to_native(const std::vector<char>& bin) {
-   return eosio::check(eosio::convert_from_bin<T>(bin)).value();
-}
-
-template<typename T>
-auto assert_native_to_bin(const T& t) {
-   return eosio::check(eosio::convert_to_bin(t)).value();
-}
-
 struct extension {
    uint16_t             type = {};
    eosio::input_stream  data = {};

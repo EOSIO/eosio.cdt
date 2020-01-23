@@ -313,6 +313,13 @@ inline void expect(const transaction_trace& tt, const char* expected_except = nu
    }
 }
 
+template<std::size_t Size>
+std::ostream& operator<<(std::ostream& os, const fixed_bytes<Size>& d) {
+   auto arr = d.extract_as_byte_array();
+   abieos::hex(arr.begin(), arr.end(), std::ostreambuf_iterator<char>(os.rdbuf()));
+   return os;
+}
+
 /**
  * Manages a chain.
  * Only one test_chain can exist at a time.
@@ -337,12 +344,15 @@ class test_chain {
 
    /**
     * Start a new pending block.  If a block is currently pending, finishes it first.
+    * May push additional blocks if any time is skipped.
     *
     * @param skip_milliseconds The amount of time to skip in addition to the 500 ms block time.
+    * truncated to a multiple of 500 ms.
     */
    void start_block(int64_t skip_miliseconds = 0) {
       head_block_info.reset();
-      if (skip_miliseconds > 500) {
+      if (skip_miliseconds >= 500) {
+         // Guarantee that there is a recent block for fill_tapos to use.
          internal_use_do_not_use::start_block(id, skip_miliseconds - 500);
          internal_use_do_not_use::start_block(id, 0);
       } else {
@@ -350,9 +360,9 @@ class test_chain {
       }
    }
 
-  /**
-   * Finish the current pending block.  If no block is pending, creates an empty block.
-   */
+   /**
+    * Finish the current pending block.  If no block is pending, creates an empty block.
+    */
    void finish_block() {
       head_block_info.reset();
       internal_use_do_not_use::finish_block(id);
