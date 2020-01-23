@@ -18,6 +18,12 @@ DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
       bar
 )
 
+DEFINE_TABLE(my_table_2, my_struct, "testtable", "eosio.kvram",
+      primary_key,
+      nullptr,
+      bar
+)
+
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
    using contract::contract;

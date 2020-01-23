@@ -9,7 +9,7 @@
 #include <functional>
 
 #include <boost/preprocessor/variadic/to_seq.hpp>
-#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/for_each_i.hpp>
 #include <boost/pfr.hpp>
 
 #define EOSIO_CDT_KV_INDEX_nullptr
@@ -21,30 +21,40 @@
 #define EOSIO_CDT_CAT2(x, y) x ## y
 #define EOSIO_CDT_CAT(x, y) EOSIO_CDT_CAT2(x, y)
 #define EOSIO_CDT_APPLY(f, args) f args
-#define EOSIO_CDT_FIX_KV_INDEX_TYPE_0(index_name) kv_index
-#define EOSIO_CDT_FIX_KV_INDEX_TYPE_1(index_name) null_kv_index
-#define EOSIO_CDT_FIX_KV_INDEX_TYPE(iskeyword, garbage) EOSIO_CDT_FIX_KV_INDEX_TYPE_ ## iskeyword
 
-#define EOSIO_CDT_FIX_KV_INDEX_CONSTRUCT_0(value_class, index_name) {&value_class::index_name}
-#define EOSIO_CDT_FIX_KV_INDEX_CONSTRUCT_1(value_class, index_name)
-#define EOSIO_CDT_FIX_KV_INDEX_CONSTRUCT(iskeyword, garbage) EOSIO_CDT_FIX_KV_INDEX_CONSTRUCT_ ## iskeyword
+#define EOSIO_CDT_KV_FIX_INDEX_NAME_0(index_name, i) index_name
+#define EOSIO_CDT_KV_FIX_INDEX_NAME_1(index_name, i) index_name ## i
+#define EOSIO_CDT_KV_FIX_INDEX_NAME(x, i) EOSIO_CDT_KV_FIX_INDEX_NAME_ ## x
+
+#define EOSIO_CDT_KV_FIX_INDEX_TYPE_0(index_name) kv_index
+#define EOSIO_CDT_KV_FIX_INDEX_TYPE_1(index_name) null_kv_index
+#define EOSIO_CDT_KV_FIX_INDEX_TYPE(iskeyword, garbage) EOSIO_CDT_KV_FIX_INDEX_TYPE_ ## iskeyword
+
+#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_0(value_class, index_name) {&value_class::index_name}
+#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_1(value_class, index_name)
+#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT(iskeyword, garbage) EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_ ## iskeyword
+
+#define EOSIO_CDT_KV_INDEX_NAME(index_name, i)                                                                         \
+   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_NAME,                                                                        \
+      (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
+           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(index_name, i)
 
 #define EOSIO_CDT_KV_INDEX_TYPE(index_name)                                                                            \
-   EOSIO_CDT_APPLY(EOSIO_CDT_FIX_KV_INDEX_TYPE,                                                                        \
+   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_TYPE,                                                                        \
       (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
            EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(index_name)
 
 #define EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name)                                                          \
-   EOSIO_CDT_APPLY(EOSIO_CDT_FIX_KV_INDEX_CONSTRUCT,                                                                   \
+   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT,                                                                   \
       (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
            EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(value_class, index_name)
 
 
-#define CREATE_KV_INDEX(r, value_class, index_name)                                                                    \
-   EOSIO_CDT_KV_INDEX_TYPE(index_name) index_name EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name);
+#define CREATE_KV_INDEX(r, value_class, i, index_name)                                                                 \
+   EOSIO_CDT_KV_INDEX_TYPE(index_name) EOSIO_CDT_KV_INDEX_NAME(index_name, i) EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name);
 
 #define LIST_INDICES(value_class, ...)                                                                                 \
-   BOOST_PP_SEQ_FOR_EACH(CREATE_KV_INDEX, value_class, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+   BOOST_PP_SEQ_FOR_EACH_I(CREATE_KV_INDEX, value_class, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
 #define TABLE_INHERITANCE(table_class, value_class, table_name, db_name)                                               \
    eosio::kv_table<table_class, value_class, table_name##_n, db_name##_n>
@@ -539,6 +549,8 @@ public:
    private:
       std::function<key_type(const T&)> key_function;
    };
+
+   class null_kv_index : public kv_index {};
 
    template <typename Indices>
    void init(eosio::name contract, Indices indices) {
