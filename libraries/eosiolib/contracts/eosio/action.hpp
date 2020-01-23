@@ -363,7 +363,7 @@ namespace eosio {
        * @return the action data
        */
       template<typename T>
-      T data_as() {
+      T data_as() const {
          return unpack<T>( &data[0], data.size() );
       }
 
