@@ -164,16 +164,8 @@ namespace eosio {
 /**
  * The key_type struct is used to store the binary representation of a key.
  */
-struct key_type {
-   size_t size;
-   std::string buffer;
-
-   bool operator==(const key_type& k) const {
-      return std::tie(size, buffer) == std::tie(k.size, k.buffer);
-   }
-   bool operator!=(const key_type& k) const {
-      return !(*this == k);
-   }
+struct key_type : std::string {
+   using std::string::string;
 };
 
 namespace detail {
@@ -194,29 +186,29 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
    memcpy(((char*)buffer) + sizeof(status), &bige_table, size_name);
    memcpy(((char*)buffer) + sizeof(status) + size_name, &bige_index, size_name);
 
-   std::string s((char*)buffer, buffer_size);
+   key_type s((const char*)buffer, buffer_size);
 
    if (buffer_size > detail::max_stack_buffer_size) {
       free(buffer);
    }
 
-   return {buffer_size, s};
+   return s;
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
-   size_t buffer_size = key.size + prefix.size;
+   size_t buffer_size = key.size() + prefix.size();
    void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
 
-   memcpy(buffer, prefix.buffer.data(), prefix.size);
-   memcpy(((char*)buffer) + prefix.size, key.buffer.data(), key.size);
+   memcpy(buffer, prefix.data(), prefix.size());
+   memcpy(((char*)buffer) + prefix.size(), key.data(), key.size());
 
-   std::string s((char*)buffer, buffer_size);
+   key_type s((const char*)buffer, buffer_size);
 
    if (buffer_size > detail::max_stack_buffer_size) {
       free(buffer);
    }
 
-   return {buffer_size, s};
+   return s;
 }
 
 template <typename I>
@@ -241,10 +233,10 @@ inline key_type make_key(I val) {
 
    auto big_endian = swap_endian<I>(val);
 
-   char* bytes = reinterpret_cast<char*>(&big_endian);
+   const char* bytes = reinterpret_cast<char*>(&big_endian);
    constexpr size_t size = sizeof(big_endian);
-   std::string s(bytes, size);
-   return {size, s};
+   key_type s(bytes, size);
+   return s;
 }
 
 template <typename I, typename F>
@@ -262,10 +254,10 @@ inline key_type make_floating_key(F val) {
 
    auto big_endian = swap_endian<I>(bit_val);
 
-   char* bytes = reinterpret_cast<char*>(&big_endian);
+   const char* bytes = reinterpret_cast<char*>(&big_endian);
    constexpr size_t size = sizeof(big_endian);
-   std::string s(bytes, size);
-   return {size, s};
+   key_type s(bytes, size);
+   return s;
 }
 
 template <typename F, typename std::enable_if_t<std::is_floating_point<F>::value, int> = 0>
@@ -298,12 +290,12 @@ inline key_type make_key(const char* str, size_t size, bool case_insensitive=fal
    ((char*)data_buffer)[data_size - 2] = 0x00;
    ((char*)data_buffer)[data_size - 1] = 0x00;
 
-   std::string s((char*)data_buffer, data_size);
+   key_type s((const char*)data_buffer, data_size);
 
    if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
    }
-   return {data_size, s};
+   return s;
 }
 
 inline key_type make_key(const std::string& val, bool case_insensitive=false) {
@@ -316,6 +308,10 @@ inline key_type make_key(const char* str, bool case_insensitive=false) {
 
 inline key_type make_key(eosio::name n) {
    return make_key(n.value);
+}
+
+inline key_type make_key(key_type&& val) {
+   return val;
 }
 
 template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
@@ -332,16 +328,16 @@ inline key_type make_key(S val) {
 
    boost::pfr::for_each_field(val, [&](auto& field) {
       auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
-      pos += kt.size;
+      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
+      pos += kt.size();
    });
 
-   std::string s((char*)data_buffer, data_size);
+   key_type s((const char*)data_buffer, data_size);
 
    if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
    }
-   return {data_size, s};
+   return s;
 }
 
 template <typename... Args>
@@ -358,16 +354,16 @@ inline key_type make_key(std::tuple<Args...> val) {
 
    boost::fusion::for_each(val, [&](auto& field) {
       auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.buffer.data(), kt.size);
-      pos += kt.size;
+      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
+      pos += kt.size();
    });
 
-   std::string s((char*)data_buffer, data_size);
+   key_type s((const char*)data_buffer, data_size);
 
    if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
    }
-   return {data_size, s};
+   return s;
 }
 /* @endcond */
 
@@ -662,15 +658,15 @@ public:
          auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
-         auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.buffer.data(), t_key.size, value_size);
+         auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
          if (!success) {
             return end();
          }
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
 
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.buffer.data(), t_key.size);
-         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.buffer.data(), t_key.size);
+         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
 
          eosio::check(cmp == 0, "This key does not exist in this iterator");
 
@@ -701,7 +697,7 @@ public:
        */
       iterator end() {
          auto prefix = make_prefix(table_name, name);
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), 0, this};
@@ -731,7 +727,7 @@ public:
        */
       iterator begin() {
          auto prefix = make_prefix(table_name, name);
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
          uint32_t value_size;
@@ -894,11 +890,11 @@ public:
       datastream<char*> data_ds((char*)data_buffer, data_size);
       data_ds << value;
 
-      internal_use_do_not_use::kv_set(db, contract_name.value, t_key.buffer.data(), t_key.size, (const char*)data_buffer, data_size);
+      internal_use_do_not_use::kv_set(db, contract_name.value, t_key.data(), t_key.size(), (const char*)data_buffer, data_size);
 
       for (auto& idx : secondary_indices) {
          auto st_key = table_key(make_prefix(table_name, idx->name), idx->get_key(value));
-         internal_use_do_not_use::kv_set(db, contract_name.value, st_key.buffer.data(), st_key.size, t_key.buffer.data(), t_key.size);
+         internal_use_do_not_use::kv_set(db, contract_name.value, st_key.data(), st_key.size(), t_key.data(), t_key.size());
       }
       
       if (data_size > detail::max_stack_buffer_size) {
@@ -935,11 +931,11 @@ public:
       T val = primary_itr.value();
 
       auto k = table_key(make_prefix(table_name, primary_index->name), make_key(key));
-      internal_use_do_not_use::kv_erase(db, contract_name.value, (const char*)k.buffer.data(), k.size);
+      internal_use_do_not_use::kv_erase(db, contract_name.value, k.data(), k.size());
 
       for (auto& idx : secondary_indices) {
          auto skey = table_key(make_prefix(table_name, idx->name), idx->get_key(val));
-         internal_use_do_not_use::kv_erase(db, contract_name.value, (const char*)skey.buffer.data(), skey.size);
+         internal_use_do_not_use::kv_erase(db, contract_name.value, skey.data(), skey.size());
       }
    }
 
