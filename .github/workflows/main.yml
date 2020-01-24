@@ -277,7 +277,7 @@ jobs:
   macos-1015-unit-test:
     name: MacOS 10.15 | Unit Test
     runs-on: macos-latest
-    needs: amazon_linux-2-build
+    needs: macos-1015-build
     steps:
       - name: Checkout
         uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
