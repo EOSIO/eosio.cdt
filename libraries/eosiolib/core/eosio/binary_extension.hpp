@@ -80,6 +80,7 @@ namespace eosio {
                _has_value = true;
                other._has_value = false;
             }
+            return *this;
          }
          /** test if container is holding a value */
          constexpr explicit operator bool()const { return _has_value; }
