@@ -59,6 +59,47 @@
 #define TABLE_INHERITANCE(table_class, value_class, table_name, db_name)                                               \
    eosio::kv_table<table_class, value_class, table_name##_n, db_name##_n>
 
+/**
+ * @brief Macro to define a table.
+ * @details The resulting table will have a member `index` that has fields on it that match 1-1 with the names of the
+ * fields passed into the list. See example for further clarification.
+ *
+ * @param table_class - The name of the class of the user defined table that inherits from eosio::kv_table
+ * @param value_class - The name of the class of the data stored as the value of the table
+ * @param table_name  - The name of the table
+ * @param db_name     - The type of the EOSIO Key Value database. Defaulted to eosio.kvram
+ * @param ...         - A variadic list of 1 or more indexes to define on the table.
+ *
+ * Example:
+ *
+ * @code
+ * struct myrecord {
+ *    std::string                primary_key;
+ *    uint64_t                   secondary_1;
+ *    std::tuple<uint32_t, bool> secondary_2;
+ * }
+ *
+ * DEFINE_TABLE(mytable, myrecord, "testtable",
+ *    primary_key,
+ *    secondary_1,
+ *    secondary_2
+ * )
+ *
+ * // The above macro results in the following class.
+ *
+ * struct mytable : kv_table<mytable, myrecord, "testtable"_n> {
+ *    struct {
+ *       kv_index primary_key{&myrecord::primary_key};
+ *       kv_index secondary_1{&myrecord::secondary_1};
+ *       kv_index secondary_2{&myrecord::secondary_2};
+ *    } index;
+ *
+ *    mytable(eosio::name contract_name) {
+ *       init(contract_name, &index);
+ *    }
+ * }
+ * @endcode
+ */
 #define DEFINE_TABLE(table_class, value_class, table_name, db_name, /*indices*/...)                                    \
    struct table_class : TABLE_INHERITANCE(table_class, value_class, table_name, db_name) {                             \
       struct {                                                                                                         \
@@ -120,6 +161,9 @@ namespace eosio {
       }
    }
 
+/**
+ * The key_type struct is used to store the binary representation of a key.
+ */
 struct key_type {
    size_t size;
    std::string buffer;
@@ -136,6 +180,7 @@ namespace detail {
    constexpr static size_t max_stack_buffer_size = 512;
 }
 
+/* @cond PRIVATE */
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
    using namespace detail;
 
@@ -332,12 +377,104 @@ inline key_type make_key(std::tuple<Args...> val) {
    }
    return {data_size, s};
 }
+/* @endcond */
 
+// This is the "best" way to document a function that does not technically exist using Doxygen.
+#if _DOXYGEN_
+/**
+ * @brief A function for converting types to the appropriate binary representation for the EOSIO Key Value database.
+ * @details The CDT provides implementations of this function for many of the common primitives and for structs/tuples.
+ * If sticking with standard types, contract developers should not need to interact with this function.
+ * If doing something more advanced, contract developers may need to provide their own implementation for a special type.
+ */
+template <typename T>
+inline key_type make_key(T val) {
+   return {};
+}
+#endif
+
+
+/**
+ * Used to return the appropriate representation of a case insensitive string for the EOSIO Key Value database.
+ *
+ * @param val - The string to be made case-insensitive
+ * @return The binary representation of the case-insensitive string
+ *
+ * Example:
+ *
+ * @code
+ * struct location {
+ *    std::string city;
+ *    std::string state;
+ *    uint64_t zip_code;
+ *
+ *    auto icity() { return eosio::make_insensitive(city); }
+ *    auto istate() { return eosio::make_insensitive(state); }
+ * }
+ *
+ * DEFINE_TABLE(my_table, location, "testtable", "eosio.kvram",
+ *    icity,
+ *    istate,
+ *    zip_code
+ * )
+ * @endcode
+ */
 inline key_type make_insensitive(const std::string& val) {
    return make_key(val, true);
 }
 
 
+/**
+ * @defgroup keyvalue Key Value Table
+ * @ingroup contracts
+ *
+ * @brief Defines an EOSIO Key Value Table
+ * @details EOSIO Key Value API provides a C++ interface to the EOSIO Key Value database.
+ * Key Value Tables require 1 primary index, of any type that can be serialized to a binary representation.
+ * Key Value Tables support 0 or more secondary index, of any type that can be serialized to a binary representation.
+ * Indexes must be a member variable or a member function.
+ *
+ * @tparam Class     - the name of the class of the user defined table that inherits from eosio::kv_table
+ * @tparam T         - the type of the data stored as the value of the table
+ * @tparam TableName - the name of the table
+ * @tparam DbName    - the type of the EOSIO Key Value database. Defaulted to eosio.kvram
+ *
+ * Example:
+ *
+ * @code
+ * #include <eosiolib/eosio.hpp>
+ * using namespace eosio;
+ *
+ * struct address {
+ *    uint64_t account_name;
+ *    string first_name;
+ *    string last_name;
+ *    string street;
+ *    string city;
+ *    string state;
+ *
+ *    auto full_name() { return first_name + " " + last_name; }
+ * }
+ *
+ * struct address_table : kv_table<address_table, myrecord, "testtable"_n> {
+ *    struct {
+ *       kv_index account_name{&address::account_name};
+ *       kv_index full_name{&address::full_name};
+ *    } index;
+ *
+ *    addresses(eosio::name contract_name) {
+ *       init(contract_name, &index);
+ *    }
+ * }
+ *
+ * class addressbook : contract {
+ *    public:
+ *       void myaction() {
+ *          auto addresses = address_table::open("mycontract"_n);
+ *       }
+ * }
+ * @endcode
+ */
 template<typename Class, typename T, eosio::name::raw TableName, eosio::name::raw DbName = eosio::name{"eosio.kvram"}>
 class kv_table {
 
@@ -348,12 +485,40 @@ class kv_table {
    };
 
 public:
+   /**
+    * @ingroup keyvalue
+    *
+    * @brief Defines an index on an EOSIO Key Value Table
+    * @details A Key Value Index allows a user of the table to search based on a given field.
+    * The only restrictions on that field are that it is serializable to a binary representation.
+    * Convenience functions exist to handle most of the primitive types as well as some more complex types, and are
+    * used automatically where possible.
+    */
    class kv_index {
       class iterator {
       public:
          iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, size_t data_size, kv_index* idx) :
                   contract_name{contract_name}, itr{itr}, itr_stat{itr_stat}, data_size{data_size}, idx{idx} {}
 
+         /**
+          * Returns the value that the iterator points to.
+          * @ingroup keyvalue
+          *
+          * @return The value that the iterator points to.
+          *
+          * Example:
+          * @code
+          * // This assumes the code from the class example.
+          *
+          *    void myaction() {
+          *       // add dan account to table           - see put example
+          *
+          *       auto dan = addresses.index.full_name.find("Dan Larimer");
+          *       eosio::check(dan != addresses.index.full_name.end(), "Dan Larimer is not in the table");
+          *       eosio::check(dan.value().city == "Blacksburg", "Got the wrong value");
+          *    }
+          * @endcode
+          */
          T value() const {
             using namespace detail;
 
@@ -473,6 +638,31 @@ public:
          };
       }
 
+      /**
+       * Search for an existing object in a table by the index, using the given key.
+       * @ingroup keyvalue
+       *
+       * @tparam K - The type of the key. This will be auto-deduced by the key param.
+       *
+       * @param key - The key to search for.
+       * @return An iterator to the found object OR the `end` iterator if the given key was not found.
+       *
+       * Example:
+       *
+       * @code
+       * // This assumes the code from the class example.
+       *
+       *     void myaction() {
+       *       // add dan account to table           - see put example
+       *
+       *       auto itr = addresses.index.account_name.find("dan"_n);
+       *       eosio::check(itr != addresses.index.account_name.end(), "Couldn't get him.");
+       *
+       *       auto itr = addresses.index.full_name.find("Dan Larimer");
+       *       eosio::check(itr != addresses.index.full_name.end(), "Couldn't get him.");
+       *     }
+       * @endcode
+       */
       template <typename K>
       iterator find(K key) {
          uint32_t value_size;
@@ -495,6 +685,28 @@ public:
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
 
+      /**
+       * Returns an iterator referring to the `past-the-end` element. It does not point to any element, therefore `value` should not be called on it.
+       * @ingroup keyvalue
+       *
+       * @return An iterator referring to the `past-the-end` element.
+       *
+       * Example:
+       *
+       * @code
+       * // This assumes the code from the class example.
+       *
+       *     void myaction() {
+       *       // add dan account to table           - see put example
+       *
+       *       auto itr = addresses.index.account_name.find("brendan"_n);
+       *       eosio::check(itr == addresses.index.account_name.end(), "brendan should not be in the table.");
+       *
+       *       auto itr = addresses.index.full_name.find("Brendan Blumer");
+       *       eosio::check(itr == addresses.index.full_name.end(), "Brendan Blumer should not be in the table.");
+       *     }
+       * @endcode
+       */
       iterator end() {
          auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
@@ -503,6 +715,28 @@ public:
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), 0, this};
       }
 
+      /**
+       * Returns an iterator to the object with the lowest key (by this index) in the table.
+       * @ingroup keyvalue
+       *
+       * @return An iterator to the object with the lowest key (by this index) in the table.
+       *
+       * Example:
+       *
+       * @code
+       * // This assumes the code from the class example.
+       *
+       *     void myaction() {
+       *       // add dan account to table           - see put example
+       *
+       *       auto itr = addresses.index.account_name.find("dan"_n);
+       *       eosio::check(itr == addresses.index.account_name.begin(), "dan should be at the beginning.");
+       *
+       *       auto itr = addresses.index.full_name.find("Dan Larimer");
+       *       eosio::check(itr == addresses.index.full_name.begin(), "Dan Larimer should be at the beginning.");
+       *     }
+       * @endcode
+       */
       iterator begin() {
          auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.buffer.data(), prefix.size);
@@ -517,6 +751,40 @@ public:
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
 
+      /**
+       * Returns a vector of objects that fall between the specifed range. The range is inclusive on both ends.
+       * @ingroup keyvalue
+       *
+       * @tparam K - The type of the key. This will be auto-deduced by the key param.
+       *
+       * @param begin - The beginning of the range.
+       * @param end - The end of the range.
+       * @return A vector containing all the objects that fall between the range.
+       *
+       * Example:
+       *
+       * @code
+       * // This assumes the code from the class example.
+       *
+       *     void myaction() {
+       *       // add dan account to table           - see put example
+       *       // add brendan account to table       - see put example
+       *       // add john account to table          - see put example
+       *
+       *       address dan = {...}
+       *       address brendan = {...}
+       *       address john = {...}
+       *
+       *       std::vector expected_values = {brendan, dan, john};
+       *       auto values = addresses.index.account_name.range("brendan"_n, "john"_n);
+       *       eosio::check(values == expected_values, "Did not get the expected values");
+       *
+       *       std::vector expected_values = {dan};
+       *       auto values = addresses.index.account_name.range("dan"_n, "dan"_n);
+       *       eosio::check(values == expected_values, "Did not get the expected values");
+       *     }
+       * @endcode
+       */
       template <typename K>
       std::vector<T> range(K begin, K end) {
          auto begin_itr = find(begin);
@@ -550,8 +818,66 @@ public:
       std::function<key_type(const T&)> key_function;
    };
 
+   /**
+    * @ingroup keyvalue
+    *
+    * @brief Defines a deleted index on an EOSIO Key Value Table
+    * @details Due to the way indexes are named, when deleting an index a "placeholder" index needs to be created instead.
+    * A null_kv_index should be created in this case. If using DEFINE_TABLE, just passing in nullptr will handle this.
+    *
+    * Example:
+    * @code
+    * // Original table:
+    * DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
+    *    primary_key,
+    *    secondary_1,
+    *    secondary_2
+    * )
+    *
+    * struct my_table : kv_table<my_table, my_struct, "testtable"_n, "eosio.kvram"_n> {
+    *   struct {
+    *       kv_index primary_key ...;
+    *       kv_index secondary_1 ...;
+    *       kv_index secondary_2 ...;
+    *   } index;
+    *
+    *   my_table(eosio::name contract_name) {
+    *       init(contract_name, &index);
+    *   }
+    * }
+    *
+    * // Table with secondary_1 deleted:
+    * DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram",
+    *    primary_key,
+    *    nullptr
+    *    secondary_2
+    * )
+    *
+    * struct my_table : kv_table<my_table, my_struct, "testtable"_n, "eosio.kvram"_n> {
+    *   struct {
+    *       kv_index primary_key ...;
+    *       null_kv_index nullptr1 ...;
+    *       kv_index secondary_2 ...;
+    *   } index;
+    *
+    *   my_table(eosio::name contract_name) {
+    *       init(contract_name, &index);
+    *   }
+    * }
+    * @endcode
+    */
    class null_kv_index : public kv_index {};
 
+   /**
+    * Initializes a key value table. This method is intended to be called in the constructor of the user defined table class.
+    * If using the DEFINE_TABLE macro, this is handled for the developer.
+    * @ingroup keyvalue
+    *
+    * @tparam Indices - a list of types of the indices. This will be auto-deduced through the indices parameter.
+    *
+    * @param contract - the name of the contract this table is associated with
+    * @param indices - a list of 1 or more indices to add to the table
+    */
    template <typename Indices>
    void init(eosio::name contract, Indices indices) {
       contract_name = contract;
@@ -584,6 +910,30 @@ public:
       std::reverse(std::begin(secondary_indices), std::end(secondary_indices));
    }
 
+   /**
+    * Puts a value into the table. If the value already exists, it updates the existing entry.
+    * The key is determined from the defined primary index.
+    * @ingroup keyvalue
+    *
+    * @param value - The entry to be stored in the table.
+    *
+    * Example:
+    * @code
+    * // This assumes the code from the class example.
+    *
+    *    void myaction() {
+    *       auto addresses = address_table::open("mycontract"_n);
+    *       addresses.put({
+    *          .account_name = "dan"_n,
+    *          .first_name = "Daniel",
+    *          .last_name = "Larimer",
+    *          .street = "1 EOS Way",
+    *          .city = "Blacksburg",
+    *          .state = "VA"
+    *       });
+    *    }
+    * @endcode
+    */
    void put(const T& value) {
       using namespace detail;
 
@@ -606,6 +956,26 @@ public:
       }
    }
 
+   /**
+    * Removes a value from the table.
+    * @ingroup keyvalue
+    *
+    * @tparam K - The type of the key. This will be auto-deduced through the key parameter.
+    *
+    * @param key - The key of the value to be removed.
+    *
+    * Example:
+    * // This assumes the code from the class example.
+    * @code
+    *    void myaction() {
+    *       auto addresses = address_table::open("mycontract"_n);
+    *
+    *       auto itr = addresses.index.account_name.find("dan"_n);
+    *       eosio::check(itr != addresses.index.account_name.end());
+    *       addresses.erase("dan"_n);
+    *    }
+    * @endcode
+    */
    template <typename K>
    void erase(K key) {
       auto primary_itr = primary_index->find(key);
@@ -623,6 +993,30 @@ public:
       }
    }
 
+   /**
+    * Initializes and returns an instance of the Key Value table scoped to the contract name.
+    *
+    * @param contract_name - The name of the contract.
+    * @return An initialized instance of the user specifed Key Value table class.
+    *
+    * Example:
+    *
+    * @code
+    * struct myrecord {
+    *    std::string                primary_key;
+    * }
+    *
+    * DEFINE_TABLE(mytable, myrecord, "testtable", primary_key)
+    *
+    * class mycontract : contract {
+    *    public:
+    *       void myaction() {
+    *          auto t = mytable::open("mycontract"_n);
+    *       }
+    * }
+    *
+    * @endcode
+    */
    static Class open(eosio::name contract_name) {
       Class c = Class(contract_name);
       return c;
@@ -631,6 +1025,16 @@ public:
 protected:
    kv_table() = default;
 
+   /**
+    * Initializes a key value table. This method is intended to be called in the constructor of the user defined table class.
+    * If using the DEFINE_TABLE macro, this is handled for the developer.
+    * @ingroup keyvalue
+    *
+    * @tparam Indices - a list of types of the indices. This will be auto-deduced through the indices parameter.
+    *
+    * @param contract - the name of the contract this table is associated with
+    * @param indices - a list of 1 or more indices to add to the table
+    */
    template <typename Indices>
    void init(eosio::name contract, Indices indices) {
       contract_name = contract;
