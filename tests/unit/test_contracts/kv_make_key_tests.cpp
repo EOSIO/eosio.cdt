@@ -61,7 +61,7 @@ public:
       .ti128 = (static_cast<uint128_t>(1) << 127) - 4,
       .tfloat = 5.2574,
       .tstruct = { 5, 6 },
-      .ttuple = { 100, 32.44, "def"}
+      .ttuple = { 100, 32.43, "def"}
    };
    my_struct s3{
       .tname = "john"_n,

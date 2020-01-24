@@ -182,19 +182,17 @@ namespace detail {
 
 /* @cond PRIVATE */
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
-   using namespace detail;
-
    auto bige_table = swap_endian<uint64_t>(table_name.value);
    auto bige_index = swap_endian<uint64_t>(index_name.value);
 
-   size_t size_64 = sizeof(index_name);
+   size_t size_name = sizeof(index_name);
 
-   size_t buffer_size = (2 * size_64) + sizeof(status);
+   size_t buffer_size = (2 * size_name) + sizeof(status);
    void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
 
    memcpy(buffer, &status, sizeof(status));
-   memcpy(((char*)buffer) + sizeof(status), &bige_table, size_64);
-   memcpy(((char*)buffer) + sizeof(status) + size_64, &bige_index, size_64);
+   memcpy(((char*)buffer) + sizeof(status), &bige_table, size_name);
+   memcpy(((char*)buffer) + sizeof(status) + size_name, &bige_index, size_name);
 
    std::string s((char*)buffer, buffer_size);
 
@@ -206,8 +204,6 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
-   using namespace detail;
-
    size_t buffer_size = key.size + prefix.size;
    void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
 
@@ -239,8 +235,6 @@ inline I get_msb(I val) {
 
 template <typename I, typename std::enable_if_t<std::is_integral<I>::value, int> = 0>
 inline key_type make_key(I val) {
-   using namespace detail;
-
    if (std::is_signed<I>::value) {
       val = flip_msb(val);
    }
@@ -291,8 +285,6 @@ inline key_type make_key(F val) {
 }
 
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
-   using namespace detail;
-
    size_t data_size = size + 3;
    void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
@@ -867,48 +859,6 @@ public:
     * @endcode
     */
    class null_kv_index : public kv_index {};
-
-   /**
-    * Initializes a key value table. This method is intended to be called in the constructor of the user defined table class.
-    * If using the DEFINE_TABLE macro, this is handled for the developer.
-    * @ingroup keyvalue
-    *
-    * @tparam Indices - a list of types of the indices. This will be auto-deduced through the indices parameter.
-    *
-    * @param contract - the name of the contract this table is associated with
-    * @param indices - a list of 1 or more indices to add to the table
-    */
-   template <typename Indices>
-   void init(eosio::name contract, Indices indices) {
-      contract_name = contract;
-      uint64_t index_name = 1;
-
-      auto& primary = get<0>(*indices);
-
-      primary_index = &primary;
-      primary_index->name = eosio::name{index_name};
-      primary_index->contract_name = contract_name;
-      primary_index->table_name = table_name;
-      primary_index->tbl = this;
-
-      ++index_name;
-
-      for_each_field(*indices, [&](auto& idx) {
-         if (idx.name != primary.name) {
-            kv_index* si = &idx;
-            si->name = eosio::name{index_name};
-            si->contract_name = contract_name;
-            si->table_name = table_name;
-            si->tbl = this;
-            secondary_indices.push_back(si);
-            ++index_name;
-         }
-      });
-
-      // Makes sure the indexes are run in the correct order.
-      // This is mainly useful for debugging, this probably could be deleted.
-      std::reverse(std::begin(secondary_indices), std::end(secondary_indices));
-   }
 
    /**
     * Puts a value into the table. If the value already exists, it updates the existing entry.
