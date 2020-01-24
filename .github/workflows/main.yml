@@ -153,7 +153,7 @@ jobs:
         with:
           name: ubuntu-1604-build
           path: build.tar.gz
-   ubuntu-1604-unit-test:
+  ubuntu-1604-unit-test:
     name: Ubuntu 16.04 | Unit Test
     runs-on: ubuntu-latest
     needs: ubuntu-1604-build
