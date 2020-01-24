@@ -1,4 +1,4 @@
-FROM centos:7.6.1810
+FROM centos:7.7.1908
 # install dependencies
 RUN yum update -y && \
     yum --enablerepo=extras install -y centos-release-scl && \

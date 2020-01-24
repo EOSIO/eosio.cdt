@@ -21,13 +21,13 @@ else # Linux
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
     BUILD_COMMANDS="cmake .. && make -j$JOBS"
 
-    [[ $IMAGE_TAG == 'centos-7.6' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
+    [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
         # Generate Base Images
         $CICD_DIR/generate-base-images.sh
     elif [[ $TRAVIS == true ]]; then
-        ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache"
+        ARGS="$ARGS -e JOBS"
     fi
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
