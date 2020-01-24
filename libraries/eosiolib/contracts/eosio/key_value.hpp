@@ -177,7 +177,7 @@ struct key_type {
 };
 
 namespace detail {
-   constexpr static size_t max_stack_buffer_size = 512;
+   constexpr inline size_t max_stack_buffer_size = 512;
 }
 
 /* @cond PRIVATE */
@@ -372,7 +372,7 @@ inline key_type make_key(std::tuple<Args...> val) {
 /* @endcond */
 
 // This is the "best" way to document a function that does not technically exist using Doxygen.
-#if _DOXYGEN_
+#if EOSIO_CDT_DOXYGEN
 /**
  * @brief A function for converting types to the appropriate binary representation for the EOSIO Key Value database.
  * @details The CDT provides implementations of this function for many of the common primitives and for structs/tuples.
