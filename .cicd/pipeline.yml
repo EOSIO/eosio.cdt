@@ -13,12 +13,12 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: $SKIP_AMAZON_LINUX_2
 
-  - label: ":centos: CentOS 7.6 - Build"
+  - label: ":centos: CentOS 7.7 - Build"
     command:
       - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env: 
-      IMAGE_TAG: "centos-7.6"
+      IMAGE_TAG: "centos-7.7"
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-10}
@@ -65,6 +65,8 @@ steps:
           always-pull: true
           debug: true
           wait-network: true
+      - thedyrt/skip-checkout#v0.1.1:
+          cd: ~
     agents:
       - "queue=mac-anka-large-node-fleet"
     skip: $SKIP_MOJAVE
@@ -82,12 +84,12 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_AMAZON_LINUX_2}${SKIP_UNIT_TESTS}
 
-  - label: ":centos: CentOS 7.6 - Unit Tests"
+  - label: ":centos: CentOS 7.7 - Unit Tests"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.6 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.7 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/tests.sh"
     env: 
-      IMAGE_TAG: "centos-7.6"
+      IMAGE_TAG: "centos-7.7"
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
@@ -134,6 +136,8 @@ steps:
           always-pull: true
           debug: true
           wait-network: true
+      - thedyrt/skip-checkout#v0.1.1:
+          cd: ~
     agents:
       - "queue=mac-anka-large-node-fleet"
     skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
@@ -154,14 +158,14 @@ steps:
 
   - wait
 
-  - label: ":centos: Centos 7.6 - Package Builder"
+  - label: ":centos: Centos 7.7 - Package Builder"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.6 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.7 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/package.sh"
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
-      IMAGE_TAG: "centos-7.6"
-      OS: "el7" # OS and PKGTYPE required for lambdas
+      IMAGE_TAG: "centos-7.7"
+      OS: "centos" # OS and PKGTYPE required for lambdas
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eks-eos-tester-fleet"
@@ -198,6 +202,8 @@ steps:
           always-pull: true
           debug: true
           wait-network: true
+      - thedyrt/skip-checkout#v0.1.1:
+          cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
     timeout: 10
