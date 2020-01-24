@@ -26,8 +26,6 @@ else # Linux
     if [[ $BUILDKITE == true ]]; then
         # Generate Base Images
         $CICD_DIR/generate-base-images.sh
-    elif [[ $TRAVIS == true ]]; then
-        ARGS="$ARGS -e JOBS"
     fi
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
