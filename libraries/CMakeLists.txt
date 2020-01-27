@@ -14,12 +14,16 @@ include(EosioCDTMacros)
 set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -O3 -Wall ")
 set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -O3 -Wall ")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS ON)
+
 add_subdirectory(libc)
 add_subdirectory(libc++)
 add_subdirectory(eosiolib)
 add_subdirectory(boost)
 add_subdirectory(rt)
 
+set(ENABLE_NATIVE_COMPILER 0)
 if (ENABLE_NATIVE_COMPILER)
    add_subdirectory(native)
 endif()
