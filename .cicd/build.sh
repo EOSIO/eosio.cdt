@@ -3,7 +3,7 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
-
+echo "Test."
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
