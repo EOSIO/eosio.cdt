@@ -10,6 +10,19 @@ jobs:
         run: echo "PR created. Builds will be triggered here for forked PRs or Buildkite for internal PRs."
 
 
+  submodule_regression_check:
+    name: Submodule Regression Check
+    runs-on: ubuntu-latest
+    needs: start-job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
+        with:
+          submodules: recursive
+      - name: Submodule Regression Check
+        run: ./.cicd/submodule-regression-checker.sh
+
+
   amazon_linux-2-build:
     # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Amazon_Linux 2 | Build
