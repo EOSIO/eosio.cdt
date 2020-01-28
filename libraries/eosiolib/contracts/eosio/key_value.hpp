@@ -254,17 +254,35 @@ inline key_type make_key(double val) {
    return make_floating_key<uint64_t>(val);
 }
 
-inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
-   size_t data_size = size + 3;
-   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   if (case_insensitive) {
-      std::transform(str, str + size, (char*)data_buffer, [](unsigned char c) -> unsigned char { return std::toupper(c); });
-   } else {
-      memcpy(data_buffer, str, size);
+inline key_type make_key(const char* val, size_t size, bool case_insensitive=false) {
+   size_t num_zeroes = 0;
+   for (int i = 0; i < size; ++i) {
+      if (val[i] == 0x00) {
+         ++num_zeroes;
+      }
    }
 
-   ((char*)data_buffer)[data_size - 3] = 0x01;
+   size_t data_size = size + num_zeroes + 2;
+   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+   int j = 0;
+   for(int i = 0; i < size; ++i) {
+      if (val[i] == 0x00) {
+         ((char*)data_buffer)[j] = 0x00;
+         ++j;
+         ((char*)data_buffer)[j] = 0x01;
+         ++j;
+      } else {
+         if(case_insensitive) {
+            ((char*)data_buffer)[j] = std::toupper(val[i]);
+            ++j;
+         } else {
+            ((char*)data_buffer)[j] = val[i];
+            ++j;
+         }
+      }
+   }
+
    ((char*)data_buffer)[data_size - 2] = 0x00;
    ((char*)data_buffer)[data_size - 1] = 0x00;
 

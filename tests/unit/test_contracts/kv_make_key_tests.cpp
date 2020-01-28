@@ -104,7 +104,7 @@ public:
    };
    my_struct s4{
       .tname = "joe"_n,
-      .tstring = "g",
+      .tstring = "21",
       .tui64 = 2,
       .ti32 = 1,
       .tui128 = (static_cast<uint128_t>(1) << 127) - 2,
@@ -115,7 +115,7 @@ public:
    };
    my_struct s5{
       .tname = "billy"_n,
-      .tstring = "I",
+      .tstring = "2109",
       .tui64 = 1,
       .ti32 = 2,
       .tui128 = 54321,
@@ -145,13 +145,13 @@ public:
    [[eosio::action]]
    void makekeystr() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tstring, {s2, s5, s1, s3, s4});
+      check_index(t.index.tstring, {s4, s5, s2, s1, s3});
    }
 
    [[eosio::action]]
    void makekeyistr() {
       my_table t{"kvtest"_n};
-      check_index(t.index.itstring, {s1, s2, s3, s4, s5});
+      check_index(t.index.itstring, {s4, s5, s1, s2, s3});
    }
 
    [[eosio::action]]
