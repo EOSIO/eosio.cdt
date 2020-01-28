@@ -668,7 +668,9 @@ public:
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
 
-         eosio::check(cmp == 0, "This key does not exist in this iterator");
+         if (!cmp) {
+            return end();
+         }
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
