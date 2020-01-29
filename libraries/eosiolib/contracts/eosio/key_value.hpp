@@ -513,7 +513,7 @@ public:
       };
 
    public:
-      eosio::name name;
+      eosio::name name{0};
       eosio::name table_name;
       eosio::name contract_name;
 
@@ -523,6 +523,13 @@ public:
 
       template <typename KF>
       kv_index(KF&& kf) {
+         key_function = [=](const T& t) {
+            return make_key(std::invoke(kf, &t));
+         };
+      }
+
+      template <typename KF>
+      kv_index(eosio::name name, KF&& kf) : name{name} {
          key_function = [=](const T& t) {
             return make_key(std::invoke(kf, &t));
          };
@@ -787,25 +794,37 @@ protected:
    template <typename Indices>
    void init(eosio::name contract, Indices indices) {
       contract_name = contract;
+      bool is_named = false;
       uint64_t index_name = 1;
 
       auto& primary = get<0>(*indices);
 
       primary_index = &primary;
-      primary_index->name = eosio::name{index_name};
       primary_index->contract_name = contract_name;
       primary_index->table_name = table_name;
       primary_index->tbl = this;
+
+      if (primary_index->name.value > 0) {
+         is_named = true;
+      } else {
+         primary_index->name = eosio::name{index_name};
+      }
+
 
       ++index_name;
 
       for_each_field(*indices, [&](auto& idx) {
          if (idx.name != primary.name) {
             kv_index* si = &idx;
-            si->name = eosio::name{index_name};
             si->contract_name = contract_name;
             si->table_name = table_name;
             si->tbl = this;
+            if (is_named) {
+               eosio::check(si->name.value > 0, "All indices must be named if one is named.");
+            } else {
+               eosio::check(si->name.value <= 0, "All indices must be named if one is named.");
+               si->name = eosio::name{index_name};
+            }
             secondary_indices.push_back(si);
             ++index_name;
          }

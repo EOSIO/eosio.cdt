@@ -24,6 +24,39 @@ DEFINE_TABLE(my_table_2, my_struct, "testtable", "eosio.kvram",
       bar
 )
 
+struct my_table_idx : eosio::kv_table<my_table_idx, my_struct, "testtable"_n, "eosio.kvram"_n> {
+   struct {
+      kv_index primary_key{"prim"_n, &my_struct::primary_key};
+      kv_index foo{"f"_n, &my_struct::foo};
+   } index;
+
+   my_table_idx(eosio::name contract_name) {
+      init(contract_name, &index);
+   }
+};
+
+struct my_table_idx_err : eosio::kv_table<my_table_idx_err, my_struct, "testtable"_n, "eosio.kvram"_n> {
+   struct {
+      kv_index primary_key{"prim"_n, &my_struct::primary_key};
+      kv_index foo{&my_struct::foo};
+   } index;
+
+   my_table_idx_err(eosio::name contract_name) {
+      init(contract_name, &index);
+   }
+};
+
+struct my_table_idx_err_2 : eosio::kv_table<my_table_idx_err_2, my_struct, "testtable"_n, "eosio.kvram"_n> {
+   struct {
+      kv_index primary_key{&my_struct::primary_key};
+      kv_index foo{"f"_n, &my_struct::foo};
+   } index;
+
+   my_table_idx_err_2(eosio::name contract_name) {
+      init(contract_name, &index);
+   }
+};
+
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
    using contract::contract;
@@ -62,6 +95,21 @@ public:
       t.put(s3);
       t.put(s4);
       t.put(s5);
+   }
+
+   [[eosio::action]]
+   void indices() {
+      my_table_idx t{"kvtest"_n};
+   }
+
+   [[eosio::action]]
+   void indiceserr() {
+      my_table_idx_err t{"kvtest"_n};
+   }
+
+   [[eosio::action]]
+   void indiceserr2() {
+      my_table_idx_err_2 t{"kvtest"_n};
    }
 
    [[eosio::action]]

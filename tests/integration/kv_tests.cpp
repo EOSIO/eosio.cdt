@@ -99,6 +99,24 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
 
 // Multi
 // -----
+BOOST_FIXTURE_TEST_CASE(multi_tests_idx, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(indices), N(kvtest), {});
+
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(indiceserr), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("All indices must be named if one is named."));
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(indiceserr2), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("All indices must be named if one is named."));
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(multi_tests_find, tester) try {
     create_accounts( { N(kvtest) } );
     produce_block();
