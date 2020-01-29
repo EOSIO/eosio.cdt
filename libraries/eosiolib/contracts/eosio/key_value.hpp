@@ -664,13 +664,40 @@ public:
          }
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
-
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
 
-         if (!cmp) {
+         if (cmp != 0) {
             return end();
          }
+
+         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+      }
+
+      /**
+       * Returns an iterator pointing to the element with the lowest key greater than or equal to the given key.
+       * @ingroup keyvalue
+       *
+       * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
+       */
+      template <typename K>
+      iterator lower_bound(K key) {
+         auto prefix = make_prefix(table_name, name);
+         auto t_key = table_key(prefix, make_key(key));
+
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
+         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+
+         if (static_cast<kv_it_stat>(itr_stat) == kv_it_stat::iterator_end) {
+            return end();
+         }
+
+         uint32_t value_size;
+
+         // kv_it_value is just used to get the value_size
+         void* buffer = alloca(1);
+         internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }

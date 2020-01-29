@@ -47,29 +47,24 @@ public:
       auto end_itr = t.index.primary_key.end();
 
       auto itr = t.index.primary_key.find("bob"_n);
-      auto val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(val.primary_key == "bob"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
 
       itr = t.index.primary_key.find("joe"_n);
-      val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(val.primary_key == "joe"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key");
 
       itr = t.index.primary_key.find("alice"_n);
-      val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(val.primary_key == "alice"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "alice"_n, "Got the wrong primary_key");
 
       itr = t.index.primary_key.find("john"_n);
-      val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(val.primary_key == "john"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong primary_key");
 
       itr = t.index.primary_key.find("billy"_n);
-      val = itr.value();
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(val.primary_key == "billy"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong primary_key");
    }
 
    [[eosio::action]]
@@ -77,6 +72,23 @@ public:
       my_table t = my_table::open("kvtest"_n);
       auto itr = t.index.primary_key.find("larry"_n);
       auto val = itr.value();
+   }
+
+   [[eosio::action]]
+   void bounds() {
+      my_table t = my_table::open("kvtest"_n);
+      auto end_itr = t.index.primary_key.end();
+
+      auto itr = t.index.primary_key.lower_bound("bob"_n);
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
+
+      itr = t.index.primary_key.lower_bound("catherine"_n);
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key");
+
+      itr = t.index.primary_key.lower_bound("william"_n);
+      eosio::check(itr == end_itr, "Should be the end");
    }
 
    [[eosio::action]]
