@@ -172,31 +172,21 @@ public:
    void range() {
       my_table t = my_table::open("kvtest"_n);
 
-      std::vector<my_struct> expected{s, s4, s3};
+      std::vector<my_struct> expected{s, s4};
       auto vals = t.index.primary_key.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
 
-      expected = {s};
+      expected = {};
       vals = t.index.primary_key.range("bob"_n, "bob"_n);
       eosio::check(vals == expected, "range did not return expected vector");
-   }
+      vals = t.index.primary_key.range("chris"_n, "joe"_n);
+      eosio::check(vals == expected, "range did not return expected vector");
+      vals = t.index.primary_key.range("joe"_n, "alice"_n);
+      eosio::check(vals == expected, "range did not return expected vector");
 
-   [[eosio::action]]
-   void rangeerror1() {
-      my_table t = my_table::open("kvtest"_n);
-      auto vals = t.index.primary_key.range("joe"_n, "alice"_n);
-   }
-
-   [[eosio::action]]
-   void rangeerror2() {
-      my_table t = my_table::open("kvtest"_n);
-      auto vals = t.index.primary_key.range("chris"_n, "joe"_n);
-   }
-
-   [[eosio::action]]
-   void rangeerror3() {
-      my_table t = my_table::open("kvtest"_n);
-      auto vals = t.index.primary_key.range("alice"_n, "chris"_n);
+      expected = {s2, s5, s, s4, s3};
+      vals = t.index.primary_key.range("alice"_n, "william"_n);
+      eosio::check(vals == expected, "range did not return expected vector");
    }
 
    [[eosio::action]]
@@ -208,7 +198,7 @@ public:
       auto itr = t.index.primary_key.find("joe"_n);
       eosio::check(itr == end_itr, "key was not properly deleted");
 
-      std::vector<my_struct> expected = {s, s3};
+      std::vector<my_struct> expected = {s};
       auto vals = t.index.primary_key.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
    }

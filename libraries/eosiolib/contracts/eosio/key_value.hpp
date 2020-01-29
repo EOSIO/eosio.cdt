@@ -486,7 +486,7 @@ public:
 
          bool operator<(const iterator& b) const {
             auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp == -1;
+            return cmp < 0;
          }
 
          bool operator<=(const iterator& b) const {
@@ -496,7 +496,7 @@ public:
 
          bool operator>(const iterator& b) const {
             auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp == 1;
+            return cmp > 0;
          }
 
          bool operator>=(const iterator& b) const {
@@ -703,7 +703,7 @@ public:
       }
 
       /**
-       * Returns a vector of objects that fall between the specifed range. The range is inclusive on both ends.
+       * Returns a vector of objects that fall between the specifed range. The range is inclusive, exclusive.
        * @ingroup keyvalue
        *
        * @tparam K - The type of the key. This will be auto-deduced by the key param.
@@ -714,25 +714,24 @@ public:
        */
       template <typename K>
       std::vector<T> range(K begin, K end) {
-         auto begin_itr = find(begin);
-         auto end_itr = find(end);
-         eosio::check(begin_itr != this->end(), "beginning of range is not in table");
-         eosio::check(end_itr != this->end(), "end of range is not in table");
+         auto begin_itr = lower_bound(begin);
+         auto end_itr = upper_bound(end);
 
-         eosio::check(begin <= end, "Beginning of range should be less than or equal to end");
+         bool include_last = find(end) != end_itr;
 
-         if (begin == end) {
-            std::vector<T> t;
-            t.push_back(find(begin).value());
-            return t;
+         if (begin_itr == end_itr || begin_itr > end_itr) {
+            return {};
          }
 
          std::vector<T> return_values;
-         return_values.push_back(begin_itr.value());
 
          iterator itr = begin_itr;
          while(itr != end_itr) {
+            return_values.push_back(itr.value());
             ++itr;
+         }
+
+         if (include_last) {
             return_values.push_back(itr.value());
          }
 
