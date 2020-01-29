@@ -24,6 +24,17 @@ BOOST_FIXTURE_TEST_CASE(single_tests_find, tester) try {
                           eosio_assert_message_is("Cannot read end iterator"));
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(single_tests_get, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_single_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_single_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(get), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(single_tests_bounds, tester) try {
     create_accounts( { N(kvtest) } );
     produce_block();

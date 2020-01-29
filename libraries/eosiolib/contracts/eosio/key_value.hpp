@@ -562,6 +562,40 @@ public:
       }
 
       /**
+       * Get the value for an existing object in a table by the index, using the given key.
+       * @ingroup keyvalue
+       *
+       * @tparam K - The type of the key. This will be auto-deduced by the key param.
+       *
+       * @param key - The key to search for.
+       * @return A std::optional of the value corresponding to the key.
+       */
+      template <typename K>
+      std::optional<T> get(K key) {
+         uint32_t value_size;
+
+         auto prefix = make_prefix(table_name, name);
+         auto t_key = table_key(prefix, make_key(key));
+
+         auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
+         if (!success) {
+            return std::nullopt;
+         }
+
+         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+         auto copy_size = internal_use_do_not_use::kv_get_data(db, 0, (char*)buffer, value_size);
+
+         datastream<const char*> ds((char*)buffer, value_size);
+
+         T val;
+         ds >> val;
+         if (value_size > detail::max_stack_buffer_size) {
+            free(buffer);
+         }
+         return val;
+      }
+
+      /**
        * Returns an iterator pointing to the element with the lowest key greater than or equal to the given key.
        * @ingroup keyvalue
        *

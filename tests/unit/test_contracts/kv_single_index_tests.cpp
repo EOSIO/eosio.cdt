@@ -75,6 +75,18 @@ public:
    }
 
    [[eosio::action]]
+   void get() {
+      my_table t = my_table::open("kvtest"_n);
+      auto end_itr = t.index.primary_key.end();
+
+      auto val = t.index.primary_key.get("bob"_n);
+      eosio::check(val->primary_key == "bob"_n, "Got the wrong value");
+
+      val = t.index.primary_key.get("william"_n);
+      eosio::check(!val, "Should not have gotten a value");
+   }
+
+   [[eosio::action]]
    void bounds() {
       my_table t = my_table::open("kvtest"_n);
       auto end_itr = t.index.primary_key.end();
