@@ -101,6 +101,17 @@ public:
 
       itr = t.index.primary_key.lower_bound("william"_n);
       eosio::check(itr == end_itr, "Should be the end");
+
+      itr = t.index.primary_key.upper_bound("bob"_n);
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
+
+      itr = t.index.primary_key.upper_bound("matt"_n);
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong primary_key");
+
+      itr = t.index.primary_key.upper_bound("ab"_n);
+      eosio::check(itr == end_itr, "Should be the end");
    }
 
    [[eosio::action]]

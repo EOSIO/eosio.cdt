@@ -413,13 +413,19 @@ public:
             using namespace detail;
 
             eosio::check(itr_stat != kv_it_stat::iterator_end, "Cannot read end iterator");
-            eosio::check(data_size > 0, "Cannot read a value of size 0");
 
+            uint32_t value_size;
             uint32_t actual_value_size;
             uint32_t offset = 0;
 
-            void* buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-            auto stat = internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, data_size, actual_value_size);
+            // call once to get the value_size
+            void* b = alloca(1);
+            internal_use_do_not_use::kv_it_value(itr, 0, (char*)b, 0, value_size);
+
+            eosio::check(value_size > 0, "Cannot read a value of size 0");
+
+            void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+            auto stat = internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, value_size, actual_value_size);
 
             eosio::check(static_cast<kv_it_stat>(stat) != kv_it_stat::iterator_end, "Error reading value");
 
@@ -428,7 +434,7 @@ public:
 
                T val;
                ds >> val;
-               if (data_size > detail::max_stack_buffer_size) {
+               if (value_size > detail::max_stack_buffer_size) {
                   free(buffer);
                }
                return val;
@@ -450,7 +456,7 @@ public:
                if (actual_data_size > detail::max_stack_buffer_size) {
                   free(pk_buffer);
                }
-               if (data_size > detail::max_stack_buffer_size) {
+               if (value_size > detail::max_stack_buffer_size) {
                   free(buffer);
                }
                return val;
@@ -510,6 +516,8 @@ public:
          key_type key() const {
             return idx->get_key(value());
          }
+
+         friend kv_index;
       };
 
    public:
@@ -625,6 +633,41 @@ public:
          itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+      }
+
+      /**
+       * Returns an iterator pointing to the element with the highest key less than or equal to the given key.
+       * @ingroup keyvalue
+       *
+       * @return An iterator pointing to the element with the highest key less than or equal to the given key.
+       */
+      template <typename K>
+      iterator upper_bound(K key) {
+         auto prefix = make_prefix(table_name, name);
+         auto t_key = table_key(prefix, make_key(key));
+
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
+         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+
+         uint32_t value_size;
+
+         // kv_it_value is just used to get the value_size
+         void* buffer = alloca(1);
+         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
+
+         iterator it{contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+
+         auto cmp = internal_use_do_not_use::kv_it_key_compare(it.itr, t_key.data(), t_key.size());
+         while(cmp > 0) {
+            if (it == begin()) {
+               return end();
+            }
+            --it;
+            cmp = internal_use_do_not_use::kv_it_key_compare(it.itr, t_key.data(), t_key.size());
+         }
+
+         return it;
+
       }
 
       /**
