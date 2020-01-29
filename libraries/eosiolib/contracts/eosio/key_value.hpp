@@ -400,8 +400,8 @@ public:
    class kv_index {
       class iterator {
       public:
-         iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, size_t data_size, kv_index* idx) :
-                  contract_name{contract_name}, itr{itr}, itr_stat{itr_stat}, data_size{data_size}, idx{idx} {}
+         iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, kv_index* idx) :
+                  contract_name{contract_name}, itr{itr}, itr_stat{itr_stat}, idx{idx} {}
 
          /**
           * Returns the value that the iterator points to.
@@ -508,8 +508,6 @@ public:
          eosio::name contract_name;
          const kv_index* idx;
 
-         size_t data_size;
-
          uint32_t itr;
          kv_it_stat itr_stat;
 
@@ -571,7 +569,7 @@ public:
          void* buffer = alloca(1);
          itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
 
       /**
@@ -632,7 +630,7 @@ public:
          void* buffer = alloca(1);
          itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
 
       /**
@@ -655,7 +653,7 @@ public:
          void* buffer = alloca(1);
          itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
-         iterator it{contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+         iterator it{contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
 
          auto cmp = internal_use_do_not_use::kv_it_key_compare(it.itr, t_key.data(), t_key.size());
          while(cmp > 0) {
@@ -681,7 +679,7 @@ public:
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), 0, this};
+         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
 
       /**
@@ -701,7 +699,7 @@ public:
          void* buffer = alloca(1);
          itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
+         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
 
       /**
