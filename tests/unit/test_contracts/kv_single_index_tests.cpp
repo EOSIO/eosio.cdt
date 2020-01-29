@@ -201,10 +201,4 @@ public:
       auto vals = t.index.primary_key.range("bob"_n, "john"_n);
       eosio::check(vals == expected, "range did not return expected vector");
    }
-
-   [[eosio::action]]
-   void eraseerror() {
-      my_table t = my_table::open("kvtest"_n);
-      t.erase("chris"_n);
-   }
 };

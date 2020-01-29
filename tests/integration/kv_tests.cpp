@@ -95,10 +95,6 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
 
     push_action(N(kvtest), N(setup), N(kvtest), {});
     push_action(N(kvtest), N(erase), N(kvtest), {});
-
-    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(eraseerror), N(kvtest), {}),
-                          eosio_assert_message_exception,
-                          eosio_assert_message_is("Attempted to erase non-existent key"));
 } FC_LOG_AND_RETHROW()
 
 // Multi

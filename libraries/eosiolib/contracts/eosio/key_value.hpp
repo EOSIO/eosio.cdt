@@ -544,11 +544,6 @@ public:
          auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
-         auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
-         if (!success) {
-            return end();
-         }
-
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
@@ -557,6 +552,9 @@ public:
          if (cmp != 0) {
             return end();
          }
+
+         void* buffer = alloca(1);
+         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
@@ -617,7 +615,7 @@ public:
 
          // kv_it_value is just used to get the value_size
          void* buffer = alloca(1);
-         internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
+         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
@@ -651,7 +649,7 @@ public:
 
          // kv_it_value is just used to get the value_size
          void* buffer = alloca(1);
-         internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
+         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), value_size, this};
       }
@@ -747,17 +745,17 @@ public:
     */
    template <typename K>
    void erase(K key) {
-      auto primary_itr = primary_index->find(key);
+      auto primary_value = primary_index->get(key);
 
-      eosio::check(primary_itr != primary_index->end(), "Attempted to erase non-existent key");
-
-      T val = primary_itr.value();
+      if (!primary_value) {
+         return;
+      }
 
       auto k = table_key(make_prefix(table_name, primary_index->name), make_key(key));
       internal_use_do_not_use::kv_erase(db, contract_name.value, k.data(), k.size());
 
       for (auto& idx : secondary_indices) {
-         auto skey = table_key(make_prefix(table_name, idx->name), idx->get_key(val));
+         auto skey = table_key(make_prefix(table_name, idx->name), idx->get_key(*primary_value));
          internal_use_do_not_use::kv_erase(db, contract_name.value, skey.data(), skey.size());
       }
    }
