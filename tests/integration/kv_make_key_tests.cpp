@@ -42,12 +42,16 @@ BOOST_AUTO_TEST_CASE(makekeyil) try {
    make_key_test(N(makekeyil));
 } FC_LOG_AND_RETHROW()
 
-BOOST_AUTO_TEST_CASE(makekeyilll) try {
-   make_key_test(N(makekeyil));
+BOOST_AUTO_TEST_CASE(makekeyuilll) try {
+   make_key_test(N(makekeyuilll));
 } FC_LOG_AND_RETHROW()
 
 BOOST_AUTO_TEST_CASE(makekeyflt) try {
    make_key_test(N(makekeyflt));
+} FC_LOG_AND_RETHROW()
+
+BOOST_AUTO_TEST_CASE(makekeydbl) try {
+   make_key_test(N(makekeydbl));
 } FC_LOG_AND_RETHROW()
 
 BOOST_AUTO_TEST_CASE(makekeystct) try {

@@ -8,33 +8,24 @@ namespace eosio {
       if constexpr (sizeof(T) == 1)
          return val;
       else if constexpr (sizeof(T) == 2)
-         return (val << 8) |(val >> 8);
+         return (val << 8) | (val >> 8);
       else if constexpr (sizeof(T) == 4) {
-         union i32_swap {
-            T value;
-            uint32_t ui;
-            i32_swap(T v) : value(v) { ui = __builtin_bswap32(ui); }
-         };
-         return i32_swap(val).value;
+         T value;
+         auto swapped = __builtin_bswap32(val);
+         memcpy((char*)&value, (char*)&swapped, sizeof(T));
+         return value;
       } else if constexpr (sizeof(T) == 8) {
-         union i64_swap {
-            T value;
-            uint64_t ui;
-            i64_swap(T v) : value(v) { ui = __builtin_bswap64(ui); }
-         };
-         return i64_swap(val).value;
+         T value;
+         auto swapped = __builtin_bswap64(val);
+         memcpy((char*)&value, (char*)&swapped, sizeof(T));
+         return value;
       } else {
-         union i128_swap {
-            uint64_t high;
-            uint64_t low;
-            T        value;
-            i128_swap(const T& val) : value(val) {
-               uint64_t tmp = high;
-               high = __builtin_bswap64(low);
-               low = __builtin_bswap64(tmp);
-            }
-         };
-         return i128_swap(val).value;
+         T value;
+         uint128_t swapped_high = __builtin_bswap64((uint64_t)val);
+         uint64_t swapped_low = __builtin_bswap64((uint64_t)(val >> 64));
+         T swapped = (swapped_high << 64) | swapped_low;
+         memcpy((char*)&value, (char*)&swapped, sizeof(T));
+         return value;
       }
    }
 }
