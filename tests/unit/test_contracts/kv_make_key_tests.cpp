@@ -4,7 +4,7 @@ struct testing_struct {
    uint16_t a;
    uint16_t b;
 
-   bool operator==(testing_struct rhs){
+   bool operator==(const testing_struct& rhs) const {
       return a == rhs.a && b == rhs.b;
    }
 };
@@ -18,6 +18,17 @@ struct my_struct {
    float tfloat;
    testing_struct tstruct;
    std::tuple<uint64_t, float, std::string> ttuple;
+
+   bool operator==(const my_struct& rhs) const {
+      return tname == rhs.tname &&
+             tstring == rhs.tstring &&
+             tui64 == rhs.tui64 &&
+             ti32 == rhs.ti32 &&
+             ti128 == rhs.ti128 &&
+             tfloat == rhs.tfloat &&
+             tstruct == rhs.tstruct &&
+             ttuple == rhs.ttuple;
+   }
 
    auto itstring() const { return eosio::make_insensitive(tstring); }
 };
@@ -43,6 +54,18 @@ struct my_table : eosio::kv_table<my_table, my_struct, "testtable"_n, "eosio.kvr
 class [[eosio::contract]] kv_make_key_tests : public eosio::contract {
 public:
    using contract::contract;
+
+   void check_index(my_table::kv_index& idx, const std::vector<my_struct>& expected) {
+      auto end_itr = idx.end();
+      auto itr = idx.begin();
+      for (const auto& expect : expected) {
+         eosio::check(itr != end_itr, "Should not be the end");
+         eosio::check(itr.value() == expect, "Got the wrong value");
+         ++itr;
+      }
+      eosio::check(itr == end_itr, "Should be the end");
+   }
+
    my_struct s1{
       .tname = "bob"_n,
       .tstring = "a",
@@ -108,189 +131,54 @@ public:
    [[eosio::action]]
    void makekeyname() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.tname.end();
-      auto itr = t.index.tname.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().tname == s2.tname, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tname == s5.tname, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tname == s1.tname, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tname == s4.tname, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tname == s3.tname, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.tname, {s2, s5, s1, s4, s3});
    }
 
    [[eosio::action]]
    void makekeystr() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.tstring.end();
-      auto itr = t.index.tstring.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().tstring == s2.tstring, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstring == s5.tstring, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstring == s1.tstring, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstring == s3.tstring, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstring == s4.tstring, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.tstring, {s2, s5, s1, s3, s4});
    }
 
    [[eosio::action]]
    void makekeyistr() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.itstring.end();
-      auto itr = t.index.itstring.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().itstring() == s1.itstring(), "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().itstring() == s2.itstring(), "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().itstring() == s3.itstring(), "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().itstring() == s4.itstring(), "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().itstring() == s5.itstring(), "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.itstring, {s1, s2, s3, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyuill() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.tui64.end();
-      auto itr = t.index.tui64.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().tui64 == s5.tui64, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tui64 == s4.tui64, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tui64 == s3.tui64, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tui64 == s2.tui64, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tui64 == s1.tui64, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.tui64, {s5, s4, s3, s2, s1});
    }
 
    [[eosio::action]]
    void makekeyil() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.ti32.end();
-      auto itr = t.index.ti32.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().ti32 == s3.ti32, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti32 == s2.ti32, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti32 == s1.ti32, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti32 == s4.ti32, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti32 == s5.ti32, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.ti32, {s3, s2, s1, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyilll() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.ti128.end();
-      auto itr = t.index.ti128.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().ti128 == s1.ti128, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti128 == s2.ti128, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti128 == s3.ti128, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti128 == s4.ti128, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ti128 == s5.ti128, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.ti128, {s1, s2, s3, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyflt() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.tfloat.end();
-      auto itr = t.index.tfloat.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().tfloat == s5.tfloat, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tfloat == s4.tfloat, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tfloat == s1.tfloat, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tfloat == s2.tfloat, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tfloat == s3.tfloat, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.tfloat, {s5, s4, s1, s2, s3});
    }
 
    [[eosio::action]]
    void makekeystct() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.tstruct.end();
-      auto itr = t.index.tstruct.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().tstruct == s1.tstruct, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstruct == s3.tstruct, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstruct == s2.tstruct, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstruct == s4.tstruct, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().tstruct == s5.tstruct, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.tstruct, {s1, s3, s2, s4, s5});
    }
 
    [[eosio::action]]
    void makekeytup() {
       my_table t = my_table::open("kvtest"_n);
-
-      auto end_itr = t.index.ttuple.end();
-      auto itr = t.index.ttuple.begin();
-
-      eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().ttuple == s1.ttuple, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ttuple == s2.ttuple, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ttuple == s3.ttuple, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ttuple == s4.ttuple, "Got the wrong value");
-      ++itr;
-      eosio::check(itr.value().ttuple == s5.ttuple, "Got the wrong value");
-      ++itr;
-      eosio::check(itr == end_itr, "Should be the end");
+      check_index(t.index.ttuple, {s1, s2, s3, s4, s5});
    }
 };
