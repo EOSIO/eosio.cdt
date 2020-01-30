@@ -50,13 +50,13 @@
            EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(value_class, index_name)
 
 
-#define CREATE_KV_INDEX(r, value_class, i, index_name)                                                                 \
+#define EOSIO_CDT_CREATE_KV_INDEX(r, value_class, i, index_name)                                                       \
    EOSIO_CDT_KV_INDEX_TYPE(index_name) EOSIO_CDT_KV_INDEX_NAME(index_name, i) EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name);
 
-#define LIST_INDICES(value_class, ...)                                                                                 \
-   BOOST_PP_SEQ_FOR_EACH_I(CREATE_KV_INDEX, value_class, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+#define EOSIO_CDT_LIST_INDICES(value_class, ...)                                                                       \
+   BOOST_PP_SEQ_FOR_EACH_I(EOSIO_CDT_CREATE_KV_INDEX, value_class, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
-#define TABLE_INHERITANCE(table_class, value_class, table_name, db_name)                                               \
+#define EOSIO_CDT_TABLE_INHERITANCE(table_class, value_class, table_name, db_name)                                     \
    eosio::kv_table<table_class, value_class, table_name##_n, db_name##_n>
 
 /**
@@ -71,9 +71,9 @@
  * @param ...         - A variadic list of 1 or more indexes to define on the table.
  */
 #define DEFINE_TABLE(table_class, value_class, table_name, db_name, /*indices*/...)                                    \
-   struct table_class : TABLE_INHERITANCE(table_class, value_class, table_name, db_name) {                             \
+   struct table_class : EOSIO_CDT_TABLE_INHERITANCE(table_class, value_class, table_name, db_name) {                   \
       struct {                                                                                                         \
-         LIST_INDICES(value_class, __VA_ARGS__)                                                                        \
+         EOSIO_CDT_LIST_INDICES(value_class, __VA_ARGS__)                                                              \
       } index;                                                                                                         \
                                                                                                                        \
       table_class(eosio::name contract_name) {                                                                         \
@@ -197,6 +197,10 @@ inline key_type make_key(I val) {
 
 template <typename I, typename F>
 inline key_type make_floating_key(F val) {
+   if (val == -0) {
+      val = +0;
+   }
+
    auto* ival = reinterpret_cast<I*>(&val);
    I bit_val;
    auto msb = get_msb(*ival);
@@ -216,20 +220,12 @@ inline key_type make_floating_key(F val) {
    return s;
 }
 
-template <typename F, typename std::enable_if_t<std::is_floating_point<F>::value, int> = 0>
-inline key_type make_key(F val) {
-   static_assert(!std::is_same_v<F, long double>, "long doubles are currently not supported by make_key");
+inline key_type make_key(float val) {
+   return make_floating_key<uint32_t>(val);
+}
 
-   if (val == -0) {
-      val = +0;
-   }
-
-   if (sizeof(F) == sizeof(float)) {
-      return make_floating_key<uint32_t>(val);
-   }
-   else {
-      return make_floating_key<uint64_t>(val);
-   }
+inline key_type make_key(double val) {
+   return make_floating_key<uint64_t>(val);
 }
 
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
@@ -277,7 +273,7 @@ inline key_type make_key(S val) {
    void* data_buffer;
 
    boost::pfr::for_each_field(val, [&](auto& field) {
-      data_size += pack_size(field);
+      data_size += sizeof(field);
    });
 
    data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
@@ -303,7 +299,7 @@ inline key_type make_key(std::tuple<Args...> val) {
    void* data_buffer;
 
    boost::fusion::for_each(val, [&](auto& field) {
-      data_size += pack_size(field);
+      data_size += sizeof(field);
    });
 
    data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
@@ -536,7 +532,7 @@ public:
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
        */
       template <typename K>
-      iterator find(K key) {
+      iterator find(const K& key) {
          auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
