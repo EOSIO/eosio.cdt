@@ -62,7 +62,7 @@ BOOST_FIXTURE_TEST_CASE(single_tests_iteration, tester) try {
 
     BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(itrerror2), N(kvtest), {}),
                           eosio_assert_message_exception,
-                          eosio_assert_message_is("incremented past the beginning"));
+                          eosio_assert_message_is("decremented past the beginning"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(single_tests_range, tester) try {

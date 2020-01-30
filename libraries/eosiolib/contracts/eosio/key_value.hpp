@@ -166,19 +166,7 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
-   size_t buffer_size = key.size() + prefix.size();
-   void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
-
-   memcpy(buffer, prefix.data(), prefix.size());
-   memcpy(((char*)buffer) + prefix.size(), key.data(), key.size());
-
-   key_type s((const char*)buffer, buffer_size);
-
-   if (buffer_size > detail::max_stack_buffer_size) {
-      free(buffer);
-   }
-
-   return s;
+   return key_type{prefix + key};
 }
 
 template <typename I>
@@ -190,9 +178,7 @@ inline I flip_msb(I val) {
 template <typename I>
 inline I get_msb(I val) {
    constexpr static size_t bits = sizeof(I) * 8;
-   constexpr static I mask = static_cast<I>(0x08) << (bits - 4);
-   I masked = val & mask;
-   return masked >> (bits - 1);
+   return val >> (bits - 1);
 }
 
 template <typename I, typename std::enable_if_t<std::is_integral<I>::value, int> = 0>
@@ -232,7 +218,7 @@ inline key_type make_floating_key(F val) {
 
 template <typename F, typename std::enable_if_t<std::is_floating_point<F>::value, int> = 0>
 inline key_type make_key(F val) {
-   static_assert(sizeof(F) != sizeof(long double), "long doubles are currently not supported by make_key");
+   static_assert(!std::is_same_v<F, long double>, "long doubles are currently not supported by make_key");
 
    if (val == -0) {
       val = +0;
@@ -419,8 +405,7 @@ public:
             uint32_t offset = 0;
 
             // call once to get the value_size
-            void* b = alloca(1);
-            internal_use_do_not_use::kv_it_value(itr, 0, (char*)b, 0, value_size);
+            internal_use_do_not_use::kv_it_value(itr, 0, (char*)nullptr, 0, value_size);
 
             eosio::check(value_size > 0, "Cannot read a value of size 0");
 
@@ -471,7 +456,7 @@ public:
 
          iterator& operator--() {
             itr_stat = static_cast<kv_it_stat>(internal_use_do_not_use::kv_it_prev(itr));
-            eosio::check(itr_stat != kv_it_stat::iterator_end, "incremented past the beginning");
+            eosio::check(itr_stat != kv_it_stat::iterator_end, "decremented past the beginning");
             return *this;
          }
 
@@ -552,8 +537,6 @@ public:
        */
       template <typename K>
       iterator find(K key) {
-         uint32_t value_size;
-
          auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
@@ -565,9 +548,6 @@ public:
          if (cmp != 0) {
             return end();
          }
-
-         void* buffer = alloca(1);
-         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
@@ -624,12 +604,6 @@ public:
             return end();
          }
 
-         uint32_t value_size;
-
-         // kv_it_value is just used to get the value_size
-         void* buffer = alloca(1);
-         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
-
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
 
@@ -646,12 +620,6 @@ public:
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
-
-         uint32_t value_size;
-
-         // kv_it_value is just used to get the value_size
-         void* buffer = alloca(1);
-         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          iterator it{contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
 
@@ -692,12 +660,6 @@ public:
          auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
-
-         uint32_t value_size;
-
-         // kv_it_value is just used to get the value_size
-         void* buffer = alloca(1);
-         itr_stat = internal_use_do_not_use::kv_it_value(itr, 0, (char*)buffer, 0, value_size);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
       }
@@ -814,8 +776,7 @@ public:
     * @return An initialized instance of the user specifed Key Value table class.
     */
    static Class open(eosio::name contract_name) {
-      Class c = Class(contract_name);
-      return c;
+      return Class(contract_name);
    }
 
 protected:
