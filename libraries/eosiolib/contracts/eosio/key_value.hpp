@@ -258,6 +258,10 @@ inline key_type make_key(const char* str, bool case_insensitive=false) {
    return make_key(std::string{str}, case_insensitive);
 }
 
+inline key_type make_key(const std::string_view& val, bool case_insensitive=false) {
+   return make_key(val.data(), val.size(), case_insensitive);
+}
+
 inline key_type make_key(eosio::name n) {
    return make_key(n.value);
 }
@@ -410,18 +414,12 @@ public:
 
             eosio::check(static_cast<kv_it_stat>(stat) != kv_it_stat::iterator_end, "Error reading value");
 
-            if (idx->name == idx->tbl->primary_index->name) {
-               datastream<const char*> ds((char*)buffer, actual_value_size);
+            void* serialize = buffer;
+            size_t serialize_size = actual_value_size;
 
-               T val;
-               ds >> val;
-               if (value_size > detail::max_stack_buffer_size) {
-                  free(buffer);
-               }
-               return val;
-            } else {
+            if (idx->name != idx->tbl->primary_index->name) {
                uint32_t actual_data_size;
-               auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)buffer, actual_value_size, actual_data_size);
+               auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
                eosio::check(success, "failure getting primary key");
 
                void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
@@ -429,19 +427,14 @@ public:
 
                eosio::check(copy_size > 0, "failure getting primary index data");
 
-               datastream<const char*> ds((char*)pk_buffer, copy_size);
-
-               T val;
-               ds >> val;
-
-               if (actual_data_size > detail::max_stack_buffer_size) {
-                  free(pk_buffer);
-               }
-               if (value_size > detail::max_stack_buffer_size) {
-                  free(buffer);
-               }
-               return val;
+               serialize = pk_buffer;
+               serialize_size = actual_data_size;
             }
+
+            datastream<const char*> ds((char*)serialize, serialize_size);
+            T val;
+            ds >> val;
+            return val;
          }
 
          iterator& operator++() {
