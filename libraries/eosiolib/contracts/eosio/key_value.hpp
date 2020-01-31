@@ -254,12 +254,12 @@ inline key_type make_key(const std::string& val, bool case_insensitive=false) {
    return make_key(val.data(), val.size(), case_insensitive);
 }
 
-inline key_type make_key(const char* str, bool case_insensitive=false) {
-   return make_key(std::string{str}, case_insensitive);
-}
-
 inline key_type make_key(const std::string_view& val, bool case_insensitive=false) {
    return make_key(val.data(), val.size(), case_insensitive);
+}
+
+inline key_type make_key(const char* str, bool case_insensitive=false) {
+   return make_key(std::string_view{str}, case_insensitive);
 }
 
 inline key_type make_key(eosio::name n) {
@@ -534,6 +534,7 @@ public:
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
 
          if (cmp != 0) {
+            internal_use_do_not_use::kv_it_destroy(itr);
             return end();
          }
 
@@ -552,12 +553,13 @@ public:
       template <typename K>
       std::optional<T> get(K key) {
          uint32_t value_size;
+         std::optional<T> ret_val;
 
          auto t_key = table_key(prefix, make_key(key));
 
          auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
          if (!success) {
-            return std::nullopt;
+            return ret_val;
          }
 
          void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
@@ -565,12 +567,12 @@ public:
 
          datastream<const char*> ds((char*)buffer, value_size);
 
-         T val;
-         ds >> val;
+         ret_val.emplace();
+         ds >> *ret_val;
          if (value_size > detail::max_stack_buffer_size) {
             free(buffer);
          }
-         return val;
+         return ret_val;
       }
 
       /**
@@ -587,6 +589,7 @@ public:
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
          if (static_cast<kv_it_stat>(itr_stat) == kv_it_stat::iterator_end) {
+            internal_use_do_not_use::kv_it_destroy(itr);
             return end();
          }
 
@@ -629,9 +632,8 @@ public:
        */
       iterator end() {
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
+         return {contract_name, itr, kv_it_stat::iterator_end, this};
       }
 
       /**
