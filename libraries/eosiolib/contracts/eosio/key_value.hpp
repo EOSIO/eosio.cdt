@@ -526,7 +526,6 @@ public:
        */
       template <typename K>
       iterator find(const K& key) {
-         auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
@@ -554,7 +553,6 @@ public:
       std::optional<T> get(K key) {
          uint32_t value_size;
 
-         auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
          auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
@@ -583,7 +581,6 @@ public:
        */
       template <typename K>
       iterator lower_bound(K key) {
-         auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
@@ -604,7 +601,6 @@ public:
        */
       template <typename K>
       iterator upper_bound(K key) {
-         auto prefix = make_prefix(table_name, name);
          auto t_key = table_key(prefix, make_key(key));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
@@ -632,7 +628,6 @@ public:
        * @return An iterator referring to the `past-the-end` element.
        */
       iterator end() {
-         auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
@@ -646,7 +641,6 @@ public:
        * @return An iterator to the object with the lowest key (by this index) in the table.
        */
       iterator begin() {
-         auto prefix = make_prefix(table_name, name);
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
@@ -692,7 +686,14 @@ public:
       key_type get_key(const T& inst) const { return key_function(inst); }
 
    private:
+      friend kv_table;
+
       std::function<key_type(const T&)> key_function;
+      key_type prefix;
+
+      void set_prefix() {
+         prefix = make_prefix(table_name, name);
+      }
    };
 
    /**
@@ -800,7 +801,7 @@ protected:
          primary_index->name = eosio::name{index_name};
       }
 
-
+      primary_index->set_prefix();
       ++index_name;
 
       for_each_field(*indices, [&](auto& idx) {
@@ -809,12 +810,14 @@ protected:
             si->contract_name = contract_name;
             si->table_name = table_name;
             si->tbl = this;
+
             if (is_named) {
                eosio::check(si->name.value > 0, "All indices must be named if one is named.");
             } else {
                eosio::check(si->name.value <= 0, "All indices must be named if one is named.");
                si->name = eosio::name{index_name};
             }
+            si->set_prefix();
             secondary_indices.push_back(si);
             ++index_name;
          }
