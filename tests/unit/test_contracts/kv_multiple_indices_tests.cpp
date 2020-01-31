@@ -24,36 +24,36 @@ DEFINE_TABLE(my_table_2, my_struct, "testtable", "eosio.kvram",
       bar
 )
 
-struct my_table_idx : eosio::kv_table<my_table_idx, my_struct, "testtable"_n, "eosio.kvram"_n> {
+struct my_table_idx : eosio::kv_table<my_struct> {
    struct {
       kv_index primary_key{"prim"_n, &my_struct::primary_key};
       kv_index foo{"f"_n, &my_struct::foo};
    } index;
 
    my_table_idx(eosio::name contract_name) {
-      init(contract_name, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
    }
 };
 
-struct my_table_idx_err : eosio::kv_table<my_table_idx_err, my_struct, "testtable"_n, "eosio.kvram"_n> {
+struct my_table_idx_err : eosio::kv_table<my_struct> {
    struct {
       kv_index primary_key{"prim"_n, &my_struct::primary_key};
       kv_index foo{&my_struct::foo};
    } index;
 
    my_table_idx_err(eosio::name contract_name) {
-      init(contract_name, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
    }
 };
 
-struct my_table_idx_err_2 : eosio::kv_table<my_table_idx_err_2, my_struct, "testtable"_n, "eosio.kvram"_n> {
+struct my_table_idx_err_2 : eosio::kv_table<my_struct> {
    struct {
       kv_index primary_key{&my_struct::primary_key};
       kv_index foo{"f"_n, &my_struct::foo};
    } index;
 
    my_table_idx_err_2(eosio::name contract_name) {
-      init(contract_name, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
    }
 };
 
@@ -88,7 +88,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       t.put(s1);
       t.put(s2);
@@ -114,7 +114,7 @@ public:
 
    [[eosio::action]]
    void find() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       auto itr = t.index.primary_key.find("bob"_n);
       auto val = itr.value();
@@ -131,7 +131,7 @@ public:
 
    [[eosio::action]]
    void finderror() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       auto itr = t.index.primary_key.find("C");
       auto val = itr.value();
@@ -139,7 +139,7 @@ public:
 
    [[eosio::action]]
    void iteration() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       auto foo_begin_itr = t.index.foo.begin();
       auto foo_end_itr = t.index.foo.end();

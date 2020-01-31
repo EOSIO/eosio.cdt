@@ -35,7 +35,7 @@ struct my_struct {
    auto itstring() const { return eosio::make_insensitive(tstring); }
 };
 
-struct my_table : eosio::kv_table<my_table, my_struct, "testtable"_n, "eosio.kvram"_n> {
+struct my_table : eosio::kv_table<my_struct> {
    struct {
       kv_index tname{&my_struct::tname};
       kv_index tstring{&my_struct::tstring};
@@ -50,7 +50,7 @@ struct my_table : eosio::kv_table<my_table, my_struct, "testtable"_n, "eosio.kvr
    } index;
 
    my_table(eosio::name contract_name) {
-      init(contract_name, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
    }
 };
 
@@ -127,7 +127,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       t.put(s1);
       t.put(s2);
@@ -138,61 +138,61 @@ public:
 
    [[eosio::action]]
    void makekeyname() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tname, {s2, s5, s1, s4, s3});
    }
 
    [[eosio::action]]
    void makekeystr() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tstring, {s2, s5, s1, s3, s4});
    }
 
    [[eosio::action]]
    void makekeyistr() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.itstring, {s1, s2, s3, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyuill() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tui64, {s5, s4, s3, s2, s1});
    }
 
    [[eosio::action]]
    void makekeyil() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.ti32, {s3, s2, s1, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyuilll() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tui128, {s2, s1, s5, s4, s3});
    }
 
    [[eosio::action]]
    void makekeyflt() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tfloat, {s5, s4, s1, s2, s3});
    }
 
    [[eosio::action]]
    void makekeydbl() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tdouble, {s5, s4, s1, s2, s3});
    }
 
    [[eosio::action]]
    void makekeystct() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.tstruct, {s1, s3, s2, s4, s5});
    }
 
    [[eosio::action]]
    void makekeytup() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       check_index(t.index.ttuple, {s1, s2, s3, s4, s5});
    }
 };

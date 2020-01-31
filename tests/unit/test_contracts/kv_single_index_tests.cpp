@@ -32,7 +32,7 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       t.put(s3);
       t.put(s);
@@ -43,8 +43,8 @@ public:
 
    [[eosio::action]]
    void find() {
-      my_table t = my_table::open("kvtest"_n);
-      auto end_itr = t.index.primary_key.end();
+      my_table t{"kvtest"_n};
+      my_table::iterator end_itr = t.index.primary_key.end();
 
       auto itr = t.index.primary_key.find("bob"_n);
       eosio::check(itr != end_itr, "Should not be the end");
@@ -69,14 +69,14 @@ public:
 
    [[eosio::action]]
    void finderror() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto itr = t.index.primary_key.find("larry"_n);
       auto val = itr.value();
    }
 
    [[eosio::action]]
    void get() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto end_itr = t.index.primary_key.end();
 
       auto val = t.index.primary_key.get("bob"_n);
@@ -88,7 +88,7 @@ public:
 
    [[eosio::action]]
    void bounds() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto end_itr = t.index.primary_key.end();
 
       auto itr = t.index.primary_key.lower_bound("bob"_n);
@@ -116,7 +116,7 @@ public:
 
    [[eosio::action]]
    void iteration() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto begin_itr = t.index.primary_key.begin();
       auto end_itr = t.index.primary_key.end();
 
@@ -156,21 +156,21 @@ public:
 
    [[eosio::action]]
    void itrerror1() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto end_itr = t.index.primary_key.end();
       ++end_itr;
    }
 
    [[eosio::action]]
    void itrerror2() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto begin_itr = t.index.primary_key.begin();
       --begin_itr;
    }
 
    [[eosio::action]]
    void range() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
 
       std::vector<my_struct> expected{s, s4};
       auto vals = t.index.primary_key.range("bob"_n, "john"_n);
@@ -191,7 +191,7 @@ public:
 
    [[eosio::action]]
    void erase() {
-      my_table t = my_table::open("kvtest"_n);
+      my_table t{"kvtest"_n};
       auto end_itr = t.index.primary_key.end();
 
       t.erase("joe"_n);
