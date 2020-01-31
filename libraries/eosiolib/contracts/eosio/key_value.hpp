@@ -271,7 +271,7 @@ inline key_type make_key(key_type&& val) {
 }
 
 template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
-inline key_type make_key(S val) {
+inline key_type make_key(const S& val) {
    size_t data_size = 0;
    size_t pos = 0;
    void* data_buffer;
@@ -297,7 +297,7 @@ inline key_type make_key(S val) {
 }
 
 template <typename... Args>
-inline key_type make_key(std::tuple<Args...> val) {
+inline key_type make_key(const std::tuple<Args...>& val) {
    size_t data_size = 0;
    size_t pos = 0;
    void* data_buffer;
@@ -525,8 +525,8 @@ public:
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
        */
       template <typename K>
-      iterator find(const K& key) {
-         auto t_key = table_key(prefix, make_key(key));
+      iterator find(K&& key) {
+         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
@@ -551,11 +551,11 @@ public:
        * @return A std::optional of the value corresponding to the key.
        */
       template <typename K>
-      std::optional<T> get(K key) {
+      std::optional<T> get(K&& key) {
          uint32_t value_size;
          std::optional<T> ret_val;
 
-         auto t_key = table_key(prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
 
          auto success = internal_use_do_not_use::kv_get(db, contract_name.value, t_key.data(), t_key.size(), value_size);
          if (!success) {
@@ -582,8 +582,8 @@ public:
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
       template <typename K>
-      iterator lower_bound(K key) {
-         auto t_key = table_key(prefix, make_key(key));
+      iterator lower_bound(K&& key) {
+         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
@@ -603,8 +603,8 @@ public:
        * @return An iterator pointing to the element with the highest key less than or equal to the given key.
        */
       template <typename K>
-      iterator upper_bound(K key) {
-         auto t_key = table_key(prefix, make_key(key));
+      iterator upper_bound(K&& key) {
+         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
@@ -660,9 +660,9 @@ public:
        * @return A vector containing all the objects that fall between the range.
        */
       template <typename K>
-      std::vector<T> range(K begin, K end) {
-         auto begin_itr = lower_bound(begin);
-         auto end_itr = upper_bound(end);
+      std::vector<T> range(K&& begin, K&& end) {
+         auto begin_itr = lower_bound(std::forward<K>(begin));
+         auto end_itr = upper_bound(std::forward<K>(end));
 
          bool include_last = find(end) != end_itr;
 
@@ -745,7 +745,7 @@ public:
     * @param key - The key of the value to be removed.
     */
    template <typename K>
-   void erase(K key) {
+   void erase(const K& key) {
       auto primary_value = primary_index->get(key);
 
       if (!primary_value) {
