@@ -12,7 +12,7 @@
 #include <boost/preprocessor/seq/for_each_i.hpp>
 #include <boost/pfr.hpp>
 
-#define EOSIO_CDT_KV_INDEX_nullptr
+#define EOSIO_CDT_KV_INDEXnullptr
 
 #define EOSIO_CDT_KV_INDEX_TEST() 1
 #define EOSIO_CDT_KV_INDEX_TEST_EOSIO_CDT_KV_INDEX_TEST 0,
@@ -37,17 +37,17 @@
 #define EOSIO_CDT_KV_INDEX_NAME(index_name, i)                                                                         \
    EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_NAME,                                                                        \
       (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(index_name, i)
+           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(index_name, i)
 
 #define EOSIO_CDT_KV_INDEX_TYPE(index_name)                                                                            \
    EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_TYPE,                                                                        \
       (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(index_name)
+           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(index_name)
 
 #define EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name)                                                          \
    EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT,                                                                   \
       (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX_ ## index_name ()))))(value_class, index_name)
+           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(value_class, index_name)
 
 
 #define EOSIO_CDT_CREATE_KV_INDEX(r, value_class, i, index_name)                                                       \
