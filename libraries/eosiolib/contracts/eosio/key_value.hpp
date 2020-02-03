@@ -386,6 +386,28 @@ public:
          iterator(eosio::name contract_name, uint32_t itr, kv_it_stat itr_stat, kv_index* idx) :
                   contract_name{contract_name}, itr{itr}, itr_stat{itr_stat}, idx{idx} {}
 
+         iterator(iterator&& other) :
+            contract_name(std::move(other.contract_name)),
+            itr(std::exchange(other.itr, 0)),
+            itr_stat(std::move(other.itr_stat)),
+            idx(std::exchange(other.idx, nullptr))
+         {}
+
+         ~iterator() {
+            if (itr) {
+               internal_use_do_not_use::kv_it_destroy(itr);
+            }
+         }
+
+         iterator& operator=(iterator&& other) {
+            contract_name = std::move(other.contract_name);
+            itr = std::exchange(other.itr, 0);
+            itr_stat = std::move(other.itr_stat);
+            idx = std::exchange(other.idx, nullptr);
+
+            return *this;
+         }
+
          /**
           * Returns the value that the iterator points to.
           * @ingroup keyvalue
@@ -404,8 +426,6 @@ public:
             // call once to get the value_size
             internal_use_do_not_use::kv_it_value(itr, 0, (char*)nullptr, 0, value_size);
 
-            eosio::check(value_size > 0, "Cannot read a value of size 0");
-
             void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
             auto stat = internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, value_size, actual_value_size);
 
@@ -422,7 +442,7 @@ public:
                void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
                auto copy_size = internal_use_do_not_use::kv_get_data(idx->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
-               eosio::check(copy_size > 0, "failure getting primary index data");
+               eosio::check(copy_size != actual_value_size, "failure getting primary index data");
 
                serialize = pk_buffer;
                serialize_size = actual_data_size;
@@ -441,38 +461,36 @@ public:
          }
 
          iterator& operator--() {
+            if (!itr) {
+               itr = internal_use_do_not_use::kv_it_create(idx->tbl->db_name, contract_name.value, idx->prefix.data(), idx->prefix.size());
+            }
             itr_stat = static_cast<kv_it_stat>(internal_use_do_not_use::kv_it_prev(itr));
             eosio::check(itr_stat != kv_it_stat::iterator_end, "decremented past the beginning");
             return *this;
          }
 
          bool operator==(const iterator& b) const {
-            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp == 0;
+            return compare(b) == 0;
          }
 
          bool operator!=(const iterator& b) const {
-            return !(*this == b);
+            return compare(b) != 0;
          }
 
          bool operator<(const iterator& b) const {
-            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp < 0;
+            return compare(b) < 0;
          }
 
          bool operator<=(const iterator& b) const {
-            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp <= 0;
+            return compare(b) <= 0;
          }
 
          bool operator>(const iterator& b) const {
-            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp > 0;
+            return compare(b) > 0;
          }
 
          bool operator>=(const iterator& b) const {
-            auto cmp = internal_use_do_not_use::kv_it_compare(itr, b.itr);
-            return cmp >= 0;
+            return compare(b) >= 0;
          }
 
       private:
@@ -484,6 +502,20 @@ public:
 
          key_type key() const {
             return idx->get_key(value());
+         }
+
+         int compare(const iterator& b) const {
+            bool a_is_end = !itr || itr_stat == kv_it_stat::iterator_end;
+            bool b_is_end = !b.itr || b.itr_stat == kv_it_stat::iterator_end;
+            if (a_is_end && b_is_end) {
+               return 0;
+            } else if (a_is_end && b.itr) {
+               return 1;
+            } else if (itr && b_is_end) {
+               return -1;
+            } else {
+               return internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            }
          }
 
          friend kv_index;
@@ -624,9 +656,7 @@ public:
        * @return An iterator referring to the `past-the-end` element.
        */
       iterator end() {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
-
-         return {contract_name, itr, kv_it_stat::iterator_end, this};
+         return {contract_name, 0, kv_it_stat::iterator_end, this};
       }
 
       /**
@@ -663,7 +693,7 @@ public:
 
          std::vector<T> return_values;
 
-         iterator itr = begin_itr;
+         iterator itr = std::move(begin_itr);
          while(itr < end_itr) {
             return_values.push_back(itr.value());
             ++itr;
