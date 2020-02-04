@@ -3,6 +3,7 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/print.hpp"
 #include "../../core/eosio/utility.hpp"
+#include "../../core/eosio/varint.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -431,8 +432,8 @@ public:
 
             eosio::check(static_cast<kv_it_stat>(stat) != kv_it_stat::iterator_end, "Error reading value");
 
-            void* serialize = buffer;
-            size_t serialize_size = actual_value_size;
+            void* deserialize_buffer = buffer;
+            size_t deserialize_size = actual_value_size;
 
             if (idx->name != idx->tbl->primary_index->name) {
                uint32_t actual_data_size;
@@ -444,13 +445,12 @@ public:
 
                eosio::check(copy_size != actual_value_size, "failure getting primary index data");
 
-               serialize = pk_buffer;
-               serialize_size = actual_data_size;
+               deserialize_buffer = pk_buffer;
+               deserialize_size = actual_data_size;
             }
 
-            datastream<const char*> ds((char*)serialize, serialize_size);
             T val;
-            ds >> val;
+            deserialize(val, deserialize_buffer, deserialize_size);
             return val;
          }
 
@@ -594,10 +594,8 @@ public:
          void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
          auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
 
-         datastream<const char*> ds((char*)buffer, value_size);
-
          ret_val.emplace();
-         ds >> *ret_val;
+         deserialize(*ret_val, buffer, copy_size);
          if (value_size > detail::max_stack_buffer_size) {
             free(buffer);
          }
@@ -738,10 +736,10 @@ public:
 
       auto t_key = table_key(make_prefix(table_name, primary_index->name), primary_index->get_key(value));
 
-      size_t data_size = pack_size(value);
+      size_t data_size = get_size(value);
       void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-      datastream<char*> data_ds((char*)data_buffer, data_size);
-      data_ds << value;
+
+      serialize(value, data_buffer, data_size);
 
       internal_use_do_not_use::kv_set(db_name, contract_name.value, t_key.data(), t_key.size(), (const char*)data_buffer, data_size);
 
@@ -875,6 +873,47 @@ private:
       static_assert(sizeof(U) % kv_index_size == 0);
       constexpr size_t num_elems = (sizeof(U) / sizeof(kv_index)) - 1;
       for_each_field<num_elems>(u, f);
+   }
+
+   template <typename V>
+   static void serialize(const V& value, void* buffer, size_t size) {
+      datastream<char*> ds((char*)buffer, size);
+      unsigned_int i{0};
+      ds << i;
+      ds << value;
+   }
+
+   template <typename... Vs>
+   static void serialize(const std::variant<Vs...>& value, void* buffer, size_t size) {
+      datastream<char*> ds((char*)buffer, size);
+      ds << value;
+   }
+
+   template <typename V>
+   static void deserialize(V& value, void* buffer, size_t size) {
+      unsigned_int idx;
+      datastream<const char*> ds((char*)buffer, size);
+
+      ds >> idx;
+      ds >> value;
+   }
+
+   template <typename... Vs>
+   static void deserialize(std::variant<Vs...>& value, void* buffer, size_t size) {
+      datastream<const char*> ds((char*)buffer, size);
+      ds >> value;
+   }
+
+   template <typename V>
+   static size_t get_size(V&& value) {
+      auto size = pack_size(std::forward<V>(value));
+      return size + 1;
+   }
+
+   template <typename... Vs>
+   static size_t get_size(std::variant<Vs...>&& value) {
+      auto size = pack_size(std::forward<std::variant<Vs...>>(value));
+      return size;
    }
 };
 } // eosio
