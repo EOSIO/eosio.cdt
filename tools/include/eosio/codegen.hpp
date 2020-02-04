@@ -237,7 +237,9 @@ namespace eosio { namespace cdt {
                   ss << "#include <eosio/name.hpp>\n";
                }
                ss << "extern \"C\" {\n";
+               ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t action_data_size();\n";
+               ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t read_action_data(void*, uint32_t);\n";
                ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
@@ -417,6 +419,7 @@ namespace eosio { namespace cdt {
                   // generate apply stub with abi
                   std::stringstream ss;
                   ss << "extern \"C\" {\n";
+                  ss << "__attribute__((eosio_wasm_import))\n";
                   ss << "void eosio_assert_code(uint32_t, uint64_t);";
                   ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
                   std::string abi = cg.abi;

@@ -47,7 +47,7 @@ extern "C" {
   *  @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
   */
 __attribute__((eosio_wasm_import))
-void send_deferred(const uint128_t& sender_id, capi_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing = 0);
+void send_deferred(const uint128_t* sender_id, capi_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing);
 
  /**
   *  Cancels a deferred transaction.
@@ -69,7 +69,7 @@ void send_deferred(const uint128_t& sender_id, capi_name payer, const char *seri
   *  @endcode
   */
 __attribute__((eosio_wasm_import))
-int cancel_deferred(const uint128_t& sender_id);
+int cancel_deferred(const uint128_t* sender_id);
 
 /**
  * Access a copy of the currently executing transaction.
@@ -89,7 +89,7 @@ size_t read_transaction(char *buffer, size_t size);
  * @return size of the currently executing transaction
  */
 __attribute__((eosio_wasm_import))
-size_t transaction_size();
+size_t transaction_size( void );
 
 /**
  * Gets the block number used for TAPOS on the currently executing transaction.
@@ -102,7 +102,7 @@ size_t transaction_size();
  * @endcode
  */
 __attribute__((eosio_wasm_import))
-int tapos_block_num();
+int tapos_block_num( void );
 
 /**
  * Gets the block prefix used for TAPOS on the currently executing transaction.
@@ -115,7 +115,7 @@ int tapos_block_num();
  * @endcode
  */
 __attribute__((eosio_wasm_import))
-int tapos_block_prefix();
+int tapos_block_prefix( void );
 
 /**
  * Gets the expiration of the currently executing transaction.
@@ -129,7 +129,7 @@ int tapos_block_prefix();
  * @endcode
  */
 __attribute__((eosio_wasm_import))
-uint32_t expiration();
+uint32_t expiration( void );
 
 /**
  * Retrieves the indicated action from the active transaction.

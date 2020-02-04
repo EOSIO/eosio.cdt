@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 import tempfile
 
 from pathlib import Path
@@ -75,9 +76,14 @@ def main():
     end = timer()
 
     if args.format == "human":
-        print_test_results(test_results, end - start)
+        failures = print_test_results(test_results, end - start)
     else:
-        print_test_results_machine(test_results, end - start)
+        failures = print_test_results_machine(test_results, end - start)
+
+    if failures:
+        sys.exit(1)
+
+    sys.exit(0)
 
 
 def get_cdt_path() -> str:

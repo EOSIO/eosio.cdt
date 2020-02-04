@@ -74,7 +74,7 @@ void eosio_exit( int32_t code );
  *  @return time in microseconds from 1970 of the current block
  */
 __attribute__((eosio_wasm_import))
-uint64_t  current_time();
+uint64_t  current_time( void );
 
 /**
  * Check if specified protocol feature has been activated
@@ -83,7 +83,7 @@ uint64_t  current_time();
  * @return true if the specified protocol feature has been activated, false otherwise
  */
 __attribute__((eosio_wasm_import))
-bool is_feature_activated( const capi_checksum256* feature_digest );
+bool is_feature_activated( const struct capi_checksum256* feature_digest );
 
 /**
  * Return name of account that sent current inline action
@@ -91,7 +91,7 @@ bool is_feature_activated( const capi_checksum256* feature_digest );
  * @return name of account that sent the current inline action (empty name if not called from inline action)
  */
 __attribute__((eosio_wasm_import))
-capi_name get_sender();
+capi_name get_sender( void );
 
 #ifdef __cplusplus
 }

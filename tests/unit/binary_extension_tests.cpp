@@ -5,6 +5,7 @@
 
 #include <eosio/tester.hpp>
 #include <eosio/binary_extension.hpp>
+#include <eosio/print.hpp>
 
 using std::in_place;
 using std::move;
@@ -219,6 +220,40 @@ EOSIO_TEST_BEGIN(binary_extension_test)
    CHECK_EQUAL( be_str_reset.has_value(), true )
    be_str_reset.reset();
    CHECK_EQUAL( be_str_reset.has_value(), false )
+
+EOSIO_TEST_END
+
+EOSIO_TEST_BEGIN(binary_extension_assignment_test)
+   // Regression for PR #792
+   {
+      binary_extension<char> be('a');
+      binary_extension<char> be_copy(be);
+      binary_extension<char> be_copy_assign = be;
+
+      CHECK_EQUAL(be.has_value(), true);
+      CHECK_EQUAL(be.value(), 'a');
+
+      CHECK_EQUAL(be_copy.has_value(), true);
+      CHECK_EQUAL(be.value(), be_copy.value());
+
+      CHECK_EQUAL(be_copy_assign.has_value(), true);
+      CHECK_EQUAL(be.value(), be_copy_assign.value());
+
+      binary_extension<char> be2('a');
+      binary_extension<char> be_move(std::move(be));
+
+      CHECK_EQUAL(be2.has_value(), true);
+      CHECK_EQUAL(be.has_value(), false);
+      CHECK_EQUAL(be2.value(), be_move.value());
+
+      binary_extension<char> be3('a');
+      binary_extension<char> be_move_assign = std::move(be2);
+
+      CHECK_EQUAL(be3.has_value(), true);
+      CHECK_EQUAL(be2.has_value(), false);
+      CHECK_EQUAL(be3.value(), be_move_assign.value());
+   }
+
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
@@ -229,5 +264,6 @@ int main(int argc, char* argv[]) {
    silence_output(!verbose);
 
    EOSIO_TEST(binary_extension_test);
+   EOSIO_TEST(binary_extension_assignment_test);
    return has_failed();
 }
