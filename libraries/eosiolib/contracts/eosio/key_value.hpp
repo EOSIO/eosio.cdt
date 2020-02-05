@@ -889,6 +889,14 @@ public:
 
       internal_use_do_not_use::kv_set(db_name, contract_name.value, t_key.data(), t_key.size(), (const char*)data_buffer, data_size);
 
+      // Cleanup secondary indices before updating.
+      // This is the only way to guarantee they are cleaned up if they have changed,
+      // as we have no way to derive the original value of the index.
+      for (auto& idx : secondary_indices) {
+         auto prefix = make_prefix(table_name, idx->name);
+         internal_use_do_not_use::kv_erase(db_name, contract_name.value, prefix.data(), prefix.size());
+      }
+
       for (auto& idx : secondary_indices) {
          key_type sk;
          if (idx->is_unique()) {
