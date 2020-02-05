@@ -81,7 +81,7 @@ steps:
       - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.6.0:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.1_6C_14G_40G
@@ -177,7 +177,7 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/tests.sh"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.6.0:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.1_6C_14G_40G
@@ -337,7 +337,7 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/package.sh"
     plugins:
-      - chef/anka#v0.5.1:
+      - EOSIO/anka#v0.6.0:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.1_6C_14G_40G
