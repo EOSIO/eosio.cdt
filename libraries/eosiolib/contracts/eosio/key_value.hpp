@@ -136,19 +136,30 @@ namespace eosio {
       }
    }
 
-/**
- * The key_type struct is used to store the binary representation of a key.
- */
-struct key_type : std::string {
-   using std::string::string;
-
-   // TODO: Instead, get rid of implicit conversion and overload + operator
-   key_type(const std::string& s) : std::string(s.data(), s.size()) {}
-};
-
 namespace detail {
    constexpr inline size_t max_stack_buffer_size = 512;
 }
+
+/**
+ * The key_type struct is used to store the binary representation of a key.
+ */
+struct key_type : private std::string {
+   key_type() : std::string() {}
+   key_type(const char* c, size_t s) : std::string(c, s) {}
+
+
+   key_type operator+(const key_type& b) const {
+      size_t buffer_size = size() + b.size();
+      void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
+
+      memcpy(buffer, data(), size());
+      memcpy(((char*)buffer) + size(), b.data(), b.size());
+      return {(char*)buffer, buffer_size};
+   }
+
+   using std::string::data;
+   using std::string::size;
+};
 
 /* @cond PRIVATE */
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
@@ -174,7 +185,7 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
-   return key_type{prefix + key};
+   return prefix + key;
 }
 
 template <typename I>
