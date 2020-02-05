@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include <string>
+#include <chrono>
+#include <ctime>
+#include <cstdio>
 #include "check.hpp"
 #include "serialize.hpp"
 
@@ -96,6 +99,25 @@ namespace eosio {
 
         static time_point_sec maximum() { return time_point_sec(0xffffffff); }
         static time_point_sec min() { return time_point_sec(0); }
+
+        static time_point_sec from_iso_string(std::string dateStr){
+           int y,mon,d,h,m;
+           float s;
+           sscanf(dateStr.c_str(), "%d-%d-%dT%d:%d:%fZ", &y, &mon, &d, &h, &m, &s);
+
+           std::tm tm;
+           tm.tm_year = y - 1900; // Year since 1900
+           tm.tm_mon = mon - 1;   // 0-11
+           tm.tm_mday = d;
+           tm.tm_hour = h;
+           tm.tm_min = m;
+           tm.tm_sec = (int)s;
+
+           auto tp = std::chrono::system_clock::from_time_t( ::mktime( &tm ) );
+           auto duration = std::chrono::duration_cast<std::chrono::seconds>( tp.time_since_epoch() );
+
+           return time_point_sec{ static_cast<uint32_t>(duration.count()) };
+        }
 
         operator time_point()const { return time_point( eosio::seconds( utc_seconds) ); }
         uint32_t sec_since_epoch()const { return utc_seconds; }

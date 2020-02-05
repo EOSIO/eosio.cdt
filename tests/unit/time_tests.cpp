@@ -364,6 +364,12 @@ EOSIO_TEST_BEGIN(time_point_sec_type_test)
    // friend bool operator>=(const time_point_sec&, const time_point_sec&)
    CHECK_EQUAL( (time_point_sec{1} >= time_point_sec{1}), true  )
    CHECK_EQUAL( (time_point_sec{1} >= time_point_sec{2}), false )
+
+   // --------------------------------------------------------------------
+   // static time_point_sec from_iso_string()
+   CHECK_EQUAL( time_point_sec::from_iso_string("1970-01-01T00:00:00.000").utc_seconds, 0);
+   CHECK_EQUAL( time_point_sec::from_iso_string("1998-06-15T08:13:12.000").utc_seconds, 897898392);
+   CHECK_EQUAL( time_point_sec::from_iso_string("2020-01-01T00:00:00.000").utc_seconds, 1577836800);
 EOSIO_TEST_END
 
 // Definitions in `eosio.cdt/libraries/eosio/time.hpp`
