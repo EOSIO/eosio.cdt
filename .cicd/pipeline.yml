@@ -70,7 +70,31 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: $SKIP_MOJAVE
+    skip: $SKIP_MACOS_10_14
+
+  - label: ":darwin: macOS 10.15 - Build"
+    command:
+      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd eosio.cdt && ./.cicd/build.sh"
+      - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
+    plugins:
+      - EOSIO/anka#v0.6.0:
+          no-volume: true
+          inherit-environment-vars: true
+          vm-name: 10.15.3_6C_14G_40G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          modify-cpu: 12
+          modify-ram: 24
+          always-pull: true
+          debug: true
+          wait-network: true
+    agents:
+      - "queue=mac-anka-large-node-fleet"
+    skip: $SKIP_MACOS_10_15
+
 
   - wait
 
@@ -142,7 +166,30 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_MACOS_10_14}${SKIP_UNIT_TESTS}
+
+  - label: ":darwin: macOS 10.15 - Unit Tests"
+    command:
+      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
+      - "cd eosio.cdt && ./.cicd/tests.sh"
+    plugins:
+      - EOSIO/anka#v0.6.0:
+          no-volume: true
+          inherit-environment-vars: true
+          vm-name: 10.15.3_6C_14G_40G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          modify-cpu: 12
+          modify-ram: 24
+          always-pull: true
+          debug: true
+          wait-network: true
+    agents:
+      - "queue=mac-anka-large-node-fleet"
+    skip: ${SKIP_MACOS_10_15}${SKIP_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
     command:
@@ -280,7 +327,28 @@ steps:
     agents:
       - "queue=mac-anka-node-fleet"
     timeout: 10
-    skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_MACOS_10_14}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":darwin: Catalina - Package Builder"
+    command:
+      - "git clone $BUILDKITE_REPO eosio.cdt"
+      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
+      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
+      - "cd eosio.cdt && ./.cicd/package.sh"
+    plugins:
+      - EOSIO/anka#v0.6.0:
+          no-volume: true
+          inherit-environment-vars: true
+          vm-name: 10.15.3_6C_14G_40G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          always-pull: true
+          debug: true
+          wait-network: true
+    agents:
+      - "queue=mac-anka-node-fleet"
+    timeout: 10
+    skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
