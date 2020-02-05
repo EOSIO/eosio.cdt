@@ -99,6 +99,17 @@ BOOST_FIXTURE_TEST_CASE(single_tests_variant, tester) try {
 
 // Multi
 // -----
+BOOST_FIXTURE_TEST_CASE(multi_tests_find, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(find), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(multi_tests_idx, tester) try {
     create_accounts( { N(kvtest) } );
     produce_block();

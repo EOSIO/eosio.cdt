@@ -9,7 +9,8 @@ struct my_struct {
    bool operator==(const my_struct b) const {
       return primary_key == b.primary_key &&
              foo == b.foo &&
-             bar == b.bar;
+             bar == b.bar &&
+             baz == b.baz;
    }
 };
 
@@ -17,7 +18,7 @@ struct my_table : eosio::kv_table<my_struct> {
    struct {
       kv_unique_index primary_key{&my_struct::primary_key};
       kv_non_unique_index foo{&my_struct::foo};
-      kv_non_unique_index bar{&my_struct::bar};
+      kv_unique_index bar{&my_struct::bar};
       kv_non_unique_index baz{&my_struct::baz};
    } index;
 
@@ -127,6 +128,17 @@ public:
    }
 
    [[eosio::action]]
+   void find() {
+      my_table t{"kvtest"_n};
+
+      auto itr = t.index.bar.find(5ull);
+      eosio::check(itr.value().bar == s1.bar, "wrong value");
+
+      auto val = t.index.bar.get(4ull);
+      eosio::check(val->bar == s2.bar, "wrong value");
+   }
+
+   [[eosio::action]]
    void indices() {
       my_table_idx t{"kvtest"_n};
    }
@@ -223,8 +235,5 @@ public:
       auto actual = t.index.baz.range(1l, 3l);
 
       eosio::check(actual == expected, "range did not return expected vector");
-      for (const auto& a : actual) {
-         eosio::print_f("% %\n", a.baz, a.primary_key);
-      }
    }
 };

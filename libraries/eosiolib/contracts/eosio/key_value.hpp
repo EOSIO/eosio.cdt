@@ -795,13 +795,31 @@ public:
          void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
          auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
 
-         datastream<const char*> ds((char*)buffer, value_size);
+         void* serialize = buffer;
+         size_t serialize_size = copy_size;
+
+         if (this->name != tbl->primary_index->name) {
+            uint32_t actual_data_size;
+            auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, (char*)buffer, copy_size, actual_data_size);
+            eosio::check(success, "failure getting primary key");
+
+            void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
+            auto pk_copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
+
+            eosio::check(pk_copy_size != copy_size, "failure getting primary index data");
+
+            serialize = pk_buffer;
+            serialize_size = pk_copy_size;
+         }
+
+         datastream<const char*> ds((char*)serialize, serialize_size);
 
          ret_val.emplace();
          ds >> *ret_val;
          if (value_size > detail::max_stack_buffer_size) {
             free(buffer);
          }
+
          return ret_val;
       }
 
