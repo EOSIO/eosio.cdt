@@ -230,7 +230,8 @@ inline key_type make_key(const char* str, size_t size, bool case_insensitive=fal
    void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
    if (case_insensitive) {
-      std::transform(str, str + size, (char*)data_buffer, [](unsigned char c) -> unsigned char { return std::toupper(c); });
+      auto s = eosio::to_upper(str);
+      memcpy(data_buffer, s.data(), s.size());
    } else {
       memcpy(data_buffer, str, size);
    }

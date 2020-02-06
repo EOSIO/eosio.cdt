@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <locale>
+#include <codecvt>
 
 namespace eosio {
    /* utility function to swap the endianness of a variable */
@@ -27,5 +30,29 @@ namespace eosio {
          memcpy((char*)&value, (char*)&swapped, sizeof(T));
          return value;
       }
+   }
+
+   inline std::wstring string_to_wstring(const std::string& str) {
+      using convert_wchar = std::codecvt_utf8<wchar_t>;
+      std::wstring_convert<convert_wchar, wchar_t> conv;
+
+      return conv.from_bytes(str);
+   }
+
+   inline std::string wstring_to_string(const std::wstring& wstr) {
+      using convert_char = std::codecvt_utf8<wchar_t>;
+      std::wstring_convert<convert_char, wchar_t> conv;
+
+      return conv.to_bytes(wstr);
+   }
+
+   inline std::string to_upper(const std::string& str) {
+      setlocale(LC_CTYPE, "en_US.UTF-8");
+      auto wstr = string_to_wstring(str);
+
+      for (std::wstring::iterator it = wstr.begin(); it != wstr.end(); ++it)
+         *it = towupper(*it);
+
+      return wstring_to_string(wstr);
    }
 }

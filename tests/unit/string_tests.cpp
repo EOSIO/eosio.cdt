@@ -6,6 +6,7 @@
 #include <eosio/tester.hpp>
 #include <eosio/datastream.hpp>
 #include <eosio/string.hpp>
+#include <eosio/utility.hpp>
 
 using std::fill;
 using std::move;
@@ -1494,6 +1495,18 @@ EOSIO_TEST_BEGIN(string_test)
    }
 EOSIO_TEST_END
 
+EOSIO_TEST_BEGIN(to_upper_test)
+   {
+      static const std::string str0{"ăbcd"};
+      static const std::string str1{"ĂBCD"};
+
+      auto upper0 = eosio::to_upper(str0);
+
+      CHECK_NOT_EQUAL(str0, str1)
+      CHECK_EQUAL(upper0, str1);
+   }
+EOSIO_TEST_END
+
 int main(int argc, char* argv[]) {
    bool verbose = false;
    if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
@@ -1502,5 +1515,6 @@ int main(int argc, char* argv[]) {
    silence_output(!verbose);
 
    EOSIO_TEST(string_test)
+   EOSIO_TEST(to_upper_test)
    return has_failed();
 }

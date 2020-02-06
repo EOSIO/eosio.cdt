@@ -98,6 +98,12 @@ inline bool expect_print(bool check, const std::string& li, const char (&expecte
       eosio::print(std::string("CHECK_EQUAL failed (")+#X+" != "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}\n"); \
    }
 
+#define CHECK_NOT_EQUAL(X, Y) \
+   if (!(X != Y)) { \
+      ___has_failed = true; \
+      eosio::print(std::string("CHECK_NOT_EQUAL failed (")+#X+" == "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}\n"); \
+   }
+
 #define REQUIRE_EQUAL(X, Y) \
    eosio::check(X == Y, std::string(std::string("REQUIRE_EQUAL failed (")+#X+" != "+#Y+") {"+__FILE__+":"+std::to_string(__LINE__)+"}").c_str());
 
