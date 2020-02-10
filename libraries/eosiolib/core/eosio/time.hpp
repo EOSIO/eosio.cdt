@@ -61,6 +61,24 @@ namespace eosio {
         const microseconds& time_since_epoch()const { return elapsed; }
         uint32_t            sec_since_epoch()const  { return uint32_t(elapsed.count() / 1000000); }
 
+        static time_point from_iso_string(std::string dateStr) {
+           std::tm tm;
+           check(strptime(dateStr.c_str(), "%Y-%m-%dT%H:%M:%S", &tm), "date parsing failed");
+
+           auto tp = std::chrono::system_clock::from_time_t( ::mktime( &tm ) );
+           auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tp.time_since_epoch() );
+           return time_point{ microseconds{ static_cast<int64_t>(duration.count()) } };
+        }
+
+        std::string to_string() const {
+           time_t rawtime = sec_since_epoch();
+
+           char buf[100];
+           strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S", gmtime ( &rawtime ));
+
+           return std::string{buf};
+        }
+
         /// @cond INTERNAL
         bool   operator > ( const time_point& t )const                              { return elapsed._count > t.elapsed._count; }
         bool   operator >=( const time_point& t )const                              { return elapsed._count >=t.elapsed._count; }
@@ -100,23 +118,13 @@ namespace eosio {
         static time_point_sec maximum() { return time_point_sec(0xffffffff); }
         static time_point_sec min() { return time_point_sec(0); }
 
-        static time_point_sec from_iso_string(std::string dateStr){
-           int y,mon,d,h,m;
-           float s;
-           sscanf(dateStr.c_str(), "%d-%d-%dT%d:%d:%fZ", &y, &mon, &d, &h, &m, &s);
+        static time_point_sec from_iso_string(std::string dateStr) {
+           auto time_p = time_point::from_iso_string(dateStr);
+           return time_point_sec{ time_p };
+        }
 
-           std::tm tm;
-           tm.tm_year = y - 1900; // Year since 1900
-           tm.tm_mon = mon - 1;   // 0-11
-           tm.tm_mday = d;
-           tm.tm_hour = h;
-           tm.tm_min = m;
-           tm.tm_sec = (int)s;
-
-           auto tp = std::chrono::system_clock::from_time_t( ::mktime( &tm ) );
-           auto duration = std::chrono::duration_cast<std::chrono::seconds>( tp.time_since_epoch() );
-
-           return time_point_sec{ static_cast<uint32_t>(duration.count()) };
+        std::string to_string() const {
+           return ((time_point)(*this)).to_string();
         }
 
         operator time_point()const { return time_point( eosio::seconds( utc_seconds) ); }
@@ -191,6 +199,15 @@ namespace eosio {
             int64_t msec = slot * (int64_t)block_interval_ms;
             msec += block_timestamp_epoch;
             return time_point(milliseconds(msec));
+         }
+
+         static block_timestamp from_iso_string(std::string dateStr) {
+            auto time_p = time_point::from_iso_string(dateStr);
+            return block_timestamp{ time_p };
+         }
+
+         std::string to_string() const {
+            return to_time_point().to_string();
          }
 
           /// @cond INTERNAL
