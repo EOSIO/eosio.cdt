@@ -202,6 +202,8 @@ EOSIO_TEST_BEGIN(time_point_type_test)
    CHECK_EQUAL( (time_point{ms1} >= time_point{ms1}), true  )
    CHECK_EQUAL( (time_point{ms0} >= time_point{ms1}), false )
 
+   // --------------------------------------------------------------------
+   // static time_point from_iso_string()
    CHECK_EQUAL( time_point::from_iso_string("1970-01-01T00:00:00").elapsed.count(), 0);
    CHECK_EQUAL( time_point::from_iso_string("1998-06-15T08:13:12").elapsed.count(), 897898392000000LL);
    CHECK_EQUAL( time_point::from_iso_string("2020-01-01T00:00:00").elapsed.count(), 1577836800000000LL);
@@ -209,6 +211,8 @@ EOSIO_TEST_BEGIN(time_point_type_test)
    CHECK_ASSERT( "date parsing failed", [](){ time_point::from_iso_string("invalid string"); });
    CHECK_ASSERT( "date parsing failed", [](){ time_point::from_iso_string("2010-13-81T00:00:00"); });
 
+   // --------------------------------------------------------------------
+   // std::string to_string()
    CHECK_EQUAL( time_point{ microseconds{0} }.to_string(),                  "1970-01-01T00:00:00");
    CHECK_EQUAL( time_point{ microseconds{897898392000000LL} }.to_string(),  "1998-06-15T08:13:12");
    CHECK_EQUAL( time_point{ microseconds{1577836800000000LL} }.to_string(), "2020-01-01T00:00:00");
