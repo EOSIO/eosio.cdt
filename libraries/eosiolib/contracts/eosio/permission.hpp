@@ -4,10 +4,10 @@
  */
 #pragma once
 
-#include "transaction.hpp"
-#include "../../core/eosio/crypto.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/time.hpp"
+#include <eosio/transaction.hpp>
+#include <eosio/crypto.hpp>
+#include <eosio/name.hpp>
+#include <eosio/time.hpp>
 
 #include <set>
 #include <limits>
