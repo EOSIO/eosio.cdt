@@ -97,8 +97,12 @@ class Test(ABC):
                     failing_test=self,
                 )
 
-        if expected.get("abi"):
-            expected_abi = expected["abi"]
+        if expected.get("abi") or expected.get("abi-file"):
+            if expected.get("abi"):
+                expected_abi = expected["abi"]
+            else:
+                expected_abi_file = open(expected["abi-file"])
+                expected_abi = expected_abi_file.read()
             with open(f"{self._name}.abi") as f:
                 actual_abi = f.read()
 

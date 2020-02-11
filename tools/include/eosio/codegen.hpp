@@ -241,6 +241,11 @@ namespace eosio { namespace cdt {
                ss << "uint32_t action_data_size();\n";
                ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t read_action_data(void*, uint32_t);\n";
+               const auto& return_ty = decl->getReturnType().getAsString();
+               if (return_ty != "void") {
+                  ss << "__attribute__((eosio_wasm_import))\n";
+                  ss << "void set_action_return_value(void*, size_t);\n";
+               }
                ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
@@ -267,13 +272,23 @@ namespace eosio { namespace cdt {
                   ss << tn << " arg" << i << "; ds >> arg" << i << ";\n";
                   i++;
                }
-               ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
-               for (int i=0; i < decl->parameters().size(); i++) {
-                  ss << "arg" << i;
-                  if (i < decl->parameters().size()-1)
-                     ss << ", ";
+               const auto& call_action = [&]() {
+                  ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
+                  for (int i=0; i < decl->parameters().size(); i++) {
+                     ss << "arg" << i;
+                     if (i < decl->parameters().size()-1)
+                        ss << ", ";
+                  }
+                  ss << ");\n";
+               };
+               if (return_ty != "void") {
+                  ss << return_ty << " result = ";
                }
-               ss << ");";
+               call_action();
+               if (return_ty != "void") {
+                  ss << "const auto& packed_result = eosio::pack(result);\n";
+                  ss << "set_action_return_value((void*)packed_result.data(), packed_result.size());\n";
+               }
                ss << "}}\n";
 
                rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
@@ -344,34 +359,6 @@ namespace eosio { namespace cdt {
             }
             return true;
          }
-
-         /*
-         virtual bool VisitRecordDecl(RecordDecl* decl) {
-            static std::set<std::string> _action_set; //used for validations
-            std::string rec_name = decl->getQualifiedNameAsString();
-            cg.records.emplace(rec_name, decl);
-            return true;
-         }
-         virtual bool VisitCallExpr(CallExpr* expr) {
-            if (auto callee = expr->getDirectCallee()) {
-               if (callee->getNumParams() == 2) {
-                  if (is_datastream(callee->getParamDecl(0)->getOriginalType())) {
-                     cg.datastream_uses.insert(get_base_type(callee->getParamDecl(1)->getOriginalType()));
-                  }
-               }
-            }
-            return true;
-         }
-         virtual bool VisitCXXRecordDecl(CXXRecordDecl* decl) {
-            std::string rec_name = decl->getQualifiedNameAsString();
-            if (decl->isEosioAction()) {
-               rec_name = generation_utils::get_action_name(decl);
-               cg.actions.insert(rec_name);
-            }
-            cg.cxx_records.emplace(rec_name, decl);
-            return true;
-         }
-         */
       };
 
       class eosio_codegen_consumer : public ASTConsumer {
@@ -397,7 +384,7 @@ namespace eosio { namespace cdt {
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
-               
+
                for (auto nd : visitor->notify_decls)
                   visitor->create_notify_dispatch(nd);
 
