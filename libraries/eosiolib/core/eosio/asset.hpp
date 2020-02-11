@@ -5,11 +5,11 @@
 
 namespace eosio {
 
-void print(asset obj) {
+inline void print(asset obj) {
    print(obj.to_string());
 }
 
-void print(extended_asset obj) {
+inline void print(extended_asset obj) {
    print(obj.to_string());
 }
 
