@@ -146,29 +146,17 @@ inline int32_t execute(std::string_view command) {
    return internal_use_do_not_use::execute(command.data(), command.data() + command.size());
 }
 
-inline abieos::public_key string_to_public_key(std::string_view s) {
-   std::string        error;
-   abieos::public_key result;
-   check(abieos::string_to_public_key(result, error, s), error);
-   return result;
+  template<typename T>
+  T get(result<T>&& obj) {
+    if(!obj) check(false, obj.error().message());
+    return std::move(obj.value());
+  }
+
+inline asset string_to_asset(const char* s) {
+   return check(eosio::convert_from_string<asset>(s)).value();
 }
 
-inline abieos::private_key string_to_private_key(std::string_view s) {
-   std::string         error;
-   abieos::private_key result;
-   check(abieos::string_to_private_key(result, error, s), error);
-   return result;
-}
-
-inline public_key convert(const abieos::public_key& k) { return unpack<public_key>(check(convert_to_bin(k)).value()); }
-
-inline abieos::asset string_to_asset(const char* s) {
-   return check(eosio::convert_from_string<abieos::asset>(s)).value();
-}
-
-inline symbol convert(abieos::symbol s) { return symbol(s.value); }
-inline asset  convert(const abieos::asset& a) { return { a.amount, convert(a.sym) }; }
-inline asset  s2a(const char* s) { return convert(string_to_asset(s)); }
+inline asset  s2a(const char* s) { return string_to_asset(s); }
 
 // TODO: move
 struct tester_key_weight {
@@ -209,24 +197,8 @@ using chain_types::transaction_status;
 auto conversion_kind(chain_types::permission_level, permission_level) -> strict_conversion;
 auto conversion_kind(chain_types::action, action) -> strict_conversion;
 
-struct account_auth_sequence {
-   name account          = {};
-   uint64_t     sequence = {};
-};
-
-auto conversion_kind(chain_types::account_auth_sequence, account_auth_sequence) -> strict_conversion;
-
-struct account_delta {
-   name account         = {};
-   int64_t      delta   = {};
-};
-
-auto conversion_kind(chain_types::account_delta, account_delta) -> strict_conversion;
-
-template<std::size_t size, typename F>
-void convert(const abieos::fixed_binary<size>& src, eosio::fixed_bytes<size>& dst, F&& f) {
-   dst = src.value;
-}
+using chain_types::account_delta;
+using chain_types::account_auth_sequence;
 
 struct action_receipt {
    name                               receiver        = {};
@@ -237,11 +209,6 @@ struct action_receipt {
    uint32_t                           code_sequence   = {};
    uint32_t                           abi_sequence    = {};
 };
-
-template<typename F>
-void convert(const abieos::name& src, eosio::name& dst, F&&) {
-   dst.value = src.value;
-}
 
 auto conversion_kind(chain_types::action_receipt_v0, action_receipt) -> strict_conversion;
 
@@ -279,16 +246,7 @@ struct transaction_trace {
 auto conversion_kind(chain_types::transaction_trace_v0, transaction_trace) -> narrowing_conversion;
 auto serialize_as(const transaction_trace&) -> chain_types::transaction_trace;
 
-auto conversion_kind(abieos::block_timestamp, block_timestamp) -> strict_conversion;
-
-struct block_info {
-   uint32_t                block_num = {};
-   checksum256             block_id  = {};
-   block_timestamp         timestamp;
-};
-
-auto conversion_kind(chain_types::block_info, block_info) -> strict_conversion;
-auto serialize_as(block_info) -> chain_types::block_info;
+using chain_types::block_info;
 
 /**
  * Validates the status of a transaction.  If expected_except is nullptr, then the
@@ -313,11 +271,30 @@ inline void expect(const transaction_trace& tt, const char* expected_except = nu
    }
 }
 
+template <typename SrcIt, typename DestIt>
+void hex(SrcIt begin, SrcIt end, DestIt dest) {
+    auto nibble = [&dest](uint8_t i) {
+        if (i <= 9)
+            *dest++ = '0' + i;
+        else
+            *dest++ = 'A' + i - 10;
+    };
+    while (begin != end) {
+        nibble(((uint8_t)*begin) >> 4);
+        nibble(((uint8_t)*begin) & 0xf);
+        ++begin;
+    }
+}
+
 template<std::size_t Size>
 std::ostream& operator<<(std::ostream& os, const fixed_bytes<Size>& d) {
    auto arr = d.extract_as_byte_array();
-   abieos::hex(arr.begin(), arr.end(), std::ostreambuf_iterator<char>(os.rdbuf()));
+   hex(arr.begin(), arr.end(), std::ostreambuf_iterator<char>(os.rdbuf()));
    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const block_timestamp& obj) {
+   return os << obj.slot;
 }
 
 /**
@@ -331,8 +308,8 @@ class test_chain {
    std::optional<block_info>              head_block_info;
 
  public:
-   abieos::public_key  default_pub_key  = string_to_public_key("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV");
-   abieos::private_key default_priv_key = string_to_private_key("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3");
+   public_key  default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV").value();
+   private_key default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3").value();
 
    test_chain() : id{ internal_use_do_not_use::create_chain() } {}
    test_chain(const test_chain&) = delete;
@@ -404,9 +381,9 @@ class test_chain {
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
     */
    [[nodiscard]]
-   transaction_trace push_transaction(const transaction& trx, const std::vector<abieos::private_key>& keys,
+   transaction_trace push_transaction(const transaction& trx, const std::vector<private_key>& keys,
                                       const std::vector<std::vector<char>>& context_free_data = {},
-                                      const std::vector<abieos::signature>& signatures        = {}) {
+                                      const std::vector<signature>& signatures        = {}) {
 
       std::vector<char> packed_trx = pack(trx);
       std::vector<char> args;
@@ -432,7 +409,7 @@ class test_chain {
     *
     * Validates the transaction status according to @ref eosio::expect.
     */
-   transaction_trace transact(std::vector<action>&& actions, const std::vector<abieos::private_key>& keys,
+   transaction_trace transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
                               const char* expected_except = nullptr) {
       auto trace = push_transaction(make_transaction(std::move(actions)), keys);
       expect(trace, expected_except);
@@ -475,7 +452,7 @@ class test_chain {
    }
 
    transaction_trace create_account(name ac, const char* expected_except = nullptr) {
-      return create_account(ac, convert(default_pub_key), expected_except);
+      return create_account(ac, default_pub_key, expected_except);
    }
 
    /**
@@ -513,11 +490,11 @@ class test_chain {
 
    transaction_trace create_code_account(name ac, bool is_priv = false,
                                          const char* expected_except = nullptr) {
-      return create_code_account(ac, convert(default_pub_key), is_priv, expected_except);
+      return create_code_account(ac, default_pub_key, is_priv, expected_except);
    }
 
    transaction_trace create_code_account(name ac, const char* expected_except) {
-      return create_code_account(ac, convert(default_pub_key), false, expected_except);
+      return create_code_account(ac, default_pub_key, false, expected_except);
    }
 
    /*

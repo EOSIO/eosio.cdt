@@ -113,7 +113,7 @@ EOSIO_TEST_BEGIN(unsigned_int_type_test)
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
-   datastream<const char*> ds{datastream_buffer, buffer_size};
+   datastream<char*> ds{datastream_buffer, buffer_size};
 
    static const unsigned_int cui{42};
    unsigned_int ui{};
@@ -238,7 +238,7 @@ EOSIO_TEST_BEGIN(signed_int_type_test)
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
-   datastream<const char*> ds{datastream_buffer, buffer_size};
+   datastream<char*> ds{datastream_buffer, buffer_size};
 
    static const signed_int csi{-42};
    signed_int a{44}, b{(1<<30)+2}, c{-35}, d{-(1<<30)-2}; // Small+, Small-, Large+, Large-

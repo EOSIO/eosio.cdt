@@ -5,8 +5,8 @@
 #pragma once
 #include "action.hpp"
 #include "system.hpp"
-#include "../../core/eosio/time.hpp"
-#include "../../core/eosio/serialize.hpp"
+#include <eosio/time.hpp>
+#include <eosio/serialize.hpp>
 
 #include <vector>
 

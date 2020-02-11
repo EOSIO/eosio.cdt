@@ -1,6 +1,6 @@
 #pragma once
 
-#include "check.hpp"
+#include <eosio/check.hpp>
 
 #include <type_traits>
 #include <utility>

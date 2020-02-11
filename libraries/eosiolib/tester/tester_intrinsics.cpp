@@ -7,9 +7,8 @@ extern "C" void prints(const char* cstr) { print_range(cstr, cstr + strlen(cstr)
 extern "C" void prints_l(const char* cstr, uint32_t len) { print_range(cstr, cstr + len); }
 
 extern "C" void printn(uint64_t n) {
-   char buffer[13];
-   auto end = eosio::name{ n }.write_as_string(buffer, buffer + sizeof(buffer));
-   print_range(buffer, end);
+   std::string s = eosio::name_to_string(n);
+   print_range(s.data(), s.data() + s.size());
 }
 
 extern "C" void printui(uint64_t value) {

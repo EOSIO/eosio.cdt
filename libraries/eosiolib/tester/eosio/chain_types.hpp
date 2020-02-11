@@ -1,10 +1,15 @@
 #pragma once
 
-#include <abieos.hpp>
+#include <eosio/name.hpp>
 #include <eosio/stream.hpp>
 #include <eosio/from_bin.hpp>
 #include <eosio/to_bin.hpp>
 #include <eosio/reflection.hpp>
+#include <eosio/name.hpp>
+#include <eosio/crypto.hpp>
+#include <eosio/fixed_bytes.hpp>
+#include <eosio/time.hpp>
+#include <eosio/varint.hpp>
 
 #ifdef EOSIO_CDT_COMPILATION
 #   include <eosio/check.hpp>
@@ -62,34 +67,34 @@ inline transaction_status get_transaction_status(const std::string& s) {
 }
 
 struct permission_level {
-   abieos::name actor      = {};
-   abieos::name permission = {};
+   eosio::name actor      = {};
+   eosio::name permission = {};
 };
 
 EOSIO_REFLECT(permission_level, actor, permission);
 
 struct account_auth_sequence {
-   abieos::name account  = {};
-   uint64_t     sequence = {};
+   eosio::name account  = {};
+   uint64_t    sequence = {};
 };
 
 EOSIO_REFLECT(account_auth_sequence, account, sequence);
 
 struct account_delta {
-   abieos::name account = {};
+   eosio::name account = {};
    int64_t      delta   = {};
 };
 
 EOSIO_REFLECT(account_delta, account, delta);
 
 struct action_receipt_v0 {
-   abieos::name                       receiver        = {};
-   abieos::checksum256                act_digest      = {};
+   eosio::name                        receiver        = {};
+   eosio::checksum256                 act_digest      = {};
    uint64_t                           global_sequence = {};
    uint64_t                           recv_sequence   = {};
    std::vector<account_auth_sequence> auth_sequence   = {};
-   abieos::varuint32                  code_sequence   = {};
-   abieos::varuint32                  abi_sequence    = {};
+   eosio::varuint32                   code_sequence   = {};
+   eosio::varuint32                   abi_sequence    = {};
 };
 
 EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence, abi_sequence);
@@ -97,8 +102,8 @@ EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_seq
 using action_receipt = std::variant<action_receipt_v0>;
 
 struct action {
-   abieos::name                  account       = {};
-   abieos::name                  name          = {};
+   eosio::name                   account       = {};
+   eosio::name                   name          = {};
    std::vector<permission_level> authorization = {};
    eosio::input_stream           data          = {};
 };
@@ -106,10 +111,10 @@ struct action {
 EOSIO_REFLECT(action, account, name, authorization, data);
 
 struct action_trace_v0 {
-   abieos::varuint32             action_ordinal         = {};
-   abieos::varuint32             creator_action_ordinal = {};
+   eosio::varuint32              action_ordinal         = {};
+   eosio::varuint32              creator_action_ordinal = {};
    std::optional<action_receipt> receipt                = {};
-   abieos::name                  receiver               = {};
+   eosio::name                   receiver               = {};
    action                        act                    = {};
    bool                          context_free           = {};
    int64_t                       elapsed                = {};
@@ -125,14 +130,14 @@ EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, 
 using action_trace = std::variant<action_trace_v0>;
 
 struct partial_transaction_v0 {
-   abieos::time_point_sec            expiration             = {};
+   eosio::time_point_sec             expiration             = {};
    uint16_t                          ref_block_num          = {};
    uint32_t                          ref_block_prefix       = {};
-   abieos::varuint32                 max_net_usage_words    = {};
+   eosio::varuint32                  max_net_usage_words    = {};
    uint8_t                           max_cpu_usage_ms       = {};
-   abieos::varuint32                 delay_sec              = {};
+   eosio::varuint32                  delay_sec              = {};
    std::vector<extension>            transaction_extensions = {};
-   std::vector<abieos::signature>    signatures             = {};
+   std::vector<eosio::signature>     signatures             = {};
    std::vector<eosio::input_stream>  context_free_data      = {};
 };
 
@@ -145,10 +150,10 @@ struct transaction_trace_v0;
 using transaction_trace = std::variant<transaction_trace_v0>;
 
 struct transaction_trace_v0 {
-   abieos::checksum256                    id                  = {};
+   eosio::checksum256                     id                  = {};
    transaction_status                     status              = {};
    uint32_t                               cpu_usage_us        = {};
-   abieos::varuint32                      net_usage_words     = {};
+   eosio::varuint32                       net_usage_words     = {};
    int64_t                                elapsed             = {};
    uint64_t                               net_usage           = {};
    bool                                   scheduled           = {};
@@ -164,8 +169,8 @@ EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, elapsed, net_usage
               account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
 
 struct producer_key {
-   abieos::name       producer_name     = {};
-   abieos::public_key block_signing_key = {};
+   eosio::name       producer_name     = {};
+   eosio::public_key block_signing_key = {};
 };
 
 EOSIO_REFLECT(producer_key, producer_name, block_signing_key);
@@ -180,13 +185,13 @@ EOSIO_REFLECT(producer_schedule, version, producers);
 struct transaction_receipt_header {
    transaction_status status          = {};
    uint32_t           cpu_usage_us    = {};
-   abieos::varuint32  net_usage_words = {};
+   eosio::varuint32  net_usage_words = {};
 };
 
 EOSIO_REFLECT(transaction_receipt_header, status, cpu_usage_us, net_usage_words);
 
 struct packed_transaction {
-   std::vector<abieos::signature> signatures               = {};
+   std::vector<eosio::signature>  signatures               = {};
    uint8_t                        compression              = {};
    eosio::input_stream            packed_context_free_data = {};
    eosio::input_stream            packed_trx               = {};
@@ -194,7 +199,7 @@ struct packed_transaction {
 
 EOSIO_REFLECT(packed_transaction, signatures, compression, packed_context_free_data, packed_trx);
 
-using transaction_variant = std::variant<abieos::checksum256, packed_transaction>;
+using transaction_variant = std::variant<eosio::checksum256, packed_transaction>;
 
 struct transaction_receipt : transaction_receipt_header {
    transaction_variant trx = {};
@@ -203,12 +208,12 @@ struct transaction_receipt : transaction_receipt_header {
 EOSIO_REFLECT(transaction_receipt, base transaction_receipt_header, trx);
 
 struct block_header {
-   abieos::block_timestamp          timestamp         = {};
-   abieos::name                     producer          = {};
+   eosio::block_timestamp           timestamp;
+   eosio::name                      producer          = {};
    uint16_t                         confirmed         = {};
-   abieos::checksum256              previous          = {};
-   abieos::checksum256              transaction_mroot = {};
-   abieos::checksum256              action_mroot      = {};
+   eosio::checksum256               previous          = {};
+   eosio::checksum256               transaction_mroot = {};
+   eosio::checksum256               action_mroot      = {};
    uint32_t                         schedule_version  = {};
    std::optional<producer_schedule> new_producers     = {};
    std::vector<extension>           header_extensions = {};
@@ -220,7 +225,7 @@ EOSIO_REFLECT(block_header,
 )
 
 struct signed_block_header : block_header {
-   abieos::signature producer_signature = {};
+   eosio::signature producer_signature = {};
 };
 
 EOSIO_REFLECT(signed_block_header, base block_header, producer_signature);
@@ -234,8 +239,8 @@ EOSIO_REFLECT(signed_block, base signed_block_header, transactions, block_extens
 
 struct block_info {
    uint32_t                block_num = {};
-   abieos::checksum256     block_id  = {};
-   abieos::block_timestamp timestamp = {};
+   eosio::checksum256      block_id  = {};
+   eosio::block_timestamp  timestamp;
 };
 
 EOSIO_REFLECT(block_info, block_num, block_id, timestamp);

@@ -11,8 +11,8 @@
 #include <variant>   // std::variant
 #include <vector>    // std::vector
 
-#include "datastream.hpp" // eosio::datastream
-#include "varint.hpp"     // eosio::unsigned_int
+#include <eosio/datastream.hpp> // eosio::datastream
+#include <eosio/varint.hpp>     // eosio::unsigned_int
 
 namespace eosio {
 

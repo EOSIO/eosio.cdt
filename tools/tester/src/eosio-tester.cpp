@@ -1,5 +1,4 @@
 #include "../../../libraries/eosiolib/tester/eosio/chain_types.hpp"
-#include <abieos_exception.hpp>
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/controller.hpp>
@@ -13,7 +12,7 @@
 #include <fc/io/json.hpp>
 #include <stdio.h>
 
-using namespace abieos::literals;
+using namespace eosio::literals;
 using namespace std::literals;
 using eosio::chain::builtin_protocol_feature_t;
 using eosio::chain::digest_type;
@@ -207,10 +206,10 @@ struct test_chain {
    }
 };
 
-abieos::checksum256 convert(const eosio::chain::checksum_type& obj) {
-   abieos::checksum256 result;
+eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
+   eosio::checksum256 result;
    static_assert(sizeof(result) == sizeof(obj));
-   memcpy(&result, &obj, sizeof(result));
+   memcpy(result.data(), &obj, sizeof(result));
    return result;
 }
 
@@ -227,7 +226,7 @@ chain_types::action_receipt_v0 convert(const eosio::chain::action_receipt& obj) 
    result.act_digest      = convert(obj.act_digest);
    result.global_sequence = obj.global_sequence;
    result.recv_sequence   = obj.recv_sequence;
-   for (auto& auth : obj.auth_sequence) result.auth_sequence.push_back({ abieos::name{ to_uint64_t(auth.first) }, auth.second });
+   for (auto& auth : obj.auth_sequence) result.auth_sequence.push_back({ eosio::name{ to_uint64_t(auth.first) }, auth.second });
    result.code_sequence.value = obj.code_sequence.value;
    result.abi_sequence.value  = obj.abi_sequence.value;
    return result;
@@ -238,7 +237,7 @@ chain_types::action convert(const eosio::chain::action& obj) {
    result.account.value = to_uint64_t(obj.account);
    result.name.value    = to_uint64_t(obj.name);
    for (auto& auth : obj.authorization)
-      result.authorization.push_back({ abieos::name{ to_uint64_t(auth.actor) }, abieos::name{ to_uint64_t(auth.permission) } });
+      result.authorization.push_back({ eosio::name{ to_uint64_t(auth.actor) }, eosio::name{ to_uint64_t(auth.permission) } });
    result.data = { obj.data.data(), obj.data.data() + obj.data.size() };
    return result;
 }
@@ -268,7 +267,7 @@ chain_types::transaction_trace_v0 convert(const eosio::chain::transaction_trace&
    if (obj.receipt) {
       result.status          = (chain_types::transaction_status)obj.receipt->status.value;
       result.cpu_usage_us    = obj.receipt->cpu_usage_us;
-      result.net_usage_words = { obj.receipt->net_usage_words.value };
+      result.net_usage_words = obj.receipt->net_usage_words.value;
    } else {
       result.status = chain_types::transaction_status::hard_fail;
    }
@@ -290,12 +289,12 @@ chain_types::transaction_trace_v0 convert(const eosio::chain::transaction_trace&
 struct contract_row {
    uint32_t             block_num   = {};
    bool                 present     = {};
-   abieos::name         code        = {};
-   abieos::name         scope       = {};
-   abieos::name         table       = {};
+   eosio::name          code        = {};
+   eosio::name          scope       = {};
+   eosio::name          table       = {};
    uint64_t             primary_key = {};
-   abieos::name         payer       = {};
-   abieos::input_buffer value       = {};
+   eosio::name          payer       = {};
+   eosio::input_stream  value       = {};
 };
 
 EOSIO_REFLECT(contract_row, block_num, present, code, scope, table, primary_key, payer, value);
@@ -711,7 +710,7 @@ struct callbacks {
       auto& chain = assert_chain(chain_index);
       check_bounds(req_begin, req_end);
       eosio::input_stream query_bin{ req_begin, req_end };
-      abieos::name         query_name;
+      eosio::name         query_name;
       eosio::check_discard(from_bin(query_name, query_bin));
       if (query_name == "cr.ctsp"_n)
          return set_data(cb_alloc_data, cb_alloc, query_contract_row_range_code_table_scope_pk(chain, query_bin));
@@ -721,13 +720,13 @@ struct callbacks {
    std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, eosio::input_stream& query_bin) {
       using eosio::from_bin; // ADL required
       auto snapshot_block    = eosio::check(from_bin<uint32_t>(query_bin)).value();
-      auto first_code        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
-      auto first_table       = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
-      auto first_scope       = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto first_code        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
+      auto first_table       = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
+      auto first_scope       = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
       auto first_primary_key = eosio::check(from_bin<uint64_t>(query_bin)).value();
-      auto last_code         = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
-      auto last_table        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
-      auto last_scope        = eosio::chain::name{ eosio::check(from_bin<abieos::name>(query_bin)).value().value };
+      auto last_code         = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
+      auto last_table        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
+      auto last_scope        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
       auto last_primary_key  = eosio::check(from_bin<uint64_t>(query_bin)).value();
       auto max_results       = eosio::check(from_bin<uint32_t>(query_bin)).value();
 
@@ -754,11 +753,11 @@ struct callbacks {
             rows.emplace_back(eosio::check(eosio::convert_to_bin(
                   contract_row{ uint32_t(0),
                                 bool(true),
-                                abieos::name{ to_uint64_t(table_it->code) },
-                                abieos::name{ to_uint64_t(table_it->scope) },
-                                abieos::name{ to_uint64_t(table_it->table) },
+                                eosio::name{ to_uint64_t(table_it->code) },
+                                eosio::name{ to_uint64_t(table_it->scope) },
+                                eosio::name{ to_uint64_t(table_it->table) },
                                 kv_it->primary_key,
-                                abieos::name{ to_uint64_t(kv_it->payer) },
+                                eosio::name{ to_uint64_t(kv_it->payer) },
                                 { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } })).value());
          };
       }

@@ -171,60 +171,6 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( !name{""}.operator bool(), true )
    CHECK_EQUAL( !name{"1"}.operator bool(), false )
 
-   // ----------------------------------------
-   // char* write_as_string(char*, char*)const
-   static constexpr uint8_t buffer_size{32};
-   char buffer[buffer_size]{};
-
-   string str{"1"};
-   name{str}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "5"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "a"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "z"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-
-   name{str = "abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "123"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-
-   // Note:
-   // Any '.' characters at the end of a name are ignored
-   name{str = ".abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = ".........abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "123."}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp("123", buffer, 3), 0 )
-   name{str = "123........."}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp("123", buffer, 3), 0 )
-   name{str = ".a.b.c.1.2.3."}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(".a.b.c.1.2.3", buffer, 12), 0 )
-
-   name{str = "abc.123"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "123.abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-
-   name{str = "12345abcdefgj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "hijklmnopqrsj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "tuvwxyz.1234j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-
-   name{str = "111111111111j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "555555555555j"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "aaaaaaaaaaaaj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-   name{str = "zzzzzzzzzzzzj"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-
    // -----------------------
    // string to_string()const
    CHECK_EQUAL( name{"1"}.to_string(), "1" )
