@@ -215,10 +215,10 @@ int main(int argc, const char **argv) {
             new_opts.insert(new_opts.begin(), "-xc++");
 
          if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
-            //llvm::sys::fs::remove(tmp_file);
+            llvm::sys::fs::remove(tmp_file);
             return -1;
          }
-         //llvm::sys::fs::remove(tmp_file);
+         llvm::sys::fs::remove(tmp_file);
       }
    } catch (std::runtime_error& err) {
       llvm::errs() << err.what() << '\n';
