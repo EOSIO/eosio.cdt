@@ -22,11 +22,6 @@ BOOST_FIXTURE_TEST_CASE( capi_tests, tester ) try {
    create_accounts( { N(test) } );
    produce_block();
 
-   const auto& pfm = control->get_protocol_feature_manager();
-
-   auto d = pfm.get_builtin_digest(builtin_protocol_feature_t::action_return_value)
-   schedule_protocol_features( {*d} );
-
    set_code( N(test), contracts::capi_tests_wasm() );
    set_abi( N(test), contracts::capi_tests_abi().data() );
    produce_blocks();

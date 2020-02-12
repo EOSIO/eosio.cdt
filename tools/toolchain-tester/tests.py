@@ -103,6 +103,7 @@ class Test(ABC):
             else:
                 expected_abi_file = open(expected["abi-file"])
                 expected_abi = expected_abi_file.read()
+                expected_abi_file.close()
             with open(f"{self._name}.abi") as f:
                 actual_abi = f.read()
 

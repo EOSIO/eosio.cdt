@@ -72,7 +72,6 @@ eosio_tool_install_and_symlink(eosio-wasm2wast eosio-wasm2wast)
 eosio_tool_install_and_symlink(eosio-cc eosio-cc)
 eosio_tool_install_and_symlink(eosio-cpp eosio-cpp)
 eosio_tool_install_and_symlink(eosio-ld eosio-ld)
-eosio_tool_install_and_symlink(eosio-abigen eosio-abigen)
 eosio_tool_install_and_symlink(eosio-abidiff eosio-abidiff)
 eosio_tool_install_and_symlink(eosio-init eosio-init)
 
