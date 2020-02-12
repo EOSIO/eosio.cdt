@@ -292,7 +292,7 @@ extern "C" {
    capi_name current_receiver() {
       return intrinsics::get().call<intrinsics::current_receiver>();
    }
-   void set_action_return_value( char* rv, size_t len ) {
+   void set_action_return_value( void* rv, size_t len ) {
       intrinsics::get().call<intrinsics::set_action_return_value>(rv, len);
    }
    void require_recipient( capi_name name ) {

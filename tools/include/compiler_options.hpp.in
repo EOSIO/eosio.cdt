@@ -1,5 +1,6 @@
 #pragma once
 #include <eosio/utils.hpp>
+#include <eosio/abi.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <vector>
 #include <string>
@@ -19,6 +20,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<std::string> abi_version_opt(
+    "abi-version",
+    cl::desc("Which ABI version to generate"),
+    cl::cat(LD_CAT));
 static cl::opt<std::string> only_export_opt(
     "only-export",
     cl::desc("Export only this symbol"),
@@ -364,6 +369,7 @@ struct Options {
    std::vector<std::string> abigen_resources;
    bool debug;
    bool native;
+   std::pair<int, int> abi_version;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -867,9 +873,19 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #endif
 
+   /* TODO add some way of defaulting these to the current highest version */
+   int abi_version_major = 1;
+   int abi_version_minor = 2;
+
+   if (!abi_version_opt.empty()) {
+      abi_version_major = std::stoi(abi_version_opt);
+      float tmp         = std::stof(abi_version_opt);
+      abi_version_minor = ((tmp - (int)tmp)*10);
+   }
+
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #else
-   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #endif
 }

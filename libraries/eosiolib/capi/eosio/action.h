@@ -176,7 +176,7 @@ capi_name current_receiver( void );
  * @pre `return_value` is a valid pointer to an array at least `size` bytes long
  */
 __attribute__((eosio_wasm_import))
-void set_action_return_value(char *return_value, size_t size);
+void set_action_return_value(void *return_value, size_t size);
 
 #ifdef __cplusplus
 }
