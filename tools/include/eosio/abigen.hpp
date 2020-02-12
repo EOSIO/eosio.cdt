@@ -496,7 +496,7 @@ namespace eosio { namespace cdt {
             o["variants"].push_back(variant_to_json( v ));
          }
          o["abi_extensions"]     = ojson::array();
-         if (_abi.version_major == 1 && _abi.version_minor == 2) {
+         if (_abi.version_major == 1 && _abi.version_minor >= 2) {
             o["action_results"]  = ojson::array();
             for ( auto ar : _abi.action_results ) {
                o["action_results"].push_back(action_result_to_json( ar ));
