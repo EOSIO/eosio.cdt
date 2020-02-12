@@ -271,7 +271,7 @@ struct secondary_index_db_functions<TYPE> {\
    static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return internal_use_do_not_use::db_##IDX##_end( code, scope, table ); } \
    static int32_t db_idx_store( uint64_t scope, uint64_t table, uint64_t payer, uint64_t id, const TYPE& secondary ) {\
      auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
-     int32_t result = internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, arr.data(), arr.size() ); \
+     return internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, arr.data(), arr.size() ); \
    }\
    static void    db_idx_update( int32_t iterator, uint64_t payer, const TYPE& secondary ) {\
      auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
