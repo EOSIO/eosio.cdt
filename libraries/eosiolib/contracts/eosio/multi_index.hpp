@@ -262,7 +262,7 @@ struct secondary_index_db_functions<TYPE> {\
    }\
 };
 
-#define WRAP_SECONDARY_ARRAY_TYPE(IDX, TYPE)\
+#define WRAP_SECONDARY_ARRAY_TYPE(IDX, TYPE, ELEMTYPE)   \
 template<>\
 struct secondary_index_db_functions<TYPE> {\
    static int32_t db_idx_next( int32_t iterator, uint64_t* primary )          { return internal_use_do_not_use::db_##IDX##_next( iterator, primary ); } \
@@ -270,22 +270,34 @@ struct secondary_index_db_functions<TYPE> {\
    static void    db_idx_remove( int32_t iterator )                           { internal_use_do_not_use::db_##IDX##_remove( iterator ); } \
    static int32_t db_idx_end( uint64_t code, uint64_t scope, uint64_t table ) { return internal_use_do_not_use::db_##IDX##_end( code, scope, table ); } \
    static int32_t db_idx_store( uint64_t scope, uint64_t table, uint64_t payer, uint64_t id, const TYPE& secondary ) {\
-     return internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, secondary.data(), TYPE::num_words() ); \
+     auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
+     int32_t result = internal_use_do_not_use::db_##IDX##_store( scope, table, payer, id, arr.data(), arr.size() ); \
    }\
    static void    db_idx_update( int32_t iterator, uint64_t payer, const TYPE& secondary ) {\
-     internal_use_do_not_use::db_##IDX##_update( iterator, payer, secondary.data(), TYPE::num_words() ); \
+     auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
+     internal_use_do_not_use::db_##IDX##_update( iterator, payer, arr.data(), arr.size() ); \
    }\
    static int32_t db_idx_find_primary( uint64_t code, uint64_t scope, uint64_t table, uint64_t primary, TYPE& secondary ) {\
-     return internal_use_do_not_use::db_##IDX##_find_primary( code, scope, table, secondary.data(), TYPE::num_words(), primary ); \
+     decltype(secondary.extract_as_word_array<ELEMTYPE>()) arr; \
+     int32_t result = internal_use_do_not_use::db_##IDX##_find_primary( code, scope, table, arr.data(), arr.size(), primary ); \
+     secondary = TYPE(arr); \
+     return result; \
    }\
    static int32_t db_idx_find_secondary( uint64_t code, uint64_t scope, uint64_t table, const TYPE& secondary, uint64_t& primary ) {\
-     return internal_use_do_not_use::db_##IDX##_find_secondary( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
+     auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
+     return internal_use_do_not_use::db_##IDX##_find_secondary( code, scope, table, arr.data(), arr.size(), &primary ); \
    }\
    static int32_t db_idx_lowerbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-     return internal_use_do_not_use::db_##IDX##_lowerbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
+     auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
+     int32_t result = internal_use_do_not_use::db_##IDX##_lowerbound( code, scope, table, arr.data(), arr.size(), &primary ); \
+     secondary = TYPE(arr); \
+     return result; \
    }\
    static int32_t db_idx_upperbound( uint64_t code, uint64_t scope, uint64_t table, TYPE& secondary, uint64_t& primary ) {\
-     return internal_use_do_not_use::db_##IDX##_upperbound( code, scope, table, secondary.data(), TYPE::num_words(), &primary ); \
+     auto arr = secondary.extract_as_word_array<ELEMTYPE>(); \
+     int32_t result = internal_use_do_not_use::db_##IDX##_upperbound( code, scope, table, arr.data(), arr.size(), &primary ); \
+     secondary = TYPE(arr); \
+     return result; \
    }\
 };
 
@@ -324,7 +336,7 @@ namespace _multi_index_detail {
       static constexpr long double true_lowest() { return -std::numeric_limits<long double>::infinity(); }
    };
 
-   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>)
+   WRAP_SECONDARY_ARRAY_TYPE(idx256, eosio::fixed_bytes<32>, uint128_t)
    template<>
    struct secondary_key_traits<eosio::fixed_bytes<32>> {
       static constexpr eosio::fixed_bytes<32> true_lowest() { return eosio::fixed_bytes<32>(); }

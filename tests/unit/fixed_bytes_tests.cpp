@@ -10,7 +10,8 @@
 
 using std::array;
 
-using eosio::fixed_bytes;
+template<std::size_t N>
+using fixed_bytes = eosio::fixed_bytes<N, unsigned __int128>;
 
 // Definitions in `eosio.cdt/libraries/eosio/fixed_bytes.hpp`
 EOSIO_TEST_BEGIN(fixed_bytes_test)

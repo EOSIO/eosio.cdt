@@ -207,10 +207,10 @@ struct test_chain {
 };
 
 eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
-   eosio::checksum256 result;
-   static_assert(sizeof(result) == sizeof(obj));
-   memcpy(result.data(), &obj, sizeof(result));
-   return result;
+   std::array<uint8_t, 32> bytes;
+   static_assert(bytes.size() == sizeof(obj));
+   memcpy(bytes.data(), &obj, bytes.size());
+   return eosio::checksum256(bytes);
 }
 
 chain_types::account_delta convert(const eosio::chain::account_delta& obj) {
