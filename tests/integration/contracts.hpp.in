@@ -1,23 +1,16 @@
 #pragma once
-#include <eosio/testing/tester.hpp>
 
 namespace eosio { namespace testing {
 
 struct contracts {
-   static std::vector<uint8_t> malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.wasm"); }
-   static std::vector<char>    malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.abi"); }
-   static std::vector<uint8_t> old_malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"); }
-   static std::vector<char>    old_malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.abi"); }
+   static const char* malloc_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.wasm"; }
+   static const char* old_malloc_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"; }
 
-   static std::vector<uint8_t> simple_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.wasm"); }
-   static std::vector<char>    simple_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.abi"); }
-   static std::vector<char>    simple_wrong_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_wrong.abi"); }
+   static const char* simple_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.wasm"; }
 
-   static std::vector<uint8_t> transfer_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"); }
-   static std::vector<char>    transfer_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.abi"); }
+   static const char* transfer_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"; }
 
-   static std::vector<uint8_t> capi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.wasm"); }
-   static std::vector<char>    capi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.abi"); }
+   static const char* capi_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.wasm"; }
 
 };
  
