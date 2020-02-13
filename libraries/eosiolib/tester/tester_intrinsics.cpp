@@ -30,6 +30,54 @@ extern "C" void printi(int64_t value) {
       printui(value);
 }
 
+extern "C" {
+   struct __attribute__((aligned (16))) capi_checksum160 { uint8_t hash[20]; };
+   struct __attribute__((aligned (16))) capi_checksum256 { uint8_t hash[32]; };
+   struct __attribute__((aligned (16))) capi_checksum512 { uint8_t hash[64]; };
+
+   int recover_key( capi_checksum256* digest, const char* sig, uint32_t sig_len, char* pub, uint32_t pub_len) {
+      eosio::check(false, "recover_key is not available");
+      [[unreachable]];
+   }
+   int assert_recover_key( capi_checksum256* digest, const char* sig, uint32_t sig_len, const char* pub, uint32_t pub_len) {
+      eosio::check(false, "assert_recover_key is not available");
+      [[unreachable]];
+   }
+
+   __attribute__((eosio_wasm_import))
+   void sha256( const char* data, uint32_t length, capi_checksum256* hash );
+
+   __attribute__((eosio_wasm_import))
+   void sha1( const char* data, uint32_t length, capi_checksum160* hash );
+
+   __attribute__((eosio_wasm_import))
+   void sha512( const char* data, uint32_t length, capi_checksum512* hash );
+
+   __attribute__((eosio_wasm_import))
+   void ripemd160( const char* data, uint32_t length, capi_checksum160* hash );
+
+   void assert_sha1(const char* data, uint32_t len, const capi_checksum160* expected) {
+      capi_checksum160 actual;
+      sha1(data, len, &actual);
+      eosio::check(memcmp(actual.hash, expected->hash, sizeof(actual.hash)) == 0, "hash mismatch");
+   }
+   void assert_sha256(const char* data, uint32_t len, const capi_checksum256* expected) {
+      capi_checksum256 actual;
+      sha256(data, len, &actual);
+      eosio::check(memcmp(actual.hash, expected->hash, sizeof(actual.hash)) == 0, "hash mismatch");
+   }
+   void assert_sha512(const char* data, uint32_t len, const capi_checksum512* expected) {
+      capi_checksum512 actual;
+      sha512(data, len, &actual);
+      eosio::check(memcmp(actual.hash, expected->hash, sizeof(actual.hash)) == 0, "hash mismatch");
+   }
+   void assert_ripemd160(const char* data, uint32_t len, const capi_checksum160* expected) {
+      capi_checksum160 actual;
+      ripemd160(data, len, &actual);
+      eosio::check(memcmp(actual.hash, expected->hash, sizeof(actual.hash)) == 0, "hash mismatch");
+   }
+}
+
 namespace eosio {
 void print(std::string_view sv) { print_range(sv.data(), sv.data() + sv.size()); }
 

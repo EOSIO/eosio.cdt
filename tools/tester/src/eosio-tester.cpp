@@ -10,6 +10,10 @@
 #include <eosio/eosio_outcome.hpp>
 #include <fc/exception/exception.hpp>
 #include <fc/io/json.hpp>
+#include <fc/crypto/sha1.hpp>
+#include <fc/crypto/sha256.hpp>
+#include <fc/crypto/sha512.hpp>
+#include <fc/crypto/ripemd160.hpp>
 #include <stdio.h>
 
 using namespace eosio::literals;
@@ -791,6 +795,34 @@ struct callbacks {
     DB_WRAPPERS_FLOAT_SECONDARY(idx_double, float64_t)
     DB_WRAPPERS_FLOAT_SECONDARY(idx_long_double, float128_t)
    // clang-format on
+
+    void sha1(const char* data, uint32_t datalen, void* hash_val) {
+      check_bounds(data, data + datalen);
+      auto hash = fc::sha1::hash( data, datalen );
+      check_bounds((char*)hash_val, (char*)hash_val + hash.data_size());
+      std::memcpy(hash_val, hash.data(), hash.data_size());
+    }
+
+    void sha256(const char* data, uint32_t datalen, void* hash_val) {
+      check_bounds(data, data + datalen);
+      auto hash = fc::sha256::hash( data, datalen );
+      check_bounds((char*)hash_val, (char*)hash_val + hash.data_size());
+      std::memcpy(hash_val, hash.data(), hash.data_size());
+    }
+
+    void sha512(const char* data, uint32_t datalen, void* hash_val) {
+      check_bounds(data, data + datalen);
+      auto hash = fc::sha512::hash( data, datalen );
+      check_bounds((char*)hash_val, (char*)hash_val + hash.data_size());
+      std::memcpy(hash_val, hash.data(), hash.data_size());
+    }
+
+    void ripemd160(const char* data, uint32_t datalen, void* hash_val) {
+      check_bounds(data, data + datalen);
+      auto hash = fc::ripemd160::hash( data, datalen );
+      check_bounds((char*)hash_val, (char*)hash_val + hash.data_size());
+      std::memcpy(hash_val, hash.data(), hash.data_size());
+    }
 }; // callbacks
 
 #define DB_REGISTER_SECONDARY(IDX)                                                                                     \
@@ -842,6 +874,10 @@ void register_callbacks() {
    // DB_REGISTER_SECONDARY(idx256)
    DB_REGISTER_SECONDARY(idx_double)
    DB_REGISTER_SECONDARY(idx_long_double)
+   rhf_t::add<callbacks, &callbacks::sha1, eosio::vm::wasm_allocator>("env", "sha1");
+   rhf_t::add<callbacks, &callbacks::sha256, eosio::vm::wasm_allocator>("env", "sha256");
+   rhf_t::add<callbacks, &callbacks::sha512, eosio::vm::wasm_allocator>("env", "sha512");
+   rhf_t::add<callbacks, &callbacks::ripemd160, eosio::vm::wasm_allocator>("env", "ripemd160");
 }
 
 static void run(const char* wasm, const std::vector<std::string>& args) {
