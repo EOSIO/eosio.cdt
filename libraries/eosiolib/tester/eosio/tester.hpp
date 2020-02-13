@@ -297,6 +297,10 @@ inline std::ostream& operator<<(std::ostream& os, const block_timestamp& obj) {
    return os << obj.slot;
 }
 
+inline std::ostream& operator<<(std::ostream& os, const name& obj) {
+   return os << obj.to_string();
+}
+
 /**
  * Manages a chain.
  * Only one test_chain can exist at a time.
@@ -564,3 +568,19 @@ class test_chain {
 };
 
 } // namespace eosio
+
+namespace chain_types {
+
+inline std::ostream& operator<<(std::ostream& os, transaction_status t) {
+   return os << to_string(t);
+}
+
+inline std::ostream& operator<<(std::ostream& os, const account_auth_sequence& aas) {
+   return os << eosio::check(eosio::convert_to_json(aas)).value();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const account_delta& ad) {
+   return os << eosio::check(eosio::convert_to_json(ad)).value();
+}
+
+}

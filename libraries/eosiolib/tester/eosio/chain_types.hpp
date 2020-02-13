@@ -79,6 +79,7 @@ struct account_auth_sequence {
 };
 
 EOSIO_REFLECT(account_auth_sequence, account, sequence);
+EOSIO_COMPARE(account_auth_sequence);
 
 struct account_delta {
    eosio::name account = {};
@@ -86,6 +87,7 @@ struct account_delta {
 };
 
 EOSIO_REFLECT(account_delta, account, delta);
+EOSIO_COMPARE(account_delta);
 
 struct action_receipt_v0 {
    eosio::name                        receiver        = {};
@@ -165,7 +167,7 @@ struct transaction_trace_v0 {
    std::optional<partial_transaction>     reserved_do_not_use = {};
 };
 
-EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, elapsed, net_usage_words, scheduled, action_traces,
+EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, net_usage_words, elapsed, net_usage, scheduled, action_traces,
               account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
 
 struct producer_key {

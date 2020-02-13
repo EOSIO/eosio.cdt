@@ -65,6 +65,50 @@ BOOST_FIXTURE_TEST_CASE(start_block_skip, eosio::test_chain) {
    transact({empty});
    start_block(1500);
    transact({empty});
+   // Verify that we can apply a transaction immediately after a large skip
    start_block(1000000);
    transact({empty});
+}
+
+template<typename T>
+eosio::checksum256 sha256(const T& t) {
+   auto packed = eosio::pack(t);
+   return eosio::sha256(packed.data(), packed.size());
+}
+
+BOOST_FIXTURE_TEST_CASE(transaction_trace, eosio::test_chain) {
+   eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
+   eosio::transaction t = make_transaction( { empty } );
+   auto trace = push_transaction( t );
+   BOOST_TEST(trace.id == sha256(t));
+   BOOST_TEST(trace.status == eosio::transaction_status::executed);
+   BOOST_TEST(trace.cpu_usage_us == 2000); // The tester always bills 2 ms per transaction.
+   BOOST_TEST(trace.net_usage_words == 12); // default minimum net usage
+   BOOST_TEST(trace.elapsed > 0); // Variable
+   BOOST_TEST(trace.net_usage == 96); // net_usage_words*8
+   BOOST_TEST(trace.scheduled == false);
+
+   // action_trace
+   BOOST_TEST(trace.action_traces.size() == 1);
+   BOOST_TEST(trace.action_traces[0].action_ordinal == 1);
+   BOOST_TEST(trace.action_traces[0].creator_action_ordinal == 0);
+   BOOST_TEST(trace.action_traces[0].receipt->receiver == "eosio"_n);
+   BOOST_TEST(trace.action_traces[0].receipt->act_digest == sha256(empty));
+   BOOST_TEST(trace.action_traces[0].receipt->global_sequence == 2);
+   BOOST_TEST(trace.action_traces[0].receipt->recv_sequence == 2);
+   BOOST_TEST(trace.action_traces[0].receipt->auth_sequence == (std::vector<eosio::account_auth_sequence>{ { "eosio"_n, 2 } }), boost::test_tools::per_element());
+   BOOST_TEST(trace.action_traces[0].receipt->code_sequence == 0);
+   BOOST_TEST(trace.action_traces[0].receipt->abi_sequence == 0);
+   BOOST_TEST(trace.action_traces[0].receiver == "eosio"_n);
+   BOOST_TEST(trace.action_traces[0].context_free == false);
+   BOOST_TEST(trace.action_traces[0].elapsed > 0);
+   BOOST_TEST(trace.action_traces[0].console == "");
+   BOOST_TEST(trace.action_traces[0].account_ram_deltas == std::vector<eosio::account_delta>{}, boost::test_tools::per_element());
+   BOOST_TEST(!trace.action_traces[0].except);
+   BOOST_TEST(!trace.action_traces[0].error_code);
+
+   BOOST_TEST(!trace.account_ram_delta);
+   BOOST_TEST(!trace.except);
+   BOOST_TEST(!trace.error_code);
+   BOOST_TEST(trace.failed_dtrx_trace.size() == 0);
 }
