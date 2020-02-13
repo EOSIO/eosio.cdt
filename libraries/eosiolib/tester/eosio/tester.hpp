@@ -147,12 +147,6 @@ inline int32_t execute(std::string_view command) {
    return internal_use_do_not_use::execute(command.data(), command.data() + command.size());
 }
 
-  template<typename T>
-  T get(result<T>&& obj) {
-    if(!obj) check(false, obj.error().message());
-    return std::move(obj.value());
-  }
-
 inline asset string_to_asset(const char* s) {
    return check(eosio::convert_from_string<asset>(s)).value();
 }
@@ -163,17 +157,17 @@ inline asset  s2a(const char* s) { return string_to_asset(s); }
 struct tester_permission_level_weight {
    permission_level permission = {};
    uint16_t         weight     = {};
-
-   EOSLIB_SERIALIZE(tester_permission_level_weight, (permission)(weight))
 };
+
+EOSIO_REFLECT(tester_permission_level_weight, permission, weight);
 
 // TODO: move
 struct tester_wait_weight {
    uint32_t wait_sec = {};
    uint16_t weight   = {};
-
-   EOSLIB_SERIALIZE(tester_wait_weight, (wait_sec)(weight))
 };
+
+EOSIO_REFLECT(tester_wait_weight, wait_sec, weight);
 
 // TODO: move
 struct tester_authority {
@@ -181,9 +175,9 @@ struct tester_authority {
    std::vector<key_weight>                     keys      = {};
    std::vector<tester_permission_level_weight> accounts  = {};
    std::vector<tester_wait_weight>             waits     = {};
-
-   EOSLIB_SERIALIZE(tester_authority, (threshold)(keys)(accounts)(waits))
 };
+
+EOSIO_REFLECT(tester_authority, threshold, keys, accounts, waits);
 
 using chain_types::transaction_status;
 
