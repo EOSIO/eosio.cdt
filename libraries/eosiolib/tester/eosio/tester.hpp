@@ -4,6 +4,7 @@
 #include <eosio/asset.hpp>
 #include <eosio/chain_types.hpp>
 #include <eosio/crypto.hpp>
+#include <eosio/producer_schedule.hpp>
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
 #include <eosio/transaction.hpp>
@@ -159,14 +160,6 @@ inline asset string_to_asset(const char* s) {
 inline asset  s2a(const char* s) { return string_to_asset(s); }
 
 // TODO: move
-struct tester_key_weight {
-   eosio::public_key key    = {};
-   uint16_t          weight = {};
-
-   EOSLIB_SERIALIZE(tester_key_weight, (key)(weight))
-};
-
-// TODO: move
 struct tester_permission_level_weight {
    permission_level permission = {};
    uint16_t         weight     = {};
@@ -185,7 +178,7 @@ struct tester_wait_weight {
 // TODO: move
 struct tester_authority {
    uint32_t                                    threshold = {};
-   std::vector<tester_key_weight>              keys      = {};
+   std::vector<key_weight>                     keys      = {};
    std::vector<tester_permission_level_weight> accounts  = {};
    std::vector<tester_wait_weight>             waits     = {};
 
