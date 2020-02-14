@@ -61,7 +61,7 @@ namespace eosio {
         const microseconds& time_since_epoch()const { return elapsed; }
         uint32_t            sec_since_epoch()const  { return uint32_t(elapsed.count() / 1000000); }
 
-        static time_point from_iso_string(std::string date_str) {
+        static time_point from_iso_string(const std::string& date_str) {
            std::tm tm;
            check(strptime(date_str.c_str(), "%Y-%m-%dT%H:%M:%S", &tm), "date parsing failed");
 
@@ -118,7 +118,7 @@ namespace eosio {
         static time_point_sec maximum() { return time_point_sec(0xffffffff); }
         static time_point_sec min() { return time_point_sec(0); }
 
-        static time_point_sec from_iso_string(std::string date_str) {
+        static time_point_sec from_iso_string(const std::string& date_str) {
            auto time_p = time_point::from_iso_string(date_str);
            return time_point_sec{ time_p };
         }
@@ -201,7 +201,7 @@ namespace eosio {
             return time_point(milliseconds(msec));
          }
 
-         static block_timestamp from_iso_string(std::string date_str) {
+         static block_timestamp from_iso_string(const std::string& date_str) {
             auto time_p = time_point::from_iso_string(date_str);
             return block_timestamp{ time_p };
          }
