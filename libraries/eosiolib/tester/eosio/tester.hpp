@@ -13,22 +13,11 @@
 
 #include <fmt/format.h>
 
-#define TESTER_INTRINSIC extern "C" __attribute__((eosio_wasm_import))
-
 namespace eosio {
 namespace internal_use_do_not_use {
 
-   TESTER_INTRINSIC void     query_database_chain(uint32_t chain, void* req_begin, void* req_end, void* cb_alloc_data,
-                                                  void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-
-   template <typename T, typename Alloc_fn>
-   inline void query_database_chain(uint32_t chain, const T& req, Alloc_fn alloc_fn) {
-      auto req_data = pack(req);
-      query_database_chain(chain, req_data.data(), req_data.data() + req_data.size(), &alloc_fn,
-                           [](void* cb_alloc_data, size_t size) -> void* {
-                              return (*reinterpret_cast<Alloc_fn*>(cb_alloc_data))(size);
-                           });
-   }
+   std::vector<char> query_database_chain(uint32_t chain, const std::vector<char>& packed_req);
+   void hex(const uint8_t* begin, const uint8_t* end, std::ostream& os);
 
 } // namespace internal_use_do_not_use
 
@@ -105,25 +94,10 @@ using chain_types::block_info;
  */
 void expect(const transaction_trace& tt, const char* expected_except = nullptr);
 
-template <typename SrcIt, typename DestIt>
-void hex(SrcIt begin, SrcIt end, DestIt dest) {
-    auto nibble = [&dest](uint8_t i) {
-        if (i <= 9)
-            *dest++ = '0' + i;
-        else
-            *dest++ = 'A' + i - 10;
-    };
-    while (begin != end) {
-        nibble(((uint8_t)*begin) >> 4);
-        nibble(((uint8_t)*begin) & 0xf);
-        ++begin;
-    }
-}
-
 template<std::size_t Size>
 std::ostream& operator<<(std::ostream& os, const fixed_bytes<Size>& d) {
    auto arr = d.extract_as_byte_array();
-   hex(arr.begin(), arr.end(), std::ostreambuf_iterator<char>(os.rdbuf()));
+   internal_use_do_not_use::hex(arr.begin(), arr.end(), os);
    return os;
 }
 
@@ -246,13 +220,8 @@ class test_chain {
                                         const char* expected_except = nullptr);
 
    template <typename T>
-   inline std::vector<char> query_database(const T& request) {
-      std::vector<char> result;
-      internal_use_do_not_use::query_database_chain(id, request, [&result](size_t size) {
-         result.resize(size);
-         return result.data();
-      });
-      return result;
+   std::vector<char> query_database(const T& request) {
+      return internal_use_do_not_use::query_database_chain(id, pack(request));
    }
 };
 

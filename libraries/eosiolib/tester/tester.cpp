@@ -26,7 +26,7 @@ namespace {
                                               void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC bool     exec_deferred(uint32_t chain, void* cb_alloc_data,
                                            void* (*cb_alloc)(void* cb_alloc_data, size_t size));
-   TESTER_INTRINSIC void     query_database_chain(uint32_t chain, void* req_begin, void* req_end, void* cb_alloc_data,
+   TESTER_INTRINSIC void     query_database_chain(uint32_t chain, const void* req_begin, const void* req_end, void* cb_alloc_data,
                                                   void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     select_chain_for_db(uint32_t chain_index);
 
@@ -86,6 +86,17 @@ namespace {
    }
 
 } // namespace
+
+std::vector<char> eosio::internal_use_do_not_use::query_database_chain(uint32_t chain, const std::vector<char>& req_data) {
+   std::vector<char> result;
+   ::query_database_chain(chain, req_data.data(), req_data.data() + req_data.size(), &result,
+                          [](void* cb_alloc_data, size_t size) -> void* {
+                             auto& result = *static_cast<std::vector<char>*>(cb_alloc_data);
+                             result.resize(size);
+                             return result.data();
+                          });
+   return result;
+}
 
 const std::vector<std::string>& eosio::get_args() {
    static std::optional<std::vector<std::string>> args;
@@ -166,6 +177,21 @@ void eosio::expect(const transaction_trace& tt, const char* expected_except) {
          eosio::print(*tt.except, "\n");
       eosio::check(false, "transaction has status " + to_string(tt.status));
    }
+}
+
+void eosio::internal_use_do_not_use::hex(const uint8_t* begin, const uint8_t* end, std::ostream& os) {
+    std::ostreambuf_iterator<char> dest(os.rdbuf());
+    auto nibble = [&dest](uint8_t i) {
+        if (i <= 9)
+            *dest++ = '0' + i;
+        else
+            *dest++ = 'A' + i - 10;
+    };
+    while (begin != end) {
+        nibble(((uint8_t)*begin) >> 4);
+        nibble(((uint8_t)*begin) & 0xf);
+        ++begin;
+    }
 }
 
 std::ostream& eosio::operator<<(std::ostream& os, const block_timestamp& obj) {
