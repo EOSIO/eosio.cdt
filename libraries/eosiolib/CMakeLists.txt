@@ -19,6 +19,7 @@ add_library(eosio_cmem
             ${HEADERS})
 
 add_library(eosio_tester
+            tester/tester.cpp
             tester/tester_intrinsics.cpp
             tester/fpconv.c
             ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp

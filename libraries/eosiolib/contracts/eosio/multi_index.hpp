@@ -4,10 +4,10 @@
  */
 #pragma once
 
-#include "../../contracts/eosio/action.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/serialize.hpp"
-#include "../../core/eosio/fixed_bytes.hpp"
+#include <eosio/action.hpp>
+#include <eosio/name.hpp>
+#include <eosio/serialize.hpp>
+#include <eosio/fixed_bytes.hpp>
 
 #include <vector>
 #include <tuple>
