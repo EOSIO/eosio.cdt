@@ -176,6 +176,9 @@ std::ostream& eosio::operator<<(std::ostream& os, const name& obj) {
    return os << obj.to_string();
 }
 
+const eosio::public_key  eosio::test_chain::default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV").value();
+const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3").value();
+
 eosio::test_chain::test_chain() : id{ ::create_chain() } {}
 eosio::test_chain::~test_chain() { ::destroy_chain(id); }
 
@@ -214,12 +217,6 @@ void eosio::test_chain::fill_tapos(transaction& t, uint32_t expire_sec) {
    memcpy(&t.ref_block_prefix, info.block_id.extract_as_byte_array().data() + 8, sizeof(t.ref_block_prefix));
 }
 
-eosio::transaction eosio::test_chain::make_transaction() {
-   transaction t{ time_point_sec{} };
-   fill_tapos(t);
-   return t;
-}
-
 eosio::transaction eosio::test_chain::make_transaction(std::vector<action>&& actions) {
    transaction t{ time_point_sec{} };
    fill_tapos(t);
@@ -244,11 +241,6 @@ eosio::transaction_trace eosio::test_chain::push_transaction(const transaction& 
       return bin.data();
    });
    return check(convert_from_bin<transaction_trace>(bin)).value();
-}
-
-[[nodiscard]]
-eosio::transaction_trace eosio::test_chain::push_transaction(const transaction& trx) {
-   return push_transaction(trx, { default_priv_key });
 }
 
 eosio::transaction_trace eosio::test_chain::transact(std::vector<action>&& actions, const std::vector<private_key>& keys,

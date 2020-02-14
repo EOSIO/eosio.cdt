@@ -141,8 +141,8 @@ class test_chain {
    std::optional<block_info>              head_block_info;
 
  public:
-   public_key  default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV").value();
-   private_key default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3").value();
+   static const public_key  default_pub_key;
+   static const private_key default_priv_key;
 
    test_chain();
    test_chain(const test_chain&) = delete;
@@ -166,21 +166,24 @@ class test_chain {
 
    const block_info& get_head_block_info();
 
+   /*
+    * Set the reference block of the transaction to the head block.
+    */
    void fill_tapos(transaction& t, uint32_t expire_sec = 1);
 
-   transaction make_transaction();
-   transaction make_transaction(std::vector<action>&& actions);
+   /*
+    * Creates a transaction.
+    */
+   transaction make_transaction(std::vector<action>&& actions = {});
 
    /**
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
     */
    [[nodiscard]]
-   transaction_trace push_transaction(const transaction& trx, const std::vector<private_key>& keys,
+   transaction_trace push_transaction(const transaction& trx,
+                                      const std::vector<private_key>& keys = { default_priv_key },
                                       const std::vector<std::vector<char>>& context_free_data = {},
                                       const std::vector<signature>& signatures        = {});
-
-   [[nodiscard]]
-   transaction_trace push_transaction(const transaction& trx);
 
    /**
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
@@ -189,7 +192,6 @@ class test_chain {
     */
    transaction_trace transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
                               const char* expected_except = nullptr);
-
    transaction_trace transact(std::vector<action>&& actions, const char* expected_except = nullptr);
 
    /**
@@ -204,7 +206,6 @@ class test_chain {
 
    transaction_trace create_account(name ac, const public_key& pub_key,
                                     const char* expected_except = nullptr);
-
    transaction_trace create_account(name ac, const char* expected_except = nullptr);
 
    /**
