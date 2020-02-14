@@ -112,3 +112,8 @@ BOOST_FIXTURE_TEST_CASE(transaction_trace, eosio::test_chain) {
    BOOST_TEST(!trace.error_code);
    BOOST_TEST(trace.failed_dtrx_trace.size() == 0);
 }
+
+BOOST_FIXTURE_TEST_CASE(send, eosio::test_chain) {
+   eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
+   empty.send();
+}

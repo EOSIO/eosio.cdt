@@ -179,8 +179,13 @@ std::ostream& eosio::operator<<(std::ostream& os, const name& obj) {
 const eosio::public_key  eosio::test_chain::default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV").value();
 const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3").value();
 
-eosio::test_chain::test_chain() : id{ ::create_chain() } {}
-eosio::test_chain::~test_chain() { ::destroy_chain(id); }
+// We only allow one chain to exist at a time in the tester.
+// If we ever find that we need multiple chains, this will
+// need to be kept in sync with whatever updates the native layer.
+static eosio::test_chain* current_chain = nullptr;
+
+eosio::test_chain::test_chain() : id{ ::create_chain() } { current_chain = this; }
+eosio::test_chain::~test_chain() { current_chain = nullptr; ::destroy_chain(id); }
 
 void eosio::test_chain::start_block(int64_t skip_miliseconds) {
    head_block_info.reset();
@@ -374,4 +379,11 @@ std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_seque
 
 std::ostream& chain_types::operator<<(std::ostream& os, const account_delta& ad) {
    return os << eosio::check(eosio::convert_to_json(ad)).value();
+}
+
+extern "C" {
+   void send_inline(char *serialized_action, size_t size) {
+      eosio::check(current_chain != nullptr, "Cannot send an action without a blockchain");
+      current_chain->transact({ eosio::unpack<eosio::action>(serialized_action, size) });
+   }
 }
