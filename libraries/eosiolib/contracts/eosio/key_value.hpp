@@ -895,6 +895,7 @@ private:
       datastream<const char*> ds((char*)buffer, size);
 
       ds >> idx;
+      eosio::check(idx==unsigned_int(0), "there was an error deserializing this value.");
       ds >> value;
    }
 
@@ -911,8 +912,8 @@ private:
    }
 
    template <typename... Vs>
-   static size_t get_size(std::variant<Vs...>&& value) {
-      auto size = pack_size(std::forward<std::variant<Vs...>>(value));
+   static size_t get_size(const std::variant<Vs...>& value) {
+      auto size = pack_size(value);
       return size;
    }
 };
