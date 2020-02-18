@@ -28,7 +28,7 @@
 #define EOSIO_CDT_KV_FIX_INDEX_NAME_1(index_name, i) index_name ## i
 #define EOSIO_CDT_KV_FIX_INDEX_NAME(x, i) EOSIO_CDT_KV_FIX_INDEX_NAME_ ## x
 
-#define EOSIO_CDT_KV_FIX_INDEX_TYPE_0(index_name) kv_index
+#define EOSIO_CDT_KV_FIX_INDEX_TYPE_0(index_name) kv_non_unique_index
 #define EOSIO_CDT_KV_FIX_INDEX_TYPE_1(index_name) null_kv_index
 #define EOSIO_CDT_KV_FIX_INDEX_TYPE(iskeyword, garbage) EOSIO_CDT_KV_FIX_INDEX_TYPE_ ## iskeyword
 
