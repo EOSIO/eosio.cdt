@@ -906,8 +906,8 @@ private:
    }
 
    template <typename V>
-   static size_t get_size(V&& value) {
-      auto size = pack_size(std::forward<V>(value));
+   static size_t get_size(const V& value) {
+      auto size = pack_size(value);
       return size + 1;
    }
 
