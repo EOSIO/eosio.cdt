@@ -18,6 +18,7 @@
 #include <string>
 #include <optional>
 #include <variant>
+#include <experimental/type_traits>
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -303,6 +304,24 @@ namespace _datastream_detail {
    struct is_datastream { static constexpr bool value = false; };
    template<typename T>
    struct is_datastream<datastream<T>> { static constexpr bool value = true; };
+
+   namespace operator_detection {
+      // These overloads will be ambiguous with the operator in eosio, unless
+      // the user has provided an operator that is a better match.
+      template<typename DataStream, typename T, std::enable_if_t<_datastream_detail::is_datastream<DataStream>::value>* = nullptr>
+      DataStream& operator>>( DataStream& ds, T& v );
+      template<typename DataStream, typename T, std::enable_if_t<_datastream_detail::is_datastream<DataStream>::value>* = nullptr>
+      DataStream& operator<<( DataStream& ds, const T& v );
+      template<typename DataStream, typename T>
+      using require_specialized_right_shift = std::void_t<decltype(std::declval<DataStream&>() >> std::declval<T&>())>;
+      template<typename DataStream, typename T>
+      using require_specialized_left_shift = std::void_t<decltype(std::declval<DataStream&>() << std::declval<const T&>())>;
+   }
+   // Going through enable_if/is_detected is necessary for reasons that I don't entirely understand.
+   template<typename DataStream, typename T>
+   using require_specialized_right_shift = std::enable_if_t<std::experimental::is_detected_v<operator_detection::require_specialized_right_shift, DataStream, T>>;
+   template<typename DataStream, typename T>
+   using require_specialized_left_shift = std::enable_if_t<std::experimental::is_detected_v<operator_detection::require_specialized_left_shift, DataStream, T>>;
 }
 
 /**
@@ -321,6 +340,13 @@ DataStream& operator<<( DataStream& ds, const T& v ) {
    return ds;
 }
 
+// Backwards compatibility: allow user defined datastream operators to work with from_bin
+template<typename DataStream, typename T, _datastream_detail::require_specialized_left_shift<datastream<DataStream>,T>* = nullptr>
+result<void> to_bin( const T& v, datastream<DataStream>& ds ) {
+   ds << v;
+   return outcome::success();
+}
+
 /**
  *  Deserialize a class
  *
@@ -335,6 +361,12 @@ template<typename DataStream, typename T, std::enable_if_t<_datastream_detail::i
 DataStream& operator>>( DataStream& ds, T& v ) {
    check_discard(from_bin(v, ds));
    return ds;
+}
+
+template<typename DataStream, typename T, _datastream_detail::require_specialized_right_shift<datastream<DataStream>,T>* = nullptr>
+result<void> from_bin( T& v, datastream<DataStream>& ds ) {
+   ds >> v;
+   return outcome::success();
 }
 
 /**
