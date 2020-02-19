@@ -87,6 +87,16 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
     push_action(N(kvtest), N(erase), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(single_tests_variant, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_single_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_single_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(vriant), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 // Multi
 // -----
 BOOST_FIXTURE_TEST_CASE(multi_tests_idx, tester) try {
