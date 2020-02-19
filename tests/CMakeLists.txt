@@ -47,6 +47,13 @@ if (EOSIO_RUN_INTEGRATION_TESTS)
    set_property(TEST integration_tests PROPERTY LABELS integration_tests)
 endif()
 
+add_test(
+   NAME tester_tests
+   COMMAND ${CMAKE_BINARY_DIR}/bin/eosio-tester ${CMAKE_BINARY_DIR}/tests/tester/tester.wasm
+   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/tests/tester
+   )
+set_property(TEST tester_tests PROPERTY LABELS tester_tests)
+
 ExternalProject_Add(
    TesterTests
    SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/tester"

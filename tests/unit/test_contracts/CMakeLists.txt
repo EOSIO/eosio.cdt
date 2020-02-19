@@ -3,6 +3,7 @@ add_contract(malloc_tests old_malloc_tests malloc_tests.cpp)
 add_contract(simple_tests simple_tests simple_tests.cpp)
 add_contract(transfer_contract transfer_contract transfer.cpp)
 add_contract(minimal_tests minimal_tests minimal_tests.cpp)
+add_contract(tester_tests tester_tests tester_tests.cpp)
 add_contract(capi_tests capi_tests capi/capi.c capi/action.c capi/chain.c capi/crypto.c capi/db.c capi/permission.c
                                    capi/print.c capi/privileged.c capi/system.c capi/transaction.c)
 

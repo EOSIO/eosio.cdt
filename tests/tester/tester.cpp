@@ -1,5 +1,6 @@
 #include <eosio/tester.hpp>
 #include <string_view>
+#include "../unit/test_contracts/tester_tests.hpp"
 
 #define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
@@ -116,4 +117,18 @@ BOOST_FIXTURE_TEST_CASE(transaction_trace, eosio::test_chain) {
 BOOST_FIXTURE_TEST_CASE(send, eosio::test_chain) {
    eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
    empty.send();
+}
+
+BOOST_FIXTURE_TEST_CASE(query, eosio::test_chain) {
+   create_account("test"_n);
+   set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
+   tester_tests::putdb_action("test"_n, { "test"_n, "active"_n }).send(1, 2);
+   eosio::query_contract_row_range_code_table_scope_pk query;
+   query.first = query.last = { "test"_n, "table"_n, eosio::name(), 0 };
+   query.last.primary_key = std::uint64_t(-1);
+   eosio::for_each_contract_row<tester_tests::table_item>(query_database(query), [](const eosio::contract_row&, auto* item) {
+      BOOST_TEST(item->key == 1);
+      BOOST_TEST(item->value == 2);
+      return true;
+   });
 }
