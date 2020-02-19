@@ -128,17 +128,6 @@ public:
    }
 
    [[eosio::action]]
-   void find() {
-      my_table t{"kvtest"_n};
-
-      auto itr = t.index.bar.find(5ull);
-      eosio::check(itr.value().bar == s1.bar, "wrong value");
-
-      auto val = t.index.bar.get(4ull);
-      eosio::check(val->bar == s2.bar, "wrong value");
-   }
-
-   [[eosio::action]]
    void indices() {
       my_table_idx t{"kvtest"_n};
    }
