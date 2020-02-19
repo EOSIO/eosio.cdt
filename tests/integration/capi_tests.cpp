@@ -21,6 +21,7 @@ BOOST_AUTO_TEST_SUITE(capi_tests)
 BOOST_FIXTURE_TEST_CASE( capi_tests, tester ) try {
    create_accounts( { N(test) } );
    produce_block();
+
    set_code( N(test), contracts::capi_tests_wasm() );
    set_abi( N(test), contracts::capi_tests_abi().data() );
    produce_blocks();

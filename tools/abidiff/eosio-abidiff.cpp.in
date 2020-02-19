@@ -224,6 +224,26 @@ class abidiff {
          }
       }
 
+      void print_action_results(const ojson& abi, int index, char direction) {
+         std::cout << direction << " action_result\n";
+         std::cout << pretty_print(abi["action_results"].at(index)) << "\n";
+      }
+
+      void find_action_results(const ojson& abi1, const ojson& abi2, char direction) {
+         for ( int i=0; i < abi1["action_results"].size(); i++ ) {
+            bool found = false;
+            for ( int j=0; j < abi2["action_results"].size(); j++ ) {
+               if (abi1["action_results"].at(i)["name"] == abi2["action_results"].at(j)["name"]) {
+                  if (abi1["action_results"].at(i)["result_type"] != abi2["action_results"].at(i)["result_type"])
+                     break;
+                  found = true;
+               }
+
+            }
+            if (!found)
+               print_action_results(abi1, i, direction);
+         }
+      }
       void diff_structs() {
          find_structs(abi_1, abi_2, '<');
          find_structs(abi_2, abi_1, '>');
@@ -254,6 +274,11 @@ class abidiff {
          find_variants(abi_2, abi_1, '>');
       }
 
+      void diff_action_results() {
+         find_action_results(abi_1, abi_2, '<');
+         find_action_results(abi_2, abi_1, '>');
+      }
+
       void diff() {
          diff_version();
          diff_structs();
@@ -263,6 +288,8 @@ class abidiff {
          diff_clauses();
          if ( get_version(abi_1) >= 11 && get_version(abi_2) >= 11 )
             diff_variants();
+         if ( get_version(abi_1) >= 12 && get_version(abi_2) >= 12 )
+            diff_action_results();
       }
 };
 
