@@ -3,17 +3,19 @@ content_title: "Understanding ABI Files"
 link_text: "Understanding ABI Files"
 ---
 ## Introduction
-Previously you deployed the `eosio.token` contract using the provided ABI file. This tutorial will overview how the ABI file correlates to the `eosio.token` contract.
 
 ABI files can be generated using the `eosio-cpp` utility provided by `eosio.cdt`. However, there are several situations that may cause ABI's generation to malfunction or fail altogether. Advanced C++ patterns can trip it up and custom types can sometimes cause issues for ABI generation. For this reason, it's **imperative** you understand how ABI files work, so you can debug and fix if and when necessary.
-## What is an ABI?
+
+## What is an ABI
+
 The Application Binary Interface (ABI) is a JSON-based description on how to convert user actions between their JSON and Binary representations. The ABI also describes how to convert the database state to/from JSON. Once you have described your contract via an ABI then developers and users will be able to interact with your contract seamlessly via JSON.
 
 [[warning | Security Note]]
 | ABI can be bypassed when executing transactions. Messages and actions passed to a contract do not have to conform to the ABI. The ABI is a guide, not a gatekeeper.
 
 ## Create an ABI File
-Start with an empty ABI, name it `eosio.token.abi`
+
+Start with an empty ABI, for exemplification we will work based on the `eosio.token` therefore name it `eosio.token.abi`:
 
 ```text
 {
@@ -29,6 +31,7 @@ Start with an empty ABI, name it `eosio.token.abi`
 ```
 
 ## Types
+
 An ABI enables any client or interface to interpret and even generate a GUI for your contract. For this to work consistently, describe the custom types that are used as a parameter in any public action or struct that needs to be described in the ABI.
 
 [[info | Built-in Types]]
@@ -59,6 +62,7 @@ The ABI now looks like this:
 ```
 
 ## Structs
+
 Structs that are exposed to the ABI also need to be described. By looking at eosio.token.hpp, it can be quickly determined which structs are utilized by public actions. This is particularly important for the next step.
 
 A struct's object definition in JSON looks like the following:
@@ -142,6 +146,7 @@ The following structs are implicit in that a struct was never explicitly defined
   ]
 }
 ```
+
 ### [transfer](https://developers.eos.io/manuals/eosio.contracts/latest/action-reference/eosio.token/index/#transfer)
 
 ```json
@@ -168,6 +173,7 @@ The following structs are implicit in that a struct was never explicitly defined
   ]
 }
 ```
+
 ### [close](https://developers.eos.io/manuals/eosio.contracts/latest/action-reference/eosio.token/index/#close)
 
 ```json
@@ -186,6 +192,7 @@ The following structs are implicit in that a struct was never explicitly defined
   ]
  }
 ```
+
 ## Explicit Structs
 These structs are explicitly defined, as they are a requirement to instantiate a multi-index table. Describing them is no different than defining the implicit structs as demonstrated above.
 
@@ -205,6 +212,7 @@ These structs are explicitly defined, as they are a requirement to instantiate a
 ```
 
 ## Actions
+
 An action's JSON object definition looks like the following:
 
 ```json
@@ -229,6 +237,7 @@ Below is a list of actions that link to their source code with example JSON prov
   "ricardian_contract": ""
 }
 ```
+
 ## [issue](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L45-L46)
 
 ```json
@@ -238,6 +247,7 @@ Below is a list of actions that link to their source code with example JSON prov
   "ricardian_contract": ""
 }
 ```
+
 ## [retire](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L55-L56)
 
 ```json
@@ -247,6 +257,7 @@ Below is a list of actions that link to their source code with example JSON prov
   "ricardian_contract": ""
 }
 ```
+
 ## [transfer](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L67-L71)
 
 ```json
@@ -256,6 +267,7 @@ Below is a list of actions that link to their source code with example JSON prov
   "ricardian_contract": ""
 }
 ```
+
 ## [close](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L96-L97)
 
 ```json
@@ -267,6 +279,7 @@ Below is a list of actions that link to their source code with example JSON prov
 ```
 
 ## Tables
+
 Describe the tables. Here's a table's JSON object definition:
 
 ```json
@@ -278,6 +291,7 @@ Describe the tables. Here's a table's JSON object definition:
   "key_types" : []  //An array of key types that correspond to key names array member, length of array must equal length of key names array.
 }
 ```
+
 The eosio.token contract instantiates two tables, [accounts](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L134) and [stat](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L135).
 
 The `accounts` table is an i64 index, based on the [`account` struct](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L120-L124), has a [`uint64` as it's primary key](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L123)
@@ -293,6 +307,7 @@ Here's how the accounts table would be described in the ABI
   "key_types" : ["uint64"]
 }
 ```
+
 The `stat` table is an i64 index, based on the [`currency_stats` struct](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L126-L132), has a [`uint64` as it's primary key](https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L131)
 
 Here's how the stat table would be described in the ABI
@@ -309,6 +324,7 @@ Here's how the stat table would be described in the ABI
 You'll notice the above tables have the same "key name." Naming your keys similar names is symbolic in that it can potentially suggest a subjective relationship. As with this implementation, implying that any given value can be used to query different tables.
 
 ## Putting it all Together
+
 Finally, an ABI file that accurately describes the `eosio.token` contract.
 
 ```json
@@ -481,27 +497,35 @@ Finally, an ABI file that accurately describes the `eosio.token` contract.
 ```
 
 ## Cases not Covered by Token Contract
+
 ## Vectors
+
 When describing a vector in your ABI file, simply append the type with `[]`, so if you need to describe a vector of permission levels, you would describe it like so: `permission_level[]`
 
 ## Struct Base
+
 It's a rarely used property worth mentioning. You can use **base** ABI struct property to reference another struct for inheritance, as long as that struct is also described in the same ABI file. Base will do nothing or potentially throw an error if your smart contract logic does not support inheritance.
 
 You can see an example of base in use in the system contract [source code](https://github.com/EOSIO/eosio.contracts/blob/4e4a3ca86d5d3482dfac85182e69f33c49e62fa9/eosio.system/include/eosio.system/eosio.system.hpp#L46) and [ABI](https://github.com/EOSIO/eosio.contracts/blob/4e4a3ca86d5d3482dfac85182e69f33c49e62fa9/eosio.system/abi/eosio.system.abi#L262)
+
 ## Extra ABI Properties Not Covered Here
+
 A few properties of the ABI specification were skipped here for brevity, however, there is a pending ABI specification that will outline every property of the ABI in its entirety.
 
 ## Ricardian Clauses
+
 Ricardian clauses describe the intended outcome of a particular actions. It may also be utilized to establish terms between the sender and the contract.
 
 ## ABI Extensions
+
 A generic "future proofing" layer that allows old clients to skip the parsing of "chunks" of extension data. For now, this property is unused. In the future each extension would have its own "chunk" in that vector so that older clients skip it and newer clients that understand how to interpret it.
+
 ## Maintenance
+
 Every time you change a struct, add a table, add an action or add parameters to an action, use a new type, you will need to remember to update your ABI file. In many cases failure to update your ABI file will not produce any error.
+
 ## Troubleshooting
-## Table returns no rows
+
+### Table returns no rows
 
 Check that your table is accurately described in the ABI file. For example, If you use `cleos` to add a table on a contract with a malformed ABI definition and then get rows from that table, you will receive an empty result. `cleos` will not produce an error when adding a row nor reading a row when a contract has failed to properly describe its tables in its ABI.
-
-## What's Next?
-- [Data Persistence](./04_data-persistence.md): Learn how data persistence works on EOSIO by writing a simple smart contract that functions as an address book. 
