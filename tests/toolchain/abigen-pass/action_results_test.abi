@@ -1,0 +1,52 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "action1",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "action2",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "action3",
+            "base": "",
+            "fields": []
+        }
+    ],
+    "actions": [
+        {
+            "name": "action1",
+            "type": "action1",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "action2",
+            "type": "action2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "action3",
+            "type": "action3",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": [
+        {
+            "name": "action2",
+            "result_type": "uint32"
+        },
+        {
+            "name": "action3",
+            "result_type": "string"
+        }
+    ]
+}

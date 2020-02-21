@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 3.5 )
 
-project(integration)
+set(EOSIO_VERSION_MIN "2.0")
+set(EOSIO_VERSION_SOFT_MAX "3.0")
+#set(EOSIO_VERSION_HARD_MAX "")
 
 set(EOSIO_WASM_OLD_BEHAVIOR "off")
 find_package(eosio.cdt)

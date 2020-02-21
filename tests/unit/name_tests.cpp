@@ -130,6 +130,30 @@ EOSIO_TEST_BEGIN(name_type_test)
    CHECK_EQUAL( name{"e.o.s.i.o.a.c"}.suffix(), name{"c"} )
    CHECK_EQUAL( name{"eos.ioa.cco"}.suffix(), name{"cco"} )
 
+   // ----------------------------
+   // constexpr name prefix()const
+
+   CHECK_EQUAL( name{".eosioaccounj"}.prefix(), name{} )
+   CHECK_EQUAL( name{"e.osioaccounj"}.prefix(), name{"e"} )
+   CHECK_EQUAL( name{"eo.sioaccounj"}.prefix(), name{"eo"} )
+   CHECK_EQUAL( name{"eos.ioaccounj"}.prefix(), name{"eos"} )
+   CHECK_EQUAL( name{"eosi.oaccounj"}.prefix(), name{"eosi"} )
+   CHECK_EQUAL( name{"eosio.accounj"}.prefix(), name{"eosio"} )
+   CHECK_EQUAL( name{"eosioa.ccounj"}.prefix(), name{"eosioa"} )
+   CHECK_EQUAL( name{"eosioac.counj"}.prefix(), name{"eosioac"} )
+   CHECK_EQUAL( name{"eosioacc.ounj"}.prefix(), name{"eosioacc"} )
+   CHECK_EQUAL( name{"eosioacco.unj"}.prefix(), name{"eosioacco"} )
+   CHECK_EQUAL( name{"eosioaccou.nj"}.prefix(), name{"eosioaccou"} )
+   CHECK_EQUAL( name{"eosioaccoun.j"}.prefix(), name{"eosioaccoun"} )
+   CHECK_EQUAL( name{"eosioaccounj."}.prefix(), name{"eosioaccounj"} )
+   CHECK_EQUAL( name{"eosioaccountj"}.prefix(), name{"eosioaccountj"} )
+
+   CHECK_EQUAL( name{"e.o.s.i.o.a.c"}.prefix(), name{"e.o.s.i.o.a"} )
+   CHECK_EQUAL( name{"eos.ioa.cco"}.prefix(), name{"eos.ioa"} )
+
+   CHECK_EQUAL( name{"a.my.account"}.prefix(), name{"a.my"} )
+   CHECK_EQUAL( name{"a.my.account"}.prefix().prefix(), name{"a"} )
+
    // -----------------------------
    // constexpr operator raw()const
    CHECK_EQUAL( name{"1"}.operator name::raw(), static_cast<name::raw>(576460752303423488ULL) )

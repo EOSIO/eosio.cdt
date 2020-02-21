@@ -40,8 +40,6 @@ namespace eosio {
             ::new (&_data) T(std::forward<Args>(args)...);
          }
 
-         ~binary_extension() { reset(); }
-
          constexpr binary_extension( const binary_extension& other )
          :_has_value(other._has_value)
          {
@@ -57,6 +55,33 @@ namespace eosio {
             }
          }
 
+         /// @cond INTERNAL
+         ~binary_extension() { reset(); }
+
+         /// @cond INTERNAL
+         constexpr binary_extension& operator = (const binary_extension& other) {
+            if (has_value())
+               reset();
+
+            if (other.has_value()) {
+               ::new (&_data) T(*other);
+               _has_value = true;
+            }
+            return *this;
+         }
+
+         /// @cond INTERNAL
+         constexpr binary_extension& operator = (binary_extension&& other) {
+            if (has_value())
+               reset();
+
+            if (other.has_value()) {
+               ::new (&_data) T(*other);
+               _has_value = true;
+               other._has_value = false;
+            }
+            return *this;
+         }
          /** test if container is holding a value */
          constexpr explicit operator bool()const { return _has_value; }
          /** test if container is holding a value */

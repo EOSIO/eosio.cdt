@@ -35,6 +35,12 @@ namespace eosio { namespace cdt {
       abigen() : generation_utils([&](){throw abigen_ex;}) {
       }
 
+
+      void set_abi_version(int major, int minor) {
+         _abi.version_major = major;
+         _abi.version_minor = minor;
+      }
+
       void add_typedef( const clang::QualType& t ) {
          abi_typedef ret;
          ret.new_type_name = get_base_type_name( t );
@@ -106,6 +112,8 @@ namespace eosio { namespace cdt {
          }
          ret.type = decl->getNameAsString();
          _abi.actions.insert(ret);
+         if (translate_type(decl->getReturnType()) != "void")
+            _abi.action_results.insert({get_action_name(decl), translate_type(decl->getReturnType())});
       }
 
       void add_tuple(const clang::QualType& type) {
@@ -133,11 +141,11 @@ namespace eosio { namespace cdt {
          abi_struct pair;
          pair.name = get_type(type);
          pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
-         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );   
+         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );
          add_type(get_template_argument(type).getAsType());
          add_type(get_template_argument(type, 1).getAsType());
          _abi.structs.insert(pair);
-      } 
+      }
 
       void add_map(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
@@ -149,7 +157,7 @@ namespace eosio { namespace cdt {
          std::string name = get_type(type);
          kv.name = name.substr(0, name.length() - 2);
          kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
-         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );   
+         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );
          add_type(get_template_argument(type).getAsType());
          add_type(get_template_argument(type, 1).getAsType());
          _abi.structs.insert(kv);
@@ -243,7 +251,7 @@ namespace eosio { namespace cdt {
             var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
             add_type(get_template_argument( t, i ).getAsType());
          }
-         _abi.variants.insert(var); 
+         _abi.variants.insert(var);
       }
 
       void add_type( const clang::QualType& t ) {
@@ -277,7 +285,7 @@ namespace eosio { namespace cdt {
          std::stringstream ss;
          ss << "This file was generated with eosio-abigen.";
          ss << " DO NOT EDIT ";
-         return ss.str(); 
+         return ss.str();
       }
 
       ojson struct_to_json( const abi_struct& s ) {
@@ -335,7 +343,14 @@ namespace eosio { namespace cdt {
          o["key_types"] = ojson::array();
          return o;
       }
-      
+
+      ojson action_result_to_json( const abi_action_result& result ) {
+         ojson o;
+         o["name"] = result.name;
+         o["result_type"] = result.type;
+         return o;
+      }
+
       bool is_empty() {
          std::set<abi_table> set_of_tables;
          for ( auto t : ctables ) {
@@ -360,11 +375,11 @@ namespace eosio { namespace cdt {
       ojson to_json() {
          ojson o;
          o["____comment"] = generate_json_comment();
-         o["version"]     = _abi.version;
+         o["version"]     = _abi.version_string();
          o["structs"]     = ojson::array();
          auto remove_suffix = [&]( std::string name ) {
             int i = name.length()-1;
-            for (; i >= 0; i--) 
+            for (; i >= 0; i--)
                if ( name[i] != '[' && name[i] != ']' && name[i] != '?' && name[i] != '$' )
                   break;
             return name.substr(0,i+1);
@@ -481,10 +496,16 @@ namespace eosio { namespace cdt {
             o["variants"].push_back(variant_to_json( v ));
          }
          o["abi_extensions"]     = ojson::array();
+         if (_abi.version_major == 1 && _abi.version_minor >= 2) {
+            o["action_results"]  = ojson::array();
+            for ( auto ar : _abi.action_results ) {
+               o["action_results"].push_back(action_result_to_json( ar ));
+            }
+         }
          return o;
       }
 
-      private: 
+      private:
          abi                                   _abi;
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;

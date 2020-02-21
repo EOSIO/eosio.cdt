@@ -20,8 +20,6 @@ else # Linux
 
     . $HELPERS_DIR/docker-hash.sh
 
-    [[ $TRAVIS == true ]] && ARGS="$ARGS -e JOBS -e CCACHE_DIR=/opt/.ccache"
-
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
         evars=""

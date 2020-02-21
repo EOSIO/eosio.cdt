@@ -1,5 +1,6 @@
 #pragma once
 #include <eosio/utils.hpp>
+#include <eosio/abi.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <vector>
 #include <string>
@@ -19,6 +20,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<std::string> abi_version_opt(
+    "abi-version",
+    cl::desc("Which ABI version to generate"),
+    cl::cat(LD_CAT));
 static cl::list<std::string> only_export_opt(
     "only-export",
     cl::desc("Export only this symbol"),
@@ -372,11 +377,17 @@ struct Options {
    std::vector<std::string> abigen_resources;
    bool debug;
    bool native;
+   std::pair<int, int> abi_version;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
+   // add the define for whether this is compiling with CDT and version macros
+   copts.emplace_back("-D__eosio_cdt__");
+   copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_minor__=")+"${VERSION_MINOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_patchlevel__=")+"${VERSION_PATCH}");
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
@@ -396,6 +407,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       if (!fasm_opt) {
          copts.emplace_back("-fno-builtin");
          copts.emplace_back("-mstackrealign");
+         copts.emplace_back("-D__eosio_cdt_native__");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLLP64");
       }
@@ -908,9 +920,19 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #endif
 
+   /* TODO add some way of defaulting these to the current highest version */
+   int abi_version_major = 1;
+   int abi_version_minor = 2;
+
+   if (!abi_version_opt.empty()) {
+      abi_version_major = std::stoi(abi_version_opt);
+      float tmp         = std::stof(abi_version_opt);
+      abi_version_minor = ((tmp - (int)tmp)*10);
+   }
+
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #else
-   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #endif
 }
