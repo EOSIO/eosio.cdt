@@ -1,0 +1,157 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "get",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "iteration",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "my_struct",
+            "base": "",
+            "fields": [
+                {
+                    "name": "primary_key",
+                    "type": "name"
+                },
+                {
+                    "name": "foo",
+                    "type": "string"
+                },
+                {
+                    "name": "bar",
+                    "type": "uint64"
+                },
+                {
+                    "name": "fullname",
+                    "type": "string"
+                },
+                {
+                    "name": "age",
+                    "type": "uint32"
+                },
+                {
+                    "name": "a",
+                    "type": "pair_int32_int32"
+                },
+                {
+                    "name": "b",
+                    "type": "float32?"
+                },
+                {
+                    "name": "c",
+                    "type": "float64[]"
+                },
+                {
+                    "name": "d",
+                    "type": "int32[]"
+                },
+                {
+                    "name": "non_unique_name",
+                    "type": "non_unique<std::string, uint32_t>"
+                }
+            ]
+        },
+        {
+            "name": "nonunique",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "setup",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "update",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "updateerr1",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "updateerr2",
+            "base": "",
+            "fields": []
+        }
+    ],
+    "actions": [
+        {
+            "name": "get",
+            "type": "get",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "iteration",
+            "type": "iteration",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "nonunique",
+            "type": "nonunique",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setup",
+            "type": "setup",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "update",
+            "type": "update",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updateerr1",
+            "type": "updateerr1",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updateerr2",
+            "type": "updateerr2",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": [
+        {
+            "name": "testtable",
+            "type": "my_struct",
+            "indices": [
+                {
+                    "name": "primary_key",
+                    "type": "name"
+                },
+                {
+                    "name": "foo",
+                    "type": "string"
+                },
+                {
+                    "name": "bar",
+                    "type": "uint64"
+                },
+                {
+                    "name": "non_unique_name",
+                    "type": "tuple_string_uint32"
+                },
+                {
+                    "name": "age",
+                    "type": "uint32"
+                }
+            ]
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}

@@ -31,6 +31,7 @@ class ABIMerger {
          ret["structs"]  = merge_structs(other);
          ret["actions"]  = merge_actions(other);
          ret["tables"]   = merge_tables(other);
+         ret["kv_tables"] = merge_kv_tables(other);
          ret["ricardian_clauses"]  = merge_clauses(other);
          ret["variants"] = merge_variants(other);
          std::string vers = abi["version"].as<std::string>();
@@ -104,6 +105,11 @@ class ABIMerger {
                 a["key_types"] == b["key_types"];
       }
 
+      static bool kv_table_is_same(ojson a, ojson b) {
+         return a["name"] == b["name"] &&
+                a["type"] == b["type"];
+      }
+
       static bool clause_is_same(ojson a, ojson b) {
          return a["id"] == b["id"] &&
                 a["body"] == b["body"];
@@ -163,6 +169,12 @@ class ABIMerger {
          ojson tabs = ojson::array();
          add_object(tabs, abi, b, "tables", "name", table_is_same);
          return tabs;
+      }
+
+      ojson merge_kv_tables(ojson b) {
+         ojson kv_tabs = ojson::array();
+         add_object(kv_tabs, abi, b, "kv_tables", "name", kv_table_is_same);
+         return kv_tabs;
       }
 
       ojson merge_clauses(ojson b) {
