@@ -402,7 +402,7 @@ public:
 
          iterator& operator=(iterator&& other) {
             contract_name = std::move(other.contract_name);
-            itr = std::exchange(other.itr, 0);
+            itr = std::exchange(other.itr, itr);
             itr_stat = std::move(other.itr_stat);
             idx = std::exchange(other.idx, nullptr);
 
@@ -441,9 +441,7 @@ public:
                eosio::check(success, "failure getting primary key");
 
                void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-               auto copy_size = internal_use_do_not_use::kv_get_data(idx->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
-
-               eosio::check(copy_size != actual_value_size, "failure getting primary index data");
+               internal_use_do_not_use::kv_get_data(idx->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
                deserialize_buffer = pk_buffer;
                deserialize_size = actual_data_size;
