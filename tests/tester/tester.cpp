@@ -119,6 +119,17 @@ BOOST_FIXTURE_TEST_CASE(send, eosio::test_chain) {
    empty.send();
 }
 
+BOOST_FIXTURE_TEST_CASE(multi_index_tests, eosio::test_chain) {
+   create_account("test"_n);
+   set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
+   tester_tests::putdb_action("test"_n, { "test"_n, "active"_n }).send(1, 2);
+   tester_tests::table t("test"_n, 0);
+   for(auto& item : t) {
+      BOOST_TEST(item.key == 1);
+      BOOST_TEST(item.value == 2);
+   }
+}
+
 BOOST_FIXTURE_TEST_CASE(query, eosio::test_chain) {
    create_account("test"_n);
    set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
