@@ -88,7 +88,7 @@ target_include_directories(eosio-tester
         ${ROCKSDB_INCLUDE_DIR}
 )
 target_link_libraries(eosio-tester
-    eosio_chain wabt Runtime Platform Logging IR fc eos-vm
+    eosio_chain wabt Runtime Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
 
