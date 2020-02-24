@@ -562,64 +562,6 @@ public:
       }
 
       /**
-       * Search for an existing object in a table by the index, using the given key.
-       * @ingroup keyvalue
-       *
-       * @tparam K - The type of the key. This will be auto-deduced by the key param.
-       *
-       * @param key - The key to search for.
-       * @return An iterator to the found object OR the `end` iterator if the given key was not found.
-       */
-      template <typename K>
-      iterator find(K&& key) {
-         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
-
-         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
-
-         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
-
-         if (cmp != 0) {
-            internal_use_do_not_use::kv_it_destroy(itr);
-            return end();
-         }
-
-         return {contract_name, itr, static_cast<kv_it_stat>(itr_stat), this};
-      }
-
-      /**
-       * Get the value for an existing object in a table by the index, using the given key.
-       * @ingroup keyvalue
-       *
-       * @tparam K - The type of the key. This will be auto-deduced by the key param.
-       *
-       * @param key - The key to search for.
-       * @return A std::optional of the value corresponding to the key.
-       */
-      template <typename K>
-      std::optional<T> get(K&& key) {
-         uint32_t value_size;
-         std::optional<T> ret_val;
-
-         auto t_key = table_key(prefix, make_key(std::forward<K>(key)));
-
-         auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
-         if (!success) {
-            return ret_val;
-         }
-
-         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
-
-         ret_val.emplace();
-         deserialize(*ret_val, buffer, copy_size);
-         if (value_size > detail::max_stack_buffer_size) {
-            free(buffer);
-         }
-         return ret_val;
-      }
-
-      /**
        * Returns an iterator pointing to the element with the lowest key greater than or equal to the given key.
        * @ingroup keyvalue
        *
@@ -795,8 +737,8 @@ public:
          void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
          auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
 
-         void* serialize = buffer;
-         size_t serialize_size = copy_size;
+         void* deserialize_buffer = buffer;
+         size_t deserialize_size = copy_size;
 
          if (this->name != tbl->primary_index->name) {
             uint32_t actual_data_size;
@@ -808,14 +750,13 @@ public:
 
             eosio::check(pk_copy_size != copy_size, "failure getting primary index data");
 
-            serialize = pk_buffer;
-            serialize_size = pk_copy_size;
+            deserialize_buffer = pk_buffer;
+            deserialize_size = pk_copy_size;
          }
 
-         datastream<const char*> ds((char*)serialize, serialize_size);
-
          ret_val.emplace();
-         ds >> *ret_val;
+         deserialize(*ret_val, deserialize_buffer, deserialize_size);
+
          if (value_size > detail::max_stack_buffer_size) {
             free(buffer);
          }
