@@ -5,6 +5,7 @@
 #pragma once
 #include <eosio/action.hpp>
 #include <eosio/print.hpp>
+#include "key_value.hpp"
 #include <eosio/multi_index.hpp>
 #include <eosio/dispatcher.hpp>
 #include <eosio/contract.hpp>

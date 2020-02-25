@@ -97,8 +97,8 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/fmt/LICENSE.rst ${CMAKE_BINARY_DIR}
 configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/date/LICENSE.txt ${CMAKE_BINARY_DIR}/licenses/date.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/rapidjson/license.txt ${CMAKE_BINARY_DIR}/licenses/rapidjson.license COPYONLY)
 
-include(modules/TestsExternalProject.txt)
+#include(modules/TestsExternalProject.txt)
 
-include(CTest)
-enable_testing()
-add_subdirectory(tests)
+#include(CTest)
+#enable_testing()
+#add_subdirectory(tests)
