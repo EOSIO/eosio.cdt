@@ -142,4 +142,30 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_range, tester) try {
     push_action(N(kvtest), N(range), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(multi_tests_unique_secondary, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    push_action(N(kvtest), N(uniqsecidx), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE(multi_tests_unique_secondary_error, tester) try {
+    create_accounts( { N(kvtest) } );
+    produce_block();
+    set_code( N(kvtest), contracts::kv_multi_tests_wasm() );
+    set_abi( N(kvtest), contracts::kv_multi_tests_abi().data() );
+    produce_blocks();
+
+    push_action(N(kvtest), N(setup), N(kvtest), {});
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(usecidxerr1), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("Attempted to store an existing unique secondary index."));
+    BOOST_CHECK_EXCEPTION(push_action(N(kvtest), N(usecidxerr2), N(kvtest), {}),
+                          eosio_assert_message_exception,
+                          eosio_assert_message_is("Attempted to update an existing unique secondary index."));
+} FC_LOG_AND_RETHROW()
 BOOST_AUTO_TEST_SUITE_END()

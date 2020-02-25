@@ -157,6 +157,13 @@ struct key_type : private std::string {
       return {(char*)buffer, buffer_size};
    }
 
+   bool operator==(const key_type& b) const {
+      if (size() != b.size()) {
+         return false;
+      }
+      return memcmp(data(), b.data(), b.size()) == 0;
+   }
+
    using std::string::data;
    using std::string::size;
 };
@@ -819,37 +826,67 @@ public:
     * @param value - The entry to be stored in the table.
     */
    void put(const T& value) {
-      using namespace detail;
+      uint32_t value_size;
+      T old_value;
 
-      auto t_key = table_key(make_prefix(table_name, primary_index->name), primary_index->get_key(value));
+      auto primary_key = primary_index->get_key(value);
+      auto tbl_key = table_key(make_prefix(table_name, primary_index->name), primary_key);
+      auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
+
+      if (primary_key_found) {
+         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+         auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+
+         deserialize(old_value, buffer, copy_size);
+
+         if (value_size > detail::max_stack_buffer_size) {
+            free(buffer);
+         }
+      }
+
+      for (const auto& idx : secondary_indices) {
+         key_type sec_key;
+
+         if (idx->is_unique()) {
+            sec_key = idx->get_key(value);
+            auto sec_tbl_key = table_key(make_prefix(table_name, idx->name), sec_key);
+            auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
+
+            if (!primary_key_found) {
+               eosio::check(!sec_found, "Attempted to store an existing unique secondary index.");
+            } else if (sec_found) {
+               void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+               auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+
+               eosio::check(copy_size == tbl_key.size(), "Attempted to update an existing unique secondary index.");
+               auto res = memcmp(buffer, tbl_key.data(), copy_size);
+               eosio::check(res == 0, "Attempted to update an existing unique secondary index.");
+
+               if (copy_size > detail::max_stack_buffer_size) {
+                  free(buffer);
+               }
+            }
+
+            auto old_sec_key = table_key(make_prefix(table_name, idx->name), idx->get_key(old_value));
+            internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
+         } else {
+            auto old_sec_key = table_key(make_prefix(table_name, idx->name), idx->get_key(old_value) + primary_index->get_key(old_value));
+            internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
+
+            sec_key = idx->get_key(value) + primary_index->get_key(value);
+         }
+
+         auto sec_tbl_key = table_key(make_prefix(table_name, idx->name), sec_key);
+         internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+      }
 
       size_t data_size = get_size(value);
       void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
       serialize(value, data_buffer, data_size);
 
-      internal_use_do_not_use::kv_set(db_name, contract_name.value, t_key.data(), t_key.size(), (const char*)data_buffer, data_size);
+      internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size);
 
-      // Cleanup secondary indices before updating.
-      // This is the only way to guarantee they are cleaned up if they have changed,
-      // as we have no way to derive the original value of the index.
-      for (auto& idx : secondary_indices) {
-         auto prefix = make_prefix(table_name, idx->name);
-         internal_use_do_not_use::kv_erase(db_name, contract_name.value, prefix.data(), prefix.size());
-      }
-
-      for (auto& idx : secondary_indices) {
-         key_type sk;
-         if (idx->is_unique()) {
-            sk = idx->get_key(value);
-         } else {
-            sk = key_type{idx->get_key(value) + primary_index->get_key(value)};
-         }
-
-         auto st_key = table_key(make_prefix(table_name, idx->name), sk);
-         internal_use_do_not_use::kv_set(db_name, contract_name.value, st_key.data(), st_key.size(), t_key.data(), t_key.size());
-      }
-      
       if (data_size > detail::max_stack_buffer_size) {
          free(data_buffer);
       }

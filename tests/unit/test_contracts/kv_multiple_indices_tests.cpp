@@ -225,4 +225,47 @@ public:
 
       eosio::check(actual == expected, "range did not return expected vector");
    }
+
+   [[eosio::action]]
+   void uniqsecidx() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "bob"_n,
+         .foo = "testing",
+         .bar = 5,
+         .baz = 3
+      });
+
+      t.put({
+         .primary_key = "bob"_n,
+         .foo = "testing",
+         .bar = 100,
+         .baz = 3
+      });
+   }
+
+   [[eosio::action]]
+   void usecidxerr1() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "carl"_n,
+         .foo = "testing",
+         .bar = 5,
+         .baz = 3
+      });
+   }
+
+   [[eosio::action]]
+   void usecidxerr2() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "alice"_n,
+         .foo = "testing",
+         .bar = 5,
+         .baz = 3
+      });
+   }
 };
