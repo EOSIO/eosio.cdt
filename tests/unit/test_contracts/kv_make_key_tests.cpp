@@ -36,21 +36,19 @@ struct my_struct {
 };
 
 struct my_table : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index tname{&my_struct::tname};
-      kv_non_unique_index tstring{&my_struct::tstring};
-      kv_non_unique_index tui64{&my_struct::tui64};
-      kv_non_unique_index ti32{&my_struct::ti32};
-      kv_non_unique_index tui128{&my_struct::tui128};
-      kv_non_unique_index tfloat{&my_struct::tfloat};
-      kv_non_unique_index tdouble{&my_struct::tdouble};
-      kv_non_unique_index tstruct{&my_struct::tstruct};
-      kv_non_unique_index ttuple{&my_struct::ttuple};
-      kv_non_unique_index itstring{&my_struct::itstring};
-   } index;
+   index<eosio::name>                              tname{&my_struct::tname};
+   index<std::string>                              tstring{&my_struct::tstring};
+   index<uint64_t>                                 tui64{&my_struct::tui64};
+   index<int32_t>                                  ti32{&my_struct::ti32};
+   index<uint128_t>                                tui128{&my_struct::tui128};
+   index<float>                                    tfloat{&my_struct::tfloat};
+   index<double>                                   tdouble{&my_struct::tdouble};
+   index<testing_struct>                           tstruct{&my_struct::tstruct};
+   index<std::tuple<uint64_t, float, std::string>> ttuple{&my_struct::ttuple};
+   index<eosio::key_type>                          itstring{&my_struct::itstring};
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &tname, &tstring, &tui64, &ti32, &tui128, &tfloat, &tdouble, &tstruct, &ttuple, &itstring);
    }
 };
 
@@ -58,9 +56,11 @@ class [[eosio::contract]] kv_make_key_tests : public eosio::contract {
 public:
    using contract::contract;
 
-   void check_index(my_table::kv_index& idx, const std::vector<my_struct>& expected) {
+   template <typename I>
+   void check_index(I& idx, const std::vector<my_struct>& expected) {
       auto end_itr = idx.end();
       auto itr = idx.begin();
+
       for (const auto& expect : expected) {
          eosio::check(itr != end_itr, "Should not be the end");
          eosio::check(itr.value() == expect, "Got the wrong value");
@@ -139,60 +139,60 @@ public:
    [[eosio::action]]
    void makekeyname() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tname, {s2, s5, s1, s4, s3});
+      check_index(t.tname, {s2, s5, s1, s4, s3});
    }
 
    [[eosio::action]]
    void makekeystr() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tstring, {s2, s5, s1, s3, s4});
+      check_index(t.tstring, {s2, s5, s1, s3, s4});
    }
 
    [[eosio::action]]
    void makekeyistr() {
       my_table t{"kvtest"_n};
-      check_index(t.index.itstring, {s1, s2, s3, s4, s5});
+      check_index(t.itstring, {s1, s2, s3, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyuill() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tui64, {s5, s4, s3, s2, s1});
+      check_index(t.tui64, {s5, s4, s3, s2, s1});
    }
 
    [[eosio::action]]
    void makekeyil() {
       my_table t{"kvtest"_n};
-      check_index(t.index.ti32, {s3, s2, s1, s4, s5});
+      check_index(t.ti32, {s3, s2, s1, s4, s5});
    }
 
    [[eosio::action]]
    void makekeyuilll() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tui128, {s2, s1, s5, s4, s3});
+      check_index(t.tui128, {s2, s1, s5, s4, s3});
    }
 
    [[eosio::action]]
    void makekeyflt() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tfloat, {s5, s4, s1, s2, s3});
+      check_index(t.tfloat, {s5, s4, s1, s2, s3});
    }
 
    [[eosio::action]]
    void makekeydbl() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tdouble, {s5, s4, s1, s2, s3});
+      check_index(t.tdouble, {s5, s4, s1, s2, s3});
    }
 
    [[eosio::action]]
    void makekeystct() {
       my_table t{"kvtest"_n};
-      check_index(t.index.tstruct, {s1, s3, s2, s4, s5});
+      check_index(t.tstruct, {s1, s3, s2, s4, s5});
    }
 
    [[eosio::action]]
    void makekeytup() {
       my_table t{"kvtest"_n};
-      check_index(t.index.ttuple, {s1, s2, s3, s4, s5});
+      check_index(t.ttuple, {s1, s2, s3, s4, s5});
    }
 };
