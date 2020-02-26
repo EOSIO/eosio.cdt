@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        shell: bash
         run: |
           git clone https://github.com/${GITHUB_REPOSITORY} .
           git fetch -v --prune origin +refs/pull/$PR_NUMBER/merge:refs/remotes/pull/$PR_NUMBER/merge
@@ -21,6 +20,8 @@ jobs:
           PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
+      - name: Fail
+        run: echo "Failing for test" && exit 1
 
 
   # amazon_linux-2-build:
