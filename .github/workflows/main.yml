@@ -19,6 +19,7 @@ jobs:
           echo "EVENT_NAME: $GITHUB_EVENT_NAME"
           echo "EVENT: $GITHUB_EVENT"
           echo "CONTEXT: $GITHUB_CONTEXT"
+          exit 1
           # if [[ $GITHUB_REF =~ ^refs/pull/[0-9]+/merge: ]]; then git fetch -v --prune origin +refs/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge:refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge && git checkout --force --progress refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge; fi
           # git submodule sync --recursive
           # git submodule update --init --force --recursive
