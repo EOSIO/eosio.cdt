@@ -19,7 +19,7 @@ jobs:
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
         env:
-          MERGE_COMMIT_SHA: ${{ toJson(github.event.pull_request.merge_commit_sha) }}
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Fail
         run: echo "Failing for test" && exit 1
 

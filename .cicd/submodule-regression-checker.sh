@@ -10,7 +10,7 @@ if [[ $BUILDKITE == true ]]; then
 else
     [[ -z $GITHUB_BASE_REF ]] && echo "Cannot find \$GITHUB_BASE_REF, so we have nothing to compare submodules to. Skipping submodule regression check." && exit 0
     BASE_BRANCH=$GITHUB_BASE_REF
-    CURRENT_BRANCH=$MERGE_COMMIT_SHA
+    CURRENT_BRANCH="refs/remotes/pull/$PR_NUMBER/merge"
 fi
 
 echo "getting submodule info for $CURRENT_BRANCH"
