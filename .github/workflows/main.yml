@@ -17,9 +17,10 @@ jobs:
           echo "SHA: $GITHUB_SHA"
           echo "HEAD_REF: $GITHUB_HEAD_REF"
           echo "BASE_REF: $GITHUB_BASE_REF"
-          if [[ $GITHUB_REF =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $GITHUB_REF | cut -d/ -f2)/head; fi
-          git submodule sync --recursive
-          git submodule update --init --force --recursive
+          echo "EVENT: $GITHUB_EVENT_NAME"
+          # if [[ $GITHUB_REF =~ ^refs/pull/[0-9]+/merge: ]]; then git fetch -v --prune origin +refs/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge:refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge && git checkout --force --progress refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge; fi
+          # git submodule sync --recursive
+          # git submodule update --init --force --recursive
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
 
