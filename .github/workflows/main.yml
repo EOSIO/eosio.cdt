@@ -8,15 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-        with:
-          fetch-depth: 0
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
 
@@ -27,13 +26,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -51,13 +51,14 @@ jobs:
     needs: amazon_linux-2-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -74,13 +75,14 @@ jobs:
     needs: amazon_linux-2-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -99,13 +101,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -123,13 +126,14 @@ jobs:
     needs: centos-77-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -146,13 +150,14 @@ jobs:
     needs: centos-77-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -171,13 +176,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -195,13 +201,14 @@ jobs:
     needs: ubuntu-1604-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -218,13 +225,14 @@ jobs:
     needs: ubuntu-1604-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -243,13 +251,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -267,13 +276,14 @@ jobs:
     needs: ubuntu-1804-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -290,13 +300,14 @@ jobs:
     needs: ubuntu-1804-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -315,13 +326,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3
@@ -338,13 +350,14 @@ jobs:
     needs: macos-1015-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -360,13 +373,14 @@ jobs:
     needs: macos-1015-build
     steps:
       - name: Checkout
-        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
-      - name: Submodules
-        shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git clone https://github.com/${GITHUB_REPOSITORY} .
+          git fetch -v --prune origin +refs/pull/${PR_NUMBER}/merge:refs/remotes/pull/${PR_NUMBER}/merge
+          git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          git submodule update --init --force --recursive
+        env:
+          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
