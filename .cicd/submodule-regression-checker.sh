@@ -10,7 +10,7 @@ if [[ $BUILDKITE == true ]]; then
 else
     [[ -z $GITHUB_BASE_REF ]] && echo "Cannot find \$GITHUB_BASE_REF, so we have nothing to compare submodules to. Skipping submodule regression check." && exit 0
     BASE_BRANCH=$GITHUB_BASE_REF
-    CURRENT_BRANCH=$GITHUB_SHA
+    CURRENT_BRANCH=$MERGE_COMMIT_SHA
 fi
 
 echo "getting submodule info for $CURRENT_BRANCH"
@@ -26,10 +26,10 @@ while read -r a b; do
 done < <(git submodule --quiet foreach --recursive 'echo $path `git log -1 --format=%ct`')
 
 # We need to switch back to the PR ref/head so we can git log properly
-if [[ $BUILDKITE != true ]]; then
-    echo "git fetch origin +$GITHUB_REF:"
-    git fetch origin +${GITHUB_REF}: 1> /dev/null
-fi
+# if [[ $BUILDKITE != true ]]; then
+#     echo "git fetch origin +$GITHUB_REF:"
+#     git fetch origin +${GITHUB_REF}: 1> /dev/null
+# fi
 
 echo "switching back to $CURRENT_BRANCH..."
 echo "git checkout -qf $CURRENT_BRANCH"

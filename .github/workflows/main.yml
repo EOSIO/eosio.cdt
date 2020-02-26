@@ -1,11 +1,9 @@
 name: Pull Request
-on:
-  push:
-  pull_request:
+on: [pull_request]
 
 jobs:
   submodule_regression_check:
-    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Submodule Regression Check
     runs-on: ubuntu-latest
     steps:
@@ -20,6 +18,8 @@ jobs:
           PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
+        env:
+          MERGE_COMMIT_SHA: ${{ toJson(github.event.pull_request.merge_commit_sha) }}
       - name: Fail
         run: echo "Failing for test" && exit 1
 
