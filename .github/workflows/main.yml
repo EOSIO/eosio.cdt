@@ -17,7 +17,7 @@ jobs:
           echo "SHA: $GITHUB_SHA"
           echo "HEAD_REF: $GITHUB_HEAD_REF"
           echo "BASE_REF: $GITHUB_BASE_REF"
-          echo "EVENT: $GITHUB_EVENT_NAME"
+          echo "CONTEXT: $GITHUB_CONTEXT"
           # if [[ $GITHUB_REF =~ ^refs/pull/[0-9]+/merge: ]]; then git fetch -v --prune origin +refs/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge:refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge && git checkout --force --progress refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge; fi
           # git submodule sync --recursive
           # git submodule update --init --force --recursive
