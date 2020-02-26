@@ -3,6 +3,7 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
+echo "Testing forked PR."
 
 if [[ $(uname) == 'Darwin' ]]; then
 
