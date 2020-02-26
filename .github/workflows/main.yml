@@ -19,8 +19,6 @@ jobs:
           git submodule update --init --force --recursive
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
-      - name: Fail for testing.
-        run: echo "Failing for testing." && exit 1
 
 
   amazon_linux-2-build:
