@@ -10,7 +10,6 @@ jobs:
       - name: Checkout
         shell: bash
         run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
           git clone https://github.com/${GITHUB_REPOSITORY} .
       - name: Submodules
         shell: bash
