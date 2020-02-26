@@ -1,6 +1,9 @@
 name: Pull Request
 on: [pull_request]
 
+env:
+  PR_NUMBER: ${{ toJson(github.event.number) }}
+
 jobs:
   submodule_regression_check:
     if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
@@ -14,8 +17,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
 
@@ -32,8 +33,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -57,8 +56,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -81,8 +78,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -107,8 +102,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -132,8 +125,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -156,8 +147,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -182,8 +171,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -207,8 +194,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -231,8 +216,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -257,8 +240,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -282,8 +263,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -306,8 +285,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -332,8 +309,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Build
         run: | 
           brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3
@@ -356,8 +331,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -379,8 +352,6 @@ jobs:
           git checkout --force --progress refs/remotes/pull/${PR_NUMBER}/merge
           git submodule sync --recursive
           git submodule update --init --force --recursive
-        env:
-          PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
