@@ -21,6 +21,8 @@ jobs:
           # if [[ $GITHUB_REF =~ ^refs/pull/[0-9]+/merge: ]]; then git fetch -v --prune origin +refs/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge:refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge && git checkout --force --progress refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge; fi
           # git submodule sync --recursive
           # git submodule update --init --force --recursive
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
 
