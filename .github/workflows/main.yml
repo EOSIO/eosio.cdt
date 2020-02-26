@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   submodule_regression_check:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Submodule Regression Check
     runs-on: ubuntu-latest
     steps:
