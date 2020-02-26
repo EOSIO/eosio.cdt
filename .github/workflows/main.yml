@@ -11,9 +11,9 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/${GITHUB_REPOSITORY} .
-      - name: Submodules
-        shell: bash
-        run: |
+          echo "REF: $GITHUB_REF"
+          echo "SHA: $GITHUB_SHA"
+          # if [[ $GITHUB_REF =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $GITHUB_REF | cut -d/ -f2)/head; fi
           git submodule sync --recursive
           git submodule update --init --force --recursive
       - name: Submodule Regression Check
