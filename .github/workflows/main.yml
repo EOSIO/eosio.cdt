@@ -1,29 +1,37 @@
 name: Pull Request
-on: [pull_request]
+on: [push]
 
 jobs:
   submodule_regression_check:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Submodule Regression Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Submodule Regression Check
         run: ./.cicd/submodule-regression-checker.sh
 
 
   amazon_linux-2-build:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Amazon_Linux 2 | Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -41,9 +49,13 @@ jobs:
     needs: amazon_linux-2-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -60,9 +72,13 @@ jobs:
     needs: amazon_linux-2-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -76,14 +92,18 @@ jobs:
 
 
   centos-77-build:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: CentOS 7.7 | Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -101,9 +121,13 @@ jobs:
     needs: centos-77-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -120,9 +144,13 @@ jobs:
     needs: centos-77-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -136,14 +164,18 @@ jobs:
 
 
   ubuntu-1604-build:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id  
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id  
     name: Ubuntu 16.04 | Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -161,9 +193,13 @@ jobs:
     needs: ubuntu-1604-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -180,9 +216,13 @@ jobs:
     needs: ubuntu-1604-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -196,14 +236,18 @@ jobs:
 
 
   ubuntu-1804-build:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: Ubuntu 18.04 | Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build
         run: | 
           ./.cicd/build.sh
@@ -221,9 +265,13 @@ jobs:
     needs: ubuntu-1804-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -240,9 +288,13 @@ jobs:
     needs: ubuntu-1804-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -256,14 +308,18 @@ jobs:
 
 
   macos-1015-build:
-    if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
+    # if: github.event.pull_request.base.repo.id != github.event.pull_request.head.repo.id
     name: MacOS 10.15 | Build
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build
         run: | 
           brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3
@@ -280,9 +336,13 @@ jobs:
     needs: macos-1015-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
@@ -298,9 +358,13 @@ jobs:
     needs: macos-1015-build
     steps:
       - name: Checkout
-        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-        with:
-          submodules: recursive
+        uses: actions/checkout@f90c7b395dac7c5a277c1a6d93d5057c1cddb74e
+      - name: Submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Download Build Artifact
         uses: actions/download-artifact@v1
         with:
