@@ -13,11 +13,10 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/${GITHUB_REPOSITORY} .
-          echo "PR_NUMBER: $PR_NUMBER"
-          exit 1
-          # if [[ $GITHUB_REF =~ ^refs/pull/[0-9]+/merge: ]]; then git fetch -v --prune origin +refs/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge:refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge && git checkout --force --progress refs/remotes/pull/$(echo $GITHUB_REF | cut -d/ -f3)/merge; fi
-          # git submodule sync --recursive
-          # git submodule update --init --force --recursive
+          git fetch -v --prune origin +refs/pull/$PR_NUMBER/merge:refs/remotes/pull/$PR_NUMBER/merge
+          git checkout --force --progress refs/remotes/pull/$PR_NUMBER/merge
+          git submodule sync --recursive
+          git submodule update --init --force --recursive
         env:
           PR_NUMBER: ${{ toJson(github.event.number) }}
       - name: Submodule Regression Check
