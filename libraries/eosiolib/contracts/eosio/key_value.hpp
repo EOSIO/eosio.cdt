@@ -755,8 +755,6 @@ public:
             void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
             auto pk_copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
-            eosio::check(pk_copy_size != copy_size, "failure getting primary index data");
-
             deserialize_buffer = pk_buffer;
             deserialize_size = pk_copy_size;
          }
