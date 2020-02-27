@@ -131,6 +131,3 @@
 // to ensure the correct libraries are selected at link time.
 // #define BOOST_LIB_BUILDID amd64
 
-// Current CDT limitations
-#define BOOST_SP_NO_ATOMIC_ACCESS
-#define BOOST_NO_FENV_H
