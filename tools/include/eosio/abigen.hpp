@@ -112,8 +112,19 @@ namespace eosio { namespace cdt {
          }
          ret.type = decl->getNameAsString();
          _abi.actions.insert(ret);
-         if (translate_type(decl->getReturnType()) != "void")
+         if (translate_type(decl->getReturnType()) != "void") {
+            /** TODO after LLVM 9 update uncomment this code and use new error handling for pretty clang style errors
+            if (decl->getReturnType() == decl->getDeclaredReturnType())
+            */
+            add_type(decl->getReturnType());
             _abi.action_results.insert({get_action_name(decl), translate_type(decl->getReturnType())});
+            /*
+            else {
+               std::cout << "Error, currently in eosio.cdt v2.0 `auto` is not allowed for actions\n";
+               throw abigen_ex;
+            }
+            */
+         }
       }
 
       void add_tuple(const clang::QualType& type) {
@@ -439,6 +450,11 @@ namespace eosio { namespace cdt {
                if (as.name == _translate_type(remove_suffix(td.type)))
                   return true;
             }
+            for( auto ar : _abi.action_results ) {
+               std::cout << "AR " << _translate_type(ar.type) << " AS " << as.name << "\n";
+               if (as.name == _translate_type(ar.type))
+                  return true;
+            }
             return false;
          };
 
@@ -467,6 +483,10 @@ namespace eosio { namespace cdt {
             for ( auto _td : _abi.typedefs )
                if ( remove_suffix(_td.type) == td.new_type_name )
                   return true;
+            for ( auto ar : _abi.action_results ) {
+               if ( ar.type == td.new_type_name )
+                  return true;
+            }
             return false;
          };
 

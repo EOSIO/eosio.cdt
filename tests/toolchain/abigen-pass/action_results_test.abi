@@ -17,6 +17,34 @@
             "name": "action3",
             "base": "",
             "fields": []
+        },
+        {
+            "name": "action4",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "action5",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "test_res",
+            "base": "",
+            "fields": [
+                {
+                    "name": "a",
+                    "type": "int32"
+                },
+                {
+                    "name": "b",
+                    "type": "float32"
+                },
+                {
+                    "name": "c",
+                    "type": "name"
+                }
+            ]
         }
     ],
     "actions": [
@@ -34,6 +62,16 @@
             "name": "action3",
             "type": "action3",
             "ricardian_contract": ""
+        },
+        {
+            "name": "action4",
+            "type": "action4",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "action5",
+            "type": "action5",
+            "ricardian_contract": ""
         }
     ],
     "tables": [],
@@ -47,6 +85,14 @@
         {
             "name": "action3",
             "result_type": "string"
+        },
+        {
+            "name": "action4",
+            "result_type": "name[]"
+        },
+        {
+            "name": "action5",
+            "result_type": "test_res"
         }
     ]
 }
