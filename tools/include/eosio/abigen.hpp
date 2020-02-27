@@ -451,7 +451,6 @@ namespace eosio { namespace cdt {
                   return true;
             }
             for( auto ar : _abi.action_results ) {
-               std::cout << "AR " << _translate_type(ar.type) << " AS " << as.name << "\n";
                if (as.name == _translate_type(ar.type))
                   return true;
             }
