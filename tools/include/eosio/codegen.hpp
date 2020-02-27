@@ -282,7 +282,7 @@ namespace eosio { namespace cdt {
                   ss << ");\n";
                };
                if (return_ty != "void") {
-                  ss << return_ty << " result = ";
+                  ss << "const auto& result = ";
                }
                call_action();
                if (return_ty != "void") {
