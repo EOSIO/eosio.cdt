@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include <catch2/catch.hpp>
 #include <eosio/tester.hpp>
 #include <tuple>
 #include <string>
@@ -10,9 +10,7 @@ using eosio::testing::contracts;
 using namespace std::literals;
 using std::tuple;
 
-BOOST_AUTO_TEST_SUITE(codegen_tests)
-
-BOOST_FIXTURE_TEST_CASE( simple_tests, test_chain ) {
+TEST_CASE_METHOD( test_chain, "Simple tests", "[simple]" ) {
    create_code_account( "test"_n );
    create_code_account( "eosio.token"_n );
    create_code_account( "someone"_n );
@@ -49,7 +47,7 @@ BOOST_FIXTURE_TEST_CASE( simple_tests, test_chain ) {
 
 }
 
-BOOST_FIXTURE_TEST_CASE( simple_eosio_tests, test_chain ) {
+TEST_CASE_METHOD( test_chain, "Simple tests on eosio account", "[simple]" ) {
    set_code( "eosio"_n, contracts::simple_wasm() );
    finish_block();
    transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test1"_n, tuple("bucky"_n)}});
@@ -62,5 +60,3 @@ BOOST_FIXTURE_TEST_CASE( simple_eosio_tests, test_chain ) {
 
    transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test3"_n, tuple(33, "some string"s)}});
 }
-
-BOOST_AUTO_TEST_SUITE_END()
