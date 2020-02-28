@@ -268,6 +268,10 @@ inline key_type make_key(key_type&& val) {
    return val;
 }
 
+inline key_type make_key(const key_type& val) {
+   return val;
+}
+
 template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
 inline key_type make_key(const S& val) {
    size_t data_size = 0;
