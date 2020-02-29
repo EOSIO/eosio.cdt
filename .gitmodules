@@ -1,9 +1,9 @@
 [submodule "libraries/libc/musl"]
 	path = libraries/libc/musl
-	url = https://github.com/turnpike2/musl
+	url = https://github.com/turnpike/musl
 [submodule "libraries/libc++/libcxx"]
 	path = libraries/libc++/libcxx
-	url = https://github.com/turnpike2/libcxx
+	url = https://github.com/turnpike/libcxx
 	branch = eosio
 [submodule "eosio_llvm"]
 	path = eosio_llvm
@@ -13,4 +13,4 @@
 	url = https://github.com/EOSIO/berkeley-softfloat-3.git
 [submodule "libraries/libc++/libcxxabi"]
 	path = libraries/libc++/libcxxabi
-	url = https://github.com/turnpike2/libcxxabi
+	url = https://github.com/turnpike/libcxxabi

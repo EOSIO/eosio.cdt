@@ -10,7 +10,7 @@ EOSCC currently supports Linux x86_64 Debian packages and Mac OS X brew.
 
 #### Debian Package Install
 ```sh
-$ wget https://github.com/turnpike2/eoscc/releases/download/v1.6.5/eoscc_1.6.5-1-ubuntu-18.04_amd64.deb
+$ wget https://github.com/turnpike/eoscc/releases/download/v1.6.5/eoscc_1.6.5-1-ubuntu-18.04_amd64.deb
 $ sudo apt install ./eoscc_1.6.5-1-ubuntu-18.04_amd64.deb
 ```
 #### Debian Package Uninstall
@@ -20,7 +20,7 @@ $ sudo apt remove eoscc
 
 #### Mac OS X Brew Install
 ```sh
-$ brew tap turnpike2/eoscc
+$ brew tap turnpike/eoscc
 $ brew install eoscc
 ```
 #### Mac OS X Brew Uninstall
@@ -30,7 +30,7 @@ $ brew remove eoscc
 
 ### Guided Installation (Building from Scratch)
 ```sh
-$ git clone --recursive https://github.com/turnpike2/eoscc
+$ git clone --recursive https://github.com/turnpike/eoscc
 $ cd eoscc
 $ ./build.sh
 $ sudo ./install.sh

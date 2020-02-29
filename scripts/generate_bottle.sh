@@ -36,7 +36,7 @@ echo "class Eoscc < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/turnpike2/eoscc/archive/v${VERSION}.tar.gz\"
+   url \"https://github.com/turnpike/eoscc/archive/v${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
@@ -55,7 +55,7 @@ echo "class Eoscc < Formula
    depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/turnpike2/eoscc/releases/download/v${VERSION}\"
+      root_url \"https://github.com/turnpike/eoscc/releases/download/v${VERSION}\"
       sha256 \"${hash}\" => :${MAC_VERSION}
    end
    def install
