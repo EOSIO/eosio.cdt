@@ -23,7 +23,7 @@ DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram", primary_key)
 
 struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    struct {
-      kv_index primary_key{[](const auto& obj) {
+      kv_unique_index primary_key{[](const auto& obj) {
          return std::visit([&](auto&& a) {
             using V = std::decay_t<decltype(a)>;
             if constexpr(std::is_same_v<V, my_struct_v>) {
@@ -36,7 +36,7 @@ struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
             }
          }, *obj);
       }};
-      kv_index age{[](const auto& obj) {
+      kv_non_unique_index age{[](const auto& obj) {
          return std::visit([&](auto&& a) {
             return a.age;
          }, *obj);
