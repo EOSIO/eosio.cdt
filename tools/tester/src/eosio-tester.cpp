@@ -689,7 +689,7 @@ struct callbacks {
       auto ptrx = std::make_shared<eosio::chain::packed_transaction>(signed_trx, eosio::chain::packed_transaction::compression_type::none);
       auto fut = eosio::chain::transaction_metadata::start_recover_keys(
             ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
-      auto result = chain.control->push_transaction( fut.get(), fc::time_point::maximum(), 2000);
+      auto result = chain.control->push_transaction( fut.get(), fc::time_point::maximum(), 2000, true);
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
       set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*result) })).value());
    }
@@ -702,7 +702,7 @@ struct callbacks {
       auto itr = idx.begin();
       if (itr != idx.end() && itr->delay_until <= chain.control->pending_block_time()) {
          auto trace =
-               chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(), billed_cpu_time_use);
+               chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(), billed_cpu_time_use, true);
          set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*trace) })).value());
          return true;
       }
