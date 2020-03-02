@@ -1,18 +1,17 @@
-#include <boost/test/included/unit_test.hpp>
+#include <catch2/catch.hpp>
 #include <eosio/tester.hpp>
 
 #include <contracts.hpp>
 
 using namespace eosio;
+using eosio::testing::contracts;
 
-BOOST_AUTO_TEST_SUITE(action_results_tests_suite)
-
-BOOST_FIXTURE_TEST_CASE( action_results_tests, test_chain ) {
+TEST_CASE_METHOD( test_chain, "Tests for action results", "[action_results]" ) {
    create_account( "test"_n );
    finish_block();
 
-   set_code( N(test), contracts::action_results_test_wasm() );
 #if 0
+   set_code( "test"_n, contracts::action_results_test_wasm() );
    produce_blocks();
    auto trace = push_action(N(test), N(action1), N(test), mvo());
    // need to fix this test after Kevin fixes action_return
@@ -25,5 +24,3 @@ BOOST_FIXTURE_TEST_CASE( action_results_tests, test_chain ) {
    wdump((trace));
 #endif
 }
-
-BOOST_AUTO_TEST_SUITE_END()

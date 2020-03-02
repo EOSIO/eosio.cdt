@@ -2,8 +2,8 @@
 #include <string_view>
 #include "../unit/test_contracts/tester_tests.hpp"
 
-#define BOOST_TEST_MAIN
-#include <boost/test/included/unit_test.hpp>
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 
 eosio::checksum256 make_checksum256(std::string_view src) {
    std::array<uint8_t, 32> buf;
@@ -11,54 +11,54 @@ eosio::checksum256 make_checksum256(std::string_view src) {
    return eosio::checksum256(buf);
 }
 
-BOOST_FIXTURE_TEST_CASE(start_finish_block, eosio::test_chain)
+TEST_CASE_METHOD(eosio::test_chain, "start_block", "[start_block][finish_block]")
 {
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 1);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("00000001F9175EC5AE6DA2F9FE99481374AC391603400534E0562E9124325F75"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304000));
+      CHECK(info.block_num == 1);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("00000001F9175EC5AE6DA2F9FE99481374AC391603400534E0562E9124325F75"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304000));
    }
    start_block();
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 2);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("00000002273D84013E8FC942B2F11646B07E8E31774951C5CE19ABD663A1999B"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304001));
+      CHECK(info.block_num == 2);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("00000002273D84013E8FC942B2F11646B07E8E31774951C5CE19ABD663A1999B"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304001));
    }
    finish_block();
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 3);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("00000003082FC6F82362072BA12D953FF3A9F0F4AC6FEC83072417662212E993"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304002));
+      CHECK(info.block_num == 3);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("00000003082FC6F82362072BA12D953FF3A9F0F4AC6FEC83072417662212E993"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304002));
    }
    start_block(); // no pending block to finish
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 3);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("00000003082FC6F82362072BA12D953FF3A9F0F4AC6FEC83072417662212E993"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304002));
+      CHECK(info.block_num == 3);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("00000003082FC6F82362072BA12D953FF3A9F0F4AC6FEC83072417662212E993"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304002));
    }
    start_block(499); // finish block 4
    finish_block();
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 5);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("00000005D4C5FF96B4FBB319E1CB81E581B518AC8133B490C1BB78216B14A0B5"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304004));
+      CHECK(info.block_num == 5);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("00000005D4C5FF96B4FBB319E1CB81E581B518AC8133B490C1BB78216B14A0B5"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304004));
    }
    start_block(500);
    finish_block();
    {
       eosio::block_info info = get_head_block_info();
-      BOOST_TEST(info.block_num == 7);
-      BOOST_TEST(eosio::checksum256(info.block_id) == make_checksum256("000000075DC2520236FAF327E55690B73039EA1AFB6D522C86CBD2A053DB167E"));
-      BOOST_TEST(info.timestamp == eosio::block_timestamp(1262304006));
+      CHECK(info.block_num == 7);
+      CHECK(eosio::checksum256(info.block_id) == make_checksum256("000000075DC2520236FAF327E55690B73039EA1AFB6D522C86CBD2A053DB167E"));
+      CHECK(info.timestamp == eosio::block_timestamp(1262304006));
    }
 }
 
-BOOST_FIXTURE_TEST_CASE(start_block_skip, eosio::test_chain) {
+TEST_CASE_METHOD(eosio::test_chain, "start_block skipping time", "[start_block]") {
    eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
    start_block(500);
    transact({empty});
@@ -77,60 +77,60 @@ eosio::checksum256 sha256(const T& t) {
    return eosio::sha256(packed.data(), packed.size());
 }
 
-BOOST_FIXTURE_TEST_CASE(transaction_trace, eosio::test_chain) {
+TEST_CASE_METHOD(eosio::test_chain, "transaction_trace members", "[transaction_trace]") {
    eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
    eosio::transaction t = make_transaction( { empty } );
    auto trace = push_transaction( t );
-   BOOST_TEST(trace.id == sha256(t));
-   BOOST_TEST(trace.status == eosio::transaction_status::executed);
-   BOOST_TEST(trace.cpu_usage_us == 2000); // The tester always bills 2 ms per transaction.
-   BOOST_TEST(trace.net_usage_words == 12); // default minimum net usage
-   BOOST_TEST(trace.elapsed > 0); // Variable
-   BOOST_TEST(trace.net_usage == 96); // net_usage_words*8
-   BOOST_TEST(trace.scheduled == false);
+   CHECK(trace.id == sha256(t));
+   CHECK(trace.status == eosio::transaction_status::executed);
+   CHECK(trace.cpu_usage_us == 2000); // The tester always bills 2 ms per transaction.
+   CHECK(trace.net_usage_words == 12); // default minimum net usage
+   CHECK(trace.elapsed > 0); // Variable
+   CHECK(trace.net_usage == 96); // net_usage_words*8
+   CHECK(trace.scheduled == false);
 
    // action_trace
-   BOOST_TEST(trace.action_traces.size() == 1);
-   BOOST_TEST(trace.action_traces[0].action_ordinal == 1);
-   BOOST_TEST(trace.action_traces[0].creator_action_ordinal == 0);
-   BOOST_TEST(trace.action_traces[0].receipt->receiver == "eosio"_n);
-   BOOST_TEST(trace.action_traces[0].receipt->act_digest == sha256(empty));
-   BOOST_TEST(trace.action_traces[0].receipt->global_sequence == 2);
-   BOOST_TEST(trace.action_traces[0].receipt->recv_sequence == 2);
-   BOOST_TEST(trace.action_traces[0].receipt->auth_sequence == (std::vector<eosio::account_auth_sequence>{ { "eosio"_n, 2 } }), boost::test_tools::per_element());
-   BOOST_TEST(trace.action_traces[0].receipt->code_sequence == 0);
-   BOOST_TEST(trace.action_traces[0].receipt->abi_sequence == 0);
-   BOOST_TEST(trace.action_traces[0].receiver == "eosio"_n);
-   BOOST_TEST(trace.action_traces[0].context_free == false);
-   BOOST_TEST(trace.action_traces[0].elapsed > 0);
-   BOOST_TEST(trace.action_traces[0].console == "");
-   BOOST_TEST(trace.action_traces[0].account_ram_deltas == std::vector<eosio::account_delta>{}, boost::test_tools::per_element());
-   BOOST_TEST(!trace.action_traces[0].except);
-   BOOST_TEST(!trace.action_traces[0].error_code);
+   CHECK(trace.action_traces.size() == 1);
+   CHECK(trace.action_traces[0].action_ordinal == 1);
+   CHECK(trace.action_traces[0].creator_action_ordinal == 0);
+   CHECK(trace.action_traces[0].receipt->receiver == "eosio"_n);
+   CHECK(trace.action_traces[0].receipt->act_digest == sha256(empty));
+   CHECK(trace.action_traces[0].receipt->global_sequence == 2);
+   CHECK(trace.action_traces[0].receipt->recv_sequence == 2);
+   CHECK(trace.action_traces[0].receipt->auth_sequence == (std::vector<eosio::account_auth_sequence>{ { "eosio"_n, 2 } }));
+   CHECK(trace.action_traces[0].receipt->code_sequence == 0);
+   CHECK(trace.action_traces[0].receipt->abi_sequence == 0);
+   CHECK(trace.action_traces[0].receiver == "eosio"_n);
+   CHECK(trace.action_traces[0].context_free == false);
+   CHECK(trace.action_traces[0].elapsed > 0);
+   CHECK(trace.action_traces[0].console == "");
+   CHECK(trace.action_traces[0].account_ram_deltas == std::vector<eosio::account_delta>{});
+   CHECK(!trace.action_traces[0].except);
+   CHECK(!trace.action_traces[0].error_code);
 
-   BOOST_TEST(!trace.account_ram_delta);
-   BOOST_TEST(!trace.except);
-   BOOST_TEST(!trace.error_code);
-   BOOST_TEST(trace.failed_dtrx_trace.size() == 0);
+   CHECK(!trace.account_ram_delta);
+   CHECK(!trace.except);
+   CHECK(!trace.error_code);
+   CHECK(trace.failed_dtrx_trace.size() == 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(send, eosio::test_chain) {
+TEST_CASE_METHOD(eosio::test_chain, "Simple action::send", "[send]") {
    eosio::action empty{ { { "eosio"_n, "active"_n } }, "eosio"_n, eosio::name(), std::tuple() };
    empty.send();
 }
 
-BOOST_FIXTURE_TEST_CASE(multi_index_tests, eosio::test_chain) {
+TEST_CASE_METHOD(eosio::test_chain, "MultiIndex API", "[multi_index]") {
    create_account("test"_n);
    set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
    tester_tests::putdb_action("test"_n, { "test"_n, "active"_n }).send(1, 2);
    tester_tests::table t("test"_n, 0);
    for(auto& item : t) {
-      BOOST_TEST(item.key == 1);
-      BOOST_TEST(item.value == 2);
+      CHECK(item.key == 1);
+      CHECK(item.value == 2);
    }
 }
 
-BOOST_FIXTURE_TEST_CASE(query, eosio::test_chain) {
+TEST_CASE_METHOD(eosio::test_chain, "Database queries", "[query]") {
    create_account("test"_n);
    set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
    tester_tests::putdb_action("test"_n, { "test"_n, "active"_n }).send(1, 2);
@@ -138,8 +138,8 @@ BOOST_FIXTURE_TEST_CASE(query, eosio::test_chain) {
    query.first = query.last = { "test"_n, "table"_n, eosio::name(), 0 };
    query.last.primary_key = std::uint64_t(-1);
    eosio::for_each_contract_row<tester_tests::table_item>(query_database(query), [](const eosio::contract_row&, auto* item) {
-      BOOST_TEST(item->key == 1);
-      BOOST_TEST(item->value == 2);
+      CHECK(item->key == 1);
+      CHECK(item->value == 2);
       return true;
    });
 }
