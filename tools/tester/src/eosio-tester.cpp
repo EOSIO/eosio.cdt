@@ -22,6 +22,12 @@ using eosio::chain::builtin_protocol_feature_t;
 using eosio::chain::digest_type;
 using eosio::chain::protocol_feature_exception;
 using eosio::chain::protocol_feature_set;
+using eosio::chain::kv_context;
+using eosio::chain::kv_iterator;
+using eosio::chain::kvdisk_id;
+using eosio::chain::kvram_id;
+using eosio::chain::kv_bad_iter;
+using eosio::chain::kv_bad_db_id;
 using eosio::check;
 using eosio::convert_to_bin;
 
@@ -110,6 +116,11 @@ struct intrinsic_context_impl<ApplyContext, std::void_t<typename ApplyContext::p
                                                           eosio::chain::uint128_t*, const eosio::chain::uint128_t*> idx256;
    typename ApplyContext::template generic_index_read_only<eosio::chain::index_double_object>                       idx_double;
    typename ApplyContext::template generic_index_read_only<eosio::chain::index_long_double_object>                  idx_long_double;
+
+   std::unique_ptr<kv_context>                                    kv_ram;
+   std::unique_ptr<kv_context>                                    kv_disk;
+   std::vector<std::unique_ptr<kv_iterator>>                      kv_iterators;
+   std::vector<size_t>                                            kv_destroyed_iterators;
    intrinsic_context_impl* apply_context;
 
    intrinsic_context_impl(eosio::chain::controller& control) :
@@ -796,6 +807,94 @@ struct callbacks {
     DB_WRAPPERS_FLOAT_SECONDARY(idx_long_double, float128_t)
    // clang-format on
 
+   bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size) {
+      return kv_get_db(db).kv_get(contract, key, key_size, value_size);
+   }
+
+   uint32_t kv_get_data(uint64_t db, uint32_t offset, char* data, uint32_t data_size) {
+      return kv_get_db(db).kv_get_data(offset, data, data_size);
+   }
+
+   uint32_t kv_it_create(uint64_t db, uint64_t contract, const char* prefix, uint32_t size) {
+      auto& kdb = kv_get_db(db);
+      uint32_t itr;
+      if (!selected().kv_destroyed_iterators.empty()) {
+         itr = selected().kv_destroyed_iterators.back();
+         selected().kv_destroyed_iterators.pop_back();
+      } else {
+         // Sanity check in case the per-database limits are set poorly
+         EOS_ASSERT(selected().kv_iterators.size() <= 0xFFFFFFFFu, kv_bad_iter, "Too many iterators");
+         itr = selected().kv_iterators.size();
+         selected().kv_iterators.emplace_back();
+      }
+      selected().kv_iterators[itr] = kdb.kv_it_create(contract, prefix, size);
+      return itr;
+   }
+
+   void kv_it_destroy(uint32_t itr) {
+      kv_check_iterator(itr);
+      selected().kv_destroyed_iterators.push_back(itr);
+      selected().kv_iterators[itr].reset();
+   }
+
+   int32_t kv_it_status(uint32_t itr) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_status());
+   }
+
+   int32_t kv_it_compare(uint32_t itr_a, uint32_t itr_b) {
+      kv_check_iterator(itr_a);
+      kv_check_iterator(itr_b);
+      return selected().kv_iterators[itr_a]->kv_it_compare(*selected().kv_iterators[itr_b]);
+   }
+
+   int32_t kv_it_key_compare(uint32_t itr, const char* key, uint32_t size) {
+      kv_check_iterator(itr);
+      return selected().kv_iterators[itr]->kv_it_key_compare(key, size);
+   }
+
+   int32_t kv_it_move_to_end(uint32_t itr) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_move_to_end());
+   }
+
+   int32_t kv_it_next(uint32_t itr) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_next());
+   }
+
+   int32_t kv_it_prev(uint32_t itr) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_prev());
+   }
+
+   int32_t kv_it_lower_bound(uint32_t itr, const char* key, uint32_t size) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_lower_bound(key, size));
+   }
+
+   int32_t kv_it_key(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_key(offset, dest, size, actual_size));
+   }
+
+   int32_t kv_it_value(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size) {
+      kv_check_iterator(itr);
+      return static_cast<int32_t>(selected().kv_iterators[itr]->kv_it_value(offset, dest, size, actual_size));
+   }
+
+   kv_context& kv_get_db(uint64_t db) {
+      if (db == kvram_id.to_uint64_t())
+         return *selected().kv_ram;
+      else if (db == kvdisk_id.to_uint64_t())
+         return *selected().kv_disk;
+      EOS_ASSERT(false, kv_bad_db_id, "Bad key-value database ID");
+   }
+
+   void kv_check_iterator(uint32_t itr) {
+      EOS_ASSERT(itr < selected().kv_iterators.size() && selected().kv_iterators[itr], kv_bad_iter, "Bad key-value iterator");
+   }
+
     void sha1(const char* data, uint32_t datalen, void* hash_val) {
       check_bounds(data, data + datalen);
       auto hash = fc::sha1::hash( data, datalen );
@@ -874,6 +973,18 @@ void register_callbacks() {
    // DB_REGISTER_SECONDARY(idx256)
    DB_REGISTER_SECONDARY(idx_double)
    DB_REGISTER_SECONDARY(idx_long_double)
+   rhf_t::add<callbacks, &callbacks::kv_get, eosio::vm::wasm_allocator>("env", "kv_get");
+   rhf_t::add<callbacks, &callbacks::kv_it_create, eosio::vm::wasm_allocator>("env", "kv_it_create");
+   rhf_t::add<callbacks, &callbacks::kv_it_destroy, eosio::vm::wasm_allocator>("env", "kv_it_destroy");
+   rhf_t::add<callbacks, &callbacks::kv_it_status, eosio::vm::wasm_allocator>("env", "kv_it_status");
+   rhf_t::add<callbacks, &callbacks::kv_it_compare, eosio::vm::wasm_allocator>("env", "kv_it_compare");
+   rhf_t::add<callbacks, &callbacks::kv_it_key_compare, eosio::vm::wasm_allocator>("env", "kv_it_key_compare");
+   rhf_t::add<callbacks, &callbacks::kv_it_move_to_end, eosio::vm::wasm_allocator>("env", "kv_it_move_to_end");
+   rhf_t::add<callbacks, &callbacks::kv_it_next, eosio::vm::wasm_allocator>("env", "kv_it_next");
+   rhf_t::add<callbacks, &callbacks::kv_it_prev, eosio::vm::wasm_allocator>("env", "kv_it_prev");
+   rhf_t::add<callbacks, &callbacks::kv_it_lower_bound, eosio::vm::wasm_allocator>("env", "kv_it_lower_bound");
+   rhf_t::add<callbacks, &callbacks::kv_it_key, eosio::vm::wasm_allocator>("env", "kv_it_key");
+   rhf_t::add<callbacks, &callbacks::kv_it_value, eosio::vm::wasm_allocator>("env", "kv_it_value");
    rhf_t::add<callbacks, &callbacks::sha1, eosio::vm::wasm_allocator>("env", "sha1");
    rhf_t::add<callbacks, &callbacks::sha256, eosio::vm::wasm_allocator>("env", "sha256");
    rhf_t::add<callbacks, &callbacks::sha512, eosio::vm::wasm_allocator>("env", "sha512");
