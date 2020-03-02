@@ -37,16 +37,16 @@ struct my_struct {
 
 struct my_table : eosio::kv_table<my_struct> {
    struct {
-      kv_index tname{&my_struct::tname};
-      kv_index tstring{&my_struct::tstring};
-      kv_index tui64{&my_struct::tui64};
-      kv_index ti32{&my_struct::ti32};
-      kv_index tui128{&my_struct::tui128};
-      kv_index tfloat{&my_struct::tfloat};
-      kv_index tdouble{&my_struct::tdouble};
-      kv_index tstruct{&my_struct::tstruct};
-      kv_index ttuple{&my_struct::ttuple};
-      kv_index itstring{&my_struct::itstring};
+      kv_unique_index tname{&my_struct::tname};
+      kv_non_unique_index tstring{&my_struct::tstring};
+      kv_non_unique_index tui64{&my_struct::tui64};
+      kv_non_unique_index ti32{&my_struct::ti32};
+      kv_non_unique_index tui128{&my_struct::tui128};
+      kv_non_unique_index tfloat{&my_struct::tfloat};
+      kv_non_unique_index tdouble{&my_struct::tdouble};
+      kv_non_unique_index tstruct{&my_struct::tstruct};
+      kv_non_unique_index ttuple{&my_struct::ttuple};
+      kv_non_unique_index itstring{&my_struct::itstring};
    } index;
 
    my_table(eosio::name contract_name) {
