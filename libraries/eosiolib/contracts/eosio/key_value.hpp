@@ -370,6 +370,7 @@ inline key_type make_key(T val) {
 
 /**
  * Used to return the appropriate representation of a case insensitive string for the EOSIO Key Value database.
+ * This is only valid for ASCII strings.
  *
  * @param val - The string to be made case-insensitive
  * @return The binary representation of the case-insensitive string
@@ -389,10 +390,7 @@ inline key_type make_insensitive(const std::string& val) {
  * Key Value Tables support 0 or more secondary index, of any type that can be serialized to a binary representation.
  * Indexes must be a member variable or a member function.
  *
- * @tparam Class     - the name of the class of the user defined table that inherits from eosio::kv_table
  * @tparam T         - the type of the data stored as the value of the table
- * @tparam TableName - the name of the table
- * @tparam DbName    - the type of the EOSIO Key Value database. Defaulted to eosio.kvram
   */
 template<typename T>
 class kv_table {
@@ -542,15 +540,6 @@ class kv_table {
       }
    };
 
-   /**
-    * @ingroup keyvalue
-    *
-    * @brief Defines an index on an EOSIO Key Value Table
-    * @details A Key Value Index allows a user of the table to search based on a given field.
-    * The only restrictions on that field are that it is serializable to a binary representation.
-    * Convenience functions exist to handle most of the primitive types as well as some more complex types, and are
-    * used automatically where possible.
-    */
    class kv_index {
 
    public:
@@ -591,6 +580,17 @@ public:
 
    using iterator = kv_table::iterator;
 
+   /**
+    * @ingroup keyvalue
+    *
+    * @brief Defines an index on an EOSIO Key Value Table
+    * @details A Key Value Index allows a user of the table to search based on a given field.
+    * The only restrictions on that field are that it is serializable to a binary representation sortable by the KV intrinsics.
+    * Convenience functions exist to handle most of the primitive types as well as some more complex types, and are
+    * used automatically where possible.
+    *
+    * @tparam K - The type of the key used in the index.
+    */
    template <typename K>
    class index : public kv_index {
       index_config config;
@@ -633,7 +633,7 @@ public:
 
          if (cmp != 0) {
             internal_use_do_not_use::kv_it_destroy(itr);
-            return this->end();
+            return end();
          }
 
          return {itr, static_cast<kv_it_stat>(itr_stat), config};
@@ -754,8 +754,8 @@ public:
        * Returns a vector of objects that fall between the specifed range. The range is inclusive, exclusive.
        * @ingroup keyvalue
        *
-       * @param begin - The beginning of the range.
-       * @param end - The end of the range.
+       * @param begin - The beginning of the range (inclusive).
+       * @param end - The end of the range (exclusive).
        * @return A vector containing all the objects that fall between the range.
        */
       std::vector<T> range(const K& b, const K& e) {
@@ -795,15 +795,15 @@ public:
     *
     * @brief Defines a deleted index on an EOSIO Key Value Table
     * @details Due to the way indexes are named, when deleting an index a "placeholder" index needs to be created instead.
-    * A null_kv_index should be created in this case. If using DEFINE_TABLE, just passing in nullptr will handle this.
+    * A null_index should be created in this case. If using DEFINE_TABLE, just passing in nullptr will handle this.
     */
-
    class null_index{};
 
    /**
+    * @ingroup keyvalue
     * Puts a value into the table. If the value already exists, it updates the existing entry.
     * The key is determined from the defined primary index.
-    * @ingroup keyvalue
+    * If the put attempts to store over an existing secondary index, the transaction will be aborted.
     *
     * @param value - The entry to be stored in the table.
     */
@@ -868,8 +868,6 @@ public:
    /**
     * Removes a value from the table.
     * @ingroup keyvalue
-    *
-    * @tparam K - The type of the key. This will be auto-deduced through the key parameter.
     *
     * @param key - The key of the value to be removed.
     */
@@ -939,16 +937,6 @@ protected:
       secondary_indices.push_back(index);
    }
 
-   /**
-    * Initializes a key value table. This method is intended to be called in the constructor of the user defined table class.
-    * If using the DEFINE_TABLE macro, this is handled for the developer.
-    * @ingroup keyvalue
-    *
-    * @tparam Indices - a list of types of the indices. This will be auto-deduced through the indices parameter.
-    *
-    * @param contract - the name of the contract this table is associated with
-    * @param indices - a list of 1 or more indices to add to the table
-    */
    template <typename PrimaryIndex, typename... SecondaryIndices>
    void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex prim_index, SecondaryIndices... indices) {
       contract_name = contract;
