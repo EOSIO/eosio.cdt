@@ -4,13 +4,18 @@ struct my_struct {
    eosio::name primary_key;
    std::string foo;
    uint64_t bar;
-   int32_t baz;
+
+   std::string fullname;
+   uint32_t age;
+
+   std::tuple<std::string, uint32_t> non_unique_name() const { return {fullname, age}; }
 
    bool operator==(const my_struct b) const {
       return primary_key == b.primary_key &&
              foo == b.foo &&
              bar == b.bar &&
-             baz == b.baz;
+             fullname == b.fullname &&
+             age == b.age;
    }
 };
 
@@ -18,10 +23,11 @@ struct my_table : eosio::kv_table<my_struct> {
    index<eosio::name> primary_key{&my_struct::primary_key};
    index<std::string> foo{&my_struct::foo};
    index<uint64_t>    bar{&my_struct::bar};
-   index<int32_t>     baz{&my_struct::baz};
+
+   index<std::tuple<std::string, uint32_t>> non_unique_name{&my_struct::non_unique_name};
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo, &bar, &baz);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo, &bar, &non_unique_name);
    }
 };
 
@@ -69,31 +75,36 @@ public:
       .primary_key = "bob"_n,
       .foo = "a",
       .bar = 5,
-      .baz = 2
+      .fullname = "Bob Smith",
+      .age = 25
    };
    my_struct s2{
       .primary_key = "alice"_n,
       .foo = "C",
       .bar = 4,
-      .baz = 3
+      .fullname = "Alice Smith",
+      .age = 100
    };
    my_struct s3{
       .primary_key = "john"_n,
       .foo = "e",
       .bar = 3,
-      .baz = 4
+      .fullname = "John Smith",
+      .age = 42
    };
    my_struct s4{
       .primary_key = "joe"_n,
       .foo = "g",
       .bar = 2,
-      .baz = 5
+      .fullname = "Bob Smith",
+      .age = 47
    };
    my_struct s5{
       .primary_key = "billy"_n,
       .foo = "I",
       .bar = 1,
-      .baz = 6
+      .fullname = "Bob Smith",
+      .age = 26
    };
 
    [[eosio::action]]
@@ -137,28 +148,28 @@ public:
 
       eosio::check(foo_itr != foo_end_itr, "Should not be the end");
       eosio::check(bar_itr != bar_end_itr, "Should not be the end");
-      eosio::check(foo_itr.value().foo == s2.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s5.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s2, "Got the wrong value");
+      eosio::check(bar_itr.value() == s5, "Got the wrong value");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s5.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s4.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s5, "Got the wrong value");
+      eosio::check(bar_itr.value() == s4, "Got the wrong value");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s1.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s3.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s1, "Got the wrong value");
+      eosio::check(bar_itr.value() == s3, "Got the wrong value");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s3.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s2.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s3, "Got the wrong value");
+      eosio::check(bar_itr.value() == s2, "Got the wrong value");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s4.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s1.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s4, "Got the wrong value");
+      eosio::check(bar_itr.value() == s1, "Got the wrong value");
 
       ++foo_itr;
       ++bar_itr;
@@ -191,58 +202,18 @@ public:
       eosio::check(bar_itr == bar_begin_itr, "Should be the beginning");
    }
 
-   /* TODO: These are probably not necessary anymore
    [[eosio::action]]
-   void range() {
+   void nonunique() {
       my_table t{"kvtest"_n};
 
-      std::vector<my_struct> expected = {s2, s5, s4, s3, s1};
-      auto actual = t.baz.range(1l, 3l);
+      std::vector<my_struct> expected{s1, s5, s4};
+      auto vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", UINT_MAX});
 
-      eosio::check(actual == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "Range did not return the expected vector.");
+
+      expected = {s1, s5};
+      vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", 27});
+
+      eosio::check(vals == expected, "Range did not return the expected vector.");
    }
-
-   [[eosio::action]]
-   void uniqsecidx() {
-      my_table t{"kvtest"_n};
-
-      t.put({
-         .primary_key = "bob"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
-      });
-
-      t.put({
-         .primary_key = "bob"_n,
-         .foo = "testing",
-         .bar = 100,
-         .baz = 3
-      });
-   }
-
-   [[eosio::action]]
-   void usecidxerr1() {
-      my_table t{"kvtest"_n};
-
-      t.put({
-         .primary_key = "carl"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
-      });
-   }
-
-   [[eosio::action]]
-   void usecidxerr2() {
-      my_table t{"kvtest"_n};
-
-      t.put({
-         .primary_key = "alice"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
-      });
-   }
-   */
 };
