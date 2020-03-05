@@ -1,25 +1,33 @@
 #include <boost/test/unit_test.hpp>
 #include <eosio/testing/tester.hpp>
 #include <eosio/chain/abi_serializer.hpp>
+#include <fc/variant_object.hpp>
 
 #include <contracts.hpp>
 
 using namespace eosio;
 using namespace eosio::testing;
 
+using mvo = fc::mutable_variant_object;
+
 BOOST_AUTO_TEST_SUITE(key_value_make_key_tests)
 
 void make_key_test(name test_name) {
-    tester t;
+   tester t;
 
-    t.create_accounts( { N(kvtest) } );
-    t.produce_block();
-    t.set_code( N(kvtest), contracts::kv_make_key_tests_wasm() );
-    t.set_abi( N(kvtest), contracts::kv_make_key_tests_abi().data() );
-    t.produce_blocks();
+   t.create_accounts( { N(kvtest) } );
+   t.produce_block();
+   t.set_code( N(kvtest), contracts::kv_make_key_tests_wasm() );
+   t.set_abi( N(kvtest), contracts::kv_make_key_tests_abi().data() );
+   t.produce_blocks();
 
-    t.push_action(N(kvtest), N(setup), N(kvtest), {});
-    t.push_action(N(kvtest), test_name, N(kvtest), {});
+   t.set_code(config::system_account_name, contracts::kv_bios_wasm());
+   t.set_abi(config::system_account_name, contracts::kv_bios_abi().data());
+
+   auto data = mvo()("k", 1024)("v", 1024*1024)("i", 256);
+   t.push_action(config::system_account_name, N(ramkvlimits), config::system_account_name, data);
+   t.push_action(N(kvtest), N(setup), N(kvtest), {});
+   t.push_action(N(kvtest), test_name, N(kvtest), {});
 }
 
 BOOST_AUTO_TEST_CASE(makekeyname) try {
