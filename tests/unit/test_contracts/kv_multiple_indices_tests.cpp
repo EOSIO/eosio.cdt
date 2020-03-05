@@ -216,4 +216,43 @@ public:
 
       eosio::check(vals == expected, "Range did not return the expected vector.");
    }
+
+   [[eosio::action]]
+   void update() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "bob"_n,
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
+      });
+   }
+
+   [[eosio::action]]
+   void updateerr1() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "alice"_n,
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
+      });
+   }
+
+   [[eosio::action]]
+   void updateerr2() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "will"_n,
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
+      });
+   }
 };

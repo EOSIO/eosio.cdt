@@ -118,4 +118,17 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_non_unique, tester) try {
    tester.push_action(N(kvtest), N(nonunique), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(multi_tests_update, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
+   tester.push_action(N(kvtest), N(update), N(kvtest), {});
+
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(updateerr1), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("Attempted to update an existing secondary index."));
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(updateerr2), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("Attempted to store an existing secondary index."));
+} FC_LOG_AND_RETHROW()
+
 BOOST_AUTO_TEST_SUITE_END()
