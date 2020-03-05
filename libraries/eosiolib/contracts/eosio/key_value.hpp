@@ -605,7 +605,7 @@ public:
       index() = default;
 
       template <typename KF>
-      index(KF&& kf) : kv_index{kf} {
+      explicit index(KF&& kf) : kv_index{kf} {
          static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
                "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
       }
@@ -720,11 +720,6 @@ public:
          uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
-         if (static_cast<kv_it_stat>(itr_stat) == kv_it_stat::iterator_end) {
-            internal_use_do_not_use::kv_it_destroy(itr);
-            return end();
-         }
-
          return {itr, static_cast<kv_it_stat>(itr_stat), config};
       }
 
@@ -732,7 +727,7 @@ public:
        * Returns an iterator pointing to the first element greater than the given key.
        * @ingroup keyvalue
        *
-       * @return An iterator pointing to the element with the highest key less than or equal to the given key.
+       * @return An iterator pointing to the first element greater than the given key.
        */
       iterator upper_bound(const K& key) {
          auto t_key = table_key(config.prefix, make_key(key));
@@ -759,19 +754,10 @@ public:
        * @return A vector containing all the objects that fall between the range.
        */
       std::vector<T> range(const K& b, const K& e) {
-         auto begin_itr = lower_bound(b);
-         auto end_itr = lower_bound(e);
-
-         if (begin_itr == end_itr || begin_itr > end_itr) {
-            return {};
-         }
-
          std::vector<T> return_values;
 
-         iterator itr = std::move(begin_itr);
-         while(itr < end_itr) {
+         for(auto itr = lower_bound(b), end_itr = lower_bound(e); itr < end_itr; ++itr) {
             return_values.push_back(itr.value());
-            ++itr;
          }
 
          return return_values;
@@ -832,25 +818,26 @@ public:
 
          if (!primary_key_found) {
             eosio::check(!sec_found, "Attempted to store an existing secondary index.");
-         } else if (sec_found) {
-            void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-            auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+            internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+         } else {
+            if (sec_found) {
+               void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+               auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
 
-            eosio::check(copy_size == tbl_key.size(), "Attempted to update an existing secondary index.");
-            auto res = memcmp(buffer, tbl_key.data(), copy_size);
-            eosio::check(res == 0, "Attempted to update an existing secondary index.");
+               eosio::check(copy_size == tbl_key.size(), "Attempted to update an existing secondary index.");
+               auto res = memcmp(buffer, tbl_key.data(), copy_size);
+               eosio::check(res == 0, "Attempted to update an existing secondary index.");
 
-            if (copy_size > detail::max_stack_buffer_size) {
-               free(buffer);
+               if (copy_size > detail::max_stack_buffer_size) {
+                  free(buffer);
+               }
+            } else {
+               auto old_sec_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(old_value));
+               internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
+               internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
             }
          }
 
-         if (primary_key_found) {
-            auto old_sec_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(old_value));
-            internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
-         }
-
-         internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
       }
 
       size_t data_size = get_size(value);
