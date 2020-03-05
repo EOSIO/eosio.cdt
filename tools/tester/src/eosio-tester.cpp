@@ -204,7 +204,7 @@ struct test_chain {
       if (control->is_building_block())
          finish_block();
       control->start_block(control->head_block_time() + fc::microseconds(skip_miliseconds * 1000ll + block_interval_us),
-                           0, {});
+                           0);
    }
 
    void start_if_needed() {
