@@ -414,7 +414,7 @@ FC_REFLECT(push_trx_args, (transaction)(context_free_data)(signatures)(keys))
 
 #define DB_WRAPPERS_ARRAY_SECONDARY(IDX, ARR_SIZE, ARR_ELEMENT_TYPE)                                                   \
    int db_##IDX##_find_secondary(uint64_t code, uint64_t scope, uint64_t table,                                        \
-                                 eosio::chain::array_ptr<const ARR_ELEMENT_TYPE> data, size_t data_len,                \
+                                 eosio::chain::array_ptr<const ARR_ELEMENT_TYPE> data, uint32_t data_len,              \
                                  uint64_t& primary) {                                                                  \
       EOS_ASSERT(data_len == ARR_SIZE, eosio::chain::db_api_exception,                                                 \
                  "invalid size of secondary key array for " #IDX                                                       \
@@ -423,7 +423,7 @@ FC_REFLECT(push_trx_args, (transaction)(context_free_data)(signatures)(keys))
       return selected().IDX.find_secondary(code, scope, table, data, primary);                                         \
    }                                                                                                                   \
    int db_##IDX##_find_primary(uint64_t code, uint64_t scope, uint64_t table,                                          \
-                               eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, size_t data_len, uint64_t primary) {    \
+                               eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, uint32_t data_len, uint64_t primary) {  \
       EOS_ASSERT(data_len == ARR_SIZE, eosio::chain::db_api_exception,                                                 \
                  "invalid size of secondary key array for " #IDX                                                       \
                  ": given ${given} bytes but expected ${expected} bytes",                                              \
@@ -431,7 +431,7 @@ FC_REFLECT(push_trx_args, (transaction)(context_free_data)(signatures)(keys))
       return selected().IDX.find_primary(code, scope, table, data.value, primary);                                     \
    }                                                                                                                   \
    int db_##IDX##_lowerbound(uint64_t code, uint64_t scope, uint64_t table,                                            \
-                             eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, size_t data_len, uint64_t& primary) {     \
+                             eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, uint32_t data_len, uint64_t& primary) {   \
       EOS_ASSERT(data_len == ARR_SIZE, eosio::chain::db_api_exception,                                                 \
                  "invalid size of secondary key array for " #IDX                                                       \
                  ": given ${given} bytes but expected ${expected} bytes",                                              \
@@ -439,7 +439,7 @@ FC_REFLECT(push_trx_args, (transaction)(context_free_data)(signatures)(keys))
       return selected().IDX.lowerbound_secondary(code, scope, table, data.value, primary);                             \
    }                                                                                                                   \
    int db_##IDX##_upperbound(uint64_t code, uint64_t scope, uint64_t table,                                            \
-                             eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, size_t data_len, uint64_t& primary) {     \
+                             eosio::chain::array_ptr<ARR_ELEMENT_TYPE> data, uint32_t data_len, uint64_t& primary) {   \
       EOS_ASSERT(data_len == ARR_SIZE, eosio::chain::db_api_exception,                                                 \
                  "invalid size of secondary key array for " #IDX                                                       \
                  ": given ${given} bytes but expected ${expected} bytes",                                              \
@@ -528,7 +528,7 @@ struct callbacks {
 
    void abort() { throw std::runtime_error("called abort"); }
 
-   void eosio_assert_message(bool test, const char* msg, size_t msg_len) {
+   void eosio_assert_message(bool test, const char* msg, uint32_t msg_len) {
       check_bounds(msg, msg + msg_len);
       if (!test)
          throw ::assert_exception(std::string(msg, msg_len));
@@ -796,7 +796,7 @@ struct callbacks {
    }
 
    // clang-format off
-    int db_get_i64(int iterator, char* buffer, size_t buffer_size)                      {return selected().db_get_i64(iterator, buffer, buffer_size);}
+    int db_get_i64(int iterator, char* buffer, uint32_t buffer_size)                    {return selected().db_get_i64(iterator, buffer, buffer_size);}
     int db_next_i64(int iterator, uint64_t& primary)                                    {return selected().db_next_i64(iterator, primary);}
     int db_previous_i64(int iterator, uint64_t& primary)                                {return selected().db_previous_i64(iterator, primary);}
     int db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t id)         {return selected().db_find_i64(eosio::chain::name{code}, eosio::chain::name{scope}, eosio::chain::name{table}, id);}
