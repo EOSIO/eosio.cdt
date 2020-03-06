@@ -48,23 +48,23 @@ public:
 
       auto itr = t.primary_key.find("bob"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key: bob");
 
       itr = t.primary_key.find("joe"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key: joe");
 
       itr = t.primary_key.find("alice"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "alice"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "alice"_n, "Got the wrong primary_key: alice");
 
       itr = t.primary_key.find("john"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong primary_key: john");
 
       itr = t.primary_key.find("billy"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong primary_key: billy");
    }
 
    [[eosio::action]]
@@ -93,22 +93,22 @@ public:
 
       auto itr = t.primary_key.lower_bound("bob"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key: lower_bound - bob");
 
       itr = t.primary_key.lower_bound("catherine"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key: lower_bound - joe");
 
       itr = t.primary_key.lower_bound("william"_n);
       eosio::check(itr == end_itr, "Should be the end");
 
       itr = t.primary_key.upper_bound("billy"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong primary_key: upper_bound - bob");
 
       itr = t.primary_key.upper_bound("ian"_n);
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong primary_key: upper_bound - joe");
 
       itr = t.primary_key.upper_bound("john"_n);
       eosio::check(itr == end_itr, "Should be the end");
@@ -127,29 +127,29 @@ public:
       eosio::check(itr.value().primary_key == "alice"_n, "Got the wrong beginning");
       ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong value");
+      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong value: billy");
       ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong value");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong value: bob");
       ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong value");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong value: joe");
       ++itr;
       eosio::check(itr != end_itr, "Should not be the end");
-      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong value");
+      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong value: john");
       ++itr;
       eosio::check(itr == end_itr, "Should be the end");
 
       // operator--
       // ----------
       --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
+      eosio::check(itr != begin_itr, "Should not be the beginning: 1");
       --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
+      eosio::check(itr != begin_itr, "Should not be the beginning: 2");
       --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
+      eosio::check(itr != begin_itr, "Should not be the beginning: 3");
       --itr;
-      eosio::check(itr != begin_itr, "Should not be the beginning");
+      eosio::check(itr != begin_itr, "Should not be the beginning: 4");
       --itr;
       eosio::check(itr == begin_itr, "Should be the beginning");
    }
@@ -178,15 +178,15 @@ public:
 
       expected = {};
       vals = t.primary_key.range("bob"_n, "bob"_n);
-      eosio::check(vals == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "range did not return expected vector: {} - 1");
       vals = t.primary_key.range("chris"_n, "joe"_n);
-      eosio::check(vals == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "range did not return expected vector: {} - 2");
       vals = t.primary_key.range("joe"_n, "alice"_n);
-      eosio::check(vals == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "range did not return expected vector: {} - 3");
 
       expected = {s2, s5, s, s4, s3};
       vals = t.primary_key.range("alice"_n, "william"_n);
-      eosio::check(vals == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "range did not return expected vector: {s2, s5, s, s4, s3}");
    }
 
    [[eosio::action]]

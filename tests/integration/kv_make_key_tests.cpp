@@ -1,3 +1,4 @@
+#include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 #include <eosio/testing/tester.hpp>
 #include <eosio/chain/abi_serializer.hpp>
@@ -10,7 +11,7 @@ using namespace eosio::testing;
 
 using mvo = fc::mutable_variant_object;
 
-BOOST_AUTO_TEST_SUITE(key_value_make_key_tests)
+BOOST_AUTO_TEST_SUITE(key_value_tests)
 
 void make_key_test(name test_name) {
    tester t;
@@ -30,44 +31,13 @@ void make_key_test(name test_name) {
    t.push_action(N(kvtest), test_name, N(kvtest), {});
 }
 
-BOOST_AUTO_TEST_CASE(makekeyname) try {
-   make_key_test(N(makekeyname));
-} FC_LOG_AND_RETHROW()
+std::vector<name> data_set{
+   N(makekeyname), N(makekeystr), N(makekeyistr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
+   N(makekeyflt), N(makekeydbl), N(makekeystct), N(makekeytup)
+};
 
-BOOST_AUTO_TEST_CASE(makekeystr) try {
-   make_key_test(N(makekeystr));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeyistr) try {
-   make_key_test(N(makekeyistr));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeyuill) try {
-   make_key_test(N(makekeyuill));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeyil) try {
-   make_key_test(N(makekeyil));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeyuilll) try {
-   make_key_test(N(makekeyuilll));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeyflt) try {
-   make_key_test(N(makekeyflt));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeydbl) try {
-   make_key_test(N(makekeydbl));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeystct) try {
-   make_key_test(N(makekeystct));
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_CASE(makekeytup) try {
-   make_key_test(N(makekeytup));
-} FC_LOG_AND_RETHROW()
+BOOST_DATA_TEST_CASE(makekeytests, data_set) { try {
+   make_key_test(sample);
+} FC_LOG_AND_RETHROW() }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -10,7 +10,7 @@ struct my_struct {
 
    std::tuple<std::string, uint32_t> non_unique_name() const { return {fullname, age}; }
 
-   bool operator==(const my_struct b) const {
+   bool operator==(const my_struct& b) const {
       return primary_key == b.primary_key &&
              foo == b.foo &&
              bar == b.bar &&
@@ -146,60 +146,61 @@ public:
       auto foo_itr = t.foo.begin();
       auto bar_itr = t.bar.begin();
 
-      eosio::check(foo_itr != foo_end_itr, "Should not be the end");
-      eosio::check(bar_itr != bar_end_itr, "Should not be the end");
-      eosio::check(foo_itr.value() == s2, "Got the wrong value");
-      eosio::check(bar_itr.value() == s5, "Got the wrong value");
+      eosio::check(foo_itr != foo_end_itr, "foo should not be the end");
+      eosio::check(bar_itr != bar_end_itr, "bar should not be the end");
+
+      eosio::check(foo_itr.value() == s2, "Got the wrong value: foo != s2");
+      eosio::check(bar_itr.value() == s5, "Got the wrong value: bar != s5");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value() == s5, "Got the wrong value");
-      eosio::check(bar_itr.value() == s4, "Got the wrong value");
+      eosio::check(foo_itr.value() == s5, "Got the wrong value: foo != s5");
+      eosio::check(bar_itr.value() == s4, "Got the wrong value: bar != s4");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value() == s1, "Got the wrong value");
-      eosio::check(bar_itr.value() == s3, "Got the wrong value");
+      eosio::check(foo_itr.value() == s1, "Got the wrong value: foo != s1");
+      eosio::check(bar_itr.value() == s3, "Got the wrong value: bar != s3");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value() == s3, "Got the wrong value");
-      eosio::check(bar_itr.value() == s2, "Got the wrong value");
+      eosio::check(foo_itr.value() == s3, "Got the wrong value: foo != s3");
+      eosio::check(bar_itr.value() == s2, "Got the wrong value: bar != s2");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value() == s4, "Got the wrong value");
-      eosio::check(bar_itr.value() == s1, "Got the wrong value");
+      eosio::check(foo_itr.value() == s4, "Got the wrong value: foo != s4");
+      eosio::check(bar_itr.value() == s1, "Got the wrong value: bar != s1");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr == foo_end_itr, "Should be the end");
-      eosio::check(bar_itr == bar_end_itr, "Should be the end");
+      eosio::check(foo_itr == foo_end_itr, "foo should be the end");
+      eosio::check(bar_itr == bar_end_itr, "bar should be the end");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 1");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 1");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 2");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 2");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 3");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 3");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 4");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 4");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr == foo_begin_itr, "Should be the beginning");
-      eosio::check(bar_itr == bar_begin_itr, "Should be the beginning");
+      eosio::check(foo_itr == foo_begin_itr, "foo should be the beginning");
+      eosio::check(bar_itr == bar_begin_itr, "bar should be the beginning");
    }
 
    [[eosio::action]]
@@ -209,12 +210,12 @@ public:
       std::vector<my_struct> expected{s1, s5, s4};
       auto vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", UINT_MAX});
 
-      eosio::check(vals == expected, "Range did not return the expected vector.");
+      eosio::check(vals == expected, "Range did not return the expected vector: {s1, s5, s4}");
 
       expected = {s1, s5};
       vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", 27});
 
-      eosio::check(vals == expected, "Range did not return the expected vector.");
+      eosio::check(vals == expected, "Range did not return the expected vector: {s1, s5}");
    }
 
    [[eosio::action]]

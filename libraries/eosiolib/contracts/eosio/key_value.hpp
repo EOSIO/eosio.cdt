@@ -307,7 +307,7 @@ inline key_type make_key(eosio::name n) {
 }
 
 inline key_type make_key(key_type&& val) {
-   return val;
+   return std::move(val);
 }
 
 inline key_type make_key(const key_type& val) {
@@ -616,8 +616,6 @@ public:
       using kv_table<T>::kv_index::index_name;
       using kv_table<T>::kv_index::prefix;
 
-      index() = default;
-
       template <typename KF>
       explicit index(KF&& kf) : kv_index{kf} {
          static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
@@ -745,11 +743,7 @@ public:
        */
       iterator upper_bound(const K& key) {
          auto t_key = table_key(config.prefix, make_key(key));
-
-         uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
-
-         iterator it{itr, static_cast<kv_it_stat>(itr_stat), config};
+         auto it = lower_bound(key);
 
          auto cmp = it.key_compare(t_key);
          if (cmp == 0) {
@@ -838,9 +832,8 @@ public:
                void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
                auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
 
-               eosio::check(copy_size == tbl_key.size(), "Attempted to update an existing secondary index.");
                auto res = memcmp(buffer, tbl_key.data(), copy_size);
-               eosio::check(res == 0, "Attempted to update an existing secondary index.");
+               eosio::check(copy_size == tbl_key.size() && res == 0, "Attempted to update an existing secondary index.");
 
                if (copy_size > detail::max_stack_buffer_size) {
                   free(buffer);
@@ -894,12 +887,12 @@ public:
 protected:
    kv_table() = default;
 
+   void setup_indices(uint64_t index_name, bool is_named) {}
+
    template <typename... Indices>
    void setup_indices(uint64_t index_name, bool is_named, null_index* index, Indices... indices) {
       ++index_name;
-      if constexpr (sizeof...(indices) > 0) {
-         setup_indices(index_name, is_named, indices...);
-      }
+      setup_indices(index_name, is_named, indices...);
    }
 
    template <typename I, typename... Indices>
@@ -907,7 +900,7 @@ protected:
       if (is_named) {
          eosio::check(index->index_name.value > 0, "All indices must be named if one is named.");
       } else {
-         eosio::check(index->index_name.value <= 0, "All indices must be named if one is named.");
+         eosio::check(index->index_name.value == 0, "All indices must be named if one is named.");
          index->index_name = eosio::name{index_name};
       }
 
@@ -919,23 +912,6 @@ protected:
       secondary_indices.push_back(index);
       ++index_name;
       setup_indices(index_name, is_named, indices...);
-   }
-
-   template <typename I>
-   void setup_indices(uint64_t index_name, bool is_named, I index) {
-      if (is_named) {
-         eosio::check(index->index_name.value > 0, "All indices must be named if one is named.");
-      } else {
-         eosio::check(index->index_name.value <= 0, "All indices must be named if one is named.");
-         index->index_name = eosio::name{index_name};
-      }
-
-      index->contract_name = contract_name;
-      index->table_name = table_name;
-      index->tbl = this;
-
-      index->setup();
-      secondary_indices.push_back(index);
    }
 
    template <typename PrimaryIndex, typename... SecondaryIndices>
@@ -961,9 +937,7 @@ protected:
 
       primary_index->setup();
 
-      if constexpr (sizeof...(indices) > 0) {
-         setup_indices(index_name, is_named, indices...);
-      }
+      setup_indices(index_name, is_named, indices...);
    }
 
 private:
