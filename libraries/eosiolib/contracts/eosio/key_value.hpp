@@ -255,38 +255,29 @@ inline key_type make_key(double val) {
 }
 
 inline key_type make_key(const char* val, size_t size, bool case_insensitive=false) {
-   size_t num_zeroes = 0;
-   for (int i = 0; i < size; ++i) {
-      if (val[i] == 0x00) {
-         ++num_zeroes;
-      }
-   }
+   size_t num_zeroes = std::count(val, val+size, 0);
 
    size_t data_size = size + num_zeroes + 2;
-   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+   char* data_buffer = data_size > detail::max_stack_buffer_size ? (char*)malloc(data_size) : (char*)alloca(data_size);
 
-   int j = 0;
-   for(int i = 0; i < size; ++i) {
+   size_t j = 0;
+   for(size_t i = 0; i < size; ++i) {
       if (val[i] == 0x00) {
-         ((char*)data_buffer)[j] = 0x00;
-         ++j;
-         ((char*)data_buffer)[j] = 0x01;
-         ++j;
+         data_buffer[j++] = 0x00;
+         data_buffer[j++] = 0x01;
       } else {
          if(case_insensitive) {
-            ((char*)data_buffer)[j] = std::toupper(val[i]);
-            ++j;
+            data_buffer[j++] = std::toupper(val[i]);
          } else {
-            ((char*)data_buffer)[j] = val[i];
-            ++j;
+            data_buffer[j++] = val[i];
          }
       }
    }
 
-   ((char*)data_buffer)[data_size - 2] = 0x00;
-   ((char*)data_buffer)[data_size - 1] = 0x00;
+   data_buffer[data_size - 2] = 0x00;
+   data_buffer[data_size - 1] = 0x00;
 
-   key_type s((const char*)data_buffer, data_size);
+   key_type s(data_buffer, data_size);
 
    if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
