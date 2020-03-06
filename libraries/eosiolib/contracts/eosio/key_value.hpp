@@ -68,7 +68,7 @@
 
 /**
  * @brief Macro to define a table.
- * @details The resulting table will have a member `index` that has fields on it that match 1-1 with the names of the
+ * @details The resulting table will have member fields on it that match 1-1 with the names of the
  * fields passed into the list. See example for further clarification.
  *
  * @param table_class - The name of the class of the user defined table that inherits from eosio::kv_table
