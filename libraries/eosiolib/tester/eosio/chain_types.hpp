@@ -129,7 +129,26 @@ struct action_trace_v0 {
 EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act,
               context_free, elapsed, console, account_ram_deltas, except, error_code);
 
-using action_trace = std::variant<action_trace_v0>;
+struct action_trace_v1 {
+   eosio::varuint32                   action_ordinal         = {};
+   eosio::varuint32                   creator_action_ordinal = {};
+   std::optional<action_receipt>      receipt                = {};
+   eosio::name                        receiver               = {};
+   action                             act                    = {};
+   bool                               context_free           = {};
+   int64_t                            elapsed                = {};
+   std::string                        console                = {};
+   std::vector<account_delta>         account_ram_deltas     = {};
+   std::vector<account_delta>         account_disk_deltas    = {};
+   std::optional<std::string>         except                 = {};
+   std::optional<uint64_t>            error_code             = {};
+   std::optional<eosio::input_stream> return_value           = {};
+};
+
+EOSIO_REFLECT(action_trace_v1, action_ordinal, creator_action_ordinal, receipt, receiver, act, context_free, elapsed,
+              console, account_ram_deltas, account_disk_deltas, except, error_code, return_value)
+
+using action_trace = std::variant<action_trace_v0, action_trace_v1>;
 
 struct partial_transaction_v0 {
    eosio::time_point_sec             expiration             = {};

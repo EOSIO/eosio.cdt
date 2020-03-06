@@ -261,8 +261,8 @@ chain_types::action convert(const eosio::chain::action& obj) {
    return result;
 }
 
-chain_types::action_trace_v0 convert(const eosio::chain::action_trace& obj) {
-   chain_types::action_trace_v0 result;
+chain_types::action_trace_v1 convert(const eosio::chain::action_trace& obj) {
+   chain_types::action_trace_v1 result;
    result.action_ordinal.value         = obj.action_ordinal.value;
    result.creator_action_ordinal.value = obj.creator_action_ordinal.value;
    if (obj.receipt)
@@ -273,10 +273,13 @@ chain_types::action_trace_v0 convert(const eosio::chain::action_trace& obj) {
    result.elapsed        = obj.elapsed.count();
    result.console        = obj.console;
    for (auto& delta : obj.account_ram_deltas) result.account_ram_deltas.push_back(convert(delta));
+   for (auto& delta : obj.account_disk_deltas) result.account_disk_deltas.push_back(convert(delta));
    if (obj.except)
       result.except = obj.except->to_string();
    if (obj.error_code)
       result.error_code = *obj.error_code;
+   if (obj.return_value)
+      result.return_value.emplace(obj.return_value->data(), obj.return_value->size());
    return result;
 }
 

@@ -19,6 +19,9 @@ namespace internal_use_do_not_use {
    std::vector<char> query_database_chain(uint32_t chain, const std::vector<char>& packed_req);
    void hex(const uint8_t* begin, const uint8_t* end, std::ostream& os);
 
+   template <typename R, typename C, typename... Args>
+   R get_return_type(R (C::*f)(Args...));
+
 } // namespace internal_use_do_not_use
 
 const std::vector<std::string>& get_args();
@@ -52,20 +55,23 @@ struct action_receipt {
 auto conversion_kind(chain_types::action_receipt_v0, action_receipt) -> strict_conversion;
 
 struct action_trace {
-   uint32_t                      action_ordinal         = {};
-   uint32_t                      creator_action_ordinal = {};
-   std::optional<action_receipt> receipt                = {};
-   name                          receiver               = {};
-   action                        act                    = {};
-   bool                          context_free           = {};
-   int64_t                       elapsed                = {};
-   std::string                   console                = {};
-   std::vector<account_delta>    account_ram_deltas     = {};
-   std::optional<std::string>    except                 = {};
-   std::optional<uint64_t>       error_code             = {};
+   uint32_t                         action_ordinal         = {};
+   uint32_t                         creator_action_ordinal = {};
+   std::optional<action_receipt>    receipt                = {};
+   name                             receiver               = {};
+   action                           act                    = {};
+   bool                             context_free           = {};
+   int64_t                          elapsed                = {};
+   std::string                      console                = {};
+   std::vector<account_delta>       account_ram_deltas     = {};
+   std::vector<account_delta>       account_disk_deltas    = {};
+   std::optional<std::string>       except                 = {};
+   std::optional<uint64_t>          error_code             = {};
+   std::optional<std::vector<char>> return_value           = {};
 };
 
-auto conversion_kind(chain_types::action_trace_v0, action_trace) -> strict_conversion;
+auto conversion_kind(chain_types::action_trace_v0, action_trace) -> widening_conversion;
+auto conversion_kind(chain_types::action_trace_v1, action_trace) -> strict_conversion;
 
 struct transaction_trace {
    checksum256                            id                  = {};
@@ -167,6 +173,18 @@ class test_chain {
    transaction_trace transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
                               const char* expected_except = nullptr);
    transaction_trace transact(std::vector<action>&& actions, const char* expected_except = nullptr);
+
+   /**
+    * Pushes a transaction with action onto the chain and converts its return value.
+    * If no block is currently pending, starts one.
+    */
+   template <typename Action, typename... Args>
+   auto action_with_return(const Action& action, Args&&... args) {
+      using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
+      auto trace = transact({action.to_action(std::forward<Args>(args)...)});
+      check(trace.action_traces[0].return_value.has_value(), "action did not return a value");
+      return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
+   }
 
    /**
     * Executes a single deferred transaction and returns the action trace.
