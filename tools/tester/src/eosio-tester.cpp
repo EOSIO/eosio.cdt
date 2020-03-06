@@ -99,13 +99,16 @@ struct intrinsic_context_impl {
 
       trx.actions.emplace_back();
       trx.actions.back().account = N(eosio.null);
+      trx.actions.back().authorization.push_back({N(eosio), N(active)});
       trx_ctx = std::make_unique<eosio::chain::transaction_context>(control, trx, trx.id(), xxx_timer.get(), fc::time_point::now());
       trx_ctx->init_for_implicit_trx(0);
       trx_ctx->exec();
       apply_context = std::make_unique<eosio::chain::apply_context>(control, *trx_ctx, 1, 0);
+      apply_context->exec_one();
    }
 };
 
+/*
 template<typename ApplyContext>
 struct intrinsic_context_impl<ApplyContext, std::void_t<typename ApplyContext::primary_index_read_only>> :
    ApplyContext::primary_index_read_only
@@ -133,6 +136,7 @@ struct intrinsic_context_impl<ApplyContext, std::void_t<typename ApplyContext::p
       apply_context{this}
    {}
 };
+*/
 
 using intrinsic_context = intrinsic_context_impl<eosio::chain::apply_context>;
 
@@ -974,6 +978,7 @@ void register_callbacks() {
    DB_REGISTER_SECONDARY(idx_double)
    DB_REGISTER_SECONDARY(idx_long_double)
    rhf_t::add<callbacks, &callbacks::kv_get, eosio::vm::wasm_allocator>("env", "kv_get");
+   rhf_t::add<callbacks, &callbacks::kv_get_data, eosio::vm::wasm_allocator>("env", "kv_get_data");
    rhf_t::add<callbacks, &callbacks::kv_it_create, eosio::vm::wasm_allocator>("env", "kv_it_create");
    rhf_t::add<callbacks, &callbacks::kv_it_destroy, eosio::vm::wasm_allocator>("env", "kv_it_destroy");
    rhf_t::add<callbacks, &callbacks::kv_it_status, eosio::vm::wasm_allocator>("env", "kv_it_status");
