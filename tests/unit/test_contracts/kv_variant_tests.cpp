@@ -11,7 +11,7 @@ struct my_struct_v2 {
    uint64_t age;
 };
 
-DEFINE_TABLE(my_table, my_struct_v, "testtable", "eosio.kvram", &age, &full_name)
+DEFINE_TABLE(my_table, my_struct_v, "testtable", "eosio.kvram", age, full_name)
 
 struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    index<std::string> primary_key{[](const auto& obj) {
@@ -38,13 +38,49 @@ struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    }
 };
 
-class [[eosio::contract]] kv_single_index_tests : public eosio::contract {
+class [[eosio::contract]] kv_variant_tests : public eosio::contract {
 public:
    using contract::contract;
 
+   // Empty action to avoid having conditional logic in the integration tests file.
    [[eosio::action]]
-   void basic_table() {
+   void setup() {}
+
+   [[eosio::action]]
+   void vriantupgrd() {
       my_table t{"kvtest"_n};
+
+      my_struct_v s1{
+         .full_name = "Dan Larimer",
+         .age = 25
+      };
+
+      my_struct_v s2{
+         .full_name = "Brendan Blumer",
+         .age = 24
+      };
+
+      t.put(s1);
+      t.put(s2);
+
+      my_table_v t1{"kvtest"_n};
+
+      auto itr = t1.primary_key.find("Dan Larimer");
+      auto val = itr.value();
+      auto vval = std::get<my_struct_v>(val);
+      eosio::check(vval.age == 25, "wrong value");
+
+      my_struct_v2 s3{
+         .first_name = "Bob",
+         .last_name = "Smith",
+         .age = 30
+      };
+
+      t1.put(s3);
+
+      auto val2 = t1.primary_key.get("Bob : Smith");
+      auto vval2 = std::get<my_struct_v2>(*val2);
+      eosio::check(vval2.age == 30, "wrong value");
    }
 
    [[eosio::action]]

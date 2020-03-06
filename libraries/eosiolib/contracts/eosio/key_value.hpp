@@ -699,10 +699,10 @@ public:
       }
 
       /**
-       * Returns an iterator referring to the `past-the-end` element. It does not point to any element, therefore `value` should not be called on it.
+       * Returns an iterator pointing past the end. It does not point to any element, therefore `value` should not be called on it.
        * @ingroup keyvalue
        *
-       * @return An iterator referring to the `past-the-end` element.
+       * @return An iterator pointing past the end.
        */
       iterator end() {
          return {0, kv_it_stat::iterator_end, config};
