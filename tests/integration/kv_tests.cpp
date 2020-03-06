@@ -1,3 +1,4 @@
+#include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <eosio/chain/abi_serializer.hpp>
@@ -125,13 +126,26 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_update, tester) try {
                          eosio_assert_message_is("Attempted to store an existing secondary index."));
 } FC_LOG_AND_RETHROW()
 
-// Multi
-// -----
+// Variant
+// -------
 BOOST_FIXTURE_TEST_CASE(multi_tests_variant, tester) try {
    TESTER tester;
    setup(tester, contracts::kv_variant_tests_wasm(), contracts::kv_variant_tests_abi());
    tester.push_action(N(kvtest), N(vriant), N(kvtest), {});
    tester.push_action(N(kvtest), N(vriantupgrd), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
+
+// Make Key
+// --------
+std::vector<name> data_set{
+   N(makekeyname), N(makekeystr), N(makekeyistr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
+   N(makekeyflt), N(makekeydbl), N(makekeystct), N(makekeytup)
+};
+
+BOOST_DATA_TEST_CASE(makekeytests, data_set) { try {
+   TESTER tester;
+   setup(tester, contracts::kv_make_key_tests_wasm(), contracts::kv_make_key_tests_abi());
+   tester.push_action(N(kvtest), sample, N(kvtest), {});
+} FC_LOG_AND_RETHROW() }
 
 BOOST_AUTO_TEST_SUITE_END()
