@@ -34,15 +34,15 @@ struct my_struct {
 };
 
 struct my_table : eosio::kv_table<my_struct> {
-   index<eosio::name>                              tname{&my_struct::tname};
-   index<std::string>                              tstring{&my_struct::tstring};
-   index<uint64_t>                                 tui64{&my_struct::tui64};
-   index<int32_t>                                  ti32{&my_struct::ti32};
-   index<uint128_t>                                tui128{&my_struct::tui128};
-   index<float>                                    tfloat{&my_struct::tfloat};
-   index<double>                                   tdouble{&my_struct::tdouble};
-   index<testing_struct>                           tstruct{&my_struct::tstruct};
-   index<std::tuple<uint64_t, float, std::string>> ttuple{&my_struct::ttuple};
+   KV_NAMED_INDEX("t1"_n, tname)
+   KV_NAMED_INDEX("t2"_n, tstring)
+   KV_NAMED_INDEX("t3"_n, tui64)
+   KV_NAMED_INDEX("t4"_n, ti32)
+   KV_NAMED_INDEX("t5"_n, tui128)
+   KV_NAMED_INDEX("t11"_n, tfloat)
+   KV_NAMED_INDEX("t12"_n, tdouble)
+   KV_NAMED_INDEX("t13"_n, tstruct)
+   KV_NAMED_INDEX("t14"_n, ttuple)
 
    my_table(eosio::name contract_name) {
       init(contract_name, "testtable"_n, "eosio.kvram"_n, &tname, &tstring, &tui64, &ti32, &tui128, &tfloat, &tdouble, &tstruct, &ttuple);

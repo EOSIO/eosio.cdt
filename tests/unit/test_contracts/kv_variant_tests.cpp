@@ -11,7 +11,14 @@ struct my_struct_v2 {
    uint64_t age;
 };
 
-DEFINE_TABLE(my_table, my_struct_v, "testtable", eosio::kv_ram, age, full_name)
+struct my_table : eosio::kv_table<my_struct_v> {
+   KV_NAMED_INDEX("age"_n, age);
+   KV_NAMED_INDEX("fullname"_n, full_name);
+
+   my_table(eosio::name contract_name) {
+      init(contract_name, "testtable"_n, eosio::kv_ram, &age, &full_name);
+   }
+};
 
 struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    index<std::string> primary_key{[](const auto& obj) {

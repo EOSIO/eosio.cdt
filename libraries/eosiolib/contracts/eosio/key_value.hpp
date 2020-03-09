@@ -1,7 +1,6 @@
 #pragma once
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
-#include "../../core/eosio/print.hpp"
 #include "../../core/eosio/utility.hpp"
 #include "../../core/eosio/varint.hpp"
 
@@ -15,76 +14,7 @@
 #include <boost/preprocessor/variadic/to_seq.hpp>
 #include <boost/pfr.hpp>
 
-#define EOSIO_CDT_KV_INDEXnullptr
-
-#define EOSIO_CDT_KV_INDEX_TEST() 1
-#define EOSIO_CDT_KV_INDEX_TEST_EOSIO_CDT_KV_INDEX_TEST 0,
-#define EOSIO_CDT_KV_INDEX_TEST_1 1, ignore
-#define EOSIO_CDT_EXPAND(x) x
-#define EOSIO_CDT_CAT2(x, y) x ## y
-#define EOSIO_CDT_CAT(x, y) EOSIO_CDT_CAT2(x, y)
-#define EOSIO_CDT_APPLY(f, args) f args
-
 #define EOSIO_CDT_GET_RETURN_T(value_class, index_name) std::decay_t<decltype(std::invoke(&value_class::index_name, std::declval<const value_class*>()))>
-
-#define EOSIO_CDT_KV_FIX_INDEX_NAME_0(index_name, i) index_name
-#define EOSIO_CDT_KV_FIX_INDEX_NAME_1(index_name, i) index_name ## i
-#define EOSIO_CDT_KV_FIX_INDEX_NAME(x, i) EOSIO_CDT_KV_FIX_INDEX_NAME_ ## x
-
-#define EOSIO_CDT_KV_FIX_INDEX_TYPE_0(index_name) index
-#define EOSIO_CDT_KV_FIX_INDEX_TYPE_1(index_name) null_index
-#define EOSIO_CDT_KV_FIX_INDEX_TYPE(iskeyword, garbage) EOSIO_CDT_KV_FIX_INDEX_TYPE_ ## iskeyword
-
-#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_0(value_class, index_name) {&value_class::index_name}
-#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_1(value_class, index_name)
-#define EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT(iskeyword, garbage) EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT_ ## iskeyword
-
-#define EOSIO_CDT_KV_INDEX_NAME(index_name, i)                                                                         \
-   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_NAME,                                                                        \
-      (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(index_name, i)
-
-#define EOSIO_CDT_KV_INDEX_TYPE(index_name)                                                                            \
-   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_TYPE,                                                                        \
-      (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(index_name)
-
-#define EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name)                                                          \
-   EOSIO_CDT_APPLY(EOSIO_CDT_KV_FIX_INDEX_CONSTRUCT,                                                                   \
-      (EOSIO_CDT_CAT(EOSIO_CDT_KV_INDEX_TEST_,                                                                         \
-           EOSIO_CDT_EXPAND(EOSIO_CDT_KV_INDEX_TEST EOSIO_CDT_KV_INDEX ## index_name ()))))(value_class, index_name)
-
-#define EOSIO_CDT_CREATE_KV_INDEX(r, value_class, i, index_name)                                                       \
-   EOSIO_CDT_KV_INDEX_TYPE(index_name)<EOSIO_CDT_GET_RETURN_T(value_class, index_name)> EOSIO_CDT_KV_INDEX_NAME(index_name, i) EOSIO_CDT_KV_INDEX_CONSTRUCT(value_class, index_name);
-
-#define EOSIO_CDT_CREATE_KV_INDICES(value_class, ...)                                                                  \
-   BOOST_PP_SEQ_FOR_EACH_I(EOSIO_CDT_CREATE_KV_INDEX, value_class, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
-
-#define EOSIO_CDT_LIST_KV_INDEX(r, data, index_name)                                                                   \
-   ,&index_name
-
-#define EOSIO_CDT_LIST_KV_INDICES(...)                                                                                 \
-   BOOST_PP_SEQ_FOR_EACH(EOSIO_CDT_LIST_KV_INDEX, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
-
-/**
- * @brief Macro to define a table.
- * @details The resulting table will have member fields on it that match 1-1 with the names of the
- * fields passed into the list. See example for further clarification.
- *
- * @param table_class - The name of the class of the user defined table that inherits from eosio::kv_table
- * @param value_class - The name of the class of the data stored as the value of the table
- * @param table_name  - The name of the table
- * @param db_name     - The type of the EOSIO Key Value database. Defaulted to eosio.kvram
- * @param ...         - A variadic list of 1 or more indexes to define on the table.
- */
-#define DEFINE_TABLE(table_class, value_class, table_name, db_name, /*indices*/...)                                    \
-   struct table_class : eosio::kv_table<value_class> {                                                                 \
-      EOSIO_CDT_CREATE_KV_INDICES(value_class, __VA_ARGS__)                                                            \
-                                                                                                                       \
-      table_class(eosio::name contract_name) {                                                                         \
-         init(contract_name, table_name##_n, db_name EOSIO_CDT_LIST_KV_INDICES(__VA_ARGS__));                          \
-      }                                                                                                                \
-   };
 
 /**
  * @brief Macro to define an index.
@@ -96,7 +26,7 @@
  * @param member_name   - The name of the member pointer used for the index. This also defines the index's C++ variable name.
  */
 #define KV_NAMED_INDEX(index_name, member_name)                                                                        \
-   index<EOSIO_CDT_GET_RETURN_T(value_type, member_name)> member_name{index_name ## _n, &value_type::member_name};
+   index<EOSIO_CDT_GET_RETURN_T(value_type, member_name)> member_name{eosio::name{index_name}, &value_type::member_name};
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -255,15 +185,11 @@ inline key_type make_key(double val) {
    return make_floating_key<uint64_t>(val);
 }
 
-inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
+inline key_type make_key(const char* str, size_t size) {
    size_t data_size = size + 3;
    void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
-   if (case_insensitive) {
-      std::transform(str, str + size, (char*)data_buffer, [](unsigned char c) -> unsigned char { return std::toupper(c); });
-   } else {
-      memcpy(data_buffer, str, size);
-   }
+   memcpy(data_buffer, str, size);
 
    ((char*)data_buffer)[data_size - 3] = 0x01;
    ((char*)data_buffer)[data_size - 2] = 0x00;
@@ -277,16 +203,16 @@ inline key_type make_key(const char* str, size_t size, bool case_insensitive=fal
    return s;
 }
 
-inline key_type make_key(const std::string& val, bool case_insensitive=false) {
-   return make_key(val.data(), val.size(), case_insensitive);
+inline key_type make_key(const std::string& val) {
+   return make_key(val.data(), val.size());
 }
 
-inline key_type make_key(const std::string_view& val, bool case_insensitive=false) {
-   return make_key(val.data(), val.size(), case_insensitive);
+inline key_type make_key(const std::string_view& val) {
+   return make_key(val.data(), val.size());
 }
 
-inline key_type make_key(const char* str, bool case_insensitive=false) {
-   return make_key(std::string_view{str}, case_insensitive);
+inline key_type make_key(const char* str) {
+   return make_key(std::string_view{str});
 }
 
 inline key_type make_key(eosio::name n) {
@@ -793,15 +719,6 @@ public:
 
    /**
     * @ingroup keyvalue
-    *
-    * @brief Defines a deleted index on an EOSIO Key Value Table
-    * @details Due to the way indexes are named, when deleting an index a "placeholder" index needs to be created instead.
-    * A null_index should be created in this case. If using DEFINE_TABLE, just passing in nullptr will handle this.
-    */
-   class null_index{};
-
-   /**
-    * @ingroup keyvalue
     * Puts a value into the table. If the value already exists, it updates the existing entry.
     * The key is determined from the defined primary index.
     * If the put attempts to store over an existing secondary index, the transaction will be aborted.
@@ -894,57 +811,34 @@ public:
 protected:
    kv_table() = default;
 
-   void setup_indices(uint64_t index_name, bool is_named) {}
-
-   template <typename... Indices>
-   void setup_indices(uint64_t index_name, bool is_named, null_index* index, Indices... indices) {
-      ++index_name;
-      setup_indices(index_name, is_named, indices...);
-   }
+   void setup_indices() {}
 
    template <typename I, typename... Indices>
-   void setup_indices(uint64_t index_name, bool is_named, I index, Indices... indices) {
-      if (is_named) {
-         eosio::check(index->index_name.value > 0, "All indices must be named if one is named.");
-      } else {
-         eosio::check(index->index_name.value == 0, "All indices must be named if one is named.");
-         index->index_name = eosio::name{index_name};
-      }
-
+   void setup_indices(I index, Indices... indices) {
       index->contract_name = contract_name;
       index->table_name = table_name;
       index->tbl = this;
 
       index->setup();
       secondary_indices.push_back(index);
-      ++index_name;
-      setup_indices(index_name, is_named, indices...);
+      setup_indices(indices...);
    }
 
    template <typename PrimaryIndex, typename... SecondaryIndices>
    void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex prim_index, SecondaryIndices... indices) {
+      validate_types(prim_index, indices...);
       contract_name = contract;
       table_name = table;
       db_name = db.value;
-
-      bool is_named = false;
-      uint64_t index_name = 1;
 
       primary_index = prim_index;
       primary_index->contract_name = contract_name;
       primary_index->table_name = table_name;
       primary_index->tbl = this;
 
-      if (primary_index->index_name.value > 0) {
-         is_named = true;
-      } else {
-         primary_index->index_name = eosio::name{index_name};
-         ++index_name;
-      }
-
       primary_index->setup();
 
-      setup_indices(index_name, is_named, indices...);
+      setup_indices(indices...);
    }
 
 private:
@@ -954,6 +848,15 @@ private:
 
    kv_index* primary_index;
    std::vector<kv_index*> secondary_indices;
+
+   constexpr void validate_types() {}
+
+   template <typename Type, typename... Types>
+   constexpr void validate_types(Type t, Types... ts) {
+      constexpr bool is_kv_index = std::is_base_of_v<kv_index, std::remove_pointer_t<Type>>;
+      static_assert(is_kv_index, "Incorrect index type passed to init. Must be an index.");
+      validate_types(ts...);
+   }
 
    template <typename V>
    static void serialize(const V& value, void* buffer, size_t size) {

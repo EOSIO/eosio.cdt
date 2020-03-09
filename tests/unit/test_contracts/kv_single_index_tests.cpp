@@ -8,7 +8,13 @@ struct my_struct {
    }
 };
 
-DEFINE_TABLE(my_table, my_struct, "testtable", eosio::kv_ram, primary_key)
+struct my_table : eosio::kv_table<my_struct> {
+   KV_NAMED_INDEX("primary"_n, primary_key);
+
+   my_table(eosio::name contract_name) {
+      init(contract_name, "testtable"_n, eosio::kv_ram, &primary_key);
+   }
+};
 
 class [[eosio::contract]] kv_single_index_tests : public eosio::contract {
 public:

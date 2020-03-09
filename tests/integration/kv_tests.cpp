@@ -92,19 +92,6 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
 
 // Multi
 // -----
-BOOST_FIXTURE_TEST_CASE(multi_tests_idx, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
-   tester.push_action(N(kvtest), N(indices), N(kvtest), {});
-
-   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(indiceserr), N(kvtest), {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("All indices must be named if one is named."));
-   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(indiceserr2), N(kvtest), {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("All indices must be named if one is named."));
-} FC_LOG_AND_RETHROW()
-
 BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
    TESTER tester;
    setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());

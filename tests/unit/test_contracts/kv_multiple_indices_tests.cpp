@@ -20,51 +20,13 @@ struct my_struct {
 };
 
 struct my_table : eosio::kv_table<my_struct> {
-   index<eosio::name> primary_key{&my_struct::primary_key};
-   index<std::string> foo{&my_struct::foo};
-   index<uint64_t>    bar{&my_struct::bar};
-
-   index<std::tuple<std::string, uint32_t>> non_unique_name{&my_struct::non_unique_name};
+   KV_NAMED_INDEX("primarykey"_n, primary_key)
+   KV_NAMED_INDEX("foo"_n, foo)
+   KV_NAMED_INDEX("bar"_n, bar)
+   KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
 
    my_table(eosio::name contract_name) {
       init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo, &bar, &non_unique_name);
-   }
-};
-
-struct my_table2 : eosio::kv_table<my_struct> {
-   index<eosio::name> primary_key{&my_struct::primary_key};
-   null_index         nullptr_2;
-   index<uint64_t>    bar{&my_struct::bar};
-
-   my_table2(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &nullptr_2, &bar);
-   }
-};
-
-struct my_table_idx : eosio::kv_table<my_struct> {
-   KV_NAMED_INDEX("prim", primary_key)
-   KV_NAMED_INDEX("f", foo)
-
-   my_table_idx(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
-   }
-};
-
-struct my_table_idx_err : eosio::kv_table<my_struct> {
-   index<eosio::name> primary_key{"prim"_n, &my_struct::primary_key};
-   index<std::string> foo{&my_struct::foo};
-
-   my_table_idx_err(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
-   }
-};
-
-struct my_table_idx_err_2 : eosio::kv_table<my_struct> {
-   index<eosio::name> primary_key{&my_struct::primary_key};
-   index<std::string> foo{"f"_n, &my_struct::foo};
-
-   my_table_idx_err_2(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
    }
 };
 
@@ -116,21 +78,6 @@ public:
       t.put(s3);
       t.put(s4);
       t.put(s5);
-   }
-
-   [[eosio::action]]
-   void indices() {
-      my_table_idx t{"kvtest"_n};
-   }
-
-   [[eosio::action]]
-   void indiceserr() {
-      my_table_idx_err t{"kvtest"_n};
-   }
-
-   [[eosio::action]]
-   void indiceserr2() {
-      my_table_idx_err_2 t{"kvtest"_n};
    }
 
    [[eosio::action]]
