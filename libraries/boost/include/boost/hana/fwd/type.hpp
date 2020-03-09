@@ -165,7 +165,7 @@ BOOST_HANA_NAMESPACE_BEGIN
     //! ### Rationale for stripping the references
     //! The rules for template argument deduction are such that a perfect
     //! solution that always matches `decltype` is impossible. Hence, we
-    //! have to settle on a solution that's good and and consistent enough
+    //! have to settle on a solution that's good and consistent enough
     //! for our needs. One case where matching `decltype`'s behavior is
     //! impossible is when the argument is a plain, unparenthesized variable
     //! or function parameter. In that case, `decltype_`'s argument will be
