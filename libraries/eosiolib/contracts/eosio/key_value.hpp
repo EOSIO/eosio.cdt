@@ -82,7 +82,7 @@
       EOSIO_CDT_CREATE_KV_INDICES(value_class, __VA_ARGS__)                                                            \
                                                                                                                        \
       table_class(eosio::name contract_name) {                                                                         \
-         init(contract_name, table_name##_n, db_name##_n EOSIO_CDT_LIST_KV_INDICES(__VA_ARGS__));                      \
+         init(contract_name, table_name##_n, db_name EOSIO_CDT_LIST_KV_INDICES(__VA_ARGS__));                          \
       }                                                                                                                \
    };
 
@@ -393,6 +393,8 @@ inline key_type make_insensitive(const std::string& val) {
    return make_key(val, true);
 }
 
+static const eosio::name KV_RAM = "eosio.kvram"_n;
+static const eosio::name KV_DISK = "eosio.kvdisk"_n;
 
 /**
  * @defgroup keyvalue Key Value Table
