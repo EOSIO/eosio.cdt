@@ -22,7 +22,7 @@ using namespace eosio;
 +    uint64_t datum;
   };
 ```
-4. Add definition of the primary index for the multi index table. The primary index type must be uint64_t, it must be unique and and it must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error saying it can't find the field to use as the primary key:
+4. Add definition of the primary index for the multi index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error saying it can't find the field to use as the primary key:
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {

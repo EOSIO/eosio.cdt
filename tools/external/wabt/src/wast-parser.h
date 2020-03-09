@@ -56,7 +56,7 @@ class WastParser {
   Result ErrorExpected(const std::vector<std::string>& expected,
                        const char* example = nullptr);
 
-  // Print an error message, and and return Result::Error if the next token is
+  // Print an error message, and return Result::Error if the next token is
   // '('. This is commonly used after parsing a sequence of s-expressions -- if
   // no more can be parsed, we know that a following '(' is invalid. This
   // function consumes the '(' so a better error message can be provided
