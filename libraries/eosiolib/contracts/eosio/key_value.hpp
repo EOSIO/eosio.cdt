@@ -393,8 +393,8 @@ inline key_type make_insensitive(const std::string& val) {
    return make_key(val, true);
 }
 
-static const eosio::name KV_RAM = "eosio.kvram"_n;
-static const eosio::name KV_DISK = "eosio.kvdisk"_n;
+static const eosio::name kv_ram = "eosio.kvram"_n;
+static const eosio::name kv_disk = "eosio.kvdisk"_n;
 
 /**
  * @defgroup keyvalue Key Value Table
