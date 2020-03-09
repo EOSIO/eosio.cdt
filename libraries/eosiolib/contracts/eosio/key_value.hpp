@@ -664,7 +664,7 @@ public:
 
       T operator[]( const K& key ) { 
          auto opt = get(key);
-         eosio::check( opt, "key not found" );
+         eosio::check( (bool)opt, "key not found" );
          return *opt;
       }
 
