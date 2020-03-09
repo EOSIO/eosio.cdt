@@ -52,6 +52,10 @@ BOOST_AUTO_TEST_CASE(single_tests_get) try {
    TESTER tester;
    setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
    tester.push_action(N(kvtest), N(get), N(kvtest), {});
+
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(geterror), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("key not found"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(single_tests_bounds, tester) try {
@@ -138,7 +142,7 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_variant, tester) try {
 // Make Key
 // --------
 std::vector<name> data_set{
-   N(makekeyname), N(makekeystr), N(makekeyistr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
+   N(makekeyname), N(makekeystr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
    N(makekeyflt), N(makekeydbl), N(makekeystct), N(makekeytup)
 };
 

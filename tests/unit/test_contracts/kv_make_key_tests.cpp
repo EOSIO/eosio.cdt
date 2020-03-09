@@ -31,8 +31,6 @@ struct my_struct {
              tstruct == rhs.tstruct &&
              ttuple == rhs.ttuple;
    }
-
-   auto itstring() const { return eosio::make_insensitive(tstring); }
 };
 
 struct my_table : eosio::kv_table<my_struct> {
@@ -45,10 +43,9 @@ struct my_table : eosio::kv_table<my_struct> {
    index<double>                                   tdouble{&my_struct::tdouble};
    index<testing_struct>                           tstruct{&my_struct::tstruct};
    index<std::tuple<uint64_t, float, std::string>> ttuple{&my_struct::ttuple};
-   index<eosio::key_type>                          itstring{&my_struct::itstring};
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &tname, &tstring, &tui64, &ti32, &tui128, &tfloat, &tdouble, &tstruct, &ttuple, &itstring);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &tname, &tstring, &tui64, &ti32, &tui128, &tfloat, &tdouble, &tstruct, &ttuple);
    }
 };
 
@@ -146,12 +143,6 @@ public:
    void makekeystr() {
       my_table t{"kvtest"_n};
       check_index(t.tstring, {s2, s5, s1, s3, s4});
-   }
-
-   [[eosio::action]]
-   void makekeyistr() {
-      my_table t{"kvtest"_n};
-      check_index(t.itstring, {s1, s2, s3, s4, s5});
    }
 
    [[eosio::action]]
