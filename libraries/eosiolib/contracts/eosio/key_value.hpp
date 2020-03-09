@@ -150,9 +150,34 @@ namespace eosio {
       }
    }
 
+
+#define FLATTENER(...)                                             \
+   template <typename T, size_t Element_Size>                                           \
+   auto flattener(const T& t, std::enable_if_t<sizeof(T)/Element_Size == std::tuple_size_v<decltype(std::tuple{__VA_ARGS__})>, int> = 0) { \
+      auto [ __VA_ARGS__ ] = t;                                    \
+      return std::tuple{__VA_ARGS__};                              \
+   }
+
 namespace detail {
    constexpr inline size_t max_stack_buffer_size = 512;
+
+   int _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32;
+   FLATTENER(_0)
+   FLATTENER(_0, _1)
+   FLATTENER(_0, _1, _2)
+   FLATTENER(_0, _1, _2, _3)
+   FLATTENER(_0, _1, _2, _3, _4)
+   FLATTENER(_0, _1, _2, _3, _4, _5)
+   FLATTENER(_0, _1, _2, _3, _4, _5, _6)
+   FLATTENER(_0, _1, _2, _3, _4, _5, _6, _7)
+   FLATTENER(_0, _1, _2, _3, _4, _5, _6, _7, _8)
+   FLATTENER(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9)
+
+   // TODO place somewhere else
 }
+
+constexpr static inline name ram_storage_type = "eosio.kvram"_n;
+constexpr static inline name disk_storage_type = "eosio.kvdisk"_n;
 
 /**
  * The key_type struct is used to store the binary representation of a key.
@@ -406,8 +431,15 @@ inline key_type make_insensitive(const std::string& val) {
  *
  * @tparam T         - the type of the data stored as the value of the table
   */
-template<typename T>
-class kv_table {
+template<typename T, name::raw Table_Name, name::raw Storage_Type>
+struct kv_table {
+   public:
+      // TODO put these in a better spot in the header file
+      using stored_t = T;
+      using kv_table_t = kv_table<T, Table_Name, Storage_Type>;
+
+      kv_table(eosio::name contract) : contract_name(contract), table_name(Table_Name), db_name(static_cast<uint64_t>(Storage_Type)) {
+      }
 
    enum class kv_it_stat {
       iterator_ok     = 0,  // Iterator is positioned at a key-value pair
@@ -605,28 +637,21 @@ public:
     *
     * @tparam K - The type of the key used in the index.
     */
-   template <typename K>
+   template <auto KF>
    class index : public kv_index {
       index_config config;
 
    public:
-      using kv_table<T>::kv_index::tbl;
-      using kv_table<T>::kv_index::table_name;
-      using kv_table<T>::kv_index::contract_name;
-      using kv_table<T>::kv_index::index_name;
-      using kv_table<T>::kv_index::prefix;
+      using kv_table_t::kv_index::tbl;
+      using kv_table_t::kv_index::table_name;
+      using kv_table_t::kv_index::contract_name;
+      using kv_table_t::kv_index::index_name;
+      using kv_table_t::kv_index::prefix;
+      using index_t = std::remove_cv_t<std::decay_t<decltype(std::invoke(KF, std::declval<const T*>()))>>;
 
-      template <typename KF>
-      explicit index(KF&& kf) : kv_index{kf} {
-         static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
-               "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
-      }
+      index() : kv_index{KF} {}
 
-      template <typename KF>
-      index(eosio::name name, KF&& kf) : kv_index{name, kf} {
-         static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
-               "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
-      }
+      index(eosio::name name) : kv_index{name, KF} {}
 
       /**
        * Search for an existing object in a table by the index, using the given key.
@@ -635,7 +660,7 @@ public:
        * @param key - The key to search for.
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
        */
-      iterator find(const K& key) {
+      iterator find(const index_t& key)const {
          auto t_key = table_key(config.prefix, make_key(key));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
@@ -658,7 +683,7 @@ public:
        * @param key - The key to search for.
        * @return A std::optional of the value corresponding to the key.
        */
-      std::optional<T> get(const K& key) {
+      std::optional<T> get(const index_t& key)const {
          uint32_t value_size;
          std::optional<T> ret_val;
 
@@ -703,7 +728,7 @@ public:
        *
        * @return An iterator to the object with the lowest key (by this index) in the table.
        */
-      iterator begin() {
+      iterator begin()const {
          uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
@@ -716,7 +741,7 @@ public:
        *
        * @return An iterator pointing past the end.
        */
-      iterator end() {
+      iterator end()const {
          return {0, kv_it_stat::iterator_end, config};
       }
 
@@ -726,7 +751,7 @@ public:
        *
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
-      iterator lower_bound(const K& key) {
+      iterator lower_bound(const index_t& key)const {
          auto t_key = table_key(config.prefix, make_key(key));
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
@@ -741,7 +766,7 @@ public:
        *
        * @return An iterator pointing to the first element greater than the given key.
        */
-      iterator upper_bound(const K& key) {
+      iterator upper_bound(const index_t& key)const {
          auto t_key = table_key(config.prefix, make_key(key));
          auto it = lower_bound(key);
 
@@ -761,7 +786,7 @@ public:
        * @param end - The end of the range (exclusive).
        * @return A vector containing all the objects that fall between the range.
        */
-      std::vector<T> range(const K& b, const K& e) {
+      std::vector<T> range(const index_t& b, const index_t& e)const {
          std::vector<T> return_values;
 
          for(auto itr = lower_bound(b), end_itr = lower_bound(e); itr < end_itr; ++itr) {
@@ -887,10 +912,10 @@ public:
 protected:
    kv_table() = default;
 
-   void setup_indices(uint64_t index_name, bool is_named) {}
+   void setup_indices(uint64_t index_name, bool is_named)const {}
 
    template <typename... Indices>
-   void setup_indices(uint64_t index_name, bool is_named, null_index* index, Indices... indices) {
+   void setup_indices(uint64_t index_name, bool is_named, null_index* index, Indices... indices)const {
       ++index_name;
       setup_indices(index_name, is_named, indices...);
    }
