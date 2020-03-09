@@ -8,7 +8,7 @@ struct my_struct {
    }
 };
 
-DEFINE_TABLE(my_table, my_struct, "testtable", "eosio.kvram", primary_key)
+DEFINE_TABLE(my_table, my_struct, "testtable", eosio::kv_ram, primary_key)
 
 class [[eosio::contract]] kv_single_index_tests : public eosio::contract {
 public:

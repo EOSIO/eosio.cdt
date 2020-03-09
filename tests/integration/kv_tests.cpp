@@ -138,7 +138,7 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_variant, tester) try {
 // Make Key
 // --------
 std::vector<name> data_set{
-   N(makekeyname), N(makekeystr), N(makekeyistr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
+   N(makekeyname), N(makekeystr), N(makekeyuill), N(makekeyil), N(makekeyuilll),
    N(makekeyflt), N(makekeydbl), N(makekeystct), N(makekeytup)
 };
 
