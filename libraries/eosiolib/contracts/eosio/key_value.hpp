@@ -640,17 +640,16 @@ public:
          return {itr, static_cast<typename iterator::status>(itr_stat), config};
       }
 
-      bool exists( const K& key ) {
-         return find(key) != end();
+      bool exists( const K& key ) const {
          uint32_t value_size;
          auto t_key = table_key(config.prefix, make_key(key));
 
          return internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, t_key.data(), t_key.size(), value_size);
       }
 
-      T operator[]( const K& key ) { 
+      T operator[]( const K& key ) const {
          auto opt = get(key);
-         eosio::check( opt, "key not found" );
+         eosio::check( opt.has_value(), "key not found" );
          return *opt;
       }
 
