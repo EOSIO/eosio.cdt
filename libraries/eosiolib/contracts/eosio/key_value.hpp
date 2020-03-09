@@ -97,8 +97,8 @@
  * @param value_class   - The class the table stores.
  * @parma member_name   - The name of the member pointer used for the index.
  */
-#define NAMED_INDEX(variable_name, index_name, value_class, member_name)                                               \
-   index<EOSIO_CDT_GET_RETURN_T(value_class, member_name)> variable_name{index_name, &value_class::member_name};
+#define KV_NAMED_INDEX(index_name, member_name)                                               \
+   index<EOSIO_CDT_GET_RETURN_T(value_type, member_name)> member_name{index_name ## _n, &value_type::member_name};
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -595,6 +595,7 @@ class kv_table {
 public:
 
    using iterator = kv_table::iterator;
+   using value_type = T;
 
    /**
     * @ingroup keyvalue
