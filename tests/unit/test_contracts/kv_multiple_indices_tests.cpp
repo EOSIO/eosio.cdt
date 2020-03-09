@@ -4,81 +4,67 @@ struct my_struct {
    eosio::name primary_key;
    std::string foo;
    uint64_t bar;
-   int32_t baz;
 
-   bool operator==(const my_struct b) const {
+   std::string fullname;
+   uint32_t age;
+
+   std::tuple<std::string, uint32_t> non_unique_name() const { return {fullname, age}; }
+
+   bool operator==(const my_struct& b) const {
       return primary_key == b.primary_key &&
              foo == b.foo &&
              bar == b.bar &&
-             baz == b.baz;
+             fullname == b.fullname &&
+             age == b.age;
    }
 };
 
 struct my_table : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index primary_key{&my_struct::primary_key};
-      kv_non_unique_index foo{&my_struct::foo};
-      kv_unique_index bar{&my_struct::bar};
-      kv_non_unique_index baz{&my_struct::baz};
-   } index;
+   index<eosio::name> primary_key{&my_struct::primary_key};
+   index<std::string> foo{&my_struct::foo};
+   index<uint64_t>    bar{&my_struct::bar};
+
+   index<std::tuple<std::string, uint32_t>> non_unique_name{&my_struct::non_unique_name};
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo, &bar, &non_unique_name);
    }
 };
 
 struct my_table2 : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index primary_key{&my_struct::primary_key};
-      null_kv_index nullptr_2{&my_struct::foo};
-      kv_non_unique_index bar{&my_struct::bar};
-   } index;
+   index<eosio::name> primary_key{&my_struct::primary_key};
+   null_index         nullptr_2;
+   index<uint64_t>    bar{&my_struct::bar};
 
    my_table2(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &nullptr_2, &bar);
    }
 };
 
 struct my_table_idx : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index primary_key{"prim"_n, &my_struct::primary_key};
-      kv_non_unique_index foo{"f"_n, &my_struct::foo};
-   } index;
+   NAMED_INDEX(primary_key, "prim"_n, my_struct, primary_key)
+   NAMED_INDEX(foo, "f"_n, my_struct, foo)
 
    my_table_idx(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
    }
 };
 
 struct my_table_idx_err : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index primary_key{"prim"_n, &my_struct::primary_key};
-      kv_non_unique_index foo{&my_struct::foo};
-   } index;
+   index<eosio::name> primary_key{"prim"_n, &my_struct::primary_key};
+   index<std::string> foo{&my_struct::foo};
 
    my_table_idx_err(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
    }
 };
 
 struct my_table_idx_err_2 : eosio::kv_table<my_struct> {
-   struct {
-      kv_unique_index primary_key{&my_struct::primary_key};
-      kv_non_unique_index foo{"f"_n, &my_struct::foo};
-   } index;
+   index<eosio::name> primary_key{&my_struct::primary_key};
+   index<std::string> foo{"f"_n, &my_struct::foo};
 
    my_table_idx_err_2(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
-   }
-};
-
-struct my_table_idx_err_3 : eosio::kv_table<my_struct> {
-   struct {
-      kv_non_unique_index primary_key{&my_struct::primary_key};
-   } index;
-
-   my_table_idx_err_3(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &index);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
    }
 };
 
@@ -89,31 +75,36 @@ public:
       .primary_key = "bob"_n,
       .foo = "a",
       .bar = 5,
-      .baz = 2
+      .fullname = "Bob Smith",
+      .age = 25
    };
    my_struct s2{
       .primary_key = "alice"_n,
       .foo = "C",
       .bar = 4,
-      .baz = 1
+      .fullname = "Alice Smith",
+      .age = 100
    };
    my_struct s3{
       .primary_key = "john"_n,
       .foo = "e",
       .bar = 3,
-      .baz = 1
+      .fullname = "John Smith",
+      .age = 42
    };
    my_struct s4{
       .primary_key = "joe"_n,
       .foo = "g",
       .bar = 2,
-      .baz = 1
+      .fullname = "Bob Smith",
+      .age = 47
    };
    my_struct s5{
       .primary_key = "billy"_n,
       .foo = "I",
       .bar = 1,
-      .baz = 1
+      .fullname = "Bob Smith",
+      .age = 26
    };
 
    [[eosio::action]]
@@ -143,129 +134,126 @@ public:
    }
 
    [[eosio::action]]
-   void indiceserr3() {
-      my_table_idx_err_3 t{"kvtest"_n};
-   }
-
-   [[eosio::action]]
    void iteration() {
       my_table t{"kvtest"_n};
 
-      auto foo_begin_itr = t.index.foo.begin();
-      auto foo_end_itr = t.index.foo.end();
+      auto foo_begin_itr = t.foo.begin();
+      auto foo_end_itr = t.foo.end();
 
-      auto bar_begin_itr = t.index.bar.begin();
-      auto bar_end_itr = t.index.bar.end();
+      auto bar_begin_itr = t.bar.begin();
+      auto bar_end_itr = t.bar.end();
 
-      auto foo_itr = t.index.foo.begin();
-      auto bar_itr = t.index.bar.begin();
+      auto foo_itr = t.foo.begin();
+      auto bar_itr = t.bar.begin();
 
-      eosio::check(foo_itr != foo_end_itr, "Should not be the end");
-      eosio::check(bar_itr != bar_end_itr, "Should not be the end");
-      eosio::check(foo_itr.value().foo == s2.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s5.bar, "Got the wrong value");
+      eosio::check(foo_itr != foo_end_itr, "foo should not be the end");
+      eosio::check(bar_itr != bar_end_itr, "bar should not be the end");
 
-      ++foo_itr;
-      ++bar_itr;
-      eosio::check(foo_itr.value().foo == s5.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s4.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s2, "Got the wrong value: foo != s2");
+      eosio::check(bar_itr.value() == s5, "Got the wrong value: bar != s5");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s1.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s3.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s5, "Got the wrong value: foo != s5");
+      eosio::check(bar_itr.value() == s4, "Got the wrong value: bar != s4");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s3.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s2.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s1, "Got the wrong value: foo != s1");
+      eosio::check(bar_itr.value() == s3, "Got the wrong value: bar != s3");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr.value().foo == s4.foo, "Got the wrong value");
-      eosio::check(bar_itr.value().bar == s1.bar, "Got the wrong value");
+      eosio::check(foo_itr.value() == s3, "Got the wrong value: foo != s3");
+      eosio::check(bar_itr.value() == s2, "Got the wrong value: bar != s2");
 
       ++foo_itr;
       ++bar_itr;
-      eosio::check(foo_itr == foo_end_itr, "Should be the end");
-      eosio::check(bar_itr == bar_end_itr, "Should be the end");
+      eosio::check(foo_itr.value() == s4, "Got the wrong value: foo != s4");
+      eosio::check(bar_itr.value() == s1, "Got the wrong value: bar != s1");
+
+      ++foo_itr;
+      ++bar_itr;
+      eosio::check(foo_itr == foo_end_itr, "foo should be the end");
+      eosio::check(bar_itr == bar_end_itr, "bar should be the end");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 1");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 1");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 2");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 2");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 3");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 3");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr != foo_begin_itr, "Should not be the beginning");
-      eosio::check(bar_itr != bar_begin_itr, "Should not be the beginning");
+      eosio::check(foo_itr != foo_begin_itr, "foo should not be the beginning: 4");
+      eosio::check(bar_itr != bar_begin_itr, "bar should not be the beginning: 4");
 
       --foo_itr;
       --bar_itr;
-      eosio::check(foo_itr == foo_begin_itr, "Should be the beginning");
-      eosio::check(bar_itr == bar_begin_itr, "Should be the beginning");
+      eosio::check(foo_itr == foo_begin_itr, "foo should be the beginning");
+      eosio::check(bar_itr == bar_begin_itr, "bar should be the beginning");
    }
 
    [[eosio::action]]
-   void range() {
+   void nonunique() {
       my_table t{"kvtest"_n};
 
-      std::vector<my_struct> expected = {s2, s5, s4, s3, s1};
-      auto actual = t.index.baz.range(1l, 3l);
+      std::vector<my_struct> expected{s1, s5, s4};
+      auto vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", UINT_MAX});
 
-      eosio::check(actual == expected, "range did not return expected vector");
+      eosio::check(vals == expected, "Range did not return the expected vector: {s1, s5, s4}");
+
+      expected = {s1, s5};
+      vals = t.non_unique_name.range({"Bob Smith", 0}, {"Bob Smith", 27});
+
+      eosio::check(vals == expected, "Range did not return the expected vector: {s1, s5}");
    }
 
    [[eosio::action]]
-   void uniqsecidx() {
+   void update() {
       my_table t{"kvtest"_n};
 
       t.put({
          .primary_key = "bob"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
-      });
-
-      t.put({
-         .primary_key = "bob"_n,
-         .foo = "testing",
-         .bar = 100,
-         .baz = 3
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
       });
    }
 
    [[eosio::action]]
-   void usecidxerr1() {
-      my_table t{"kvtest"_n};
-
-      t.put({
-         .primary_key = "carl"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
-      });
-   }
-
-   [[eosio::action]]
-   void usecidxerr2() {
+   void updateerr1() {
       my_table t{"kvtest"_n};
 
       t.put({
          .primary_key = "alice"_n,
-         .foo = "testing",
-         .bar = 5,
-         .baz = 3
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
+      });
+   }
+
+   [[eosio::action]]
+   void updateerr2() {
+      my_table t{"kvtest"_n};
+
+      t.put({
+         .primary_key = "will"_n,
+         .foo = "a",
+         .bar = 1000,
+         .fullname = "Bob Smith",
+         .age = 25
       });
    }
 };
