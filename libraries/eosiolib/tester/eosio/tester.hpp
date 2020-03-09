@@ -186,6 +186,31 @@ class test_chain {
       return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
    }
 
+
+   template <typename Action, typename... Args>
+   auto act(const Action& action, Args&&... args) {
+      using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
+      auto trace = transact({action.to_action(std::forward<Args>(args)...)});
+      if constexpr ( !std::is_same_v<Ret,void> ) {
+         check(trace.action_traces[0].return_value.has_value(), "action did not return a value");
+         return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
+      }
+   }
+
+   struct user_context {
+      test_chain& t;
+      std::vector<eosio::permission_level> level;
+      
+      template <typename Action, typename... Args>
+      auto act(Args&&... args) {
+         return t.act( Action(level), std::forward<Args>(args)... );
+      }
+   };
+
+   auto as( eosio::name current_user, eosio::name current_perm = "active"_n ) {
+      return user_context{ *this, {1,{current_user,current_perm}} };
+   }
+
    /**
     * Executes a single deferred transaction and returns the action trace.
     * If there are no available deferred transactions that are ready to execute

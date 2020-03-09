@@ -447,8 +447,20 @@ namespace eosio {
     * trans_action.send(st.issuer, to, quantity, memo);
     * @endcode
     */
-   template <eosio::name::raw Name, auto Action>
+   template <eosio::name::raw Name, auto Action, eosio::name::raw DefaultContract = ""_n>
    struct action_wrapper {
+      constexpr action_wrapper()
+         : code_name(DefaultContract), permissions() {}
+
+      constexpr action_wrapper( eosio::name user )
+         : code_name(DefaultContract), permissions({1,{user,"active"_n}}) {}
+
+      action_wrapper( eosio::permission_level l )
+         : code_name(DefaultContract), permissions({1,l}) {}
+
+      action_wrapper( std::vector<eosio::permission_level> l )
+         : code_name(DefaultContract), permissions(std::move(l)) {}
+
       template <typename Code>
       constexpr action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
          : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
@@ -465,9 +477,11 @@ namespace eosio {
       constexpr action_wrapper(Code&& code, const eosio::permission_level& perm)
          : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
 
+      /*
       template <typename Code>
       constexpr action_wrapper(Code&& code)
          : code_name(std::forward<Code>(code)) {}
+         */
 
       static constexpr eosio::name action_name = eosio::name(Name);
       eosio::name code_name;
@@ -475,6 +489,12 @@ namespace eosio {
 
       static constexpr auto get_mem_ptr() {
          return Action;
+      }
+
+      template <typename... Args>
+      action operator()(Args&&... args)const {
+         static_assert(detail::type_check<Action, Args...>());
+         return action(permissions, code_name, action_name, detail::deduced<Action>{std::forward<Args>(args)...});
       }
 
       template <typename... Args>
