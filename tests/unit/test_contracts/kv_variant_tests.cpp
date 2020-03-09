@@ -11,7 +11,7 @@ struct my_struct_v2 {
    uint64_t age;
 };
 
-DEFINE_TABLE(my_table, my_struct_v, "testtable", "eosio.kvram", age, full_name)
+DEFINE_TABLE(my_table, my_struct_v, "testtable", eosio::kv_ram, age, full_name)
 
 struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    index<std::string> primary_key{[](const auto& obj) {

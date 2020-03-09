@@ -42,8 +42,8 @@ struct my_table2 : eosio::kv_table<my_struct> {
 };
 
 struct my_table_idx : eosio::kv_table<my_struct> {
-   NAMED_INDEX(primary_key, "prim"_n, my_struct, primary_key)
-   NAMED_INDEX(foo, "f"_n, my_struct, foo)
+   KV_NAMED_INDEX("prim", primary_key)
+   KV_NAMED_INDEX("f", foo)
 
    my_table_idx(eosio::name contract_name) {
       init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo);
