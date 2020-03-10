@@ -28,8 +28,8 @@ brew remove eosio.cdt
 
 ### Debian Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
-$ sudo apt install ./eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
+sudo apt install ./eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
 ```
 
 ### Debian Package Uninstall
@@ -39,8 +39,8 @@ sudo apt remove eosio.cdt
 
 ### RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt-1.7.0-1.el7.x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.7.0-1.el7.x86_64.rpm
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt-1.7.0-1.el7.x86_64.rpm
+sudo yum install ./eosio.cdt-1.7.0-1.el7.x86_64.rpm
 ```
 
 ### RPM Package Uninstall
