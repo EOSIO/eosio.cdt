@@ -447,8 +447,20 @@ namespace eosio {
     * trans_action.send(st.issuer, to, quantity, memo);
     * @endcode
     */
-   template <eosio::name::raw Name, auto Action>
+   template <eosio::name::raw Name, auto Action, eosio::name::raw DefaultContract = ""_n>
    struct action_wrapper {
+      constexpr action_wrapper()
+         : code_name(DefaultContract), permissions() {}
+
+      constexpr action_wrapper( eosio::name user )
+         : code_name(DefaultContract), permissions({1,{user,"active"_n}}) {}
+
+      action_wrapper( eosio::permission_level l )
+         : code_name(DefaultContract), permissions({1,l}) {}
+
+      action_wrapper( std::vector<eosio::permission_level> l )
+         : code_name(DefaultContract), permissions(std::move(l)) {}
+
       template <typename Code>
       constexpr action_wrapper(Code&& code, std::vector<eosio::permission_level>&& perms)
          : code_name(std::forward<Code>(code)), permissions(std::move(perms)) {}
@@ -465,9 +477,11 @@ namespace eosio {
       constexpr action_wrapper(Code&& code, const eosio::permission_level& perm)
          : code_name(std::forward<Code>(code)), permissions({1, perm}) {}
 
+      /*
       template <typename Code>
       constexpr action_wrapper(Code&& code)
          : code_name(std::forward<Code>(code)) {}
+         */
 
       static constexpr eosio::name action_name = eosio::name(Name);
       eosio::name code_name;
@@ -475,6 +489,12 @@ namespace eosio {
 
       static constexpr auto get_mem_ptr() {
          return Action;
+      }
+
+      template <typename... Args>
+      action operator()(Args&&... args)const {
+         static_assert(detail::type_check<Action, Args...>());
+         return action(permissions, code_name, action_name, detail::deduced<Action>{std::forward<Args>(args)...});
       }
 
       template <typename... Args>
@@ -601,3 +621,14 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
 BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );
+
+
+#define EOSIO_ACTION_WRAPPER_DECL(r, data, action) \
+   using action = eosio::action_wrapper<BOOST_PP_CAT(BOOST_PP_STRINGIZE(action),_n), &__contract_class::action, __contract_account>;
+
+#define EOSIO_ACTIONS( CONTRACT_CLASS, CONTRACT_ACCOUNT, ... ) \
+   namespace actions { \
+      static constexpr auto __contract_account = CONTRACT_ACCOUNT; \
+      using __contract_class   = CONTRACT_CLASS; \
+      BOOST_PP_SEQ_FOR_EACH( EOSIO_ACTION_WRAPPER_DECL, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) )  \
+   }

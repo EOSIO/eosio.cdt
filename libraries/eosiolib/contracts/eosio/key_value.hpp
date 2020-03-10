@@ -667,6 +667,15 @@ public:
          return *opt;
       }
 
+      /*
+      template<typename L>
+      void modify( const K& key, L&& lambda ) {
+         auto val = (*this)[key];
+         lambda( val );
+         put( val );
+      }
+      */
+
       /**
        * Get the value for an existing object in a table by the index, using the given key.
        * @ingroup keyvalue
