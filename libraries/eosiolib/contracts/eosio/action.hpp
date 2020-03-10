@@ -621,3 +621,14 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
 #define SEND_INLINE_ACTION( CONTRACT, NAME, ... )\
 INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_self(),\
 BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );
+
+
+#define EOSIO_ACTION_WRAPPER_DECL(r, data, action) \
+   using action = eosio::action_wrapper<BOOST_PP_CAT(BOOST_PP_STRINGIZE(action),_n), &__contract_class::action, __contract_account>;
+
+#define EOSIO_ACTIONS( CONTRACT_CLASS, CONTRACT_ACCOUNT, ... ) \
+   namespace actions { \
+      static constexpr auto __contract_account = CONTRACT_ACCOUNT; \
+      using __contract_class   = CONTRACT_CLASS; \
+      BOOST_PP_SEQ_FOR_EACH( EOSIO_ACTION_WRAPPER_DECL, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) )  \
+   }
