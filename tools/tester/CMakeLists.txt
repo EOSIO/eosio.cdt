@@ -62,6 +62,7 @@ add_subdirectory(../../libraries/eos/libraries/builtins builtins EXCLUDE_FROM_AL
 add_subdirectory(../../libraries/eos/libraries/chain chain EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/chainbase chainbase EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/fc fc EXCLUDE_FROM_ALL)
+add_subdirectory(../../libraries/eos/libraries/state_history state_history EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/wabt wabt EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/wasm-jit wasm-jit EXCLUDE_FROM_ALL)
 
@@ -81,14 +82,16 @@ target_include_directories(eosio-tester
         ../../libraries/abieos/external/rapidjson/include
         ../../libraries/eos/libraries/chain/include
         ../../libraries/eos/libraries/fc/include
-        ../../libraries/eos/libraries/wasm-jit/Include
+        ../../libraries/eos/libraries/state_history/include
         ../../libraries/eos/libraries/wabt/src
+        ../../libraries/eos/libraries/wasm-jit/Include
+        ../../libraries/history-tools/include
         ${Boost_INCLUDE_DIR}
         ${JS_INCLUDE_DIRS}
         ${ROCKSDB_INCLUDE_DIR}
 )
 target_link_libraries(eosio-tester
-    eosio_chain wabt Runtime Logging IR fc eos-vm
+    state_history eosio_chain wabt Runtime Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
 

@@ -1,3 +1,5 @@
+#include "filter-wasm.hpp"
+
 #include "../../../libraries/eosiolib/tester/eosio/chain_types.hpp"
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
@@ -5,31 +7,42 @@
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/webassembly/common.hpp>
-#include <eosio/vm/backend.hpp>
-#include <eosio/from_bin.hpp>
 #include <eosio/eosio_outcome.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/io/json.hpp>
+#include <eosio/from_bin.hpp>
+#include <eosio/state_history/create_deltas.hpp>
+#include <eosio/state_history/serialization.hpp>
+#include <eosio/state_history/trace_converter.hpp>
+#include <eosio/vm/backend.hpp>
+#include <fc/crypto/ripemd160.hpp>
 #include <fc/crypto/sha1.hpp>
 #include <fc/crypto/sha256.hpp>
 #include <fc/crypto/sha512.hpp>
-#include <fc/crypto/ripemd160.hpp>
+#include <fc/exception/exception.hpp>
+#include <fc/io/json.hpp>
 #include <stdio.h>
 
 using namespace eosio::literals;
 using namespace std::literals;
+using boost::signals2::scoped_connection;
+using eosio::check;
+using eosio::convert_to_bin;
+using eosio::chain::block_state_ptr;
 using eosio::chain::builtin_protocol_feature_t;
 using eosio::chain::digest_type;
-using eosio::chain::protocol_feature_exception;
-using eosio::chain::protocol_feature_set;
+using eosio::chain::kv_bad_db_id;
+using eosio::chain::kv_bad_iter;
 using eosio::chain::kv_context;
 using eosio::chain::kv_iterator;
 using eosio::chain::kvdisk_id;
 using eosio::chain::kvram_id;
-using eosio::chain::kv_bad_iter;
-using eosio::chain::kv_bad_db_id;
-using eosio::check;
-using eosio::convert_to_bin;
+using eosio::chain::protocol_feature_exception;
+using eosio::chain::protocol_feature_set;
+using eosio::chain::signed_transaction;
+using eosio::chain::transaction_trace_ptr;
+using eosio::state_history::block_position;
+using eosio::state_history::create_deltas;
+using eosio::state_history::get_blocks_result_v0;
+using eosio::state_history::trace_converter;
 
 struct callbacks;
 using backend_t = eosio::vm::backend<callbacks, eosio::vm::jit>;
@@ -172,19 +185,33 @@ struct test_chain {
    eosio::chain::private_key_type producer_key{ "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"s };
    std::unique_ptr<eosio::chain::controller::config> cfg;
    std::unique_ptr<eosio::chain::controller>         control;
+   fc::optional<scoped_connection>                   applied_transaction_connection;
+   fc::optional<scoped_connection>                   accepted_block_connection;
+   trace_converter                                   trace_converter;
+   fc::optional<block_position>                      prev_block;
    std::unique_ptr<intrinsic_context>                intr_ctx;
 
    test_chain() {
       eosio::chain::genesis_state genesis;
-      genesis.initial_timestamp      = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
-      cfg                            = std::make_unique<eosio::chain::controller::config>();
-      cfg->blocks_dir                = dir.path() / "blocks";
-      cfg->state_dir                 = dir.path() / "state";
-      cfg->contracts_console         = true;
+      genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
+      cfg                       = std::make_unique<eosio::chain::controller::config>();
+      cfg->blocks_dir           = dir.path() / "blocks";
+      cfg->state_dir            = dir.path() / "state";
+      cfg->contracts_console    = true;
 
-      control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
+      control =
+            std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
       control->add_indices();
-      do_startup(control, []{}, []() { return false; }, genesis);
+
+      applied_transaction_connection.emplace(control->applied_transaction.connect(
+            [&](std::tuple<const transaction_trace_ptr&, const signed_transaction&> t) {
+               on_applied_transaction(std::get<0>(t), std::get<1>(t));
+            }));
+      accepted_block_connection.emplace(
+            control->accepted_block.connect([&](const block_state_ptr& p) { on_accepted_block(p); }));
+
+      do_startup(
+            control, [] {}, [] { return false; }, genesis);
       control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
                            { *control->get_protocol_feature_manager().get_builtin_digest(
                                  eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
@@ -192,6 +219,26 @@ struct test_chain {
 
    test_chain(const test_chain&) = delete;
    test_chain& operator=(const test_chain&) = delete;
+
+   void on_applied_transaction(const transaction_trace_ptr& p, const signed_transaction& t) {
+      trace_converter.add_transaction(p, t);
+   }
+
+   void on_accepted_block(const block_state_ptr& block_state) {
+      auto traces_bin = trace_converter.pack(control->db(), false, block_state);
+      auto deltas_bin = fc::raw::pack(create_deltas(control->db(), !prev_block));
+
+      get_blocks_result_v0 message;
+      message.head = block_position{ control->head_block_num(), control->head_block_id() };
+      message.last_irreversible =
+            block_position{ control->last_irreversible_block_num(), control->last_irreversible_block_id() };
+      message.this_block = block_position{ block_state->block->block_num(), block_state->block->id() };
+      message.prev_block = prev_block;
+      message.traces     = std::move(traces_bin);
+      message.deltas     = std::move(deltas_bin);
+
+      prev_block = message.this_block;
+   }
 
    void mutating() { intr_ctx.reset(); }
 

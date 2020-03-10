@@ -24,3 +24,6 @@
 [submodule "libraries/Catch2"]
 	path = libraries/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "libraries/history-tools"]
+	path = libraries/history-tools
+	url = https://github.com/EOSIO/history-tools.git
