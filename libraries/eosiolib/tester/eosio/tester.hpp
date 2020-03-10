@@ -188,7 +188,14 @@ class test_chain {
       if constexpr ( !std::is_same_v<Ret,void> ) {
          check(trace.action_traces[0].return_value.has_value(), "action did not return a value");
          return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
+      } else {
+         return trace;
       }
+   }
+
+   template <typename Action, typename... Args>
+   auto trace(const Action& action, Args&&... args) {
+      return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ), { default_priv_key } );
    }
 
    struct user_context {
@@ -198,6 +205,11 @@ class test_chain {
       template <typename Action, typename... Args>
       auto act(Args&&... args) {
          return t.act( Action(level), std::forward<Args>(args)... );
+      }
+
+      template <typename Action, typename... Args>
+      auto trace(Args&&... args) {
+         return t.trace( Action(level), std::forward<Args>(args)... );
       }
    };
 
