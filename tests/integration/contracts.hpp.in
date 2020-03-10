@@ -31,6 +31,9 @@ struct contracts {
    static std::vector<uint8_t> kv_variant_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_variant_tests.wasm"); }
    static std::vector<char>    kv_variant_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_variant_tests.abi"); }
 
+   static std::vector<uint8_t> kv_singleton_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_singleton_tests.wasm"); }
+   static std::vector<char>    kv_singleton_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_singleton_tests.abi"); }
+
    static std::vector<uint8_t> kv_bios_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.wasm"); }
    static std::vector<char>    kv_bios_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.abi"); }
 
