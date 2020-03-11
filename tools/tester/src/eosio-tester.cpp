@@ -398,6 +398,7 @@ struct file {
    }
 };
 
+/*
 namespace eosio { namespace vm {
 
    template <>
@@ -421,6 +422,7 @@ namespace eosio { namespace vm {
    };
 
 }} // namespace eosio::vm
+*/
 
 struct state {
    const char*                              wasm;

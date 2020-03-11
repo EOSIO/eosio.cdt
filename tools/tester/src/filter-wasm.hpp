@@ -1,3 +1,6 @@
+// not needed, except to prevent an eventual redefinition error on LIKELY with eos-vm
+#include <fc/exception/exception.hpp>
+
 #include <eosio/history-tools/callbacks/basic.hpp>
 #include <eosio/history-tools/callbacks/chaindb.hpp>
 #include <eosio/history-tools/callbacks/compiler_builtins.hpp>
@@ -24,11 +27,11 @@ struct callbacks : history_tools::basic_callbacks<callbacks>,
                    history_tools::db_callbacks<callbacks>,
                    history_tools::memory_callbacks<callbacks>,
                    history_tools::unimplemented_callbacks<callbacks> {
-   temp_filter_wasm::filter_state& filter_state;
-   history_tools::chaindb_state&   chaindb_state;
-   history_tools::db_view_state&   db_view_state;
+   filter_wasm::filter_state&    filter_state;
+   history_tools::chaindb_state& chaindb_state;
+   history_tools::db_view_state& db_view_state;
 
-   callbacks(temp_filter_wasm::filter_state& filter_state, history_tools::chaindb_state& chaindb_state,
+   callbacks(filter_wasm::filter_state& filter_state, history_tools::chaindb_state& chaindb_state,
              history_tools::db_view_state& db_view_state)
        : filter_state{ filter_state }, chaindb_state{ chaindb_state }, db_view_state{ db_view_state } {}
 
