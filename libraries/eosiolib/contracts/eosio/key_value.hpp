@@ -345,7 +345,7 @@ inline key_type make_key(const std::tuple<Args...>& val) {
       pos += kt.size();
    });
 
-   key_type s((const char*)data_buffer, data_size);
+   key_type s((const char*)data_buffer, pos);//data_size);
 
    if (data_size > detail::max_stack_buffer_size) {
       free(data_buffer);
@@ -653,22 +653,6 @@ public:
          return *opt;
       }
 
-
-      T operator[]( const K& key ) { 
-         auto opt = get(key);
-         eosio::check( (bool)opt, "key not found" );
-         return *opt;
-      }
-
-      /*
-      template<typename L>
-      void modify( const K& key, L&& lambda ) {
-         auto val = (*this)[key];
-         lambda( val );
-         put( val );
-      }
-      */
-
       /**
        * Get the value for an existing object in a table by the index, using the given key.
        * @ingroup keyvalue
@@ -830,6 +814,7 @@ public:
 
       auto primary_key = primary_index->get_key(value);
       auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+
       auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
       if (primary_key_found) {
