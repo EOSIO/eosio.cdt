@@ -378,9 +378,9 @@ class kv_table {
          void* deserialize_buffer = buffer;
          size_t deserialize_size = actual_value_size;
 
-         bool is_primary = config.index_name != config.primary_index_name;
+         bool is_primary = config.index_name == config.primary_index_name;
 
-         if (is_primary) {
+         if (!is_primary) {
             auto success = internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
             eosio::check(success, "failure getting primary key");
 
@@ -477,13 +477,6 @@ class kv_table {
 
    protected:
       kv_index() = default;
-
-      template <typename KF>
-      kv_index(KF&& kf) {
-         key_function = [=](const T& t) {
-            return make_key(std::invoke(kf, &t));
-         };
-      }
 
       template <typename KF>
       kv_index(eosio::name index_name, KF&& kf) : index_name{index_name} {

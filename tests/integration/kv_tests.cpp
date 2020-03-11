@@ -119,10 +119,15 @@ BOOST_FIXTURE_TEST_CASE(multi_tests_update, tester) try {
 
 // Variant
 // -------
-BOOST_FIXTURE_TEST_CASE(multi_tests_variant, tester) try {
+BOOST_FIXTURE_TEST_CASE(variant_tests, tester) try {
    TESTER tester;
    setup(tester, contracts::kv_variant_tests_wasm(), contracts::kv_variant_tests_abi());
    tester.push_action(N(kvtest), N(vriant), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE(variant_upgrade_tests, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_variant_tests_wasm(), contracts::kv_variant_tests_abi());
    tester.push_action(N(kvtest), N(vriantupgrd), N(kvtest), {});
 } FC_LOG_AND_RETHROW()
 
