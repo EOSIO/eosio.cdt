@@ -248,10 +248,11 @@ void eosio::test_chain::fill_tapos(transaction& t, uint32_t expire_sec) {
    memcpy(&t.ref_block_prefix, info.block_id.extract_as_byte_array().data() + 8, sizeof(t.ref_block_prefix));
 }
 
-eosio::transaction eosio::test_chain::make_transaction(std::vector<action>&& actions) {
+eosio::transaction eosio::test_chain::make_transaction(std::vector<action>&& actions, std::vector<action>&& cfa  ) {
    transaction t{ time_point_sec{} };
    fill_tapos(t);
    t.actions = std::move(actions);
+   t.context_free_actions = std::move(cfa);
    return t;
 }
 
