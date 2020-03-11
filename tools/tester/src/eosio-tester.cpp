@@ -180,16 +180,32 @@ protocol_feature_set make_protocol_feature_set() {
    return pfs;
 }
 
+struct test_chain;
+
+struct test_chain_ref {
+   test_chain* chain = {};
+
+   test_chain_ref() = default;
+   test_chain_ref(test_chain&);
+   test_chain_ref(const test_chain_ref&) = delete;
+   ~test_chain_ref();
+
+   test_chain_ref& operator=(test_chain_ref&&);
+};
+
 struct test_chain {
-   fc::temp_directory                                dir;
    eosio::chain::private_key_type producer_key{ "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"s };
+
+   fc::temp_directory                                dir;
    std::unique_ptr<eosio::chain::controller::config> cfg;
    std::unique_ptr<eosio::chain::controller>         control;
    fc::optional<scoped_connection>                   applied_transaction_connection;
    fc::optional<scoped_connection>                   accepted_block_connection;
    trace_converter                                   trace_converter;
    fc::optional<block_position>                      prev_block;
+   std::map<uint32_t, std::vector<char>>             history;
    std::unique_ptr<intrinsic_context>                intr_ctx;
+   std::set<test_chain_ref*>                         refs;
 
    test_chain() {
       eosio::chain::genesis_state genesis;
@@ -220,6 +236,10 @@ struct test_chain {
    test_chain(const test_chain&) = delete;
    test_chain& operator=(const test_chain&) = delete;
 
+   ~test_chain() {
+      for (auto* ref : refs) ref->chain = nullptr;
+   }
+
    void on_applied_transaction(const transaction_trace_ptr& p, const signed_transaction& t) {
       trace_converter.add_transaction(p, t);
    }
@@ -237,7 +257,8 @@ struct test_chain {
       message.traces     = std::move(traces_bin);
       message.deltas     = std::move(deltas_bin);
 
-      prev_block = message.this_block;
+      prev_block                         = message.this_block;
+      history[control->head_block_num()] = fc::raw::pack(message);
    }
 
    void mutating() { intr_ctx.reset(); }
@@ -270,6 +291,22 @@ struct test_chain {
       control->finalize_block([&](eosio::chain::digest_type d) { return std::vector{producer_key.sign(d)}; });
       control->commit_block();
    }
+};
+
+test_chain_ref::test_chain_ref(test_chain& chain) {
+   chain.refs.insert(this);
+   this->chain = &chain;
+}
+
+test_chain_ref::~test_chain_ref() {
+   if (chain)
+      chain->refs.erase(this);
+}
+
+test_chain_ref& test_chain_ref::operator=(test_chain_ref&& rhs) { std::swap(this->chain, rhs.chain); }
+
+struct test_rodeos {
+   test_chain_ref chain;
 };
 
 eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
@@ -425,13 +462,14 @@ namespace eosio { namespace vm {
 */
 
 struct state {
-   const char*                              wasm;
-   eosio::vm::wasm_allocator&               wa;
-   backend_t&                               backend;
-   std::vector<char>                        args;
-   std::vector<file>                        files;
-   std::vector<std::unique_ptr<test_chain>> chains;
-   std::optional<uint32_t>                  selected_chain_index;
+   const char*                               wasm;
+   eosio::vm::wasm_allocator&                wa;
+   backend_t&                                backend;
+   std::vector<char>                         args;
+   std::vector<file>                         files;
+   std::vector<std::unique_ptr<test_chain>>  chains;
+   std::vector<std::unique_ptr<test_rodeos>> rodeoses;
+   std::optional<uint32_t>                   selected_chain_index;
 };
 
 struct push_trx_args {
@@ -776,6 +814,7 @@ struct callbacks {
       return false;
    }
 
+   // todo: remove
    void query_database(uint32_t chain_index, const char* req_begin, const char* req_end, uint32_t cb_alloc_data,
                        uint32_t cb_alloc) {
       auto& chain = assert_chain(chain_index);
@@ -788,6 +827,7 @@ struct callbacks {
       throw std::runtime_error("query_database: unknown query: " + (std::string)query_name);
    }
 
+   // todo: remove
    std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, eosio::input_stream& query_bin) {
       using eosio::from_bin; // ADL required
       auto snapshot_block    = eosio::check(from_bin<uint32_t>(query_bin)).value();
@@ -845,6 +885,29 @@ struct callbacks {
           !state.chains[*state.selected_chain_index])
          throw std::runtime_error("select_chain_for_db() must be called before using multi_index");
       return state.chains[*state.selected_chain_index]->get_apply_context();
+   }
+
+   test_rodeos& assert_rodeos(uint32_t rodeos) {
+      if (rodeos >= state.rodeoses.size() || !state.rodeoses[rodeos])
+         throw std::runtime_error("rodeos does not exist or was destroyed");
+      return *state.rodeoses[rodeos];
+   }
+
+   uint32_t create_rodeos() {
+      state.rodeoses.push_back(std::make_unique<test_rodeos>());
+      return state.rodeoses.size() - 1;
+   }
+
+   void destroy_rodeos(uint32_t rodeos) {
+      assert_rodeos(rodeos);
+      state.rodeoses[rodeos].reset();
+      while (!state.rodeoses.empty() && !state.rodeoses.back()) { state.rodeoses.pop_back(); }
+   }
+
+   void connect_rodeos(uint32_t rodeos, uint32_t chain) {
+      auto& r = assert_rodeos(rodeos);
+      auto& c = assert_chain(chain);
+      r.chain = test_chain_ref{ c };
    }
 
    // clang-format off
