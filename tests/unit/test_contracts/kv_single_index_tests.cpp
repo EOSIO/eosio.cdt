@@ -12,7 +12,7 @@ struct my_table : eosio::kv_table<my_struct> {
    KV_NAMED_INDEX("primary"_n, primary_key);
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, eosio::kv_ram, &primary_key);
+      init(contract_name, "testtable"_n, eosio::kv_ram, primary_key);
    }
 };
 

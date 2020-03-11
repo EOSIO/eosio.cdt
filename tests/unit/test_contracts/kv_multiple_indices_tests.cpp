@@ -26,7 +26,7 @@ struct my_table : eosio::kv_table<my_struct> {
    KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &foo, &bar, &non_unique_name);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, primary_key, foo, bar, non_unique_name);
    }
 };
 

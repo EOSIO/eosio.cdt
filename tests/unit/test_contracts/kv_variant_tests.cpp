@@ -16,7 +16,7 @@ struct my_table : eosio::kv_table<my_struct_v> {
    KV_NAMED_INDEX("age"_n, age);
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, eosio::kv_ram, &full_name, &age);
+      init(contract_name, "testtable"_n, eosio::kv_ram, full_name, age);
    }
 };
 
@@ -41,7 +41,7 @@ struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
    }};
 
    my_table_v(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &age);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, primary_key, age);
    }
 };
 

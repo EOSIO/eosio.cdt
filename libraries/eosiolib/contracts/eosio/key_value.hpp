@@ -8,12 +8,6 @@
 #include <cctype>
 #include <functional>
 
-#include <boost/preprocessor/control/if.hpp>
-#include <boost/preprocessor/seq/for_each.hpp>
-#include <boost/preprocessor/seq/for_each_i.hpp>
-#include <boost/preprocessor/variadic/to_seq.hpp>
-#include <boost/pfr.hpp>
-
 #define EOSIO_CDT_GET_RETURN_T(value_class, index_name) std::decay_t<decltype(std::invoke(&value_class::index_name, std::declval<const value_class*>()))>
 
 /**
@@ -804,34 +798,32 @@ public:
 protected:
    kv_table() = default;
 
-   void setup_indices() {}
-
    template <typename I, typename... Indices>
-   void setup_indices(I index, Indices... indices) {
-      index->contract_name = contract_name;
-      index->table_name = table_name;
-      index->tbl = this;
+   void setup_indices(I&& index, Indices&&... indices) {
+      kv_index* idx = &index;
+      idx->contract_name = contract_name;
+      idx->table_name = table_name;
+      idx->tbl = this;
 
-      index->setup();
-      secondary_indices.push_back(index);
-      setup_indices(indices...);
+      idx->setup();
+      secondary_indices.push_back(idx);
    }
 
    template <typename PrimaryIndex, typename... SecondaryIndices>
-   void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex prim_index, SecondaryIndices... indices) {
-      validate_types(prim_index, indices...);
+   void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex&& prim_index, SecondaryIndices&&... indices) {
+      (validate_types(prim_index, indices), ...);
       contract_name = contract;
       table_name = table;
       db_name = db.value;
 
-      primary_index = prim_index;
+      primary_index = &prim_index;
       primary_index->contract_name = contract_name;
       primary_index->table_name = table_name;
       primary_index->tbl = this;
 
       primary_index->setup();
 
-      setup_indices(indices...);
+      (setup_indices(indices), ...);
    }
 
 private:
@@ -845,10 +837,10 @@ private:
    constexpr void validate_types() {}
 
    template <typename Type, typename... Types>
-   constexpr void validate_types(Type t, Types... ts) {
-      constexpr bool is_kv_index = std::is_base_of_v<kv_index, std::remove_pointer_t<Type>>;
-      static_assert(is_kv_index, "Incorrect index type passed to init. Must be an index.");
-      validate_types(ts...);
+   constexpr void validate_types(Type&& t, Types&&... ts) {
+      constexpr bool is_kv_index = std::is_base_of_v<kv_index, std::decay_t<Type>>;
+      constexpr bool is_ref = std::is_reference_v<Type>;
+      static_assert(is_kv_index && is_ref, "Incorrect index type passed to init. Must be a reference to an index.");
    }
 
    template <typename V>
