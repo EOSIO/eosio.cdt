@@ -154,7 +154,7 @@ class test_chain {
    /*
     * Creates a transaction.
     */
-   transaction make_transaction(std::vector<action>&& actions = {});
+   transaction make_transaction(std::vector<action>&& actions = {}, std::vector<action>&& cfaction = {});
 
    /**
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
@@ -188,7 +188,7 @@ class test_chain {
 
 
    template <typename Action, typename... Args>
-   auto act(const Action& action, Args&&... args) {
+   auto act( std::optional<std::vector<std::vector<char>>> cfd, const Action& action, Args&&... args) {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({action.to_action(std::forward<Args>(args)...)});
       if constexpr ( !std::is_same_v<Ret,void> ) {
@@ -200,22 +200,41 @@ class test_chain {
    }
 
    template <typename Action, typename... Args>
-   auto trace(const Action& action, Args&&... args) {
-      return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ), { default_priv_key } );
+   auto trace( std::optional<std::vector<std::vector<char> >> cfd, const Action& action, Args&&... args) {
+      if( !cfd ) {
+         return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ), 
+                                  { default_priv_key } );
+      } else {
+         return push_transaction( make_transaction( {}, {action.to_action(std::forward<Args>(args)...)} ), 
+                                  { default_priv_key }, *cfd );
+      }
    }
 
    struct user_context {
       test_chain& t;
       std::vector<eosio::permission_level> level;
+      std::optional<std::vector<std::vector<char>>>   context_free_data;
+
+      user_context with_cfd( std::vector<std::vector<char>> d ) {
+         user_context uc = *this;
+         uc.context_free_data = std::move(d);
+         return uc;
+      }
       
       template <typename Action, typename... Args>
       auto act(Args&&... args) {
-         return t.act( Action(level), std::forward<Args>(args)... );
+         if( context_free_data )
+            return t.act( context_free_data, Action(), std::forward<Args>(args)... );
+         else
+            return t.act( context_free_data, Action(level), std::forward<Args>(args)... );
       }
 
       template <typename Action, typename... Args>
       auto trace(Args&&... args) {
-         return t.trace( Action(level), std::forward<Args>(args)... );
+         if( context_free_data )
+            return t.trace( context_free_data, Action(), std::forward<Args>(args)... );
+         else
+            return t.trace( context_free_data, Action(level), std::forward<Args>(args)... );
       }
    };
 
