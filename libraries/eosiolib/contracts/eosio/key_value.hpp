@@ -4,6 +4,8 @@
 #include "../../core/eosio/utility.hpp"
 #include "../../core/eosio/varint.hpp"
 
+#include <eosio/to_key.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <functional>
@@ -82,6 +84,9 @@ struct key_type : private std::string {
    key_type() = default;
    key_type(const char* c, size_t s) : std::string(c, s) {}
 
+   template <class Iter>
+   key_type(Iter begin, Iter end) : std::string(begin, end) {}
+
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
       ret += b;
@@ -119,158 +124,15 @@ inline key_type table_key(const key_type& prefix, const key_type& key) {
    return prefix + key;
 }
 
-template <typename I>
-inline I flip_msb(I val) {
-   constexpr static size_t bits = sizeof(I) * 8;
-   return val ^ (static_cast<I>(1) << (bits - 1));
+template <typename T>
+inline key_type make_key(const T& t) {
+   auto bytes = convert_to_key(t);
+   
+   eosio::check(bytes, "There was a failure converting to a key.");
+
+   return key_type(bytes.value().begin(), bytes.value().end());
 }
 
-template <typename I>
-inline I get_msb(I val) {
-   constexpr static size_t bits = sizeof(I) * 8;
-   return val >> (bits - 1);
-}
-
-template <typename I, typename std::enable_if_t<std::is_integral<I>::value, int> = 0>
-inline key_type make_key(I val) {
-   if (std::is_signed<I>::value) {
-      val = flip_msb(val);
-   }
-
-   auto big_endian = swap_endian<I>(val);
-
-   const char* bytes = reinterpret_cast<char*>(&big_endian);
-   constexpr size_t size = sizeof(big_endian);
-   key_type s(bytes, size);
-   return s;
-}
-
-template <typename I, typename F>
-inline key_type make_floating_key(F val) {
-   if (val == -0) {
-      val = +0;
-   }
-
-   auto* ival = reinterpret_cast<I*>(&val);
-   I bit_val;
-   auto msb = get_msb(*ival);
-   if (msb) {
-      // invert all the bits
-      bit_val = ~(*ival);
-   } else {
-      // invert just msb
-      bit_val = flip_msb(*ival);
-   }
-
-   auto big_endian = swap_endian<I>(bit_val);
-
-   const char* bytes = reinterpret_cast<char*>(&big_endian);
-   constexpr size_t size = sizeof(big_endian);
-   key_type s(bytes, size);
-   return s;
-}
-
-inline key_type make_key(float val) {
-   return make_floating_key<uint32_t>(val);
-}
-
-inline key_type make_key(double val) {
-   return make_floating_key<uint64_t>(val);
-}
-
-inline key_type make_key(const char* str, size_t size) {
-   size_t data_size = size + 3;
-   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   memcpy(data_buffer, str, size);
-
-   ((char*)data_buffer)[data_size - 3] = 0x01;
-   ((char*)data_buffer)[data_size - 2] = 0x00;
-   ((char*)data_buffer)[data_size - 1] = 0x00;
-
-   key_type s((const char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
-}
-
-inline key_type make_key(const std::string& val) {
-   return make_key(val.data(), val.size());
-}
-
-inline key_type make_key(const std::string_view& val) {
-   return make_key(val.data(), val.size());
-}
-
-inline key_type make_key(const char* str) {
-   return make_key(std::string_view{str});
-}
-
-inline key_type make_key(eosio::name n) {
-   return make_key(n.value);
-}
-
-inline key_type make_key(key_type&& val) {
-   return std::move(val);
-}
-
-inline key_type make_key(const key_type& val) {
-   return val;
-}
-
-template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
-inline key_type make_key(const S& val) {
-   size_t data_size = 0;
-   size_t pos = 0;
-   void* data_buffer;
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      data_size += sizeof(field);
-   });
-
-   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
-      pos += kt.size();
-   });
-
-   key_type s((const char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
-}
-
-template <typename... Args>
-inline key_type make_key(const std::tuple<Args...>& val) {
-   size_t data_size = 0;
-   size_t pos = 0;
-   void* data_buffer;
-
-   boost::fusion::for_each(val, [&](auto& field) {
-      data_size += sizeof(field);
-   });
-
-   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   boost::fusion::for_each(val, [&](auto& field) {
-      auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
-      pos += kt.size();
-   });
-
-   key_type s((const char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
-}
 /* @endcond */
 
 // This is the "best" way to document a function that does not technically exist using Doxygen.
