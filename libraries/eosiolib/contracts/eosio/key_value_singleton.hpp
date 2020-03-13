@@ -1,8 +1,7 @@
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
-#include "../../core/eosio/print.hpp"
-#include "../../core/eosio/utility.hpp"
-#include "../../core/eosio/varint.hpp"
+
+#include <eosio/to_key.hpp>
 
 namespace detail {
    constexpr inline size_t max_stack_buffer_size = 512;
@@ -102,17 +101,7 @@ namespace eosio {
       bool is_cached = false;
 
       key_type make_prefix(uint64_t singleton_name, uint8_t status = 2) {
-         auto bige_singleton = swap_endian<uint64_t>(singleton_name);
-
-         constexpr size_t buffer_size = sizeof(singleton_name) + sizeof(status);
-
-         key_type ret;
-         ret.resize(buffer_size);
-
-         memcpy(ret.data(), &status, sizeof(status));
-         memcpy(ret.data() + sizeof(status), &bige_singleton, sizeof(singleton_name));
-
-         return ret;
+         return make_key(std::make_tuple(status, singleton_name));
       }
 
       template <typename V>
