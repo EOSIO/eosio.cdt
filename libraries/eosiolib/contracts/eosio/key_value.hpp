@@ -540,7 +540,7 @@ public:
             return end();
          }
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
+         return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
 
       /**
@@ -631,7 +631,7 @@ public:
          uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
+         return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
 
       /**
@@ -641,7 +641,7 @@ public:
        * @return An iterator pointing past the end.
        */
       iterator end() const {
-         return {0, iterator::status::iterator_end, reinterpret_cast<const kv_index*>(this)};
+         return {0, iterator::status::iterator_end, this};
       }
 
       /**
@@ -656,7 +656,7 @@ public:
          uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
+         return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
 
       /**
