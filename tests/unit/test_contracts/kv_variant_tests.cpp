@@ -11,10 +11,17 @@ struct my_struct_v2 {
    uint64_t age;
 };
 
-DEFINE_TABLE(my_table, my_struct_v, "testtable", eosio::kv_ram, age, full_name)
+struct my_table : eosio::kv_table<my_struct_v> {
+   KV_NAMED_INDEX("fullname"_n, full_name);
+   KV_NAMED_INDEX("age"_n, age);
+
+   my_table(eosio::name contract_name) {
+      init(contract_name, "testtable"_n, eosio::kv_ram, full_name, age);
+   }
+};
 
 struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
-   index<std::string> primary_key{[](const auto& obj) {
+   index<std::string> primary_key{"fullname"_n, [](const auto& obj) {
       return std::visit([&](auto&& a) {
          using V = std::decay_t<decltype(a)>;
          if constexpr(std::is_same_v<V, my_struct_v>) {
@@ -27,14 +34,14 @@ struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
          }
       }, *obj);
    }};
-   index<uint64_t> age{[](const auto& obj) {
+   index<uint64_t> age{"age"_n, [](const auto& obj) {
       return std::visit([&](auto&& a) {
          return a.age;
       }, *obj);
    }};
 
    my_table_v(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &primary_key, &age);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, primary_key, age);
    }
 };
 
