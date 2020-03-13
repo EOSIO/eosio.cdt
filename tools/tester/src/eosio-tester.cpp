@@ -1,4 +1,4 @@
-#include "filter-wasm.hpp"
+#include <eosio/history-tools/filter.hpp> // todo: remove
 
 #include "../../../libraries/eosiolib/tester/eosio/chain_types.hpp"
 #include <eosio/chain/apply_context.hpp>
