@@ -288,9 +288,8 @@ inline key_type make_key(T val) {
 }
 #endif
 
-
-static const eosio::name kv_ram = "eosio.kvram"_n;
-static const eosio::name kv_disk = "eosio.kvdisk"_n;
+static constexpr eosio::name kv_ram = "eosio.kvram"_n;
+static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
 
 /**
  * @defgroup keyvalue Key Value Table
@@ -408,8 +407,12 @@ class kv_table {
          return *this;
       }
 
-      uint32_t key_compare(key_type kt) const {
-         return internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
+      int32_t key_compare(key_type kt) const {
+         if (itr == 0 || itr_stat == status::iterator_end) {
+            return 1;
+         } else {
+            return internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
+         }
       }
 
       bool operator==(const iterator& b) const {
@@ -512,12 +515,6 @@ public:
       using kv_table<T>::kv_index::prefix;
 
       template <typename KF>
-      explicit index(KF&& kf) : kv_index{kf} {
-         static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
-               "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
-      }
-
-      template <typename KF>
       index(eosio::name name, KF&& kf) : kv_index{name, kf} {
          static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
                "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
@@ -544,19 +541,6 @@ public:
          }
 
          return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
-      }
-
-      bool exists( const K& key ) const {
-         uint32_t value_size;
-         auto t_key = table_key(prefix, make_key(key));
-
-         return internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
-      }
-
-      T operator[]( const K& key ) const {
-         auto opt = get(key);
-         eosio::check( opt.has_value(), "key not found" );
-         return *opt;
       }
 
       /**
@@ -783,8 +767,8 @@ public:
 protected:
    kv_table() = default;
 
-   template <typename I, typename... Indices>
-   void setup_indices(I&& index, Indices&&... indices) {
+   template <typename I>
+   void setup_indices(I& index) {
       kv_index* idx = &index;
       idx->contract_name = contract_name;
       idx->table_name = table_name;
@@ -795,8 +779,10 @@ protected:
    }
 
    template <typename PrimaryIndex, typename... SecondaryIndices>
-   void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex&& prim_index, SecondaryIndices&&... indices) {
-      (validate_types(prim_index, indices), ...);
+   void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex& prim_index, SecondaryIndices&... indices) {
+      validate_types(prim_index);
+      (validate_types(indices), ...);
+
       contract_name = contract;
       table_name = table;
       db_name = db.value;
@@ -825,11 +811,10 @@ private:
 
    constexpr void validate_types() {}
 
-   template <typename Type, typename... Types>
-   constexpr void validate_types(Type&& t, Types&&... ts) {
+   template <typename Type>
+   constexpr void validate_types(Type& t) {
       constexpr bool is_kv_index = std::is_base_of_v<kv_index, std::decay_t<Type>>;
-      constexpr bool is_ref = std::is_reference_v<Type>;
-      static_assert(is_kv_index && is_ref, "Incorrect index type passed to init. Must be a reference to an index.");
+      static_assert(is_kv_index, "Incorrect type passed to init. Must be a reference to an index.");
    }
 
    template <typename V>
