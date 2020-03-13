@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(single_tests_get) try {
 
    BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(geterror), N(kvtest), {}),
                          eosio_assert_message_exception,
-                         eosio_assert_message_is("key not found"));
+                         eosio_assert_message_is("Key not found in `[]`"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_FIXTURE_TEST_CASE(single_tests_bounds, tester) try {
