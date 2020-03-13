@@ -125,7 +125,7 @@ namespace detail {
 struct key_type : private std::vector<char> {
    key_type() = default;
 
-   key_type(std::vector<char>&& v) : std::vector<char>(v) {}
+   explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
@@ -134,7 +134,6 @@ struct key_type : private std::vector<char> {
    }
 
    key_type& operator+=(const key_type& b) const {
-      this->resize(this->size()+b->size());
       this->insert(this->end(), b.begin(), b.end());
       return *this;
    }
