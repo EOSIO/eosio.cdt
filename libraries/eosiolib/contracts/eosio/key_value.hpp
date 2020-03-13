@@ -80,17 +80,21 @@ namespace detail {
 /**
  * The key_type struct is used to store the binary representation of a key.
  */
-struct key_type : private std::string {
+struct key_type : private std::vector<char> {
    key_type() = default;
-   key_type(const char* c, size_t s) : std::string(c, s) {}
 
-   template <class Iter>
-   key_type(Iter begin, Iter end) : std::string(begin, end) {}
+   key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
       ret += b;
       return ret;
+   }
+
+   key_type& operator+=(const key_type& b) const {
+      this->resize(this->size()+b->size());
+      this->insert(this->end(), b.begin(), b.end());
+      return *this;
    }
 
    bool operator==(const key_type& b) const {
@@ -103,36 +107,20 @@ struct key_type : private std::string {
 };
 
 /* @cond PRIVATE */
+template <typename T>
+inline key_type make_key(const T& t) {
+   auto bytes = convert_to_key(t);
+   eosio::check((bool)bytes, "There was a failure converting to a key.");
+   return key_type(std::move(bytes.value()));
+}
+
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
-   auto bige_table = swap_endian<uint64_t>(table_name.value);
-   auto bige_index = swap_endian<uint64_t>(index_name.value);
-
-   constexpr size_t index_name_size = sizeof(index_name);
-   constexpr size_t buffer_size = (2 * index_name_size) + sizeof(status);
-
-   key_type ret;
-   ret.resize(buffer_size);
-
-   memcpy(ret.data(), &status, sizeof(status));
-   memcpy(ret.data() + sizeof(status), &bige_table, index_name_size);
-   memcpy(ret.data() + sizeof(status) + index_name_size, &bige_index, index_name_size);
-
-   return ret;
+   return make_key(std::make_tuple(status, table_name, index_name));
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
    return prefix + key;
 }
-
-template <typename T>
-inline key_type make_key(const T& t) {
-   auto bytes = convert_to_key(t);
-   
-   eosio::check(bytes, "There was a failure converting to a key.");
-
-   return key_type(bytes.value().begin(), bytes.value().end());
-}
-
 /* @endcond */
 
 // This is the "best" way to document a function that does not technically exist using Doxygen.
