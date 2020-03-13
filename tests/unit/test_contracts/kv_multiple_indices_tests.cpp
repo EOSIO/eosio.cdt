@@ -81,6 +81,15 @@ public:
    }
 
    [[eosio::action]]
+   void get() {
+      my_table t{"kvtest"_n};
+      auto end_itr = t.foo.end();
+
+      auto val = t.foo.get("g");
+      eosio::check(val->primary_key == "joe"_n, "Got the wrong value");
+   }
+
+   [[eosio::action]]
    void iteration() {
       my_table t{"kvtest"_n};
 

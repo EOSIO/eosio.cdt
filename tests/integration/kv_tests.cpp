@@ -92,6 +92,12 @@ BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
 
 // Multi
 // -----
+BOOST_FIXTURE_TEST_CASE(multi_tests_get, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
+   tester.push_action(N(kvtest), N(get), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
    TESTER tester;
    setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());

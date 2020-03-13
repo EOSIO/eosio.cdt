@@ -307,13 +307,7 @@ static const eosio::name kv_disk = "eosio.kvdisk"_n;
 template<typename T>
 class kv_table {
 
-   struct index_config {
-      uint64_t db_name;
-      eosio::name contract_name;
-      eosio::name index_name;
-      eosio::name primary_index_name;
-      key_type prefix;
-   };
+   class kv_index;
 
    class iterator {
    public:
@@ -323,12 +317,13 @@ class kv_table {
          iterator_end    = -2, // Iterator is out-of-bounds
       };
 
-      iterator(uint32_t itr, status itr_stat, const index_config& config) : itr{itr}, itr_stat{itr_stat}, config{config} {}
+      iterator() = default;
+
+      iterator(uint32_t itr, status itr_stat, const kv_index* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
 
       iterator(iterator&& other) :
          itr(std::exchange(other.itr, 0)),
-         itr_stat(std::move(other.itr_stat)),
-         config(std::move(other.config))
+         itr_stat(std::move(other.itr_stat))
       {}
 
       ~iterator() {
@@ -338,10 +333,11 @@ class kv_table {
       }
 
       iterator& operator=(iterator&& other) {
-         itr = std::exchange(other.itr, itr);
+         if (itr) {
+            internal_use_do_not_use::kv_it_destroy(itr);
+         }
+         itr = std::exchange(other.itr, 0);
          itr_stat = std::move(other.itr_stat);
-         config = std::move(other.config);
-
          return *this;
       }
 
@@ -372,14 +368,13 @@ class kv_table {
          void* deserialize_buffer = buffer;
          size_t deserialize_size = actual_value_size;
 
-         bool is_primary = config.index_name == config.primary_index_name;
-
+         bool is_primary = index->index_name == index->tbl->primary_index_name;
          if (!is_primary) {
-            auto success = internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
-            eosio::check(success, "failure getting primary key");
+            auto success = internal_use_do_not_use::kv_get(index->tbl->db_name, index->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
+            eosio::check(success, "failure getting primary key in `value()`");
 
             void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            internal_use_do_not_use::kv_get_data(config.db_name, 0, (char*)pk_buffer, actual_data_size);
+            internal_use_do_not_use::kv_get_data(index->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
             deserialize_buffer = pk_buffer;
             deserialize_size = actual_data_size;
@@ -406,7 +401,7 @@ class kv_table {
 
       iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
@@ -445,7 +440,7 @@ class kv_table {
       uint32_t itr;
       status itr_stat;
 
-      index_config config;
+      const kv_index* index;
 
       int compare(const iterator& b) const {
          bool a_is_end = !itr || itr_stat == status::iterator_end;
@@ -509,8 +504,6 @@ public:
     */
    template <typename K>
    class index : public kv_index {
-      index_config config;
-
    public:
       using kv_table<T>::kv_index::tbl;
       using kv_table<T>::kv_index::table_name;
@@ -538,9 +531,9 @@ public:
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
        */
       iterator find(const K& key) const {
-         auto t_key = table_key(config.prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(key));
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
+         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
@@ -550,14 +543,14 @@ public:
             return end();
          }
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), config};
+         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
       }
 
       bool exists( const K& key ) const {
          uint32_t value_size;
-         auto t_key = table_key(config.prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(key));
 
-         return internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, t_key.data(), t_key.size(), value_size);
+         return internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
       }
 
       T operator[]( const K& key ) const {
@@ -578,26 +571,26 @@ public:
          uint32_t actual_data_size;
          std::optional<T> ret_val;
 
-         auto t_key = table_key(config.prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(key));
 
-         auto success = internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, t_key.data(), t_key.size(), value_size);
+         auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
          if (!success) {
             return ret_val;
          }
 
          void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto copy_size = internal_use_do_not_use::kv_get_data(config.db_name, 0, (char*)buffer, value_size);
+         auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
 
          void* deserialize_buffer = buffer;
          size_t deserialize_size = copy_size;
 
-         bool is_primary = config.index_name != config.primary_index_name;
-         if (is_primary) {
-            auto success = internal_use_do_not_use::kv_get(config.db_name, config.contract_name.value, (char*)buffer, copy_size, actual_data_size);
+         bool is_primary = index_name == tbl->primary_index_name;
+         if (!is_primary) {
+            auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, (char*)buffer, copy_size, actual_data_size);
             eosio::check(success, "failure getting primary key");
 
             void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            auto pk_copy_size = internal_use_do_not_use::kv_get_data(config.db_name, 0, (char*)pk_buffer, actual_data_size);
+            auto pk_copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
             deserialize_buffer = pk_buffer;
             deserialize_size = pk_copy_size;
@@ -624,10 +617,10 @@ public:
        * @return An iterator to the object with the lowest key (by this index) in the table.
        */
       iterator begin() const {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
+         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), config};
+         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
       }
 
       /**
@@ -637,7 +630,7 @@ public:
        * @return An iterator pointing past the end.
        */
       iterator end() const {
-         return {0, iterator::status::iterator_end, config};
+         return {0, iterator::status::iterator_end, reinterpret_cast<const kv_index*>(this)};
       }
 
       /**
@@ -647,12 +640,12 @@ public:
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
       iterator lower_bound(const K& key) const {
-         auto t_key = table_key(config.prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(key));
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(config.db_name, config.contract_name.value, config.prefix.data(), config.prefix.size());
+         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
 
-         return {itr, static_cast<typename iterator::status>(itr_stat), config};
+         return {itr, static_cast<typename iterator::status>(itr_stat), reinterpret_cast<const kv_index*>(this)};
       }
 
       /**
@@ -662,7 +655,7 @@ public:
        * @return An iterator pointing to the first element greater than the given key.
        */
       iterator upper_bound(const K& key) const {
-         auto t_key = table_key(config.prefix, make_key(key));
+         auto t_key = table_key(prefix, make_key(key));
          auto it = lower_bound(key);
 
          auto cmp = it.key_compare(t_key);
@@ -693,14 +686,6 @@ public:
 
       void setup() override {
          prefix = make_prefix(table_name, index_name);
-         config = {
-            .db_name            = tbl->db_name,
-            .contract_name      = contract_name,
-            .index_name         = index_name,
-            .primary_index_name = tbl->primary_index->index_name,
-            .prefix             = prefix
-         };
-
       }
    };
 
@@ -823,6 +808,8 @@ protected:
 
       primary_index->setup();
 
+      primary_index_name = primary_index->index_name;
+
       (setup_indices(indices), ...);
    }
 
@@ -830,6 +817,8 @@ private:
    eosio::name contract_name;
    eosio::name table_name;
    uint64_t db_name;
+
+   eosio::name primary_index_name;
 
    kv_index* primary_index;
    std::vector<kv_index*> secondary_indices;
