@@ -11,10 +11,13 @@
 #include <eosio/ignore.hpp>
 #include <eosio/time.hpp>
 
-#include <boost/preprocessor/variadic/size.hpp>
-#include <boost/preprocessor/variadic/to_tuple.hpp>
-#include <boost/preprocessor/tuple/enum.hpp>
+#include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/facilities/overload.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/tuple/enum.hpp>
+#include <boost/preprocessor/variadic/size.hpp>
+#include <boost/preprocessor/variadic/to_seq.hpp>
+#include <boost/preprocessor/variadic/to_tuple.hpp>
 
 namespace eosio {
 
