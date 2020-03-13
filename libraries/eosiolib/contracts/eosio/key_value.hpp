@@ -4,6 +4,8 @@
 #include <eosio/utility.hpp>
 #include <eosio/varint.hpp>
 
+#include <eosio/to_key.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <functional>
@@ -79,9 +81,10 @@ namespace detail {
 /**
  * The key_type struct is used to store the binary representation of a key.
  */
-struct key_type : private std::string {
+struct key_type : private std::vector<char> {
    key_type() = default;
-   key_type(const char* c, size_t s) : std::string(c, s) {}
+
+   explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
@@ -89,188 +92,30 @@ struct key_type : private std::string {
       return ret;
    }
 
-   bool operator==(const key_type& b) const {
-      return size() != b.size() && memcmp(data(), b.data(), b.size()) == 0;
+   key_type& operator+=(const key_type& b) {
+      this->insert(this->end(), b.begin(), b.end());
+      return *this;
    }
 
-   using std::string::data;
-   using std::string::size;
-   using std::string::resize;
+   using std::vector<char>::data;
+   using std::vector<char>::size;
+   using std::vector<char>::resize;
 };
 
 /* @cond PRIVATE */
+template <typename T>
+inline key_type make_key(T&& t) {
+   auto bytes = convert_to_key(std::forward<T>(t));
+   eosio::check((bool)bytes, "There was a failure in make_key."); 
+   return key_type(std::move(bytes.value()));
+}
+
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
-   auto bige_table = swap_endian<uint64_t>(table_name.value);
-   auto bige_index = swap_endian<uint64_t>(index_name.value);
-
-   constexpr size_t index_name_size = sizeof(index_name);
-   constexpr size_t buffer_size = (2 * index_name_size) + sizeof(status);
-
-   key_type ret;
-   ret.resize(buffer_size);
-
-   memcpy(ret.data(), &status, sizeof(status));
-   memcpy(ret.data() + sizeof(status), &bige_table, index_name_size);
-   memcpy(ret.data() + sizeof(status) + index_name_size, &bige_index, index_name_size);
-
-   return ret;
+   return make_key(std::make_tuple(status, table_name, index_name));
 }
 
 inline key_type table_key(const key_type& prefix, const key_type& key) {
    return prefix + key;
-}
-
-template <typename I>
-inline I flip_msb(I val) {
-   constexpr static size_t bits = sizeof(I) * 8;
-   return val ^ (static_cast<I>(1) << (bits - 1));
-}
-
-template <typename I>
-inline I get_msb(I val) {
-   constexpr static size_t bits = sizeof(I) * 8;
-   return val >> (bits - 1);
-}
-
-template <typename I, typename std::enable_if_t<std::is_integral<I>::value, int> = 0>
-inline key_type make_key(I val) {
-   if (std::is_signed<I>::value) {
-      val = flip_msb(val);
-   }
-
-   auto big_endian = swap_endian<I>(val);
-
-   const char* bytes = reinterpret_cast<char*>(&big_endian);
-   constexpr size_t size = sizeof(big_endian);
-   key_type s(bytes, size);
-   return s;
-}
-
-template <typename I, typename F>
-inline key_type make_floating_key(F val) {
-   if (val == -0) {
-      val = +0;
-   }
-
-   auto* ival = reinterpret_cast<I*>(&val);
-   I bit_val;
-   auto msb = get_msb(*ival);
-   if (msb) {
-      // invert all the bits
-      bit_val = ~(*ival);
-   } else {
-      // invert just msb
-      bit_val = flip_msb(*ival);
-   }
-
-   auto big_endian = swap_endian<I>(bit_val);
-
-   const char* bytes = reinterpret_cast<char*>(&big_endian);
-   constexpr size_t size = sizeof(big_endian);
-   key_type s(bytes, size);
-   return s;
-}
-
-inline key_type make_key(float val) {
-   return make_floating_key<uint32_t>(val);
-}
-
-inline key_type make_key(double val) {
-   return make_floating_key<uint64_t>(val);
-}
-
-inline key_type make_key(const char* str, size_t size) {
-   size_t data_size = size + 3;
-   void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   memcpy(data_buffer, str, size);
-
-   ((char*)data_buffer)[data_size - 3] = 0x01;
-   ((char*)data_buffer)[data_size - 2] = 0x00;
-   ((char*)data_buffer)[data_size - 1] = 0x00;
-
-   key_type s((const char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
-}
-
-inline key_type make_key(const std::string& val) {
-   return make_key(val.data(), val.size());
-}
-
-inline key_type make_key(const std::string_view& val) {
-   return make_key(val.data(), val.size());
-}
-
-inline key_type make_key(const char* str) {
-   return make_key(std::string_view{str});
-}
-
-inline key_type make_key(eosio::name n) {
-   return make_key(n.value);
-}
-
-inline key_type make_key(key_type&& val) {
-   return std::move(val);
-}
-
-inline key_type make_key(const key_type& val) {
-   return val;
-}
-
-template <typename S, typename std::enable_if_t<std::is_class<S>::value, int> = 0>
-inline key_type make_key(const S& val) {
-   size_t data_size = 0;
-   size_t pos = 0;
-   void* data_buffer;
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      data_size += sizeof(field);
-   });
-
-   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   boost::pfr::for_each_field(val, [&](auto& field) {
-      auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
-      pos += kt.size();
-   });
-
-   key_type s((const char*)data_buffer, data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
-}
-
-template <typename... Args>
-inline key_type make_key(const std::tuple<Args...>& val) {
-   size_t data_size = 0;
-   size_t pos = 0;
-   void* data_buffer;
-
-   boost::fusion::for_each(val, [&](auto& field) {
-      data_size += sizeof(field);
-   });
-
-   data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-   boost::fusion::for_each(val, [&](auto& field) {
-      auto kt = make_key(field);
-      memcpy((char*)data_buffer + pos, kt.data(), kt.size());
-      pos += kt.size();
-   });
-
-   key_type s((const char*)data_buffer, pos);//data_size);
-
-   if (data_size > detail::max_stack_buffer_size) {
-      free(data_buffer);
-   }
-   return s;
 }
 /* @endcond */
 
