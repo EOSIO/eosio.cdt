@@ -1,8 +1,6 @@
 #pragma once
 #include <eosio/datastream.hpp>
 #include <eosio/name.hpp>
-#include <eosio/print.hpp>
-#include <eosio/utility.hpp>
 #include <eosio/varint.hpp>
 
 #include <eosio/to_key.hpp>
