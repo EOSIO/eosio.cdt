@@ -90,6 +90,18 @@ public:
 
       val = t.primary_key.get("william"_n);
       eosio::check(!val, "Should not have gotten a value");
+
+      eosio::check(t.primary_key.exists("bob"_n), "Exists should return true");
+      eosio::check(!t.primary_key.exists("william"_n), "Exists should return false");
+
+      auto vval = t.primary_key["bob"_n];
+      eosio::check(vval.primary_key == "bob"_n, "Got the wrong value");
+   }
+
+   [[eosio::action]]
+   void geterror() {
+      my_table t{"kvtest"_n};
+      auto val = t.primary_key["william"_n];
    }
 
    [[eosio::action]]
