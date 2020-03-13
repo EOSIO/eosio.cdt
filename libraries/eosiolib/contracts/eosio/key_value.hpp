@@ -544,6 +544,33 @@ public:
       }
 
       /**
+       * Check if a given key exists in the index.
+       * @ingroup keyvalue
+       *
+       * @param key - The key to check for.
+       * @return If the key exists or not.
+       */
+      bool exists(const K& key) const {
+         uint32_t value_size;
+         auto t_key = table_key(prefix, make_key(key));
+
+         return internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
+      }
+
+      /**
+       * Get the value for an existing object in a table by the index, using the given key.
+       * @ingroup keyvalue
+       *
+       * @param key - The key to search for.
+       * @return The value corresponding to the key.
+       */
+      T operator[](const K& key) const {
+         auto opt = get(key);
+         eosio::check(opt.has_value(), "Key not found in `[]`");
+         return *opt;
+      }
+
+      /**
        * Get the value for an existing object in a table by the index, using the given key.
        * @ingroup keyvalue
        *
