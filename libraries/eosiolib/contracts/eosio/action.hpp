@@ -370,9 +370,17 @@ namespace eosio {
       auto get_args(R(Act::*p)(Args...)) {
          return std::tuple<std::decay_t<typename unwrap<Args>::type>...>{};
       }
+      template <typename R, typename Act, typename... Args>
+      auto get_args(R(Act::*p)(Args...)const ) {
+         return std::tuple<std::decay_t<typename unwrap<Args>::type>...>{};
+      }
 
       template <typename R, typename Act, typename... Args>
       auto get_args_nounwrap(R(Act::*p)(Args...)) {
+         return std::tuple<std::decay_t<Args>...>{};
+      }
+      template <typename R, typename Act, typename... Args>
+      auto get_args_nounwrap(R(Act::*p)(Args...)const) {
          return std::tuple<std::decay_t<Args>...>{};
       }
 
