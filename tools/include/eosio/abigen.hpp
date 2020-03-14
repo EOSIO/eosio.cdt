@@ -63,21 +63,25 @@ namespace eosio { namespace cdt {
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
+            /*
             try {
                validate_name( decl->getName().str(), error_handler );
             } catch (...) {
                std::cout << "Error, name <" <<decl->getName().str() << "> is an invalid EOSIO name.\n";
                throw;
             }
+            */
             ret.name = decl->getName().str();
          }
          else {
+            /*
             try {
                validate_name( action_name.str(), error_handler );
             } catch (...) {
                std::cout << "Error, name <" << action_name.str() << "> is an invalid EOSIO name.\n";
                throw;
             }
+            */
             ret.name = action_name.str();
          }
          ret.type = decl->getName().str();
@@ -95,19 +99,23 @@ namespace eosio { namespace cdt {
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
+            /*
             try {
                validate_name( decl->getNameAsString(), error_handler );
             } catch (...) {
                std::cout << "Error, name <" <<decl->getNameAsString() << "> is an invalid EOSIO name.\n";
             }
+            */
             ret.name = decl->getNameAsString();
          }
          else {
+            /*
             try {
                validate_name( action_name.str(), error_handler );
             } catch (...) {
                std::cout << "Error, name <" << action_name.str() << "> is an invalid EOSIO name.\n";
             }
+            */
             ret.name = action_name.str();
          }
          ret.type = decl->getNameAsString();
@@ -222,10 +230,12 @@ namespace eosio { namespace cdt {
          t.type = decl->getNameAsString();
          auto table_name = decl->getEosioTableAttr()->getName();
          if (!table_name.empty()) {
+            /*
             try {
                validate_name( table_name.str(), error_handler );
             } catch (...) {
             }
+            */
             t.name = table_name.str();
          }
          else {

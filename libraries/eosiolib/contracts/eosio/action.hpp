@@ -624,7 +624,7 @@ BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TU
 
 
 #define EOSIO_ACTION_WRAPPER_DECL(r, data, action) \
-   using action = eosio::action_wrapper<BOOST_PP_CAT(BOOST_PP_STRINGIZE(action),_n), &__contract_class::action, __contract_account>;
+   using action = eosio::action_wrapper<BOOST_PP_CAT(BOOST_PP_STRINGIZE(action),_h), &__contract_class::action, __contract_account>;
 
 #define EOSIO_ACTIONS( CONTRACT_CLASS, CONTRACT_ACCOUNT, ... ) \
    namespace actions { \

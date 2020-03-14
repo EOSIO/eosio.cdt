@@ -96,7 +96,7 @@ namespace eosio {
 
  // Helper macro for EOSIO_DISPATCH_INTERNAL
  #define EOSIO_DISPATCH_INTERNAL( r, OP, elem ) \
-    case eosio::name( BOOST_PP_STRINGIZE(elem) ).value: \
+    case BOOST_PP_STRINGIZE(elem) ##_h: \
        eosio::execute_action( eosio::name(receiver), eosio::name(code), &OP::elem ); \
        break;
 
