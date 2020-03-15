@@ -65,7 +65,12 @@ class datastream {
       *
       *  @param s - The number of bytes to skip
       */
-      inline void skip( size_t s ){ _pos += s; }
+      inline result<void> skip( size_t s ){ 
+         _pos += s; 
+         if (_pos > _end )
+            return stream_error::overrun;
+         return outcome::success();
+      }
 
      /**
       *  Reads a specified number of bytes from the stream into a buffer
@@ -142,6 +147,7 @@ class datastream {
       *  @return T - The current position of the stream
       */
       T pos()const { return _pos; }
+      T get_pos()const { return _pos; }
       inline bool valid()const { return _pos <= _end && _pos >= _start;  }
 
      /**
@@ -209,7 +215,7 @@ class datastream<size_t> {
       *  @param s - The amount of size to increase
       *  @return true
       */
-     inline bool     skip( size_t s )                 { _size += s; return true;  }
+     inline result<void> skip( size_t s ) { _size += s; return outcome::success();  }
 
      /**
       *  Increment the size by s. This behaves the same as skip( size_t s )
