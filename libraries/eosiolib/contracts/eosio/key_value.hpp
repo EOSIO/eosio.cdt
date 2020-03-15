@@ -425,6 +425,8 @@ class kv_table {
          return *this;
       }
 
+      bool good()const { return itr_stat != status::iterator_end; }
+
       /**
        * Returns the value that the iterator points to.
        * @ingroup keyvalue
