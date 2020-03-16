@@ -913,7 +913,7 @@ struct callbacks {
       while (!state.rodeoses.empty() && !state.rodeoses.back()) { state.rodeoses.pop_back(); }
    }
 
-   void set_filter(uint32_t rodeos, const char* wasm_filename) {
+   void rodeos_set_filter(uint32_t rodeos, const char* wasm_filename) {
       auto& r = assert_rodeos(rodeos);
       r.filter.emplace(wasm_filename);
    }
@@ -1114,7 +1114,7 @@ void register_callbacks() {
 
    rhf_t::add<callbacks, &callbacks::create_rodeos, eosio::vm::wasm_allocator>("env", "create_rodeos");
    rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
-   rhf_t::add<callbacks, &callbacks::set_filter, eosio::vm::wasm_allocator>("env", "set_filter");
+   rhf_t::add<callbacks, &callbacks::rodeos_set_filter, eosio::vm::wasm_allocator>("env", "rodeos_set_filter");
    rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_push_block, eosio::vm::wasm_allocator>("env", "rodeos_push_block");
 
