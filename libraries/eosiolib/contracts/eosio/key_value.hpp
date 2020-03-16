@@ -322,7 +322,8 @@ class kv_table {
 
       iterator(iterator&& other) :
          itr(std::exchange(other.itr, 0)),
-         itr_stat(std::move(other.itr_stat))
+         itr_stat(std::move(other.itr_stat)),
+         index(std::move(other.index))
       {}
 
       ~iterator() {
@@ -337,6 +338,7 @@ class kv_table {
          }
          itr = std::exchange(other.itr, 0);
          itr_stat = std::move(other.itr_stat);
+         index = std::move(other.index);
          return *this;
       }
 
@@ -695,6 +697,7 @@ public:
          return return_values;
       }
 
+   private:
       void setup() override {
          prefix = make_prefix(table_name, index_name);
       }
