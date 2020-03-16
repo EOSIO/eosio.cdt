@@ -311,7 +311,7 @@ namespace eosio { namespace cdt {
             static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
                name = generation_utils::get_action_name(decl);
-               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
+//               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
                if (!_action_set.count(name))
                   _action_set.insert(name);
                else {
@@ -332,7 +332,7 @@ namespace eosio { namespace cdt {
                if (first != "*")
                   validate_name(first, [&]() {emitError(*ci, decl->getLocation(), "invalid contract name");});
                auto second = name.substr(name.find("::")+2);
-               validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
+     //          validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
 
                if (!_notify_set.count(name))
                   _notify_set.insert(name);
@@ -416,6 +416,7 @@ namespace eosio { namespace cdt {
                   ss << "eosio_assert_code(false, 1);";
                   ss << "}\n";
                   ss << "}";
+
                   visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
                   out << std::string(RewriteBuf.begin(), RewriteBuf.end());

@@ -373,9 +373,17 @@ namespace eosio {
       auto get_args(R(Act::*p)(Args...)) {
          return std::tuple<std::decay_t<typename unwrap<Args>::type>...>{};
       }
+      template <typename R, typename Act, typename... Args>
+      auto get_args(R(Act::*p)(Args...)const ) {
+         return std::tuple<std::decay_t<typename unwrap<Args>::type>...>{};
+      }
 
       template <typename R, typename Act, typename... Args>
       auto get_args_nounwrap(R(Act::*p)(Args...)) {
+         return std::tuple<std::decay_t<Args>...>{};
+      }
+      template <typename R, typename Act, typename... Args>
+      auto get_args_nounwrap(R(Act::*p)(Args...)const) {
          return std::tuple<std::decay_t<Args>...>{};
       }
 
@@ -626,12 +634,3 @@ INLINE_ACTION_SENDER(std::decay_t<decltype(CONTRACT)>, NAME)( (CONTRACT).get_sel
 BOOST_PP_TUPLE_ENUM(BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), BOOST_PP_VARIADIC_TO_TUPLE(__VA_ARGS__)) );
 
 
-#define EOSIO_ACTION_WRAPPER_DECL(r, data, action) \
-   using action = eosio::action_wrapper<BOOST_PP_CAT(BOOST_PP_STRINGIZE(action),_n), &__contract_class::action, __contract_account>;
-
-#define EOSIO_ACTIONS( CONTRACT_CLASS, CONTRACT_ACCOUNT, ... ) \
-   namespace actions { \
-      static constexpr auto __contract_account = CONTRACT_ACCOUNT; \
-      using __contract_class   = CONTRACT_CLASS; \
-      BOOST_PP_SEQ_FOR_EACH( EOSIO_ACTION_WRAPPER_DECL, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) )  \
-   }
