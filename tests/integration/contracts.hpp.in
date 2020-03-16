@@ -21,6 +21,8 @@ struct contracts {
    static const char* kv_variant_tests_abi() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_variant_tests.abi"; }
    static const char* kv_bios_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.wasm"; }
    static const char* kv_bios_abi() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.abi"; }
+   static const char* kv_singleton_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_singleton_tests.wasm"; }
+   static const char* kv_singleton_tests_abi() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_singleton_tests.abi"; }
 
    static const char* action_results_test_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.wasm"; }
    static const char* action_results_test_abi() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.abi"; }
