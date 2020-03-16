@@ -26,19 +26,28 @@ namespace eosio {
 
    template <typename T, eosio::name::raw SingletonName, eosio::name::raw DbName = "eosio.kvram"_n>
    class kv_singleton {
+
+      struct state {
+         T value;
+         key_type raw_original;
+         bool is_dirty = false;
+         bool is_cached = false;
+      };
+
    public:
       kv_singleton(eosio::name contract_name) : contract_name{contract_name} {
          key = make_prefix(singleton_name);
       }
 
       ~kv_singleton() {
-         if (is_dirty) {
-            write_back();
+         if (get_state().is_dirty) {
+            store();
          }
       }
 
       const T& get() {
-         if (!is_cached) {
+         auto& ste = get_state();
+         if (!ste.is_cached) {
             uint32_t copy_size;
             uint32_t value_size;
 
@@ -52,40 +61,45 @@ namespace eosio {
             T val;
             deserialize(val, val_buffer, copy_size);
 
-            value() = val;
-            is_cached = true;
+            ste.value = val;
+            ste.is_cached = true;
 
-            raw_original.resize(copy_size);
-            memcpy(raw_original.data(), val_buffer, copy_size);
+            ste.raw_original.resize(copy_size);
+            memcpy(ste.raw_original.data(), val_buffer, copy_size);
 
             if (value_size > detail::max_stack_buffer_size) {
                free(val_buffer);
             }
          }
 
-         return value();
+         return get_state().value;
       }
 
       void set(const T& val) {
-         value() = val;
-         is_dirty = true;
-         is_cached = true;
+         auto& ste = get_state();
+         ste.value = val;
+         ste.is_dirty = true;
+         ste.is_cached = true;
       }
 
       void erase() {
          internal_use_do_not_use::kv_erase(db_name, contract_name.value, key.data(), key.size());
-         is_cached = false;
-         is_dirty = false;
+         auto& ste = get_state();
+         ste.is_cached = false;
+         ste.is_dirty = false;
       }
 
-      void write_back() {
-         size_t data_size = get_size(value());
-         void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+      void store() {
+         auto& ste = get_state();
+         if (ste.is_dirty) {
+            size_t data_size = get_size(ste.value);
+            void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
 
-         serialize(value(), data_buffer, data_size);
+            serialize(ste.value, data_buffer, data_size);
 
-         if (raw_original.size() != data_size || memcmp(raw_original.data(), data_buffer, data_size) != 0) {
-            internal_use_do_not_use::kv_set(db_name, contract_name.value, key.data(), key.size(), (const char*)data_buffer, data_size);
+            if (ste.raw_original.size() != data_size || memcmp(ste.raw_original.data(), data_buffer, data_size) != 0) {
+               internal_use_do_not_use::kv_set(db_name, contract_name.value, key.data(), key.size(), (const char*)data_buffer, data_size);
+            }
          }
       }
 
@@ -96,33 +110,54 @@ namespace eosio {
       eosio::name contract_name;
       key_type key;
 
-      key_type raw_original;
-      bool is_dirty = false;
-      bool is_cached = false;
-
       key_type make_prefix(uint64_t singleton_name, uint8_t status = 2) {
          return make_key(std::make_tuple(status, singleton_name));
       }
 
       template <typename V>
-      static void deserialize(V& value, void* buffer, size_t size) {
-         datastream<const char*> ds((char*)buffer, size);
-         ds >> value;
+      static void serialize(const V& value, void* buffer, size_t size) {
+         datastream<char*> ds((char*)buffer, size);
+         unsigned_int i{0};
+         ds << i;
+         ds << value;
       }
 
-      template <typename V>
-      static void serialize(const V& value, void* buffer, size_t size) {
+      template <typename... Vs>
+      static void serialize(const std::variant<Vs...>& value, void* buffer, size_t size) {
          datastream<char*> ds((char*)buffer, size);
          ds << value;
       }
 
       template <typename V>
-      static size_t get_size(const V& value) {
-         return pack_size(value);
+      static void deserialize(V& value, void* buffer, size_t size) {
+         unsigned_int idx;
+         datastream<const char*> ds((char*)buffer, size);
+
+         ds >> idx;
+         eosio::check(idx==unsigned_int(0), "there was an error deserializing this value.");
+         ds >> value;
       }
 
-      T& value() {
-         static T value;
+      template <typename... Vs>
+      static void deserialize(std::variant<Vs...>& value, void* buffer, size_t size) {
+         datastream<const char*> ds((char*)buffer, size);
+         ds >> value;
+      }
+
+      template <typename V>
+      static size_t get_size(const V& value) {
+         auto size = pack_size(value);
+         return size + 1;
+      }
+
+      template <typename... Vs>
+      static size_t get_size(const std::variant<Vs...>& value) {
+         auto size = pack_size(value);
+         return size;
+      }
+
+      state& get_state() {
+         static state value;
          return value;
       }
    };
