@@ -54,8 +54,9 @@ include(SetupTargetMacros)
 include(GNUInstallDirs)
 include(VersionMacros)
 
+set(EOSIO_HISTORY_TOOLS_TESTER "Yes")
 add_subdirectory(../../libraries/eos/libraries/eos-vm eos-vm EXCLUDE_FROM_ALL)
-add_subdirectory(../../libraries/history-tools/external/rocksdb rocksdb EXCLUDE_FROM_ALL)
+add_subdirectory(../../libraries/history-tools history-tools EXCLUDE_FROM_ALL)
 
 set(EOSIO_ROOT_KEY "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV")
 set(EOSIO_WASM_OLD_BEHAVIOR "Off")
@@ -87,14 +88,13 @@ target_include_directories(eosio-tester
         ../../libraries/eos/libraries/wabt/src
         ../../libraries/eos/libraries/wasm-jit/Include
         ../../libraries/history-tools/external/chain-kv/include
-        ../../libraries/history-tools/external/rocksdb/include
         ../../libraries/history-tools/include
         ${Boost_INCLUDE_DIR}
         ${JS_INCLUDE_DIRS}
         ${ROCKSDB_INCLUDE_DIR}
 )
 target_link_libraries(eosio-tester
-    state_history rocksdb eosio_chain wabt Runtime Logging IR fc eos-vm
+    embedded_rodeos state_history eosio_chain wabt Runtime Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
 

@@ -1,5 +1,3 @@
-#include <eosio/history-tools/filter.hpp> // todo: remove
-
 #include "../../../libraries/eosiolib/tester/eosio/chain_types.hpp"
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
@@ -9,6 +7,7 @@
 #include <eosio/chain/webassembly/common.hpp>
 #include <eosio/eosio_outcome.hpp>
 #include <eosio/from_bin.hpp>
+#include <eosio/history-tools/embedded_rodeos.hpp>
 #include <eosio/state_history/create_deltas.hpp>
 #include <eosio/state_history/serialization.hpp>
 #include <eosio/state_history/trace_converter.hpp>
@@ -303,10 +302,22 @@ test_chain_ref::~test_chain_ref() {
       chain->refs.erase(this);
 }
 
-test_chain_ref& test_chain_ref::operator=(test_chain_ref&& rhs) { std::swap(this->chain, rhs.chain); }
+test_chain_ref& test_chain_ref::operator=(test_chain_ref&& rhs) { std::swap(this->chain, rhs.chain); return *this; }
 
 struct test_rodeos {
-   test_chain_ref chain;
+   fc::temp_directory                        dir;
+   embedded_rodeos::context                  context;
+   std::optional<embedded_rodeos::partition> partition;
+   std::optional<embedded_rodeos::snapshot>  write_snapshot;
+   std::optional<embedded_rodeos::filter>    filter;
+   test_chain_ref                            chain;
+   uint32_t                                  next_block = 0;
+
+   test_rodeos() {
+      context.open_db(dir.path().string().c_str(), true);
+      partition.emplace(context, "", 0);
+      write_snapshot.emplace(partition->obj, true);
+   }
 };
 
 eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
@@ -435,7 +446,6 @@ struct file {
    }
 };
 
-/*
 namespace eosio { namespace vm {
 
    template <>
@@ -459,7 +469,6 @@ namespace eosio { namespace vm {
    };
 
 }} // namespace eosio::vm
-*/
 
 struct state {
    const char*                               wasm;
@@ -904,10 +913,33 @@ struct callbacks {
       while (!state.rodeoses.empty() && !state.rodeoses.back()) { state.rodeoses.pop_back(); }
    }
 
+   void set_filter(uint32_t rodeos, const char* wasm_filename) {
+      auto& r = assert_rodeos(rodeos);
+      r.filter.emplace(wasm_filename);
+   }
+
    void connect_rodeos(uint32_t rodeos, uint32_t chain) {
       auto& r = assert_rodeos(rodeos);
       auto& c = assert_chain(chain);
+      if (r.chain.chain)
+         throw std::runtime_error("rodeos is already connected");
       r.chain = test_chain_ref{ c };
+   }
+
+   bool rodeos_push_block(uint32_t rodeos) {
+      auto& r = assert_rodeos(rodeos);
+      if (!r.chain.chain)
+         throw std::runtime_error("rodeos is not connected to a chain");
+      auto it = r.chain.chain->history.lower_bound(r.next_block);
+      if (it == r.chain.chain->history.end())
+         return false;
+      r.write_snapshot->start_block(it->second.data(), it->second.size());
+      r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
+      if (r.filter)
+         r.filter->run(*r.write_snapshot, it->second.data(), it->second.size());
+      r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
+      r.next_block = it->first + 1;
+      return true;
    }
 
    // clang-format off
@@ -1079,6 +1111,12 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::exec_deferred, eosio::vm::wasm_allocator>("env", "exec_deferred");
    rhf_t::add<callbacks, &callbacks::query_database, eosio::vm::wasm_allocator>("env", "query_database_chain");
    rhf_t::add<callbacks, &callbacks::select_chain_for_db, eosio::vm::wasm_allocator>("env", "select_chain_for_db");
+
+   rhf_t::add<callbacks, &callbacks::create_rodeos, eosio::vm::wasm_allocator>("env", "create_rodeos");
+   rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
+   rhf_t::add<callbacks, &callbacks::set_filter, eosio::vm::wasm_allocator>("env", "set_filter");
+   rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
+   rhf_t::add<callbacks, &callbacks::rodeos_push_block, eosio::vm::wasm_allocator>("env", "rodeos_push_block");
 
    rhf_t::add<callbacks, &callbacks::db_get_i64, eosio::vm::wasm_allocator>("env", "db_get_i64");
    rhf_t::add<callbacks, &callbacks::db_next_i64, eosio::vm::wasm_allocator>("env", "db_next_i64");
