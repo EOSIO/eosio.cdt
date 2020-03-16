@@ -497,7 +497,7 @@ class multi_index
             typedef typename std::decay<decltype( Extractor()(nullptr) )>::type secondary_key_type;
 
             constexpr static bool validate_index_name( eosio::name n ) {
-               return n.value != 0 && n != eosio::name("primary"); // Primary is a reserve index name.
+               return n.value != 0 && n != "primary"_n; // Primary is a reserve index name.
             }
 
             static_assert( validate_index_name( name(IndexName) ), "invalid index name used in multi_index" );
