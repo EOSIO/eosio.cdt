@@ -31,10 +31,8 @@ public:
       myglob.set(8);
       eosio::check(myglob.get() == 8, "Get returned an incorrect value: 2");
 
-      gl.modify([&](auto& x) {
-         x.a = 2;
-         x.b = "abcd";
-      });
+      gl.set({2, "abcd"});
+
       my_contract_config expected{2, "abcd"};
       eosio::check(gl.get() == expected, "Get returned an incorrect value: 3");
    }
