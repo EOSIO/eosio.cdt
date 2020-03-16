@@ -6,7 +6,6 @@
 #include "clang/Basic/Builtins.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
-#include "clang/Frontend/CompilerInstance.h"
 #include "llvm/Support/raw_ostream.h"
 #include <functional>
 #include <vector>
@@ -105,32 +104,26 @@ struct simple_ricardian_tokenizer {
 struct generation_utils {
    std::vector<std::string> resource_dirs;
    std::string contract_name;
-   clang::CompilerInstance* ci;
+   CompilerInstance* ci;
 
-   generation_utils() : resource_dirs({"./"}) {}
-   generation_utils(clang::CompilerInstance* ci, const std::string cn="") : resource_dirs({"./"}), contract_name(cn), ci(ci) {}
-   generation_utils(clang::CompilerInstance* ci, const std::vector<std::string>& paths, const std::string cn="")
+   generation_utils(CompilerInstance* ci, const std::string cn) : resource_dirs({"./"}), contract_name(cn), ci(ci) {}
+   generation_utils(CompilerInstance* ci, const std::string cn, const std::vector<std::string>& paths)
       : resource_dirs(paths), contract_name(cn), ci(ci) {}
 
 
    template <size_t N>
-   void emit_error(const clang::SourceLocation& loc, const char (&err_msg)[N])const {
-      clang::FullSourceLoc full(loc, ci->getSourceManager());
-      uint32_t id = ci->getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err_msg);
-      ci->getDiagnostics().Report(full, id);
+   void emit_error(const SourceLocation& loc, const char (&err_msg)[N]) {
+      FullSourceLoc full(loc, ci.getSourceManager());
+      uint32_t id = ci.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err_msg);
+      ci.getDiagnostics().Report(full, id);
    }
 
    template <size_t N>
-   void emit_warning(const clang::SourceLocation& loc, const char (&err_msg)[N])const {
-      clang::FullSourceLoc full(loc, ci->getSourceManager());
-      uint32_t id = ci->getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Warning, err_msg);
-      ci->getDiagnostics().Report(full, id);
+   void emit_warning(const SourceLocation& loc, const char (&err_msg)[N]) {
+      FullSourceLoc full(loc, ci.getSourceManager());
+      uint32_t id = ci.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Warning, err_msg);
+      ci.getDiagnostics().Report(full, id);
    }
-
-   inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
-   inline std::string get_contract_name()const { return contract_name; }
-   inline void set_compiler_instance(clang::CompilerInstance* ci) { ci = ci; }
-   inline clang::CompilerInstance* get_compiler_instance() { return ci; }
 
    static inline bool is_ignorable( const clang::QualType& type ) {
       auto check = [&](const clang::Type* pt) {
@@ -169,6 +162,8 @@ struct generation_utils {
    }
 
 
+   inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
+   inline std::string get_contract_name()const { return contract_name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
@@ -181,8 +176,6 @@ struct generation_utils {
             resource_dirs.push_back(rp.str());
       }
    }
-
-   inline std::vector<std::string> get_resource_dirs() { return resource_dirs; }
 
    static inline bool has_eosio_ricardian( const clang::CXXMethodDecl* decl ) {
       return decl->hasEosioRicardian();
@@ -344,7 +337,7 @@ struct generation_utils {
             auto arg = tst->getArg(index);
             return arg.getAsType();
          }
-         emit_error(clang::TypeLoc(type, nullptr).getBeginLoc(), "internal error, wrong type of template specialization\n");
+         emit_error(TypeLoc(type).getBeginLoc(), "internal error, wrong type of template specialization\n");
          return tst->getArg(index).getAsType();
       };
       if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()))

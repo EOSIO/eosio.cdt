@@ -1,0 +1,57 @@
+#include <eosio/wasm_runner.hpp>
+
+// Declares clang::SyntaxOnlyAction.
+#include "clang/Frontend/FrontendActions.h"
+#include "clang/Tooling/CommonOptionsParser.h"
+#include "clang/Tooling/Tooling.h"
+#include "clang/ASTMatchers/ASTMatchers.h"
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "clang/AST/DeclCXX.h"
+#include "clang/AST/DeclTemplate.h"
+#include "clang/AST/Expr.h"
+#include "clang/Basic/Builtins.h"
+#include "clang/Rewrite/Core/Rewriter.h"
+#include "clang/Rewrite/Frontend/Rewriters.h"
+#include "llvm/Support/FileSystem.h"
+
+#include <iostream>
+#include <sstream>
+
+// Declares llvm::cl::extrahelp.
+#include "llvm/Support/CommandLine.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Path.h"
+
+#include <eosio/gen.hpp>
+
+using namespace clang::tooling;
+using namespace llvm;
+
+#include <set>
+#include <sstream>
+
+using namespace clang::tooling;
+using namespace clang::ast_matchers;
+using namespace llvm;
+using namespace eosio;
+using namespace eosio::cdt;
+
+eosio::vm::wasm_allocator wasm_runner::alloc = {};
+
+int main(int argc, const char **argv) {
+   cl::SetVersionPrinter([](llvm::raw_ostream& os) { os << "eosio-build version " << "${VERSION_FULL}" << "\n"; });
+   cl::OptionCategory cat("eosio-build", "EOSIO app build system");
+   //cl::opt<
+   cl::ParseCommandLineOptions(argc, argv, std::string("eosio-build"));
+   
+   wake_context ctx;
+   using backend_t = vm::backend<wake_context>;
+   try {
+      vm::wasm_code wc = backend_t::read_wasm("test.wasm");
+      wasm_runner wr(ctx, wc);
+      wr.execute();
+   } catch ( eosio::vm::wasm_link_exception ex ) {
+      std::cerr << ex.what() << "\n";
+   }
+   return 0;
+}

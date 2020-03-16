@@ -22,7 +22,6 @@
 #include <eosio/whereami/whereami.hpp>
 #include <eosio/abi.hpp>
 
-#include <exception>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -51,16 +50,6 @@ namespace eosio { namespace cdt {
       }
       return ss.str();
    }
-   template<typename T, typename... Args>
-   std::unique_ptr<T> _make_unique(Args&&... args) {
-      return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-   }
-
-   struct codegen_exception : public std::exception {
-      virtual const char* what() const throw() {
-         return "eosio.codegen fatal error";
-      }
-   };
 
    struct include_double {
       include_double(std::string fn, SourceRange sr) : file_name(fn), range(sr) {}
@@ -68,47 +57,35 @@ namespace eosio { namespace cdt {
       SourceRange    range;
    };
 
-   class codegen : public generation_utils {
-      public:
-         codegen_exception codegen_ex;
-         Rewriter          codegen_rewriter;
-         CompilerInstance* codegen_ci;
-         std::string       contract_name;
-         std::string       abi;
-         std::set<std::string> defined_datastreams;
-         std::set<std::string> datastream_uses;
-         std::set<std::string> actions;
-         std::set<std::string> notify_handlers;
-         ASTContext *ast_context;
-         std::map<std::string, CXXMethodDecl*> cxx_methods;
-         std::map<std::string, CXXRecordDecl*> cxx_records;
-         std::map<std::string, RecordDecl*>    records;
-         llvm::sys::fs::TempFile*              tmp_file;
-         llvm::ArrayRef<std::string>           sources;
-         size_t                                source_index = 0;
-         std::map<std::string, std::string>    tmp_files;
+   struct codegen : generation_utils {
+      Rewriter          codegen_rewriter;
+      std::string       abi;
+      std::set<std::string> defined_datastreams;
+      std::set<std::string> datastream_uses;
+      std::set<std::string> actions;
+      std::set<std::string> notify_handlers;
+      ASTContext *ast_context;
+      std::map<std::string, CXXMethodDecl*> cxx_methods;
+      std::map<std::string, CXXRecordDecl*> cxx_records;
+      std::map<std::string, RecordDecl*>    records;
+      llvm::sys::fs::TempFile*              tmp_file;
+      llvm::ArrayRef<std::string>           sources;
+      size_t                                source_index = 0;
+      std::map<std::string, std::string>    tmp_files;
 
-         codegen() : generation_utils([&](){throw codegen_ex;}) {
-         }
+      codegen() = default;
 
-         static codegen& get() {
-            static codegen inst;
-            return inst;
-         }
+      static codegen& get() {
+         static codegen inst;
+         return inst;
+      }
 
-         void set_contract_name(std::string cn) {
-            contract_name = cn;
-         }
-
-         void set_abi(std::string s) {
-            abi = s;
-         }
+      void set_abi(std::string s) {
+         abi = s;
+      }
    };
 
    std::map<std::string, std::vector<include_double>>  global_includes;
-
-   // remove after v1.7.0
-   bool has_eosiolib = false;
 
    class eosio_ppcallbacks : public PPCallbacks {
       public:
@@ -133,9 +110,6 @@ namespace eosio { namespace cdt {
                      (search_path + llvm::sys::path::get_separator() + file_name).str(),
                      filename_range.getAsRange());
             }
-
-            if ( file_name.find("eosiolib") != StringRef::npos )
-               has_eosiolib = true;
          }
 
          std::string fn;
@@ -156,9 +130,9 @@ namespace eosio { namespace cdt {
          std::vector<CXXMethodDecl*> notify_decls;
 
          explicit eosio_codegen_visitor(CompilerInstance *CI)
-               : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
+               : generation_utils(CI), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
-            cg.codegen_ci = CI;
+            cg.set_compiler_instance(CI);
             rewriter.setSourceMgr(CI->getASTContext().getSourceManager(), CI->getASTContext().getLangOpts());
          }
 
@@ -185,13 +159,6 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         template <size_t N>
-         void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
-            FullSourceLoc full(loc, inst.getSourceManager());
-            unsigned id = inst.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err);
-            inst.getDiagnostics().Report(full, id);
-         }
-
          std::string get_base_type(const QualType& qt) {
             std::istringstream ss(qt.getAsString());
             std::vector<std::string> results((std::istream_iterator<std::string>(ss)),
@@ -206,21 +173,32 @@ namespace eosio { namespace cdt {
             return "";
          }
 
-         /*
-         virtual bool VisitFunctionTemplateDecl(FunctionTemplateDecl* decl) {
-            if (decl->getNameAsString() == "operator<<") {
-               if (decl->getTemplatedDecl()->getNumParams() == 2) {
-                  auto param0 = decl->getTemplatedDecl()->getParamDecl(0)->getOriginalType();
-                  if (is_datastream(param0)) {
-                     if (auto tp = dyn_cast<NamedDecl>(decl->getTemplatedDecl()->getParamDecl(1)->getOriginalType().getTypePtr()->getPointeeCXXRecordDecl())) {
-                        cg.defined_datastreams.insert(tp->getQualifiedNameAsString());
-                     }
-                  }
+         void create_reflector(CXXRecordDecl* decl) {
+            std::stringstream ss;
+            codegen& cg = codegen::get();
+            std::string name = decl->getQualifiedNameAsString();
+            /*
+            if (cg.is_eosio_contract(decl, "")) {
+               ss << "namespace eosio {\n";
+               ss << "template<typename T> struct meta;\n";
+               ss << "template <>\n";
+               ss << "struct meta<" << name << "> {\n";
+               ss << "using identity = " << name << ";\n";
+               ss << "template <std::size_t N>\n";
+               ss << "constexpr auto get( const " << name << "& val) { \n";
+               int i=0;
+               for ( auto field : decl->fields() ) {
+                  ss << "if constexpr (N == " << i++ << ")\n";
+                  ss << "return val." << field->getQualifiedNameAsString() << ";\n";
                }
+               ss << "else return reflect_error;\n";
+               ss << "}\n";
+               ss << "};\n";
+               ss << "}\n";
             }
-            return true;
+            */
+            rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
          }
-         */
 
          template <typename F>
          void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
@@ -229,13 +207,8 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               if (has_eosiolib) {
-                  ss << "\n\n#include <eosiolib/datastream.hpp>\n";
-                  ss << "#include <eosiolib/name.hpp>\n";
-               } else {
-                  ss << "\n\n#include <eosio/datastream.hpp>\n";
-                  ss << "#include <eosio/name.hpp>\n";
-               }
+               ss << "\n\n#include <eosio/datastream.hpp>\n";
+               ss << "#include <eosio/name.hpp>\n";
                ss << "extern \"C\" {\n";
                ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t action_data_size();\n";
@@ -311,13 +284,13 @@ namespace eosio { namespace cdt {
             static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
                name = generation_utils::get_action_name(decl);
-               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
+               validate_name(name, codegen::get(), decl->getLocation());
                if (!_action_set.count(name))
                   _action_set.insert(name);
                else {
                   auto itr = _action_set.find(name);
                   if (*itr != name)
-                     emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
+                     emit_error(decl->getLocation(), "action declaration doesn't match previous declaration");
                }
                std::string full_action_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
                if (cg.actions.count(full_action_name) == 0) {
@@ -330,16 +303,16 @@ namespace eosio { namespace cdt {
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
                if (first != "*")
-                  validate_name(first, [&]() {emitError(*ci, decl->getLocation(), "invalid contract name");});
+                  validate_name(first, codegen::get(), decl->getLocation());
                auto second = name.substr(name.find("::")+2);
-               validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
+               validate_name(second, codegen::get(), decl->getLocation());
 
                if (!_notify_set.count(name))
                   _notify_set.insert(name);
                else {
                   auto itr = _notify_set.find(name);
                   if (*itr != name)
-                     emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
+                     emit_error(decl->getLocation(), "notify handler declaration doesn't match previous declaration");
                }
 
                std::string full_notify_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
@@ -356,9 +329,21 @@ namespace eosio { namespace cdt {
             if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
                if (fd->getNameInfo().getAsString() == "apply")
                   apply_was_found = true;
+            } else if (auto* d = dyn_cast<clang::CXXRecordDecl>(decl)) {
+               create_reflector(d);
             }
             return true;
          }
+
+         virtual bool VisitStmt(clang::Stmt* stmt) {
+            if (auto* expr = dyn_cast<clang::CallExpr>(stmt)) {
+               auto* d = expr->getCalleeDecl();
+               if (d)
+                  llvm::outs() << "Call " << dyn_cast<clang::NamedDecl>(d)->getName() << "\n";
+            }
+            return true;
+         }
+
       };
 
       class eosio_codegen_consumer : public ASTConsumer {
@@ -429,11 +414,11 @@ namespace eosio { namespace cdt {
 
       };
 
-      class eosio_codegen_frontend_action : public ASTFrontendAction {
+      class eosio_codegen_frontend_action : public clang::SyntaxOnlyAction {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
-            CI.getPreprocessor().addPPCallbacks(_make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return _make_unique<eosio_codegen_consumer>(&CI, file);
+            CI.getPreprocessor().addPPCallbacks(make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file));
+            return make_unique<eosio_codegen_consumer>(&CI, file);
          }
    };
 
