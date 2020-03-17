@@ -318,17 +318,17 @@ class test_rodeos {
    ~test_rodeos();
    test_rodeos& operator=(const test_rodeos&) = delete;
 
-   /// Connect this rodeos instance to chain. rodeos_push_block() will receive data from this chain.
+   /// Connect this rodeos instance to chain. rodeos_sync_block() will receive data from this chain.
    void connect(test_chain& chain);
 
-   /// Set filter wasm. This will receive data from the chain everytime rodeos_push_block() is called.
+   /// Set filter wasm. This will receive data from the chain everytime rodeos_sync_block() is called.
    void set_filter(const char* filename);
 
    /// Fetches a single block of data, if available, from chain. Returns true if data was available.
-   bool push_block();
+   bool sync_block();
 
    /// Fetches blocks of data, if available, from chain. Returns number of blocks.
-   uint32_t push_blocks();
+   uint32_t sync_blocks();
 }; // test_rodeos
 
 } // namespace eosio

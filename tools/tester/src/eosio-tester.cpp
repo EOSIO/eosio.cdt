@@ -927,7 +927,7 @@ struct callbacks {
       r.chain = test_chain_ref{ c };
    }
 
-   bool rodeos_push_block(uint32_t rodeos) {
+   bool rodeos_sync_block(uint32_t rodeos) {
       auto& r = assert_rodeos(rodeos);
       if (!r.chain.chain)
          throw std::runtime_error("rodeos is not connected to a chain");
@@ -1117,7 +1117,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_set_filter, eosio::vm::wasm_allocator>("env", "rodeos_set_filter");
    rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
-   rhf_t::add<callbacks, &callbacks::rodeos_push_block, eosio::vm::wasm_allocator>("env", "rodeos_push_block");
+   rhf_t::add<callbacks, &callbacks::rodeos_sync_block, eosio::vm::wasm_allocator>("env", "rodeos_sync_block");
 
    rhf_t::add<callbacks, &callbacks::db_get_i64, eosio::vm::wasm_allocator>("env", "db_get_i64");
    rhf_t::add<callbacks, &callbacks::db_next_i64, eosio::vm::wasm_allocator>("env", "db_next_i64");

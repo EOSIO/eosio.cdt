@@ -35,7 +35,7 @@ namespace {
    TESTER_INTRINSIC void
                          rodeos_set_filter(uint32_t rodeos, const char* wasm_filename);
    TESTER_INTRINSIC void connect_rodeos(uint32_t rodeos, uint32_t chain);
-   TESTER_INTRINSIC bool rodeos_push_block(uint32_t rodeos);
+   TESTER_INTRINSIC bool rodeos_sync_block(uint32_t rodeos);
 
    template <typename Alloc_fn>
    inline void get_args(Alloc_fn alloc_fn) {
@@ -411,11 +411,11 @@ void eosio::test_rodeos::connect(test_chain& chain) { connect_rodeos(id, chain.i
 
 void eosio::test_rodeos::set_filter(const char* filename) { rodeos_set_filter(id, filename); }
 
-bool eosio::test_rodeos::push_block() { return rodeos_push_block(id); }
+bool eosio::test_rodeos::sync_block() { return rodeos_sync_block(id); }
 
-uint32_t eosio::test_rodeos::push_blocks() {
+uint32_t eosio::test_rodeos::sync_blocks() {
    uint32_t n = 0;
-   while (push_block()) ++n;
+   while (sync_block()) ++n;
    return n;
 }
 
