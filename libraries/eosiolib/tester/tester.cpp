@@ -30,6 +30,13 @@ namespace {
                                                   void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     select_chain_for_db(uint32_t chain_index);
 
+   TESTER_INTRINSIC uint32_t create_rodeos();
+   TESTER_INTRINSIC void     destroy_rodeos(uint32_t rodeos);
+   TESTER_INTRINSIC void
+                         rodeos_set_filter(uint32_t rodeos, const char* wasm_filename);
+   TESTER_INTRINSIC void connect_rodeos(uint32_t rodeos, uint32_t chain);
+   TESTER_INTRINSIC bool rodeos_push_block(uint32_t rodeos);
+
    template <typename Alloc_fn>
    inline void get_args(Alloc_fn alloc_fn) {
       return get_args(&alloc_fn, [](void* cb_alloc_data, size_t size) -> void* { //
@@ -396,8 +403,20 @@ eosio::transaction_trace eosio::test_chain::issue_and_transfer(const name& contr
          expected_except);
 }
 
-std::ostream& chain_types::operator<<(std::ostream& os, transaction_status t) {
-   return os << to_string(t);
+eosio::test_rodeos::test_rodeos() : id{ create_rodeos() } {}
+
+eosio::test_rodeos::~test_rodeos() { destroy_rodeos(id); }
+
+void eosio::test_rodeos::connect(test_chain& chain) { connect_rodeos(id, chain.id); }
+
+void eosio::test_rodeos::set_filter(const char* filename) { rodeos_set_filter(id, filename); }
+
+bool eosio::test_rodeos::push_block() { return rodeos_push_block(id); }
+
+uint32_t eosio::test_rodeos::push_blocks() {
+   uint32_t n = 0;
+   while (push_block()) ++n;
+   return n;
 }
 
 std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {

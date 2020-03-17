@@ -5,31 +5,44 @@
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/webassembly/common.hpp>
-#include <eosio/vm/backend.hpp>
-#include <eosio/from_bin.hpp>
 #include <eosio/eosio_outcome.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/io/json.hpp>
+#include <eosio/from_bin.hpp>
+#include <eosio/history-tools/embedded_rodeos.hpp>
+#include <eosio/state_history/create_deltas.hpp>
+#include <eosio/state_history/serialization.hpp>
+#include <eosio/state_history/trace_converter.hpp>
+#include <eosio/vm/backend.hpp>
+#include <fc/crypto/ripemd160.hpp>
 #include <fc/crypto/sha1.hpp>
 #include <fc/crypto/sha256.hpp>
 #include <fc/crypto/sha512.hpp>
-#include <fc/crypto/ripemd160.hpp>
+#include <fc/exception/exception.hpp>
+#include <fc/io/json.hpp>
 #include <stdio.h>
 
 using namespace eosio::literals;
 using namespace std::literals;
+using boost::signals2::scoped_connection;
+using eosio::check;
+using eosio::convert_to_bin;
+using eosio::chain::block_state_ptr;
 using eosio::chain::builtin_protocol_feature_t;
 using eosio::chain::digest_type;
-using eosio::chain::protocol_feature_exception;
-using eosio::chain::protocol_feature_set;
+using eosio::chain::kv_bad_db_id;
+using eosio::chain::kv_bad_iter;
 using eosio::chain::kv_context;
 using eosio::chain::kv_iterator;
 using eosio::chain::kvdisk_id;
 using eosio::chain::kvram_id;
-using eosio::chain::kv_bad_iter;
-using eosio::chain::kv_bad_db_id;
-using eosio::check;
-using eosio::convert_to_bin;
+using eosio::chain::protocol_feature_exception;
+using eosio::chain::protocol_feature_set;
+using eosio::chain::signed_transaction;
+using eosio::chain::transaction_trace_ptr;
+using eosio::state_history::block_position;
+using eosio::state_history::create_deltas;
+using eosio::state_history::get_blocks_result_v0;
+using eosio::state_history::state_result;
+using eosio::state_history::trace_converter;
 
 struct callbacks;
 using backend_t = eosio::vm::backend<callbacks, eosio::vm::jit>;
@@ -167,24 +180,54 @@ protocol_feature_set make_protocol_feature_set() {
    return pfs;
 }
 
+struct test_chain;
+
+struct test_chain_ref {
+   test_chain* chain = {};
+
+   test_chain_ref() = default;
+   test_chain_ref(test_chain&);
+   test_chain_ref(const test_chain_ref&) = delete;
+   ~test_chain_ref();
+
+   test_chain_ref& operator=(test_chain_ref&&);
+};
+
 struct test_chain {
-   fc::temp_directory                                dir;
    eosio::chain::private_key_type producer_key{ "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"s };
+
+   fc::temp_directory                                dir;
    std::unique_ptr<eosio::chain::controller::config> cfg;
    std::unique_ptr<eosio::chain::controller>         control;
+   fc::optional<scoped_connection>                   applied_transaction_connection;
+   fc::optional<scoped_connection>                   accepted_block_connection;
+   trace_converter                                   trace_converter;
+   fc::optional<block_position>                      prev_block;
+   std::map<uint32_t, std::vector<char>>             history;
    std::unique_ptr<intrinsic_context>                intr_ctx;
+   std::set<test_chain_ref*>                         refs;
 
    test_chain() {
       eosio::chain::genesis_state genesis;
-      genesis.initial_timestamp      = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
-      cfg                            = std::make_unique<eosio::chain::controller::config>();
-      cfg->blocks_dir                = dir.path() / "blocks";
-      cfg->state_dir                 = dir.path() / "state";
-      cfg->contracts_console         = true;
+      genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
+      cfg                       = std::make_unique<eosio::chain::controller::config>();
+      cfg->blocks_dir           = dir.path() / "blocks";
+      cfg->state_dir            = dir.path() / "state";
+      cfg->contracts_console    = true;
 
-      control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
+      control =
+            std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
       control->add_indices();
-      do_startup(control, []{}, []() { return false; }, genesis);
+
+      applied_transaction_connection.emplace(control->applied_transaction.connect(
+            [&](std::tuple<const transaction_trace_ptr&, const signed_transaction&> t) {
+               on_applied_transaction(std::get<0>(t), std::get<1>(t));
+            }));
+      accepted_block_connection.emplace(
+            control->accepted_block.connect([&](const block_state_ptr& p) { on_accepted_block(p); }));
+
+      do_startup(
+            control, [] {}, [] { return false; }, genesis);
       control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
                            { *control->get_protocol_feature_manager().get_builtin_digest(
                                  eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
@@ -192,6 +235,31 @@ struct test_chain {
 
    test_chain(const test_chain&) = delete;
    test_chain& operator=(const test_chain&) = delete;
+
+   ~test_chain() {
+      for (auto* ref : refs) ref->chain = nullptr;
+   }
+
+   void on_applied_transaction(const transaction_trace_ptr& p, const signed_transaction& t) {
+      trace_converter.add_transaction(p, t);
+   }
+
+   void on_accepted_block(const block_state_ptr& block_state) {
+      auto traces_bin = trace_converter.pack(control->db(), false, block_state);
+      auto deltas_bin = fc::raw::pack(create_deltas(control->db(), !prev_block));
+
+      get_blocks_result_v0 message;
+      message.head = block_position{ control->head_block_num(), control->head_block_id() };
+      message.last_irreversible =
+            block_position{ control->last_irreversible_block_num(), control->last_irreversible_block_id() };
+      message.this_block = block_position{ block_state->block->block_num(), block_state->block->id() };
+      message.prev_block = prev_block;
+      message.traces     = std::move(traces_bin);
+      message.deltas     = std::move(deltas_bin);
+
+      prev_block                         = message.this_block;
+      history[control->head_block_num()] = fc::raw::pack(state_result{message});
+   }
 
    void mutating() { intr_ctx.reset(); }
 
@@ -222,6 +290,34 @@ struct test_chain {
       ilog("finish block ${n}", ("n", control->head_block_num()));
       control->finalize_block([&](eosio::chain::digest_type d) { return std::vector{producer_key.sign(d)}; });
       control->commit_block();
+   }
+};
+
+test_chain_ref::test_chain_ref(test_chain& chain) {
+   chain.refs.insert(this);
+   this->chain = &chain;
+}
+
+test_chain_ref::~test_chain_ref() {
+   if (chain)
+      chain->refs.erase(this);
+}
+
+test_chain_ref& test_chain_ref::operator=(test_chain_ref&& rhs) { std::swap(this->chain, rhs.chain); return *this; }
+
+struct test_rodeos {
+   fc::temp_directory                        dir;
+   embedded_rodeos::context                  context;
+   std::optional<embedded_rodeos::partition> partition;
+   std::optional<embedded_rodeos::snapshot>  write_snapshot;
+   std::optional<embedded_rodeos::filter>    filter;
+   test_chain_ref                            chain;
+   uint32_t                                  next_block = 0;
+
+   test_rodeos() {
+      context.open_db(dir.path().string().c_str(), true);
+      partition.emplace(context, "", 0);
+      write_snapshot.emplace(partition->obj, true);
    }
 };
 
@@ -322,8 +418,8 @@ struct contract_row {
 EOSIO_REFLECT(contract_row, block_num, present, code, scope, table, primary_key, payer, value);
 
 struct file {
-   FILE* f = nullptr;
-   bool owns;
+   FILE *f = nullptr;
+   bool owns = false;
 
    file(FILE* f = nullptr, bool owns = true) : f(f), owns(owns) {}
 
@@ -376,13 +472,14 @@ namespace eosio { namespace vm {
 }} // namespace eosio::vm
 
 struct state {
-   const char*                              wasm;
-   eosio::vm::wasm_allocator&               wa;
-   backend_t&                               backend;
-   std::vector<char>                        args;
-   std::vector<file>                        files;
-   std::vector<std::unique_ptr<test_chain>> chains;
-   std::optional<uint32_t>                  selected_chain_index;
+   const char*                               wasm;
+   eosio::vm::wasm_allocator&                wa;
+   backend_t&                                backend;
+   std::vector<char>                         args;
+   std::vector<file>                         files;
+   std::vector<std::unique_ptr<test_chain>>  chains;
+   std::vector<std::unique_ptr<test_rodeos>> rodeoses;
+   std::optional<uint32_t>                   selected_chain_index;
 };
 
 struct push_trx_args {
@@ -727,6 +824,7 @@ struct callbacks {
       return false;
    }
 
+   // todo: remove
    void query_database(uint32_t chain_index, const char* req_begin, const char* req_end, uint32_t cb_alloc_data,
                        uint32_t cb_alloc) {
       auto& chain = assert_chain(chain_index);
@@ -739,6 +837,7 @@ struct callbacks {
       throw std::runtime_error("query_database: unknown query: " + (std::string)query_name);
    }
 
+   // todo: remove
    std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, eosio::input_stream& query_bin) {
       using eosio::from_bin; // ADL required
       auto snapshot_block    = eosio::check(from_bin<uint32_t>(query_bin)).value();
@@ -796,6 +895,52 @@ struct callbacks {
           !state.chains[*state.selected_chain_index])
          throw std::runtime_error("select_chain_for_db() must be called before using multi_index");
       return state.chains[*state.selected_chain_index]->get_apply_context();
+   }
+
+   test_rodeos& assert_rodeos(uint32_t rodeos) {
+      if (rodeos >= state.rodeoses.size() || !state.rodeoses[rodeos])
+         throw std::runtime_error("rodeos does not exist or was destroyed");
+      return *state.rodeoses[rodeos];
+   }
+
+   uint32_t create_rodeos() {
+      state.rodeoses.push_back(std::make_unique<test_rodeos>());
+      return state.rodeoses.size() - 1;
+   }
+
+   void destroy_rodeos(uint32_t rodeos) {
+      assert_rodeos(rodeos);
+      state.rodeoses[rodeos].reset();
+      while (!state.rodeoses.empty() && !state.rodeoses.back()) { state.rodeoses.pop_back(); }
+   }
+
+   void rodeos_set_filter(uint32_t rodeos, const char* wasm_filename) {
+      auto& r = assert_rodeos(rodeos);
+      r.filter.emplace(wasm_filename);
+   }
+
+   void connect_rodeos(uint32_t rodeos, uint32_t chain) {
+      auto& r = assert_rodeos(rodeos);
+      auto& c = assert_chain(chain);
+      if (r.chain.chain)
+         throw std::runtime_error("rodeos is already connected");
+      r.chain = test_chain_ref{ c };
+   }
+
+   bool rodeos_push_block(uint32_t rodeos) {
+      auto& r = assert_rodeos(rodeos);
+      if (!r.chain.chain)
+         throw std::runtime_error("rodeos is not connected to a chain");
+      auto it = r.chain.chain->history.lower_bound(r.next_block);
+      if (it == r.chain.chain->history.end())
+         return false;
+      r.write_snapshot->start_block(it->second.data(), it->second.size());
+      r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
+      if (r.filter)
+         r.filter->run(*r.write_snapshot, it->second.data(), it->second.size());
+      r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
+      r.next_block = it->first + 1;
+      return true;
    }
 
    // clang-format off
@@ -967,6 +1112,12 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::exec_deferred, eosio::vm::wasm_allocator>("env", "exec_deferred");
    rhf_t::add<callbacks, &callbacks::query_database, eosio::vm::wasm_allocator>("env", "query_database_chain");
    rhf_t::add<callbacks, &callbacks::select_chain_for_db, eosio::vm::wasm_allocator>("env", "select_chain_for_db");
+
+   rhf_t::add<callbacks, &callbacks::create_rodeos, eosio::vm::wasm_allocator>("env", "create_rodeos");
+   rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
+   rhf_t::add<callbacks, &callbacks::rodeos_set_filter, eosio::vm::wasm_allocator>("env", "rodeos_set_filter");
+   rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
+   rhf_t::add<callbacks, &callbacks::rodeos_push_block, eosio::vm::wasm_allocator>("env", "rodeos_push_block");
 
    rhf_t::add<callbacks, &callbacks::db_get_i64, eosio::vm::wasm_allocator>("env", "db_get_i64");
    rhf_t::add<callbacks, &callbacks::db_next_i64, eosio::vm::wasm_allocator>("env", "db_next_i64");

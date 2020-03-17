@@ -112,12 +112,16 @@ std::ostream& operator<<(std::ostream& os, const fixed_bytes<Size>& d) {
 std::ostream& operator<<(std::ostream& os, const block_timestamp& obj);
 std::ostream& operator<<(std::ostream& os, const name& obj);
 
+class test_rodeos;
+
 /**
  * Manages a chain.
  * Only one test_chain can exist at a time.
  * The test chain uses simulated time starting at 2020-01-01T00:00:00.000.
  */
 class test_chain {
+    friend test_rodeos;
+
  private:
    uint32_t                               id;
    std::optional<block_info>              head_block_info;
@@ -299,7 +303,33 @@ class test_chain {
    std::vector<char> query_database(const T& request) {
       return internal_use_do_not_use::query_database_chain(id, pack(request));
    }
-};
+}; // test_chain
+
+/**
+ * Manages a rodeos instance
+ */
+class test_rodeos {
+ private:
+   uint32_t id;
+
+ public:
+   test_rodeos();
+   test_rodeos(const test_rodeos&) = delete;
+   ~test_rodeos();
+   test_rodeos& operator=(const test_rodeos&) = delete;
+
+   /// Connect this rodeos instance to chain. rodeos_push_block() will receive data from this chain.
+   void connect(test_chain& chain);
+
+   /// Set filter wasm. This will receive data from the chain everytime rodeos_push_block() is called.
+   void set_filter(const char* filename);
+
+   /// Fetches a single block of data, if available, from chain. Returns true if data was available.
+   bool push_block();
+
+   /// Fetches blocks of data, if available, from chain. Returns number of blocks.
+   uint32_t push_blocks();
+}; // test_rodeos
 
 } // namespace eosio
 

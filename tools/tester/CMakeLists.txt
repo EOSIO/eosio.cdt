@@ -54,7 +54,9 @@ include(SetupTargetMacros)
 include(GNUInstallDirs)
 include(VersionMacros)
 
+set(EOSIO_HISTORY_TOOLS_TESTER "Yes")
 add_subdirectory(../../libraries/eos/libraries/eos-vm eos-vm EXCLUDE_FROM_ALL)
+add_subdirectory(../../libraries/history-tools history-tools EXCLUDE_FROM_ALL)
 
 set(EOSIO_ROOT_KEY "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV")
 set(EOSIO_WASM_OLD_BEHAVIOR "Off")
@@ -62,6 +64,7 @@ add_subdirectory(../../libraries/eos/libraries/builtins builtins EXCLUDE_FROM_AL
 add_subdirectory(../../libraries/eos/libraries/chain chain EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/chainbase chainbase EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/fc fc EXCLUDE_FROM_ALL)
+add_subdirectory(../../libraries/eos/libraries/state_history state_history EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/wabt wabt EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/wasm-jit wasm-jit EXCLUDE_FROM_ALL)
 
@@ -81,15 +84,22 @@ target_include_directories(eosio-tester
         ../../libraries/abieos/external/rapidjson/include
         ../../libraries/eos/libraries/chain/include
         ../../libraries/eos/libraries/fc/include
-        ../../libraries/eos/libraries/wasm-jit/Include
+        ../../libraries/eos/libraries/state_history/include
         ../../libraries/eos/libraries/wabt/src
+        ../../libraries/eos/libraries/wasm-jit/Include
+        ../../libraries/history-tools/external/chain-kv/include
+        ../../libraries/history-tools/include
         ${Boost_INCLUDE_DIR}
         ${JS_INCLUDE_DIRS}
         ${ROCKSDB_INCLUDE_DIR}
 )
 target_link_libraries(eosio-tester
-    eosio_chain wabt Runtime Logging IR fc eos-vm
+    embedded_rodeos state_history eosio_chain wabt Runtime Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
+
+if(UNIX AND NOT APPLE)
+   target_link_libraries(eosio-tester -lrt)
+endif()
 
 set_target_properties(eosio-tester PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
