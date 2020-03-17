@@ -45,7 +45,7 @@ namespace eosio {
          }
       }
 
-      const T& get() {
+      const T& get() const {
          auto& ste = get_state();
          if (!ste.is_cached) {
             uint32_t copy_size;
