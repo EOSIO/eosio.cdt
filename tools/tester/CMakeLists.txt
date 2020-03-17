@@ -98,4 +98,8 @@ target_link_libraries(eosio-tester
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
 
+if(UNIX AND NOT APPLE)
+   target_link_libraries(eosio-tester -lrt)
+endif()
+
 set_target_properties(eosio-tester PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)

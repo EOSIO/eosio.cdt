@@ -41,6 +41,7 @@ using eosio::chain::transaction_trace_ptr;
 using eosio::state_history::block_position;
 using eosio::state_history::create_deltas;
 using eosio::state_history::get_blocks_result_v0;
+using eosio::state_history::state_result;
 using eosio::state_history::trace_converter;
 
 struct callbacks;
@@ -257,7 +258,7 @@ struct test_chain {
       message.deltas     = std::move(deltas_bin);
 
       prev_block                         = message.this_block;
-      history[control->head_block_num()] = fc::raw::pack(message);
+      history[control->head_block_num()] = fc::raw::pack(state_result{message});
    }
 
    void mutating() { intr_ctx.reset(); }
@@ -417,8 +418,8 @@ struct contract_row {
 EOSIO_REFLECT(contract_row, block_num, present, code, scope, table, primary_key, payer, value);
 
 struct file {
-   FILE* f = nullptr;
-   bool owns;
+   FILE *f = nullptr;
+   bool owns = false;
 
    file(FILE* f = nullptr, bool owns = true) : f(f), owns(owns) {}
 
