@@ -18,9 +18,9 @@ ExternalProject_Add(
 )
 
 ExternalProject_Add(
-  integration-tester
-  SOURCE_DIR "${CMAKE_SOURCE_DIR}/tools/integration-tester"
-  BINARY_DIR "${CMAKE_BINARY_DIR}/tools/integration-tester"
+  toolchain-tester
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/tools/toolchain-tester"
+  BINARY_DIR "${CMAKE_BINARY_DIR}/tools/toolchain-tester"
   UPDATE_COMMAND ""
   PATCH_COMMAND  ""
   TEST_COMMAND   ""
