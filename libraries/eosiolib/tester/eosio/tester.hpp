@@ -69,7 +69,7 @@ struct action_trace {
    std::vector<account_delta>       account_disk_deltas    = {};
    std::optional<std::string>       except                 = {};
    std::optional<uint64_t>          error_code             = {};
-   std::optional<std::vector<char>> return_value           = {};
+   std::vector<char>                return_value           = {};
 };
 
 auto conversion_kind(chain_types::action_trace_v0, action_trace) -> widening_conversion;
@@ -188,8 +188,7 @@ class test_chain {
    auto action_with_return(const Action& action, Args&&... args) {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({action.to_action(std::forward<Args>(args)...)});
-      check(trace.action_traces[0].return_value.has_value(), "action did not return a value");
-      return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
+      return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
    }
 
 
@@ -198,8 +197,7 @@ class test_chain {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({action.to_action(std::forward<Args>(args)...)});
       if constexpr ( !std::is_same_v<Ret,void> ) {
-         check(trace.action_traces[0].return_value.has_value(), "action did not return a value");
-         return check(convert_from_bin<Ret>(*trace.action_traces[0].return_value)).value();
+         return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
       } else {
          return trace;
       }

@@ -142,7 +142,7 @@ struct action_trace_v1 {
    std::vector<account_delta>         account_disk_deltas    = {};
    std::optional<std::string>         except                 = {};
    std::optional<uint64_t>            error_code             = {};
-   std::optional<eosio::input_stream> return_value           = {};
+   eosio::input_stream                return_value           = {};
 };
 
 EOSIO_REFLECT(action_trace_v1, action_ordinal, creator_action_ordinal, receipt, receiver, act, context_free, elapsed,

@@ -374,8 +374,7 @@ chain_types::action_trace_v1 convert(const eosio::chain::action_trace& obj) {
       result.except = obj.except->to_string();
    if (obj.error_code)
       result.error_code = *obj.error_code;
-   if (obj.return_value)
-      result.return_value.emplace(obj.return_value->data(), obj.return_value->size());
+   result.return_value = {obj.return_value.data(), obj.return_value.size()};
    return result;
 }
 
