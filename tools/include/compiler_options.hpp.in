@@ -34,6 +34,11 @@ static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
     cl::cat(LD_CAT));
+static cl::opt<bool> no_missing_ricardian_clause_opt(
+    "no-missing-ricardian-clause",
+    cl::desc("Disable warnings for missing Ricardian clauses"),
+    cl::init(false),
+    cl::cat(LD_CAT));
 static cl::opt<bool> fquery_opt(
     "fquery",
     cl::desc("Produce binaries for wasmql"),
@@ -172,22 +177,22 @@ static cl::opt<std::string> abigen_output_opt(
     cl::cat(EosioCompilerToolCategory));
 // ignore for now
 static cl::opt<bool> g_opt(
-      "g",
-      cl::desc("debug build <ignored>"),
-      cl::Hidden,
-      cl::ZeroOrMore,
-      cl::cat(EosioCompilerToolCategory));
+    "g",
+    cl::desc("debug build <ignored>"),
+    cl::Hidden,
+    cl::ZeroOrMore,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<std::string> x_opt(
-      "x",
-      cl::desc("<ignored>"),
-      cl::Hidden,
-      cl::Prefix,
-      cl::cat(EosioCompilerToolCategory));
+    "x",
+    cl::desc("<ignored>"),
+    cl::Hidden,
+    cl::Prefix,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<bool> pch_opt(
-      "fpch-preprocess",
-      cl::desc("<ignored>"),
-      cl::Hidden,
-      cl::cat(EosioCompilerToolCategory));
+    "fpch-preprocess",
+    cl::desc("<ignored>"),
+    cl::Hidden,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<bool> CC_opt(
     "CC",
     cl::desc("Include comments from within macros in preprocessed output"),
@@ -359,6 +364,7 @@ struct Options {
    std::vector<std::string> inputs;
    bool link;
    bool abigen;
+   bool suppress_ricardian_warning;
    bool pp_only;
    std::string eosio_pp_dir;
    std::string abigen_output;
@@ -374,7 +380,6 @@ struct Options {
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
-   std::string apply_lib;
    // add the define for whether this is compiling with CDT and version macros
    copts.emplace_back("-D__eosio_cdt__");
    copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
@@ -624,8 +629,9 @@ static Options CreateOptions(bool add_defaults=true) {
       link = false;
       copts.emplace_back("-E");
    }
-   if(g_opt)
+   if(g_opt) {
       copts.emplace_back("-g");
+   }
    if (!x_opt.empty()) {
       // x_opt should precede input files
       copts.insert(copts.begin(), "-x"+x_opt);
@@ -884,8 +890,8 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #else
-   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #endif
 }
