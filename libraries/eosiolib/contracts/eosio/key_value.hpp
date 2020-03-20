@@ -85,6 +85,8 @@ struct key_type : private std::vector<char> {
 
    explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
+   key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
+
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
       ret += b;
@@ -94,6 +96,32 @@ struct key_type : private std::vector<char> {
    key_type& operator+=(const key_type& b) {
       this->insert(this->end(), b.begin(), b.end());
       return *this;
+   }
+
+   std::string to_hex() const {
+      const char* hex_characters = "0123456789abcdef";
+
+      uint32_t buffer_size = 2 * size();
+      check(buffer_size >= size(), "length passed into printhex is too large");
+
+      void* buffer = buffer_size > detail::max_stack_buffer_size ? malloc(buffer_size) : alloca(buffer_size);
+
+      char* b = reinterpret_cast<char*>(buffer);
+      const uint8_t* d = reinterpret_cast<const uint8_t*>(data());
+      for(uint32_t i = 0; i < size(); ++i) {
+         *b = hex_characters[d[i] >> 4];
+         ++b;
+         *b = hex_characters[d[i] & 0x0f];
+         ++b;
+      }
+
+      std::string ret{reinterpret_cast<char*>(buffer), buffer_size};
+
+      if (buffer_size > detail::max_stack_buffer_size) {
+         free(buffer);
+      }
+
+      return ret;
    }
 
    using std::vector<char>::data;
@@ -238,6 +266,21 @@ class kv_table {
          return val;
       }
 
+      key_type key() const {
+         uint32_t actual_value_size;
+         uint32_t value_size;
+
+         // call once to get the value size
+         internal_use_do_not_use::kv_it_key(itr, 0, (char*)nullptr, 0, value_size);
+
+         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+         auto stat = internal_use_do_not_use::kv_it_key(itr, 0, (char*)buffer, value_size, actual_value_size);
+
+         eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
+
+         return {(char*)buffer, actual_value_size};
+      }
+
       iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "cannot increment end iterator");
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
@@ -376,10 +419,14 @@ public:
       iterator find(const K& key) const {
          auto t_key = table_key(prefix, make_key(key));
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+         return find(t_key);
+      }
 
-         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
+      iterator find(const key_type& key) const {
+         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
+         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, key.data(), key.size());
+
+         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, key.data(), key.size());
 
          if (cmp != 0) {
             internal_use_do_not_use::kv_it_destroy(itr);
@@ -397,10 +444,13 @@ public:
        * @return If the key exists or not.
        */
       bool exists(const K& key) const {
-         uint32_t value_size;
          auto t_key = table_key(prefix, make_key(key));
+         return exists(t_key);
+      }
 
-         return internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
+      bool exists(const key_type& key) const {
+         uint32_t value_size;
+         return internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, key.data(), key.size(), value_size);
       }
 
       /**
@@ -411,6 +461,11 @@ public:
        * @return The value corresponding to the key.
        */
       T operator[](const K& key) const {
+         auto t_key = table_key(prefix, make_key(key));
+         return operator[](t_key);
+      }
+
+      T operator[](const key_type& key) const {
          auto opt = get(key);
          eosio::check(opt.has_value(), "Key not found in `[]`");
          return *opt;
@@ -424,13 +479,16 @@ public:
        * @return A std::optional of the value corresponding to the key.
        */
       std::optional<T> get(const K& key) const {
+         auto t_key = table_key(prefix, make_key(key));
+         return get(t_key);
+      }
+
+      std::optional<T> get(const key_type& key) const {
          uint32_t value_size;
          uint32_t actual_data_size;
          std::optional<T> ret_val;
 
-         auto t_key = table_key(prefix, make_key(key));
-
-         auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
+         auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, key.data(), key.size(), value_size);
          if (!success) {
             return ret_val;
          }
@@ -498,9 +556,12 @@ public:
        */
       iterator lower_bound(const K& key) const {
          auto t_key = table_key(prefix, make_key(key));
+         return lower_bound(t_key);
+      }
 
+      iterator lower_bound(const key_type& key) const {
          uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, key.data(), key.size());
 
          return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
@@ -513,9 +574,13 @@ public:
        */
       iterator upper_bound(const K& key) const {
          auto t_key = table_key(prefix, make_key(key));
+         return upper_bound(t_key);
+      }
+
+      iterator upper_bound(const key_type& key) const {
          auto it = lower_bound(key);
 
-         auto cmp = it.key_compare(t_key);
+         auto cmp = it.key_compare(key);
          if (cmp == 0) {
             ++it;
          }
@@ -532,6 +597,12 @@ public:
        * @return A vector containing all the objects that fall between the range.
        */
       std::vector<T> range(const K& b, const K& e) const {
+         auto b_key = table_key(prefix, make_key(b));
+         auto e_key = table_key(prefix, make_key(e));
+         return range(b_key, e_key);
+      }
+
+      std::vector<T> range(const key_type& b, const key_type& e) const {
          std::vector<T> return_values;
 
          for(auto itr = lower_bound(b), end_itr = lower_bound(e); itr < end_itr; ++itr) {
