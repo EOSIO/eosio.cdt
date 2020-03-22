@@ -98,6 +98,27 @@ struct key_type : private std::vector<char> {
       return *this;
    }
 
+   static key_type from_hex( const std::string_view& str ) {
+      key_type out;
+
+      check( str.size() % 2 == 0, "invalid hex string length" );
+      out.reserve( str.size() / 2 );
+
+      auto start = str.data();
+      auto end   = start + str.size();
+      for(const char* p = start; p != end; p+=2 ) {
+          auto hic = p[0];
+          auto lowc = p[1];
+
+          uint8_t hi  = hic  <= '9' ? hic-'0' : 10+(hic-'a');
+          uint8_t low = lowc <= '9' ? lowc-'0' : 10+(lowc-'a');
+
+          out.push_back( char((hi << 4) | low) );
+      }
+
+      return out;
+   }
+
    std::string to_hex() const {
       const char* hex_characters = "0123456789abcdef";
 
