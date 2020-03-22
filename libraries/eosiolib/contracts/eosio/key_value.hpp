@@ -377,6 +377,8 @@ class kv_table {
       eosio::name table_name;
       eosio::name contract_name;
 
+      key_type to_table_key( const key_type& k )const{ return table_key( prefix, k ); }
+
    protected:
       kv_index() = default;
 
@@ -482,13 +484,12 @@ public:
        * @return The value corresponding to the key.
        */
       T operator[](const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
-         return operator[](t_key);
+         return operator[](make_key(key));
       }
 
       T operator[](const key_type& key) const {
          auto opt = get(key);
-         eosio::check(opt.has_value(), "Key not found in `[]`");
+         eosio::check(opt.has_value(), __FILE__ ":" + std::to_string(__LINE__) + " Key not found in `[]`");
          return *opt;
       }
 
@@ -500,11 +501,11 @@ public:
        * @return A std::optional of the value corresponding to the key.
        */
       std::optional<T> get(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
-         return get(t_key);
+         return get(make_key(key));
       }
 
-      std::optional<T> get(const key_type& key) const {
+      std::optional<T> get(const key_type& k ) const {
+         auto key =   table_key( prefix, k );
          uint32_t value_size;
          uint32_t actual_data_size;
          std::optional<T> ret_val;
@@ -576,11 +577,11 @@ public:
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
       iterator lower_bound(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
-         return lower_bound(t_key);
+         return lower_bound(make_key(key));
       }
 
-      iterator lower_bound(const key_type& key) const {
+      iterator lower_bound(const key_type& k ) const {
+         auto key = table_key( prefix, k );
          uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, key.data(), key.size());
 
@@ -594,8 +595,7 @@ public:
        * @return An iterator pointing to the first element greater than the given key.
        */
       iterator upper_bound(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
-         return upper_bound(t_key);
+         return upper_bound(make_key(key));
       }
 
       iterator upper_bound(const key_type& key) const {
@@ -618,12 +618,12 @@ public:
        * @return A vector containing all the objects that fall between the range.
        */
       std::vector<T> range(const K& b, const K& e) const {
-         auto b_key = table_key(prefix, make_key(b));
-         auto e_key = table_key(prefix, make_key(e));
-         return range(b_key, e_key);
+         return range(make_key(b), make_key(e));
       }
 
-      std::vector<T> range(const key_type& b, const key_type& e) const {
+      std::vector<T> range(const key_type& b_key, const key_type& e_key) const {
+         auto b = table_key(prefix, make_key(b_key));
+         auto e = table_key(prefix, make_key(e_key));
          std::vector<T> return_values;
 
          for(auto itr = lower_bound(b), end_itr = lower_bound(e); itr < end_itr; ++itr) {
