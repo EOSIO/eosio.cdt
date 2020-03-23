@@ -308,7 +308,8 @@ class test_chain {
  */
 class test_rodeos {
  private:
-   uint32_t id;
+   uint32_t    id;
+   test_chain* connected = {};
 
  public:
    test_rodeos();
@@ -322,11 +323,78 @@ class test_rodeos {
    /// Set filter wasm. This will receive data from the chain everytime rodeos_sync_block() is called.
    void set_filter(const char* filename);
 
+   /// Enable query handling. If contract_dir is not empty, then wasms in
+   /// contract_dir override contracts on chain.
+   void enable_queries(uint32_t max_console_size, uint32_t wasm_cache_size, uint64_t max_exec_time_ms,
+                       const char* contract_dir);
+
    /// Fetches a single block of data, if available, from chain. Returns true if data was available.
    bool sync_block();
 
    /// Fetches blocks of data, if available, from chain. Returns number of blocks.
    uint32_t sync_blocks();
+
+   /// Pushes a query transaction
+   [[nodiscard]] transaction_trace push_transaction(const transaction& trx, const std::vector<private_key>& keys = {},
+                                                    const std::vector<std::vector<char>>& context_free_data = {},
+                                                    const std::vector<signature>&         signatures        = {});
+
+   /// Pushes a query transaction. Validates the transaction status according to @ref eosio::expect.
+   transaction_trace transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
+                              const char* expected_except = nullptr);
+   transaction_trace transact(std::vector<action>&& actions, const char* expected_except = nullptr);
+
+   template <typename Action, typename... Args>
+   auto act(std::optional<std::vector<std::vector<char>>> cfd, const Action& action, Args&&... args) {
+      using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
+      auto trace = transact({ action.to_action(std::forward<Args>(args)...) });
+      if constexpr (!std::is_same_v<Ret, void>) {
+         return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
+      } else {
+         return trace;
+      }
+   }
+
+   template <typename Action, typename... Args>
+   auto trace(std::optional<std::vector<std::vector<char>>> cfd, const Action& action, Args&&... args) {
+      if (!cfd) {
+         return push_transaction(connected->make_transaction({ action.to_action(std::forward<Args>(args)...) }), {});
+      } else {
+         return push_transaction(connected->make_transaction({}, { action.to_action(std::forward<Args>(args)...) }), {},
+                                 *cfd);
+      }
+   }
+
+   struct user_context {
+      test_rodeos&                                  r;
+      std::vector<eosio::permission_level>          level;
+      std::optional<std::vector<std::vector<char>>> context_free_data;
+
+      user_context with_cfd(std::vector<std::vector<char>> d) {
+         user_context uc      = *this;
+         uc.context_free_data = std::move(d);
+         return uc;
+      }
+
+      template <typename Action, typename... Args>
+      auto act(Args&&... args) {
+         if (context_free_data)
+            return r.act(context_free_data, Action(), std::forward<Args>(args)...);
+         else
+            return r.act(context_free_data, Action(level), std::forward<Args>(args)...);
+      }
+
+      template <typename Action, typename... Args>
+      auto trace(Args&&... args) {
+         if (context_free_data)
+            return r.trace(context_free_data, Action(), std::forward<Args>(args)...);
+         else
+            return r.trace(context_free_data, Action(level), std::forward<Args>(args)...);
+      }
+   };
+
+   auto as() { return user_context{ *this }; }
+
 }; // test_rodeos
 
 } // namespace eosio

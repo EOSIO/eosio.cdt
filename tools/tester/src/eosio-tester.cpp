@@ -187,10 +187,10 @@ struct test_chain_ref {
 
    test_chain_ref() = default;
    test_chain_ref(test_chain&);
-   test_chain_ref(const test_chain_ref&) = delete;
+   test_chain_ref(const test_chain_ref&);
    ~test_chain_ref();
 
-   test_chain_ref& operator=(test_chain_ref&&);
+   test_chain_ref& operator=(const test_chain_ref&);
 };
 
 struct test_chain {
@@ -298,21 +298,36 @@ test_chain_ref::test_chain_ref(test_chain& chain) {
    this->chain = &chain;
 }
 
+test_chain_ref::test_chain_ref(const test_chain_ref& src) {
+   chain = src.chain;
+   if (chain)
+      chain->refs.insert(this);
+}
+
 test_chain_ref::~test_chain_ref() {
    if (chain)
       chain->refs.erase(this);
 }
 
-test_chain_ref& test_chain_ref::operator=(test_chain_ref&& rhs) { std::swap(this->chain, rhs.chain); return *this; }
+test_chain_ref& test_chain_ref::operator=(const test_chain_ref& src) {
+   if (chain)
+      chain->refs.erase(this);
+   chain = nullptr;
+   if (src.chain)
+      src.chain->refs.insert(this);
+   chain = src.chain;
+   return *this;
+}
 
 struct test_rodeos {
-   fc::temp_directory                        dir;
-   embedded_rodeos::context                  context;
-   std::optional<embedded_rodeos::partition> partition;
-   std::optional<embedded_rodeos::snapshot>  write_snapshot;
-   std::optional<embedded_rodeos::filter>    filter;
-   test_chain_ref                            chain;
-   uint32_t                                  next_block = 0;
+   fc::temp_directory                            dir;
+   embedded_rodeos::context                      context;
+   std::optional<embedded_rodeos::partition>     partition;
+   std::optional<embedded_rodeos::snapshot>      write_snapshot;
+   std::optional<embedded_rodeos::filter>        filter;
+   std::optional<embedded_rodeos::query_handler> query_handler;
+   test_chain_ref                                chain;
+   uint32_t                                      next_block = 0;
 
    test_rodeos() {
       context.open_db(dir.path().string().c_str(), true);
@@ -625,6 +640,10 @@ struct callbacks {
       memcpy(alloc(cb_alloc_data, cb_alloc, data.size()), data.data(), data.size());
    }
 
+   void set_data(uint32_t cb_alloc_data, uint32_t cb_alloc, const embedded_rodeos::result& data) {
+      memcpy(alloc(cb_alloc_data, cb_alloc, data.size), data.data, data.size);
+   }
+
    void abort() { throw std::runtime_error("called abort"); }
 
    void eosio_assert_message(bool test, const char* msg, uint32_t msg_len) {
@@ -918,6 +937,12 @@ struct callbacks {
       r.filter.emplace(wasm_filename);
    }
 
+   void rodeos_enable_queries(uint32_t rodeos, uint32_t max_console_size, uint32_t wasm_cache_size,
+                              uint64_t max_exec_time_ms, const char* contract_dir) {
+      auto& r = assert_rodeos(rodeos);
+      r.query_handler.emplace(*r.partition, max_console_size, wasm_cache_size, max_exec_time_ms, contract_dir);
+   }
+
    void connect_rodeos(uint32_t rodeos, uint32_t chain) {
       auto& r = assert_rodeos(rodeos);
       auto& c = assert_chain(chain);
@@ -940,6 +965,28 @@ struct callbacks {
       r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
       r.next_block = it->first + 1;
       return true;
+   }
+
+   void rodeos_push_transaction(uint32_t rodeos, const char* args_begin, const char* args_end, uint32_t cb_alloc_data,
+                                uint32_t cb_alloc) {
+      auto& r = assert_rodeos(rodeos);
+      if (!r.chain.chain)
+         throw std::runtime_error("rodeos is not connected to a chain");
+      if (!r.query_handler)
+         throw std::runtime_error("call rodeos_enable_queries before rodeos_push_transaction");
+      auto& chain = *r.chain.chain;
+      chain.start_if_needed();
+
+      auto                             args        = unpack_checked<push_trx_args>(args_begin, args_end);
+      auto                             transaction = unpack<eosio::chain::transaction>(args.transaction.data(),
+                                                           args.transaction.data() + args.transaction.size());
+      eosio::chain::signed_transaction signed_trx{ std::move(transaction), std::move(args.signatures),
+                                                   std::move(args.context_free_data) };
+      for (auto& key : args.keys) signed_trx.sign(key, chain.control->get_chain_id());
+      eosio::chain::packed_transaction ptrx{ signed_trx, eosio::chain::packed_transaction::compression_type::none };
+      auto                             data = fc::raw::pack(ptrx);
+      auto result = r.query_handler->query_transaction(*r.write_snapshot, data.data(), data.size());
+      set_data(cb_alloc_data, cb_alloc, result);
    }
 
    // clang-format off
@@ -1115,8 +1162,10 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::create_rodeos, eosio::vm::wasm_allocator>("env", "create_rodeos");
    rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_set_filter, eosio::vm::wasm_allocator>("env", "rodeos_set_filter");
+   rhf_t::add<callbacks, &callbacks::rodeos_enable_queries, eosio::vm::wasm_allocator>("env", "rodeos_enable_queries");
    rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_sync_block, eosio::vm::wasm_allocator>("env", "rodeos_sync_block");
+   rhf_t::add<callbacks, &callbacks::rodeos_push_transaction, eosio::vm::wasm_allocator>("env", "rodeos_push_transaction");
 
    rhf_t::add<callbacks, &callbacks::db_get_i64, eosio::vm::wasm_allocator>("env", "db_get_i64");
    rhf_t::add<callbacks, &callbacks::db_next_i64, eosio::vm::wasm_allocator>("env", "db_next_i64");

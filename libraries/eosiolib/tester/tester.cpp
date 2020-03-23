@@ -32,10 +32,14 @@ namespace {
 
    TESTER_INTRINSIC uint32_t create_rodeos();
    TESTER_INTRINSIC void     destroy_rodeos(uint32_t rodeos);
-   TESTER_INTRINSIC void
-                         rodeos_set_filter(uint32_t rodeos, const char* wasm_filename);
-   TESTER_INTRINSIC void connect_rodeos(uint32_t rodeos, uint32_t chain);
-   TESTER_INTRINSIC bool rodeos_sync_block(uint32_t rodeos);
+   TESTER_INTRINSIC void     rodeos_set_filter(uint32_t rodeos, const char* wasm_filename);
+   TESTER_INTRINSIC void     rodeos_enable_queries(uint32_t rodeos, uint32_t max_console_size, uint32_t wasm_cache_size,
+                                                   uint64_t max_exec_time_ms, const char* contract_dir);
+   TESTER_INTRINSIC void     connect_rodeos(uint32_t rodeos, uint32_t chain);
+   TESTER_INTRINSIC bool     rodeos_sync_block(uint32_t rodeos);
+   TESTER_INTRINSIC void     rodeos_push_transaction(uint32_t rodeos, const char* args_begin, const char* args_end,
+                                                     void* cb_alloc_data,
+                                                     void* (*cb_alloc)(void* cb_alloc_data, size_t size));
 
    template <typename Alloc_fn>
    inline void get_args(Alloc_fn alloc_fn) {
@@ -88,6 +92,14 @@ namespace {
    template <typename Alloc_fn>
    inline bool exec_deferred(uint32_t chain, Alloc_fn alloc_fn) {
       return exec_deferred(chain, &alloc_fn, [](void* cb_alloc_data, size_t size) -> void* { //
+         return (*reinterpret_cast<Alloc_fn*>(cb_alloc_data))(size);
+      });
+   }
+
+   template <typename Alloc_fn>
+   inline void rodeos_push_transaction(uint32_t rodeos, const char* args_begin, const char* args_end,
+                                       Alloc_fn alloc_fn) {
+      rodeos_push_transaction(rodeos, args_begin, args_end, &alloc_fn, [](void* cb_alloc_data, size_t size) -> void* {
          return (*reinterpret_cast<Alloc_fn*>(cb_alloc_data))(size);
       });
    }
@@ -407,9 +419,17 @@ eosio::test_rodeos::test_rodeos() : id{ create_rodeos() } {}
 
 eosio::test_rodeos::~test_rodeos() { destroy_rodeos(id); }
 
-void eosio::test_rodeos::connect(test_chain& chain) { connect_rodeos(id, chain.id); }
+void eosio::test_rodeos::connect(test_chain& chain) {
+   connected = &chain;
+   connect_rodeos(id, chain.id);
+}
 
 void eosio::test_rodeos::set_filter(const char* filename) { rodeos_set_filter(id, filename); }
+
+void eosio::test_rodeos::enable_queries(uint32_t max_console_size, uint32_t wasm_cache_size, uint64_t max_exec_time_ms,
+                                        const char* contract_dir) {
+   rodeos_enable_queries(id, max_console_size, wasm_cache_size, max_exec_time_ms, contract_dir ? contract_dir : "");
+}
 
 bool eosio::test_rodeos::sync_block() { return rodeos_sync_block(id); }
 
@@ -417,6 +437,36 @@ uint32_t eosio::test_rodeos::sync_blocks() {
    uint32_t n = 0;
    while (sync_block()) ++n;
    return n;
+}
+
+[[nodiscard]] eosio::transaction_trace
+eosio::test_rodeos::push_transaction(const transaction& trx, const std::vector<private_key>& keys,
+                                     const std::vector<std::vector<char>>& context_free_data,
+                                     const std::vector<signature>&         signatures) {
+   std::vector<char> packed_trx = pack(trx);
+   std::vector<char> args;
+   check_discard(convert_to_bin(packed_trx, args));
+   check_discard(convert_to_bin(context_free_data, args));
+   check_discard(convert_to_bin(signatures, args));
+   check_discard(convert_to_bin(keys, args));
+   std::vector<char> bin;
+   rodeos_push_transaction(id, args.data(), args.data() + args.size(), [&](size_t size) {
+      bin.resize(size);
+      return bin.data();
+   });
+   return check(convert_from_bin<transaction_trace>(bin)).value();
+}
+
+eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&&           actions,
+                                                      const std::vector<private_key>& keys,
+                                                      const char*                     expected_except) {
+   auto trace = push_transaction(connected->make_transaction(std::move(actions)), keys);
+   expect(trace, expected_except);
+   return trace;
+}
+
+eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&& actions, const char* expected_except) {
+   return transact(std::move(actions), {}, expected_except);
 }
 
 std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {
