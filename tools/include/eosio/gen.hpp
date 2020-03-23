@@ -104,6 +104,7 @@ struct generation_utils {
    std::function<void()> error_handler;
    std::vector<std::string> resource_dirs;
    std::string contract_name;
+   bool suppress_ricardian_warnings;
 
    generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
    generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
@@ -216,6 +217,10 @@ struct generation_utils {
       return {};
    }
 
+   inline void set_suppress_ricardian_warning(bool suppress_ricardian_warnings) {
+      this->suppress_ricardian_warnings = suppress_ricardian_warnings;
+   }
+
    inline std::string get_ricardian_clauses() {
       return read_file(get_clauses_filename());
    }
@@ -228,7 +233,9 @@ struct generation_utils {
       std::map<std::string, std::string> rcs;
       simple_ricardian_tokenizer srt(contracts);
       if (contracts.empty()) {
-         std::cout << "Warning, empty ricardian clause file\n";
+         if (!suppress_ricardian_warnings) {
+            std::cout << "Warning, empty ricardian clause file\n";
+         }
          return rcs;
       }
 
@@ -244,7 +251,9 @@ struct generation_utils {
       std::vector<std::pair<std::string, std::string>> clause_pairs;
       simple_ricardian_tokenizer srt(clauses);
       if (clauses.empty()) {
-         std::cout << "Warning, empty ricardian clause file\n";
+         if (!suppress_ricardian_warnings) {
+            std::cout << "Warning, empty ricardian clause file\n";
+         }
          return clause_pairs;
       }
 

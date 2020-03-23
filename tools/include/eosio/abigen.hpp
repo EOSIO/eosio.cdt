@@ -57,8 +57,9 @@ namespace eosio { namespace cdt {
          abi_action ret;
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!suppress_ricardian_warnings)
+            if (rcs[get_action_name(decl)].empty())
+               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
@@ -89,8 +90,9 @@ namespace eosio { namespace cdt {
 
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!suppress_ricardian_warnings)
+            if (rcs[get_action_name(decl)].empty())
+               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 

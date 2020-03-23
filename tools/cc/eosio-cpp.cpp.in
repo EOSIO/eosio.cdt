@@ -107,7 +107,7 @@ namespace eosio { namespace cdt {
    };
 }} // ns eosio::cdt
 
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -131,6 +131,7 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    get_abigen_ref().set_contract_name(contract_name);
    get_abigen_ref().set_resource_dirs(resource_paths);
    get_abigen_ref().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
+   get_abigen_ref().set_suppress_ricardian_warning(suppress_ricardian_warning);
    codegen::get().set_contract_name(contract_name);
 
    EosioMethodMatcher eosio_method_matcher;
@@ -190,7 +191,7 @@ int main(int argc, const char **argv) {
             tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
                                            [&](const auto& opt){ return non_tool_opts.count(opt); }),
                             tool_opts.end());
-            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen);
+            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning);
 
             auto src = SmallString<64>(input);
             llvm::sys::path::remove_filename(src);
