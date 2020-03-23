@@ -19,7 +19,7 @@ struct address_table : kv_table<address> {
    index<std::string> full_name{"fullname"_n, &myrecord::full_name};
 
    address_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &account_name, &full_name);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, account_name, full_name);
    }
 }
 
@@ -39,7 +39,7 @@ struct address_table : kv_table<address> {
    KV_NAMED_INDEX("fullname"_n, full_name)
 
    address_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, &account_name, &full_name);
+      init(contract_name, "testtable"_n, "eosio.kvram"_n, account_name, full_name);
    }
 }
 ```
