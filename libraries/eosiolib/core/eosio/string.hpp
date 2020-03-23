@@ -424,7 +424,7 @@ namespace eosio {
       }
    };
 
-   bool operator< (const string& lhs, const string& rhs) {
+   inline bool operator< (const string& lhs, const string& rhs) {
       const char* beg_lhs{lhs.cbegin()}; const char* end_lhs{lhs.cend()};
       const char* beg_rhs{rhs.cbegin()}; const char* end_rhs{rhs.cend()};
 
@@ -438,27 +438,27 @@ namespace eosio {
       return beg_lhs == end_lhs && beg_rhs != end_rhs;
    }
 
-   bool operator> (const string& lhs, const string& rhs) {
+   inline bool operator> (const string& lhs, const string& rhs) {
       return (rhs < lhs);
    }
 
-   bool operator<=(const string& lhs, const string& rhs) {
+   inline bool operator<=(const string& lhs, const string& rhs) {
       return !(rhs < lhs);
    }
 
-   bool operator>=(const string& lhs, const string& rhs) {
+   inline bool operator>=(const string& lhs, const string& rhs) {
       return !(lhs < rhs);
    }
 
-   bool operator==(const string& lhs, const string& rhs) {
+   inline bool operator==(const string& lhs, const string& rhs) {
       return !(lhs < rhs) && !(rhs < lhs);
    }
 
-   bool operator!=(const string& lhs, const string& rhs) {
+   inline bool operator!=(const string& lhs, const string& rhs) {
       return !(lhs == rhs);
    }
 
-   string operator+(const string& lhs, const string& rhs) {
+   inline string operator+(const string& lhs, const string& rhs) {
       string res{lhs};
       res += rhs;
       return res;

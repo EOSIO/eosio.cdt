@@ -10,6 +10,8 @@ else()
    endif()
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -no-missing-ricardian-clause")
+
 add_test( asset_tests ${CMAKE_BINARY_DIR}/tests/unit/asset_tests )
 set_property(TEST asset_tests PROPERTY LABELS unit_tests)
 add_test( binary_extension_tests ${CMAKE_BINARY_DIR}/tests/unit/binary_extension_tests )
