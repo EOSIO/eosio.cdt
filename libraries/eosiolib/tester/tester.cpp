@@ -32,7 +32,7 @@ namespace {
 
    TESTER_INTRINSIC uint32_t create_rodeos();
    TESTER_INTRINSIC void     destroy_rodeos(uint32_t rodeos);
-   TESTER_INTRINSIC void     rodeos_set_filter(uint32_t rodeos, const char* wasm_filename);
+   TESTER_INTRINSIC void     rodeos_add_filter(uint32_t rodeos, uint64_t name, const char* wasm_filename);
    TESTER_INTRINSIC void     rodeos_enable_queries(uint32_t rodeos, uint32_t max_console_size, uint32_t wasm_cache_size,
                                                    uint64_t max_exec_time_ms, const char* contract_dir);
    TESTER_INTRINSIC void     connect_rodeos(uint32_t rodeos, uint32_t chain);
@@ -424,7 +424,9 @@ void eosio::test_rodeos::connect(test_chain& chain) {
    connect_rodeos(id, chain.id);
 }
 
-void eosio::test_rodeos::set_filter(const char* filename) { rodeos_set_filter(id, filename); }
+void eosio::test_rodeos::add_filter(eosio::name name, const char* wasm_filename) {
+   rodeos_add_filter(id, name.value, wasm_filename);
+}
 
 void eosio::test_rodeos::enable_queries(uint32_t max_console_size, uint32_t wasm_cache_size, uint64_t max_exec_time_ms,
                                         const char* contract_dir) {

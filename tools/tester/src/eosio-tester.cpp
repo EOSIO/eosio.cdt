@@ -8,6 +8,7 @@
 #include <eosio/eosio_outcome.hpp>
 #include <eosio/from_bin.hpp>
 #include <eosio/history-tools/embedded_rodeos.hpp>
+#include <eosio/ship_protocol.hpp>
 #include <eosio/state_history/create_deltas.hpp>
 #include <eosio/state_history/serialization.hpp>
 #include <eosio/state_history/trace_converter.hpp>
@@ -324,7 +325,7 @@ struct test_rodeos {
    embedded_rodeos::context                      context;
    std::optional<embedded_rodeos::partition>     partition;
    std::optional<embedded_rodeos::snapshot>      write_snapshot;
-   std::optional<embedded_rodeos::filter>        filter;
+   std::list<embedded_rodeos::filter>            filters;
    std::optional<embedded_rodeos::query_handler> query_handler;
    test_chain_ref                                chain;
    uint32_t                                      next_block = 0;
@@ -932,9 +933,9 @@ struct callbacks {
       while (!state.rodeoses.empty() && !state.rodeoses.back()) { state.rodeoses.pop_back(); }
    }
 
-   void rodeos_set_filter(uint32_t rodeos, const char* wasm_filename) {
+   void rodeos_add_filter(uint32_t rodeos, uint64_t name, const char* wasm_filename) {
       auto& r = assert_rodeos(rodeos);
-      r.filter.emplace(wasm_filename);
+      r.filters.emplace_back(name, wasm_filename);
    }
 
    void rodeos_enable_queries(uint32_t rodeos, uint32_t max_console_size, uint32_t wasm_cache_size,
@@ -960,8 +961,8 @@ struct callbacks {
          return false;
       r.write_snapshot->start_block(it->second.data(), it->second.size());
       r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
-      if (r.filter)
-         r.filter->run(*r.write_snapshot, it->second.data(), it->second.size());
+      for (auto& filter : r.filters) //
+         filter.run(*r.write_snapshot, it->second.data(), it->second.size());
       r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
       r.next_block = it->first + 1;
       return true;
@@ -986,6 +987,15 @@ struct callbacks {
       eosio::chain::packed_transaction ptrx{ signed_trx, eosio::chain::packed_transaction::compression_type::none };
       auto                             data = fc::raw::pack(ptrx);
       auto result = r.query_handler->query_transaction(*r.write_snapshot, data.data(), data.size());
+      auto tt     = eosio::check(eosio::convert_from_bin<eosio::ship_protocol::transaction_trace>(
+                                   { result.data, result.data + result.size }))
+                      .value();
+      auto& tt0 = std::get<eosio::ship_protocol::transaction_trace_v0>(tt);
+      for (auto& at : tt0.action_traces) {
+         auto& at1 = std::get<eosio::ship_protocol::action_trace_v1>(at);
+         if (!at1.console.empty())
+            ilog("query console:\n${c}", ("c", at1.console));
+      }
       set_data(cb_alloc_data, cb_alloc, result);
    }
 
@@ -1004,6 +1014,15 @@ struct callbacks {
     DB_WRAPPERS_FLOAT_SECONDARY(idx_double, float64_t)
     DB_WRAPPERS_FLOAT_SECONDARY(idx_long_double, float128_t)
    // clang-format on
+
+    int64_t kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size) {
+       throw std::runtime_error("kv_erase not implemented in tester");
+    }
+
+    int64_t kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value,
+                   uint32_t value_size) {
+       throw std::runtime_error("kv_set not implemented in tester");
+    }
 
    bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size) {
       return kv_get_db(db).kv_get(contract, key, key_size, value_size);
@@ -1161,7 +1180,7 @@ void register_callbacks() {
 
    rhf_t::add<callbacks, &callbacks::create_rodeos, eosio::vm::wasm_allocator>("env", "create_rodeos");
    rhf_t::add<callbacks, &callbacks::destroy_rodeos, eosio::vm::wasm_allocator>("env", "destroy_rodeos");
-   rhf_t::add<callbacks, &callbacks::rodeos_set_filter, eosio::vm::wasm_allocator>("env", "rodeos_set_filter");
+   rhf_t::add<callbacks, &callbacks::rodeos_add_filter, eosio::vm::wasm_allocator>("env", "rodeos_add_filter");
    rhf_t::add<callbacks, &callbacks::rodeos_enable_queries, eosio::vm::wasm_allocator>("env", "rodeos_enable_queries");
    rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_sync_block, eosio::vm::wasm_allocator>("env", "rodeos_sync_block");
@@ -1179,6 +1198,8 @@ void register_callbacks() {
    // DB_REGISTER_SECONDARY(idx256)
    DB_REGISTER_SECONDARY(idx_double)
    DB_REGISTER_SECONDARY(idx_long_double)
+   rhf_t::add<callbacks, &callbacks::kv_erase, eosio::vm::wasm_allocator>("env", "kv_erase");
+   rhf_t::add<callbacks, &callbacks::kv_set, eosio::vm::wasm_allocator>("env", "kv_set");
    rhf_t::add<callbacks, &callbacks::kv_get, eosio::vm::wasm_allocator>("env", "kv_get");
    rhf_t::add<callbacks, &callbacks::kv_get_data, eosio::vm::wasm_allocator>("env", "kv_get_data");
    rhf_t::add<callbacks, &callbacks::kv_it_create, eosio::vm::wasm_allocator>("env", "kv_it_create");

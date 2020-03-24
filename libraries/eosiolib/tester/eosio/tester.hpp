@@ -320,8 +320,8 @@ class test_rodeos {
    /// Connect this rodeos instance to chain. rodeos_sync_block() will receive data from this chain.
    void connect(test_chain& chain);
 
-   /// Set filter wasm. This will receive data from the chain everytime rodeos_sync_block() is called.
-   void set_filter(const char* filename);
+   /// Add a filter wasm. This will receive data from the chain everytime rodeos_sync_block() is called.
+   void add_filter(eosio::name name, const char* wasm_filename);
 
    /// Enable query handling. If contract_dir is not empty, then wasms in
    /// contract_dir override contracts on chain.
