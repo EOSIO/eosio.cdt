@@ -1,3 +1,4 @@
+#pragma once
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
 #include <eosio/to_key.hpp>
@@ -42,7 +43,7 @@ namespace eosio {
 
    public:
       explicit kv_singleton(eosio::name contract_name) : contract_name{contract_name} {
-         key = make_prefix(singleton_name);
+         key = make_prefix();
       }
 
       ~kv_singleton() {
@@ -116,7 +117,7 @@ namespace eosio {
       key_type key;
 
       key_type make_prefix() {
-         return make_key(std::make_tuple(status, singleton_name));
+         return make_key(std::make_tuple(0x02, singleton_name));
       }
 
       template <typename V>
