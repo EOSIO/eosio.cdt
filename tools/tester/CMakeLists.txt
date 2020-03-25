@@ -55,6 +55,7 @@ include(GNUInstallDirs)
 include(VersionMacros)
 
 set(EOSIO_HISTORY_TOOLS_TESTER "Yes")
+list(APPEND EOSIO_WASM_RUNTIMES wabt eos-vm eos-vm-jit)
 add_subdirectory(../../libraries/eos/libraries/eos-vm eos-vm EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/history-tools history-tools EXCLUDE_FROM_ALL)
 

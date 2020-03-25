@@ -217,6 +217,7 @@ struct test_chain {
       cfg->blocks_dir           = dir.path() / "blocks";
       cfg->state_dir            = dir.path() / "state";
       cfg->contracts_console    = true;
+      cfg->wasm_runtime         = eosio::chain::wasm_interface::vm_type::eos_vm_jit;
 
       control =
             std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
