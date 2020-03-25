@@ -458,7 +458,7 @@ struct file {
    }
 
    void close() {
-      if (owns)
+      if (owns && f)
          fclose(f);
       f = nullptr;
       owns = false;
