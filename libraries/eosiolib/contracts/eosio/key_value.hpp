@@ -373,6 +373,8 @@ class kv_table {
    class kv_index {
 
    public:
+      typedef kv_table::iterator iterator;
+
       eosio::name index_name;
       eosio::name table_name;
       eosio::name contract_name;
