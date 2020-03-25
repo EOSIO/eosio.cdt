@@ -19,6 +19,8 @@
 #include <fc/crypto/sha512.hpp>
 #include <fc/exception/exception.hpp>
 #include <fc/io/json.hpp>
+
+#include <chrono>
 #include <stdio.h>
 
 using namespace eosio::literals;
@@ -823,7 +825,10 @@ struct callbacks {
       auto ptrx = std::make_shared<eosio::chain::packed_transaction>(signed_trx, eosio::chain::packed_transaction::compression_type::none);
       auto fut = eosio::chain::transaction_metadata::start_recover_keys(
             ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
-      auto result = chain.control->push_transaction( fut.get(), fc::time_point::maximum(), 2000, true);
+      auto start_time = std::chrono::steady_clock::now();
+      auto result     = chain.control->push_transaction(fut.get(), fc::time_point::maximum(), 2000, true);
+      auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);
+      ilog("chainlib transaction took ${u} us", ("u", us.count()));
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
       set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*result) })).value());
    }
@@ -986,8 +991,11 @@ struct callbacks {
       for (auto& key : args.keys) signed_trx.sign(key, chain.control->get_chain_id());
       eosio::chain::packed_transaction ptrx{ signed_trx, eosio::chain::packed_transaction::compression_type::none };
       auto                             data = fc::raw::pack(ptrx);
+      auto                             start_time = std::chrono::steady_clock::now();
       auto result = r.query_handler->query_transaction(*r.write_snapshot, data.data(), data.size());
-      auto tt     = eosio::check(eosio::convert_from_bin<eosio::ship_protocol::transaction_trace>(
+      auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);
+      ilog("rodeos transaction took ${u} us", ("u", us.count()));
+      auto tt = eosio::check(eosio::convert_from_bin<eosio::ship_protocol::transaction_trace>(
                                    { result.data, result.data + result.size }))
                       .value();
       auto& tt0 = std::get<eosio::ship_protocol::transaction_trace_v0>(tt);
