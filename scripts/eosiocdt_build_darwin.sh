@@ -119,11 +119,11 @@ fi
 if [ $COUNT -gt 1 ]; then
 	printf "\\nThe following dependencies are required to install EOSIO:\\n"
 	printf "${DISPLAY}\\n\\n"
-	if [ $1 == 0 ]; then read -p "Do you wish to install these packages? (y/n) " answer; fi
+	if [ -z "$1" ]; then read -p "Do you wish to install these packages? (y/n) " answer; fi
 	case ${answer} in
 		1 | [Yy]* )
 			"${XCODESELECT}" --install 2>/dev/null;
-			if [ $1 == 0 ]; then read -p "Do you wish to update homebrew packages first? (y/n) " answer; fi
+			if [ -z "$1" ]; then read -p "Do you wish to update homebrew packages first? (y/n) " answer; fi
 			case ${answer} in
 				1 | [Yy]* )
 					if ! brew update; then
