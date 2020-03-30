@@ -36,6 +36,7 @@
 
 # Build
 build/*
+build-*/*
 
 # Python
 __pycache__/

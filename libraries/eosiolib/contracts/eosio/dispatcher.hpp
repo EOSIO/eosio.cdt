@@ -196,12 +196,12 @@ extern "C" { \
       BOOST_PP_SEQ_FOR_EACH( EOSIO_ACTION_WRAPPER_DECL, _, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) )  \
       \
       inline void eosio_apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-         check( code == receiver, "notifications not supported by dispatcher" );  \
+         eosio::check( code == receiver, "notifications not supported by dispatcher" );  \
          bool executed = false; \
          switch( action ) {  \
             EOSIO_DISPATCH_HELPER( CONTRACT_CLASS, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) ) \
          } \
-         check( executed == true, "unkown action" ); \
+         eosio::check( executed == true, "unkown action" ); \
       } \
    }
 
