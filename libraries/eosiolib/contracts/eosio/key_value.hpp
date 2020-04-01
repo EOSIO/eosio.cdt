@@ -393,6 +393,21 @@ class kv_table {
          return val;
       }
 
+      key_type key() const {
+         uint32_t actual_value_size;
+         uint32_t value_size;
+
+         // call once to get the value size
+         internal_use_do_not_use::kv_it_key(itr, 0, (char*)nullptr, 0, value_size);
+
+         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+         auto stat = internal_use_do_not_use::kv_it_key(itr, 0, (char*)buffer, value_size, actual_value_size);
+
+         eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
+
+         return {(char*)buffer, actual_value_size};
+      }
+
       iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "cannot increment end iterator");
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
