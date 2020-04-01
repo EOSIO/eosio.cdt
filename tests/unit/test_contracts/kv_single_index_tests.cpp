@@ -187,6 +187,60 @@ public:
    }
 
    [[eosio::action]]
+   void riteration() {
+      my_table t{"kvtest"_n};
+      auto begin_itr = t.primary_key.rbegin();
+      auto end_itr = t.primary_key.rend();
+
+      // operator++
+      // ----------
+      auto itr = t.primary_key.rbegin();
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "john"_n, "Got the wrong value: john");
+      ++itr;
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "joe"_n, "Got the wrong value: joe");
+      ++itr;
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "bob"_n, "Got the wrong value: bob");
+      ++itr;
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "billy"_n, "Got the wrong value: billy");
+      ++itr;
+      eosio::check(itr != end_itr, "Should not be the end");
+      eosio::check(itr.value().primary_key == "alice"_n, "Got the wrong beginning");
+      ++itr;
+      eosio::check(itr == end_itr, "Should be the end");
+
+      // operator--
+      // ----------
+      --itr;
+      eosio::check(itr != begin_itr, "Should not be the beginning: 1");
+      --itr;
+      eosio::check(itr != begin_itr, "Should not be the beginning: 2");
+      --itr;
+      eosio::check(itr != begin_itr, "Should not be the beginning: 3");
+      --itr;
+      eosio::check(itr != begin_itr, "Should not be the beginning: 4");
+      --itr;
+      eosio::check(itr == begin_itr, "Should be the beginning");
+   }
+
+   [[eosio::action]]
+   void ritrerror1() {
+      my_table t{"kvtest"_n};
+      auto end_itr = t.primary_key.rend();
+      ++end_itr;
+   }
+
+   [[eosio::action]]
+   void ritrerror2() {
+      my_table t{"kvtest"_n};
+      auto begin_itr = t.primary_key.rbegin();
+      --begin_itr;
+   }
+
+   [[eosio::action]]
    void range() {
       my_table t{"kvtest"_n};
 
