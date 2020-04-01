@@ -307,7 +307,7 @@ class kv_table {
 
    class kv_index;
 
-   class iterator {
+   class base_iterator {
    public:
       enum class status {
          iterator_ok     = 0,  // Iterator is positioned at a key-value pair
@@ -315,23 +315,23 @@ class kv_table {
          iterator_end    = -2, // Iterator is out-of-bounds
       };
 
-      iterator() = default;
+      base_iterator() = default;
 
-      iterator(uint32_t itr, status itr_stat, const kv_index* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
+      base_iterator(uint32_t itr, status itr_stat, const kv_index* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
 
-      iterator(iterator&& other) :
+      base_iterator(base_iterator&& other) :
          itr(std::exchange(other.itr, 0)),
          itr_stat(std::move(other.itr_stat)),
          index(std::move(other.index))
       {}
 
-      ~iterator() {
+      ~base_iterator() {
          if (itr) {
             internal_use_do_not_use::kv_it_destroy(itr);
          }
       }
 
-      iterator& operator=(iterator&& other) {
+      base_iterator& operator=(base_iterator&& other) {
          if (itr) {
             internal_use_do_not_use::kv_it_destroy(itr);
          }
@@ -408,6 +408,41 @@ class kv_table {
          return {(char*)buffer, actual_value_size};
       }
 
+   protected:
+      uint32_t itr;
+      status itr_stat;
+
+      const kv_index* index;
+
+      int compare(const base_iterator& b) const {
+         bool a_is_end = !itr || itr_stat == status::iterator_end;
+         bool b_is_end = !b.itr || b.itr_stat == status::iterator_end;
+         if (a_is_end && b_is_end) {
+            return 0;
+         } else if (a_is_end && b.itr) {
+            return 1;
+         } else if (itr && b_is_end) {
+            return -1;
+         } else {
+            return internal_use_do_not_use::kv_it_compare(itr, b.itr);
+         }
+      }
+   };
+
+   class iterator : public base_iterator {
+      using base_iterator::itr;
+      using base_iterator::itr_stat;
+      using base_iterator::index;
+
+   public:
+      using status = typename base_iterator::status;
+
+      iterator() = default;
+
+      iterator(uint32_t itr, status itr_stat, const kv_index* index) : base_iterator{itr, itr_stat, index} {}
+
+      iterator(iterator&& other) : base_iterator{std::move(other)} {}
+
       iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "cannot increment end iterator");
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
@@ -432,47 +467,90 @@ class kv_table {
       }
 
       bool operator==(const iterator& b) const {
-         return compare(b) == 0;
+         return base_iterator::compare(b) == 0;
       }
 
       bool operator!=(const iterator& b) const {
-         return compare(b) != 0;
+         return base_iterator::compare(b) != 0;
       }
 
       bool operator<(const iterator& b) const {
-         return compare(b) < 0;
+         return base_iterator::compare(b) < 0;
       }
 
       bool operator<=(const iterator& b) const {
-         return compare(b) <= 0;
+         return base_iterator::compare(b) <= 0;
       }
 
       bool operator>(const iterator& b) const {
-         return compare(b) > 0;
+         return base_iterator::compare(b) > 0;
       }
 
       bool operator>=(const iterator& b) const {
-         return compare(b) >= 0;
+         return base_iterator::compare(b) >= 0;
+      }
+   };
+
+   class reverse_iterator : public base_iterator {
+      using base_iterator::itr;
+      using base_iterator::itr_stat;
+      using base_iterator::index;
+
+   public:
+      using status = typename base_iterator::status;
+
+      reverse_iterator() = default;
+
+      reverse_iterator(uint32_t itr, status itr_stat, const kv_index* index) : base_iterator{itr, itr_stat, index} {}
+
+      reverse_iterator(reverse_iterator&& other) : base_iterator{std::move(other)} {}
+
+      reverse_iterator& operator++() {
+         if (!itr) {
+            itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
+            int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
+         }
+         eosio::check(itr_stat != status::iterator_end, "incremented past the end");
+         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
+         return *this;
       }
 
-   private:
-      uint32_t itr;
-      status itr_stat;
+      reverse_iterator& operator--() {
+         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
+         eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
+         return *this;
+      }
 
-      const kv_index* index;
-
-      int compare(const iterator& b) const {
-         bool a_is_end = !itr || itr_stat == status::iterator_end;
-         bool b_is_end = !b.itr || b.itr_stat == status::iterator_end;
-         if (a_is_end && b_is_end) {
-            return 0;
-         } else if (a_is_end && b.itr) {
+      int32_t key_compare(key_type kt) const {
+         if (itr == 0 || itr_stat == status::iterator_end) {
             return 1;
-         } else if (itr && b_is_end) {
-            return -1;
          } else {
-            return internal_use_do_not_use::kv_it_compare(itr, b.itr);
+            return internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
          }
+      }
+
+      bool operator==(const reverse_iterator& b) const {
+         return base_iterator::compare(b) == 0;
+      }
+
+      bool operator!=(const reverse_iterator& b) const {
+         return base_iterator::compare(b) != 0;
+      }
+
+      bool operator<(const reverse_iterator& b) const {
+         return base_iterator::compare(b) < 0;
+      }
+
+      bool operator<=(const reverse_iterator& b) const {
+         return base_iterator::compare(b) <= 0;
+      }
+
+      bool operator>(const reverse_iterator& b) const {
+         return base_iterator::compare(b) > 0;
+      }
+
+      bool operator>=(const reverse_iterator& b) const {
+         return base_iterator::compare(b) >= 0;
       }
    };
 
@@ -657,6 +735,29 @@ public:
        * @return An iterator pointing past the end.
        */
       iterator end() const {
+         return {0, iterator::status::iterator_end, this};
+      }
+
+      /**
+       * Returns a reverse iterator to the object with the highest key (by this index) in the table.
+       * @ingroup keyvalue
+       *
+       * @return A reverse iterator to the object with the highest key (by this index) in the table.
+       */
+      reverse_iterator rbegin() const {
+         uint32_t itr = internal_use_do_not_use::kv_it_create(tbl->db_name, contract_name.value, prefix.data(), prefix.size());
+         int32_t itr_stat = internal_use_do_not_use::kv_it_prev(itr);
+
+         return {itr, static_cast<typename iterator::status>(itr_stat), this};
+      }
+
+      /**
+       * Returns a reverse iterator pointing past the beginning. It does not point to any element, therefore `value` should not be called on it.
+       * @ingroup keyvalue
+       *
+       * @return A reverse iterator pointing past the beginning.
+       */
+      reverse_iterator rend() const {
          return {0, iterator::status::iterator_end, this};
       }
 
