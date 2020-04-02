@@ -526,16 +526,16 @@ class kv_table {
       }
 
       reverse_iterator& operator++() {
-         if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
-            int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
-         }
          eosio::check(itr_stat != status::iterator_end, "incremented past the end");
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
          return *this;
       }
 
       reverse_iterator& operator--() {
+         if (!itr) {
+            itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
+            itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
+         }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
          return *this;
