@@ -798,6 +798,13 @@ struct callbacks {
       }
    }
 
+   uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size) {
+      auto& c = assert_chain(chain);
+      auto  s = c.dir.path().string();
+      memcpy(dest, s.c_str(), std::min(size, (uint32_t)s.size()));
+      return s.size();
+   }
+
    void start_block(uint32_t chain_index, int64_t skip_miliseconds) {
       assert_chain(chain_index).start_block(skip_miliseconds);
    }
@@ -1179,6 +1186,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::execute, eosio::vm::wasm_allocator>("env", "execute");
    rhf_t::add<callbacks, &callbacks::create_chain, eosio::vm::wasm_allocator>("env", "create_chain");
    rhf_t::add<callbacks, &callbacks::destroy_chain, eosio::vm::wasm_allocator>("env", "destroy_chain");
+   rhf_t::add<callbacks, &callbacks::get_chain_path, eosio::vm::wasm_allocator>("env", "get_chain_path");
    rhf_t::add<callbacks, &callbacks::start_block, eosio::vm::wasm_allocator>("env", "start_block");
    rhf_t::add<callbacks, &callbacks::finish_block, eosio::vm::wasm_allocator>("env", "finish_block");
    rhf_t::add<callbacks, &callbacks::get_head_block_info, eosio::vm::wasm_allocator>("env", "get_head_block_info");
