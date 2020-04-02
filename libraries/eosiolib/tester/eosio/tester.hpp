@@ -137,6 +137,11 @@ class test_chain {
    test_chain& operator=(const test_chain&) = delete;
 
    /**
+    * Get the temporary path which contains the chain's blocks and states directories
+    */
+   std::string get_path();
+
+   /**
     * Start a new pending block.  If a block is currently pending, finishes it first.
     * May push additional blocks if any time is skipped.
     *

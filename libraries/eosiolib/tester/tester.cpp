@@ -18,6 +18,7 @@ namespace {
 
    TESTER_INTRINSIC uint32_t create_chain();
    TESTER_INTRINSIC void     destroy_chain(uint32_t chain);
+   TESTER_INTRINSIC uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size);
    TESTER_INTRINSIC void     start_block(uint32_t chain, int64_t skip_miliseconds);
    TESTER_INTRINSIC void     finish_block(uint32_t chain);
    TESTER_INTRINSIC void     get_head_block_info(uint32_t chain, void* cb_alloc_data,
@@ -231,6 +232,13 @@ static eosio::test_chain* current_chain = nullptr;
 
 eosio::test_chain::test_chain() : id{ ::create_chain() } { current_chain = this; }
 eosio::test_chain::~test_chain() { current_chain = nullptr; ::destroy_chain(id); }
+
+std::string eosio::test_chain::get_path() {
+   size_t      len = get_chain_path(id, nullptr, 0);
+   std::string result(len, 0);
+   get_chain_path(id, result.data(), len);
+   return result;
+}
 
 void eosio::test_chain::start_block(int64_t skip_miliseconds) {
    head_block_info.reset();
