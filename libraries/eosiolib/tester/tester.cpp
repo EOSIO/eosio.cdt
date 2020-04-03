@@ -18,6 +18,7 @@ namespace {
 
    TESTER_INTRINSIC uint32_t create_chain(const char* snapshot);
    TESTER_INTRINSIC void     destroy_chain(uint32_t chain);
+   TESTER_INTRINSIC void     shutdown_chain(uint32_t chain);
    TESTER_INTRINSIC uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size);
    TESTER_INTRINSIC void     replace_producer_keys(uint32_t chain, const char* key_begin, uint32_t key_size);
    TESTER_INTRINSIC void     replace_account_keys(uint32_t chain, uint64_t account, const char* key_begin, uint32_t key_size);
@@ -240,6 +241,8 @@ eosio::test_chain::~test_chain() {
    current_chain = nullptr;
    ::destroy_chain(id);
 }
+
+void eosio::test_chain::shutdown() { ::shutdown_chain(id); }
 
 std::string eosio::test_chain::get_path() {
    size_t      len = get_chain_path(id, nullptr, 0);

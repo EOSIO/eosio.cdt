@@ -137,6 +137,12 @@ class test_chain {
    test_chain& operator=(const test_chain&) = delete;
 
    /**
+    * Shuts down the chain to allow copying its state file. The chain's temporary path will
+    * live until this object destructs.
+    */
+   void shutdown();
+
+   /**
     * Get the temporary path which contains the chain's blocks and states directories
     */
    std::string get_path();

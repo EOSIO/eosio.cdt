@@ -802,10 +802,13 @@ struct callbacks {
       return system(std::string{ command_begin, command_end }.c_str());
    }
 
-   test_chain& assert_chain(uint32_t chain) {
+   test_chain& assert_chain(uint32_t chain, bool require_control = true) {
       if (chain >= state.chains.size() || !state.chains[chain])
          throw std::runtime_error("chain does not exist or was destroyed");
-      return *state.chains[chain];
+      auto& result = *state.chains[chain];
+      if (require_control && !result.control)
+         throw std::runtime_error("chain was shut down");
+      return result;
    }
 
    uint32_t create_chain(const char* snapshot) {
@@ -818,15 +821,20 @@ struct callbacks {
    }
 
    void destroy_chain(uint32_t chain) {
-      assert_chain(chain);
+      assert_chain(chain, false);
       state.chains[chain].reset();
       while(!state.chains.empty() && !state.chains.back()) {
          state.chains.pop_back();
       }
    }
 
-   uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size) {
+   void shutdown_chain(uint32_t chain) {
       auto& c = assert_chain(chain);
+      c.control.reset();
+   }
+
+   uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size) {
+      auto& c = assert_chain(chain, false);
       auto  s = c.dir.path().string();
       memcpy(dest, s.c_str(), std::min(size, (uint32_t)s.size()));
       return s.size();
@@ -963,7 +971,7 @@ struct callbacks {
 
    auto& selected() {
       if (!state.selected_chain_index || *state.selected_chain_index >= state.chains.size() ||
-          !state.chains[*state.selected_chain_index])
+          !state.chains[*state.selected_chain_index] || !state.chains[*state.selected_chain_index]->control)
          throw std::runtime_error("select_chain_for_db() must be called before using multi_index");
       return state.chains[*state.selected_chain_index]->get_apply_context();
    }
@@ -1225,6 +1233,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::execute, eosio::vm::wasm_allocator>("env", "execute");
    rhf_t::add<callbacks, &callbacks::create_chain, eosio::vm::wasm_allocator>("env", "create_chain");
    rhf_t::add<callbacks, &callbacks::destroy_chain, eosio::vm::wasm_allocator>("env", "destroy_chain");
+   rhf_t::add<callbacks, &callbacks::shutdown_chain, eosio::vm::wasm_allocator>("env", "shutdown_chain");
    rhf_t::add<callbacks, &callbacks::get_chain_path, eosio::vm::wasm_allocator>("env", "get_chain_path");
    rhf_t::add<callbacks, &callbacks::replace_producer_keys, eosio::vm::wasm_allocator>("env", "replace_producer_keys");
    rhf_t::add<callbacks, &callbacks::replace_account_keys, eosio::vm::wasm_allocator>("env", "replace_account_keys");
