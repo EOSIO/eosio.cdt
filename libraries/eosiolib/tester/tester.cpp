@@ -16,9 +16,11 @@ namespace {
                                             void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC int32_t execute(const char* command_begin, const char* command_end);
 
-   TESTER_INTRINSIC uint32_t create_chain();
+   TESTER_INTRINSIC uint32_t create_chain(const char* snapshot);
    TESTER_INTRINSIC void     destroy_chain(uint32_t chain);
    TESTER_INTRINSIC uint32_t get_chain_path(uint32_t chain, char* dest, uint32_t size);
+   TESTER_INTRINSIC void     replace_producer_keys(uint32_t chain, const char* key_begin, uint32_t key_size);
+   TESTER_INTRINSIC void     replace_account_keys(uint32_t chain, uint64_t account, const char* key_begin, uint32_t key_size);
    TESTER_INTRINSIC void     start_block(uint32_t chain, int64_t skip_miliseconds);
    TESTER_INTRINSIC void     finish_block(uint32_t chain);
    TESTER_INTRINSIC void     get_head_block_info(uint32_t chain, void* cb_alloc_data,
@@ -230,14 +232,30 @@ const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_
 // need to be kept in sync with whatever updates the native layer.
 static eosio::test_chain* current_chain = nullptr;
 
-eosio::test_chain::test_chain() : id{ ::create_chain() } { current_chain = this; }
-eosio::test_chain::~test_chain() { current_chain = nullptr; ::destroy_chain(id); }
+eosio::test_chain::test_chain(const char* snapshot) : id{ ::create_chain(snapshot ? snapshot : "") } {
+   current_chain = this;
+}
+
+eosio::test_chain::~test_chain() {
+   current_chain = nullptr;
+   ::destroy_chain(id);
+}
 
 std::string eosio::test_chain::get_path() {
    size_t      len = get_chain_path(id, nullptr, 0);
    std::string result(len, 0);
    get_chain_path(id, result.data(), len);
    return result;
+}
+
+void eosio::test_chain::replace_producer_keys(const eosio::public_key& key) {
+   std::vector<char> packed = pack(key);
+   ::replace_producer_keys(id, packed.data(), packed.size());
+}
+
+void eosio::test_chain::replace_account_keys(name account, const eosio::public_key& key) {
+   std::vector<char> packed = pack(key);
+   ::replace_account_keys(id, account.value, packed.data(), packed.size());
 }
 
 void eosio::test_chain::start_block(int64_t skip_miliseconds) {

@@ -210,7 +210,7 @@ struct test_chain {
    std::unique_ptr<intrinsic_context>                intr_ctx;
    std::set<test_chain_ref*>                         refs;
 
-   test_chain() {
+   test_chain(const char* snapshot) {
       eosio::chain::genesis_state genesis;
       genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
       cfg                       = std::make_unique<eosio::chain::controller::config>();
@@ -219,8 +219,26 @@ struct test_chain {
       cfg->contracts_console    = true;
       cfg->wasm_runtime         = eosio::chain::wasm_interface::vm_type::eos_vm_jit;
 
-      control =
-            std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), genesis.compute_chain_id());
+      std::optional<std::ifstream>                           snapshot_file;
+      std::shared_ptr<eosio::chain::istream_snapshot_reader> snapshot_reader;
+      if (snapshot && *snapshot) {
+         std::optional<eosio::chain::chain_id_type> chain_id;
+         {
+            std::ifstream temp_file(snapshot, (std::ios::in | std::ios::binary));
+            if (!temp_file.is_open())
+               throw std::runtime_error("can not open " + std::string{ snapshot });
+            eosio::chain::istream_snapshot_reader tmp_reader(temp_file);
+            tmp_reader.validate();
+            chain_id = eosio::chain::controller::extract_chain_id(tmp_reader);
+         }
+         snapshot_file.emplace(snapshot, std::ios::in | std::ios::binary);
+         snapshot_reader = std::make_shared<eosio::chain::istream_snapshot_reader>(*snapshot_file);
+         control         = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(), *chain_id);
+      } else {
+         control = std::make_unique<eosio::chain::controller>(*cfg, make_protocol_feature_set(),
+                                                              genesis.compute_chain_id());
+      }
+
       control->add_indices();
 
       applied_transaction_connection.emplace(control->applied_transaction.connect(
@@ -230,11 +248,15 @@ struct test_chain {
       accepted_block_connection.emplace(
             control->accepted_block.connect([&](const block_state_ptr& p) { on_accepted_block(p); }));
 
-      do_startup(
-            control, [] {}, [] { return false; }, genesis);
-      control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
-                           { *control->get_protocol_feature_manager().get_builtin_digest(
-                                 eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
+      if (snapshot_reader) {
+         control->startup([] {}, [] { return false; }, snapshot_reader);
+      } else {
+         do_startup(
+               control, [] {}, [] { return false; }, genesis);
+         control->start_block(control->head_block_time() + fc::microseconds(block_interval_us), 0,
+                              { *control->get_protocol_feature_manager().get_builtin_digest(
+                                    eosio::chain::builtin_protocol_feature_t::preactivate_feature) });
+      }
    }
 
    test_chain(const test_chain&) = delete;
@@ -625,6 +647,11 @@ struct callbacks {
       return unpack<T>(begin, end);
    }
 
+   template <typename T>
+   T unpack_checked(const char* begin, uint32_t size) {
+      return unpack_checked<T>(begin, begin + size);
+   }
+
    char* alloc(uint32_t cb_alloc_data, uint32_t cb_alloc, uint32_t size) {
       // todo: verify cb_alloc isn't in imports
       if (state.backend.get_module().tables.size() < 0 || state.backend.get_module().tables[0].table.size() < cb_alloc)
@@ -781,8 +808,8 @@ struct callbacks {
       return *state.chains[chain];
    }
 
-   uint32_t create_chain() {
-      state.chains.push_back(std::make_unique<test_chain>());
+   uint32_t create_chain(const char* snapshot) {
+      state.chains.push_back(std::make_unique<test_chain>(snapshot));
       if (state.chains.size() == 1)
          state.selected_chain_index = 0;
       else
@@ -803,6 +830,18 @@ struct callbacks {
       auto  s = c.dir.path().string();
       memcpy(dest, s.c_str(), std::min(size, (uint32_t)s.size()));
       return s.size();
+   }
+
+   void replace_producer_keys(uint32_t chain_index, const char* key_begin, uint32_t key_size) {
+      auto& chain = assert_chain(chain_index);
+      auto  key   = unpack_checked<eosio::chain::public_key_type>(key_begin, key_size);
+      chain.control->replace_producer_keys(key);
+   }
+
+   void replace_account_keys(uint32_t chain_index, uint64_t account, const char* key_begin, uint32_t key_size) {
+      auto& chain = assert_chain(chain_index);
+      auto  key   = unpack_checked<eosio::chain::public_key_type>(key_begin, key_size);
+      chain.control->replace_account_keys(eosio::chain::name{ account }, key);
    }
 
    void start_block(uint32_t chain_index, int64_t skip_miliseconds) {
@@ -1187,6 +1226,8 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::create_chain, eosio::vm::wasm_allocator>("env", "create_chain");
    rhf_t::add<callbacks, &callbacks::destroy_chain, eosio::vm::wasm_allocator>("env", "destroy_chain");
    rhf_t::add<callbacks, &callbacks::get_chain_path, eosio::vm::wasm_allocator>("env", "get_chain_path");
+   rhf_t::add<callbacks, &callbacks::replace_producer_keys, eosio::vm::wasm_allocator>("env", "replace_producer_keys");
+   rhf_t::add<callbacks, &callbacks::replace_account_keys, eosio::vm::wasm_allocator>("env", "replace_account_keys");
    rhf_t::add<callbacks, &callbacks::start_block, eosio::vm::wasm_allocator>("env", "start_block");
    rhf_t::add<callbacks, &callbacks::finish_block, eosio::vm::wasm_allocator>("env", "finish_block");
    rhf_t::add<callbacks, &callbacks::get_head_block_info, eosio::vm::wasm_allocator>("env", "get_head_block_info");

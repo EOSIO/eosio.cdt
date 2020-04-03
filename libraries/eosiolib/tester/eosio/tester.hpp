@@ -130,7 +130,7 @@ class test_chain {
    static const public_key  default_pub_key;
    static const private_key default_priv_key;
 
-   test_chain();
+   test_chain(const char* snapshot = nullptr);
    test_chain(const test_chain&) = delete;
    ~test_chain();
 
@@ -140,6 +140,17 @@ class test_chain {
     * Get the temporary path which contains the chain's blocks and states directories
     */
    std::string get_path();
+
+   /**
+    * Replace the producer keys with key. This bypasses chain consensus rules.
+    * This does not update owner or active keys.
+    */
+   void replace_producer_keys(const eosio::public_key& key);
+
+   /**
+    * Replace the owner and active keys of an account. This bypasses chain consensus rules.
+    */
+   void replace_account_keys(name account, const eosio::public_key& key);
 
    /**
     * Start a new pending block.  If a block is currently pending, finishes it first.
