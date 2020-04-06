@@ -271,6 +271,7 @@ struct test_chain {
    }
 
    void on_accepted_block(const block_state_ptr& block_state) {
+      auto block_bin  = fc::raw::pack(*block_state->block);
       auto traces_bin = trace_converter.pack(control->db(), false, block_state);
       auto deltas_bin = fc::raw::pack(create_deltas(control->db(), !prev_block));
 
@@ -280,6 +281,7 @@ struct test_chain {
             block_position{ control->last_irreversible_block_num(), control->last_irreversible_block_id() };
       message.this_block = block_position{ block_state->block->block_num(), block_state->block->id() };
       message.prev_block = prev_block;
+      message.block      = std::move(block_bin);
       message.traces     = std::move(traces_bin);
       message.deltas     = std::move(deltas_bin);
 
