@@ -1022,6 +1022,7 @@ struct callbacks {
       if (it == r.chain.chain->history.end())
          return false;
       r.write_snapshot->start_block(it->second.data(), it->second.size());
+      r.write_snapshot->write_block_info(it->second.data(), it->second.size());
       r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
       for (auto& filter : r.filters) //
          filter.run(*r.write_snapshot, it->second.data(), it->second.size());
