@@ -102,6 +102,11 @@ using chain_types::block_info;
  */
 void expect(const transaction_trace& tt, const char* expected_except = nullptr);
 
+/**
+ * Same as expect(), but errors indicate transaction was executed from rodeos
+ */
+void expect_rodeos(const transaction_trace& tt, const char* expected_except = nullptr);
+
 template<std::size_t Size>
 std::ostream& operator<<(std::ostream& os, const fixed_bytes<Size>& d) {
    auto arr = d.extract_as_byte_array();

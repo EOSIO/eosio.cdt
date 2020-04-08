@@ -197,8 +197,27 @@ void eosio::expect(const transaction_trace& tt, const char* expected_except) {
       if (tt.status == transaction_status::executed)
          return;
       if (tt.except)
-         eosio::print(*tt.except, "\n");
-      eosio::check(false, "transaction has status " + to_string(tt.status));
+         eosio::print("transaction has exception: ", *tt.except, "\n");
+      eosio::check(false, "transaction failed with status " + to_string(tt.status));
+   }
+}
+
+void eosio::expect_rodeos(const transaction_trace& tt, const char* expected_except) {
+   if (expected_except) {
+      if (tt.status == transaction_status::executed)
+         eosio::check(false,
+                      "rodeos transaction succeeded, but was expected to fail with: " + std::string(expected_except));
+      if (!tt.except)
+         eosio::check(false, "rodeos transaction has no failure message. expected: " + std::string(expected_except));
+      if (tt.except->find(expected_except) == std::string::npos)
+         eosio::check(false, "rodeos transaction failed with <<<" + *tt.except +
+                                   ">>>, but was expected to fail with: <<<" + expected_except + ">>>");
+   } else {
+      if (tt.status == transaction_status::executed)
+         return;
+      if (tt.except)
+         eosio::print("rodeos transaction has exception: ", *tt.except, "\n");
+      eosio::check(false, "rodeos transaction failed with status " + to_string(tt.status));
    }
 }
 
@@ -492,7 +511,7 @@ eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&&     
                                                       const std::vector<private_key>& keys,
                                                       const char*                     expected_except) {
    auto trace = push_transaction(connected->make_transaction(std::move(actions)), keys);
-   expect(trace, expected_except);
+   expect_rodeos(trace, expected_except);
    return trace;
 }
 

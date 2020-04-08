@@ -1024,8 +1024,11 @@ struct callbacks {
       r.write_snapshot->start_block(it->second.data(), it->second.size());
       r.write_snapshot->write_block_info(it->second.data(), it->second.size());
       r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
-      for (auto& filter : r.filters) //
-         filter.run(*r.write_snapshot, it->second.data(), it->second.size());
+      for (auto& filter : r.filters) {
+         try {
+            filter.run(*r.write_snapshot, it->second.data(), it->second.size());
+         } catch (std::exception& e) { throw std::runtime_error("filter failed: " + std::string{ e.what() }); }
+      }
       r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
       r.next_block = it->first + 1;
       return true;
@@ -1060,7 +1063,7 @@ struct callbacks {
       for (auto& at : tt0.action_traces) {
          auto& at1 = std::get<eosio::ship_protocol::action_trace_v1>(at);
          if (!at1.console.empty())
-            ilog("query console:\n${c}", ("c", at1.console));
+            ilog("rodeos query console: <<<\n${c}>>>", ("c", at1.console));
       }
       set_data(cb_alloc_data, cb_alloc, result);
    }
@@ -1337,7 +1340,7 @@ int main(int argc, char* argv[]) {
       run(argv[next_arg], args);
       return 0;
    } catch (::assert_exception& e) {
-      std::cerr << "assert failed: " << e.what() << "\n";
+      std::cerr << "tester wasm asserted: " << e.what() << "\n";
    } catch (eosio::vm::exception& e) {
       std::cerr << "vm::exception: " << e.detail() << "\n";
    } catch (std::exception& e) { std::cerr << "std::exception: " << e.what() << "\n"; } catch (fc::exception& e) {
