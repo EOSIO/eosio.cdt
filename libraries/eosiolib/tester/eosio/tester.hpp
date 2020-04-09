@@ -4,13 +4,14 @@
 #include <eosio/asset.hpp>
 #include <eosio/chain_types.hpp>
 #include <eosio/crypto.hpp>
-#include <eosio/producer_schedule.hpp>
 #include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
-#include <eosio/transaction.hpp>
 #include <eosio/from_string.hpp>
-#include <cwchar>
+#include <eosio/producer_schedule.hpp>
+#include <eosio/ship_protocol.hpp>
+#include <eosio/transaction.hpp>
 
+#include <cwchar>
 #include <fmt/format.h>
 
 namespace eosio {
@@ -282,6 +283,22 @@ class test_chain {
     */
    [[nodiscard]]
    std::optional<transaction_trace> exec_deferred();
+
+   struct get_history_result {
+      /** The other members refer to memory owned here */
+      std::vector<char> memory;
+
+      ship_protocol::get_blocks_result_v0                          result;
+      std::optional<ship_protocol::signed_block>                   block;
+      std::optional<std::vector<ship_protocol::transaction_trace>> traces;
+      std::optional<std::vector<ship_protocol::table_delta>>       deltas;
+   };
+
+   /**
+    * Git SHiP history for a block. Returns nullopt if history doesn't exist for that block.
+    * If block_num == 0xffff'ffff, then returns history for the last-produced block, if available.
+    */
+   std::optional<get_history_result> get_history(uint32_t block_num);
 
    transaction_trace create_account(name ac, const public_key& pub_key,
                                     const char* expected_except = nullptr);

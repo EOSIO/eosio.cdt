@@ -905,6 +905,20 @@ struct callbacks {
       return false;
    }
 
+   uint32_t get_history(uint32_t chain_index, uint32_t block_num, char* dest, uint32_t size) {
+      auto&                                           chain = assert_chain(chain_index);
+      std::map<uint32_t, std::vector<char>>::iterator it;
+      if (block_num == 0xffff'ffff && !chain.history.empty())
+         it = --chain.history.end();
+      else {
+         it = chain.history.find(block_num);
+         if (it == chain.history.end())
+            return 0;
+      }
+      memcpy(dest, it->second.data(), std::min(size, (uint32_t)it->second.size()));
+      return it->second.size();
+   }
+
    // todo: remove
    void query_database(uint32_t chain_index, const char* req_begin, const char* req_end, uint32_t cb_alloc_data,
                        uint32_t cb_alloc) {
@@ -1248,6 +1262,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::get_head_block_info, eosio::vm::wasm_allocator>("env", "get_head_block_info");
    rhf_t::add<callbacks, &callbacks::push_transaction, eosio::vm::wasm_allocator>("env", "push_transaction");
    rhf_t::add<callbacks, &callbacks::exec_deferred, eosio::vm::wasm_allocator>("env", "exec_deferred");
+   rhf_t::add<callbacks, &callbacks::get_history, eosio::vm::wasm_allocator>("env", "get_history");
    rhf_t::add<callbacks, &callbacks::query_database, eosio::vm::wasm_allocator>("env", "query_database_chain");
    rhf_t::add<callbacks, &callbacks::select_chain_for_db, eosio::vm::wasm_allocator>("env", "select_chain_for_db");
 
