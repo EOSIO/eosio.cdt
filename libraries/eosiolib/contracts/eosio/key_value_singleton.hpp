@@ -51,6 +51,23 @@ namespace eosio {
             store();
          }
       }
+      const T& get_or_create() {
+          if( !exists() ) {
+              auto& ste = get_state();
+              ste.is_cached = true;
+              ste.is_dirty = true;
+          }
+          return get();
+      };
+
+      T& create_or_modify() {
+          if( !exists() ) {
+              auto& ste = get_state();
+              ste.is_cached = true;
+              ste.is_dirty = true;
+          }
+          return modify();
+      };
 
       const T& get() {
          auto& ste = get_state();
@@ -60,7 +77,9 @@ namespace eosio {
 
             auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
 
-            eosio::check(success, "tried to get a singleton that does not exist");
+            if( !success ) {
+                eosio::check(success, "tried to get the singleton '" + std::string(contract_name) + "'/'"+ std::string(name(SingletonName)) + "' that does not exist");
+            }
 
             ste.raw_original = (char*)malloc(value_size);
             ste.raw_original_size = value_size;
@@ -72,6 +91,31 @@ namespace eosio {
 
          return get_state().value;
       }
+
+      T& modify() {
+         auto& ste = get_state();
+         if (!ste.is_cached) {
+            uint32_t copy_size;
+            uint32_t value_size;
+
+            auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
+
+            if( !success ) {
+                eosio::check(success, "tried to get the singleton '" + std::string(contract_name) + "'/'"+ std::string(name(SingletonName)) + "' that does not exist");
+            }
+
+            ste.raw_original = (char*)malloc(value_size);
+            ste.raw_original_size = value_size;
+            copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, ste.raw_original, value_size);
+
+            deserialize(ste.value, ste.raw_original, copy_size);
+            ste.is_cached = true;
+         }
+         ste.is_dirty = true;
+
+         return get_state().value;
+      }
+
 
       void set(const T& val) {
          auto& ste = get_state();
@@ -163,6 +207,10 @@ namespace eosio {
       }
 
       state& get_state() {
+         static state value;
+         return value;
+      }
+      const state& get_state()const {
          static state value;
          return value;
       }
