@@ -817,13 +817,13 @@ struct callbacks {
       state.chains.push_back(std::make_unique<test_chain>(snapshot));
       if (state.chains.size() == 1)
          state.selected_chain_index = 0;
-      else
-         throw std::runtime_error("Chain already exists");
       return state.chains.size() - 1;
    }
 
    void destroy_chain(uint32_t chain) {
       assert_chain(chain, false);
+      if (state.selected_chain_index && *state.selected_chain_index == chain)
+         state.selected_chain_index.reset();
       state.chains[chain].reset();
       while(!state.chains.empty() && !state.chains.back()) {
          state.chains.pop_back();
