@@ -472,7 +472,7 @@ struct generation_utils {
       }
       else if ( is_template_specialization( type, {"vector", "set", "deque", "list"} ) ) {
          auto t =translate_type(get_template_argument( type ).getAsType());
-         if (t=="int8" || t=="uint8") {
+         if ( t=="int8" || t=="uint8" ) {
             return "bytes";
          } else {
             return t+"[]";
