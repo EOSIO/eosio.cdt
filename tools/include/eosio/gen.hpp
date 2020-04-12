@@ -12,6 +12,7 @@
 #include <map>
 #include <utility>
 #include <regex>
+#include <variant>
 #include <eosio/utils.hpp>
 
 namespace eosio { namespace cdt {
@@ -299,8 +300,8 @@ struct generation_utils {
                   return true;
                } else {
                   for ( auto name : names )
-                     if ( rt->getDecl()->getName().str() == name ) {
-                        return true;
+                     if ( const auto* decl = rt->getDecl() ) {
+                        return decl->getName().str() == name;
                      }
                }
             }
@@ -316,20 +317,55 @@ struct generation_utils {
 
       return is_specialization;
    }
-   inline clang::TemplateArgument get_template_argument( const clang::QualType& type, int index = 0 ) {
-      auto ret = [&](const clang::Type* t) {
+
+   using template_arg_t = std::variant<clang::QualType, clang::Expr*, llvm::APSInt>;
+
+   inline template_arg_t get_template_argument( const clang::QualType& type, int index = 0 ) {
+      template_arg_t ret_val;
+
+      auto resolve = [&](const clang::Type* t) {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(t);
          if (tst) {
             auto arg = tst->getArg(index);
-            return arg.getAsType();
+            if ( arg.getKind() == clang::TemplateArgument::ArgKind::Type ) {
+               ret_val = arg.getAsType();
+               return;
+            } else if ( arg.getKind() == clang::TemplateArgument::ArgKind::Integral ) {
+               ret_val = arg.getAsIntegral();
+               return;
+            } else if ( arg.getKind() == clang::TemplateArgument::ArgKind::Expression ) {
+               ret_val = arg.getAsExpr();
+               return;
+            }
+            else
+               error_handler();
          }
          std::cout << "Internal error, wrong type of template specialization\n";
          error_handler();
-         return tst->getArg(index).getAsType();
       };
+
       if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()))
-         return ret(pt->desugar().getTypePtr());
-      return ret(type.getTypePtr());
+         resolve(pt->desugar().getTypePtr());
+      else
+         resolve(type.getTypePtr());
+
+      return ret_val;
+   }
+
+   inline std::string get_template_argument_as_string( const clang::QualType& type, int index = 0 ) {
+      auto arg = get_template_argument( type, index );
+      if (std::holds_alternative<clang::QualType>(arg))
+         return translate_type(std::get<clang::QualType>(arg));
+      else if (std::holds_alternative<clang::Expr*>(arg)) {
+         if (auto ce = llvm::dyn_cast<clang::CastExpr>(std::get<clang::Expr*>(arg))) {
+            auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
+            return std::to_string(il->getValue().getLimitedValue());
+         }
+      } else {
+         return std::get<llvm::APSInt>(arg).toString(10);
+      }
+      error_handler();
+      __builtin_unreachable();
    }
 
    std::string get_base_type_name( const clang::QualType& type ) {
@@ -421,7 +457,7 @@ struct generation_utils {
          {"fixed_bytes_32", "checksum256"},
          {"fixed_bytes_64", "checksum512"}
       };
-      
+
       auto ret = translation_table[t];
 
       if (ret == "")
@@ -444,46 +480,34 @@ struct generation_utils {
       auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr());
       std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
       for (int i=0; i < tst->getNumArgs(); ++i) {
-         auto arg = get_template_argument(type,i);
-         if (arg.getAsExpr()) {
-            auto ce = llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr());
-            if (ce) { 
-               auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
-               ret += std::to_string(il->getValue().getLimitedValue());
-               if ( i < tst->getNumArgs()-1 )
-                  ret += "_";
-            }
-         }
-         else {
-            ret += _translate_type(get_template_argument( type, i ).getAsType());
-            if ( i < tst->getNumArgs()-1 )
-               ret += "_";
-         }
+         ret += get_template_argument_as_string(type,i);
+         if ( i < tst->getNumArgs()-1 )
+            ret += "_";
       }
       return _translate_type(replace_in_name(ret));
    }
 
    inline std::string translate_type( const clang::QualType& type ) {
       if ( is_template_specialization( type, {"ignore"} ) )
-         return translate_type(get_template_argument( type ).getAsType() );
+         return get_template_argument_as_string( type );
       else if ( is_template_specialization( type, {"binary_extension"} ) ) {
-         auto t = translate_type(get_template_argument( type ).getAsType());
+         auto t = get_template_argument_as_string( type );
          return t+"$";
       }
       else if ( is_template_specialization( type, {"vector", "set", "deque", "list"} ) ) {
-         auto t =translate_type(get_template_argument( type ).getAsType());
+         auto t = get_template_argument_as_string( type );
          return t=="int8" ? "bytes" : t+"[]";
       }
       else if ( is_template_specialization( type, {"optional"} ) )
-         return translate_type(get_template_argument( type ).getAsType())+"?";
+         return get_template_argument_as_string( type )+"?";
       else if ( is_template_specialization( type, {"map"} )) {
-         auto t0 = translate_type(get_template_argument( type ).getAsType());
-         auto t1 = translate_type(get_template_argument( type, 1).getAsType());
+         auto t0 = get_template_argument_as_string( type );
+         auto t1 = get_template_argument_as_string( type, 1);
          return replace_in_name("pair_" + t0 + "_" + t1 + "[]");
       }
       else if ( is_template_specialization( type, {"pair"} )) {
-         auto t0 = translate_type(get_template_argument( type ).getAsType());
-         auto t1 = translate_type(get_template_argument( type, 1).getAsType());
+         auto t0 = get_template_argument_as_string( type );
+         auto t1 = get_template_argument_as_string( type, 1);
          return replace_in_name("pair_" + t0 + "_" + t1);
       }
       else if ( is_template_specialization( type, {"tuple"} )) {
@@ -491,7 +515,7 @@ struct generation_utils {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>( pt ? pt->desugar().getTypePtr() : type.getTypePtr() );
          std::string ret = "tuple_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            ret += _translate_type(get_template_argument( type, i ).getAsType());
+            ret += get_template_argument_as_string( type, i );
             if ( i < tst->getNumArgs()-1 )
                ret += "_";
          }
@@ -502,19 +526,9 @@ struct generation_utils {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr() );
          std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            auto arg = get_template_argument(type,i);
-            if (auto ce = arg.getKind() == clang::TemplateArgument::ArgKind::Expression
-                  ? llvm::dyn_cast<clang::CastExpr>(arg.getAsExpr()) : nullptr) {
-               auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
-               ret += std::to_string(il->getValue().getLimitedValue());
-               if ( i < tst->getNumArgs()-1 )
-                  ret += "_";
-            }
-            else {
-               ret += translate_type(get_template_argument( type, i ).getAsType());
-               if ( i < tst->getNumArgs()-1 )
-                  ret += "_";
-            }
+            ret += get_template_argument_as_string(type,i);
+            if ( i < tst->getNumArgs()-1 )
+               ret += "_";
          }
          return _translate_type(replace_in_name(ret));
       }
