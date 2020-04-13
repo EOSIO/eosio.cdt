@@ -26,6 +26,16 @@ add_library(eosio_tester
             ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp
             ${HEADERS})
 
+add_library(eosio_embed
+            tester/fpconv.c
+            ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp
+            embed/eosio/eosio_assert.cpp
+            embed/eosio/printi.cpp
+            embed/eosio/printn.cpp
+            embed/eosio/prints.cpp
+            embed/eosio/printui.cpp
+            ${HEADERS})
+
 set(std_includes ${CMAKE_SOURCE_DIR}/libc++/libcxx/include
                  ${CMAKE_SOURCE_DIR}/libc/musl/include
                  ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
@@ -101,6 +111,7 @@ add_custom_command( TARGET eosio_malloc POST_BUILD COMMAND ${CMAKE_COMMAND} -E c
 add_custom_command( TARGET eosio_dsm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_dsm> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_cmem POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_cmem> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_tester> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET eosio_embed POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_embed> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${BASE_BINARY_DIR}/lib )
 

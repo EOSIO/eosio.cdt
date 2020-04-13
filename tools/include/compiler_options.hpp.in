@@ -34,6 +34,15 @@ static cl::list<std::string> export_opt(
     cl::desc("Export this symbol"),
     cl::Hidden,
     cl::ZeroOrMore);
+static cl::opt<std::string> entry_opt(
+    "entry",
+    cl::desc("Entry function"),
+    cl::Hidden);
+static cl::list<std::string> export_fn_opt(
+    "export-fn",
+    cl::desc("Export this function; shortcut for combining --export with --only-export"),
+    cl::Hidden,
+    cl::ZeroOrMore);
 static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
@@ -43,22 +52,20 @@ static cl::opt<bool> no_missing_ricardian_clause_opt(
     cl::desc("Disable warnings for missing Ricardian clauses"),
     cl::init(false),
     cl::cat(LD_CAT));
-static cl::opt<bool> fquery_opt(
-    "fquery",
-    cl::desc("Produce binaries for wasmql"),
-    cl::cat(LD_CAT));
-static cl::opt<bool> fquery_server_opt(
-    "fquery-server",
-    cl::desc("Produce binaries for wasmql"),
-    cl::cat(LD_CAT));
-static cl::opt<bool> fquery_client_opt(
-    "fquery-client",
-    cl::desc("Produce binaries for wasmql"),
+static cl::opt<bool> fcustom_opt(
+    "fcustom",
+    cl::desc("Produce a wasm which isn't a contract"),
+    cl::Hidden,
     cl::cat(LD_CAT));
 static cl::opt<bool> ftester_opt(
     "ftester",
     cl::desc("Produce binaries for eosio-tester"),
     cl::cat(LD_CAT));
+static cl::list<std::string> headers_opt(
+    "headers",
+    cl::desc("Include a header set"),
+    cl::Hidden,
+    cl::ZeroOrMore);
 static cl::opt<bool> use_old_malloc_opt(
     "use-freeing-malloc",
     cl::desc("Set the malloc implementation to the old freeing malloc"),
@@ -460,35 +467,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("--merge-data-segments");
-      if (fquery_opt || fquery_server_opt || fquery_client_opt) {
+      if (fcustom_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
          ldopts.insert(ldopts.end(), { "--only-export", "*:table" });
          ldopts.insert(ldopts.end(), { "--only-export", "*:memory" });
-         if (fuse_main_opt) {
-            ldopts.insert(ldopts.end(), { "-e", "main" });
-            ldopts.insert(ldopts.end(), { "--only-export", "main:function" } );
-         }
-         else {
-            ldopts.insert(ldopts.end(), { "-e", "initialize" } );
-            ldopts.insert(ldopts.end(), { "--only-export", "initialize:function" } );
-         }
-         if (fquery_server_opt)
-            ldopts.insert(ldopts.end(), { "-export", "run_query" });
-         else {
-            ldopts.insert(ldopts.end(), { "-export", "create_query_request" });
-            ldopts.insert(ldopts.end(), { "-export", "decode_query_response" });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_request" });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_response" });
-         }
-         if (fquery_server_opt)
-            ldopts.insert(ldopts.end(), { "--only-export", "run_query:function" });
-         else {
-            ldopts.insert(ldopts.end(), { "--only-export", "create_query_request:function" });
-            ldopts.insert(ldopts.end(), { "--only-export", "decode_query_response:function" });
-            ldopts.insert(ldopts.end(), { "--only-export", "describe_query_request:function" });
-            ldopts.insert(ldopts.end(), { "--only-export", "describe_query_response:function" });
-         }
       } else if (ftester_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
@@ -505,19 +488,24 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.insert(ldopts.end(), { "-e", "apply" });
          ldopts.insert(ldopts.end(), { "--only-export", "apply:function" });
       }
+      if (!entry_opt.empty()) {
+         ldopts.insert(ldopts.end(), {"-e", entry_opt});
+         ldopts.insert(ldopts.end(), {"--only-export", entry_opt + ":function"});
+      }
       ldopts.emplace_back("-lc++");
       ldopts.emplace_back("-lc");
-      ldopts.emplace_back("-leosio");
+      if (!fcustom_opt)
+         ldopts.emplace_back("-leosio");
       if (use_old_malloc_opt)
          ldopts.emplace_back("-leosio_malloc");
       else
          ldopts.emplace_back("-leosio_dsm");
 
-      if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt || ftester_opt) {
+      if (use_rt_opt || ftester_opt || fcustom_opt) {
          ldopts.emplace_back("-lrt");
          ldopts.emplace_back("-lsf");
       }
-      if (fquery_opt || fquery_server_opt || fquery_client_opt || ftester_opt)
+      if (ftester_opt || fcustom_opt)
          ldopts.emplace_back("-leosio_cmem");
       if (ftester_opt) {
          ldopts.emplace_back(eosio::cdt::whereami::where()+"/../lib/crt0.o");
@@ -576,20 +564,22 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   if (fquery_opt)
-      ldopts.emplace_back("-fquery");
-   if (fquery_server_opt)
-      ldopts.emplace_back("-fquery-server");
-   if (fquery_client_opt)
-      ldopts.emplace_back("-fquery-client");
+   if (fcustom_opt)
+      ldopts.emplace_back("-fcustom");
    if (ftester_opt)
       ldopts.emplace_back("-ftester");
    for (auto e : only_export_opt) {
-      ldopts.emplace_back("-only-export \""+e+"\"");
+      ldopts.insert(ldopts.end(), {"--only-export", e});
    }
    for (auto e : export_opt) {
-      ldopts.emplace_back("-export \""+e+"\"");
+      ldopts.insert(ldopts.end(), {"-export", e});
    }
+   for (auto e : export_fn_opt) {
+      ldopts.insert(ldopts.end(), {"-export", e});
+      ldopts.insert(ldopts.end(), {"--only-export", e + ":function"});
+   }
+   if (!entry_opt.empty())
+      ldopts.insert(ldopts.end(), {"--entry", entry_opt});
 #endif
 
    if (!pp_path_opt.empty())
@@ -733,6 +723,10 @@ static Options CreateOptions(bool add_defaults=true) {
       if (ftester_opt) {
          copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/tester");
       }
+      for (auto h : headers_opt) {
+         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/" + h);
+      }
+
       copts.emplace_back("-I"+sysroot_opt+"/include/abieos");
       copts.emplace_back("-I"+sysroot_opt+"/include/date");
       copts.emplace_back("-I"+sysroot_opt+"/include/fmt");
@@ -766,6 +760,9 @@ static Options CreateOptions(bool add_defaults=true) {
       if (ftester_opt) {
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/tester");
          copts.emplace_back("-DCATCH_CONFIG_NO_POSIX_SIGNALS");
+      }
+      for (auto h : headers_opt) {
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/" + h);
       }
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/abieos");
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/date");
