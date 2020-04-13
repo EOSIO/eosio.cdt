@@ -4,6 +4,8 @@ file(GLOB HEADERS "*.hpp"
 add_library(eosio
             eosiolib.cpp
             crypto.cpp
+            tester/fpconv.c
+            ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp
             ${HEADERS})
 
 add_library(eosio_malloc
@@ -21,7 +23,6 @@ add_library(eosio_cmem
 add_library(eosio_tester
             tester/tester.cpp
             tester/tester_intrinsics.cpp
-            tester/fpconv.c
             ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp
             ${HEADERS})
 
