@@ -28,6 +28,7 @@ namespace {
                                                  void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     push_transaction(uint32_t chain, const char* args_begin, const char* args_end,
                                               void* cb_alloc_data, void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC uint32_t get_history(uint32_t chain_index, uint32_t block_num, char* dest, uint32_t size);
    TESTER_INTRINSIC bool     exec_deferred(uint32_t chain, void* cb_alloc_data,
                                            void* (*cb_alloc)(void* cb_alloc_data, size_t size));
    TESTER_INTRINSIC void     query_database_chain(uint32_t chain, const void* req_begin, const void* req_end, void* cb_alloc_data,
@@ -362,6 +363,34 @@ std::optional<eosio::transaction_trace> eosio::test_chain::exec_deferred() {
        }))
       return {};
    return check(convert_from_bin<transaction_trace>(bin)).value();
+}
+
+std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_history(uint32_t block_num) {
+   std::optional<get_history_result> ret;
+   auto                              size = ::get_history(id, block_num, nullptr, 0);
+   if (!size)
+      return ret;
+   ret.emplace();
+   ret->memory.resize(size);
+   ::get_history(id, block_num, ret->memory.data(), size);
+   ship_protocol::result r;
+   check_discard(convert_from_bin(r, ret->memory));
+   auto p = std::get_if<ship_protocol::get_blocks_result_v0>(&r);
+   check(!!p, "test_chain::get_history: expected ship_protocol::get_blocks_result_v0");
+   ret->result = *p;
+   if (p->block) {
+      ret->block.emplace();
+      check_discard(from_bin(*ret->block, *p->block));
+   }
+   if (p->traces) {
+      ret->traces.emplace();
+      check_discard(from_bin(*ret->traces, *p->traces));
+   }
+   if (p->deltas) {
+      ret->deltas.emplace();
+      check_discard(from_bin(*ret->deltas, *p->deltas));
+   }
+   return ret;
 }
 
 eosio::transaction_trace eosio::test_chain::create_account(name ac, const public_key& pub_key,

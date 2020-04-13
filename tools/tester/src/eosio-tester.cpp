@@ -817,13 +817,13 @@ struct callbacks {
       state.chains.push_back(std::make_unique<test_chain>(snapshot));
       if (state.chains.size() == 1)
          state.selected_chain_index = 0;
-      else
-         throw std::runtime_error("Chain already exists");
       return state.chains.size() - 1;
    }
 
    void destroy_chain(uint32_t chain) {
       assert_chain(chain, false);
+      if (state.selected_chain_index && *state.selected_chain_index == chain)
+         state.selected_chain_index.reset();
       state.chains[chain].reset();
       while(!state.chains.empty() && !state.chains.back()) {
          state.chains.pop_back();
@@ -903,6 +903,20 @@ struct callbacks {
          return true;
       }
       return false;
+   }
+
+   uint32_t get_history(uint32_t chain_index, uint32_t block_num, char* dest, uint32_t size) {
+      auto&                                           chain = assert_chain(chain_index);
+      std::map<uint32_t, std::vector<char>>::iterator it;
+      if (block_num == 0xffff'ffff && !chain.history.empty())
+         it = --chain.history.end();
+      else {
+         it = chain.history.find(block_num);
+         if (it == chain.history.end())
+            return 0;
+      }
+      memcpy(dest, it->second.data(), std::min(size, (uint32_t)it->second.size()));
+      return it->second.size();
    }
 
    // todo: remove
@@ -1248,6 +1262,7 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::get_head_block_info, eosio::vm::wasm_allocator>("env", "get_head_block_info");
    rhf_t::add<callbacks, &callbacks::push_transaction, eosio::vm::wasm_allocator>("env", "push_transaction");
    rhf_t::add<callbacks, &callbacks::exec_deferred, eosio::vm::wasm_allocator>("env", "exec_deferred");
+   rhf_t::add<callbacks, &callbacks::get_history, eosio::vm::wasm_allocator>("env", "get_history");
    rhf_t::add<callbacks, &callbacks::query_database, eosio::vm::wasm_allocator>("env", "query_database_chain");
    rhf_t::add<callbacks, &callbacks::select_chain_for_db, eosio::vm::wasm_allocator>("env", "select_chain_for_db");
 
