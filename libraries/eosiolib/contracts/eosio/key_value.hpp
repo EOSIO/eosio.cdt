@@ -437,21 +437,7 @@ class kv_table {
    public:
       using status = typename base_iterator::status;
 
-      iterator() = default;
-
-      iterator(uint32_t itr, status itr_stat, const kv_index* index) : base_iterator{itr, itr_stat, index} {}
-
-      iterator(iterator&& other) : base_iterator{std::move(other)} {}
-
-      iterator& operator=(iterator&& other) {
-         if (itr) {
-            internal_use_do_not_use::kv_it_destroy(itr);
-         }
-         itr = std::exchange(other.itr, 0);
-         itr_stat = std::move(other.itr_stat);
-         index = std::move(other.index);
-         return *this;
-      }
+      using base_iterator::base_iterator;
 
       iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "cannot increment end iterator");
@@ -509,21 +495,9 @@ class kv_table {
    public:
       using status = typename base_iterator::status;
 
-      reverse_iterator() = default;
+      using base_iterator::base_iterator;
 
-      reverse_iterator(uint32_t itr, status itr_stat, const kv_index* index) : base_iterator{itr, itr_stat, index} {}
-
-      reverse_iterator(reverse_iterator&& other) : base_iterator{std::move(other)} {}
-
-      reverse_iterator& operator=(reverse_iterator&& other) {
-         if (itr) {
-            internal_use_do_not_use::kv_it_destroy(itr);
-         }
-         itr = std::exchange(other.itr, 0);
-         itr_stat = std::move(other.itr_stat);
-         index = std::move(other.index);
-         return *this;
-      }
+      reverse_iterator(iterator&& other) : base_iterator{std::move(other)} {}
 
       reverse_iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "incremented past the end");
