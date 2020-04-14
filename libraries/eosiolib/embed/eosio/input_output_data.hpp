@@ -29,8 +29,8 @@ inline void set_output_data(const std::vector<char>& v) {
 }
 
 template <int size>
-inline void set_output_data(const char (&s)[size]) {
-   internal_use_do_not_use::set_output_data(s, size);
+inline void set_output_data_str(const char (&s)[size]) {
+   internal_use_do_not_use::set_output_data(s, size - 1);
 }
 
 inline void set_output_data(const std::string_view& v) { internal_use_do_not_use::set_output_data(v.data(), v.size()); }

@@ -517,6 +517,10 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       for (auto e : export_opt) {
          ldopts.insert(ldopts.end(), {"-export", e});
       }
+      for (auto e : export_fn_opt) {
+         ldopts.insert(ldopts.end(), {"-export", e});
+         ldopts.insert(ldopts.end(), {"--only-export", e + ":function"});
+      }
 
    } else {
 #ifdef __APPLE__
