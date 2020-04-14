@@ -224,6 +224,19 @@ public:
       eosio::check(itr != begin_itr, "Should not be the beginning: 4");
       --itr;
       eosio::check(itr == begin_itr, "Should be the beginning");
+
+      eosio::check(end_itr > begin_itr, "end should be greater than beginning");
+      eosio::check(end_itr >= begin_itr, "end should be greater than or equal to beginning");
+      eosio::check(begin_itr < end_itr, "beginning should be less than end");
+      eosio::check(begin_itr <= end_itr, "beginning should be less than or equal to end");
+
+      auto b = t.primary_key.rbegin();
+      auto c = t.primary_key.rbegin();
+      ++c;
+      eosio::check(c > b, "c should be greater than b");
+      eosio::check(c >= b, "c should be greater than or equal to b");
+      eosio::check(b <= c, "b should be less than or equal to c");
+      eosio::check(b < c, "b should be less than c");
    }
 
    [[eosio::action]]

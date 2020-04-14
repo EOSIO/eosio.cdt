@@ -519,32 +519,47 @@ class kv_table {
          if (itr == 0 || itr_stat == status::iterator_end) {
             return 1;
          } else {
-            return internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
+            auto comp = internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
+            return comp == 0 ? 0 : -comp;
+         }
+      }
+
+      int compare(const reverse_iterator& b) const {
+         bool a_is_end = !itr || itr_stat == status::iterator_end;
+         bool b_is_end = !b.itr || b.itr_stat == status::iterator_end;
+         if (a_is_end && b_is_end) {
+            return 0;
+         } else if (a_is_end && b.itr) {
+            return 1;
+         } else if (itr && b_is_end) {
+            return -1;
+         } else {
+            return -(internal_use_do_not_use::kv_it_compare(itr, b.itr));
          }
       }
 
       bool operator==(const reverse_iterator& b) const {
-         return base_iterator::compare(b) == 0;
+         return compare(b) == 0;
       }
 
       bool operator!=(const reverse_iterator& b) const {
-         return base_iterator::compare(b) != 0;
+         return compare(b) != 0;
       }
 
       bool operator<(const reverse_iterator& b) const {
-         return base_iterator::compare(b) < 0;
+         return compare(b) < 0;
       }
 
       bool operator<=(const reverse_iterator& b) const {
-         return base_iterator::compare(b) <= 0;
+         return compare(b) <= 0;
       }
 
       bool operator>(const reverse_iterator& b) const {
-         return base_iterator::compare(b) > 0;
+         return compare(b) > 0;
       }
 
       bool operator>=(const reverse_iterator& b) const {
-         return base_iterator::compare(b) >= 0;
+         return compare(b) >= 0;
       }
    };
 
