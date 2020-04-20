@@ -3,7 +3,8 @@
 magic
 version
 section("linking") {
-  1 2 3 4 5 6 7
+  metadata_version[2]
+  2 3 4 5 6 7
 }
 
 ;; Some dummy data to make sure the module is still parsed after the invalid
@@ -28,14 +29,16 @@ Section Details:
 
 Custom:
  - name: "linking"
-Type:
+Type[1]:
  - type[0] () -> nil
-Function:
+Function[1]:
  - func[0] sig=0
+Code[1]:
+ - func[0] size=3
 
 Code Disassembly:
 
-000026 func[0]:
+000027 func[0]:
  000028: 0f                         | return
  000029: 0b                         | end
 ;;; STDOUT ;;)

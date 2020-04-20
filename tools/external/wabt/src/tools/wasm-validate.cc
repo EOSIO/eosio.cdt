@@ -21,7 +21,7 @@
 
 #include "src/binary-reader.h"
 #include "src/binary-reader-ir.h"
-#include "src/error-handler.h"
+#include "src/error-formatter.h"
 #include "src/ir.h"
 #include "src/option-parser.h"
 #include "src/stream.h"
@@ -52,7 +52,6 @@ static void ParseOptions(int argc, char** argv) {
     s_verbose++;
     s_log_stream = FileStream::CreateStdout();
   });
-  parser.AddHelpOption();
   s_features.AddOptions(&parser);
   parser.AddOption("no-debug-names", "Ignore debug names in the binary file",
                    []() { s_read_debug_names = false; });
@@ -76,19 +75,19 @@ int ProgramMain(int argc, char** argv) {
   std::vector<uint8_t> file_data;
   result = ReadFile(s_infile.c_str(), &file_data);
   if (Succeeded(result)) {
-    ErrorHandlerFile error_handler(Location::Type::Binary);
+    Errors errors;
     Module module;
     const bool kStopOnFirstError = true;
     ReadBinaryOptions options(s_features, s_log_stream.get(),
                               s_read_debug_names, kStopOnFirstError,
                               s_fail_on_custom_section_error);
-    result = ReadBinaryIr(s_infile.c_str(), file_data.data(),
-                          file_data.size(), &options, &error_handler, &module);
+    result = ReadBinaryIr(s_infile.c_str(), file_data.data(), file_data.size(),
+                          options, &errors, &module);
     if (Succeeded(result)) {
-      WastLexer* lexer = nullptr;
       ValidateOptions options(s_features);
-      result = ValidateModule(lexer, &module, &error_handler, &options);
+      result = ValidateModule(&module, &errors, options);
     }
+    FormatErrorsToFile(errors, Location::Type::Binary);
   }
   return result != Result::Ok;
 }

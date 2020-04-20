@@ -50,6 +50,16 @@ OptionParser::OptionParser(const char* program_name, const char* description)
     : program_name_(program_name),
       description_(description),
       on_error_([this](const std::string& message) { DefaultError(message); }) {
+
+  // Add common options
+  AddOption("help", "Print this help message", [this]() {
+    PrintHelp();
+    exit(0);
+  });
+  AddOption("version", "Print version information", []() {
+    printf("%s\n", WABT_VERSION_INFO);
+    exit(0);
+  });
 }
 
 void OptionParser::AddOption(const Option& option) {
@@ -89,11 +99,8 @@ void OptionParser::AddOption(char short_name,
   AddOption(option);
 }
 
-void OptionParser::AddHelpOption() {
-  AddOption('h', "help", "Print this help message", [this]() {
-    PrintHelp();
-    exit(0);
-  });
+void OptionParser::SetErrorCallback(const Callback& callback) {
+  on_error_ = callback;
 }
 
 // static
@@ -186,8 +193,9 @@ void OptionParser::Parse(int argc, char* argv[]) {
         const Option& best_option = options_[best_index];
         const char* option_argument = nullptr;
         if (best_option.has_argument) {
-          if (arg[best_length] == '=') {
-            option_argument = &arg[best_length + 1];
+          if (arg[best_length + 1] != 0 &&    // This byte is 0 on a full match.
+              arg[best_length + 2] == '=') {  // +2 to skip "--".
+            option_argument = &arg[best_length + 3];
           } else {
             if (i + 1 == argc || argv[i + 1][0] == '-') {
               Errorf("option '--%s' requires argument",

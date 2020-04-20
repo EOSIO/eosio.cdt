@@ -17,6 +17,7 @@
 #include "src/wat-writer.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cinttypes>
 #include <cstdarg>
@@ -30,6 +31,7 @@
 #include "src/common.h"
 #include "src/expr-visitor.h"
 #include "src/ir.h"
+#include "src/ir-util.h"
 #include "src/literal.h"
 #include "src/stream.h"
 
@@ -79,42 +81,21 @@ enum class NextChar {
 };
 
 struct ExprTree {
-  explicit ExprTree(const Expr* expr = nullptr) : expr(expr) {}
-  // For debugging.
-  std::string describe() const {
-    std::string result("ExprTree(");
-    if (expr) {
-      result.append(GetExprTypeName(*expr));
-    }
-    return result + ")";
-  }
+  explicit ExprTree(const Expr* expr, Index result_count)
+      : expr(expr), result_count(result_count) {}
 
   const Expr* expr;
   std::vector<ExprTree> children;
+  Index result_count;
 };
 
-struct Label {
-  Label(LabelType label_type,
-        const std::string& name,
-        const TypeVector& param_types,
-        const TypeVector& result_types)
-      : name(name),
-        label_type(label_type),
-        param_types(param_types),
-        result_types(result_types) {}
-
-  std::string name;
-  LabelType label_type;
-  TypeVector param_types;
-  TypeVector result_types;
-};
-
-class WatWriter {
+class WatWriter : ModuleContext {
  public:
-  WatWriter(Stream* stream, const WriteWatOptions* options)
-      : options_(options), stream_(stream) {}
+  WatWriter(Stream* stream, const WriteWatOptions& options,
+            const Module &module)
+      : ModuleContext(module), options_(options), stream_(stream) {}
 
-  Result WriteModule(const Module& module);
+  Result WriteModule();
 
  private:
   void Indent();
@@ -147,7 +128,6 @@ class WatWriter {
   void WriteBeginBlock(LabelType label_type,
                        const Block& block,
                        const char* text);
-  void WriteBeginIfExceptBlock(const IfExceptExpr* expr);
   void WriteEndBlock();
   void WriteConst(const Const& const_);
   void WriteExpr(const Expr* expr);
@@ -157,15 +137,14 @@ class WatWriter {
   void WriteInitExpr(const ExprList& expr);
   template <typename T>
   void WriteTypeBindings(const char* prefix,
-                         const Func& func,
                          const T& types,
-                         const BindingHash& bindings);
+                         const std::vector<std::string>& index_to_name,
+                         Index binding_index_offset = 0);
   void WriteBeginFunc(const Func& func);
   void WriteFunc(const Func& func);
   void WriteBeginGlobal(const Global& global);
   void WriteGlobal(const Global& global);
-  void WriteBeginException(const Exception& except);
-  void WriteException(const Exception& except);
+  void WriteEvent(const Event& event);
   void WriteLimits(const Limits& limits);
   void WriteTable(const Table& table);
   void WriteElemSegment(const ElemSegment& segment);
@@ -178,11 +157,6 @@ class WatWriter {
 
   class ExprVisitorDelegate;
 
-  Index GetLabelStackSize() { return label_stack_.size(); }
-  Label* GetLabel(const Var& var);
-  Index GetLabelArity(const Var& var);
-  Index GetFuncParamCount(const Var& var);
-  Index GetFuncResultCount(const Var& var);
   void PushExpr(const Expr* expr, Index operand_count, Index result_count);
   void FlushExprTree(const ExprTree& expr_tree);
   void FlushExprTreeVector(const std::vector<ExprTree>&);
@@ -196,15 +170,11 @@ class WatWriter {
   void BuildInlineImportMap();
   void WriteInlineImport(ExternalKind, Index);
 
-  const WriteWatOptions* options_ = nullptr;
-  const Module* module_ = nullptr;
-  const Func* current_func_ = nullptr;
+  const WriteWatOptions& options_;
   Stream* stream_ = nullptr;
   Result result_ = Result::Ok;
   int indent_ = 0;
   NextChar next_char_ = NextChar::None;
-  std::vector<std::string> index_to_name_;
-  std::vector<Label> label_stack_;
   std::vector<ExprTree> expr_tree_stack_;
   std::multimap<std::pair<ExternalKind, Index>, const Export*>
       inline_export_map_;
@@ -215,7 +185,9 @@ class WatWriter {
   Index table_index_ = 0;
   Index memory_index_ = 0;
   Index func_type_index_ = 0;
-  Index except_index_ = 0;
+  Index event_index_ = 0;
+  Index data_segment_index_ = 0;
+  Index elem_segment_index_ = 0;
 };
 
 void WatWriter::Indent() {
@@ -443,34 +415,13 @@ void WatWriter::WriteBeginBlock(LabelType label_type,
     Writef(" ;; label = @%" PRIindex, GetLabelStackSize());
   }
   WriteNewline(FORCE_NEWLINE);
-  label_stack_.emplace_back(label_type, block.label, block.decl.sig.param_types,
-                            block.decl.sig.result_types);
-  Indent();
-}
-
-void WatWriter::WriteBeginIfExceptBlock(const IfExceptExpr* expr) {
-  const Block& block = expr->true_;
-  WritePutsSpace(Opcode::IfExcept_Opcode.GetName());
-  bool has_label = !block.label.empty();
-  if (has_label) {
-    WriteString(block.label, NextChar::Space);
-  }
-  WriteTypes(block.decl.sig.param_types, "param");
-  WriteTypes(block.decl.sig.result_types, "result");
-  WriteVar(expr->except_var, NextChar::Space);
-  if (!has_label) {
-    Writef(" ;; label = @%" PRIindex, GetLabelStackSize());
-  }
-  WriteNewline(FORCE_NEWLINE);
-  label_stack_.emplace_back(LabelType::IfExcept, block.label,
-                            block.decl.sig.param_types,
-                            block.decl.sig.result_types);
+  BeginBlock(label_type, block);
   Indent();
 }
 
 void WatWriter::WriteEndBlock() {
   Dedent();
-  label_stack_.pop_back();
+  EndBlock();
   WritePutsNewline(Opcode::End_Opcode.GetName());
 }
 
@@ -514,9 +465,9 @@ void WatWriter::WriteConst(const Const& const_) {
 
     case Type::V128: {
       WritePutsSpace(Opcode::V128Const_Opcode.GetName());
-      Writef("i32 0x%08x 0x%08x 0x%08x 0x%08x", const_.v128_bits.v[0],
-             const_.v128_bits.v[1], const_.v128_bits.v[2],
-             const_.v128_bits.v[3]);
+      Writef("i32x4 0x%08x 0x%08x 0x%08x 0x%08x", const_.vec128.v[0],
+             const_.vec128.v[1], const_.vec128.v[2],
+             const_.vec128.v[3]);
       WriteNewline(NO_FORCE_NEWLINE);
       break;
     }
@@ -549,6 +500,7 @@ class WatWriter::ExprVisitorDelegate : public ExprVisitor::Delegate {
   Result EndBlockExpr(BlockExpr*) override;
   Result OnBrExpr(BrExpr*) override;
   Result OnBrIfExpr(BrIfExpr*) override;
+  Result OnBrOnExnExpr(BrOnExnExpr*) override;
   Result OnBrTableExpr(BrTableExpr*) override;
   Result OnCallExpr(CallExpr*) override;
   Result OnCallIndirectExpr(CallIndirectExpr*) override;
@@ -556,26 +508,40 @@ class WatWriter::ExprVisitorDelegate : public ExprVisitor::Delegate {
   Result OnConstExpr(ConstExpr*) override;
   Result OnConvertExpr(ConvertExpr*) override;
   Result OnDropExpr(DropExpr*) override;
-  Result OnGetGlobalExpr(GetGlobalExpr*) override;
-  Result OnGetLocalExpr(GetLocalExpr*) override;
+  Result OnGlobalGetExpr(GlobalGetExpr*) override;
+  Result OnGlobalSetExpr(GlobalSetExpr*) override;
   Result BeginIfExpr(IfExpr*) override;
   Result AfterIfTrueExpr(IfExpr*) override;
   Result EndIfExpr(IfExpr*) override;
-  Result BeginIfExceptExpr(IfExceptExpr*) override;
-  Result AfterIfExceptTrueExpr(IfExceptExpr*) override;
-  Result EndIfExceptExpr(IfExceptExpr*) override;
   Result OnLoadExpr(LoadExpr*) override;
+  Result OnLocalGetExpr(LocalGetExpr*) override;
+  Result OnLocalSetExpr(LocalSetExpr*) override;
+  Result OnLocalTeeExpr(LocalTeeExpr*) override;
   Result BeginLoopExpr(LoopExpr*) override;
   Result EndLoopExpr(LoopExpr*) override;
+  Result OnMemoryCopyExpr(MemoryCopyExpr*) override;
+  Result OnDataDropExpr(DataDropExpr*) override;
+  Result OnMemoryFillExpr(MemoryFillExpr*) override;
   Result OnMemoryGrowExpr(MemoryGrowExpr*) override;
+  Result OnMemoryInitExpr(MemoryInitExpr*) override;
   Result OnMemorySizeExpr(MemorySizeExpr*) override;
+  Result OnTableCopyExpr(TableCopyExpr*) override;
+  Result OnElemDropExpr(ElemDropExpr*) override;
+  Result OnTableInitExpr(TableInitExpr*) override;
+  Result OnTableGetExpr(TableGetExpr*) override;
+  Result OnTableSetExpr(TableSetExpr*) override;
+  Result OnTableGrowExpr(TableGrowExpr*) override;
+  Result OnTableSizeExpr(TableSizeExpr*) override;
+  Result OnTableFillExpr(TableFillExpr*) override;
+  Result OnRefFuncExpr(RefFuncExpr*) override;
+  Result OnRefNullExpr(RefNullExpr*) override;
+  Result OnRefIsNullExpr(RefIsNullExpr*) override;
   Result OnNopExpr(NopExpr*) override;
   Result OnReturnExpr(ReturnExpr*) override;
+  Result OnReturnCallExpr(ReturnCallExpr*) override;
+  Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
   Result OnSelectExpr(SelectExpr*) override;
-  Result OnSetGlobalExpr(SetGlobalExpr*) override;
-  Result OnSetLocalExpr(SetLocalExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
-  Result OnTeeLocalExpr(TeeLocalExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
   Result OnUnreachableExpr(UnreachableExpr*) override;
   Result BeginTryExpr(TryExpr*) override;
@@ -584,7 +550,7 @@ class WatWriter::ExprVisitorDelegate : public ExprVisitor::Delegate {
   Result OnThrowExpr(ThrowExpr*) override;
   Result OnRethrowExpr(RethrowExpr*) override;
   Result OnAtomicWaitExpr(AtomicWaitExpr*) override;
-  Result OnAtomicWakeExpr(AtomicWakeExpr*) override;
+  Result OnAtomicNotifyExpr(AtomicNotifyExpr*) override;
   Result OnAtomicLoadExpr(AtomicLoadExpr*) override;
   Result OnAtomicStoreExpr(AtomicStoreExpr*) override;
   Result OnAtomicRmwExpr(AtomicRmwExpr*) override;
@@ -592,6 +558,7 @@ class WatWriter::ExprVisitorDelegate : public ExprVisitor::Delegate {
   Result OnTernaryExpr(TernaryExpr*) override;
   Result OnSimdLaneOpExpr(SimdLaneOpExpr*) override;
   Result OnSimdShuffleOpExpr(SimdShuffleOpExpr*) override;
+  Result OnLoadSplatExpr(LoadSplatExpr*) override;
 
  private:
   WatWriter* writer_;
@@ -625,6 +592,13 @@ Result WatWriter::ExprVisitorDelegate::OnBrIfExpr(BrIfExpr* expr) {
   return Result::Ok;
 }
 
+Result WatWriter::ExprVisitorDelegate::OnBrOnExnExpr(BrOnExnExpr* expr) {
+  writer_->WritePutsSpace(Opcode::BrOnExn_Opcode.GetName());
+  writer_->WriteBrVar(expr->label_var, NextChar::Space);
+  writer_->WriteVar(expr->event_var, NextChar::Newline);
+  return Result::Ok;
+}
+
 Result WatWriter::ExprVisitorDelegate::OnBrTableExpr(BrTableExpr* expr) {
   writer_->WritePutsSpace(Opcode::BrTable_Opcode.GetName());
   for (const Var& var : expr->targets) {
@@ -643,8 +617,11 @@ Result WatWriter::ExprVisitorDelegate::OnCallExpr(CallExpr* expr) {
 Result WatWriter::ExprVisitorDelegate::OnCallIndirectExpr(
     CallIndirectExpr* expr) {
   writer_->WritePutsSpace(Opcode::CallIndirect_Opcode.GetName());
+  if (!expr->table.is_index() || expr->table.index() != 0) {
+    writer_->WriteVar(expr->table, NextChar::Space);
+  }
   writer_->WriteOpenSpace("type");
-  writer_->WriteVar(expr->decl.type_var, NextChar::Space);
+  writer_->WriteVar(expr->decl.type_var, NextChar::Newline);
   writer_->WriteCloseNewline();
   return Result::Ok;
 }
@@ -669,14 +646,14 @@ Result WatWriter::ExprVisitorDelegate::OnDropExpr(DropExpr* expr) {
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::OnGetGlobalExpr(GetGlobalExpr* expr) {
-  writer_->WritePutsSpace(Opcode::GetGlobal_Opcode.GetName());
+Result WatWriter::ExprVisitorDelegate::OnGlobalGetExpr(GlobalGetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::GlobalGet_Opcode.GetName());
   writer_->WriteVar(expr->var, NextChar::Newline);
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::OnGetLocalExpr(GetLocalExpr* expr) {
-  writer_->WritePutsSpace(Opcode::GetLocal_Opcode.GetName());
+Result WatWriter::ExprVisitorDelegate::OnGlobalSetExpr(GlobalSetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::GlobalSet_Opcode.GetName());
   writer_->WriteVar(expr->var, NextChar::Newline);
   return Result::Ok;
 }
@@ -702,31 +679,26 @@ Result WatWriter::ExprVisitorDelegate::EndIfExpr(IfExpr* expr) {
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::BeginIfExceptExpr(IfExceptExpr* expr) {
-  // Can't use WriteBeginBlock because if_except has an additional exception
-  // index argument.
-  writer_->WriteBeginIfExceptBlock(expr);
-  return Result::Ok;
-}
-
-Result WatWriter::ExprVisitorDelegate::AfterIfExceptTrueExpr(
-    IfExceptExpr* expr) {
-  if (!expr->false_.empty()) {
-    writer_->Dedent();
-    writer_->WritePutsSpace(Opcode::Else_Opcode.GetName());
-    writer_->Indent();
-    writer_->WriteNewline(FORCE_NEWLINE);
-  }
-  return Result::Ok;
-}
-
-Result WatWriter::ExprVisitorDelegate::EndIfExceptExpr(IfExceptExpr* expr) {
-  writer_->WriteEndBlock();
-  return Result::Ok;
-}
-
 Result WatWriter::ExprVisitorDelegate::OnLoadExpr(LoadExpr* expr) {
   writer_->WriteLoadStoreExpr<LoadExpr>(expr);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnLocalGetExpr(LocalGetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::LocalGet_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnLocalSetExpr(LocalSetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::LocalSet_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnLocalTeeExpr(LocalTeeExpr* expr) {
+  writer_->WritePutsSpace(Opcode::LocalTee_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
   return Result::Ok;
 }
 
@@ -741,6 +713,22 @@ Result WatWriter::ExprVisitorDelegate::EndLoopExpr(LoopExpr* expr) {
   return Result::Ok;
 }
 
+Result WatWriter::ExprVisitorDelegate::OnMemoryCopyExpr(MemoryCopyExpr* expr) {
+  writer_->WritePutsNewline(Opcode::MemoryCopy_Opcode.GetName());
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnDataDropExpr(DataDropExpr* expr) {
+  writer_->WritePutsSpace(Opcode::DataDrop_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnMemoryFillExpr(MemoryFillExpr* expr) {
+  writer_->WritePutsNewline(Opcode::MemoryFill_Opcode.GetName());
+  return Result::Ok;
+}
+
 Result WatWriter::ExprVisitorDelegate::OnMemoryGrowExpr(MemoryGrowExpr* expr) {
   writer_->WritePutsNewline(Opcode::MemoryGrow_Opcode.GetName());
   return Result::Ok;
@@ -748,6 +736,75 @@ Result WatWriter::ExprVisitorDelegate::OnMemoryGrowExpr(MemoryGrowExpr* expr) {
 
 Result WatWriter::ExprVisitorDelegate::OnMemorySizeExpr(MemorySizeExpr* expr) {
   writer_->WritePutsNewline(Opcode::MemorySize_Opcode.GetName());
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnMemoryInitExpr(MemoryInitExpr* expr) {
+  writer_->WritePutsSpace(Opcode::MemoryInit_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableCopyExpr(TableCopyExpr* expr) {
+  writer_->WritePutsNewline(Opcode::TableCopy_Opcode.GetName());
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnElemDropExpr(ElemDropExpr* expr) {
+  writer_->WritePutsSpace(Opcode::ElemDrop_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableInitExpr(TableInitExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableInit_Opcode.GetName());
+  writer_->WriteVar(expr->segment_index, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableGetExpr(TableGetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableGet_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableSetExpr(TableSetExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableSet_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableGrowExpr(TableGrowExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableGrow_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableSizeExpr(TableSizeExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableSize_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnTableFillExpr(TableFillExpr* expr) {
+  writer_->WritePutsSpace(Opcode::TableFill_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnRefFuncExpr(RefFuncExpr* expr) {
+  writer_->WritePutsSpace(Opcode::RefFunc_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnRefNullExpr(RefNullExpr* expr) {
+  writer_->WritePutsNewline(Opcode::RefNull_Opcode.GetName());
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnRefIsNullExpr(RefIsNullExpr* expr) {
+  writer_->WritePutsNewline(Opcode::RefIsNull_Opcode.GetName());
   return Result::Ok;
 }
 
@@ -761,31 +818,28 @@ Result WatWriter::ExprVisitorDelegate::OnReturnExpr(ReturnExpr* expr) {
   return Result::Ok;
 }
 
+Result WatWriter::ExprVisitorDelegate::OnReturnCallExpr(ReturnCallExpr* expr) {
+  writer_->WritePutsSpace(Opcode::ReturnCall_Opcode.GetName());
+  writer_->WriteVar(expr->var, NextChar::Newline);
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnReturnCallIndirectExpr(
+    ReturnCallIndirectExpr* expr) {
+  writer_->WritePutsSpace(Opcode::ReturnCallIndirect_Opcode.GetName());
+  writer_->WriteOpenSpace("type");
+  writer_->WriteVar(expr->decl.type_var, NextChar::Space);
+  writer_->WriteCloseNewline();
+  return Result::Ok;
+}
+
 Result WatWriter::ExprVisitorDelegate::OnSelectExpr(SelectExpr* expr) {
   writer_->WritePutsNewline(Opcode::Select_Opcode.GetName());
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::OnSetGlobalExpr(SetGlobalExpr* expr) {
-  writer_->WritePutsSpace(Opcode::SetGlobal_Opcode.GetName());
-  writer_->WriteVar(expr->var, NextChar::Newline);
-  return Result::Ok;
-}
-
-Result WatWriter::ExprVisitorDelegate::OnSetLocalExpr(SetLocalExpr* expr) {
-  writer_->WritePutsSpace(Opcode::SetLocal_Opcode.GetName());
-  writer_->WriteVar(expr->var, NextChar::Newline);
-  return Result::Ok;
-}
-
 Result WatWriter::ExprVisitorDelegate::OnStoreExpr(StoreExpr* expr) {
   writer_->WriteLoadStoreExpr<StoreExpr>(expr);
-  return Result::Ok;
-}
-
-Result WatWriter::ExprVisitorDelegate::OnTeeLocalExpr(TeeLocalExpr* expr) {
-  writer_->WritePutsSpace(Opcode::TeeLocal_Opcode.GetName());
-  writer_->WriteVar(expr->var, NextChar::Newline);
   return Result::Ok;
 }
 
@@ -810,7 +864,7 @@ Result WatWriter::ExprVisitorDelegate::OnCatchExpr(TryExpr* expr) {
   writer_->Dedent();
   writer_->WritePutsSpace(Opcode::Catch_Opcode.GetName());
   writer_->Indent();
-  writer_->label_stack_.back().label_type = LabelType::Catch;
+  writer_->SetTopLabelType(LabelType::Catch);
   writer_->WriteNewline(FORCE_NEWLINE);
   return Result::Ok;
 }
@@ -836,8 +890,9 @@ Result WatWriter::ExprVisitorDelegate::OnAtomicWaitExpr(AtomicWaitExpr* expr) {
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::OnAtomicWakeExpr(AtomicWakeExpr* expr) {
-  writer_->WriteLoadStoreExpr<AtomicWakeExpr>(expr);
+Result WatWriter::ExprVisitorDelegate::OnAtomicNotifyExpr(
+    AtomicNotifyExpr* expr) {
+  writer_->WriteLoadStoreExpr<AtomicNotifyExpr>(expr);
   return Result::Ok;
 }
 
@@ -878,9 +933,16 @@ Result WatWriter::ExprVisitorDelegate::OnSimdLaneOpExpr(SimdLaneOpExpr* expr) {
 Result WatWriter::ExprVisitorDelegate::OnSimdShuffleOpExpr(
     SimdShuffleOpExpr* expr) {
   writer_->WritePutsSpace(expr->opcode.GetName());
-  writer_->Writef(" 0x%08x 0x%08x 0x%08x 0x%08x", (expr->val.v[0]), (expr->val.v[1]),
-                  (expr->val.v[2]), (expr->val.v[3]));
+  std::array<uint8_t, 16> values = Bitcast<std::array<uint8_t, 16>>(expr->val);
+  for (int32_t lane = 0; lane < 16; ++lane) {
+    writer_->Writef(" %u", values[lane]);
+  }
   writer_->WritePutsNewline("");
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::OnLoadSplatExpr(LoadSplatExpr* expr) {
+  writer_->WriteLoadStoreExpr<LoadSplatExpr>(expr);
   return Result::Ok;
 }
 
@@ -898,200 +960,10 @@ void WatWriter::WriteExprList(const ExprList& exprs) {
   visitor.VisitExprList(const_cast<ExprList&>(exprs));
 }
 
-Label* WatWriter::GetLabel(const Var& var) {
-  if (var.is_name()) {
-    for (Index i = GetLabelStackSize(); i > 0; --i) {
-      Label* label = &label_stack_[i - 1];
-      if (label->name == var.name()) {
-        return label;
-      }
-    }
-  } else if (var.index() < GetLabelStackSize()) {
-    Label* label = &label_stack_[GetLabelStackSize() - var.index() - 1];
-    return label;
-  }
-  return nullptr;
-}
-
-Index WatWriter::GetLabelArity(const Var& var) {
-  Label* label = GetLabel(var);
-  if (!label) {
-    return 0;
-  }
-
-  return label->label_type == LabelType::Loop ? label->param_types.size()
-                                              : label->result_types.size();
-}
-
-Index WatWriter::GetFuncParamCount(const Var& var) {
-  const Func* func = module_->GetFunc(var);
-  return func ? func->GetNumParams() : 0;
-}
-
-Index WatWriter::GetFuncResultCount(const Var& var) {
-  const Func* func = module_->GetFunc(var);
-  return func ? func->GetNumResults() : 0;
-}
-
 void WatWriter::WriteFoldedExpr(const Expr* expr) {
   WABT_TRACE_ARGS(WriteFoldedExpr, "%s", GetExprTypeName(*expr));
-  switch (expr->type()) {
-    case ExprType::AtomicRmw:
-    case ExprType::AtomicWake:
-    case ExprType::Binary:
-    case ExprType::Compare:
-      PushExpr(expr, 2, 1);
-      break;
-
-    case ExprType::AtomicStore:
-    case ExprType::Store:
-      PushExpr(expr, 2, 0);
-      break;
-
-    case ExprType::Block:
-      PushExpr(expr, 0, cast<BlockExpr>(expr)->block.decl.sig.GetNumResults());
-      break;
-
-    case ExprType::Br:
-      PushExpr(expr, GetLabelArity(cast<BrExpr>(expr)->var), 1);
-      break;
-
-    case ExprType::BrIf: {
-      Index arity = GetLabelArity(cast<BrIfExpr>(expr)->var);
-      PushExpr(expr, arity + 1, arity);
-      break;
-    }
-
-    case ExprType::BrTable:
-      PushExpr(expr, GetLabelArity(cast<BrTableExpr>(expr)->default_target) + 1,
-               1);
-      break;
-
-    case ExprType::Call: {
-      const Var& var = cast<CallExpr>(expr)->var;
-      PushExpr(expr, GetFuncParamCount(var), GetFuncResultCount(var));
-      break;
-    }
-
-    case ExprType::CallIndirect: {
-      const auto* ci_expr = cast<CallIndirectExpr>(expr);
-      PushExpr(expr, ci_expr->decl.GetNumParams() + 1,
-               ci_expr->decl.GetNumResults());
-      break;
-    }
-
-    case ExprType::Const:
-    case ExprType::MemorySize:
-    case ExprType::GetGlobal:
-    case ExprType::GetLocal:
-    case ExprType::Unreachable:
-      PushExpr(expr, 0, 1);
-      break;
-
-    case ExprType::AtomicLoad:
-    case ExprType::Convert:
-    case ExprType::MemoryGrow:
-    case ExprType::Load:
-    case ExprType::TeeLocal:
-    case ExprType::Unary:
-      PushExpr(expr, 1, 1);
-      break;
-
-    case ExprType::Drop:
-    case ExprType::SetGlobal:
-    case ExprType::SetLocal:
-      PushExpr(expr, 1, 0);
-      break;
-
-    case ExprType::If:
-      PushExpr(expr, 1, cast<IfExpr>(expr)->true_.decl.sig.GetNumResults());
-      break;
-
-    case ExprType::IfExcept:
-      PushExpr(expr, 1,
-               cast<IfExceptExpr>(expr)->true_.decl.sig.GetNumResults());
-      break;
-
-    case ExprType::Loop:
-      PushExpr(expr, 0, cast<LoopExpr>(expr)->block.decl.sig.GetNumResults());
-      break;
-
-    case ExprType::Nop:
-      PushExpr(expr, 0, 0);
-      break;
-
-    case ExprType::Return:
-      PushExpr(expr, current_func_->decl.sig.result_types.size(), 1);
-      break;
-
-    case ExprType::Rethrow:
-      PushExpr(expr, 0, 0);
-      break;
-
-    case ExprType::AtomicRmwCmpxchg:
-    case ExprType::AtomicWait:
-    case ExprType::Select:
-      PushExpr(expr, 3, 1);
-      break;
-
-    case ExprType::Throw: {
-      auto throw_ = cast<ThrowExpr>(expr);
-      Index operand_count = 0;
-      if (Exception* except = module_->GetExcept(throw_->var)) {
-        operand_count = except->sig.size();
-      }
-      PushExpr(expr, operand_count, 0);
-      break;
-    }
-
-    case ExprType::Try:
-      PushExpr(expr, 0, cast<TryExpr>(expr)->block.decl.sig.GetNumResults());
-      break;
-
-    case ExprType::Ternary:
-      PushExpr(expr, 3, 1);
-      break;
-
-    case ExprType::SimdLaneOp: {
-      const Opcode opcode = cast<SimdLaneOpExpr>(expr)->opcode;
-      switch (opcode) {
-        case Opcode::I8X16ExtractLaneS:
-        case Opcode::I8X16ExtractLaneU:
-        case Opcode::I16X8ExtractLaneS:
-        case Opcode::I16X8ExtractLaneU:
-        case Opcode::I32X4ExtractLane:
-        case Opcode::I64X2ExtractLane:
-        case Opcode::F32X4ExtractLane:
-        case Opcode::F64X2ExtractLane:
-          PushExpr(expr, 1, 1);
-          break;
-
-        case Opcode::I8X16ReplaceLane:
-        case Opcode::I16X8ReplaceLane:
-        case Opcode::I32X4ReplaceLane:
-        case Opcode::I64X2ReplaceLane:
-        case Opcode::F32X4ReplaceLane:
-        case Opcode::F64X2ReplaceLane:
-          PushExpr(expr, 2, 1);
-          break;
-
-        default:
-          fprintf(stderr, "Invalid Opcode for expr type: %s\n",
-                  GetExprTypeName(*expr));
-          assert(0);
-      }
-      break;
-    }
-
-    case ExprType::SimdShuffleOp:
-      PushExpr(expr, 2, 1);
-      break;
-
-    default:
-      fprintf(stderr, "bad expr type: %s\n", GetExprTypeName(*expr));
-      assert(0);
-      break;
-  }
+  auto arity = GetExprArity(*expr);
+  PushExpr(expr, arity.nargs, arity.nreturns);
 }
 
 void WatWriter::WriteFoldedExprList(const ExprList& exprs) {
@@ -1106,18 +978,43 @@ void WatWriter::PushExpr(const Expr* expr,
                          Index result_count) {
   WABT_TRACE_ARGS(PushExpr, "%s, %" PRIindex ", %" PRIindex "",
                   GetExprTypeName(*expr), operand_count, result_count);
-  if (operand_count <= expr_tree_stack_.size()) {
+
+  // Try to pop operand off the expr stack to use as this expr's children. One
+  // expr can have multiple return values (with the multi-value extension), so
+  // we have to iterate over each in reverse.
+
+  auto first_operand = expr_tree_stack_.end();
+
+  Index current_count = 0;
+  if (operand_count > 0) {
+    for (auto iter = expr_tree_stack_.rbegin(); iter != expr_tree_stack_.rend();
+         ++iter) {
+      assert(iter->result_count > 0);
+      current_count += iter->result_count;
+
+      if (current_count == operand_count) {
+        first_operand = iter.base() - 1;
+        break;
+      } else if (current_count > operand_count) {
+        // We went over the number of operands this instruction wants; this can
+        // only happen when there are expressions on the stack with a
+        // result_count > 1. When this happens we can't fold, since any result
+        // we produce will not make sense.
+        break;
+      }
+    }
+  }
+
+  ExprTree tree(expr, result_count);
+
+  if (current_count == operand_count && operand_count > 0) {
     auto last_operand = expr_tree_stack_.end();
-    auto first_operand = last_operand - operand_count;
-    ExprTree tree(expr);
     std::move(first_operand, last_operand, std::back_inserter(tree.children));
     expr_tree_stack_.erase(first_operand, last_operand);
-    expr_tree_stack_.emplace_back(tree);
-    if (result_count == 0) {
-      FlushExprTreeStack();
-    }
-  } else {
-    expr_tree_stack_.emplace_back(expr);
+  }
+
+  expr_tree_stack_.emplace_back(std::move(tree));
+  if (current_count > operand_count || result_count == 0) {
     FlushExprTreeStack();
   }
 }
@@ -1156,25 +1053,6 @@ void WatWriter::FlushExprTree(const ExprTree& expr_tree) {
       if (!if_expr->false_.empty()) {
         WriteOpenNewline("else");
         WriteFoldedExprList(if_expr->false_);
-        FlushExprTreeStack();
-        WriteCloseNewline();
-      }
-      WriteCloseNewline();
-      break;
-    }
-
-    case ExprType::IfExcept: {
-      auto if_except_expr = cast<IfExceptExpr>(expr_tree.expr);
-      WritePuts("(", NextChar::None);
-      WriteBeginIfExceptBlock(if_except_expr);
-      FlushExprTreeVector(expr_tree.children);
-      WriteOpenNewline("then");
-      WriteFoldedExprList(if_except_expr->true_.exprs);
-      FlushExprTreeStack();
-      WriteCloseNewline();
-      if (!if_except_expr->false_.empty()) {
-        WriteOpenNewline("else");
-        WriteFoldedExprList(if_except_expr->false_);
         FlushExprTreeStack();
         WriteCloseNewline();
       }
@@ -1234,11 +1112,9 @@ void WatWriter::WriteInitExpr(const ExprList& expr) {
 
 template <typename T>
 void WatWriter::WriteTypeBindings(const char* prefix,
-                                  const Func& func,
                                   const T& types,
-                                  const BindingHash& bindings) {
-  MakeTypeBindingReverseMapping(types.size(), bindings, &index_to_name_);
-
+                                  const std::vector<std::string>& index_to_name,
+                                  Index binding_index_offset) {
   /* named params/locals must be specified by themselves, but nameless
    * params/locals can be compressed, e.g.:
    *   (param $foo i32)
@@ -1252,7 +1128,7 @@ void WatWriter::WriteTypeBindings(const char* prefix,
       is_open = true;
     }
 
-    const std::string& name = index_to_name_[index];
+    const std::string& name = index_to_name[binding_index_offset + index];
     if (!name.empty()) {
       WriteString(name, NextChar::Space);
     }
@@ -1279,7 +1155,7 @@ void WatWriter::WriteBeginFunc(const Func& func) {
     WriteCloseSpace();
   }
 
-  if (module_->IsImport(ExternalKind::Func, Var(func_index_))) {
+  if (module.IsImport(ExternalKind::Func, Var(func_index_))) {
     // Imported functions can be written a few ways:
     //
     //   1. (import "module" "field" (func (type 0)))
@@ -1290,7 +1166,7 @@ void WatWriter::WriteBeginFunc(const Func& func) {
     //
     // Note that the text format does not allow including the param/result
     // explicitly when using the "(import..." syntax (#1 and #2).
-    if (options_->inline_import || !func.decl.has_func_type) {
+    if (options_.inline_import || !func.decl.has_func_type) {
       WriteFuncSigSpace(func.decl.sig);
     }
   }
@@ -1299,25 +1175,25 @@ void WatWriter::WriteBeginFunc(const Func& func) {
 
 void WatWriter::WriteFunc(const Func& func) {
   WriteBeginFunc(func);
-  WriteTypeBindings("param", func, func.decl.sig.param_types,
-                    func.param_bindings);
+  std::vector<std::string> index_to_name;
+  MakeTypeBindingReverseMapping(func.GetNumParamsAndLocals(), func.bindings,
+                                &index_to_name);
+  WriteTypeBindings("param", func.decl.sig.param_types, index_to_name);
   WriteTypes(func.decl.sig.result_types, "result");
   WriteNewline(NO_FORCE_NEWLINE);
   if (func.local_types.size()) {
-    WriteTypeBindings("local", func, func.local_types, func.local_bindings);
+    WriteTypeBindings("local", func.local_types, index_to_name,
+                      func.GetNumParams());
   }
   WriteNewline(NO_FORCE_NEWLINE);
-  label_stack_.clear();
-  label_stack_.emplace_back(LabelType::Func, std::string(), TypeVector(),
-                            func.decl.sig.result_types);
-  current_func_ = &func;
-  if (options_->fold_exprs) {
+  BeginFunc(func);
+  if (options_.fold_exprs) {
     WriteFoldedExprList(func.exprs);
     FlushExprTreeStack();
   } else {
     WriteExprList(func.exprs);
   }
-  current_func_ = nullptr;
+  EndFunc();
   WriteCloseNewline();
 }
 
@@ -1342,17 +1218,18 @@ void WatWriter::WriteGlobal(const Global& global) {
   WriteCloseNewline();
 }
 
-void WatWriter::WriteBeginException(const Exception& except) {
-  WriteOpenSpace("except");
-  WriteNameOrIndex(except.name, except_index_, NextChar::Space);
-  WriteInlineExports(ExternalKind::Except, except_index_);
-  WriteInlineImport(ExternalKind::Except, except_index_);
-  WriteTypes(except.sig, nullptr);
-  ++except_index_;
-}
-
-void WatWriter::WriteException(const Exception& except) {
-  WriteBeginException(except);
+void WatWriter::WriteEvent(const Event& event) {
+  WriteOpenSpace("event");
+  WriteNameOrIndex(event.name, event_index_, NextChar::Space);
+  WriteInlineExports(ExternalKind::Event, event_index_);
+  WriteInlineImport(ExternalKind::Event, event_index_);
+  if (event.decl.has_func_type) {
+    WriteOpenSpace("type");
+    WriteVar(event.decl.type_var, NextChar::None);
+    WriteCloseSpace();
+  }
+  WriteTypes(event.decl.sig.param_types, "param");
+  ++event_index_;
   WriteCloseNewline();
 }
 
@@ -1372,18 +1249,45 @@ void WatWriter::WriteTable(const Table& table) {
   WriteInlineExports(ExternalKind::Table, table_index_);
   WriteInlineImport(ExternalKind::Table, table_index_);
   WriteLimits(table.elem_limits);
-  WritePutsSpace("anyfunc");
+  WriteType(table.elem_type, NextChar::None);
   WriteCloseNewline();
   table_index_++;
 }
 
 void WatWriter::WriteElemSegment(const ElemSegment& segment) {
   WriteOpenSpace("elem");
-  WriteInitExpr(segment.offset);
-  for (const Var& var : segment.vars) {
-    WriteVar(var, NextChar::Space);
+  WriteNameOrIndex(segment.name, elem_segment_index_, NextChar::Space);
+
+  uint8_t flags = segment.GetFlags(&module);
+
+  if (!(flags & SegPassive)) {
+    WriteInitExpr(segment.offset);
+  }
+
+  if (flags & SegUseElemExprs) {
+    WriteType(segment.elem_type, NextChar::Space);
+  } else {
+    assert(segment.elem_type == Type::Funcref);
+    WritePuts("func", NextChar::Space);
+  }
+
+  for (const ElemExpr& expr : segment.elem_exprs) {
+    if (flags & SegUseElemExprs) {
+      if (expr.kind == ElemExprKind::RefNull) {
+        WriteOpenSpace("ref.null");
+        WriteCloseSpace();
+      } else {
+        WriteOpenSpace("ref.func");
+        WriteVar(expr.var, NextChar::Space);
+        WriteCloseSpace();
+      }
+    } else {
+      assert(expr.kind == ElemExprKind::RefFunc);
+      WriteVar(expr.var, NextChar::Space);
+    }
   }
   WriteCloseNewline();
+  elem_segment_index_++;
 }
 
 void WatWriter::WriteMemory(const Memory& memory) {
@@ -1398,13 +1302,17 @@ void WatWriter::WriteMemory(const Memory& memory) {
 
 void WatWriter::WriteDataSegment(const DataSegment& segment) {
   WriteOpenSpace("data");
-  WriteInitExpr(segment.offset);
+  WriteNameOrIndex(segment.name, data_segment_index_, NextChar::Space);
+  if (segment.kind != SegmentKind::Passive) {
+    WriteInitExpr(segment.offset);
+  }
   WriteQuotedData(segment.data.data(), segment.data.size());
   WriteCloseNewline();
+  data_segment_index_++;
 }
 
 void WatWriter::WriteImport(const Import& import) {
-  if (!options_->inline_import) {
+  if (!options_.inline_import) {
     WriteOpenSpace("import");
     WriteQuotedString(import.module_name, NextChar::Space);
     WriteQuotedString(import.field_name, NextChar::Space);
@@ -1429,13 +1337,12 @@ void WatWriter::WriteImport(const Import& import) {
       WriteCloseSpace();
       break;
 
-    case ExternalKind::Except:
-      WriteBeginException(cast<ExceptionImport>(&import)->except);
-      WriteCloseSpace();
+    case ExternalKind::Event:
+      WriteEvent(cast<EventImport>(&import)->event);
       break;
   }
 
-  if (options_->inline_import) {
+  if (options_.inline_import) {
     WriteNewline(NO_FORCE_NEWLINE);
   } else {
     WriteCloseNewline();
@@ -1443,7 +1350,7 @@ void WatWriter::WriteImport(const Import& import) {
 }
 
 void WatWriter::WriteExport(const Export& export_) {
-  if (options_->inline_export && IsInlineExport(export_)) {
+  if (options_.inline_export && IsInlineExport(export_)) {
     return;
   }
   WriteOpenSpace("export");
@@ -1469,8 +1376,7 @@ void WatWriter::WriteStartFunction(const Var& start) {
   WriteCloseNewline();
 }
 
-Result WatWriter::WriteModule(const Module& module) {
-  module_ = &module;
+Result WatWriter::WriteModule() {
   BuildInlineExportMap();
   BuildInlineImportMap();
   WriteOpenSpace("module");
@@ -1490,8 +1396,8 @@ Result WatWriter::WriteModule(const Module& module) {
       case ModuleFieldType::Import:
         WriteImport(*cast<ImportModuleField>(&field)->import);
         break;
-      case ModuleFieldType::Except:
-        WriteException(cast<ExceptionModuleField>(&field)->except);
+      case ModuleFieldType::Event:
+        WriteEvent(cast<EventModuleField>(&field)->event);
         break;
       case ModuleFieldType::Export:
         WriteExport(cast<ExportModuleField>(&field)->export_);
@@ -1523,12 +1429,11 @@ Result WatWriter::WriteModule(const Module& module) {
 }
 
 void WatWriter::BuildInlineExportMap() {
-  if (!options_->inline_export) {
+  if (!options_.inline_export) {
     return;
   }
 
-  assert(module_);
-  for (Export* export_ : module_->exports) {
+  for (Export* export_ : module.exports) {
     Index index = kInvalidIndex;
 
     // Exported imports can't be written with inline exports, unless the
@@ -1540,29 +1445,29 @@ void WatWriter::BuildInlineExportMap() {
     //
     //   (func (export "e") (import "module" "field"))
     //
-    if (!options_->inline_import && module_->IsImport(*export_)) {
+    if (!options_.inline_import && module.IsImport(*export_)) {
       continue;
     }
 
     switch (export_->kind) {
       case ExternalKind::Func:
-        index = module_->GetFuncIndex(export_->var);
+        index = module.GetFuncIndex(export_->var);
         break;
 
       case ExternalKind::Table:
-        index = module_->GetTableIndex(export_->var);
+        index = module.GetTableIndex(export_->var);
         break;
 
       case ExternalKind::Memory:
-        index = module_->GetMemoryIndex(export_->var);
+        index = module.GetMemoryIndex(export_->var);
         break;
 
       case ExternalKind::Global:
-        index = module_->GetGlobalIndex(export_->var);
+        index = module.GetGlobalIndex(export_->var);
         break;
 
-      case ExternalKind::Except:
-        index = module_->GetExceptIndex(export_->var);
+      case ExternalKind::Event:
+        index = module.GetEventIndex(export_->var);
         break;
     }
 
@@ -1574,7 +1479,7 @@ void WatWriter::BuildInlineExportMap() {
 }
 
 void WatWriter::WriteInlineExports(ExternalKind kind, Index index) {
-  if (!options_->inline_export) {
+  if (!options_.inline_export) {
     return;
   }
 
@@ -1591,23 +1496,23 @@ bool WatWriter::IsInlineExport(const Export& export_) {
   Index index;
   switch (export_.kind) {
     case ExternalKind::Func:
-      index = module_->GetFuncIndex(export_.var);
+      index = module.GetFuncIndex(export_.var);
       break;
 
     case ExternalKind::Table:
-      index = module_->GetTableIndex(export_.var);
+      index = module.GetTableIndex(export_.var);
       break;
 
     case ExternalKind::Memory:
-      index = module_->GetMemoryIndex(export_.var);
+      index = module.GetMemoryIndex(export_.var);
       break;
 
     case ExternalKind::Global:
-      index = module_->GetGlobalIndex(export_.var);
+      index = module.GetGlobalIndex(export_.var);
       break;
 
-    case ExternalKind::Except:
-      index = module_->GetExceptIndex(export_.var);
+    case ExternalKind::Event:
+      index = module.GetEventIndex(export_.var);
       break;
   }
 
@@ -1616,18 +1521,17 @@ bool WatWriter::IsInlineExport(const Export& export_) {
 }
 
 void WatWriter::BuildInlineImportMap() {
-  if (!options_->inline_import) {
+  if (!options_.inline_import) {
     return;
   }
 
-  assert(module_);
-  for (const Import* import : module_->imports) {
+  for (const Import* import : module.imports) {
     inline_import_map_[static_cast<size_t>(import->kind())].push_back(import);
   }
 }
 
 void WatWriter::WriteInlineImport(ExternalKind kind, Index index) {
-  if (!options_->inline_import) {
+  if (!options_.inline_import) {
     return;
   }
 
@@ -1648,9 +1552,9 @@ void WatWriter::WriteInlineImport(ExternalKind kind, Index index) {
 
 Result WriteWat(Stream* stream,
                 const Module* module,
-                const WriteWatOptions* options) {
-  WatWriter wat_writer(stream, options);
-  return wat_writer.WriteModule(*module);
+                const WriteWatOptions& options) {
+  WatWriter wat_writer(stream, options, *module);
+  return wat_writer.WriteModule();
 }
 
 }  // namespace wabt

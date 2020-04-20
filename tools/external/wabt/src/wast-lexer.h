@@ -24,6 +24,7 @@
 #include "src/common.h"
 #include "src/lexer-source-line-finder.h"
 #include "src/literal.h"
+#include "src/make-unique.h"
 #include "src/opcode.h"
 #include "src/token.h"
 
@@ -38,41 +39,68 @@ class WastLexer {
   WABT_DISALLOW_COPY_AND_ASSIGN(WastLexer);
 
   WastLexer(std::unique_ptr<LexerSource> source, string_view filename);
-  ~WastLexer();
 
   // Convenience functions.
-  static std::unique_ptr<WastLexer> CreateFileLexer(string_view filename);
   static std::unique_ptr<WastLexer> CreateBufferLexer(string_view filename,
                                                       const void* data,
                                                       size_t size);
 
   Token GetToken(WastParser* parser);
-  Result Fill(size_t need);
 
   // TODO(binji): Move this out of the lexer.
-  LexerSourceLineFinder& line_finder() { return line_finder_; }
+  std::unique_ptr<LexerSourceLineFinder> MakeLineFinder() {
+    return MakeUnique<LexerSourceLineFinder>(source_->Clone());
+  }
 
  private:
+  static const int kEof = -1;
+  enum class CharClass { Reserved = 1, Keyword = 2, HexDigit = 4, Digit = 8 };
+
   Location GetLocation();
-  Literal MakeLiteral(LiteralType);
-  std::string GetText(size_t at = 0);
+  string_view GetText(size_t offset = 0);
+
+  Token BareToken(TokenType);
+  Token LiteralToken(TokenType, LiteralType);
+  Token TextToken(TokenType, size_t offset = 0);
+
+  int PeekChar();
+  int ReadChar();
+  bool MatchChar(char);
+  bool MatchString(string_view);
+  void Newline();
+  bool ReadBlockComment(WastParser*);  // Returns false if EOF.
+  bool ReadLineComment();              // Returns false if EOF.
+  void ReadWhitespace();
+
+  static bool IsCharClass(int c, CharClass);
+  static bool IsDigit(int c) { return IsCharClass(c, CharClass::Digit); }
+  static bool IsHexDigit(int c) { return IsCharClass(c, CharClass::HexDigit); }
+  static bool IsKeyword(int c) { return IsCharClass(c, CharClass::Keyword); }
+  static bool IsReserved(int c) { return IsCharClass(c, CharClass::Reserved); }
+
+  bool ReadNum();
+  bool ReadHexNum();
+  int ReadReservedChars();
+  bool NoTrailingReservedChars() { return ReadReservedChars() == 0; }
+  void ReadSign();
+  Token GetStringToken(WastParser*);
+  Token GetNumberToken(TokenType);
+  Token GetHexNumberToken(TokenType);
+  Token GetInfToken();
+  Token GetNanToken();
+  Token GetNameEqNumToken(string_view name, TokenType);
+  Token GetIdToken();
+  Token GetKeywordToken();
+  Token GetReservedToken();
 
   std::unique_ptr<LexerSource> source_;
-  LexerSourceLineFinder line_finder_;
   std::string filename_;
   int line_;
-  int comment_nesting_;
-  size_t buffer_file_offset_;  // File offset of the start of the buffer.
-  size_t line_file_offset_;    // File offset of the start of the current line.
-
-  // Lexing data needed by re2c.
-  bool eof_;
-  char* buffer_;
-  size_t buffer_size_;
-  char* marker_;
-  char* next_pos_;
-  char* cursor_;
-  char* limit_;
+  const char* buffer_;
+  const char* buffer_end_;
+  const char* line_start_;
+  const char* token_start_;
+  const char* cursor_;
 };
 
 }  // namespace wabt

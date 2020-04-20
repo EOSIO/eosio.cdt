@@ -1,0 +1,37 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, macos-latest, windows-latest]
+        python: [2.7, '3.x']
+        exclude:
+          - os: macos-latest
+            python: '3.x'
+          - os: windows-latest
+            python: '3.x'
+    steps:
+    - uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python }}
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: mkdir
+      run: mkdir -p out
+    - name: cmake
+      run: cmake ..
+      working-directory: out
+    - name: build
+      run: cmake --build out
+    - name: unittests
+      run: cmake --build out --target run-unittests
+    - name: c-api-tests
+      run: cmake --build out --target run-c-api-tests
+    - name: tests
+      run: cmake --build out --target run-tests

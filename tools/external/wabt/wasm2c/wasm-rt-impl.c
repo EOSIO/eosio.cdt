@@ -21,6 +21,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define PAGE_SIZE 65536
 
@@ -32,6 +33,7 @@ typedef struct FuncType {
 } FuncType;
 
 uint32_t wasm_rt_call_stack_depth;
+uint32_t g_saved_call_stack_depth;
 
 jmp_buf g_jmp_buf;
 FuncType* g_func_types;
@@ -39,6 +41,7 @@ uint32_t g_func_type_count;
 
 void wasm_rt_trap(wasm_rt_trap_t code) {
   assert(code != WASM_RT_TRAP_NONE);
+  wasm_rt_call_stack_depth = g_saved_call_stack_depth;
   longjmp(g_jmp_buf, code);
 }
 
@@ -100,12 +103,21 @@ void wasm_rt_allocate_memory(wasm_rt_memory_t* memory,
 uint32_t wasm_rt_grow_memory(wasm_rt_memory_t* memory, uint32_t delta) {
   uint32_t old_pages = memory->pages;
   uint32_t new_pages = memory->pages + delta;
+  if (new_pages == 0) {
+    return 0;
+  }
   if (new_pages < old_pages || new_pages > memory->max_pages) {
     return (uint32_t)-1;
   }
-  memory->data = realloc(memory->data, new_pages);
+  uint32_t new_size = new_pages * PAGE_SIZE;
+  uint8_t* new_data = realloc(memory->data, new_size);
+  if (new_data == NULL) {
+    return (uint32_t)-1;
+  }
   memory->pages = new_pages;
-  memory->size = new_pages * PAGE_SIZE;
+  memory->size = new_size;
+  memory->data = new_data;
+  memset(memory->data + old_pages * PAGE_SIZE, 0, delta * PAGE_SIZE);
   return old_pages;
 }
 

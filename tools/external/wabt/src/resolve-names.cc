@@ -20,11 +20,9 @@
 #include <cstdio>
 
 #include "src/cast.h"
-#include "src/error-handler.h"
 #include "src/expr-visitor.h"
 #include "src/ir.h"
 #include "src/wast-lexer.h"
-#include "src/wast-parser-lexer-shared.h"
 
 namespace wabt {
 
@@ -32,7 +30,7 @@ namespace {
 
 class NameResolver : public ExprVisitor::DelegateNop {
  public:
-  NameResolver(WastLexer* lexer, Script* script, ErrorHandler* error_handler);
+  NameResolver(Script* script, Errors* errors);
 
   Result VisitModule(Module* module);
   Result VisitScript(Script* script);
@@ -42,20 +40,31 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Result EndBlockExpr(BlockExpr*) override;
   Result OnBrExpr(BrExpr*) override;
   Result OnBrIfExpr(BrIfExpr*) override;
+  Result OnBrOnExnExpr(BrOnExnExpr*) override;
   Result OnBrTableExpr(BrTableExpr*) override;
   Result OnCallExpr(CallExpr*) override;
   Result OnCallIndirectExpr(CallIndirectExpr*) override;
-  Result OnGetGlobalExpr(GetGlobalExpr*) override;
-  Result OnGetLocalExpr(GetLocalExpr*) override;
+  Result OnReturnCallExpr(ReturnCallExpr *) override;
+  Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
+  Result OnGlobalGetExpr(GlobalGetExpr*) override;
+  Result OnGlobalSetExpr(GlobalSetExpr*) override;
   Result BeginIfExpr(IfExpr*) override;
   Result EndIfExpr(IfExpr*) override;
-  Result BeginIfExceptExpr(IfExceptExpr*) override;
-  Result EndIfExceptExpr(IfExceptExpr*) override;
+  Result OnLocalGetExpr(LocalGetExpr*) override;
+  Result OnLocalSetExpr(LocalSetExpr*) override;
+  Result OnLocalTeeExpr(LocalTeeExpr*) override;
   Result BeginLoopExpr(LoopExpr*) override;
   Result EndLoopExpr(LoopExpr*) override;
-  Result OnSetGlobalExpr(SetGlobalExpr*) override;
-  Result OnSetLocalExpr(SetLocalExpr*) override;
-  Result OnTeeLocalExpr(TeeLocalExpr*) override;
+  Result OnDataDropExpr(DataDropExpr*) override;
+  Result OnMemoryInitExpr(MemoryInitExpr*) override;
+  Result OnElemDropExpr(ElemDropExpr*) override;
+  Result OnTableInitExpr(TableInitExpr*) override;
+  Result OnTableGetExpr(TableGetExpr*) override;
+  Result OnTableSetExpr(TableSetExpr*) override;
+  Result OnTableGrowExpr(TableGrowExpr*) override;
+  Result OnTableSizeExpr(TableSizeExpr*) override;
+  Result OnTableFillExpr(TableFillExpr*) override;
+  Result OnRefFuncExpr(RefFuncExpr*) override;
   Result BeginTryExpr(TryExpr*) override;
   Result EndTryExpr(TryExpr*) override;
   Result OnThrowExpr(ThrowExpr*) override;
@@ -65,6 +74,9 @@ class NameResolver : public ExprVisitor::DelegateNop {
   void PushLabel(const std::string& label);
   void PopLabel();
   void CheckDuplicateBindings(const BindingHash* bindings, const char* desc);
+  void PrintDuplicateBindingsError(const BindingHash::value_type&,
+                                   const BindingHash::value_type&,
+                                   const char* desc);
   void ResolveLabelVar(Var* var);
   void ResolveVar(const BindingHash* bindings, Var* var, const char* desc);
   void ResolveFuncVar(Var* var);
@@ -72,18 +84,21 @@ class NameResolver : public ExprVisitor::DelegateNop {
   void ResolveFuncTypeVar(Var* var);
   void ResolveTableVar(Var* var);
   void ResolveMemoryVar(Var* var);
-  void ResolveExceptionVar(Var* var);
+  void ResolveEventVar(Var* var);
+  void ResolveDataSegmentVar(Var* var);
+  void ResolveElemSegmentVar(Var* var);
   void ResolveLocalVar(Var* var);
+  void ResolveBlockDeclarationVar(BlockDeclaration* decl);
   void VisitFunc(Func* func);
   void VisitExport(Export* export_);
   void VisitGlobal(Global* global);
+  void VisitEvent(Event* event);
   void VisitElemSegment(ElemSegment* segment);
   void VisitDataSegment(DataSegment* segment);
   void VisitScriptModule(ScriptModule* script_module);
   void VisitCommand(Command* command);
 
-  ErrorHandler* error_handler_ = nullptr;
-  WastLexer* lexer_ = nullptr;
+  Errors* errors_ = nullptr;
   Script* script_ = nullptr;
   Module* current_module_ = nullptr;
   Func* current_func_ = nullptr;
@@ -92,24 +107,19 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Result result_ = Result::Ok;
 };
 
-NameResolver::NameResolver(WastLexer* lexer,
-                           Script* script,
-                           ErrorHandler* error_handler)
-    : error_handler_(error_handler),
-      lexer_(lexer),
+NameResolver::NameResolver(Script* script, Errors* errors)
+    : errors_(errors),
       script_(script),
       visitor_(this) {}
 
 }  // end anonymous namespace
 
 void WABT_PRINTF_FORMAT(3, 4) NameResolver::PrintError(const Location* loc,
-                                                       const char* fmt,
+                                                       const char* format,
                                                        ...) {
   result_ = Result::Error;
-  va_list args;
-  va_start(args, fmt);
-  WastFormatError(error_handler_, loc, lexer_, fmt, args);
-  va_end(args);
+  WABT_SNPRINTF_ALLOCA(buffer, length, format);
+  errors_->emplace_back(ErrorLevel::Error, *loc, buffer);
 }
 
 void NameResolver::PushLabel(const std::string& label) {
@@ -124,13 +134,18 @@ void NameResolver::CheckDuplicateBindings(const BindingHash* bindings,
                                           const char* desc) {
   bindings->FindDuplicates([this, desc](const BindingHash::value_type& a,
                                         const BindingHash::value_type& b) {
-    // Choose the location that is later in the file.
-    const Location& a_loc = a.second.loc;
-    const Location& b_loc = b.second.loc;
-    const Location& loc = a_loc.line > b_loc.line ? a_loc : b_loc;
-    PrintError(&loc, "redefinition of %s \"%s\"", desc, a.first.c_str());
-
+    PrintDuplicateBindingsError(a, b, desc);
   });
+}
+
+void NameResolver::PrintDuplicateBindingsError(const BindingHash::value_type& a,
+                                               const BindingHash::value_type& b,
+                                               const char* desc) {
+  // Choose the location that is later in the file.
+  const Location& a_loc = a.second.loc;
+  const Location& b_loc = b.second.loc;
+  const Location& loc = a_loc.line > b_loc.line ? a_loc : b_loc;
+  PrintError(&loc, "redefinition of %s \"%s\"", desc, a.first.c_str());
 }
 
 void NameResolver::ResolveLabelVar(Var* var) {
@@ -182,8 +197,16 @@ void NameResolver::ResolveMemoryVar(Var* var) {
   ResolveVar(&current_module_->memory_bindings, var, "memory");
 }
 
-void NameResolver::ResolveExceptionVar(Var* var) {
-  ResolveVar(&current_module_->except_bindings, var, "exception");
+void NameResolver::ResolveEventVar(Var* var) {
+  ResolveVar(&current_module_->event_bindings, var, "event");
+}
+
+void NameResolver::ResolveDataSegmentVar(Var* var) {
+  ResolveVar(&current_module_->data_segment_bindings, var, "data segment");
+}
+
+void NameResolver::ResolveElemSegmentVar(Var* var) {
+  ResolveVar(&current_module_->elem_segment_bindings, var, "elem segment");
 }
 
 void NameResolver::ResolveLocalVar(Var* var) {
@@ -203,8 +226,15 @@ void NameResolver::ResolveLocalVar(Var* var) {
   }
 }
 
+void NameResolver::ResolveBlockDeclarationVar(BlockDeclaration* decl) {
+  if (decl->has_func_type) {
+    ResolveFuncTypeVar(&decl->type_var);
+  }
+}
+
 Result NameResolver::BeginBlockExpr(BlockExpr* expr) {
   PushLabel(expr->block.label);
+  ResolveBlockDeclarationVar(&expr->block.decl);
   return Result::Ok;
 }
 
@@ -215,6 +245,7 @@ Result NameResolver::EndBlockExpr(BlockExpr* expr) {
 
 Result NameResolver::BeginLoopExpr(LoopExpr* expr) {
   PushLabel(expr->block.label);
+  ResolveBlockDeclarationVar(&expr->block.decl);
   return Result::Ok;
 }
 
@@ -230,6 +261,12 @@ Result NameResolver::OnBrExpr(BrExpr* expr) {
 
 Result NameResolver::OnBrIfExpr(BrIfExpr* expr) {
   ResolveLabelVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnBrOnExnExpr(BrOnExnExpr* expr) {
+  ResolveLabelVar(&expr->label_var);
+  ResolveEventVar(&expr->event_var);
   return Result::Ok;
 }
 
@@ -249,21 +286,36 @@ Result NameResolver::OnCallIndirectExpr(CallIndirectExpr* expr) {
   if (expr->decl.has_func_type) {
     ResolveFuncTypeVar(&expr->decl.type_var);
   }
+  ResolveTableVar(&expr->table);
   return Result::Ok;
 }
 
-Result NameResolver::OnGetGlobalExpr(GetGlobalExpr* expr) {
+Result NameResolver::OnReturnCallExpr(ReturnCallExpr* expr) {
+  ResolveFuncVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnReturnCallIndirectExpr(ReturnCallIndirectExpr* expr) {
+  if (expr->decl.has_func_type) {
+    ResolveFuncTypeVar(&expr->decl.type_var);
+  }
+  ResolveTableVar(&expr->table);
+  return Result::Ok;
+}
+
+Result NameResolver::OnGlobalGetExpr(GlobalGetExpr* expr) {
   ResolveGlobalVar(&expr->var);
   return Result::Ok;
 }
 
-Result NameResolver::OnGetLocalExpr(GetLocalExpr* expr) {
-  ResolveLocalVar(&expr->var);
+Result NameResolver::OnGlobalSetExpr(GlobalSetExpr* expr) {
+  ResolveGlobalVar(&expr->var);
   return Result::Ok;
 }
 
 Result NameResolver::BeginIfExpr(IfExpr* expr) {
   PushLabel(expr->true_.label);
+  ResolveBlockDeclarationVar(&expr->true_.decl);
   return Result::Ok;
 }
 
@@ -272,34 +324,75 @@ Result NameResolver::EndIfExpr(IfExpr* expr) {
   return Result::Ok;
 }
 
-Result NameResolver::BeginIfExceptExpr(IfExceptExpr* expr) {
-  PushLabel(expr->true_.label);
-  ResolveExceptionVar(&expr->except_var);
-  return Result::Ok;
-}
-
-Result NameResolver::EndIfExceptExpr(IfExceptExpr* expr) {
-  PopLabel();
-  return Result::Ok;
-}
-
-Result NameResolver::OnSetGlobalExpr(SetGlobalExpr* expr) {
-  ResolveGlobalVar(&expr->var);
-  return Result::Ok;
-}
-
-Result NameResolver::OnSetLocalExpr(SetLocalExpr* expr) {
+Result NameResolver::OnLocalGetExpr(LocalGetExpr* expr) {
   ResolveLocalVar(&expr->var);
   return Result::Ok;
 }
 
-Result NameResolver::OnTeeLocalExpr(TeeLocalExpr* expr) {
+Result NameResolver::OnLocalSetExpr(LocalSetExpr* expr) {
   ResolveLocalVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnLocalTeeExpr(LocalTeeExpr* expr) {
+  ResolveLocalVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnDataDropExpr(DataDropExpr* expr) {
+  ResolveDataSegmentVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnMemoryInitExpr(MemoryInitExpr* expr) {
+  ResolveDataSegmentVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnElemDropExpr(ElemDropExpr* expr) {
+  ResolveElemSegmentVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableInitExpr(TableInitExpr* expr) {
+  ResolveElemSegmentVar(&expr->segment_index);
+  ResolveTableVar(&expr->table_index);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableGetExpr(TableGetExpr* expr) {
+  ResolveTableVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableSetExpr(TableSetExpr* expr) {
+  ResolveTableVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableGrowExpr(TableGrowExpr* expr) {
+  ResolveTableVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableSizeExpr(TableSizeExpr* expr) {
+  ResolveTableVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnTableFillExpr(TableFillExpr* expr) {
+  ResolveTableVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnRefFuncExpr(RefFuncExpr* expr) {
+  ResolveFuncVar(&expr->var);
   return Result::Ok;
 }
 
 Result NameResolver::BeginTryExpr(TryExpr* expr) {
   PushLabel(expr->block.label);
+  ResolveBlockDeclarationVar(&expr->block.decl);
   return Result::Ok;
 }
 
@@ -309,7 +402,7 @@ Result NameResolver::EndTryExpr(TryExpr*) {
 }
 
 Result NameResolver::OnThrowExpr(ThrowExpr* expr) {
-  ResolveExceptionVar(&expr->var);
+  ResolveEventVar(&expr->var);
   return Result::Ok;
 }
 
@@ -319,8 +412,12 @@ void NameResolver::VisitFunc(Func* func) {
     ResolveFuncTypeVar(&func->decl.type_var);
   }
 
-  CheckDuplicateBindings(&func->param_bindings, "parameter");
-  CheckDuplicateBindings(&func->local_bindings, "local");
+  func->bindings.FindDuplicates(
+      [=](const BindingHash::value_type& a, const BindingHash::value_type& b) {
+        const char* desc =
+            (a.second.index < func->GetNumParams()) ? "parameter" : "local";
+        PrintDuplicateBindingsError(a, b, desc);
+      });
 
   visitor_.VisitFunc(func);
   current_func_ = nullptr;
@@ -344,8 +441,8 @@ void NameResolver::VisitExport(Export* export_) {
       ResolveGlobalVar(&export_->var);
       break;
 
-    case ExternalKind::Except:
-      ResolveExceptionVar(&export_->var);
+    case ExternalKind::Event:
+      ResolveEventVar(&export_->var);
       break;
   }
 }
@@ -354,11 +451,20 @@ void NameResolver::VisitGlobal(Global* global) {
   visitor_.VisitExprList(global->init_expr);
 }
 
+void NameResolver::VisitEvent(Event* event) {
+  if (event->decl.has_func_type) {
+    ResolveFuncTypeVar(&event->decl.type_var);
+  }
+}
+
 void NameResolver::VisitElemSegment(ElemSegment* segment) {
   ResolveTableVar(&segment->table_var);
   visitor_.VisitExprList(segment->offset);
-  for (Var& var : segment->vars)
-    ResolveFuncVar(&var);
+  for (ElemExpr& elem_expr : segment->elem_exprs) {
+    if (elem_expr.kind == ElemExprKind::RefFunc) {
+      ResolveFuncVar(&elem_expr.var);
+    }
+  }
 }
 
 void NameResolver::VisitDataSegment(DataSegment* segment) {
@@ -368,12 +474,13 @@ void NameResolver::VisitDataSegment(DataSegment* segment) {
 
 Result NameResolver::VisitModule(Module* module) {
   current_module_ = module;
+  CheckDuplicateBindings(&module->elem_segment_bindings, "elem");
   CheckDuplicateBindings(&module->func_bindings, "function");
   CheckDuplicateBindings(&module->global_bindings, "global");
   CheckDuplicateBindings(&module->func_type_bindings, "function type");
   CheckDuplicateBindings(&module->table_bindings, "table");
   CheckDuplicateBindings(&module->memory_bindings, "memory");
-  CheckDuplicateBindings(&module->except_bindings, "except");
+  CheckDuplicateBindings(&module->event_bindings, "event");
 
   for (Func* func : module->funcs)
     VisitFunc(func);
@@ -381,6 +488,8 @@ Result NameResolver::VisitModule(Module* module) {
     VisitExport(export_);
   for (Global* global : module->globals)
     VisitGlobal(global);
+  for (Event* event : module->events)
+    VisitEvent(event);
   for (ElemSegment* elem_segment : module->elem_segments)
     VisitElemSegment(elem_segment);
   for (DataSegment* data_segment : module->data_segments)
@@ -405,8 +514,6 @@ void NameResolver::VisitCommand(Command* command) {
 
     case CommandType::Action:
     case CommandType::AssertReturn:
-    case CommandType::AssertReturnCanonicalNan:
-    case CommandType::AssertReturnArithmeticNan:
     case CommandType::AssertTrap:
     case CommandType::AssertExhaustion:
     case CommandType::Register:
@@ -424,8 +531,8 @@ void NameResolver::VisitCommand(Command* command) {
       /* The module may be invalid because the names cannot be resolved; we
        * don't want to print errors or fail if that's the case, but we still
        * should try to resolve names when possible. */
-      ErrorHandlerNop new_error_handler;
-      NameResolver new_resolver(lexer_, script_, &new_error_handler);
+      Errors errors;
+      NameResolver new_resolver(script_, &errors);
       new_resolver.VisitScriptModule(assert_invalid_command->module.get());
       break;
     }
@@ -447,17 +554,13 @@ Result NameResolver::VisitScript(Script* script) {
   return result_;
 }
 
-Result ResolveNamesModule(WastLexer* lexer,
-                          Module* module,
-                          ErrorHandler* error_handler) {
-  NameResolver resolver(lexer, nullptr, error_handler);
+Result ResolveNamesModule(Module* module, Errors* errors) {
+  NameResolver resolver(nullptr, errors);
   return resolver.VisitModule(module);
 }
 
-Result ResolveNamesScript(WastLexer* lexer,
-                          Script* script,
-                          ErrorHandler* error_handler) {
-  NameResolver resolver(lexer, script, error_handler);
+Result ResolveNamesScript(Script* script, Errors* errors) {
+  NameResolver resolver(script, errors);
   return resolver.VisitScript(script);
 }
 

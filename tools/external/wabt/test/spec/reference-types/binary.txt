@@ -1,0 +1,228 @@
+;;; TOOL: run-interp-spec
+;;; STDIN_FILE: third_party/testsuite/proposals/reference-types/binary.wast
+;;; ARGS*: --enable-reference-types
+(;; STDOUT ;;;
+out/test/spec/reference-types/binary.wast:6: assert_malformed passed:
+  0000000: error: unable to read uint32_t: magic
+out/test/spec/reference-types/binary.wast:7: assert_malformed passed:
+  0000000: error: unable to read uint32_t: magic
+out/test/spec/reference-types/binary.wast:8: assert_malformed passed:
+  0000000: error: unable to read uint32_t: magic
+out/test/spec/reference-types/binary.wast:9: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:10: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:11: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:12: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:13: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:14: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:15: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:16: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:17: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:18: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:21: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:24: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:25: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:28: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:31: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:34: assert_malformed passed:
+  0000004: error: bad magic value
+out/test/spec/reference-types/binary.wast:37: assert_malformed passed:
+  0000004: error: unable to read uint32_t: version
+out/test/spec/reference-types/binary.wast:38: assert_malformed passed:
+  0000004: error: unable to read uint32_t: version
+out/test/spec/reference-types/binary.wast:39: assert_malformed passed:
+  0000004: error: unable to read uint32_t: version
+out/test/spec/reference-types/binary.wast:40: assert_malformed passed:
+  0000008: error: bad wasm file version: 0 (expected 0x1)
+out/test/spec/reference-types/binary.wast:41: assert_malformed passed:
+  0000008: error: bad wasm file version: 0xd (expected 0x1)
+out/test/spec/reference-types/binary.wast:42: assert_malformed passed:
+  0000008: error: bad wasm file version: 0xe (expected 0x1)
+out/test/spec/reference-types/binary.wast:43: assert_malformed passed:
+  0000008: error: bad wasm file version: 0x100 (expected 0x1)
+out/test/spec/reference-types/binary.wast:44: assert_malformed passed:
+  0000008: error: bad wasm file version: 0x10000 (expected 0x1)
+out/test/spec/reference-types/binary.wast:45: assert_malformed passed:
+  0000008: error: bad wasm file version: 0x1000000 (expected 0x1)
+out/test/spec/reference-types/binary.wast:158: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:168: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:178: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:189: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:199: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:211: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:219: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:229: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:239: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:249: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:259: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:270: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:280: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:290: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:300: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:313: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:321: assert_malformed passed:
+  0000022: error: unable to read u32 leb128: load offset
+out/test/spec/reference-types/binary.wast:340: assert_malformed passed:
+  0000021: error: unable to read u32 leb128: load alignment
+out/test/spec/reference-types/binary.wast:359: assert_malformed passed:
+  0000023: error: unable to read u32 leb128: store alignment
+out/test/spec/reference-types/binary.wast:378: assert_malformed passed:
+  0000024: error: unable to read u32 leb128: store offset
+out/test/spec/reference-types/binary.wast:399: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:409: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:420: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:430: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:442: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:450: assert_malformed passed:
+  000000c: error: unable to read u32 leb128: memory initial page count
+out/test/spec/reference-types/binary.wast:458: assert_malformed passed:
+  0000022: error: unable to read u32 leb128: load offset
+out/test/spec/reference-types/binary.wast:477: assert_malformed passed:
+  0000022: error: unable to read u32 leb128: load offset
+out/test/spec/reference-types/binary.wast:496: assert_malformed passed:
+  0000021: error: unable to read u32 leb128: load alignment
+out/test/spec/reference-types/binary.wast:514: assert_malformed passed:
+  0000021: error: unable to read u32 leb128: load alignment
+out/test/spec/reference-types/binary.wast:533: assert_malformed passed:
+  0000023: error: unable to read u32 leb128: store alignment
+out/test/spec/reference-types/binary.wast:552: assert_malformed passed:
+  0000023: error: unable to read u32 leb128: store alignment
+out/test/spec/reference-types/binary.wast:571: assert_malformed passed:
+  0000024: error: unable to read u32 leb128: store offset
+out/test/spec/reference-types/binary.wast:590: assert_malformed passed:
+  0000024: error: unable to read u32 leb128: store offset
+out/test/spec/reference-types/binary.wast:612: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:622: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:632: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:642: assert_malformed passed:
+  000000e: error: unable to read i32 leb128: init_expr i32.const value
+out/test/spec/reference-types/binary.wast:653: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:663: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:673: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:683: assert_malformed passed:
+  000000e: error: unable to read i64 leb128: init_expr i64.const value
+out/test/spec/reference-types/binary.wast:695: assert_malformed passed:
+  0000020: error: memory.grow reserved value must be 0
+out/test/spec/reference-types/binary.wast:715: assert_malformed passed:
+  0000020: error: memory.grow reserved value must be 0
+out/test/spec/reference-types/binary.wast:735: assert_malformed passed:
+  0000020: error: memory.grow reserved value must be 0
+out/test/spec/reference-types/binary.wast:754: assert_malformed passed:
+  0000020: error: memory.grow reserved value must be 0
+out/test/spec/reference-types/binary.wast:773: assert_malformed passed:
+  0000020: error: memory.grow reserved value must be 0
+out/test/spec/reference-types/binary.wast:793: assert_malformed passed:
+  000001e: error: memory.size reserved value must be 0
+out/test/spec/reference-types/binary.wast:812: assert_malformed passed:
+  000001e: error: memory.size reserved value must be 0
+out/test/spec/reference-types/binary.wast:831: assert_malformed passed:
+  000001e: error: memory.size reserved value must be 0
+out/test/spec/reference-types/binary.wast:849: assert_malformed passed:
+  000001e: error: memory.size reserved value must be 0
+out/test/spec/reference-types/binary.wast:867: assert_malformed passed:
+  000001e: error: memory.size reserved value must be 0
+out/test/spec/reference-types/binary.wast:886: assert_malformed passed:
+  000001c: error: local count must be < 0x10000000
+out/test/spec/reference-types/binary.wast:918: assert_malformed passed:
+  0000013: error: function signature count != function body count
+out/test/spec/reference-types/binary.wast:928: assert_malformed passed:
+  000000b: error: function signature count != function body count
+out/test/spec/reference-types/binary.wast:937: assert_malformed passed:
+  0000016: error: function signature count != function body count
+out/test/spec/reference-types/binary.wast:948: assert_malformed passed:
+  0000015: error: function signature count != function body count
+out/test/spec/reference-types/binary.wast:971: assert_malformed passed:
+  000000e: error: data section without memory section
+out/test/spec/reference-types/binary.wast:981: assert_malformed passed:
+  000000e: error: data section without memory section
+out/test/spec/reference-types/binary.wast:991: assert_malformed passed:
+  0000024: error: memory.init requires data count section
+out/test/spec/reference-types/binary.wast:1013: assert_malformed passed:
+  000001e: error: data.drop requires data count section
+out/test/spec/reference-types/binary.wast:1032: assert_malformed passed:
+  0000024: error: expected ref.null or ref.func in passive element segment
+  0000025: error: expected END opcode after element expression
+out/test/spec/reference-types/binary.wast:1058: assert_malformed passed:
+  0000022: error: segment elem expr type must be a reference type (got i32)
+out/test/spec/reference-types/binary.wast:1139: assert_malformed passed:
+  000000a: error: invalid section size: extends past end
+out/test/spec/reference-types/binary.wast:1150: assert_malformed passed:
+  000000e: error: unfinished section (expected end: 0x11)
+out/test/spec/reference-types/binary.wast:1169: assert_malformed passed:
+  0000027: error: unable to read u32 leb128: string length
+out/test/spec/reference-types/binary.wast:1188: assert_malformed passed:
+  000002b: error: unfinished section (expected end: 0x40)
+out/test/spec/reference-types/binary.wast:1219: assert_malformed passed:
+  000000b: error: invalid table count 1, only 0 bytes left in section
+out/test/spec/reference-types/binary.wast:1235: assert_malformed passed:
+  000000b: error: invalid memory count 1, only 0 bytes left in section
+out/test/spec/reference-types/binary.wast:1251: assert_malformed passed:
+  0000010: error: unable to read i32 leb128: global type
+out/test/spec/reference-types/binary.wast:1262: assert_malformed passed:
+  0000010: error: unfinished section (expected end: 0x15)
+out/test/spec/reference-types/binary.wast:1285: assert_malformed passed:
+  000001b: error: unable to read u32 leb128: string length
+out/test/spec/reference-types/binary.wast:1306: assert_malformed passed:
+  000001b: error: unfinished section (expected end: 0x20)
+out/test/spec/reference-types/binary.wast:1340: assert_malformed passed:
+  0000021: error: unable to read u32 leb128: elem segment flags
+out/test/spec/reference-types/binary.wast:1358: assert_malformed passed:
+  0000021: error: unfinished section (expected end: 0x27)
+out/test/spec/reference-types/binary.wast:1384: assert_malformed passed:
+  0000016: error: unable to read u32 leb128: data segment flags
+out/test/spec/reference-types/binary.wast:1397: assert_malformed passed:
+  0000016: error: unfinished section (expected end: 0x1c)
+out/test/spec/reference-types/binary.wast:1410: assert_malformed passed:
+  0000015: error: unable to read data: data segment data
+out/test/spec/reference-types/binary.wast:1424: assert_malformed passed:
+  000001a: error: unfinished section (expected end: 0x1b)
+out/test/spec/reference-types/binary.wast:1455: assert_malformed passed:
+  error: invalid depth: 11 (max 2)
+  0000024: error: OnBrTableExpr callback failed
+out/test/spec/reference-types/binary.wast:1477: assert_malformed passed:
+  0000025: error: expected valid block signature type
+out/test/spec/reference-types/binary.wast:1512: assert_malformed passed:
+  0000017: error: multiple Start sections
+110/110 tests passed.
+;;; STDOUT ;;)

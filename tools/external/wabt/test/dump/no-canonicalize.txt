@@ -71,7 +71,7 @@
 000003d: 0000 0000 00                              ; section size (guess)
 0000042: 01                                        ; num tables
 ; table 0
-0000043: 70                                        ; anyfunc
+0000043: 70                                        ; funcref
 0000044: 01                                        ; limits: flags
 0000045: 02                                        ; limits: initial
 0000046: 02                                        ; limits: max
@@ -98,13 +98,13 @@
 000005d: 0000 0000 00                              ; section size (guess)
 0000062: 01                                        ; num elem segments
 ; elem segment header 0
-0000063: 00                                        ; table index
+0000063: 00                                        ; segment flags
 0000064: 41                                        ; i32.const
 0000065: 00                                        ; i32 literal
 0000066: 0b                                        ; end
-0000067: 02                                        ; num function indices
-0000068: 02                                        ; function index
-0000069: 03                                        ; function index
+0000067: 02                                        ; num elems
+0000068: 02                                        ; elem function index
+0000069: 03                                        ; elem function index
 000005d: 8880 8080 00                              ; FIXUP section size
 ; section "Code" (10)
 000006a: 0a                                        ; section code
@@ -113,20 +113,20 @@
 ; function body 0
 0000071: 0000 0000 00                              ; func body size (guess)
 0000076: 00                                        ; local decl count
-0000077: 20                                        ; get_local
+0000077: 20                                        ; local.get
 0000078: 00                                        ; local index
-0000079: 20                                        ; get_local
+0000079: 20                                        ; local.get
 000007a: 01                                        ; local index
 000007b: 11                                        ; call_indirect
 000007c: 00                                        ; signature index
-000007d: 00                                        ; call_indirect reserved
+000007d: 00                                        ; table index
 000007e: 1a                                        ; drop
 000007f: 0b                                        ; end
 0000071: 8a80 8080 00                              ; FIXUP func body size
 ; function body 1
 0000080: 0000 0000 00                              ; func body size (guess)
 0000085: 00                                        ; local decl count
-0000086: 20                                        ; get_local
+0000086: 20                                        ; local.get
 0000087: 00                                        ; local index
 0000088: 41                                        ; i32.const
 0000089: 01                                        ; i32 literal
@@ -137,7 +137,7 @@
 ; function body 2
 000008d: 0000 0000 00                              ; func body size (guess)
 0000092: 00                                        ; local decl count
-0000093: 20                                        ; get_local
+0000093: 20                                        ; local.get
 0000094: 00                                        ; local index
 0000095: 41                                        ; i32.const
 0000096: 02                                        ; i32 literal
@@ -151,20 +151,20 @@ no-canonicalize.wasm:	file format wasm 0x1
 
 Code Disassembly:
 
-000071 <f1>:
- 000077: 20 00                      | get_local 0
- 000079: 20 01                      | get_local 1
+000076 func[1] <f1>:
+ 000077: 20 00                      | local.get 0
+ 000079: 20 01                      | local.get 1
  00007b: 11 00 00                   | call_indirect 0 0
  00007e: 1a                         | drop
  00007f: 0b                         | end
-000080 func[2]:
- 000086: 20 00                      | get_local 0
+000085 func[2]:
+ 000086: 20 00                      | local.get 0
  000088: 41 01                      | i32.const 1
  00008a: 6a                         | i32.add
  00008b: 1a                         | drop
  00008c: 0b                         | end
-00008d func[3]:
- 000093: 20 00                      | get_local 0
+000092 func[3]:
+ 000093: 20 00                      | local.get 0
  000095: 41 02                      | i32.const 2
  000097: 6c                         | i32.mul
  000098: 1a                         | drop

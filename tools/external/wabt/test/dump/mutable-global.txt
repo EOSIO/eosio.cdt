@@ -1,5 +1,5 @@
 ;;; TOOL: run-objdump
-;;; ARGS0: -v --enable-mutable-globals
+;;; ARGS0: -v
 ;;; ARGS1: -x
 (module
   (import "foo" "imported" (global (mut i32)))
@@ -44,11 +44,11 @@ mutable-global.wasm:	file format wasm 0x1
 
 Section Details:
 
-Import:
+Import[1]:
  - global[0] i32 mutable=1 <- foo.imported
-Global:
- - global[1] i32 mutable=1 - init i32=1
-Export:
+Global[1]:
+ - global[1] i32 mutable=1 <exported> - init i32=1
+Export[1]:
  - global[1] -> "exported"
 
 Code Disassembly:

@@ -27,7 +27,7 @@
 0000013: 00                                        ; section size (guess)
 0000014: 01                                        ; num tables
 ; table 0
-0000015: 70                                        ; anyfunc
+0000015: 70                                        ; funcref
 0000016: 00                                        ; limits: flags
 0000017: 01                                        ; limits: initial
 0000013: 04                                        ; FIXUP section size
@@ -36,13 +36,13 @@
 0000019: 00                                        ; section size (guess)
 000001a: 01                                        ; num elem segments
 ; elem segment header 0
-000001b: 00                                        ; table index
+000001b: 00                                        ; segment flags
 000001c: 41                                        ; i32.const
 000001d: 01                                        ; i32 literal
 000001e: 45                                        ; i32.eqz
 000001f: 0b                                        ; end
-0000020: 01                                        ; num function indices
-0000021: 00                                        ; function index
+0000020: 01                                        ; num elems
+0000021: 00                                        ; elem function index
 0000019: 08                                        ; FIXUP section size
 ; section "Code" (10)
 0000022: 0a                                        ; section code

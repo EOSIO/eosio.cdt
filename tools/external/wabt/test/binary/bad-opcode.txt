@@ -13,7 +13,7 @@ section(CODE) {
   }
 }
 (;; STDERR ;;;
-0000019: error: unexpected opcode: 255 (0xff)
+0000019: error: unexpected opcode: 0xff
 ;;; STDERR ;;)
 (;; STDOUT ;;;
 
@@ -21,12 +21,14 @@ bad-opcode.wasm:	file format wasm 0x1
 
 Section Details:
 
-Type:
+Type[1]:
  - type[0] () -> i32
-Function:
+Function[1]:
  - func[0] sig=0
+Code[1]:
+ - func[0] size=3
 
 Code Disassembly:
 
-000016 func[0]:
+000017 func[0]:
 ;;; STDOUT ;;)

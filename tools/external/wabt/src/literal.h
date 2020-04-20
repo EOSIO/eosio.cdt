@@ -23,13 +23,12 @@
 
 namespace wabt {
 
-/* These functions all return Result::Ok on success and Result::Error on
- * failure.
- *
- * NOTE: the functions are written for use with the re2c lexer, assuming that
- * the literal has already matched the regular expressions defined there. As a
- * result, the only validation that is done is for overflow, not for otherwise
- * bogus input. */
+// These functions all return Result::Ok on success and Result::Error on
+// failure.
+//
+// NOTE: the functions are written for use with wast-lexer, assuming that the
+// literal has already matched the patterns defined there. As a result, the
+// only validation that is done is for overflow, not for otherwise bogus input.
 
 enum class LiteralType {
   Int,
@@ -49,6 +48,14 @@ enum class ParseIntType {
 #define WABT_MAX_DOUBLE_HEX 40
 
 Result ParseHexdigit(char c, uint32_t* out);
+Result ParseInt8(const char* s,
+                 const char* end,
+                 uint8_t* out,
+                 ParseIntType parse_type);
+Result ParseInt16(const char* s,
+                  const char* end,
+                  uint16_t* out,
+                  ParseIntType parse_type);
 Result ParseInt32(const char* s,
                   const char* end,
                   uint32_t* out,
@@ -58,6 +65,7 @@ Result ParseInt64(const char* s,
                   uint64_t* out,
                   ParseIntType parse_type);
 Result ParseUint64(const char* s, const char* end, uint64_t* out);
+Result ParseUint128(const char* s, const char* end, v128* out);
 Result ParseFloat(LiteralType literal_type,
                   const char* s,
                   const char* end,
@@ -69,6 +77,7 @@ Result ParseDouble(LiteralType literal_type,
 
 void WriteFloatHex(char* buffer, size_t size, uint32_t bits);
 void WriteDoubleHex(char* buffer, size_t size, uint64_t bits);
+void WriteUint128(char* buffer, size_t size, v128 bits);
 
 }  // namespace wabt
 

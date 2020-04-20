@@ -21,11 +21,26 @@
 namespace wabt {
 
 void Features::AddOptions(OptionParser* parser) {
-#define WABT_FEATURE(variable, flag, help) \
-  parser->AddOption("enable-" flag, help, [this]() { enable_##variable(); });
+#define WABT_FEATURE(variable, flag, default_, help)       \
+  if (default_ == true) {                                  \
+    parser->AddOption("disable-" flag, "Disable " help,    \
+                      [this]() { disable_##variable(); }); \
+  } else {                                                 \
+    parser->AddOption("enable-" flag, "Enable " help,      \
+                      [this]() { enable_##variable(); });  \
+  }
 
 #include "src/feature.def"
 #undef WABT_FEATURE
+  parser->AddOption("enable-all", "Enable all features",
+                    [this]() { EnableAll(); });
+}
+
+void Features::UpdateDependencies() {
+  // Reference types requires bulk memory.
+  if (reference_types_enabled_) {
+    bulk_memory_enabled_ = true;
+  }
 }
 
 }  // namespace wabt

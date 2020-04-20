@@ -23,21 +23,22 @@ USE_NINJA ?= 0
 FUZZ_BIN_DIR ?= ${ROOT_DIR}/afl-fuzz
 GCC_FUZZ_CC := ${FUZZ_BIN_DIR}/afl-gcc
 GCC_FUZZ_CXX := ${FUZZ_BIN_DIR}/afl-g++
-EMSCRIPTEN_DIR ?= ${ROOT_DIR}/emscripten
+EMSCRIPTEN_DIR ?= $(dir $(shell which emcc))
 CMAKE_CMD ?= cmake
 
 DEFAULT_SUFFIX = clang-debug
 
-COMPILERS := GCC GCC_I686 GCC_FUZZ CLANG EMCC
+COMPILERS := GCC GCC_I686 GCC_FUZZ CLANG CLANG_I686 EMCC
 BUILD_TYPES := DEBUG RELEASE
 SANITIZERS := ASAN MSAN LSAN UBSAN
-CONFIGS := NORMAL $(SANITIZERS) COV NO_RE2C NO_TESTS
+CONFIGS := NORMAL $(SANITIZERS) COV NO_TESTS
 
 # directory names
 GCC_DIR := gcc/
 GCC_I686_DIR := gcc-i686/
 GCC_FUZZ_DIR := gcc-fuzz/
 CLANG_DIR := clang/
+CLANG_I686_DIR := clang-i686/
 EMCC_DIR := emscripten/
 DEBUG_DIR := Debug/
 RELEASE_DIR := Release/
@@ -46,7 +47,6 @@ ASAN_DIR := asan/
 MSAN_DIR := msan/
 LSAN_DIR := lsan/
 UBSAN_DIR := ubsan/
-NO_RE2C_DIR := no-re2c/
 COV_DIR := cov/
 NO_TESTS_DIR := no-tests/
 
@@ -56,6 +56,8 @@ GCC_I686_FLAG := -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ \
 	-DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32
 GCC_FUZZ_FLAG := -DCMAKE_C_COMPILER=${GCC_FUZZ_CC} -DCMAKE_CXX_COMPILER=${GCC_FUZZ_CXX} -DWITH_EXCEPTIONS=ON
 CLANG_FLAG := -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+CLANG_I686_FLAG := -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+	-DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32
 EMCC_FLAG := -DCMAKE_TOOLCHAIN_FILE=${EMSCRIPTEN_DIR}/cmake/Modules/Platform/Emscripten.cmake
 DEBUG_FLAG := -DCMAKE_BUILD_TYPE=Debug
 RELEASE_FLAG := -DCMAKE_BUILD_TYPE=Release
@@ -65,7 +67,6 @@ MSAN_FLAG := -DUSE_MSAN=ON
 LSAN_FLAG := -DUSE_LSAN=ON
 UBSAN_FLAG := -DUSE_UBSAN=ON
 COV_FLAG := -DCODE_COVERAGE=ON
-NO_RE2C_FLAG := -DRUN_RE2C=OFF
 NO_TESTS_FLAG := -DBUILD_TESTS=OFF
 
 # make target prefixes
@@ -73,6 +74,7 @@ GCC_PREFIX := gcc
 GCC_I686_PREFIX := gcc-i686
 GCC_FUZZ_PREFIX := gcc-fuzz
 CLANG_PREFIX := clang
+CLANG_I686_PREFIX := clang-i686
 EMCC_PREFIX := emscripten
 DEBUG_PREFIX := -debug
 RELEASE_PREFIX := -release
@@ -82,7 +84,6 @@ MSAN_PREFIX := -msan
 LSAN_PREFIX := -lsan
 UBSAN_PREFIX := -ubsan
 COV_PREFIX := -cov
-NO_RE2C_PREFIX := -no-re2c
 NO_TESTS_PREFIX := -no-tests
 
 ifeq ($(USE_NINJA),1)
@@ -124,7 +125,7 @@ endef
 define TEST
 .PHONY: $(call TEST_TARGET,$(1),$(2),$(3))
 $(call TEST_TARGET,$(1),$(2),$(3)): $(call CMAKE_DIR,$(1),$(2),$(3))$$(BUILD_FILE)
-	$$(BUILD_CMD) -C $(call CMAKE_DIR,$(1),$(2),$(3)) run-tests
+	$$(BUILD_CMD) -C $(call CMAKE_DIR,$(1),$(2),$(3)) check
 test-everything: $(CALL TEST_TARGET,$(1),$(2),$(3))
 endef
 
@@ -140,11 +141,11 @@ clean:
 .PHONY: test-everything
 test-everything:
 
-.PHONY: update-re2c
-update-re2c: src/prebuilt/wast-lexer-gen.cc
+.PHONY: update-gperf
+update-gperf: src/prebuilt/lexer-keywords.cc
 
-src/prebuilt/wast-lexer-gen.cc: src/wast-lexer.cc
-	re2c -W -Werror --no-generation-date -bc8 -o $@ $<
+src/prebuilt/lexer-keywords.cc: src/lexer-keywords.txt
+	gperf -m 50 -L C++ -N InWordSet -E -t -c --output-file=$@ $<
 
 .PHONY: update-wasm2c
 update-wasm2c: src/prebuilt/wasm2c.include.c src/prebuilt/wasm2c.include.h

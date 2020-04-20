@@ -29,37 +29,55 @@ const char* ExprTypeName[] = {
   "AtomicRmw",
   "AtomicRmwCmpxchg",
   "AtomicStore",
+  "AtomicNotify",
   "AtomicWait",
-  "AtomicWake",
   "Binary",
   "Block",
   "Br",
   "BrIf",
+  "BrOnExn",
   "BrTable",
   "Call",
   "CallIndirect",
   "Compare",
   "Const",
   "Convert",
-  "CurrentMemory",
   "Drop",
-  "GetGlobal",
-  "GetLocal",
-  "GrowMemory",
+  "GlobalGet",
+  "GlobalSet",
   "If",
-  "IfExcept",
   "Load",
+  "LocalGet",
+  "LocalSet",
+  "LocalTee",
   "Loop",
+  "MemoryCopy",
+  "DataDrop",
+  "MemoryFill",
+  "MemoryGrow",
+  "MemoryInit",
+  "MemorySize",
   "Nop",
+  "RefIsNull",
+  "RefFunc",
+  "RefNull",
   "Rethrow",
   "Return",
+  "ReturnCall",
+  "ReturnCallIndirect",
   "Select",
-  "SetGlobal",
-  "SetLocal",
   "SimdLaneOp",
   "SimdShuffleOp",
+  "LoadSplat",
   "Store",
-  "TeeLocal",
+  "TableCopy",
+  "ElemDrop",
+  "TableInit",
+  "TableGet",
+  "TableGrow",
+  "TableSize",
+  "TableSet",
+  "TableFill",
   "Ternary",
   "Throw",
   "Try",
@@ -113,8 +131,16 @@ Index Module::GetFuncTypeIndex(const Var& var) const {
   return func_type_bindings.FindIndex(var);
 }
 
-Index Module::GetExceptIndex(const Var& var) const {
-  return except_bindings.FindIndex(var);
+Index Module::GetEventIndex(const Var& var) const {
+  return event_bindings.FindIndex(var);
+}
+
+Index Module::GetDataSegmentIndex(const Var& var) const {
+  return data_segment_bindings.FindIndex(var);
+}
+
+Index Module::GetElemSegmentIndex(const Var& var) const {
+  return elem_segment_bindings.FindIndex(var);
 }
 
 bool Module::IsImport(ExternalKind kind, const Var& var) const {
@@ -131,8 +157,8 @@ bool Module::IsImport(ExternalKind kind, const Var& var) const {
     case ExternalKind::Table:
       return GetTableIndex(var) < num_table_imports;
 
-    case ExternalKind::Except:
-      return GetExceptIndex(var) < num_except_imports;
+    case ExternalKind::Event:
+      return GetEventIndex(var) < num_event_imports;
 
     default:
       return false;
@@ -196,19 +222,7 @@ Index Func::GetLocalIndex(const Var& var) const {
   if (var.is_index()) {
     return var.index();
   }
-
-  Index result = param_bindings.FindIndex(var);
-  if (result != kInvalidIndex) {
-    return result;
-  }
-
-  result = local_bindings.FindIndex(var);
-  if (result == kInvalidIndex) {
-    return result;
-  }
-
-  // The locals start after all the params.
-  return decl.GetNumParams() + result;
+  return bindings.FindIndex(var);
 }
 
 const Func* Module::GetFunc(const Var& var) const {
@@ -259,12 +273,36 @@ Memory* Module::GetMemory(const Var& var) {
   return memories[index];
 }
 
-Exception* Module::GetExcept(const Var& var) const {
-  Index index = GetExceptIndex(var);
-  if (index >= excepts.size()) {
+Event* Module::GetEvent(const Var& var) const {
+  Index index = GetEventIndex(var);
+  if (index >= events.size()) {
     return nullptr;
   }
-  return excepts[index];
+  return events[index];
+}
+
+const DataSegment* Module::GetDataSegment(const Var& var) const {
+  return const_cast<Module*>(this)->GetDataSegment(var);
+}
+
+DataSegment* Module::GetDataSegment(const Var& var) {
+  Index index = data_segment_bindings.FindIndex(var);
+  if (index >= data_segments.size()) {
+    return nullptr;
+  }
+  return data_segments[index];
+}
+
+const ElemSegment* Module::GetElemSegment(const Var& var) const {
+  return const_cast<Module*>(this)->GetElemSegment(var);
+}
+
+ElemSegment* Module::GetElemSegment(const Var& var) {
+  Index index = elem_segment_bindings.FindIndex(var);
+  if (index >= elem_segments.size()) {
+    return nullptr;
+  }
+  return elem_segments[index];
 }
 
 const FuncType* Module::GetFuncType(const Var& var) const {
@@ -297,21 +335,31 @@ Index Module::GetFuncTypeIndex(const FuncDeclaration& decl) const {
 }
 
 void Module::AppendField(std::unique_ptr<DataSegmentModuleField> field) {
-  data_segments.push_back(&field->data_segment);
+  DataSegment& data_segment = field->data_segment;
+  if (!data_segment.name.empty()) {
+    data_segment_bindings.emplace(data_segment.name,
+                                  Binding(field->loc, data_segments.size()));
+  }
+  data_segments.push_back(&data_segment);
   fields.push_back(std::move(field));
 }
 
 void Module::AppendField(std::unique_ptr<ElemSegmentModuleField> field) {
-  elem_segments.push_back(&field->elem_segment);
+  ElemSegment& elem_segment = field->elem_segment;
+  if (!elem_segment.name.empty()) {
+    elem_segment_bindings.emplace(elem_segment.name,
+                                  Binding(field->loc, elem_segments.size()));
+  }
+  elem_segments.push_back(&elem_segment);
   fields.push_back(std::move(field));
 }
 
-void Module::AppendField(std::unique_ptr<ExceptionModuleField> field) {
-  Exception& except = field->except;
-  if (!except.name.empty()) {
-    except_bindings.emplace(except.name, Binding(field->loc, excepts.size()));
+void Module::AppendField(std::unique_ptr<EventModuleField> field) {
+  Event& event = field->event;
+  if (!event.name.empty()) {
+    event_bindings.emplace(event.name, Binding(field->loc, events.size()));
   }
-  excepts.push_back(&except);
+  events.push_back(&event);
   fields.push_back(std::move(field));
 }
 
@@ -398,13 +446,13 @@ void Module::AppendField(std::unique_ptr<ImportModuleField> field) {
       break;
     }
 
-    case ExternalKind::Except: {
-      Exception& except = cast<ExceptionImport>(import)->except;
-      name = &except.name;
-      bindings = &except_bindings;
-      index = excepts.size();
-      excepts.push_back(&except);
-      ++num_except_imports;
+    case ExternalKind::Event: {
+      Event& event = cast<EventImport>(import)->event;
+      name = &event.name;
+      bindings = &event_bindings;
+      index = events.size();
+      events.push_back(&event);
+      ++num_event_imports;
       break;
     }
   }
@@ -482,8 +530,8 @@ void Module::AppendField(std::unique_ptr<ModuleField> field) {
       AppendField(cast<StartModuleField>(std::move(field)));
       break;
 
-    case ModuleFieldType::Except:
-      AppendField(cast<ExceptionModuleField>(std::move(field)));
+    case ModuleFieldType::Event:
+      AppendField(cast<EventModuleField>(std::move(field)));
       break;
   }
 }
@@ -601,6 +649,54 @@ Const::Const(F64Tag, uint64_t value, const Location& loc_)
     : loc(loc_), type(Type::F64), f64_bits(value) {}
 
 Const::Const(V128Tag, v128 value, const Location& loc_)
-    : loc(loc_), type(Type::V128), v128_bits(value) {}
+    : loc(loc_), type(Type::V128), vec128(value) {}
+
+uint8_t ElemSegment::GetFlags(const Module* module) const {
+  uint8_t flags = 0;
+
+  switch (kind) {
+    case SegmentKind::Active: {
+      Index table_index = module->GetTableIndex(table_var);
+      if (table_index != 0) {
+        flags |= SegExplicitIndex;
+      }
+      break;
+    }
+
+    case SegmentKind::Passive:
+      flags |= SegPassive;
+      break;
+
+    case SegmentKind::Declared:
+      flags |= SegDeclared;
+      break;
+  }
+
+  bool all_ref_func = std::all_of(
+      elem_exprs.begin(), elem_exprs.end(), [](const ElemExpr& elem_expr) {
+        return elem_expr.kind == ElemExprKind::RefFunc;
+      });
+  if (!all_ref_func) {
+    flags |= SegUseElemExprs;
+  }
+
+  return flags;
+}
+
+uint8_t DataSegment::GetFlags(const Module* module) const {
+  uint8_t flags = 0;
+
+  if (kind == SegmentKind::Passive) {
+    flags |= SegPassive;
+  }
+
+  Index memory_index = module->GetMemoryIndex(memory_var);
+  if (memory_index != 0) {
+    flags |= SegExplicitIndex;
+  }
+
+  return flags;
+}
+
 
 }  // namespace wabt

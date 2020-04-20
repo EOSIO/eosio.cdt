@@ -26,6 +26,7 @@
 #include "src/cast.h"
 #include "src/filenames.h"
 #include "src/ir.h"
+#include "src/literal.h"
 #include "src/stream.h"
 #include "src/string-view.h"
 
@@ -39,7 +40,7 @@ class BinaryWriterSpec {
                    WriteBinarySpecStreamFactory module_stream_factory,
                    string_view source_filename,
                    string_view module_filename_noext,
-                   const WriteBinaryOptions* options);
+                   const WriteBinaryOptions& options);
 
   Result WriteScript(const Script& script);
 
@@ -68,7 +69,7 @@ class BinaryWriterSpec {
   WriteBinarySpecStreamFactory module_stream_factory_;
   std::string source_filename_;
   std::string module_filename_noext_;
-  const WriteBinaryOptions* options_ = nullptr;
+  const WriteBinaryOptions& options_;
   Result result_ = Result::Ok;
   size_t num_modules_ = 0;
 };
@@ -78,7 +79,7 @@ BinaryWriterSpec::BinaryWriterSpec(
     WriteBinarySpecStreamFactory module_stream_factory,
     string_view source_filename,
     string_view module_filename_noext,
-    const WriteBinaryOptions* options)
+    const WriteBinaryOptions& options)
     : json_stream_(json_stream),
       module_stream_factory_(module_stream_factory),
       source_filename_(source_filename),
@@ -110,7 +111,7 @@ void BinaryWriterSpec::WriteEscapedString(string_view s) {
   json_stream_->WriteChar('"');
   for (size_t i = 0; i < s.length(); ++i) {
     uint8_t c = s[i];
-    if (c < 0x20 || c == '\\' || c == '"' || c > 0x7f) {
+    if (c < 0x20 || c == '\\' || c == '"') {
       json_stream_->Writef("\\u%04x", c);
     } else {
       json_stream_->WriteChar(c);
@@ -129,8 +130,6 @@ void BinaryWriterSpec::WriteCommandType(const Command& command) {
       "assert_unlinkable",
       "assert_uninstantiable",
       "assert_return",
-      "assert_return_canonical_nan",
-      "assert_return_arithmetic_nan",
       "assert_trap",
       "assert_exhaustion",
   };
@@ -187,7 +186,15 @@ void BinaryWriterSpec::WriteConst(const Const& const_) {
       WriteString("f32");
       WriteSeparator();
       WriteKey("value");
-      json_stream_->Writef("\"%u\"", const_.f32_bits);
+      if (const_.is_expected_nan) {
+        if (const_.expected == ExpectedNan::Arithmetic) {
+          WriteString("nan:arithmetic");
+        } else {
+          WriteString("nan:canonical");
+        }
+      } else {
+        json_stream_->Writef("\"%u\"", const_.f32_bits);
+      }
       break;
     }
 
@@ -196,12 +203,55 @@ void BinaryWriterSpec::WriteConst(const Const& const_) {
       WriteString("f64");
       WriteSeparator();
       WriteKey("value");
-      json_stream_->Writef("\"%" PRIu64 "\"", const_.f64_bits);
+      if (const_.is_expected_nan) {
+        if (const_.expected == ExpectedNan::Arithmetic) {
+          WriteString("nan:arithmetic");
+        } else {
+          WriteString("nan:canonical");
+        }
+      } else {
+        json_stream_->Writef("\"%" PRIu64 "\"", const_.f64_bits);
+      }
+      break;
+    }
+
+    case Type::Nullref:
+      WriteString("nullref");
+      WriteSeparator();
+      WriteKey("value");
+      json_stream_->Writef("\"0\"");
+      break;
+
+    case Type::Funcref: {
+      WriteString("funcref");
+      WriteSeparator();
+      WriteKey("value");
+      int64_t ref_bits = static_cast<int64_t>(const_.ref_bits);
+      json_stream_->Writef("\"%" PRIu64 "\"", ref_bits);
+      break;
+    }
+
+    case Type::Hostref: {
+      WriteString("hostref");
+      WriteSeparator();
+      WriteKey("value");
+      int64_t ref_bits = static_cast<int64_t>(const_.ref_bits);
+      json_stream_->Writef("\"%" PRIu64 "\"", ref_bits);
+      break;
+    }
+
+    case Type::V128: {
+      WriteString("v128");
+      WriteSeparator();
+      WriteKey("value");
+      char buffer[128];
+      WriteUint128(buffer, 128, const_.vec128);
+      json_stream_->Writef("\"%s\"", buffer);
       break;
     }
 
     default:
-      assert(0);
+      WABT_UNREACHABLE;
   }
 
   json_stream_->Writef("}");
@@ -445,30 +495,6 @@ void BinaryWriterSpec::WriteCommands() {
         break;
       }
 
-      case CommandType::AssertReturnCanonicalNan: {
-        auto* assert_return_canonical_nan_command =
-            cast<AssertReturnCanonicalNanCommand>(command);
-        WriteLocation(assert_return_canonical_nan_command->action->loc);
-        WriteSeparator();
-        WriteAction(*assert_return_canonical_nan_command->action);
-        WriteSeparator();
-        WriteKey("expected");
-        WriteActionResultType(*assert_return_canonical_nan_command->action);
-        break;
-      }
-
-      case CommandType::AssertReturnArithmeticNan: {
-        auto* assert_return_arithmetic_nan_command =
-            cast<AssertReturnArithmeticNanCommand>(command);
-        WriteLocation(assert_return_arithmetic_nan_command->action->loc);
-        WriteSeparator();
-        WriteAction(*assert_return_arithmetic_nan_command->action);
-        WriteSeparator();
-        WriteKey("expected");
-        WriteActionResultType(*assert_return_arithmetic_nan_command->action);
-        break;
-      }
-
       case CommandType::AssertTrap: {
         auto* assert_trap_command = cast<AssertTrapCommand>(command);
         WriteLocation(assert_trap_command->action->loc);
@@ -489,6 +515,9 @@ void BinaryWriterSpec::WriteCommands() {
         WriteLocation(assert_exhaustion_command->action->loc);
         WriteSeparator();
         WriteAction(*assert_exhaustion_command->action);
+        WriteSeparator();
+        WriteKey("text");
+        WriteEscapedString(assert_exhaustion_command->text);
         WriteSeparator();
         WriteKey("expected");
         WriteActionResultType(*assert_exhaustion_command->action);
@@ -514,7 +543,7 @@ Result WriteBinarySpecScript(Stream* json_stream,
                              Script* script,
                              string_view source_filename,
                              string_view module_filename_noext,
-                             const WriteBinaryOptions* options) {
+                             const WriteBinaryOptions& options) {
   BinaryWriterSpec binary_writer_spec(json_stream, module_stream_factory,
                                       source_filename, module_filename_noext,
                                       options);
@@ -526,7 +555,7 @@ Result WriteBinarySpecScript(
     Script* script,
     string_view source_filename,
     string_view module_filename_noext,
-    const WriteBinaryOptions* options,
+    const WriteBinaryOptions& options,
     std::vector<FilenameMemoryStreamPair>* out_module_streams,
     Stream* log_stream) {
   WriteBinarySpecStreamFactory module_stream_factory =

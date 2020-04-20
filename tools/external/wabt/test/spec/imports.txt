@@ -17,7 +17,7 @@ out/test/spec/imports.wast:107: assert_unlinkable passed:
   error: unknown module field "unknown"
   0000020: error: OnImportFunc callback failed
 out/test/spec/imports.wast:111: assert_unlinkable passed:
-  error: unknown host function import "spectest.unknown"
+  error: unknown module field "unknown"
   0000024: error: OnImportFunc callback failed
 out/test/spec/imports.wast:116: assert_unlinkable passed:
   error: import signature mismatch
@@ -77,19 +77,19 @@ out/test/spec/imports.wast:189: assert_unlinkable passed:
   error: expected import "test.memory-2-inf" to have kind func, not memory
   0000025: error: OnImportFunc callback failed
 out/test/spec/imports.wast:193: assert_unlinkable passed:
-  error: unknown host function import "spectest.global_i32"
+  error: expected import "spectest.global_i32" to have kind func, not global
   0000027: error: OnImportFunc callback failed
 out/test/spec/imports.wast:197: assert_unlinkable passed:
-  error: unknown host function import "spectest.table"
+  error: expected import "spectest.table" to have kind func, not table
   0000022: error: OnImportFunc callback failed
 out/test/spec/imports.wast:201: assert_unlinkable passed:
-  error: unknown host function import "spectest.memory"
+  error: expected import "spectest.memory" to have kind func, not memory
   0000023: error: OnImportFunc callback failed
 out/test/spec/imports.wast:235: assert_unlinkable passed:
   error: unknown module field "unknown"
   000001b: error: OnImportGlobal callback failed
 out/test/spec/imports.wast:239: assert_unlinkable passed:
-  error: unknown host global import "spectest.unknown"
+  error: unknown module field "unknown"
   000001f: error: OnImportGlobal callback failed
 out/test/spec/imports.wast:244: assert_unlinkable passed:
   error: expected import "test.func" to have kind global, not func
@@ -101,14 +101,20 @@ out/test/spec/imports.wast:252: assert_unlinkable passed:
   error: expected import "test.memory-2-inf" to have kind global, not memory
   0000020: error: OnImportGlobal callback failed
 out/test/spec/imports.wast:256: assert_unlinkable passed:
-  error: unknown host global import "spectest.print_i32"
+  error: expected import "spectest.print_i32" to have kind global, not func
   0000021: error: OnImportGlobal callback failed
 out/test/spec/imports.wast:260: assert_unlinkable passed:
-  error: unknown host global import "spectest.table"
+  error: expected import "spectest.table" to have kind global, not table
   000001d: error: OnImportGlobal callback failed
 out/test/spec/imports.wast:264: assert_unlinkable passed:
-  error: unknown host global import "spectest.memory"
+  error: expected import "spectest.memory" to have kind global, not memory
   000001e: error: OnImportGlobal callback failed
+out/test/spec/imports.wast:283: assert_trap passed: uninitialized table element
+out/test/spec/imports.wast:286: assert_trap passed: uninitialized table element
+out/test/spec/imports.wast:287: assert_trap passed: undefined table index
+out/test/spec/imports.wast:302: assert_trap passed: uninitialized table element
+out/test/spec/imports.wast:305: assert_trap passed: uninitialized table element
+out/test/spec/imports.wast:306: assert_trap passed: undefined table index
 out/test/spec/imports.wast:310: assert_invalid passed:
   error: unknown import module ""
   0000011: error: OnImportTable callback failed
@@ -121,7 +127,7 @@ out/test/spec/imports.wast:335: assert_unlinkable passed:
   error: unknown module field "unknown"
   000001c: error: OnImportTable callback failed
 out/test/spec/imports.wast:339: assert_unlinkable passed:
-  error: unknown host table import "spectest.unknown"
+  error: unknown module field "unknown"
   0000020: error: OnImportTable callback failed
 out/test/spec/imports.wast:344: assert_unlinkable passed:
   error: actual size (10) smaller than declared (12)
@@ -145,8 +151,10 @@ out/test/spec/imports.wast:369: assert_unlinkable passed:
   error: expected import "test.memory-2-inf" to have kind table, not memory
   0000021: error: OnImportTable callback failed
 out/test/spec/imports.wast:373: assert_unlinkable passed:
-  error: unknown host table import "spectest.print_i32"
+  error: expected import "spectest.print_i32" to have kind table, not func
   0000022: error: OnImportTable callback failed
+out/test/spec/imports.wast:391: assert_trap passed: out of bounds memory access: access at 1000000+4 >= max value 65536
+out/test/spec/imports.wast:402: assert_trap passed: out of bounds memory access: access at 1000000+4 >= max value 65536
 out/test/spec/imports.wast:405: assert_invalid passed:
   error: unknown import module ""
   0000010: error: OnImportMemory callback failed
@@ -159,7 +167,7 @@ out/test/spec/imports.wast:428: assert_unlinkable passed:
   error: unknown module field "unknown"
   000001b: error: OnImportMemory callback failed
 out/test/spec/imports.wast:432: assert_unlinkable passed:
-  error: unknown host memory import "spectest.unknown"
+  error: unknown module field "unknown"
   000001f: error: OnImportMemory callback failed
 out/test/spec/imports.wast:437: assert_unlinkable passed:
   error: actual size (2) smaller than declared (3)
@@ -183,13 +191,13 @@ out/test/spec/imports.wast:462: assert_unlinkable passed:
   error: expected import "test.table-10-inf" to have kind memory, not table
   0000020: error: OnImportMemory callback failed
 out/test/spec/imports.wast:466: assert_unlinkable passed:
-  error: unknown host memory import "spectest.print_i32"
+  error: expected import "spectest.print_i32" to have kind memory, not func
   0000021: error: OnImportMemory callback failed
 out/test/spec/imports.wast:470: assert_unlinkable passed:
-  error: unknown host memory import "spectest.global_i32"
+  error: expected import "spectest.global_i32" to have kind memory, not global
   0000022: error: OnImportMemory callback failed
 out/test/spec/imports.wast:474: assert_unlinkable passed:
-  error: unknown host memory import "spectest.table"
+  error: expected import "spectest.table" to have kind memory, not table
   000001d: error: OnImportMemory callback failed
 out/test/spec/imports.wast:479: assert_unlinkable passed:
   error: actual size (1) smaller than declared (2)
@@ -207,7 +215,7 @@ out/test/spec/imports.wast:505: assert_malformed passed:
           ^^^^^^
 out/test/spec/imports.wast:509: assert_malformed passed:
   out/test/spec/imports/imports.102.wat:1:9: error: imports must occur before all non-import definitions
-  (func) (import "" "" (table 0 anyfunc))
+  (func) (import "" "" (table 0 funcref))
           ^^^^^^
 out/test/spec/imports.wast:513: assert_malformed passed:
   out/test/spec/imports/imports.103.wat:1:9: error: imports must occur before all non-import definitions
@@ -223,7 +231,7 @@ out/test/spec/imports.wast:522: assert_malformed passed:
                               ^^^^^^
 out/test/spec/imports.wast:526: assert_malformed passed:
   out/test/spec/imports/imports.106.wat:1:29: error: imports must occur before all non-import definitions
-  (global i64 (i64.const 0)) (import "" "" (table 0 anyfunc))
+  (global i64 (i64.const 0)) (import "" "" (table 0 funcref))
                               ^^^^^^
 out/test/spec/imports.wast:530: assert_malformed passed:
   out/test/spec/imports/imports.107.wat:1:29: error: imports must occur before all non-import definitions
@@ -231,19 +239,19 @@ out/test/spec/imports.wast:530: assert_malformed passed:
                               ^^^^^^
 out/test/spec/imports.wast:535: assert_malformed passed:
   out/test/spec/imports/imports.108.wat:1:20: error: imports must occur before all non-import definitions
-  (table 0 anyfunc) (import "" "" (func))
+  (table 0 funcref) (import "" "" (func))
                      ^^^^^^
 out/test/spec/imports.wast:539: assert_malformed passed:
   out/test/spec/imports/imports.109.wat:1:20: error: imports must occur before all non-import definitions
-  (table 0 anyfunc) (import "" "" (global i32))
+  (table 0 funcref) (import "" "" (global i32))
                      ^^^^^^
 out/test/spec/imports.wast:543: assert_malformed passed:
   out/test/spec/imports/imports.110.wat:1:20: error: imports must occur before all non-import definitions
-  (table 0 anyfunc) (import "" "" (table 0 anyfunc))
+  (table 0 funcref) (import "" "" (table 0 funcref))
                      ^^^^^^
 out/test/spec/imports.wast:547: assert_malformed passed:
   out/test/spec/imports/imports.111.wat:1:20: error: imports must occur before all non-import definitions
-  (table 0 anyfunc) (import "" "" (memory 0))
+  (table 0 funcref) (import "" "" (memory 0))
                      ^^^^^^
 out/test/spec/imports.wast:552: assert_malformed passed:
   out/test/spec/imports/imports.112.wat:1:13: error: imports must occur before all non-import definitions
@@ -255,14 +263,14 @@ out/test/spec/imports.wast:556: assert_malformed passed:
               ^^^^^^
 out/test/spec/imports.wast:560: assert_malformed passed:
   out/test/spec/imports/imports.114.wat:1:13: error: imports must occur before all non-import definitions
-  (memory 0) (import "" "" (table 1 3 anyfunc))
+  (memory 0) (import "" "" (table 1 3 funcref))
               ^^^^^^
 out/test/spec/imports.wast:564: assert_malformed passed:
   out/test/spec/imports/imports.115.wat:1:13: error: imports must occur before all non-import definitions
   (memory 0) (import "" "" (memory 1 2))
               ^^^^^^
-out/test/spec/imports.wast:572: assert_unlinkable passed:
-  error: unknown import module "not wasm"
+out/test/spec/imports.wast:574: assert_unlinkable passed:
+  error: unknown module field "overloaded"
   000004d: error: OnImportFunc callback failed
 109/109 tests passed.
 ;;; STDOUT ;;)
