@@ -409,6 +409,10 @@ class test_rodeos {
       }
    }
 
+   uint32_t          get_num_pushed_data();
+   std::vector<char> get_pushed_data(uint32_t index);
+   std::string       get_pushed_data_str(uint32_t index);
+
    struct user_context {
       test_rodeos&                                  r;
       std::vector<eosio::permission_level>          level;

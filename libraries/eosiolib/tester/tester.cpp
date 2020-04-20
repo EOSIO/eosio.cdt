@@ -45,6 +45,8 @@ namespace {
    TESTER_INTRINSIC void     rodeos_push_transaction(uint32_t rodeos, const char* args_begin, const char* args_end,
                                                      void* cb_alloc_data,
                                                      void* (*cb_alloc)(void* cb_alloc_data, size_t size));
+   TESTER_INTRINSIC uint32_t rodeos_get_num_pushed_data(uint32_t rodeos);
+   TESTER_INTRINSIC uint32_t rodeos_get_pushed_data(uint32_t rodeos, uint32_t index, char* dest, uint32_t size);
 
    template <typename Alloc_fn>
    inline void get_args(Alloc_fn alloc_fn) {
@@ -546,6 +548,24 @@ eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&&     
 
 eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&& actions, const char* expected_except) {
    return transact(std::move(actions), {}, expected_except);
+}
+
+uint32_t eosio::test_rodeos::get_num_pushed_data() {
+    return rodeos_get_num_pushed_data(id);
+}
+
+std::vector<char> eosio::test_rodeos::get_pushed_data(uint32_t index) {
+    size_t            len = rodeos_get_pushed_data(id, index, nullptr, 0);
+    std::vector<char> result(len);
+    rodeos_get_pushed_data(id, index, result.data(), len);
+    return result;
+}
+
+std::string eosio::test_rodeos::get_pushed_data_str(uint32_t index) {
+    size_t      len = rodeos_get_pushed_data(id, index, nullptr, 0);
+    std::string result(len, 0);
+    rodeos_get_pushed_data(id, index, result.data(), len);
+    return result;
 }
 
 std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {

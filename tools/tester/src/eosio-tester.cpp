@@ -356,6 +356,7 @@ struct test_rodeos {
    std::optional<embedded_rodeos::query_handler> query_handler;
    test_chain_ref                                chain;
    uint32_t                                      next_block = 0;
+   std::vector<std::vector<char>>                pushed_data;
 
    test_rodeos() {
       context.open_db(dir.path().string().c_str(), true);
@@ -1039,9 +1040,17 @@ struct callbacks {
       r.write_snapshot->write_block_info(it->second.data(), it->second.size());
       r.write_snapshot->write_deltas(it->second.data(), it->second.size(), [] { return false; });
       for (auto& filter : r.filters) {
-         try {
-            filter.run(*r.write_snapshot, it->second.data(), it->second.size());
-         } catch (std::exception& e) { throw std::runtime_error("filter failed: " + std::string{ e.what() }); }
+          try {
+              filter.run(
+                  *r.write_snapshot, it->second.data(), it->second.size(),
+                  [&](const char* data, uint64_t size) {
+                      r.pushed_data.emplace_back(data, data + size);
+                      return true;
+                  });
+          } catch (std::exception& e) {
+              throw std::runtime_error(
+                  "filter failed: " + std::string{e.what()});
+          }
       }
       r.write_snapshot->end_block(it->second.data(), it->second.size(), true);
       r.next_block = it->first + 1;
@@ -1080,6 +1089,23 @@ struct callbacks {
             ilog("rodeos query console: <<<\n${c}>>>", ("c", at1.console));
       }
       set_data(cb_alloc_data, cb_alloc, result);
+   }
+
+   uint32_t rodeos_get_num_pushed_data(uint32_t rodeos) {
+       auto& r = assert_rodeos(rodeos);
+       return r.pushed_data.size();
+   }
+
+   uint32_t rodeos_get_pushed_data(
+       uint32_t rodeos, uint32_t index, char* dest, uint32_t size) {
+       auto& r = assert_rodeos(rodeos);
+       if (index >= r.pushed_data.size())
+           throw std::runtime_error(
+               "rodeos_get_pushed_data: index is out of range");
+       memcpy(
+           dest, r.pushed_data[index].data(),
+           std::min(size, (uint32_t)r.pushed_data[index].size()));
+       return r.pushed_data[index].size();
    }
 
    // clang-format off
@@ -1273,6 +1299,8 @@ void register_callbacks() {
    rhf_t::add<callbacks, &callbacks::connect_rodeos, eosio::vm::wasm_allocator>("env", "connect_rodeos");
    rhf_t::add<callbacks, &callbacks::rodeos_sync_block, eosio::vm::wasm_allocator>("env", "rodeos_sync_block");
    rhf_t::add<callbacks, &callbacks::rodeos_push_transaction, eosio::vm::wasm_allocator>("env", "rodeos_push_transaction");
+   rhf_t::add<callbacks, &callbacks::rodeos_get_num_pushed_data, eosio::vm::wasm_allocator>("env", "rodeos_get_num_pushed_data");
+   rhf_t::add<callbacks, &callbacks::rodeos_get_pushed_data, eosio::vm::wasm_allocator>("env", "rodeos_get_pushed_data");
 
    rhf_t::add<callbacks, &callbacks::db_get_i64, eosio::vm::wasm_allocator>("env", "db_get_i64");
    rhf_t::add<callbacks, &callbacks::db_next_i64, eosio::vm::wasm_allocator>("env", "db_next_i64");
