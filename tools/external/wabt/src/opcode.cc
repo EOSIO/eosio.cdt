@@ -16,8 +16,6 @@
 
 #include "src/opcode.h"
 
-#include <algorithm>
-
 #include "src/feature.h"
 
 namespace wabt {
@@ -25,54 +23,30 @@ namespace wabt {
 // static
 Opcode::Info Opcode::infos_[] = {
 #define WABT_OPCODE(rtype, type1, type2, type3, mem_size, prefix, code, Name, \
-                    text)                                                     \
-  {text,        Type::rtype, Type::type1,                                     \
+                    text, decomp)                                             \
+  {text, decomp, Type::rtype, Type::type1,                                    \
    Type::type2, Type::type3, mem_size,                                        \
    prefix,      code,        PrefixCode(prefix, code)},
 #include "src/opcode.def"
 #undef WABT_OPCODE
+
+  {"<invalid>", "", Type::Void, Type::Void, Type::Void, Type::Void, 0, 0, 0, 0},
 };
 
 #define WABT_OPCODE(rtype, type1, type2, type3, mem_size, prefix, code, Name, \
-                    text)                                                     \
+                    text, decomp)                                                     \
   /* static */ Opcode Opcode::Name##_Opcode(Opcode::Name);
 #include "src/opcode.def"
 #undef WABT_OPCODE
-
-// static
-Opcode Opcode::FromCode(uint32_t code) {
-  return FromCode(0, code);
-}
-
-// static
-Opcode Opcode::FromCode(uint8_t prefix, uint32_t code) {
-  uint32_t prefix_code = PrefixCode(prefix, code);
-  auto begin = infos_;
-  auto end = infos_ + WABT_ARRAY_SIZE(infos_);
-  auto iter = std::lower_bound(begin, end, prefix_code,
-                               [](const Info& info, uint32_t prefix_code) {
-                                 return info.prefix_code < prefix_code;
-                               });
-  if (iter == end || iter->prefix_code != prefix_code) {
-    return Opcode(EncodeInvalidOpcode(prefix_code));
-  }
-
-  return Opcode(static_cast<Enum>(iter - infos_));
-}
 
 Opcode::Info Opcode::GetInfo() const {
   if (enum_ < Invalid) {
     return infos_[enum_];
   }
 
-  uint8_t prefix;
-  uint32_t code;
-  DecodeInvalidOpcode(enum_, &prefix, &code);
-  const Info invalid_info = {
-      "<invalid>", Type::Void, Type::Void,
-      Type::Void,  Type::Void, 0,
-      prefix,      code,       PrefixCode(prefix, code),
-  };
+  Info invalid_info = infos_[Opcode::Invalid];
+  DecodeInvalidOpcode(enum_, &invalid_info.prefix, &invalid_info.code);
+  invalid_info.prefix_code = PrefixCode(invalid_info.prefix, invalid_info.code);
   return invalid_info;
 }
 
@@ -94,17 +68,21 @@ bool Opcode::IsEnabled(const Features& features) const {
     case Opcode::Catch:
     case Opcode::Throw:
     case Opcode::Rethrow:
-    case Opcode::IfExcept:
+    case Opcode::BrOnExn:
       return features.exceptions_enabled();
 
-    case Opcode::I32TruncSSatF32:
-    case Opcode::I32TruncUSatF32:
-    case Opcode::I32TruncSSatF64:
-    case Opcode::I32TruncUSatF64:
-    case Opcode::I64TruncSSatF32:
-    case Opcode::I64TruncUSatF32:
-    case Opcode::I64TruncSSatF64:
-    case Opcode::I64TruncUSatF64:
+    case Opcode::ReturnCallIndirect:
+    case Opcode::ReturnCall:
+      return features.tail_call_enabled();
+
+    case Opcode::I32TruncSatF32S:
+    case Opcode::I32TruncSatF32U:
+    case Opcode::I32TruncSatF64S:
+    case Opcode::I32TruncSatF64U:
+    case Opcode::I64TruncSatF32S:
+    case Opcode::I64TruncSatF32U:
+    case Opcode::I64TruncSatF64S:
+    case Opcode::I64TruncSatF64U:
       return features.sat_float_to_int_enabled();
 
     case Opcode::I32Extend8S:
@@ -114,7 +92,7 @@ bool Opcode::IsEnabled(const Features& features) const {
     case Opcode::I64Extend32S:
       return features.sign_extension_enabled();
 
-    case Opcode::AtomicWake:
+    case Opcode::AtomicNotify:
     case Opcode::I32AtomicWait:
     case Opcode::I64AtomicWait:
     case Opcode::I32AtomicLoad:
@@ -133,53 +111,53 @@ bool Opcode::IsEnabled(const Features& features) const {
     case Opcode::I64AtomicStore32:
     case Opcode::I32AtomicRmwAdd:
     case Opcode::I64AtomicRmwAdd:
-    case Opcode::I32AtomicRmw8UAdd:
-    case Opcode::I32AtomicRmw16UAdd:
-    case Opcode::I64AtomicRmw8UAdd:
-    case Opcode::I64AtomicRmw16UAdd:
-    case Opcode::I64AtomicRmw32UAdd:
+    case Opcode::I32AtomicRmw8AddU:
+    case Opcode::I32AtomicRmw16AddU:
+    case Opcode::I64AtomicRmw8AddU:
+    case Opcode::I64AtomicRmw16AddU:
+    case Opcode::I64AtomicRmw32AddU:
     case Opcode::I32AtomicRmwSub:
     case Opcode::I64AtomicRmwSub:
-    case Opcode::I32AtomicRmw8USub:
-    case Opcode::I32AtomicRmw16USub:
-    case Opcode::I64AtomicRmw8USub:
-    case Opcode::I64AtomicRmw16USub:
-    case Opcode::I64AtomicRmw32USub:
+    case Opcode::I32AtomicRmw8SubU:
+    case Opcode::I32AtomicRmw16SubU:
+    case Opcode::I64AtomicRmw8SubU:
+    case Opcode::I64AtomicRmw16SubU:
+    case Opcode::I64AtomicRmw32SubU:
     case Opcode::I32AtomicRmwAnd:
     case Opcode::I64AtomicRmwAnd:
-    case Opcode::I32AtomicRmw8UAnd:
-    case Opcode::I32AtomicRmw16UAnd:
-    case Opcode::I64AtomicRmw8UAnd:
-    case Opcode::I64AtomicRmw16UAnd:
-    case Opcode::I64AtomicRmw32UAnd:
+    case Opcode::I32AtomicRmw8AndU:
+    case Opcode::I32AtomicRmw16AndU:
+    case Opcode::I64AtomicRmw8AndU:
+    case Opcode::I64AtomicRmw16AndU:
+    case Opcode::I64AtomicRmw32AndU:
     case Opcode::I32AtomicRmwOr:
     case Opcode::I64AtomicRmwOr:
-    case Opcode::I32AtomicRmw8UOr:
-    case Opcode::I32AtomicRmw16UOr:
-    case Opcode::I64AtomicRmw8UOr:
-    case Opcode::I64AtomicRmw16UOr:
-    case Opcode::I64AtomicRmw32UOr:
+    case Opcode::I32AtomicRmw8OrU:
+    case Opcode::I32AtomicRmw16OrU:
+    case Opcode::I64AtomicRmw8OrU:
+    case Opcode::I64AtomicRmw16OrU:
+    case Opcode::I64AtomicRmw32OrU:
     case Opcode::I32AtomicRmwXor:
     case Opcode::I64AtomicRmwXor:
-    case Opcode::I32AtomicRmw8UXor:
-    case Opcode::I32AtomicRmw16UXor:
-    case Opcode::I64AtomicRmw8UXor:
-    case Opcode::I64AtomicRmw16UXor:
-    case Opcode::I64AtomicRmw32UXor:
+    case Opcode::I32AtomicRmw8XorU:
+    case Opcode::I32AtomicRmw16XorU:
+    case Opcode::I64AtomicRmw8XorU:
+    case Opcode::I64AtomicRmw16XorU:
+    case Opcode::I64AtomicRmw32XorU:
     case Opcode::I32AtomicRmwXchg:
     case Opcode::I64AtomicRmwXchg:
-    case Opcode::I32AtomicRmw8UXchg:
-    case Opcode::I32AtomicRmw16UXchg:
-    case Opcode::I64AtomicRmw8UXchg:
-    case Opcode::I64AtomicRmw16UXchg:
-    case Opcode::I64AtomicRmw32UXchg:
+    case Opcode::I32AtomicRmw8XchgU:
+    case Opcode::I32AtomicRmw16XchgU:
+    case Opcode::I64AtomicRmw8XchgU:
+    case Opcode::I64AtomicRmw16XchgU:
+    case Opcode::I64AtomicRmw32XchgU:
     case Opcode::I32AtomicRmwCmpxchg:
     case Opcode::I64AtomicRmwCmpxchg:
-    case Opcode::I32AtomicRmw8UCmpxchg:
-    case Opcode::I32AtomicRmw16UCmpxchg:
-    case Opcode::I64AtomicRmw8UCmpxchg:
-    case Opcode::I64AtomicRmw16UCmpxchg:
-    case Opcode::I64AtomicRmw32UCmpxchg:
+    case Opcode::I32AtomicRmw8CmpxchgU:
+    case Opcode::I32AtomicRmw16CmpxchgU:
+    case Opcode::I64AtomicRmw8CmpxchgU:
+    case Opcode::I64AtomicRmw16CmpxchgU:
+    case Opcode::I64AtomicRmw32CmpxchgU:
       return features.threads_enabled();
 
     case Opcode::V128Const:
@@ -205,7 +183,6 @@ bool Opcode::IsEnabled(const Features& features) const {
     case Opcode::I64X2ReplaceLane:
     case Opcode::F32X4ReplaceLane:
     case Opcode::F64X2ReplaceLane:
-    case Opcode::V8X16Shuffle:
     case Opcode::I8X16Add:
     case Opcode::I16X8Add:
     case Opcode::I32X4Add:
@@ -314,15 +291,38 @@ bool Opcode::IsEnabled(const Features& features) const {
     case Opcode::F64X2Mul:
     case Opcode::F32X4Sqrt:
     case Opcode::F64X2Sqrt:
-    case Opcode::F32X4ConvertSI32X4:
-    case Opcode::F32X4ConvertUI32X4:
-    case Opcode::F64X2ConvertSI64X2:
-    case Opcode::F64X2ConvertUI64X2:
-    case Opcode::I32X4TruncSF32X4Sat:
-    case Opcode::I32X4TruncUF32X4Sat:
-    case Opcode::I64X2TruncSF64X2Sat:
-    case Opcode::I64X2TruncUF64X2Sat:
+    case Opcode::F32X4ConvertI32X4S:
+    case Opcode::F32X4ConvertI32X4U:
+    case Opcode::F64X2ConvertI64X2S:
+    case Opcode::F64X2ConvertI64X2U:
+    case Opcode::I32X4TruncSatF32X4S:
+    case Opcode::I32X4TruncSatF32X4U:
+    case Opcode::I64X2TruncSatF64X2S:
+    case Opcode::I64X2TruncSatF64X2U:
+    case Opcode::V8X16Swizzle:
+    case Opcode::V8X16Shuffle:
+    case Opcode::I8X16LoadSplat:
+    case Opcode::I16X8LoadSplat:
+    case Opcode::I32X4LoadSplat:
+    case Opcode::I64X2LoadSplat:
       return features.simd_enabled();
+
+    case Opcode::MemoryInit:
+    case Opcode::DataDrop:
+    case Opcode::MemoryCopy:
+    case Opcode::MemoryFill:
+    case Opcode::TableInit:
+    case Opcode::ElemDrop:
+    case Opcode::TableCopy:
+      return features.bulk_memory_enabled();
+
+    case Opcode::TableGet:
+    case Opcode::TableSet:
+    case Opcode::TableGrow:
+    case Opcode::TableSize:
+    case Opcode::RefNull:
+    case Opcode::RefIsNull:
+      return features.reference_types_enabled();
 
     // Interpreter opcodes are never "enabled".
     case Opcode::InterpAlloca:
@@ -364,6 +364,22 @@ uint32_t Opcode::GetSimdLaneCount() const {
     default:
       WABT_UNREACHABLE;
   }
+}
+
+// Get the byte sequence for this opcode, including prefix.
+std::vector<uint8_t> Opcode::GetBytes() const {
+  std::vector<uint8_t> result;
+  if (HasPrefix()) {
+    result.push_back(GetPrefix());
+    uint8_t buffer[5];
+    Offset length =
+        WriteU32Leb128Raw(buffer, buffer + sizeof(buffer), GetCode());
+    assert(length != 0);
+    result.insert(result.end(), buffer, buffer + length);
+  } else {
+    result.push_back(GetCode());
+  }
+  return result;
 }
 
 }  // namespace wabt

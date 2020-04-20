@@ -12,7 +12,7 @@ section(CODE) {
   }
 }
 (;; STDERR ;;;
-000001a: error: unexpected opcode: 254 127 (0xfe 0x7f)
+000001a: error: unexpected opcode: 0xfe 0x7f
 ;;; STDERR ;;)
 (;; STDOUT ;;;
 
@@ -20,5 +20,5 @@ bad-opcode-prefix.wasm:	file format wasm 0x1
 
 Code Disassembly:
 
-000016 func[0]:
+000017 func[0]:
 ;;; STDOUT ;;)

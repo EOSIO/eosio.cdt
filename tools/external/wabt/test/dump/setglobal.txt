@@ -1,7 +1,7 @@
 ;;; TOOL: run-objdump
 ;;; ARGS0: -v
 (module
-  (global f32 (f32.const 1))
+  (global (mut f32) (f32.const 1))
   (func
     f32.const 2
     set_global 0))
@@ -28,7 +28,7 @@
 0000013: 00                                        ; section size (guess)
 0000014: 01                                        ; num globals
 0000015: 7d                                        ; f32
-0000016: 00                                        ; global mutability
+0000016: 01                                        ; global mutability
 0000017: 43                                        ; f32.const
 0000018: 0000 803f                                 ; f32 literal
 000001c: 0b                                        ; end
@@ -42,7 +42,7 @@
 0000021: 00                                        ; local decl count
 0000022: 43                                        ; f32.const
 0000023: 0000 0040                                 ; f32 literal
-0000027: 24                                        ; set_global
+0000027: 24                                        ; global.set
 0000028: 00                                        ; global index
 0000029: 0b                                        ; end
 0000020: 09                                        ; FIXUP func body size
@@ -52,8 +52,8 @@ setglobal.wasm:	file format wasm 0x1
 
 Code Disassembly:
 
-000020 func[0]:
+000021 func[0]:
  000022: 43 00 00 00 40             | f32.const 0x1p+1
- 000027: 24 00                      | set_global 0
+ 000027: 24 00                      | global.set 0
  000029: 0b                         | end
 ;;; STDOUT ;;)

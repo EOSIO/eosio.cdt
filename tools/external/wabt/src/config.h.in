@@ -18,6 +18,9 @@
 #define WABT_CONFIG_H_
 
 #include <stdint.h>
+#include <stdlib.h>
+
+#cmakedefine WABT_VERSION_INFO "${WABT_VERSION_INFO}"
 
 /* TODO(binji): nice way to define these with WABT_ prefix? */
 
@@ -57,10 +60,6 @@
 #define alloca _alloca
 #elif defined(__MINGW32__)
 #include <malloc.h>
-#elif defined(__FreeBSD__)
-#include <stdlib.h>
-#else
-#error no alloca
 #endif
 
 #if COMPILER_IS_CLANG || COMPILER_IS_GNU
@@ -95,12 +94,10 @@
 #define WABT_STATIC_ASSERT(x) _Static_assert((x), #x)
 #endif
 
-#define WABT_UNREACHABLE __builtin_unreachable()
-
 #elif COMPILER_IS_MSVC
 
 #include <intrin.h>
-#include <cstring>
+#include <string.h>
 
 #define WABT_UNUSED
 #define WABT_WARN_UNUSED
@@ -110,13 +107,15 @@
 #define WABT_LIKELY(x) (x)
 #define WABT_PRINTF_FORMAT(format_arg, first_arg)
 
-#define WABT_UNREACHABLE __assume(0)
-
 #else
 
 #error unknown compiler
 
 #endif
+
+#define WABT_UNREACHABLE abort()
+
+#ifdef __cplusplus
 
 namespace wabt {
 
@@ -281,7 +280,7 @@ int wabt_vsnprintf(char* str, size_t size, const char* format, va_list ap);
 #endif
 
 #if !HAVE_SSIZE_T
-typedef int ssize_t;
+typedef long ssize_t;
 #endif
 
 #if !HAVE_STRCASECMP
@@ -292,40 +291,11 @@ typedef int ssize_t;
 #endif
 #endif
 
-#if COMPILER_IS_MSVC && defined(_M_X64)
-// MSVC on x64 generates uint64 -> float conversions but doesn't do
-// round-to-nearest-ties-to-even, which is required by WebAssembly.
-#include <emmintrin.h>
-__inline double wabt_convert_uint64_to_double(unsigned __int64 x) {
-  __m128d result = _mm_setzero_pd();
-  if (x & 0x8000000000000000ULL) {
-    result = _mm_cvtsi64_sd(result, (x >> 1) | (x & 1));
-    result = _mm_add_sd(result, result);
-  } else {
-    result = _mm_cvtsi64_sd(result, x);
-  }
-  return _mm_cvtsd_f64(result);
-}
+double wabt_convert_uint64_to_double(uint64_t x);
+float wabt_convert_uint64_to_float(uint64_t x);
+double wabt_convert_int64_to_double(int64_t x);
+float wabt_convert_int64_to_float(int64_t x);
 
-__inline float wabt_convert_uint64_to_float(unsigned __int64 x) {
-  __m128 result = _mm_setzero_ps();
-  if (x & 0x8000000000000000ULL) {
-    result = _mm_cvtsi64_ss(result, (x >> 1) | (x & 1));
-    result = _mm_add_ss(result, result);
-  } else {
-    result = _mm_cvtsi64_ss(result, x);
-  }
-  return _mm_cvtss_f32(result);
-}
-
-#else
-__inline double wabt_convert_uint64_to_double(uint64_t x) {
-  return static_cast<double>(x);
-}
-
-__inline float wabt_convert_uint64_to_float(uint64_t x) {
-  return static_cast<float>(x);
-}
-#endif
+#endif  // __cplusplus
 
 #endif /* WABT_CONFIG_H_ */

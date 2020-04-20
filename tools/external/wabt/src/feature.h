@@ -28,19 +28,27 @@ class Features {
   void AddOptions(OptionParser*);
 
   void EnableAll() {
-#define WABT_FEATURE(variable, flag, help) enable_##variable();
+#define WABT_FEATURE(variable, flag, default_, help) enable_##variable();
 #include "src/feature.def"
 #undef WABT_FEATURE
   }
 
-#define WABT_FEATURE(variable, flag, help)                        \
+#define WABT_FEATURE(variable, flag, default_, help)              \
   bool variable##_enabled() const { return variable##_enabled_; } \
-  void enable_##variable() { variable##_enabled_ = true; }
+  void enable_##variable() { set_##variable##_enabled(true); }    \
+  void disable_##variable() { set_##variable##_enabled(false); }  \
+  void set_##variable##_enabled(bool value) {                     \
+    variable##_enabled_ = value;                                  \
+    UpdateDependencies();                                         \
+  }
 #include "src/feature.def"
 #undef WABT_FEATURE
 
  private:
-#define WABT_FEATURE(variable, flag, help) bool variable##_enabled_ = false;
+  void UpdateDependencies();
+
+#define WABT_FEATURE(variable, flag, default_, help) \
+  bool variable##_enabled_ = default_;
 #include "src/feature.def"
 #undef WABT_FEATURE
 };

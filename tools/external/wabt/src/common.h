@@ -102,14 +102,17 @@
 
 struct v128 {
   uint32_t v[4];
+
+  bool operator==(const v128& other) const {
+    return v[0] == other.v[0] &&
+           v[1] == other.v[1] &&
+           v[2] == other.v[2] &&
+           v[3] == other.v[3];
+  }
+  bool operator!=(const v128& other) const { return !(*this == other); }
 };
 
 namespace wabt {
-
-enum class ErrorLevel {
-  Warning,
-  Error,
-};
 
 typedef uint32_t Index;    // An index into one of the many index spaces.
 typedef uint32_t Address;  // An address or size in linear memory.
@@ -165,8 +168,6 @@ enum class LabelType {
   Loop,
   If,
   Else,
-  IfExcept,
-  IfExceptElse,
   Try,
   Catch,
 
@@ -206,34 +207,68 @@ struct Location {
 
 // Matches binary format, do not change.
 enum class Type : int32_t {
-  I32 = -0x01,        // 0x7f
-  I64 = -0x02,        // 0x7e
-  F32 = -0x03,        // 0x7d
-  F64 = -0x04,        // 0x7c
-  V128 = -0x05,       // 0x7b
-  Anyfunc = -0x10,    // 0x70
-  ExceptRef = -0x18,  // 0x68
-  Func = -0x20,       // 0x60
-  Void = -0x40,       // 0x40
-  ___ = Void,         // Convenient for the opcode table in opcode.h
-  Any = 0,            // Not actually specified, but useful for type-checking
+  I32 = -0x01,      // 0x7f
+  I64 = -0x02,      // 0x7e
+  F32 = -0x03,      // 0x7d
+  F64 = -0x04,      // 0x7c
+  V128 = -0x05,     // 0x7b
+  Funcref = -0x10,  // 0x70
+  Anyref = -0x11,   // 0x6f
+  Nullref = -0x12,  // 0x6e
+  Exnref = -0x18,   // 0x68
+  Func = -0x20,     // 0x60
+  Void = -0x40,     // 0x40
+  ___ = Void,       // Convenient for the opcode table in opcode.h
+  Any = 0,          // Not actually specified, but useful for type-checking
+  Hostref = 2,      // Not actually specified, but used in testing and type-checking
+  I8 = 3,           // Not actually specified, but used internally with load/store
+  I8U = 4,          // Not actually specified, but used internally with load/store
+  I16 = 5,          // Not actually specified, but used internally with load/store
+  I16U = 6,         // Not actually specified, but used internally with load/store
+  I32U = 7,         // Not actually specified, but used internally with load/store
 };
 typedef std::vector<Type> TypeVector;
 
+enum class SegmentKind {
+  Active,
+  Passive,
+  Declared,
+};
+
+// Used in test asserts for special expected values "nan:canonical" and "nan:arithmetic"
+enum class ExpectedNan {
+  Canonical,
+  Arithmetic,
+};
+
+// Matches binary format, do not change.
+enum SegmentFlags : uint8_t {
+  SegFlagsNone = 0,
+  SegPassive = 1,        // bit 0: Is passive
+  SegExplicitIndex = 2,  // bit 1: Has explict index (Implies table 0 if absent)
+  SegDeclared = 3,       // Only used for declared segments
+  SegUseElemExprs = 4,   // bit 2: Is elemexpr (Or else index sequence)
+
+  SegFlagMax = (SegUseElemExprs << 1) - 1,  // All bits set.
+};
+
 enum class RelocType {
-  FuncIndexLEB = 0,       // e.g. Immediate of call instruction
-  TableIndexSLEB = 1,     // e.g. Loading address of function
-  TableIndexI32 = 2,      // e.g. Function address in DATA
-  MemoryAddressLEB = 3,   // e.g. Memory address in load/store offset immediate
-  MemoryAddressSLEB = 4,  // e.g. Memory address in i32.const
-  MemoryAddressI32 = 5,   // e.g. Memory address in DATA
-  TypeIndexLEB = 6,       // e.g. Immediate type in call_indirect
-  GlobalIndexLEB = 7,     // e.g. Immediate of get_global inst
-  FunctionOffsetI32 = 8,  // e.g. Code offset in DWARF metadata
-  SectionOffsetI32 = 9,   // e.g. Section offset in DWARF metadata
+  FuncIndexLEB = 0,          // e.g. Immediate of call instruction
+  TableIndexSLEB = 1,        // e.g. Loading address of function
+  TableIndexI32 = 2,         // e.g. Function address in DATA
+  MemoryAddressLEB = 3,      // e.g. Memory address in load/store offset immediate
+  MemoryAddressSLEB = 4,     // e.g. Memory address in i32.const
+  MemoryAddressI32 = 5,      // e.g. Memory address in DATA
+  TypeIndexLEB = 6,          // e.g. Immediate type in call_indirect
+  GlobalIndexLEB = 7,        // e.g. Immediate of get_global inst
+  FunctionOffsetI32 = 8,     // e.g. Code offset in DWARF metadata
+  SectionOffsetI32 = 9,      // e.g. Section offset in DWARF metadata
+  EventIndexLEB = 10,        // Used in throw instructions
+  MemoryAddressRelSLEB = 11, // In PIC code, data address relative to __memory_base
+  TableIndexRelSLEB = 12,    // In PIC code, table index relative to __table_base
 
   First = FuncIndexLEB,
-  Last = SectionOffsetI32,
+  Last = TableIndexRelSLEB,
 };
 static const int kRelocTypeCount = WABT_ENUM_COUNT(RelocType);
 
@@ -258,11 +293,21 @@ enum class SymbolType {
   Data = 1,
   Global = 2,
   Section = 3,
+  Event = 4,
 };
 
-#define WABT_SYMBOL_FLAG_UNDEFINED 0x10
+enum class ComdatType {
+  Data = 0x0,
+  Function = 0x1,
+};
+
 #define WABT_SYMBOL_MASK_VISIBILITY 0x4
 #define WABT_SYMBOL_MASK_BINDING 0x3
+#define WABT_SYMBOL_FLAG_UNDEFINED 0x10
+#define WABT_SYMBOL_FLAG_EXPORTED 0x20
+#define WABT_SYMBOL_FLAG_EXPLICIT_NAME 0x40
+#define WABT_SYMBOL_FLAG_NO_STRIP 0x80
+#define WABT_SYMBOL_FLAG_MAX 0xff
 
 enum class SymbolVisibility {
   Default = 0,
@@ -281,14 +326,21 @@ enum class ExternalKind {
   Table = 1,
   Memory = 2,
   Global = 3,
-  Except = 4,
+  Event = 4,
 
   First = Func,
-  Last = Except,
+  Last = Event,
 };
 static const int kExternalKindCount = WABT_ENUM_COUNT(ExternalKind);
 
 struct Limits {
+  Limits() = default;
+  explicit Limits(uint64_t initial) : initial(initial) {}
+  Limits(uint64_t initial, uint64_t max)
+      : initial(initial), max(max), has_max(true) {}
+  Limits(uint64_t initial, uint64_t max, bool is_shared)
+      : initial(initial), max(max), has_max(true), is_shared(is_shared) {}
+
   uint64_t initial = 0;
   uint64_t max = 0;
   bool has_max = false;
@@ -306,8 +358,9 @@ void InitStdio();
 extern const char* g_kind_name[];
 
 static WABT_INLINE const char* GetKindName(ExternalKind kind) {
-  assert(static_cast<int>(kind) < kExternalKindCount);
-  return g_kind_name[static_cast<size_t>(kind)];
+  return static_cast<int>(kind) < kExternalKindCount
+    ? g_kind_name[static_cast<size_t>(kind)]
+    : "<error_kind>";
 }
 
 /* reloc */
@@ -315,8 +368,9 @@ static WABT_INLINE const char* GetKindName(ExternalKind kind) {
 extern const char* g_reloc_type_name[];
 
 static WABT_INLINE const char* GetRelocTypeName(RelocType reloc) {
-  assert(static_cast<int>(reloc) < kRelocTypeCount);
-  return g_reloc_type_name[static_cast<size_t>(reloc)];
+  return static_cast<int>(reloc) < kRelocTypeCount
+    ? g_reloc_type_name[static_cast<size_t>(reloc)]
+    : "<error_reloc_type>";
 }
 
 /* symbol */
@@ -331,11 +385,24 @@ static WABT_INLINE const char* GetSymbolTypeName(SymbolType type) {
       return "data";
     case SymbolType::Section:
       return "section";
+    case SymbolType::Event:
+      return "event";
+    default:
+      return "<error_symbol_type>";
   }
-  WABT_UNREACHABLE;
 }
 
 /* type */
+
+static WABT_INLINE bool IsRefType(Type t) {
+  return t == Type::Anyref || t == Type::Funcref || t == Type::Nullref ||
+         t == Type::Exnref || t == Type::Hostref;
+}
+
+static WABT_INLINE bool IsNullableRefType(Type t) {
+  /* Currently all reftypes are nullable */
+  return IsRefType(t);
+}
 
 static WABT_INLINE const char* GetTypeName(Type type) {
   switch (type) {
@@ -349,20 +416,23 @@ static WABT_INLINE const char* GetTypeName(Type type) {
       return "f64";
     case Type::V128:
       return "v128";
-    case Type::Anyfunc:
-      return "anyfunc";
+    case Type::Funcref:
+      return "funcref";
     case Type::Func:
       return "func";
-    case Type::ExceptRef:
-      return "except_ref";
+    case Type::Exnref:
+      return "exnref";
     case Type::Void:
       return "void";
     case Type::Any:
       return "any";
+    case Type::Anyref:
+      return "anyref";
+    case Type::Nullref:
+      return "nullref";
     default:
-      return "<type index>";
+      return "<type_index>";
   }
-  WABT_UNREACHABLE;
 }
 
 static WABT_INLINE bool IsTypeIndex(Type type) {
@@ -385,23 +455,15 @@ static WABT_INLINE TypeVector GetInlineTypeVector(Type type) {
     case Type::F32:
     case Type::F64:
     case Type::V128:
+    case Type::Funcref:
+    case Type::Anyref:
+    case Type::Nullref:
+    case Type::Exnref:
       return TypeVector(&type, &type + 1);
 
     default:
       WABT_UNREACHABLE;
   }
-}
-
-/* error level */
-
-static WABT_INLINE const char* GetErrorLevelName(ErrorLevel error_level) {
-  switch (error_level) {
-    case ErrorLevel::Warning:
-      return "warning";
-    case ErrorLevel::Error:
-      return "error";
-  }
-  WABT_UNREACHABLE;
 }
 
 template <typename T>

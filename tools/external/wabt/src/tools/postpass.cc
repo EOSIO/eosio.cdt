@@ -24,7 +24,7 @@
 #include "src/binary-reader.h"
 #include "src/binary-writer.h"
 #include "src/binary-reader-ir.h"
-#include "src/error-handler.h"
+#include "src/error-formatter.h"
 #include "src/feature.h"
 #include "src/generate-names.h"
 #include "src/ir.h"
@@ -60,7 +60,6 @@ static void ParseOptions(int argc, char** argv) {
     s_verbose++;
     s_log_stream = FileStream::CreateStdout();
   });
-  parser.AddHelpOption();
   parser.AddOption(
       'o', "output", "FILENAME",
       "Output file for the generated wast file, by default use stdout",
@@ -145,16 +144,16 @@ int ProgramMain(int argc, char** argv) {
   bool stub = false;
   std::unique_ptr<FileStream> s_log_stream_s;
   result = ReadFile(s_infile.c_str(), &file_data);
-  DataSegment _hds;
+  DataSegment _hds = DataSegment(string_view());
   if (Succeeded(result)) {
-    ErrorHandlerFile error_handler(Location::Type::Binary);
+    Errors errors;
     Module module;
     const bool kStopOnFirstError = true;
     ReadBinaryOptions options(s_features, s_log_stream_s.get(),
                               s_write_binary_options.write_debug_names, kStopOnFirstError,
                               stub);
     result = ReadBinaryIr(s_infile.c_str(), file_data.data(),
-                          file_data.size(), &options, &error_handler, &module);
+                          file_data.size(), options, &errors, &module);
 
     if (Succeeded(result)) {
       size_t fixup = 0;
@@ -163,7 +162,7 @@ int ProgramMain(int argc, char** argv) {
      if (Succeeded(result)) {
       MemoryStream stream(s_log_stream.get());
       result =
-          WriteBinaryModule(&stream, &module, &s_write_binary_options);
+          WriteBinaryModule(&stream, &module, s_write_binary_options);
 
       if (Succeeded(result)) {
         if (s_outfile.empty()) {
@@ -172,8 +171,8 @@ int ProgramMain(int argc, char** argv) {
         WriteBufferToFile(s_outfile.c_str(), stream.output_buffer());
       }
     }
-   }
-
+   } 
+    FormatErrorsToFile(errors, Location::Type::Binary);
   }
   return result != Result::Ok;
 }

@@ -106,7 +106,7 @@ class Stream {
   void WriteChar(char c,
                  const char* desc = nullptr,
                  PrintChars print_chars = PrintChars::No) {
-    WriteU8(c, desc, print_chars);
+    WriteU8(static_cast<unsigned char>(c), desc, print_chars);
   }
 
   // Dump memory as text, similar to the xxd format.
@@ -124,6 +124,8 @@ class Stream {
                    PrintChars print_chars = PrintChars::No) {
     WriteU8(static_cast<uint32_t>(value), desc, print_chars);
   }
+
+  virtual void Flush() {}
 
  protected:
   virtual Result WriteDataImpl(size_t offset,
@@ -193,6 +195,8 @@ class FileStream : public Stream {
   static std::unique_ptr<FileStream> CreateStderr();
 
   bool is_open() const { return file_ != nullptr; }
+
+  void Flush() override;
 
  protected:
   Result WriteDataImpl(size_t offset, const void* data, size_t size) override;

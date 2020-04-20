@@ -60,15 +60,15 @@ BeginModule(version: 1)
   EndExportSection
   BeginCodeSection(7)
     OnFunctionBodyCount(1)
-    BeginFunctionBody(0)
+    BeginFunctionBody(0, size:5)
     OnLocalDeclCount(0)
     OnI32ConstExpr(42 (0x2a))
     OnReturnExpr
     EndFunctionBody(0)
   EndCodeSection
 EndModule
-   0| i32.const $42
-   5| return
-   6| return
+   0| i32.const 42
+   8| return
+  12| return
 main() => i32:42
 ;;; STDOUT ;;)

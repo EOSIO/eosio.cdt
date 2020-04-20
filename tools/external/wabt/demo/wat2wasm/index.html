@@ -26,9 +26,9 @@
   <header>
     <h1>wat2wasm demo</h1>
     <p>WebAssembly has a
-      <a href="http://webassembly.github.io/spec/text/index.html">text format</a>
+      <a href="https://webassembly.github.io/spec/core/text/index.html">text format</a>
       and a
-      <a href="http://webassembly.github.io/spec/binary/index.html">binary format</a>.
+      <a href="https://webassembly.github.io/spec/core/binary/index.html">binary format</a>.
       This demo converts from the text format to the binary format.
     </p>
     <p>
@@ -36,6 +36,21 @@
       either show an error, or will show a log with a description of the
       generated binary file.
     </p>
+    <div>Enabled features:</div>
+    <div>
+      <input type="checkbox" id="exceptions"><label for="exceptions">exceptions</label>
+      <input type="checkbox" id="mutable_globals" checked><label for="mutable_globals">mutable globals</label>
+      <input type="checkbox" id="sat_float_to_int"><label for="sat_float_to_int">saturating float to int</label>
+      <input type="checkbox" id="sign_extension"><label for="sign_extension">sign extension</label>
+    </div>
+    <div>
+      <input type="checkbox" id="simd"><label for="simd">simd</label>
+      <input type="checkbox" id="threads"><label for="threads">threads</label>
+      <input type="checkbox" id="multi_value"><label for="multi_value">multi value</label>
+      <input type="checkbox" id="tail_call"><label for="tail_call">tail call</label>
+      <input type="checkbox" id="bulk_memory"><label for="bulk_memory">bulk memory</label>
+      <input type="checkbox" id="reference_types"><label for="reference_types">reference types</label>
+    </div>
   </header>
   <main>
     <div id="split-grid" class="split-grid">

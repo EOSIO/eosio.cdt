@@ -20,14 +20,13 @@
 #include <array>
 
 #include "src/circular-array.h"
+#include "src/error.h"
 #include "src/feature.h"
 #include "src/intrusive-list.h"
 #include "src/ir.h"
 #include "src/wast-lexer.h"
 
 namespace wabt {
-
-class ErrorHandler;
 
 struct WastParseOptions {
   WastParseOptions(const Features& features) : features(features) {}
@@ -40,7 +39,7 @@ typedef std::array<TokenType, 2> TokenTypePair;
 
 class WastParser {
  public:
-  WastParser(WastLexer*, ErrorHandler*, WastParseOptions*);
+  WastParser(WastLexer*, Errors*, WastParseOptions*);
 
   void WABT_PRINTF_FORMAT(3, 4) Error(Location, const char* format, ...);
   Result ParseModule(std::unique_ptr<Module>* out_module);
@@ -49,6 +48,11 @@ class WastParser {
   std::unique_ptr<Script> ReleaseScript();
 
  private:
+  enum class ConstType {
+    Normal,
+    Expectation,
+  };
+
   void ErrorUnlessOpcodeEnabled(const Token&);
 
   // Print an error message listing the expected tokens, as well as an example
@@ -114,16 +118,21 @@ class WastParser {
   // synchronized.
   Result Synchronize(SynchronizeFunc);
 
-  void ParseBindVarOpt(std::string* name);
+  bool ParseBindVarOpt(std::string* name);
   Result ParseVar(Var* out_var);
   bool ParseVarOpt(Var* out_var, Var default_var = Var());
   Result ParseOffsetExpr(ExprList* out_expr_list);
+  bool ParseOffsetExprOpt(ExprList* out_expr_list);
   Result ParseTextList(std::vector<uint8_t>* out_data);
   bool ParseTextListOpt(std::vector<uint8_t>* out_data);
   Result ParseVarList(VarVector* out_var_list);
-  bool ParseVarListOpt(VarVector* out_var_list);
+  bool ParseElemExprOpt(ElemExpr* out_elem_expr);
+  bool ParseElemExprListOpt(ElemExprVector* out_list);
+  bool ParseElemExprVarListOpt(ElemExprVector* out_list);
   Result ParseValueType(Type* out_type);
   Result ParseValueTypeList(TypeVector* out_type_list);
+  Result ParseRefType(Type* out_type);
+  bool ParseRefTypeOpt(Type* out_type);
   Result ParseQuotedText(std::string* text);
   bool ParseOffsetOpt(uint32_t* offset);
   bool ParseAlignOpt(uint32_t* align);
@@ -134,7 +143,7 @@ class WastParser {
   Result ParseModuleField(Module*);
   Result ParseDataModuleField(Module*);
   Result ParseElemModuleField(Module*);
-  Result ParseExceptModuleField(Module*);
+  Result ParseEventModuleField(Module*);
   Result ParseExportModuleField(Module*);
   Result ParseFuncModuleField(Module*);
   Result ParseTypeModuleField(Module*);
@@ -150,21 +159,25 @@ class WastParser {
   Result ParseTypeUseOpt(FuncDeclaration*);
   Result ParseFuncSignature(FuncSignature*, BindingHash* param_bindings);
   Result ParseUnboundFuncSignature(FuncSignature*);
-  Result ParseBoundValueTypeList(TokenType, TypeVector*, BindingHash*);
+  Result ParseBoundValueTypeList(TokenType,
+                                 TypeVector*,
+                                 BindingHash*,
+                                 Index binding_index_offset = 0);
   Result ParseUnboundValueTypeList(TokenType, TypeVector*);
   Result ParseResultList(TypeVector*);
   Result ParseInstrList(ExprList*);
   Result ParseTerminatingInstrList(ExprList*);
   Result ParseInstr(ExprList*);
   Result ParsePlainInstr(std::unique_ptr<Expr>*);
-  Result ParseConst(Const*);
-  Result ParseConstList(ConstVector*);
+  Result ParseConst(Const*, ConstType type);
+  Result ParseHostRef(Const*);
+  Result ParseExpectedNan(ExpectedNan* expected);
+  Result ParseConstList(ConstVector*, ConstType type);
   Result ParseBlockInstr(std::unique_ptr<Expr>*);
   Result ParseLabelOpt(std::string*);
   Result ParseEndLabelOpt(const std::string&);
   Result ParseBlockDeclaration(BlockDeclaration*);
   Result ParseBlock(Block*);
-  Result ParseIfExceptHeader(IfExceptExpr*);
   Result ParseExprList(ExprList*);
   Result ParseExpr(ExprList*);
   Result ParseGlobalType(Global*);
@@ -180,8 +193,7 @@ class WastParser {
   Result ParseAssertInvalidCommand(CommandPtr*);
   Result ParseAssertMalformedCommand(CommandPtr*);
   Result ParseAssertReturnCommand(CommandPtr*);
-  Result ParseAssertReturnArithmeticNanCommand(CommandPtr*);
-  Result ParseAssertReturnCanonicalNanCommand(CommandPtr*);
+  Result ParseAssertReturnFuncCommand(CommandPtr*);
   Result ParseAssertTrapCommand(CommandPtr*);
   Result ParseAssertUnlinkableCommand(CommandPtr*);
   Result ParseActionCommand(CommandPtr*);
@@ -200,14 +212,13 @@ class WastParser {
   template <typename T>
   Result ParseAssertScriptModuleCommand(TokenType, CommandPtr*);
 
-  Result ParseSimdConst(Const*, Type, int32_t);
+  Result ParseSimdV128Const(Const*, TokenType);
 
   void CheckImportOrdering(Module*);
 
   WastLexer* lexer_;
   Index last_module_index_ = kInvalidIndex;
-  ErrorHandler* error_handler_;
-  int errors_ = 0;
+  Errors* errors_;
   WastParseOptions* options_;
 
   CircularArray<Token, 2> tokens_;
@@ -215,13 +226,13 @@ class WastParser {
 
 Result ParseWatModule(WastLexer* lexer,
                       std::unique_ptr<Module>* out_module,
-                      ErrorHandler*,
-                      WastParseOptions* options = nullptr);
+                      Errors*,
+                      WastParseOptions* options);
 
 Result ParseWastScript(WastLexer* lexer,
                        std::unique_ptr<Script>* out_script,
-                       ErrorHandler*,
-                       WastParseOptions* options = nullptr);
+                       Errors*,
+                       WastParseOptions* options);
 
 }  // namespace wabt
 
