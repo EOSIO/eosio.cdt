@@ -1,7 +1,8 @@
 ### kv_table Example:
 ```cpp
-#include <eosiolib/eosio.hpp>
+#include <eosio/eosio.hpp>
 using namespace eosio;
+using namespace std;
 
 struct address {
    uint64_t account_name;
@@ -12,7 +13,7 @@ struct address {
    string state;
 
    auto full_name() { return first_name + " " + last_name; }
-}
+};
 
 struct address_table : kv_table<address> {
    index<uint64_t>    account_name{"accname"_n, &myrecord::account_name};
@@ -21,14 +22,14 @@ struct address_table : kv_table<address> {
    address_table(eosio::name contract_name) {
       init(contract_name, "testtable"_n, "eosio.kvram"_n, account_name, full_name);
    }
-}
+};
 
 class addressbook : contract {
    public:
       void myaction() {
          address_table addresses{"mycontract"_n};
       }
-}
+};
 ```
 
 ### KV_NAMED_INDEX Example:
