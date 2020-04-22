@@ -16,8 +16,8 @@ struct address {
 };
 
 struct address_table : kv_table<address> {
-   index<uint64_t>    account_name{"accname"_n, &myrecord::account_name};
-   index<std::string> full_name{"fullname"_n, &myrecord::full_name};
+   index<uint64_t>    account_name{"accname"_n, &address::account_name};
+   index<std::string> full_name{"fullname"_n, &address::full_name};
 
    address_table(eosio::name contract_name) {
       init(contract_name, "testtable"_n, "eosio.kvram"_n, account_name, full_name);
