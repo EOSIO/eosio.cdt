@@ -36,6 +36,17 @@ macro( eosio_tool_install_and_symlink file symlink )
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
 endmacro( eosio_tool_install_and_symlink )
 
+# TODO after the refactor for this tool remove this macro
+macro( install_tester file symlink )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/tools/tester)
+   add_custom_command( TARGET EosioTester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CDT_INSTALL_PREFIX}/bin
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+   install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
+   install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
+endmacro()
+
 macro( eosio_cmake_install_and_symlink file symlink )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/modules)
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/lib/cmake/eosio.cdt)")
@@ -74,7 +85,7 @@ eosio_tool_install_and_symlink(eosio-cpp eosio-cpp)
 eosio_tool_install_and_symlink(eosio-ld eosio-ld)
 eosio_tool_install_and_symlink(eosio-abidiff eosio-abidiff)
 eosio_tool_install_and_symlink(eosio-init eosio-init)
-eosio_tool_install_and_symlink(eosio-tester eosio-tester)
+install_tester(eosio-tester eosio-tester)
 
 eosio_clang_install(../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
 eosio_clang_install(../lib/LLVMEosioSoftfloat${CMAKE_SHARED_LIBRARY_SUFFIX})

@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 project(eosio-tester VERSION 0.1 LANGUAGES CXX)
-cmake_policy(SET CMP0077 NEW)
+#cmake_policy(SET CMP0077 NEW)
 
 set(default_build_type "Release")
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -75,7 +75,8 @@ target_include_directories(eosio_chain PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}/wabt"
 )
 
-add_executable(eosio-tester src/eosio-tester.cpp)
+### TODO Replace all of this with EOSIO.CDT add_tool and use the already existing stuff
+add_executable(eosio-tester eosio-tester.cpp)
 target_include_directories(eosio-tester
     PRIVATE
         ../../libraries/abieos/include
@@ -103,4 +104,4 @@ if(UNIX AND NOT APPLE)
    target_link_libraries(eosio-tester -lrt)
 endif()
 
-set_target_properties(eosio-tester PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+##set_target_properties(eosio-tester PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BINARY_DIR}/../bin)
