@@ -452,9 +452,10 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef ONLY_LD
 static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
-      ldopts.emplace_back("--gc-sections");
-      if (!allow_names_opt)
+      if (!allow_names_opt) {
+         ldopts.emplace_back("--gc-sections");
          ldopts.emplace_back("--strip-all");
+      }
       ldopts.emplace_back("--merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
@@ -563,6 +564,10 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fquery-server");
    if (fquery_client_opt)
       ldopts.emplace_back("-fquery-client");
+   if (allow_names_opt) {
+      ldopts.emplace_back("-fno-post-pass");
+      ldopts.emplace_back("--allow-names");
+   }
 #endif
 
    if (!pp_path_opt.empty())
