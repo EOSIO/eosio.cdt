@@ -136,6 +136,10 @@ static cl::opt<bool> allow_sse_opt(
     cl::desc("Should not be used, except for build libc"),
     cl::Hidden,
     cl::cat(LD_CAT));
+static cl::opt<bool> allow_names(
+    "allow-names",
+    cl::desc("Allows name section to be created"),
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -449,7 +453,8 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
       ldopts.emplace_back("--gc-sections");
-      ldopts.emplace_back("--strip-all");
+      if (!allow_names_opt)
+         ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("--merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
