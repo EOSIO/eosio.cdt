@@ -467,9 +467,10 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef ONLY_LD
 static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
-      ldopts.emplace_back("--gc-sections");
-      if (!allow_names_opt)
+      if (!allow_names_opt) {
+         ldopts.emplace_back("--gc-sections");
          ldopts.emplace_back("--strip-all");
+      }
       ldopts.emplace_back("--merge-data-segments");
       if (fcustom_opt) {
          ldopts.emplace_back("--export-table");
@@ -588,6 +589,10 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if (!entry_opt.empty())
       ldopts.insert(ldopts.end(), {"--entry", entry_opt});
+   if (allow_names_opt) {
+      ldopts.emplace_back("-fno-post-pass");
+      ldopts.emplace_back("--allow-names");
+   }
 #endif
 
    if (!pp_path_opt.empty())
