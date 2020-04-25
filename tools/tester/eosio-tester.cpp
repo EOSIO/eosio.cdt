@@ -204,7 +204,7 @@ struct test_chain {
    std::unique_ptr<eosio::chain::controller>         control;
    fc::optional<scoped_connection>                   applied_transaction_connection;
    fc::optional<scoped_connection>                   accepted_block_connection;
-   trace_converter                                   trace_converter;
+   struct trace_converter                                   trace_converter;
    fc::optional<block_position>                      prev_block;
    std::map<uint32_t, std::vector<char>>             history;
    std::unique_ptr<intrinsic_context>                intr_ctx;

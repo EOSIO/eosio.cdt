@@ -55,7 +55,6 @@ static cl::opt<bool> no_missing_ricardian_clause_opt(
 static cl::opt<bool> fcustom_opt(
     "fcustom",
     cl::desc("Produce a wasm which isn't a contract"),
-    cl::Hidden,
     cl::cat(LD_CAT));
 static cl::opt<bool> ftester_opt(
     "ftester",
