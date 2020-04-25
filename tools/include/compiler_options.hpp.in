@@ -136,7 +136,7 @@ static cl::opt<bool> allow_sse_opt(
     cl::desc("Should not be used, except for build libc"),
     cl::Hidden,
     cl::cat(LD_CAT));
-static cl::opt<bool> allow_names(
+static cl::opt<bool> allow_names_opt (
     "allow-names",
     cl::desc("Allows name section to be created"),
     cl::cat(LD_CAT));
