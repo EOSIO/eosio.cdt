@@ -74,7 +74,6 @@ eosio_tool_install_and_symlink(eosio-cpp eosio-cpp)
 eosio_tool_install_and_symlink(eosio-ld eosio-ld)
 eosio_tool_install_and_symlink(eosio-abidiff eosio-abidiff)
 eosio_tool_install_and_symlink(eosio-init eosio-init)
-eosio_tool_install_and_symlink(eosio-tester eosio-tester)
 
 eosio_clang_install(../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
 eosio_clang_install(../lib/LLVMEosioSoftfloat${CMAKE_SHARED_LIBRARY_SUFFIX})

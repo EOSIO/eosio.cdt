@@ -12,9 +12,6 @@
 [submodule "libraries/native/softfloat"]
 	path = libraries/native/softfloat
 	url = https://github.com/EOSIO/berkeley-softfloat-3.git
-[submodule "libraries/eos"]
-	path = libraries/eos
-	url = https://github.com/EOSIO/eos.git
 [submodule "libraries/abieos"]
 	path = libraries/abieos
 	url = https://github.com/EOSIO/abieos.git
@@ -24,6 +21,3 @@
 [submodule "libraries/Catch2"]
 	path = libraries/Catch2
 	url = https://github.com/catchorg/Catch2.git
-[submodule "libraries/history-tools"]
-	path = libraries/history-tools
-	url = https://github.com/EOSIO/history-tools.git
