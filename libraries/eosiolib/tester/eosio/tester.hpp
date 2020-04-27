@@ -4,7 +4,6 @@
 #include <eosio/asset.hpp>
 #include <eosio/chain_types.hpp>
 #include <eosio/crypto.hpp>
-#include <eosio/database.hpp>
 #include <eosio/eosio.hpp>
 #include <eosio/from_string.hpp>
 #include <eosio/producer_schedule.hpp>
@@ -158,6 +157,11 @@ class test_chain {
     * This does not update owner or active keys.
     */
    void replace_producer_keys(const eosio::public_key& key);
+
+   /**
+    * Replace the keys of an account. This bypasses chain consensus rules.
+    */
+   void replace_account_keys(name account, name permission, const eosio::public_key& key);
 
    /**
     * Replace the owner and active keys of an account. This bypasses chain consensus rules.
@@ -340,11 +344,6 @@ class test_chain {
    transaction_trace issue_and_transfer(const name& contract, const name& issuer, const name& to,
                                         const asset& amount, const std::string& memo = "",
                                         const char* expected_except = nullptr);
-
-   template <typename T>
-   std::vector<char> query_database(const T& request) {
-      return internal_use_do_not_use::query_database_chain(id, pack(request));
-   }
 }; // test_chain
 
 /**

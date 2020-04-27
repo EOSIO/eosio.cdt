@@ -129,17 +129,3 @@ TEST_CASE_METHOD(eosio::test_chain, "MultiIndex API", "[multi_index]") {
       CHECK(item.value == 2);
    }
 }
-
-TEST_CASE_METHOD(eosio::test_chain, "Database queries", "[query]") {
-   create_account("test"_n);
-   set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
-   tester_tests::putdb_action("test"_n, { "test"_n, "active"_n }).send(1, 2);
-   eosio::query_contract_row_range_code_table_scope_pk query;
-   query.first = query.last = { "test"_n, "table"_n, eosio::name(), 0 };
-   query.last.primary_key = std::uint64_t(-1);
-   eosio::for_each_contract_row<tester_tests::table_item>(query_database(query), [](const eosio::contract_row&, auto* item) {
-      CHECK(item->key == 1);
-      CHECK(item->value == 2);
-      return true;
-   });
-}

@@ -1,34 +1,23 @@
+// TODO: this is a duplicate of a file in eos repo
+
 #pragma once
 
-#include <eosio/name.hpp>
-#include <eosio/stream.hpp>
-#include <eosio/from_bin.hpp>
-#include <eosio/to_bin.hpp>
-#include <eosio/reflection.hpp>
-#include <eosio/name.hpp>
+#include <eosio/check.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/fixed_bytes.hpp>
+#include <eosio/from_bin.hpp>
+#include <eosio/name.hpp>
+#include <eosio/reflection.hpp>
+#include <eosio/stream.hpp>
 #include <eosio/time.hpp>
+#include <eosio/to_bin.hpp>
 #include <eosio/varint.hpp>
-
-#ifdef EOSIO_CDT_COMPILATION
-#   include <eosio/check.hpp>
-#endif
 
 namespace chain_types {
 
-#ifdef EOSIO_CDT_COMPILATION
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Winvalid-noreturn"
-[[noreturn]] inline void report_error(const std::string& s) { eosio::check(false, s); }
-#   pragma clang diagnostic pop
-#else
-[[noreturn]] inline void report_error(const std::string& s) { throw std::runtime_error(s); }
-#endif
-
 struct extension {
-   uint16_t             type = {};
-   eosio::input_stream  data = {};
+   uint16_t            type = {};
+   eosio::input_stream data = {};
 };
 
 EOSIO_REFLECT(extension, type, data);
@@ -49,7 +38,9 @@ inline std::string to_string(transaction_status status) {
       case transaction_status::delayed: return "delayed";
       case transaction_status::expired: return "expired";
    }
-   report_error("unknown status: " + std::to_string((uint8_t)status));
+
+   eosio::check(false, "unknown status: " + std::to_string((uint8_t)status));
+   return {}; // suppress warning
 }
 
 inline transaction_status get_transaction_status(const std::string& s) {
@@ -63,7 +54,9 @@ inline transaction_status get_transaction_status(const std::string& s) {
       return transaction_status::delayed;
    if (s == "expired")
       return transaction_status::expired;
-   report_error("unknown status: " + s);
+
+   eosio::check(false, "unknown status: " + s);
+   return {}; // suppress warning
 }
 
 struct permission_level {
@@ -83,7 +76,7 @@ EOSIO_COMPARE(account_auth_sequence);
 
 struct account_delta {
    eosio::name account = {};
-   int64_t      delta   = {};
+   int64_t     delta   = {};
 };
 
 EOSIO_REFLECT(account_delta, account, delta);
@@ -99,7 +92,8 @@ struct action_receipt_v0 {
    eosio::varuint32                   abi_sequence    = {};
 };
 
-EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence, abi_sequence);
+EOSIO_REFLECT(action_receipt_v0, receiver, act_digest, global_sequence, recv_sequence, auth_sequence, code_sequence,
+              abi_sequence);
 
 using action_receipt = std::variant<action_receipt_v0>;
 
@@ -126,23 +120,23 @@ struct action_trace_v0 {
    std::optional<uint64_t>       error_code             = {};
 };
 
-EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act,
-              context_free, elapsed, console, account_ram_deltas, except, error_code);
+EOSIO_REFLECT(action_trace_v0, action_ordinal, creator_action_ordinal, receipt, receiver, act, context_free, elapsed,
+              console, account_ram_deltas, except, error_code);
 
 struct action_trace_v1 {
-   eosio::varuint32                   action_ordinal         = {};
-   eosio::varuint32                   creator_action_ordinal = {};
-   std::optional<action_receipt>      receipt                = {};
-   eosio::name                        receiver               = {};
-   action                             act                    = {};
-   bool                               context_free           = {};
-   int64_t                            elapsed                = {};
-   std::string                        console                = {};
-   std::vector<account_delta>         account_ram_deltas     = {};
-   std::vector<account_delta>         account_disk_deltas    = {};
-   std::optional<std::string>         except                 = {};
-   std::optional<uint64_t>            error_code             = {};
-   eosio::input_stream                return_value           = {};
+   eosio::varuint32              action_ordinal         = {};
+   eosio::varuint32              creator_action_ordinal = {};
+   std::optional<action_receipt> receipt                = {};
+   eosio::name                   receiver               = {};
+   action                        act                    = {};
+   bool                          context_free           = {};
+   int64_t                       elapsed                = {};
+   std::string                   console                = {};
+   std::vector<account_delta>    account_ram_deltas     = {};
+   std::vector<account_delta>    account_disk_deltas    = {};
+   std::optional<std::string>    except                 = {};
+   std::optional<uint64_t>       error_code             = {};
+   eosio::input_stream           return_value           = {};
 };
 
 EOSIO_REFLECT(action_trace_v1, action_ordinal, creator_action_ordinal, receipt, receiver, act, context_free, elapsed,
@@ -151,15 +145,15 @@ EOSIO_REFLECT(action_trace_v1, action_ordinal, creator_action_ordinal, receipt, 
 using action_trace = std::variant<action_trace_v0, action_trace_v1>;
 
 struct partial_transaction_v0 {
-   eosio::time_point_sec             expiration             = {};
-   uint16_t                          ref_block_num          = {};
-   uint32_t                          ref_block_prefix       = {};
-   eosio::varuint32                  max_net_usage_words    = {};
-   uint8_t                           max_cpu_usage_ms       = {};
-   eosio::varuint32                  delay_sec              = {};
-   std::vector<extension>            transaction_extensions = {};
-   std::vector<eosio::signature>     signatures             = {};
-   std::vector<eosio::input_stream>  context_free_data      = {};
+   eosio::time_point_sec            expiration             = {};
+   uint16_t                         ref_block_num          = {};
+   uint32_t                         ref_block_prefix       = {};
+   eosio::varuint32                 max_net_usage_words    = {};
+   uint8_t                          max_cpu_usage_ms       = {};
+   eosio::varuint32                 delay_sec              = {};
+   std::vector<extension>           transaction_extensions = {};
+   std::vector<eosio::signature>    signatures             = {};
+   std::vector<eosio::input_stream> context_free_data      = {};
 };
 
 EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
@@ -171,23 +165,23 @@ struct transaction_trace_v0;
 using transaction_trace = std::variant<transaction_trace_v0>;
 
 struct transaction_trace_v0 {
-   eosio::checksum256                     id                  = {};
-   transaction_status                     status              = {};
-   uint32_t                               cpu_usage_us        = {};
-   eosio::varuint32                       net_usage_words     = {};
-   int64_t                                elapsed             = {};
-   uint64_t                               net_usage           = {};
-   bool                                   scheduled           = {};
-   std::vector<action_trace>              action_traces       = {};
-   std::optional<account_delta>           account_ram_delta   = {};
-   std::optional<std::string>             except              = {};
-   std::optional<uint64_t>                error_code          = {};
-   std::vector<transaction_trace>         failed_dtrx_trace   = {};
-   std::optional<partial_transaction>     reserved_do_not_use = {};
+   eosio::checksum256                 id                  = {};
+   transaction_status                 status              = {};
+   uint32_t                           cpu_usage_us        = {};
+   eosio::varuint32                   net_usage_words     = {};
+   int64_t                            elapsed             = {};
+   uint64_t                           net_usage           = {};
+   bool                               scheduled           = {};
+   std::vector<action_trace>          action_traces       = {};
+   std::optional<account_delta>       account_ram_delta   = {};
+   std::optional<std::string>         except              = {};
+   std::optional<uint64_t>            error_code          = {};
+   std::vector<transaction_trace>     failed_dtrx_trace   = {};
+   std::optional<partial_transaction> reserved_do_not_use = {};
 };
 
-EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, net_usage_words, elapsed, net_usage, scheduled, action_traces,
-              account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
+EOSIO_REFLECT(transaction_trace_v0, id, status, cpu_usage_us, net_usage_words, elapsed, net_usage, scheduled,
+              action_traces, account_ram_delta, except, error_code, failed_dtrx_trace, reserved_do_not_use);
 
 struct producer_key {
    eosio::name       producer_name     = {};
@@ -206,16 +200,16 @@ EOSIO_REFLECT(producer_schedule, version, producers);
 struct transaction_receipt_header {
    transaction_status status          = {};
    uint32_t           cpu_usage_us    = {};
-   eosio::varuint32  net_usage_words = {};
+   eosio::varuint32   net_usage_words = {};
 };
 
 EOSIO_REFLECT(transaction_receipt_header, status, cpu_usage_us, net_usage_words);
 
 struct packed_transaction {
-   std::vector<eosio::signature>  signatures               = {};
-   uint8_t                        compression              = {};
-   eosio::input_stream            packed_context_free_data = {};
-   eosio::input_stream            packed_trx               = {};
+   std::vector<eosio::signature> signatures               = {};
+   uint8_t                       compression              = {};
+   eosio::input_stream           packed_context_free_data = {};
+   eosio::input_stream           packed_trx               = {};
 };
 
 EOSIO_REFLECT(packed_transaction, signatures, compression, packed_context_free_data, packed_trx);
@@ -240,10 +234,8 @@ struct block_header {
    std::vector<extension>           header_extensions = {};
 };
 
-EOSIO_REFLECT(block_header,
-   timestamp, producer, confirmed, previous, transaction_mroot, action_mroot,
-   schedule_version, new_producers, header_extensions
-)
+EOSIO_REFLECT(block_header, timestamp, producer, confirmed, previous, transaction_mroot, action_mroot, schedule_version,
+              new_producers, header_extensions)
 
 struct signed_block_header : block_header {
    eosio::signature producer_signature = {};
@@ -259,9 +251,9 @@ struct signed_block : signed_block_header {
 EOSIO_REFLECT(signed_block, base signed_block_header, transactions, block_extensions);
 
 struct block_info {
-   uint32_t                block_num = {};
-   eosio::checksum256      block_id  = {};
-   eosio::block_timestamp  timestamp;
+   uint32_t               block_num = {};
+   eosio::checksum256     block_id  = {};
+   eosio::block_timestamp timestamp;
 };
 
 EOSIO_REFLECT(block_info, block_num, block_id, timestamp);
