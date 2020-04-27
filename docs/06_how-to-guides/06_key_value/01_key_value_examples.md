@@ -5,18 +5,18 @@ using namespace eosio;
 using namespace std;
 
 struct address {
-   uint64_t account_name;
+   name account_name;
    string first_name;
    string last_name;
    string street;
    string city;
    string state;
 
-   auto full_name() { return first_name + " " + last_name; }
+   auto full_name() const { return first_name + " " + last_name; }
 };
 
 struct address_table : kv_table<address> {
-   index<uint64_t>    account_name{"accname"_n, &address::account_name};
+   index<name>    account_name{"accname"_n, &address::account_name};
    index<std::string> full_name{"fullname"_n, &address::full_name};
 
    address_table(eosio::name contract_name) {
