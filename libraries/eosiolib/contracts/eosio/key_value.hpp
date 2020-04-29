@@ -313,6 +313,25 @@ namespace kv_detail {
             free(data_buffer);
          }
       }
+
+      void erase(const void* value) {
+         uint32_t value_size;
+
+         auto primary_key = primary_index->get_key_void(value);
+         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+         auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
+
+         if (!primary_key_found) {
+            return;
+         }
+
+         for (const auto& idx : secondary_indices) {
+            auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
+            internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
+         }
+
+         internal_use_do_not_use::kv_erase(db_name, contract_name.value, tbl_key.data(), tbl_key.size());
+      }
    };
 
    inline void kv_index::get(const key_type& k, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const {
@@ -910,22 +929,7 @@ public:
     * @param key - The key of the value to be removed.
     */
    void erase(const T& value) {
-      uint32_t value_size;
-
-      auto primary_key = primary_index->get_key(value);
-      auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
-      auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
-
-      if (!primary_key_found) {
-         return;
-      }
-
-      for (const auto& idx : secondary_indices) {
-         auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(value));
-         internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
-      }
-
-      internal_use_do_not_use::kv_erase(db_name, contract_name.value, tbl_key.data(), tbl_key.size());
+      kv_table_base::erase(&value);
    }
 
 protected:
