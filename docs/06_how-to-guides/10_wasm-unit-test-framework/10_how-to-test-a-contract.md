@@ -5,7 +5,7 @@ link_text: How to test a contract
 
 ## Summary
 
-If you are a smart contract developer and want to build unit tests for your smart contracts then WASM Unit Test Framework is a viable option. It allows you to write unit tests which can be grouped into fixtures for each smart contract actions or even more complex scenarios, e.g. multiple action execution scenarios. By following this how to step by step you will learn the way to employ the WASM Unit Test Framework to build unit tests for one or more of your smart contracts.
+If you are a smart contract developer and want to build unit tests for your smart contracts then WASM Unit Test Framework is a viable option. It allows you to write unit tests, which can be grouped into fixtures, for each smart contract actions or even more complex scenarios, e.g. multiple action execution scenarios. By following this how to step by step you will learn how to employ the WASM Unit Test Framework to build unit tests for one or more of your smart contracts.
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ The result of this step is to have implemented the skeleton for your first unit 
 
 ### 6. Implement the Test Method
 
-Now it is time to add your implementation for the unit test method. In the below example we create one account `hello`, another one `wasmunittest`, we set the code for the contract `hello` to the `test` account and then we send an action `hi` to that the `test` account with `wasmunittest` parameter.
+Now it is time to add your implementation for the unit test method. In the below example we create one account `hello`, another one `wasmunittest`, we set the code for the contract `hello` to the `test` account and then we send an action `hi` to the `test` account with `wasmunittest` parameter using the `active` permission.
 
 ```
 TEST_CASE_METHOD(first_tests_fixture, "Action hi::send", "[send]") {
