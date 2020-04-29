@@ -85,7 +85,7 @@ struct key_type : private std::vector<char> {
 
    explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
-   key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
+   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
 
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
@@ -156,6 +156,15 @@ inline key_type make_key(T&& t) {
    auto bytes = convert_to_key(std::forward<T>(t));
    eosio::check((bool)bytes, "There was a failure in make_key."); 
    return key_type(std::move(bytes.value()));
+}
+inline key_type make_key(key_type&& t) {
+   return t;
+}
+inline key_type make_key(key_type& t) {
+   return t;
+}
+inline key_type make_key(const key_type& t) {
+   return t;
 }
 
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
@@ -271,7 +280,7 @@ namespace kv_detail {
             auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
             auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
 
-            if (!old_value) {
+            if (!primary_key_found) {
                eosio::check(!sec_found, "Attempted to store an existing secondary index.");
                internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
             } else {
@@ -441,7 +450,7 @@ namespace kv_detail {
 
          eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
 
-         return {(char*)buffer, actual_value_size};
+         return key_type{(char*)buffer, actual_value_size};
       }
 
    protected:
@@ -604,7 +613,7 @@ class kv_table : kv_detail::kv_table_base {
 
       reverse_iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(index->tbl)->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
             itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
@@ -832,7 +841,7 @@ public:
       iterator upper_bound(const key_type& key) const {
          auto it = lower_bound(key);
 
-         auto cmp = it.key_compare(key);
+         auto cmp = it.key_compare(table_key( prefix, key ));
          if (cmp == 0) {
             ++it;
          }
@@ -853,11 +862,9 @@ public:
       }
 
       std::vector<T> range(const key_type& b_key, const key_type& e_key) const {
-         auto b = table_key(prefix, make_key(b_key));
-         auto e = table_key(prefix, make_key(e_key));
          std::vector<T> return_values;
 
-         for(auto itr = lower_bound(b), end_itr = lower_bound(e); itr < end_itr; ++itr) {
+         for(auto itr = lower_bound(b_key), end_itr = lower_bound(e_key); itr < end_itr; ++itr) {
             return_values.push_back(itr.value());
          }
 
