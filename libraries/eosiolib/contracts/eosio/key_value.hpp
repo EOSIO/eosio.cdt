@@ -224,6 +224,7 @@ namespace kv_detail {
       template<typename T>
       friend class eosio::kv_table;
       friend class kv_table_base;
+      friend class iterator_base;
 
       std::function<key_type(const void*)> key_function;
 
@@ -233,6 +234,7 @@ namespace kv_detail {
    class kv_table_base {
     protected:
       friend class kv_index;
+      friend class iterator_base;
       eosio::name contract_name;
       eosio::name table_name;
       uint64_t db_name;
@@ -342,26 +344,8 @@ namespace kv_detail {
          free(deserialize_buffer);
       }
    }
-}
 
-/**
- * @defgroup keyvalue Key Value Table
- * @ingroup contracts
- *
- * @brief Defines an EOSIO Key Value Table
- * @details EOSIO Key Value API provides a C++ interface to the EOSIO Key Value database.
- * Key Value Tables require 1 primary index, of any type that can be serialized to a binary representation.
- * Key Value Tables support 0 or more secondary index, of any type that can be serialized to a binary representation.
- * Indexes must be a member variable or a member function.
- *
- * @tparam T         - the type of the data stored as the value of the table
-  */
-template<typename T>
-class kv_table : kv_detail::kv_table_base {
-
-   using kv_index = kv_detail::kv_index;
-
-   class base_iterator {
+   class iterator_base {
    public:
       enum class status {
          iterator_ok     = 0,  // Iterator is positioned at a key-value pair
@@ -369,22 +353,22 @@ class kv_table : kv_detail::kv_table_base {
          iterator_end    = -2, // Iterator is out-of-bounds
       };
 
-      base_iterator() = default;
+      iterator_base() = default;
 
-      base_iterator(uint32_t itr, status itr_stat, const kv_index* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
+      iterator_base(uint32_t itr, status itr_stat, const kv_index* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
 
-      base_iterator(base_iterator&& other) :
+      iterator_base(iterator_base&& other) :
          itr(std::exchange(other.itr, 0)),
          itr_stat(std::move(other.itr_stat))
       {}
 
-      ~base_iterator() {
+      ~iterator_base() {
          if (itr) {
             internal_use_do_not_use::kv_it_destroy(itr);
          }
       }
 
-      base_iterator& operator=(base_iterator&& other) {
+      iterator_base& operator=(iterator_base&& other) {
          if (itr) {
             internal_use_do_not_use::kv_it_destroy(itr);
          }
@@ -401,7 +385,7 @@ class kv_table : kv_detail::kv_table_base {
        *
        * @return The value that the iterator points to.
        */
-      T value() const {
+     void value(void* val, void (*deserialize)(void*, const void*, std::size_t)) const {
          using namespace detail;
 
          eosio::check(itr_stat != status::iterator_end, "Cannot read end iterator");
@@ -422,19 +406,18 @@ class kv_table : kv_detail::kv_table_base {
          void* deserialize_buffer = buffer;
          size_t deserialize_size = actual_value_size;
 
-         bool is_primary = index->index_name == static_cast<kv_table*>(index->tbl)->primary_index_name;
+         bool is_primary = index->index_name == index->tbl->primary_index_name;
          if (!is_primary) {
-            auto success = internal_use_do_not_use::kv_get(static_cast<kv_table*>(index->tbl)->db_name, index->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
+            auto success = internal_use_do_not_use::kv_get(index->tbl->db_name, index->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
             eosio::check(success, "failure getting primary key in `value()`");
 
             void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            internal_use_do_not_use::kv_get_data(static_cast<kv_table*>(index->tbl)->db_name, 0, (char*)pk_buffer, actual_data_size);
+            internal_use_do_not_use::kv_get_data(index->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
             deserialize_buffer = pk_buffer;
             deserialize_size = actual_data_size;
          }
 
-         T val;
          deserialize(val, deserialize_buffer, deserialize_size);
 
          if (value_size > detail::max_stack_buffer_size) {
@@ -444,7 +427,6 @@ class kv_table : kv_detail::kv_table_base {
          if (is_primary && actual_data_size > detail::max_stack_buffer_size) {
             free(deserialize_buffer);
          }
-         return val;
       }
 
       key_type key() const {
@@ -468,7 +450,7 @@ class kv_table : kv_detail::kv_table_base {
 
       const kv_index* index;
 
-      int compare(const base_iterator& b) const {
+      int compare(const iterator_base& b) const {
          bool a_is_end = !itr || itr_stat == status::iterator_end;
          bool b_is_end = !b.itr || b.itr_stat == status::iterator_end;
          if (a_is_end && b_is_end) {
@@ -480,6 +462,41 @@ class kv_table : kv_detail::kv_table_base {
          } else {
             return internal_use_do_not_use::kv_it_compare(itr, b.itr);
          }
+      }
+   };
+
+}
+
+/**
+ * @defgroup keyvalue Key Value Table
+ * @ingroup contracts
+ *
+ * @brief Defines an EOSIO Key Value Table
+ * @details EOSIO Key Value API provides a C++ interface to the EOSIO Key Value database.
+ * Key Value Tables require 1 primary index, of any type that can be serialized to a binary representation.
+ * Key Value Tables support 0 or more secondary index, of any type that can be serialized to a binary representation.
+ * Indexes must be a member variable or a member function.
+ *
+ * @tparam T         - the type of the data stored as the value of the table
+  */
+template<typename T>
+class kv_table : kv_detail::kv_table_base {
+
+   using kv_index = kv_detail::kv_index;
+
+   class base_iterator : public kv_detail::iterator_base {
+   public:
+      using iterator_base::iterator_base;
+      /**
+       * Returns the value that the iterator points to.
+       * @ingroup keyvalue
+       *
+       * @return The value that the iterator points to.
+       */
+      T value() const {
+         T val;
+         iterator_base::value(&val, &kv_table::deserialize_fun);
+         return val;
       }
    };
 
