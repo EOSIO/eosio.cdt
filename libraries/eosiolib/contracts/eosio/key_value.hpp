@@ -189,6 +189,8 @@ class kv_table;
 
 namespace kv_detail {
 
+   class kv_table_base;
+
    class kv_index {
 
    public:
@@ -212,7 +214,10 @@ namespace kv_detail {
       template<typename T>
       key_type get_key(const T& inst) const { return key_function(&inst); }
       key_type get_key_void(const void* ptr) const { return key_function(ptr); }
-      void* tbl;
+
+      void get(const key_type& k, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const;
+
+      kv_table_base* tbl;
       key_type prefix;
 
    private:
@@ -227,6 +232,7 @@ namespace kv_detail {
 
    class kv_table_base {
     protected:
+      friend class kv_index;
       eosio::name contract_name;
       eosio::name table_name;
       uint64_t db_name;
@@ -236,7 +242,28 @@ namespace kv_detail {
       kv_index* primary_index;
       std::vector<kv_index*> secondary_indices;
 
-      void put_secondary(const key_type& tbl_key, const void* value, const void* old_value) {
+      void put(const void* value, void* old_value,
+               std::size_t (*get_size)(const void*),
+               void (*deserialize)(void*, const void*, std::size_t),
+               void (*serialize)(const void*, void*, std::size_t)) {
+         uint32_t value_size;
+
+         auto primary_key = primary_index->get_key_void(value);
+         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+
+         auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
+
+         if (primary_key_found) {
+            void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+            auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+
+            deserialize(old_value, buffer, copy_size);
+
+            if (value_size > detail::max_stack_buffer_size) {
+               free(buffer);
+            }
+         }
+
          for (const auto& idx : secondary_indices) {
             uint32_t value_size;
             auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
@@ -263,8 +290,58 @@ namespace kv_detail {
                }
             }
          }
+
+         size_t data_size = get_size(value);
+         void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+         serialize(value, data_buffer, data_size);
+
+         internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size);
+
+         if (data_size > detail::max_stack_buffer_size) {
+            free(data_buffer);
+         }
       }
    };
+
+   inline void kv_index::get(const key_type& k, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const {
+      auto key =   table_key( prefix, k );
+      uint32_t value_size;
+      uint32_t actual_data_size;
+
+      auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, key.data(), key.size(), value_size);
+      if (!success) {
+         return;
+      }
+
+      void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+      auto copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)buffer, value_size);
+
+      void* deserialize_buffer = buffer;
+      size_t deserialize_size = copy_size;
+
+      bool is_primary = index_name == tbl->primary_index_name;
+      if (!is_primary) {
+         auto success = internal_use_do_not_use::kv_get(tbl->db_name, contract_name.value, (char*)buffer, copy_size, actual_data_size);
+         eosio::check(success, "failure getting primary key");
+
+         void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
+         auto pk_copy_size = internal_use_do_not_use::kv_get_data(tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
+
+         deserialize_buffer = pk_buffer;
+         deserialize_size = pk_copy_size;
+      }
+
+      deserialize(ret_val, deserialize_buffer, deserialize_size);
+
+      if (value_size > detail::max_stack_buffer_size) {
+         free(buffer);
+      }
+
+      if (is_primary && actual_data_size > detail::max_stack_buffer_size) {
+         free(deserialize_buffer);
+      }
+   }
 }
 
 /**
@@ -656,45 +733,8 @@ public:
       }
 
       std::optional<T> get(const key_type& k ) const {
-         auto key =   table_key( prefix, k );
-         uint32_t value_size;
-         uint32_t actual_data_size;
          std::optional<T> ret_val;
-
-         auto success = internal_use_do_not_use::kv_get(static_cast<kv_table*>(tbl)->db_name, contract_name.value, key.data(), key.size(), value_size);
-         if (!success) {
-            return ret_val;
-         }
-
-         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto copy_size = internal_use_do_not_use::kv_get_data(static_cast<kv_table*>(tbl)->db_name, 0, (char*)buffer, value_size);
-
-         void* deserialize_buffer = buffer;
-         size_t deserialize_size = copy_size;
-
-         bool is_primary = index_name == static_cast<kv_table*>(tbl)->primary_index_name;
-         if (!is_primary) {
-            auto success = internal_use_do_not_use::kv_get(static_cast<kv_table*>(tbl)->db_name, contract_name.value, (char*)buffer, copy_size, actual_data_size);
-            eosio::check(success, "failure getting primary key");
-
-            void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            auto pk_copy_size = internal_use_do_not_use::kv_get_data(static_cast<kv_table*>(tbl)->db_name, 0, (char*)pk_buffer, actual_data_size);
-
-            deserialize_buffer = pk_buffer;
-            deserialize_size = pk_copy_size;
-         }
-
-         ret_val.emplace();
-         deserialize(*ret_val, deserialize_buffer, deserialize_size);
-
-         if (value_size > detail::max_stack_buffer_size) {
-            free(buffer);
-         }
-
-         if (is_primary && actual_data_size > detail::max_stack_buffer_size) {
-            free(deserialize_buffer);
-         }
-
+         kv_index::get(k, &ret_val, &deserialize_optional_fun);
          return ret_val;
       }
 
@@ -821,37 +861,22 @@ public:
     * @param value - The entry to be stored in the table.
     */
    void put(const T& value) {
-      uint32_t value_size;
       T old_value;
+      kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun);
+   }
 
-      auto primary_key = primary_index->get_key(value);
-      auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
-
-      auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
-
-      if (primary_key_found) {
-         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
-
-         deserialize(old_value, buffer, copy_size);
-
-         if (value_size > detail::max_stack_buffer_size) {
-            free(buffer);
-         }
-      }
-
-      put_secondary(tbl_key, &value, primary_key_found ? &old_value : nullptr);
-
-      size_t data_size = get_size(value);
-      void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
-
-      serialize(value, data_buffer, data_size);
-
-      internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size);
-
-      if (data_size > detail::max_stack_buffer_size) {
-         free(data_buffer);
-      }
+   static void deserialize_optional_fun(void* value, const void* buffer, std::size_t buffer_size) {
+      static_cast<std::optional<T>*>(value)->emplace();
+      return kv_table::deserialize(**static_cast<std::optional<T>*>(value), buffer, buffer_size);
+   }
+   static void deserialize_fun(void* value, const void* buffer, std::size_t buffer_size) {
+      return kv_table::deserialize(*static_cast<T*>(value), buffer, buffer_size);
+   }
+   static void serialize_fun(const void* value, void* buffer, std::size_t buffer_size) {
+      return kv_table::serialize(*static_cast<const T*>(value), buffer, buffer_size);
+   }
+   static std::size_t get_size_fun(const void* value) {
+      return kv_table::get_size(*static_cast<const T*>(value));
    }
 
    /**
@@ -939,9 +964,9 @@ private:
    }
 
    template <typename V>
-   static void deserialize(V& value, void* buffer, size_t size) {
+   static void deserialize(V& value, const void* buffer, size_t size) {
       unsigned_int idx;
-      datastream<const char*> ds((char*)buffer, size);
+      datastream<const char*> ds((const char*)buffer, size);
 
       ds >> idx;
       eosio::check(idx==unsigned_int(0), "there was an error deserializing this value.");
@@ -949,8 +974,8 @@ private:
    }
 
    template <typename... Vs>
-   static void deserialize(std::variant<Vs...>& value, void* buffer, size_t size) {
-      datastream<const char*> ds((char*)buffer, size);
+   static void deserialize(std::variant<Vs...>& value, const void* buffer, size_t size) {
+      datastream<const char*> ds((const char*)buffer, size);
       ds >> value;
    }
 
