@@ -2,6 +2,7 @@
 #include <eosio/datastream.hpp>
 #include <eosio/name.hpp>
 #include <eosio/varint.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
 #include <eosio/to_key.hpp>
 
@@ -762,7 +763,7 @@ public:
 
       T operator[](const key_type& key) const {
          auto opt = get(key);
-         eosio::check(opt.has_value(), __FILE__ ":" + std::to_string(__LINE__) + " Key not found in `[]`");
+         eosio::check(opt.has_value(), __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__) " Key not found in `[]`");
          return *opt;
       }
 
