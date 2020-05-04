@@ -364,9 +364,9 @@ struct test_rodeos {
 };
 
 eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
-   uint64_t bytes[4];
-   static_assert(sizeof(bytes) == sizeof(obj));
-   memcpy(bytes, &obj, sizeof(bytes));
+   std::array<uint8_t, 32> bytes;
+   static_assert(bytes.size() == sizeof(obj));
+   memcpy(bytes.data(), &obj, bytes.size());
    return eosio::checksum256(bytes);
 }
 
