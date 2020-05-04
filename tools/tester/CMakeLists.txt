@@ -69,6 +69,9 @@ add_subdirectory(../../libraries/eos/libraries/state_history state_history EXCLU
 add_subdirectory(../../libraries/eos/libraries/wabt wabt EXCLUDE_FROM_ALL)
 add_subdirectory(../../libraries/eos/libraries/wasm-jit wasm-jit EXCLUDE_FROM_ALL)
 
+set(ABIEOS_ONLY_LIBRARY ON CACHE BOOL "only use the library" FORCE)
+add_subdirectory(../../libraries/abieos)
+
 target_include_directories(eosio_chain PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/../../libraries/eos/libraries/wabt"
     "${CMAKE_CURRENT_SOURCE_DIR}/builtins"
@@ -78,11 +81,9 @@ target_include_directories(eosio_chain PUBLIC
 ### TODO Replace all of this with EOSIO.CDT add_tool and use the already existing stuff
 add_executable(eosio-tester eosio-tester.cpp)
 target_include_directories(eosio-tester
-    PRIVATE
+   PRIVATE
         ../../libraries/abieos/include
         ../../libraries/abieos/src
-        ../../libraries/abieos/external/outcome/single-header
-        ../../libraries/abieos/external/date/include
         ../../libraries/abieos/external/rapidjson/include
         ../../libraries/eos/libraries/chain/include
         ../../libraries/eos/libraries/fc/include
@@ -95,8 +96,8 @@ target_include_directories(eosio-tester
         ${JS_INCLUDE_DIRS}
         ${ROCKSDB_INCLUDE_DIR}
 )
-target_link_libraries(eosio-tester
-    embedded_rodeos state_history eosio_chain wabt Runtime Logging IR fc eos-vm
+target_link_libraries(eosio-tester PRIVATE
+   abieos embedded_rodeos state_history eosio_chain wabt Runtime Logging IR fc eos-vm
     Boost::date_time Boost::filesystem Boost::chrono Boost::system Boost::iostreams Boost::program_options
     -lpthread)
 

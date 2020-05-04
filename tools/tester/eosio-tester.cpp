@@ -5,7 +5,6 @@
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/webassembly/common.hpp>
-#include <eosio/eosio_outcome.hpp>
 #include <eosio/from_bin.hpp>
 #include <eosio/history-tools/embedded_rodeos.hpp>
 #include <eosio/ship_protocol.hpp>
@@ -26,7 +25,6 @@
 using namespace eosio::literals;
 using namespace std::literals;
 using boost::signals2::scoped_connection;
-using eosio::check;
 using eosio::convert_to_bin;
 using eosio::chain::block_state_ptr;
 using eosio::chain::builtin_protocol_feature_t;
@@ -366,9 +364,9 @@ struct test_rodeos {
 };
 
 eosio::checksum256 convert(const eosio::chain::checksum_type& obj) {
-   std::array<uint8_t, 32> bytes;
-   static_assert(bytes.size() == sizeof(obj));
-   memcpy(bytes.data(), &obj, bytes.size());
+   uint64_t bytes[4];
+   static_assert(sizeof(bytes) == sizeof(obj));
+   memcpy(bytes, &obj, sizeof(bytes));
    return eosio::checksum256(bytes);
 }
 
@@ -867,7 +865,7 @@ struct callbacks {
       info.block_num      = chain.control->head_block_num();
       info.block_id       = convert(chain.control->head_block_id());
       info.timestamp.slot = chain.control->head_block_state()->header.timestamp.slot;
-      set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(info)).value());
+      set_data(cb_alloc_data, cb_alloc, convert_to_bin(info));
    }
 
    void push_transaction(uint32_t chain_index, const char* args_begin, const char* args_end, uint32_t cb_alloc_data,
@@ -888,7 +886,7 @@ struct callbacks {
       auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);
       ilog("chainlib transaction took ${u} us", ("u", us.count()));
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
-      set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*result) })).value());
+      set_data(cb_alloc_data, cb_alloc, convert_to_bin(chain_types::transaction_trace{ convert(*result) }));
    }
 
    bool exec_deferred(uint32_t chain_index, uint32_t cb_alloc_data, uint32_t cb_alloc) {
@@ -900,7 +898,7 @@ struct callbacks {
       if (itr != idx.end() && itr->delay_until <= chain.control->pending_block_time()) {
          auto trace =
                chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(), billed_cpu_time_use, true);
-         set_data(cb_alloc_data, cb_alloc, check(convert_to_bin(chain_types::transaction_trace{ convert(*trace) })).value());
+         set_data(cb_alloc_data, cb_alloc, convert_to_bin(chain_types::transaction_trace{ convert(*trace) }));
          return true;
       }
       return false;
@@ -927,7 +925,7 @@ struct callbacks {
       check_bounds(req_begin, req_end);
       eosio::input_stream query_bin{ req_begin, req_end };
       eosio::name         query_name;
-      eosio::check_discard(from_bin(query_name, query_bin));
+      from_bin(query_name, query_bin);
       if (query_name == "cr.ctsp"_n)
          return set_data(cb_alloc_data, cb_alloc, query_contract_row_range_code_table_scope_pk(chain, query_bin));
       throw std::runtime_error("query_database: unknown query: " + (std::string)query_name);
@@ -936,16 +934,16 @@ struct callbacks {
    // todo: remove
    std::vector<char> query_contract_row_range_code_table_scope_pk(test_chain& chain, eosio::input_stream& query_bin) {
       using eosio::from_bin; // ADL required
-      auto snapshot_block    = eosio::check(from_bin<uint32_t>(query_bin)).value();
-      auto first_code        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto first_table       = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto first_scope       = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto first_primary_key = eosio::check(from_bin<uint64_t>(query_bin)).value();
-      auto last_code         = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto last_table        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto last_scope        = eosio::chain::name{ eosio::check(from_bin<eosio::name>(query_bin)).value().value };
-      auto last_primary_key  = eosio::check(from_bin<uint64_t>(query_bin)).value();
-      auto max_results       = eosio::check(from_bin<uint32_t>(query_bin)).value();
+      auto snapshot_block    = from_bin<uint32_t>(query_bin);
+      auto first_code        = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto first_table       = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto first_scope       = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto first_primary_key = from_bin<uint64_t>(query_bin);
+      auto last_code         = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto last_table        = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto last_scope        = eosio::chain::name{ from_bin<eosio::name>(query_bin).value };
+      auto last_primary_key  = from_bin<uint64_t>(query_bin);
+      auto max_results       = from_bin<uint32_t>(query_bin);
 
       if (first_code != last_code)
          throw std::runtime_error("query_database: first.code != last.code");
@@ -967,7 +965,7 @@ struct callbacks {
               kv_it != kv_index.end(); ++kv_it) {
             if (kv_it->t_id != table_it->id || kv_it->primary_key > last_primary_key || rows.size() >= max_results)
                break;
-            rows.emplace_back(eosio::check(eosio::convert_to_bin(
+            rows.emplace_back(eosio::convert_to_bin(
                   contract_row{ uint32_t(0),
                                 bool(true),
                                 eosio::name{ to_uint64_t(table_it->code) },
@@ -975,10 +973,10 @@ struct callbacks {
                                 eosio::name{ to_uint64_t(table_it->table) },
                                 kv_it->primary_key,
                                 eosio::name{ to_uint64_t(kv_it->payer) },
-                                { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } })).value());
+                                { kv_it->value.data(), kv_it->value.data() + kv_it->value.size() } }));
          };
       }
-      return eosio::check(eosio::convert_to_bin(rows)).value();
+      return eosio::convert_to_bin(rows);
    } // query_contract_row_range_code_table_scope_pk
 
    void select_chain_for_db(uint32_t chain_index) {
@@ -1079,9 +1077,8 @@ struct callbacks {
       auto result = r.query_handler->query_transaction(*r.write_snapshot, data.data(), data.size());
       auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);
       ilog("rodeos transaction took ${u} us", ("u", us.count()));
-      auto tt = eosio::check(eosio::convert_from_bin<eosio::ship_protocol::transaction_trace>(
-                                   { result.data, result.data + result.size }))
-                      .value();
+      auto tt = eosio::convert_from_bin<eosio::ship_protocol::transaction_trace>(
+                                   { result.data, result.data + result.size });
       auto& tt0 = std::get<eosio::ship_protocol::transaction_trace_v0>(tt);
       for (auto& at : tt0.action_traces) {
          auto& at1 = std::get<eosio::ship_protocol::action_trace_v1>(at);
@@ -1339,7 +1336,7 @@ static void run(const char* wasm, const std::vector<std::string>& args) {
    eosio::vm::wasm_allocator wa;
    auto                      code = backend_t::read_wasm(wasm);
    backend_t                 backend(code);
-   ::state                   state{ wasm, wa, backend, eosio::check(eosio::convert_to_bin(args)).value() };
+   ::state                   state{ wasm, wa, backend, eosio::convert_to_bin(args) };
    callbacks                 cb{ state };
    state.files.emplace_back(stdin, false);
    state.files.emplace_back(stdout, false);

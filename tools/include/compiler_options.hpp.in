@@ -20,6 +20,14 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> fpic_opt (
+      "fPIC",
+      cl::desc("Currently does nothing"),
+      cl::cat(LD_CAT));
+static cl::opt<bool> no_default_paths_opt(
+    "fno-default-paths",
+    cl::desc("Disables default paths from being added"),
+    cl::cat(LD_CAT));
 static cl::opt<std::string> abi_version_opt(
     "abi-version",
     cl::desc("Which ABI version to generate"),
@@ -620,9 +628,11 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifdef ONLY_LD
-   ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
+   if (!no_default_paths_opt)
+      ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
 #ifndef __APPLE__
-   ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
+   if (!no_default_paths_opt)
+      ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
 #endif
 #endif
 #ifndef ONLY_LD
@@ -720,71 +730,85 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
-      copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
-      copts.emplace_back("-I"+sysroot_opt+"/include/libc");
+      if (!no_default_paths_opt) {
+         copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
+         copts.emplace_back("-I"+sysroot_opt+"/include/libc");
+      }
 
       // only allow capi for native builds and for eosio-cc
       if (fnative_opt) {
-        copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
-        copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/native");
+         if (!no_default_paths_opt) {
+            copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
+            copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/native");
+         }
       }
+      if (!no_default_paths_opt) {
 #ifndef CPP_COMP
-      copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
-#endif
-      copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/core");
-      copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/contracts");
-      if (ftester_opt) {
-         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/tester");
-      }
-      for (auto h : headers_opt) {
-         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/" + h);
-      }
+         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
+#endif   
+         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/core");
+         copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/contracts");
+         if (ftester_opt) {
+            copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/tester");
+         }
+         for (auto h : headers_opt) {
+            copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/" + h);
+         }
 
-      copts.emplace_back("-I"+sysroot_opt+"/include/abieos");
-      copts.emplace_back("-I"+sysroot_opt+"/include/date");
-      copts.emplace_back("-I"+sysroot_opt+"/include/fmt");
-      copts.emplace_back("-I"+sysroot_opt+"/include/rapidjson");
+         copts.emplace_back("-I"+sysroot_opt+"/include/abieos");
+         copts.emplace_back("-I"+sysroot_opt+"/include/date");
+         copts.emplace_back("-I"+sysroot_opt+"/include/fmt");
+         copts.emplace_back("-I"+sysroot_opt+"/include/rapidjson");
 
-      ldopts.emplace_back("-L"+sysroot_opt+"/lib");
+         ldopts.emplace_back("-L"+sysroot_opt+"/lib");
 #ifndef __APPLE__
-      ldopts.emplace_back("-L"+sysroot_opt+"/lib64");
+         ldopts.emplace_back("-L"+sysroot_opt+"/lib64");
 #endif
+      }
    }
    else {
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
-      copts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
-      agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
-      agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
-      agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
-      agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
-      ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
+      if (!no_default_paths_opt) {
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
+         copts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
+         agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
+         agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
+         agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
+         agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
+         ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
+      }
 
       if (fnative_opt) {
-        copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/capi");
-        copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/native");
+         if (!no_default_paths_opt) {
+           copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/capi");
+           copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/native");
+         }
       }
+      if (!no_default_paths_opt) {
 #ifndef CPP_COMP
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/capi");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/capi");
 #endif
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/core");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/contracts");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/core");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/contracts");
+      }
       if (ftester_opt) {
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/tester");
          copts.emplace_back("-DCATCH_CONFIG_NO_POSIX_SIGNALS");
       }
-      for (auto h : headers_opt) {
-         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/" + h);
-      }
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/abieos");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/date");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/fmt");
-      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/rapidjson");
+      if (!no_default_paths_opt) {
+         for (auto h : headers_opt) {
+            copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/" + h);
+         }
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/abieos");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/date");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/fmt");
+         copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/rapidjson");
 
 #ifndef __APPLE__
-      ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
+         ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib64");
 #endif
+      }
    }
    if (O_opt.empty() && !g_opt) {
       copts.emplace_back("-O3");
