@@ -158,16 +158,16 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
 
    // inline void skip(size_t)
    // inline size_t tellp()const
-   CHECK_EQUAL( ds.skip(0), true)
+   CHECK_EQUAL( !!ds.skip(0), true)
    CHECK_EQUAL( ds.tellp(), 256)
 
-   CHECK_EQUAL( ds.skip(1), true)
+   CHECK_EQUAL( !!ds.skip(1), true)
    CHECK_EQUAL( ds.tellp(), 257)
 
-   CHECK_EQUAL( ds.skip(255), true)
+   CHECK_EQUAL( !!ds.skip(255), true)
    CHECK_EQUAL( ds.tellp(), 512)
 
-   CHECK_EQUAL( ds.skip(1028), true)
+   CHECK_EQUAL( !!ds.skip(1028), true)
    CHECK_EQUAL( ds.tellp(), 1540)
 
    // inline bool seekp(size_t)

@@ -568,6 +568,10 @@ std::string eosio::test_rodeos::get_pushed_data_str(uint32_t index) {
     return result;
 }
 
+std::ostream& chain_types::operator<<(std::ostream& os, transaction_status t) {
+   return os << to_string(t);
+}
+
 std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {
    return os << eosio::convert_to_json(aas);
 }
