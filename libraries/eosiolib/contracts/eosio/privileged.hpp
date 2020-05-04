@@ -1,10 +1,10 @@
 #pragma once
-#include <eosio/producer_schedule.hpp>
-#include <eosio/system.hpp>
-#include <eosio/crypto.hpp>
-#include <eosio/name.hpp>
-#include <eosio/serialize.hpp>
-#include <eosio/datastream.hpp>
+#include "producer_schedule.hpp"
+#include "system.hpp"
+#include "../core/eosio/crypto.hpp"
+#include "../core/eosio/name.hpp"
+#include "../core/eosio/serialize.hpp"
+#include "../core/eosio/datastream.hpp"
 
 namespace eosio {
 

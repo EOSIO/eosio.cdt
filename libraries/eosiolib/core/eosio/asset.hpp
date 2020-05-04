@@ -1,7 +1,7 @@
 #pragma once
 
 #include_next <eosio/asset.hpp>
-#include <eosio/print.hpp>
+#include "print.hpp"
 
 namespace eosio {
 

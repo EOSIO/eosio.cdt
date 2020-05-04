@@ -1,7 +1,7 @@
 #pragma once
 
-#include <eosio/name.hpp>
-#include <eosio/datastream.hpp>
+#include "../core/eosio/name.hpp"
+#include "../core/eosio/datastream.hpp"
 
 
 /**

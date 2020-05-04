@@ -5,7 +5,7 @@
 #pragma once
 
 #include_next <eosio/symbol.hpp>
-#include <eosio/print.hpp>
+#include "print.hpp"
 
 namespace eosio {
 

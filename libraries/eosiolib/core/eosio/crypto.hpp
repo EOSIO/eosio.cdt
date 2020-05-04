@@ -5,7 +5,7 @@
 #pragma once
 
 #include_next <eosio/crypto.hpp>
-#include <eosio/fixed_bytes.hpp>
+#include "fixed_bytes.hpp"
 
 namespace eosio {
 

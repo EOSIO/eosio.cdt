@@ -1,11 +1,11 @@
 #pragma once
-#include <eosio/action.hpp>
+#include "action.hpp"
 #include <boost/fusion/adapted/std_tuple.hpp>
 #include <boost/fusion/include/std_tuple.hpp>
 
 #include <boost/mp11/tuple.hpp>
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 /**
@@ -18,7 +18,7 @@ extern "C" {
 __attribute__((eosio_wasm_import))
 void set_action_return_value(void *return_value, size_t size);
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 } // extern "C"
 #endif
 

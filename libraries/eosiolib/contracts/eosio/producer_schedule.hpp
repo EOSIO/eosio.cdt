@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include <eosio/name.hpp>
-#include <eosio/crypto.hpp>
-#include <eosio/serialize.hpp>
+#include "../core/eosio/name.hpp"
+#include "../core/eosio/crypto.hpp"
+#include "../core/eosio/serialize.hpp"
 
 namespace eosio {
 

@@ -5,14 +5,14 @@
 #include <eosio/chain_types.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/database.hpp>
-#include <eosio/eosio.hpp>
+#include "../../contracts/eosio/eosio.hpp"
+#include "../../contracts/eosio/producer_schedule.hpp"
+#include "../../contracts/eosio/transaction.hpp"
 #include <eosio/from_string.hpp>
-#include <eosio/producer_schedule.hpp>
 #include <eosio/ship_protocol.hpp>
-#include <eosio/transaction.hpp>
 
 #include <cwchar>
-#include <fmt/format.h>
+//#include <fmt/format.h>
 
 namespace eosio {
 namespace internal_use_do_not_use {
@@ -234,10 +234,10 @@ class test_chain {
    template <typename Action, typename... Args>
    auto trace( std::optional<std::vector<std::vector<char> >> cfd, const Action& action, Args&&... args) {
       if( !cfd ) {
-         return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ), 
+         return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ),
                                   { default_priv_key } );
       } else {
-         return push_transaction( make_transaction( {}, {action.to_action(std::forward<Args>(args)...)} ), 
+         return push_transaction( make_transaction( {}, {action.to_action(std::forward<Args>(args)...)} ),
                                   { default_priv_key }, *cfd );
       }
    }
@@ -252,7 +252,7 @@ class test_chain {
          uc.context_free_data = std::move(d);
          return uc;
       }
-      
+
       template <typename Action, typename... Args>
       auto act(Args&&... args) {
          if( context_free_data )

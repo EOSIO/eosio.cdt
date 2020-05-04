@@ -1,5 +1,5 @@
 #include <memory>
-#include "core/eosio/check.hpp"
+#include <eosio/check.hpp>
 
 #ifdef EOSIO_NATIVE
    extern "C" {
@@ -13,7 +13,7 @@
 #define GROW_MEMORY(X) __builtin_wasm_grow_memory(X)
 #endif
 
-namespace eosio {   
+namespace eosio {
    struct dsmalloc {
       inline char* align(char* ptr, uint8_t align_amt) {
          return (char*)((((size_t)ptr) + align_amt-1) & ~(align_amt-1));
@@ -32,7 +32,7 @@ namespace eosio {
 
          next_page = CURRENT_MEMORY;
       }
-       
+
       char* operator()(size_t sz, uint8_t align_amt=16) {
          if (sz == 0)
             return NULL;
@@ -45,8 +45,8 @@ namespace eosio {
          if ((next_page << 16) <= (size_t)last_ptr) {
             next_page++;
             pages_to_alloc++;
-         }         
-         eosio::check(GROW_MEMORY(pages_to_alloc) != -1, "failed to allocate pages");  
+         }
+         eosio::check(GROW_MEMORY(pages_to_alloc) != -1, "failed to allocate pages");
          return ret;
       }
 
@@ -54,7 +54,7 @@ namespace eosio {
       char*  last_ptr;
       size_t offset;
       size_t next_page;
-   }; 
+   };
    dsmalloc _dsmalloc;
 } // ns eosio
 

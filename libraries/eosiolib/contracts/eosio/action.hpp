@@ -5,11 +5,11 @@
 #pragma once
 #include <cstdlib>
 
-#include <eosio/serialize.hpp>
-#include <eosio/datastream.hpp>
-#include <eosio/name.hpp>
-#include <eosio/ignore.hpp>
-#include <eosio/time.hpp>
+#include "../core/eosio/serialize.hpp"
+#include "../core/eosio/datastream.hpp"
+#include "../core/eosio/name.hpp"
+#include "../core/eosio/ignore.hpp"
+#include "time.hpp"
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/facilities/overload.hpp>

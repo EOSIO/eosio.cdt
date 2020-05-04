@@ -11,8 +11,8 @@
 #include <variant>   // std::variant
 #include <vector>    // std::vector
 
-#include <eosio/datastream.hpp> // eosio::datastream
-#include <eosio/varint.hpp>     // eosio::unsigned_int
+#include "datastream.hpp" // eosio::datastream
+#include "varint.hpp"     // eosio::unsigned_int
 
 namespace eosio {
 
@@ -170,10 +170,10 @@ namespace eosio {
       const char* c_str() const {
          static size_t prev_size{0};
          char* raw_ptr{nullptr};
-         
+
          if (is_literal())
             return std::get<const char*>(_begin);
-         
+
          if (_size == prev_size)
             return std::get<uptr>(_begin).get();
          else if (_size < prev_size)
@@ -184,7 +184,7 @@ namespace eosio {
             prev_size = _size;
             memcpy(raw_ptr, std::get<uptr>(_begin).get(), _size);
          }
-         
+
          raw_ptr[_size+1] = '\0';
          return raw_ptr;
       }
