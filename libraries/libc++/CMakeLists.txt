@@ -8,35 +8,23 @@ FOREACH(FN ${SRC_FILENAMES})
    LIST(APPEND SRC_FILES "libcxx/src/${FN}")
 ENDFOREACH(FN)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything")
-set(CMAKE_BUILD_TYPE "Release")
+add_library(c++ STATIC ${SRC_FILES})
 
-add_library(c++
-            ${SRC_FILES})
-
-add_native_library(native_c++
-            ${SRC_FILES})
+add_native_library(native_c++ STATIC ${SRC_FILES})
 
 target_include_directories(c++
-                           PUBLIC 
-                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                           ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
+                           PUBLIC
+                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
 target_include_directories(native_c++
-                           PUBLIC 
-                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                           ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
+                           PUBLIC
+                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include)
 
-target_link_libraries(c++ c)
-target_link_libraries(native_c++ native_c)
+target_link_libraries(c++ PUBLIC c)
+target_link_libraries(native_c++ PUBLIC native_c)
 
-target_compile_options(native_c++ PUBLIC -allow-sse)
+target_compile_options(c++ PUBLIC "-Wno-everything" "-allow-sse" "-fno-default-paths")
+target_compile_options(native_c++ PUBLIC "-Wno-everything" "-allow-sse" "-fno-default-paths")
 
 add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${BASE_BINARY_DIR}/lib )
 

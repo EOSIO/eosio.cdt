@@ -18,13 +18,14 @@ file ( GLOB builtins_headers "${CMAKE_CURRENT_SOURCE_DIR}*.h" )
 list( APPEND builtins_sources ${builtins_headers} )
 
 add_library ( rt STATIC ${builtins_sources} )
-add_native_library ( native_rt STATIC ${builtins_sources} )
+# TODO re-enable after more CMake fixes
+#add_native_library ( native_rt STATIC ${builtins_sources} )
 
 target_include_directories( rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
                                       "${CMAKE_CURRENT_SOURCE_DIR}/../native/softfloat/source/include" )
 
-target_include_directories( native_rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
-                                             "${CMAKE_CURRENT_SOURCE_DIR}/../native/softfloat/source/include" )
+                                   #target_include_directories( native_rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+                                   #"${CMAKE_CURRENT_SOURCE_DIR}/../native/softfloat/source/include" )
 
 add_custom_command( TARGET rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:rt> ${BASE_BINARY_DIR}/lib )
-add_custom_command( TARGET native_rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_rt> ${BASE_BINARY_DIR}/lib )
+#add_custom_command( TARGET native_rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_rt> ${BASE_BINARY_DIR}/lib )

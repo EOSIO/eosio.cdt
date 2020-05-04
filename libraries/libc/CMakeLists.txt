@@ -17,19 +17,12 @@ file(GLOB THREAD_SOURCES "musl/src/thread/*.c") #only for __lock __unlock
 
 set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c musl/src/internal/shgetc.c musl/src/internal/libc.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse")
-set(CMAKE_BUILD_TYPE "Release")
-
-if(__APPLE)
-  add_definitions(-D__APPLE__)
-endif()
-
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/musl/include/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h")
 
-add_library(c 
-            ${CRYPT_SOURCES} 
+add_library(c STATIC
+            ${CRYPT_SOURCES}
             ${CTYPE_SOURCES}
             ${ENV_SOURCES}
             ${ERRNO_SOURCES}
@@ -50,8 +43,8 @@ add_library(c
             "musl/src/malloc/memalign.c"
             ${HEADERS})
 
-add_native_library(native_c 
-            ${CRYPT_SOURCES} 
+add_native_library(native_c STATIC
+            ${CRYPT_SOURCES}
             ${CTYPE_SOURCES}
             ${ENV_SOURCES}
             ${ERRNO_SOURCES}
@@ -72,21 +65,29 @@ add_native_library(native_c
             "musl/src/malloc/memalign.c"
             ${HEADERS})
 
-target_include_directories(c 
-                           PUBLIC 
+target_include_directories(c
+                           PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
                            ${CMAKE_SOURCE_DIR})
 
-target_include_directories(native_c 
-                           PUBLIC 
+target_include_directories(native_c
+                           PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
                            ${CMAKE_SOURCE_DIR})
+
+target_compile_options(c PUBLIC "-Wno-everything" "-allow-sse" "-fno-default-paths")
+target_compile_options(native_c PUBLIC "-Wno-everything" "-allow-sse" "-fno-default-paths")
+
+if(__APPLE)
+target_compile_definitions(c PRIVATE -D__APPLE__)
+target_compile_definitions(native_c PRIVATE -D__APPLE__)
+endif()
 
 add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
