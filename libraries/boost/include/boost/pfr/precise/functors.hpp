@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,6 +10,7 @@
 #include <boost/pfr/detail/config.hpp>
 
 #include <boost/pfr/detail/functional.hpp>
+#include <boost/pfr/detail/make_integer_sequence.hpp>
 #if BOOST_PFR_USE_CPP17
 #   include <boost/pfr/detail/core17.hpp>
 #else
@@ -21,8 +22,6 @@
 /// Each functor iterates over fields of the type.
 ///
 /// \b Requires: C++17 or \constexprinit{C++14 constexpr aggregate intializable type}.
-///
-/// \rcast14
 namespace boost { namespace pfr {
 
 namespace detail {
@@ -46,10 +45,10 @@ namespace detail {
                     [&result, &lhs](const auto& rhs) {
                         result = visitor_t::cmp(lhs, rhs);
                     },
-                    std::make_index_sequence<fields_count_rhs>{}
+                    detail::make_index_sequence<fields_count_rhs>{}
                 );
             },
-            std::make_index_sequence<fields_count_lhs>{}
+            detail::make_index_sequence<fields_count_lhs>{}
         );
 
         return result;
@@ -63,8 +62,6 @@ namespace detail {
 /// \brief std::equal_to like comparator
 template <class T = void> struct equal_to {
     /// \return \b true if each field of \b x equals the field with same index of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::equal_impl>(x, y);
     }
@@ -92,8 +89,6 @@ template <> struct equal_to<void> {
 /// \brief std::not_equal like comparator
 template <class T = void> struct not_equal {
     /// \return \b true if at least one field \b x not equals the field with same index of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::not_equal_impl>(x, y);
     }
@@ -122,8 +117,6 @@ template <> struct not_equal<void> {
 /// \brief std::greater like comparator
 template <class T = void> struct greater {
     /// \return \b true if field of \b x greater than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::greater_impl>(x, y);
     }
@@ -152,8 +145,6 @@ template <> struct greater<void> {
 /// \brief std::less like comparator
 template <class T = void> struct less {
     /// \return \b true if field of \b x less than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::less_impl>(x, y);
     }
@@ -183,8 +174,6 @@ template <> struct less<void> {
 template <class T = void> struct greater_equal {
     /// \return \b true if field of \b x greater than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y;
     /// or if each field of \b x equals the field with same index of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::greater_equal_impl>(x, y);
     }
@@ -214,8 +203,6 @@ template <> struct greater_equal<void> {
 template <class T = void> struct less_equal {
     /// \return \b true if field of \b x less than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y;
     /// or if each field of \b x equals the field with same index of \b y.
-    ///
-    /// \rcast14
     bool operator()(const T& x, const T& y) const {
         return detail::binary_visit<detail::less_equal_impl>(x, y);
     }
@@ -245,8 +232,6 @@ template <> struct less_equal<void> {
 /// \brief std::hash like functor
 template <class T> struct hash {
     /// \return hash value of \b x.
-    ///
-    /// \rcast14
     std::size_t operator()(const T& x) const {
         constexpr std::size_t fields_count_val = boost::pfr::detail::fields_count<std::remove_reference_t<T>>();
 #if BOOST_PFR_USE_CPP17
@@ -258,7 +243,7 @@ template <class T> struct hash {
             [&result](const auto& lhs) {
                 result = detail::hash_impl<0, fields_count_val>::compute(lhs);
             },
-            std::make_index_sequence<fields_count_val>{}
+            detail::make_index_sequence<fields_count_val>{}
         );
 
         return result;

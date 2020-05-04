@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +15,7 @@
 
 #include <boost/pfr/detail/sequence_tuple.hpp>
 #include <boost/pfr/detail/io.hpp>
+#include <boost/pfr/detail/make_integer_sequence.hpp>
 #include <boost/pfr/precise/tuple_size.hpp>
 
 #if BOOST_PFR_USE_CPP17
@@ -28,8 +29,6 @@ namespace boost { namespace pfr {
 /// \brief Writes aggregate `value` to `out`
 ///
 /// \b Requires: C++17 or \constexprinit{C++14 constexpr aggregate intializable type}.
-///
-/// \rcast14
 ///
 /// \b Example:
 /// \code
@@ -49,7 +48,7 @@ void write(std::basic_ostream<Char, Traits>& out, const T& value) {
         [&out](const auto& val) {
             detail::print_impl<0, fields_count_val>::print(out, val);
         },
-        std::make_index_sequence<fields_count_val>{}
+        detail::make_index_sequence<fields_count_val>{}
     );
 #endif
     out << '}';
@@ -58,8 +57,6 @@ void write(std::basic_ostream<Char, Traits>& out, const T& value) {
 /// Reads aggregate `value` from stream `in`
 ///
 /// \b Requires: C++17 or \constexprinit{C++14 constexpr aggregate intializable type}.
-///
-/// \rcast14
 ///
 /// \b Example:
 /// \code
@@ -91,7 +88,7 @@ void read(std::basic_istream<Char, Traits>& in, T& value) {
         [&in](const auto& val) {
             detail::read_impl<0, fields_count_val>::read(in, val);
         },
-        std::make_index_sequence<fields_count_val>{}
+        detail::make_index_sequence<fields_count_val>{}
     );
 #endif
 

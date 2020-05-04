@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,10 @@
 #include <boost/pfr/detail/stdtuple.hpp>
 #include <boost/pfr/detail/core14.hpp>
 #include <boost/pfr/detail/for_each_field_impl.hpp>
+#include <boost/pfr/detail/make_integer_sequence.hpp>
 #include <boost/pfr/flat/tuple_size.hpp>
+
+#include <boost/pfr/detail/flat_tie_from_structure_tuple.hpp>
 
 namespace boost { namespace pfr {
 
@@ -81,7 +84,7 @@ template <class T>
 auto flat_structure_to_tuple(const T& val) noexcept {
     return detail::make_stdtuple_from_tietuple(
         detail::tie_as_flat_tuple(val),
-        std::make_index_sequence< flat_tuple_size_v<T> >()
+        detail::make_index_sequence< flat_tuple_size_v<T> >()
     );
 }
 
@@ -103,7 +106,7 @@ template <class T>
 auto flat_structure_tie(T& val /* @cond */, std::enable_if_t< std::is_trivially_assignable<T, T>::value>* = 0 /* @endcond */) noexcept {
     return detail::make_stdtiedtuple_from_tietuple(
         detail::tie_as_flat_tuple(val),
-        std::make_index_sequence< flat_tuple_size_v<T> >()
+        detail::make_index_sequence< flat_tuple_size_v<T> >()
     );
 }
 
@@ -131,9 +134,26 @@ void flat_for_each_field(T&& value, F&& func) {
     ::boost::pfr::detail::for_each_field_impl(
         tup,
         std::forward<F>(func),
-        std::make_index_sequence< flat_tuple_size_v<T> >{},
+        detail::make_index_sequence< flat_tuple_size_v<T> >{},
         std::is_rvalue_reference<T&&>{}
     );
+}
+
+/// \brief Create a tuple of lvalue references capable of de-structuring
+/// assignment from \flattening{flattened} fields of an aggregate T.
+///
+/// \b Example:
+/// \code
+///     auto f() {
+///       struct { struct { int x, y } p; short s; } res { { 4, 5 }, 6 };
+///       return res;
+///     }
+///     auto [x, y, s] = flat_structure_tie(f());
+///     flat_tie_from_structure(x, y, s) = f();
+/// \endcode
+template <typename... Elements>
+constexpr detail::flat_tie_from_structure_tuple<Elements...> flat_tie_from_structure(Elements&... args) noexcept {
+    return detail::flat_tie_from_structure_tuple<Elements...>(args...);
 }
 
 }} // namespace boost::pfr

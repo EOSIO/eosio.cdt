@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,7 +14,6 @@
 namespace boost { namespace pfr { namespace detail {
 
 #ifndef _MSC_VER // MSVC fails to compile the following code, but compiles the structured bindings in core17_generated.hpp
-
 struct do_not_define_std_tuple_size_for_me {
     bool test1 = true;
 };
@@ -41,13 +40,16 @@ constexpr bool do_structured_bindings_work() noexcept { // *********************
 
 static_assert(
     do_structured_bindings_work<do_not_define_std_tuple_size_for_me>(),
-    "Your compiler can not handle C++17 structured bindings. Read the above comments for workarounds."
+    "====================> Boost.PFR: Your compiler can not handle C++17 structured bindings. Read the above comments for workarounds."
 );
-
 #endif // #ifndef _MSC_VER
 
 template <class T, class F, std::size_t... I>
 void for_each_field_dispatcher(T& t, F&& f, std::index_sequence<I...>) {
+    static_assert(
+        !std::is_union<T>::value,
+        "====================> Boost.PFR: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
+    );
     std::forward<F>(f)(
         detail::tie_as_tuple(t)
     );

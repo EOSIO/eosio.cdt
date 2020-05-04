@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,9 +19,9 @@ template <class T, class U>
 constexpr void static_assert_layout_compatible() noexcept {
     static_assert(
         std::alignment_of<T>::value == std::alignment_of<U>::value,
-        "Alignment check failed, probably your structure has user-defined alignment for the whole structure or for some of the fields."
+        "====================> Boost.PFR: Alignment check failed, probably your structure has user-defined alignment for the whole structure or for some of the fields."
     );
-    static_assert(sizeof(T) == sizeof(U), "Size check failed, probably your structure has bitfields or user-defined alignment.");
+    static_assert(sizeof(T) == sizeof(U), "====================> Boost.PFR: Size check failed, probably your structure has bitfields or user-defined alignment.");
 }
 
 /// @cond
@@ -35,14 +35,14 @@ constexpr void static_assert_layout_compatible() noexcept {
 template <class To, class From>
 MAY_ALIAS const To& cast_to_layout_compatible(const From& val) noexcept {
     MAY_ALIAS const To* const t = reinterpret_cast<const To*>( std::addressof(val) );
-    static_assert_layout_compatible<To, From>();
+    detail::static_assert_layout_compatible<To, From>();
     return *t;
 }
 
 template <class To, class From>
 MAY_ALIAS const volatile To& cast_to_layout_compatible(const volatile From& val) noexcept {
     MAY_ALIAS const volatile To* const t = reinterpret_cast<const volatile To*>( std::addressof(val) );
-    static_assert_layout_compatible<To, From>();
+    detail::static_assert_layout_compatible<To, From>();
     return *t;
 }
 
@@ -50,7 +50,7 @@ MAY_ALIAS const volatile To& cast_to_layout_compatible(const volatile From& val)
 template <class To, class From>
 MAY_ALIAS volatile To& cast_to_layout_compatible(volatile From& val) noexcept {
     MAY_ALIAS volatile To* const t = reinterpret_cast<volatile To*>( std::addressof(val) );
-    static_assert_layout_compatible<To, From>();
+    detail::static_assert_layout_compatible<To, From>();
     return *t;
 }
 
@@ -58,7 +58,7 @@ MAY_ALIAS volatile To& cast_to_layout_compatible(volatile From& val) noexcept {
 template <class To, class From>
 MAY_ALIAS To& cast_to_layout_compatible(From& val) noexcept {
     MAY_ALIAS To* const t = reinterpret_cast<To*>( std::addressof(val) );
-    static_assert_layout_compatible<To, From>();
+    detail::static_assert_layout_compatible<To, From>();
     return *t;
 }
 

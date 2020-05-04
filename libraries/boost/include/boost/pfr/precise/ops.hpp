@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,8 +21,6 @@
 /// Just write \b using \b namespace \b ops; and operators will be available in scope.
 ///
 /// \b Requires: C++17 or \constexprinit{C++14 constexpr aggregate intializable type}.
-///
-/// \rcast14
 ///
 /// \b Example:
 /// \code

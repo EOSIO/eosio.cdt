@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +15,7 @@
 #include <boost/pfr/detail/sequence_tuple.hpp>
 #include <boost/pfr/detail/stdtuple.hpp>
 #include <boost/pfr/detail/for_each_field_impl.hpp>
+#include <boost/pfr/detail/make_integer_sequence.hpp>
 
 #include <boost/pfr/precise/tuple_size.hpp>
 #if BOOST_PFR_USE_CPP17
@@ -23,13 +24,13 @@
 #   include <boost/pfr/detail/core14.hpp>
 #endif
 
+#include <boost/pfr/detail/tie_from_structure_tuple.hpp>
+
 namespace boost { namespace pfr {
 
 /// \brief Returns reference or const reference to a field with index `I` in aggregate T.
 ///
 /// \b Requires: C++17 or \flatpod{C++14 flat POD or C++14 with not disabled Loophole}.
-///
-/// \rcast14
 ///
 /// \b Example:
 /// \code
@@ -79,8 +80,6 @@ using tuple_element_t = typename tuple_element<I, T>::type;
 ///
 /// \b Requires: C++17 or \flatpod{C++14 flat POD or C++14 with not disabled Loophole}.
 ///
-/// \rcast14
-///
 /// \b Example:
 /// \code
 ///     struct my_struct { int i, short s; };
@@ -92,7 +91,7 @@ template <class T>
 constexpr auto structure_to_tuple(const T& val) noexcept {
     return detail::make_stdtuple_from_tietuple(
         detail::tie_as_tuple(val),
-        std::make_index_sequence< tuple_size_v<T> >()
+        detail::make_index_sequence< tuple_size_v<T> >()
     );
 }
 
@@ -101,20 +100,18 @@ constexpr auto structure_to_tuple(const T& val) noexcept {
 ///
 /// \b Requires: C++17 or \flatpod{C++14 flat POD or C++14 with not disabled Loophole}.
 ///
-/// \rcast14
-///
 /// \b Example:
 /// \code
 ///     struct my_struct { int i, short s; };
 ///     my_struct s;
-///     tie(s) = std::tuple<int, short>{10, 11};
+///     structure_tie(s) = std::tuple<int, short>{10, 11};
 ///     assert(s.s == 11);
 /// \endcode
 template <class T>
 constexpr auto structure_tie(T& val) noexcept {
     return detail::make_stdtiedtuple_from_tietuple(
         detail::tie_as_tuple(val),
-        std::make_index_sequence< tuple_size_v<T> >()
+        detail::make_index_sequence< tuple_size_v<T> >()
     );
 }
 
@@ -128,8 +125,6 @@ constexpr auto structure_tie(T& val) noexcept {
 ///     * any_return_type func(U&& value, I i)  // Here I is an `std::integral_constant<size_t, field_index>`
 ///
 /// \param value To each field of this variable will be the `func` applied.
-///
-/// \rcast14
 ///
 /// \b Example:
 /// \code
@@ -152,12 +147,29 @@ void for_each_field(T&& value, F&& func) {
             ::boost::pfr::detail::for_each_field_impl(
                 t,
                 std::forward<F>(f),
-                std::make_index_sequence<fields_count_val_in_lambda>{},
+                detail::make_index_sequence<fields_count_val_in_lambda>{},
                 std::is_rvalue_reference<T&&>{}
             );
         },
-        std::make_index_sequence<fields_count_val>{}
+        detail::make_index_sequence<fields_count_val>{}
     );
+}
+
+/// \brief Create a tuple of lvalue references capable of de-structuring
+/// assignment from fields of an aggregate T.
+///
+/// \b Example:
+/// \code
+///     auto f() {
+///       struct { struct { int x, y } p; short s; } res { { 4, 5 }, 6 };
+///       return res;
+///     }
+///     auto [p, s] = f();
+///     tie_from_structure(p, s) = f();
+/// \endcode
+template <typename... Elements>
+constexpr detail::tie_from_structure_tuple<Elements...> tie_from_structure(Elements&... args) noexcept {
+    return detail::tie_from_structure_tuple<Elements...>(args...);
 }
 
 }} // namespace boost::pfr

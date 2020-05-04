@@ -1,4 +1,5 @@
-// Copyright (c) 2017 Chris Beck
+// Copyright (c) 2017-2018 Chris Beck
+// Copyright (c) 2019-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,7 +40,15 @@ struct tuple_of_aligned_storage;
 
 template <typename... Ts>
 struct tuple_of_aligned_storage<sequence_tuple::tuple<Ts...>> {
-  using type = sequence_tuple::tuple<internal_aligned_storage<sizeof(Ts), alignof(Ts)>...>;
+  using type = sequence_tuple::tuple<internal_aligned_storage<sizeof(Ts),
+#if defined(__GNUC__) && __GNUC__ < 8 && !defined(__x86_64__) && !defined(__CYGWIN__)
+      // Before GCC-8 the `alignof` was returning the optimal alignment rather than the minimal one.
+      // We have to adjust the alignemnt because otherwise we get the wrong offset.
+      (alignof(Ts) > 4 ? 4 : alignof(Ts))
+#else
+      alignof(Ts)
+#endif
+  >...>;
 };
 
 // Note: If pfr has a typelist also, could also have an overload for that here
@@ -60,12 +69,12 @@ template <typename U, typename S>
 class offset_based_getter {
   using this_t = offset_based_getter<U, S>;
 
-  static_assert(sizeof(U) == sizeof(S), "Member sequence does not indicate correct size for struct type!");
-  static_assert(alignof(U) == alignof(S), "Member sequence does not indicate correct alignment for struct type!");
+  static_assert(sizeof(U) == sizeof(S), "====================> Boost.PFR: Member sequence does not indicate correct size for struct type!");
+  static_assert(alignof(U) == alignof(S), "====================> Boost.PFR: Member sequence does not indicate correct alignment for struct type!");
 
-  static_assert(!std::is_const<U>::value, "const should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later, this indicates an error within pfr");
-  static_assert(!std::is_reference<U>::value, "reference should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later, this indicates an error within pfr");
-  static_assert(!std::is_volatile<U>::value, "volatile should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later. this indicates an error within pfr");
+  static_assert(!std::is_const<U>::value, "====================> Boost.PFR: const should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later, this indicates an error within pfr");
+  static_assert(!std::is_reference<U>::value, "====================> Boost.PFR: reference should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later, this indicates an error within pfr");
+  static_assert(!std::is_volatile<U>::value, "====================> Boost.PFR: volatile should be stripped from user-defined type when using offset_based_getter or overload resolution will be ambiguous later. this indicates an error within pfr");
 
   // Get type of idx'th member
   template <std::size_t idx>
@@ -122,7 +131,7 @@ public:
     return *this_t::get_pointer<idx>(std::addressof(u));
   }
 
-  // rvalues must no be used here, to avoid template instantiation bloats.
+  // rvalues must not be used here, to avoid template instantiation bloats.
   template <std::size_t idx>
   index_t<idx> && get(rvalue_t<U> u, size_t_<idx>) const = delete;
 };
