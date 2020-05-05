@@ -92,14 +92,14 @@ target_include_directories(eosio PUBLIC
                                  ${std_includes}
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/eosiolib/core
-                                 ${CMAKE_SOURCE_DIR}/eosiolib/contract
+                                 ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                  ${abieos_includes}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
 target_include_directories(native_eosio PUBLIC
                                  ${std_includes}
                                  ${CMAKE_SOURCE_DIR}/eosiolib/core
-                                 ${CMAKE_SOURCE_DIR}/eosiolib/contract
+                                 ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                  ${abieos_includes}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
