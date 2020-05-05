@@ -38,8 +38,6 @@ add_library(eosio_embed
 
 set(abieos_includes ${CMAKE_SOURCE_DIR}/abieos/include
                     ${CMAKE_SOURCE_DIR}/abieos/src
-                    ${CMAKE_SOURCE_DIR}/abieos/external/outcome/single-header
-                    ${CMAKE_SOURCE_DIR}/abieos/external/date/include
                     ${CMAKE_SOURCE_DIR}/abieos/external/rapidjson/include)
 
 target_include_directories(eosio_tester PUBLIC
@@ -102,8 +100,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.h DESTINATION ${BASE_
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_numeric.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_ripemd160.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/date/include/date DESTINATION ${BASE_BINARY_DIR}/include/date FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/rapidjson/include/rapidjson DESTINATION ${BASE_BINARY_DIR}/include/rapidjson FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../fmt/include/fmt DESTINATION ${BASE_BINARY_DIR}/include/fmt FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../Catch2/single_include/catch2 DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/outcome/single-header/outcome-basic.hpp DESTINATION ${BASE_BINARY_DIR}/include)
