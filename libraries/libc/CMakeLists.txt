@@ -73,7 +73,7 @@ add_native_library(native_c
             ${HEADERS})
 
 target_include_directories(c 
-                           PUBLIC 
+                           PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
