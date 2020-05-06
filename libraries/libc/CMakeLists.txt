@@ -73,7 +73,7 @@ add_native_library(native_c
             ${HEADERS})
 
 target_include_directories(c 
-                           PUBLIC 
+                           PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
@@ -87,6 +87,9 @@ target_include_directories(native_c
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/crypt
                            ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
                            ${CMAKE_SOURCE_DIR})
+
+target_compile_options(c PUBLIC "-fno-default-paths")
+target_compile_options(native_c PUBLIC "-fno-default-paths")
 
 add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )

@@ -3,6 +3,7 @@
 namespace eosio { namespace testing {
 
 struct contracts {
+   static const char* boot_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/boot.wasm"; }
    static const char* malloc_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.wasm"; }
    static const char* old_malloc_tests_wasm() { return "${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"; }
 
