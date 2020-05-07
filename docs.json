@@ -1,7 +1,7 @@
 {
 	"name": "eosio.cdt",
 	"generators": [
-    {
+		{
 			"name": "collate_markdown",
 			"options": {
 				"docs_dir": "docs"
@@ -15,7 +15,7 @@
 				"EXCLUDE_PATTERNS": "*.cpp *.c *.h"
 			}
 		},
-    {
+		{
 			"name": "doxybook",
 			"options": {}
 		}

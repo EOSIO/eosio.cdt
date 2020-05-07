@@ -1,4 +1,4 @@
-#!/bin/bash
+  #!/bin/bash
 
 CDT_DIR=/usr/local/eosio.cdt/eosio.cdt
 CDT_SRC_DIR=/root/eosio.cdt
@@ -28,6 +28,6 @@ standardese \
     -I $CDT_DIR/include/libc/ \
     -I $CDT_DIR/include/libcxx/ \
     -I $CDT_SRC_DIR/libraries/eosiolib/contracts \
-    ../../libraries/eosiolib/
+    ../../libraries/eosiolib/core/eosio/crypto.hpp
 
 popd
