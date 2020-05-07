@@ -87,7 +87,7 @@ const std::vector<std::string>& eosio::get_args() {
    if (!args) {
       auto&                bytes = ::get_args();
       args.emplace();
-      args = check(convert_from_bin<std::vector<std::string>>(bytes)).value();
+      args = convert_from_bin<std::vector<std::string>>(bytes);
    }
    return *args;
 }
@@ -105,7 +105,7 @@ std::vector<char> eosio::read_whole_file(std::string_view filename) {
 int32_t eosio::execute(std::string_view command) { return ::execute(command.data(), command.size()); }
 
 eosio::asset eosio::string_to_asset(const char* s) {
-   return check(eosio::convert_from_string<asset>(s)).value();
+   return eosio::convert_from_string<asset>(s);
 }
 
 namespace {
@@ -203,8 +203,8 @@ std::ostream& eosio::operator<<(std::ostream& os, const name& obj) {
    return os << obj.to_string();
 }
 
-const eosio::public_key  eosio::test_chain::default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV").value();
-const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3").value();
+const eosio::public_key  eosio::test_chain::default_pub_key  = public_key_from_string("EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV");
+const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3");
 
 // We only allow one chain to exist at a time in the tester.
 // If we ever find that we need multiple chains, this will
@@ -269,7 +269,7 @@ const eosio::block_info& eosio::test_chain::get_head_block_info() {
          bin.resize(size);
          return bin.data();
       });
-      head_block_info = check(convert_from_bin<block_info>(bin)).value();
+      head_block_info = convert_from_bin<block_info>(bin);
    }
    return *head_block_info;
 }
@@ -296,16 +296,16 @@ eosio::transaction_trace eosio::test_chain::push_transaction(const transaction& 
 
    std::vector<char> packed_trx = pack(trx);
    std::vector<char> args;
-   check_discard(convert_to_bin(packed_trx, args));
-   check_discard(convert_to_bin(context_free_data, args));
-   check_discard(convert_to_bin(signatures, args));
-   check_discard(convert_to_bin(keys, args));
+   (void)convert_to_bin(packed_trx, args);
+   (void)convert_to_bin(context_free_data, args);
+   (void)convert_to_bin(signatures, args);
+   (void)convert_to_bin(keys, args);
    std::vector<char> bin;
    ::push_transaction(id, args.data(), args.size(), [&](size_t size) {
       bin.resize(size);
       return bin.data();
    });
-   return check(convert_from_bin<transaction_trace>(bin)).value();
+   return convert_from_bin<transaction_trace>(bin);
 }
 
 eosio::transaction_trace eosio::test_chain::transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
@@ -327,7 +327,7 @@ std::optional<eosio::transaction_trace> eosio::test_chain::exec_deferred() {
           return bin.data();
        }))
       return {};
-   return check(convert_from_bin<transaction_trace>(bin)).value();
+   return convert_from_bin<transaction_trace>(bin);
 }
 
 std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_history(uint32_t block_num) {
@@ -339,21 +339,21 @@ std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_hist
    ret->memory.resize(size);
    ::get_history(id, block_num, ret->memory.data(), size);
    ship_protocol::result r;
-   check_discard(convert_from_bin(r, ret->memory));
+   (void)convert_from_bin(r, ret->memory);
    auto p = std::get_if<ship_protocol::get_blocks_result_v0>(&r);
    check(!!p, "test_chain::get_history: expected ship_protocol::get_blocks_result_v0");
    ret->result = *p;
    if (p->block) {
       ret->block.emplace();
-      check_discard(from_bin(*ret->block, *p->block));
+      (void)from_bin(*ret->block, *p->block);
    }
    if (p->traces) {
       ret->traces.emplace();
-      check_discard(from_bin(*ret->traces, *p->traces));
+      (void)from_bin(*ret->traces, *p->traces);
    }
    if (p->deltas) {
       ret->deltas.emplace();
-      check_discard(from_bin(*ret->deltas, *p->deltas));
+      (void)from_bin(*ret->deltas, *p->deltas);
    }
    return ret;
 }
@@ -490,16 +490,16 @@ eosio::test_rodeos::push_transaction(const transaction& trx, const std::vector<p
                                      const std::vector<signature>&         signatures) {
    std::vector<char> packed_trx = pack(trx);
    std::vector<char> args;
-   check_discard(convert_to_bin(packed_trx, args));
-   check_discard(convert_to_bin(context_free_data, args));
-   check_discard(convert_to_bin(signatures, args));
-   check_discard(convert_to_bin(keys, args));
+   (void)convert_to_bin(packed_trx, args);
+   (void)convert_to_bin(context_free_data, args);
+   (void)convert_to_bin(signatures, args);
+   (void)convert_to_bin(keys, args);
    std::vector<char> bin;
    rodeos_push_transaction(id, args.data(), args.size(), [&](size_t size) {
       bin.resize(size);
       return bin.data();
    });
-   return check(convert_from_bin<transaction_trace>(bin)).value();
+   return convert_from_bin<transaction_trace>(bin);
 }
 
 eosio::transaction_trace eosio::test_rodeos::transact(std::vector<action>&&           actions,
@@ -532,12 +532,16 @@ std::string eosio::test_rodeos::get_pushed_data_str(uint32_t index) {
     return result;
 }
 
+std::ostream& chain_types::operator<<(std::ostream& os, transaction_status t) {
+   return os << to_string(t);
+}
+
 std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {
-   return os << eosio::check(eosio::convert_to_json(aas)).value();
+   return os << eosio::convert_to_json(aas);
 }
 
 std::ostream& chain_types::operator<<(std::ostream& os, const account_delta& ad) {
-   return os << eosio::check(eosio::convert_to_json(ad)).value();
+   return os << eosio::convert_to_json(ad);
 }
 
 extern "C" {

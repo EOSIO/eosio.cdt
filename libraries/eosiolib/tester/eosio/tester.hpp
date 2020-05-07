@@ -220,7 +220,7 @@ class test_chain {
    auto action_with_return(const Action& action, Args&&... args) {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({action.to_action(std::forward<Args>(args)...)});
-      return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
+      return convert_from_bin<Ret>(trace.action_traces[0].return_value);
    }
 
 
@@ -229,7 +229,7 @@ class test_chain {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({action.to_action(std::forward<Args>(args)...)});
       if constexpr ( !std::is_same_v<Ret,void> ) {
-         return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
+         return convert_from_bin<Ret>(trace.action_traces[0].return_value);
       } else {
          return trace;
       }
@@ -392,7 +392,7 @@ class test_rodeos {
       using Ret  = decltype(internal_use_do_not_use::get_return_type(Action::get_mem_ptr()));
       auto trace = transact({ action.to_action(std::forward<Args>(args)...) });
       if constexpr (!std::is_same_v<Ret, void>) {
-         return check(convert_from_bin<Ret>(trace.action_traces[0].return_value)).value();
+         return convert_from_bin<Ret>(trace.action_traces[0].return_value);
       } else {
          return trace;
       }

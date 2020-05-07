@@ -1,6 +1,6 @@
 #pragma once
 
-#include "check.hpp"
+#include <eosio/check.hpp>
 
 namespace eosio {
     /**

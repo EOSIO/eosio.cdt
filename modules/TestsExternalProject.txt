@@ -27,6 +27,6 @@ if (EOSIO_RUN_INTEGRATION_TESTS)
         TEST_COMMAND   ""
         INSTALL_COMMAND ""
         BUILD_ALWAYS 1
-        DEPENDS EosioWasmLibraries EosioTools tester
+        DEPENDS EosioWasmLibraries EosioTools
       )
 endif()

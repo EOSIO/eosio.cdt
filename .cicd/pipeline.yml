@@ -347,7 +347,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: 10
+    timeout: 20
     skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"

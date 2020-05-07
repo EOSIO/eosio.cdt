@@ -60,7 +60,6 @@ create_symlink eosio-objdump eosio-objdump
 create_symlink eosio-ranlib eosio-ranlib
 create_symlink eosio-readelf eosio-readelf
 create_symlink eosio-strip eosio-strip
-create_symlink eosio-tester eosio-tester
 
 echo "Generating Tarball $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1

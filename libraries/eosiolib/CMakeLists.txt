@@ -36,46 +36,27 @@ add_library(eosio_embed
             embed/eosio/printui.cpp
             ${HEADERS})
 
-set(std_includes ${CMAKE_SOURCE_DIR}/libc++/libcxx/include
-                 ${CMAKE_SOURCE_DIR}/libc/musl/include
-                 ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                 ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                 ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
 set(abieos_includes ${CMAKE_SOURCE_DIR}/abieos/include
                     ${CMAKE_SOURCE_DIR}/abieos/src
-                    ${CMAKE_SOURCE_DIR}/abieos/external/outcome/single-header
-                    ${CMAKE_SOURCE_DIR}/abieos/external/date/include
                     ${CMAKE_SOURCE_DIR}/abieos/external/rapidjson/include)
 
 target_include_directories(eosio_tester PUBLIC
-                                        ${std_includes}
                                         ${CMAKE_SOURCE_DIR}/eosiolib/tester
                                         ${CMAKE_SOURCE_DIR}/eosiolib/core
-                                        ${CMAKE_SOURCE_DIR}/eosiolib/contract
+                                        ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                         ${abieos_includes}
-                                        ${CMAKE_SOURCE_DIR}/boost/include)
+                                        ${CMAKE_SOURCE_DIR}/boost/include
+                                        ${CMAKE_SOURCE_DIR}/fmt/include)
 
-set(tester_includes -I${CMAKE_SOURCE_DIR}/libc++/libcxx/include
-                    -I${CMAKE_SOURCE_DIR}/libc/musl/include
-                    -I${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                    -I${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                    -I${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
-                    -I${CMAKE_SOURCE_DIR}/eosiolib/tester
-                    -I${CMAKE_SOURCE_DIR}/eosiolib/core
-                    -I${CMAKE_SOURCE_DIR}/eosiolib/contracts
-                    -I${CMAKE_SOURCE_DIR}/abieos/include
-                    -I${CMAKE_SOURCE_DIR}/abieos/src
-                    -I${CMAKE_SOURCE_DIR}/abieos/external/outcome/single-header
-                    -I${CMAKE_SOURCE_DIR}/abieos/external/date/include
-                    -I${CMAKE_SOURCE_DIR}/abieos/external/rapidjson/include
-                    -I${CMAKE_SOURCE_DIR}/Catch2/single_include
-                    -I${CMAKE_SOURCE_DIR}/fmt/include)
+target_compile_options(eosio_tester PRIVATE -fno-default-paths)
+target_link_libraries(eosio_tester c++)
 
 add_custom_command(
    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crt0.o
-   COMMAND ${CMAKE_CXX_COMPILER} -c -o ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${tester_includes} ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
+   COMMAND ${CMAKE_CXX_COMPILER} -fno-default-paths -c -o ${CMAKE_CURRENT_BINARY_DIR}/crt0.o "-I$<JOIN:$<TARGET_PROPERTY:eosio_tester,INCLUDE_DIRECTORIES>,;-I>" ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    DEPENDS ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    COMMENT "Building C++ object crt0.o"
+   COMMAND_EXPAND_LISTS
 )
 add_custom_target(crt0.o.target DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crt0.o)
 add_dependencies(eosio_tester crt0.o.target)
@@ -89,21 +70,19 @@ add_native_library(native_eosio
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(eosio PUBLIC
-                                 ${std_includes}
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/eosiolib/core
-                                 ${CMAKE_SOURCE_DIR}/eosiolib/contract
+                                 ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                  ${abieos_includes}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
 target_include_directories(native_eosio PUBLIC
-                                 ${std_includes}
                                  ${CMAKE_SOURCE_DIR}/eosiolib/core
-                                 ${CMAKE_SOURCE_DIR}/eosiolib/contract
+                                 ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                  ${abieos_includes}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
-target_link_libraries( eosio c c++ )
+target_link_libraries( eosio c++ c )
 add_dependencies( native_eosio eosio )
 
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
@@ -121,8 +100,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.h DESTINATION ${BASE_
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_numeric.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos_ripemd160.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/date/include/date DESTINATION ${BASE_BINARY_DIR}/include/date FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/rapidjson/include/rapidjson DESTINATION ${BASE_BINARY_DIR}/include/rapidjson FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../fmt/include/fmt DESTINATION ${BASE_BINARY_DIR}/include/fmt FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../Catch2/single_include/catch2 DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/external/outcome/single-header/outcome-basic.hpp DESTINATION ${BASE_BINARY_DIR}/include)
