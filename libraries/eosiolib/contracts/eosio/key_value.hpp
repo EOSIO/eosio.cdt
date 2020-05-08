@@ -217,7 +217,7 @@ namespace kv_detail {
       eosio::name table_name;
       eosio::name contract_name;
 
-      full_key to_table_key( const partial_key& k )const{ return table_key( prefix, k ); }
+      full_key to_table_key( const partial_key& k )const{ return full_key( prefix, k ); }
 
    protected:
       kv_index() = default;
@@ -233,7 +233,7 @@ namespace kv_detail {
       partial_key get_key(const T& inst) const { return key_function(&inst); }
       partial_key get_key_void(const void* ptr) const { return key_function(ptr); }
 
-      void get(const partial_key& k, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const;
+      void get(const full_key& key, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const;
 
       kv_table_base* tbl;
       partial_key prefix;
@@ -269,7 +269,7 @@ namespace kv_detail {
          uint32_t value_size;
 
          auto primary_key = primary_index->get_key_void(value);
-         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+         auto tbl_key = full_key(make_prefix(table_name, primary_index->index_name), primary_key);
 
          auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
@@ -286,7 +286,7 @@ namespace kv_detail {
 
          for (const auto& idx : secondary_indices) {
             uint32_t value_size;
-            auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
+            auto sec_tbl_key = full_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
             auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
 
             if (!primary_key_found) {
@@ -304,7 +304,7 @@ namespace kv_detail {
                      free(buffer);
                   }
                } else {
-                  auto old_sec_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(old_value));
+                  auto old_sec_key = full_key(make_prefix(table_name, idx->index_name), idx->get_key_void(old_value));
                   internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
                   internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
                }
@@ -327,7 +327,7 @@ namespace kv_detail {
          uint32_t value_size;
 
          auto primary_key = primary_index->get_key_void(value);
-         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+         auto tbl_key = full_key(make_prefix(table_name, primary_index->index_name), primary_key);
          auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
          if (!primary_key_found) {
@@ -335,7 +335,7 @@ namespace kv_detail {
          }
 
          for (const auto& idx : secondary_indices) {
-            auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
+            auto sec_tbl_key = full_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
             internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
          }
 
@@ -343,8 +343,7 @@ namespace kv_detail {
       }
    };
 
-   inline void kv_index::get(const partial_key& k, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const {
-      auto key =   table_key( prefix, k );
+   inline void kv_index::get(const full_key& key, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const {
       uint32_t value_size;
       uint32_t actual_data_size;
 
@@ -795,8 +794,7 @@ public:
       }
 
       std::optional<T> get(const partial_key& k ) const {
-         full_key key{prefix, k};
-         return get(key);
+         return get(full_key(prefix, k));
       }
 
       std::optional<T> get(const full_key& k ) const {
