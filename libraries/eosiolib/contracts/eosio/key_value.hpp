@@ -575,7 +575,7 @@ class kv_table : kv_detail::kv_table_base {
          return *this;
       }
 
-      int32_t key_compare(key_type kt) const {
+      int32_t key_compare(const full_key& kt) const {
          if (itr == 0 || itr_stat == status::iterator_end) {
             return 1;
          } else {
@@ -648,7 +648,7 @@ class kv_table : kv_detail::kv_table_base {
          return *this;
       }
 
-      int32_t key_compare(key_type kt) const {
+      int32_t key_compare(const full_key& kt) const {
          if (itr == 0 || itr_stat == status::iterator_end) {
             return 1;
          } else {
@@ -911,7 +911,7 @@ public:
 
       std::vector<T> range(const partial_key& b_key, const partial_key& e_key) const {
          full_key b{prefix, b_key};
-         full_key e{prefix, b_key};
+         full_key e{prefix, e_key};
          return range(b, e);
       }
 
