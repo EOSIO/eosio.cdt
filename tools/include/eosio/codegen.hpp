@@ -128,7 +128,7 @@ namespace eosio { namespace cdt {
             auto fid = sources.getFileID(hash_loc);
             auto fe  = sources.getFileEntryForID(fid);
 
-            if (!is_angled && llvm::sys::path::filename(fe->getName()) == llvm::sys::path::filename(fn)) {
+            if (!is_angled && !llvm::sys::path::is_absolute(fn) && llvm::sys::path::filename(fe->getName()) == llvm::sys::path::filename(fn)) {
                llvm::SmallString<64> abs_search_path(search_path);
                llvm::sys::fs::make_absolute(abs_search_path);
                global_includes[fe->getName().str()].emplace_back(
