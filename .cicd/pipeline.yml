@@ -323,7 +323,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: 20
+    timeout: 10
     skip: ${SKIP_MACOS_10_14}${SKIP_PACKAGE_BUILDER}
 
   - label: ":darwin: Catalina - Package Builder"
