@@ -340,20 +340,17 @@ std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_hist
    ::get_history(id, block_num, ret->memory.data(), size);
    ship_protocol::result r;
    (void)convert_from_bin(r, ret->memory);
-   auto p = std::get_if<ship_protocol::get_blocks_result_v0>(&r);
-   check(!!p, "test_chain::get_history: expected ship_protocol::get_blocks_result_v0");
+   auto p = std::get_if<ship_protocol::get_blocks_result_v1>(&r);
+   check(!!p, "test_chain::get_history: expected ship_protocol::get_blocks_result_v1");
    ret->result = *p;
    if (p->block) {
-      ret->block.emplace();
-      (void)from_bin(*ret->block, *p->block);
+      ret->block = std::move(*p->block);
    }
-   if (p->traces) {
-      ret->traces.emplace();
-      (void)from_bin(*ret->traces, *p->traces);
+   if (!p->traces.empty()) {
+      p->traces.unpack(ret->traces);
    }
-   if (p->deltas) {
-      ret->deltas.emplace();
-      (void)from_bin(*ret->deltas, *p->deltas);
+   if (p->deltas.empty()) {
+      p->deltas.unpack(ret->deltas);
    }
    return ret;
 }

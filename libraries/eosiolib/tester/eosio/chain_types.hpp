@@ -143,6 +143,40 @@ EOSIO_REFLECT(action_trace_v1, action_ordinal, creator_action_ordinal, receipt, 
               console, account_ram_deltas, account_disk_deltas, except, error_code, return_value)
 
 using action_trace = std::variant<action_trace_v0, action_trace_v1>;
+			  
+struct prunable_data_type {
+    struct none {
+       eosio::checksum256 prunable_digest;
+    };
+
+    using segment_type = std::variant<eosio::checksum256, eosio::input_stream>;
+
+    struct partial {
+       std::vector<eosio::signature> signatures;
+       std::vector<segment_type> context_free_segments;
+    };
+
+    struct full {
+       std::vector<eosio::signature> signatures;
+       std::vector<eosio::input_stream> context_free_segments;
+    };
+
+    struct full_legacy {
+       std::vector<eosio::signature> signatures;
+       eosio::input_stream packed_context_free_data;
+    };
+
+    using prunable_data_t = std::variant<full_legacy, none, partial, full>;
+
+    prunable_data_t prunable_data;
+ };
+
+ EOSIO_REFLECT(prunable_data_type, prunable_data)
+ EOSIO_REFLECT(prunable_data_type::none, prunable_digest)
+ EOSIO_REFLECT(prunable_data_type::partial, signatures, context_free_segments)
+ EOSIO_REFLECT(prunable_data_type::full, signatures, context_free_segments)
+ EOSIO_REFLECT(prunable_data_type::full_legacy, signatures, packed_context_free_data)
+
 
 struct partial_transaction_v0 {
    eosio::time_point_sec            expiration             = {};
@@ -159,7 +193,21 @@ struct partial_transaction_v0 {
 EOSIO_REFLECT(partial_transaction_v0, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
               max_cpu_usage_ms, delay_sec, transaction_extensions, signatures, context_free_data);
 
-using partial_transaction = std::variant<partial_transaction_v0>;
+struct partial_transaction_v1 {
+   eosio::time_point_sec             expiration             = {};
+   uint16_t                          ref_block_num          = {};
+   uint32_t                          ref_block_prefix       = {};
+   eosio::varuint32                  max_net_usage_words    = {};
+   uint8_t                           max_cpu_usage_ms       = {};
+   eosio::varuint32                  delay_sec              = {};
+   std::vector<extension>            transaction_extensions = {};
+   std::optional<prunable_data_type> prunable_data          = {};
+};
+
+EOSIO_REFLECT(partial_transaction_v1, expiration, ref_block_num, ref_block_prefix, max_net_usage_words,
+              max_cpu_usage_ms, delay_sec, transaction_extensions, prunable_data)
+
+using partial_transaction = std::variant<partial_transaction_v0, partial_transaction_v1>;
 
 struct transaction_trace_v0;
 using transaction_trace = std::variant<transaction_trace_v0>;
@@ -205,14 +253,30 @@ struct transaction_receipt_header {
 
 EOSIO_REFLECT(transaction_receipt_header, status, cpu_usage_us, net_usage_words);
 
-struct packed_transaction {
+struct packed_transaction_v0 {
    std::vector<eosio::signature> signatures               = {};
    uint8_t                       compression              = {};
    eosio::input_stream           packed_context_free_data = {};
    eosio::input_stream           packed_trx               = {};
 };
 
-EOSIO_REFLECT(packed_transaction, signatures, compression, packed_context_free_data, packed_trx);
+EOSIO_REFLECT(packed_transaction_v0, signatures, compression, packed_context_free_data, packed_trx);
+
+struct packed_transaction {
+   uint8_t                       compression              = {};
+   prunable_data_type            prunable_data            = {};
+   eosio::input_stream           packed_trx               = {};
+};
+
+EOSIO_REFLECT(packed_transaction, compression, prunable_data, packed_trx)
+
+using transaction_variant_v0 = std::variant<eosio::checksum256, packed_transaction_v0>;
+
+struct transaction_receipt_v0 : transaction_receipt_header {
+   transaction_variant_v0 trx = {};
+};
+
+EOSIO_REFLECT(transaction_receipt_v0, base transaction_receipt_header, trx)
 
 using transaction_variant = std::variant<eosio::checksum256, packed_transaction>;
 
@@ -220,7 +284,7 @@ struct transaction_receipt : transaction_receipt_header {
    transaction_variant trx = {};
 };
 
-EOSIO_REFLECT(transaction_receipt, base transaction_receipt_header, trx);
+EOSIO_REFLECT(transaction_receipt, base transaction_receipt_header, trx)
 
 struct block_header {
    eosio::block_timestamp           timestamp;
@@ -243,12 +307,22 @@ struct signed_block_header : block_header {
 
 EOSIO_REFLECT(signed_block_header, base block_header, producer_signature);
 
-struct signed_block : signed_block_header {
+struct signed_block_v0 : signed_block_header {
    std::vector<transaction_receipt> transactions     = {};
    std::vector<extension>           block_extensions = {};
 };
 
-EOSIO_REFLECT(signed_block, base signed_block_header, transactions, block_extensions);
+EOSIO_REFLECT(signed_block_v0, base signed_block_header, transactions, block_extensions);
+
+struct signed_block_v1 : signed_block_header {
+   uint8_t                             prune_state      = {};
+   std::vector<transaction_receipt>    transactions     = {};
+   std::vector<extension>              block_extensions = {};
+};
+
+EOSIO_REFLECT(signed_block_v1, base signed_block_header, prune_state, transactions, block_extensions)
+
+using signed_block_variant = std::variant<signed_block_v0, signed_block_v1>;
 
 struct block_info {
    uint32_t               block_num = {};

@@ -292,10 +292,10 @@ class test_chain {
       /** The other members refer to memory owned here */
       std::vector<char> memory;
 
-      ship_protocol::get_blocks_result_v0                          result;
-      std::optional<ship_protocol::signed_block>                   block;
-      std::optional<std::vector<ship_protocol::transaction_trace>> traces;
-      std::optional<std::vector<ship_protocol::table_delta>>       deltas;
+      ship_protocol::get_blocks_result_v1                result;
+      std::optional<ship_protocol::signed_block_variant> block;
+      std::vector<ship_protocol::transaction_trace>      traces;
+      std::vector<ship_protocol::table_delta>            deltas;
    };
 
    /**
