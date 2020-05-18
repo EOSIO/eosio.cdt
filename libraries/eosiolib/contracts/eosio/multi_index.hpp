@@ -1894,8 +1894,6 @@ class multi_index
 
          eosio::check( itr2 != _items_vector.rend(), "attempt to remove object that was not in multi_index" );
 
-         _items_vector.erase(--(itr2.base()));
-
          internal_use_do_not_use::db_remove_i64( objitem.__primary_itr );
 
          hana::for_each( _indices, [&]( auto& idx ) {
@@ -1909,6 +1907,8 @@ class multi_index
             if( i >= 0 )
                secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_remove( i );
          });
+
+         _items_vector.erase(--(itr2.base()));
       }
 
 };
