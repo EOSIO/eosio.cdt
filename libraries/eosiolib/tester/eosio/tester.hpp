@@ -7,7 +7,6 @@
 #include <eosio/eosio.hpp>
 #include <eosio/from_string.hpp>
 #include <eosio/producer_schedule.hpp>
-#include <eosio/ship_protocol.hpp>
 #include <eosio/transaction.hpp>
 
 #include <cwchar>
@@ -90,8 +89,13 @@ struct transaction_trace {
    std::vector<transaction_trace>         failed_dtrx_trace   = {};
 };
 
-auto conversion_kind(chain_types::transaction_trace_v0, transaction_trace) -> narrowing_conversion;
+auto conversion_kind(chain_types::transaction_trace, transaction_trace) -> narrowing_conversion;
 auto serialize_as(const transaction_trace&) -> chain_types::transaction_trace;
+
+template <typename F>
+void convert(const chain_types::recurse_transaction_trace& src, eosio::transaction_trace& dst, F&& chooser) {
+   convert(src.recurse, dst, chooser);
+}
 
 using chain_types::block_info;
 
@@ -292,7 +296,7 @@ class test_chain {
       /** The other members refer to memory owned here */
       std::vector<char> memory;
 
-      ship_protocol::get_blocks_result_v1                result;
+      ship_protocol::get_blocks_result_base              result;
       std::optional<ship_protocol::signed_block_variant> block;
       std::vector<ship_protocol::transaction_trace>      traces;
       std::vector<ship_protocol::table_delta>            deltas;
@@ -446,10 +450,10 @@ class test_rodeos {
 
 } // namespace eosio
 
-namespace chain_types {
+namespace eosio { namespace ship_protocol {
 
 std::ostream& operator<<(std::ostream& os, transaction_status t);
 std::ostream& operator<<(std::ostream& os, const account_auth_sequence& aas);
 std::ostream& operator<<(std::ostream& os, const account_delta& ad);
 
-}
+}}

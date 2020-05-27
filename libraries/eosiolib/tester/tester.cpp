@@ -330,6 +330,39 @@ std::optional<eosio::transaction_trace> eosio::test_chain::exec_deferred() {
    return convert_from_bin<transaction_trace>(bin);
 }
 
+
+void build_history_result(eosio::test_chain::get_history_result& history_result, eosio::ship_protocol::get_blocks_result_v0& blocks_result) {
+   history_result.result = blocks_result;
+   if (blocks_result.block) {
+      history_result.block.emplace();
+      (void)from_bin(*history_result.block, *blocks_result.block);
+   }
+   if (blocks_result.traces) {
+      (void)from_bin(history_result.traces, *blocks_result.traces);
+   }
+   if (blocks_result.deltas) {
+      (void)from_bin(history_result.deltas, *blocks_result.deltas);
+   }
+}
+
+void build_history_result(eosio::test_chain::get_history_result& history_result, eosio::ship_protocol::get_blocks_result_v1& blocks_result) {
+   history_result.result = blocks_result;
+   if (blocks_result.block) {
+      history_result.block = std::move(*blocks_result.block);
+   }
+   if (!blocks_result.traces.empty()) {
+      blocks_result.traces.unpack(history_result.traces);
+   }
+   if (blocks_result.deltas.empty()) {
+      blocks_result.deltas.unpack(history_result.deltas);
+   }
+}
+
+template <typename T>
+void  build_history_result(eosio::test_chain::get_history_result&, const T&) {
+   eosio::check(false, "test_chain::get_history: unexpected result type");
+}
+
 std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_history(uint32_t block_num) {
    std::optional<get_history_result> ret;
    auto                              size = ::get_history(id, block_num, nullptr, 0);
@@ -340,18 +373,8 @@ std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_hist
    ::get_history(id, block_num, ret->memory.data(), size);
    ship_protocol::result r;
    (void)convert_from_bin(r, ret->memory);
-   auto p = std::get_if<ship_protocol::get_blocks_result_v1>(&r);
-   check(!!p, "test_chain::get_history: expected ship_protocol::get_blocks_result_v1");
-   ret->result = *p;
-   if (p->block) {
-      ret->block = std::move(*p->block);
-   }
-   if (!p->traces.empty()) {
-      p->traces.unpack(ret->traces);
-   }
-   if (p->deltas.empty()) {
-      p->deltas.unpack(ret->deltas);
-   }
+
+   std::visit([&ret](const auto& v) { build_history_result(*ret, v); }, r);
    return ret;
 }
 
@@ -529,15 +552,15 @@ std::string eosio::test_rodeos::get_pushed_data_str(uint32_t index) {
     return result;
 }
 
-std::ostream& chain_types::operator<<(std::ostream& os, transaction_status t) {
+std::ostream& eosio::ship_protocol::operator<<(std::ostream& os, eosio::ship_protocol::transaction_status t) {
    return os << to_string(t);
 }
 
-std::ostream& chain_types::operator<<(std::ostream& os, const account_auth_sequence& aas) {
+std::ostream& eosio::ship_protocol::operator<<(std::ostream& os, const eosio::ship_protocol::account_auth_sequence& aas) {
    return os << eosio::convert_to_json(aas);
 }
 
-std::ostream& chain_types::operator<<(std::ostream& os, const account_delta& ad) {
+std::ostream& eosio::ship_protocol::operator<<(std::ostream& os, const eosio::ship_protocol::account_delta& ad) {
    return os << eosio::convert_to_json(ad);
 }
 
