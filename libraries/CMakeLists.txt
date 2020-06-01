@@ -23,7 +23,6 @@ add_subdirectory(eosiolib)
 add_subdirectory(boost)
 add_subdirectory(rt)
 
-set(ENABLE_NATIVE_COMPILER 0)
 if (ENABLE_NATIVE_COMPILER)
    add_subdirectory(native)
 endif()
