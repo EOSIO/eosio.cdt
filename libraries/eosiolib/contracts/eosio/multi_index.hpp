@@ -866,7 +866,7 @@ class multi_index
        *  // This assumes the code from the constructor example. Replace myaction() {...}
        *
        *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
+       *        address_index addresses("dan"_n, "dan"_n.value); // code, scope
        *        eosio::check(addresses.get_code() == "dan"_n, "Codes don't match.");
        *      }
        *  }
@@ -887,8 +887,8 @@ class multi_index
        *  // This assumes the code from the constructor example. Replace myaction() {...}
        *
        *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio::check(addresses.get_code() == "dan"_n, "Scopes don't match");
+       *        address_index addresses("dan"_n, "dan"_n.value); // code, scope
+       *        eosio::check(addresses.get_scope() == "dan"_n.value, "Scopes don't match");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
