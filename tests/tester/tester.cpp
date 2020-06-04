@@ -129,3 +129,20 @@ TEST_CASE_METHOD(eosio::test_chain, "MultiIndex API", "[multi_index]") {
       CHECK(item.value == 2);
    }
 }
+
+TEST_CASE_METHOD(eosio::test_chain, "Creating signatures", "[sign]") {
+   create_account("test"_n);
+   set_code("test"_n, "../unit/test_contracts/tester_tests.wasm");
+   std::string data = "Cogitanti miho saepenumero et memoria vetera repetenti perbeati fuisse";
+   auto hash = eosio::sha256(data.data(), data.size());
+
+   auto k1_pvt = eosio::private_key_from_string("5KDhbSEzvfjmrX9t8hLAzVM1AKxVRFcVutVSKULUt9vquKXNNRX");
+   auto k1_pub = eosio::public_key_from_string("EOS8VebGY8Crdk3bhz4RaGNaEuhJPfLoWBogc9pQKMRe7QqJJaxHn");
+   auto k1_sig = eosio::sign(k1_pvt, hash);
+   as("test"_n).act<tester_tests::assertsig_action>(hash, k1_sig, k1_pub);
+
+   auto r1_pvt = eosio::private_key_from_string("PVT_R1_SXT9sxVG9XZMmtNjbQU42XkimqV61buEbqDsxWJWNNPjQrgSL");
+   auto r1_pub = eosio::public_key_from_string("PUB_R1_5BqdSPaEpcCfLSaFCHgnkBUJWiuxt3TcaNndgCRRFG9cXwiFHc");
+   auto r1_sig = eosio::sign(r1_pvt, hash);
+   as("test"_n).act<tester_tests::assertsig_action>(hash, r1_sig, r1_pub);
+}

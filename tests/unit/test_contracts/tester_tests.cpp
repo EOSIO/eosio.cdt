@@ -14,3 +14,7 @@ using namespace eosio;
       t.modify(iter, get_self(), inserter);
    }
 }
+
+[[eosio::action]] void tester_tests::assertsig(eosio::checksum256 digest, eosio::signature sig, eosio::public_key pub) {
+   assert_recover_key(digest, sig, pub);
+}
