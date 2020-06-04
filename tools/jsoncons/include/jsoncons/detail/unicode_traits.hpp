@@ -39,6 +39,13 @@
 #include <type_traits>
 #include <system_error>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#else
+#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+
 namespace unicons {
 
 /*
@@ -261,12 +268,10 @@ is_legal_utf8(Iterator first, size_t length)
         if (((a = (*--srcptr))& 0xC0) != 0x80)
             return conv_errc::expected_continuation_byte;
         // FALLTHRU
-    LLVM_FALLTHROUGH;
     case 3:
         if (((a = (*--srcptr))& 0xC0) != 0x80)
             return conv_errc::expected_continuation_byte;
         // FALLTHRU
-    LLVM_FALLTHROUGH;
     case 2:
         if (((a = (*--srcptr))& 0xC0) != 0x80)
             return conv_errc::expected_continuation_byte;
@@ -282,7 +287,6 @@ is_legal_utf8(Iterator first, size_t length)
         }
 
         // FALLTHRU
-    LLVM_FALLTHROUGH;
     case 1:
         if (static_cast<uint8_t>(*first) >= 0x80 && static_cast<uint8_t>(*first) < 0xC2)
             return conv_errc::source_illegal;
@@ -376,11 +380,8 @@ convert(InputIt first, InputIt last, OutputIt target, conv_flags flags=conv_flag
 
         switch (length) {
             case 4: *target++ = (static_cast<uint8_t>(*first++));
-            LLVM_FALLTHROUGH;
             case 3: *target++ = (static_cast<uint8_t>(*first++));
-            LLVM_FALLTHROUGH;
             case 2: *target++ = (static_cast<uint8_t>(*first++));
-            LLVM_FALLTHROUGH;
             case 1: *target++ = (static_cast<uint8_t>(*first++));
         }
     }
@@ -750,15 +751,12 @@ convert(InputIt first, InputIt last,
         case 4:
             byte4 = (uint8_t)((ch | byteMark) & byteMask); ch >>= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 3:
             byte3 = (uint8_t)((ch | byteMark) & byteMask); ch >>= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 2:
             byte2 = (uint8_t)((ch | byteMark) & byteMask); ch >>= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 1:
             byte1 = (uint8_t) (ch | first_byte_mark[bytes_to_write]);
         }
@@ -993,15 +991,12 @@ public:
         case 4:
             ch += static_cast<uint8_t>(*it++); ch <<= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 3:
             ch += static_cast<uint8_t>(*it++); ch <<= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 2:
             ch += static_cast<uint8_t>(*it++); ch <<= 6;
             // FALLTHRU
-        LLVM_FALLTHROUGH;
         case 1:
             ch += static_cast<uint8_t>(*it++);
             ch -= offsets_from_utf8[length_ - 1];
