@@ -130,6 +130,7 @@ class test_chain {
  private:
    uint32_t                               id;
    std::optional<block_info>              head_block_info;
+   std::vector<eosio::private_key>        default_trx_signing_keys;
 
  public:
    static const public_key  default_pub_key;
@@ -151,6 +152,15 @@ class test_chain {
     * Get the temporary path which contains the chain's blocks and states directories
     */
    std::string get_path();
+
+   /**
+    * Change the set of private keys used to normally sign transactions.
+    * This does not change the behavior of push_transaction or transact when
+    * called with explicit private keys.
+    */
+   void change_default_signing_keys(std::vector<eosio::private_key> keys = {default_priv_key});
+
+   //void set_transaction_cpu_time( uint32_t cpu_us );
 
    /**
     * Reset the private keys used by the test_chain to sign blocks back to the default signing key.
@@ -209,9 +219,15 @@ class test_chain {
     */
    [[nodiscard]]
    transaction_trace push_transaction(const transaction& trx,
-                                      const std::vector<private_key>& keys = { default_priv_key },
+                                      const std::vector<private_key>& keys,
                                       const std::vector<std::vector<char>>& context_free_data = {},
                                       const std::vector<signature>& signatures        = {});
+
+   /**
+    * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
+    */
+   [[nodiscard]]
+   transaction_trace push_transaction(const transaction& trx);
 
    /**
     * Pushes a transaction onto the chain.  If no block is currently pending, starts one.
@@ -249,10 +265,10 @@ class test_chain {
    auto trace( std::optional<std::vector<std::vector<char> >> cfd, const Action& action, Args&&... args) {
       if( !cfd ) {
          return push_transaction( make_transaction( {action.to_action(std::forward<Args>(args)...)} ), 
-                                  { default_priv_key } );
+                                  default_trx_signing_keys );
       } else {
          return push_transaction( make_transaction( {}, {action.to_action(std::forward<Args>(args)...)} ), 
-                                  { default_priv_key }, *cfd );
+                                  default_trx_signing_keys, *cfd );
       }
    }
 

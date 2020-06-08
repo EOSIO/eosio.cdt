@@ -215,6 +215,7 @@ static eosio::test_chain* current_chain = nullptr;
 eosio::test_chain::test_chain(const char* snapshot)
     : id{ ::create_chain(snapshot ? snapshot : "", snapshot ? strlen(snapshot) : 0) } {
    current_chain = this;
+   change_default_signing_keys();
 }
 
 eosio::test_chain::~test_chain() {
@@ -229,6 +230,10 @@ std::string eosio::test_chain::get_path() {
    std::string result(len, 0);
    get_chain_path(id, result.data(), len);
    return result;
+}
+
+void eosio::test_chain::change_default_signing_keys(std::vector<eosio::private_key> keys) {
+   default_trx_signing_keys.swap(keys);
 }
 
 void eosio::test_chain::reset_producer_private_keys() {
@@ -318,6 +323,11 @@ eosio::transaction_trace eosio::test_chain::push_transaction(const transaction& 
    return convert_from_bin<transaction_trace>(bin);
 }
 
+[[nodiscard]] 
+eosio::transaction_trace eosio::test_chain::push_transaction(const transaction &trx) {
+  return push_transaction(trx, default_trx_signing_keys);
+}
+
 eosio::transaction_trace eosio::test_chain::transact(std::vector<action>&& actions, const std::vector<private_key>& keys,
                                               const char* expected_except) {
    auto trace = push_transaction(make_transaction(std::move(actions)), keys);
@@ -326,7 +336,7 @@ eosio::transaction_trace eosio::test_chain::transact(std::vector<action>&& actio
 }
 
 eosio::transaction_trace eosio::test_chain::transact(std::vector<action>&& actions, const char* expected_except) {
-   return transact(std::move(actions), { default_priv_key }, expected_except);
+   return transact(std::move(actions), default_trx_signing_keys, expected_except);
 }
 
 [[nodiscard]]
