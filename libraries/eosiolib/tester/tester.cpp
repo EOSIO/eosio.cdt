@@ -8,7 +8,7 @@ namespace {
 
 // clang-format off
    TESTER_INTRINSIC void     connect_rodeos(uint32_t rodeos, uint32_t chain);
-   TESTER_INTRINSIC uint32_t create_chain(const char* snapshot, uint32_t snapshot_size);
+   TESTER_INTRINSIC uint32_t create_chain(const char* snapshot, uint32_t snapshot_size, const char* blocks_dir, uint32_t blocks_dir_size);
    TESTER_INTRINSIC uint32_t create_rodeos();
    TESTER_INTRINSIC void     destroy_chain(uint32_t chain);
    TESTER_INTRINSIC void     destroy_rodeos(uint32_t rodeos);
@@ -212,8 +212,10 @@ const eosio::private_key eosio::test_chain::default_priv_key = private_key_from_
 // need to be kept in sync with whatever updates the native layer.
 static eosio::test_chain* current_chain = nullptr;
 
-eosio::test_chain::test_chain(const char* snapshot)
-    : id{ ::create_chain(snapshot ? snapshot : "", snapshot ? strlen(snapshot) : 0) } {
+eosio::test_chain::test_chain(const char* snapshot, const char* blocks_dir)
+    : id{ ::create_chain(snapshot ? snapshot : "", snapshot ? strlen(snapshot) : 0,
+                         blocks_dir ? blocks_dir : "", blocks_dir ? strlen(blocks_dir) : 0) } 
+{
    current_chain = this;
    change_default_signing_keys();
 }

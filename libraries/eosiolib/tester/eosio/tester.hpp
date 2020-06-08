@@ -136,7 +136,7 @@ class test_chain {
    static const public_key  default_pub_key;
    static const private_key default_priv_key;
 
-   test_chain(const char* snapshot = nullptr);
+   test_chain(const char* snapshot = nullptr, const char* blocks_dir = nullptr);
    test_chain(const test_chain&) = delete;
    ~test_chain();
 
