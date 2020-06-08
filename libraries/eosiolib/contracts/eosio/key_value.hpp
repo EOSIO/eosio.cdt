@@ -3,7 +3,7 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/varint.hpp"
 
-#include <eosio/to_key.hpp>
+#include "to_key.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -84,13 +84,15 @@ struct key_type : private std::vector<char> {
 
    explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
 
+   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
+
    key_type operator+(const key_type& b) const {
       key_type ret = *this;
       ret += b;
       return ret;
    }
 
-   key_type& operator+=(const key_type& b) const {
+   key_type& operator+=(const key_type& b) {
       this->insert(this->end(), b.begin(), b.end());
       return *this;
    }
@@ -99,17 +101,16 @@ struct key_type : private std::vector<char> {
       return size() != b.size() && memcmp(data(), b.data(), b.size()) == 0;
    }
 
-   using std::string::data;
-   using std::string::size;
-   using std::string::resize;
+   using std::vector<char>::data;
+   using std::vector<char>::size;
+   using std::vector<char>::resize;
 };
 
 /* @cond PRIVATE */
 template <typename T>
 inline key_type make_key(const T& t) {
    auto bytes = convert_to_key(t);
-   eosio::check((bool)bytes, "There was a failure converting to a key.");
-   return key_type(std::move(bytes.value()));
+   return key_type(std::move(bytes));
 }
 
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {

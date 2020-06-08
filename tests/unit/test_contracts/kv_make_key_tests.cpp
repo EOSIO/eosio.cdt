@@ -33,6 +33,9 @@ struct my_struct {
    }
 };
 
+EOSIO_REFLECT(testing_struct, a, b);
+EOSIO_REFLECT(my_struct, tname, tstring, tui64, ti32, tui128, tfloat, tdouble, tstruct, ttuple);
+
 struct my_table : eosio::kv_table<my_struct> {
    KV_NAMED_INDEX("t1"_n, tname)
    KV_NAMED_INDEX("t2"_n, tstring)
