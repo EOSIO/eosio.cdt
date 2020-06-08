@@ -153,6 +153,16 @@ class test_chain {
    std::string get_path();
 
    /**
+    * Reset the private keys used by the test_chain to sign blocks back to the default signing key.
+    */
+   void reset_producer_private_keys();
+
+   /**
+    * Reset the private keys used by the test_chain to sign blocks to the provided set of keys.
+    */
+   void reset_producer_private_keys(const std::vector<eosio::private_key>& keys);
+
+   /**
     * Replace the producer keys with key. This bypasses chain consensus rules.
     * This does not update owner or active keys.
     */

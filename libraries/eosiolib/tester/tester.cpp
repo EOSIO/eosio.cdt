@@ -23,6 +23,7 @@ namespace {
    TESTER_INTRINSIC bool     read_whole_file(const char* filename, uint32_t filename_size, void* cb_alloc_data, cb_alloc_type cb_alloc);
    TESTER_INTRINSIC void     replace_account_keys(uint32_t chain_index, uint64_t account, uint64_t permission, const char* key, uint32_t key_size);
    TESTER_INTRINSIC void     replace_producer_keys(uint32_t chain_index, const char* key, uint32_t key_size);
+   TESTER_INTRINSIC void     reset_producer_private_keys(uint32_t chain_index, const char* keys, uint32_t keys_size);
    TESTER_INTRINSIC void     rodeos_add_filter(uint32_t rodeos, uint64_t name, const char* wasm_filename, uint32_t wasm_filename_size);
    TESTER_INTRINSIC void     rodeos_enable_queries(uint32_t rodeos, uint32_t max_console_size, uint32_t wasm_cache_size, uint64_t max_exec_time_ms, const char* contract_dir, uint32_t contract_dir_size);
    TESTER_INTRINSIC uint32_t rodeos_get_num_pushed_data(uint32_t rodeos);
@@ -228,6 +229,15 @@ std::string eosio::test_chain::get_path() {
    std::string result(len, 0);
    get_chain_path(id, result.data(), len);
    return result;
+}
+
+void eosio::test_chain::reset_producer_private_keys() {
+   ::reset_producer_private_keys(id, nullptr, 0);
+}
+
+void eosio::test_chain::reset_producer_private_keys(const std::vector<eosio::private_key>& keys) {
+   std::vector<char> packed = pack(keys);
+   ::reset_producer_private_keys(id, packed.data(), packed.size());
 }
 
 void eosio::test_chain::replace_producer_keys(const eosio::public_key& key) {
