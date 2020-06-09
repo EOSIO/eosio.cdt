@@ -304,7 +304,11 @@ static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
   */
 template<typename T>
 class kv_table {
+public:
+   template<typename K>
+   class index;
 
+private:
    class kv_index;
 
    class base_iterator {
@@ -434,6 +438,9 @@ class kv_table {
       using base_iterator::itr_stat;
       using base_iterator::index;
 
+      template<typename K>
+      friend class index;
+
    public:
       using status = typename base_iterator::status;
 
@@ -452,14 +459,6 @@ class kv_table {
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
          return *this;
-      }
-
-      int32_t key_compare(key_type kt) const {
-         if (itr == 0 || itr_stat == status::iterator_end) {
-            return 1;
-         } else {
-            return internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
-         }
       }
 
       bool operator==(const iterator& b) const {
@@ -514,15 +513,6 @@ class kv_table {
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
          return *this;
-      }
-
-      int32_t key_compare(key_type kt) const {
-         if (itr == 0 || itr_stat == status::iterator_end) {
-            return 1;
-         } else {
-            auto comp = internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
-            return -comp;
-         }
       }
 
       int compare(const reverse_iterator& b) const {
@@ -796,7 +786,13 @@ public:
          auto t_key = table_key(prefix, make_key(key));
          auto it = lower_bound(key);
 
-         auto cmp = it.key_compare(t_key);
+         int32_t cmp;
+
+         if (it.itr == 0 || it.itr_stat == base_iterator::status::iterator_end) {
+            cmp = 1;
+         } else {
+            cmp = internal_use_do_not_use::kv_it_key_compare(it.itr, t_key.data(), t_key.size());
+         }
          if (cmp == 0) {
             ++it;
          }
