@@ -509,6 +509,7 @@ class kv_table {
          if (!itr) {
             itr = internal_use_do_not_use::kv_it_create(index->tbl->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
             itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
+            return *this;
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
@@ -520,7 +521,7 @@ class kv_table {
             return 1;
          } else {
             auto comp = internal_use_do_not_use::kv_it_key_compare(itr, kt.data(), kt.size());
-            return comp == 0 ? 0 : -comp;
+            return -comp;
          }
       }
 
