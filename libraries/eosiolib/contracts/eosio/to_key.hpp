@@ -1,8 +1,6 @@
 #pragma once
 
 #include <deque>
-#include "../../core/eosio/for_each_field.hpp"
-#include "../../core/eosio/stream.hpp"
 #include <list>
 #include <map>
 #include <optional>
@@ -13,10 +11,25 @@
 #include <vector>
 #include <cstring>
 
+#include "../../core/eosio/datastream.hpp"
+#include "../../core/eosio/for_each_field.hpp"
+
 namespace eosio {
 
+template<typename T>
+constexpr bool has_bitwise_serialization() {
+   if constexpr (std::is_arithmetic_v<T>) {
+      return true;
+   } else if constexpr (std::is_enum_v<T>) {
+      static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
+      return true;
+   } else {
+      return false;
+   }
+}
+
 template <typename... Ts, typename S>
-void to_key(const std::tuple<Ts...>& obj, S& stream);
+void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
 
 // to_key defines a conversion from a type to a sequence of bytes whose lexicograpical
 // ordering is the same as the ordering of the original type.
@@ -40,10 +53,10 @@ void to_key(const std::tuple<Ts...>& obj, S& stream);
 // - Reflected structs
 // - All smart-contract related types defined by abieos
 template <typename T, typename S>
-void to_key(const T& obj, S& stream);
+void to_key(const T& obj, datastream<S>& stream);
 
 template <int i, typename T, typename S>
-void to_key_tuple(const T& obj, S& stream) {
+void to_key_tuple(const T& obj, datastream<S>& stream) {
    if constexpr (i < std::tuple_size_v<T>) {
       to_key(std::get<i>(obj), stream);
       to_key_tuple<i + 1>(obj, stream);
@@ -51,33 +64,34 @@ void to_key_tuple(const T& obj, S& stream) {
 }
 
 template <typename... Ts, typename S>
-void to_key(const std::tuple<Ts...>& obj, S& stream) {
+void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream) {
    to_key_tuple<0>(obj, stream);
 }
 
 template <typename T, std::size_t N, typename S>
-void to_key(const std::array<T, N>& obj, S& stream) {
+void to_key(const std::array<T, N>& obj, datastream<S>& stream) {
    for (const T& elem : obj) { to_key(elem, stream); }
 }
 
 template <typename T, typename S>
-void to_key_optional(const bool* obj, S& stream) {
+void to_key_optional(const bool* obj, datastream<S>& stream) {
    if (obj == nullptr)
       stream.write('\0');
    else if (!*obj)
       stream.write('\1');
-   else
-      stream.write('\2');
+   else {
+      stream.write("\2", 2);
+   }
 }
 
 template <typename T, typename S>
-void to_key_optional(const T* obj, S& stream) {
+void to_key_optional(const T* obj, datastream<S>& stream) {
    if constexpr (has_bitwise_serialization<T>() && sizeof(T) == 1) {
       if (obj == nullptr)
          stream.write("\0", 2);
       else {
          char             buf[1];
-         fixed_buf_stream tmp_stream(buf, 1);
+         datastream<char*> tmp_stream(buf, 1);
          to_key(*obj, tmp_stream);
          stream.write(buf[0]);
          if (buf[0] == '\0')
@@ -94,45 +108,45 @@ void to_key_optional(const T* obj, S& stream) {
 }
 
 template <typename T, typename U, typename S>
-void to_key(const std::pair<T, U>& obj, S& stream) {
+void to_key(const std::pair<T, U>& obj, datastream<S>& stream) {
    to_key(obj.first, stream);
    to_key(obj.second, stream);
 }
 
 template <typename T, typename S>
-void to_key_range(const T& obj, S& stream) {
+void to_key_range(const T& obj, datastream<S>& stream) {
    for (const auto& elem : obj) { to_key_optional(&elem, stream); }
    to_key_optional((decltype(&*std::begin(obj))) nullptr, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::vector<T>& obj, S& stream) {
+void to_key(const std::vector<T>& obj, datastream<S>& stream) {
    for (const T& elem : obj) { to_key_optional(&elem, stream); }
    to_key_optional((const T*)nullptr, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::list<T>& obj, S& stream) {
+void to_key(const std::list<T>& obj, datastream<S>& stream) {
    to_key_range(obj, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::deque<T>& obj, S& stream) {
+void to_key(const std::deque<T>& obj, datastream<S>& stream) {
    to_key_range(obj, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::set<T>& obj, S& stream) {
+void to_key(const std::set<T>& obj, datastream<S>& stream) {
    to_key_range(obj, stream);
 }
 
 template <typename T, typename U, typename S>
-void to_key(const std::map<T, U>& obj, S& stream) {
+void to_key(const std::map<T, U>& obj, datastream<S>& stream) {
    to_key_range(obj, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::optional<T>& obj, S& stream) {
+void to_key(const std::optional<T>& obj, datastream<S>& stream) {
    to_key_optional(obj ? &*obj : nullptr, stream);
 }
 
@@ -146,7 +160,7 @@ void to_key(const std::optional<T>& obj, S& stream) {
 // - values must be encoded using the minimum number of bytes,
 //   as non-canonical representations will break the sort order.
 template <typename S>
-void to_key_varuint32(std::uint32_t obj, S& stream) {
+void to_key_varuint32(std::uint32_t obj, datastream<S>& stream) {
    int num_bytes;
    if (obj < 0x80u) {
       num_bytes = 1;
@@ -183,7 +197,7 @@ void to_key_varuint32(std::uint32_t obj, S& stream) {
 // - A 5-byte varint can represent values in $[-2^34, 2^34)$.  In this case,
 //   the argument will be sign-extended.
 template <typename S>
-void to_key_varint32(std::int32_t obj, S& stream) {
+void to_key_varint32(std::int32_t obj, datastream<S>& stream) {
    static_assert(std::is_same_v<S, void>, "to_key for varint32 has been temporarily disabled");
    int  num_bytes;
    bool sign = (obj < 0);
@@ -213,15 +227,15 @@ void to_key_varint32(std::int32_t obj, S& stream) {
 }
 
 template <typename... Ts, typename S>
-void to_key(const std::variant<Ts...>& obj, S& stream) {
+void to_key(const std::variant<Ts...>& obj, datastream<S>& stream) {
    to_key_varuint32(static_cast<uint32_t>(obj.index()), stream);
    std::visit([&](const auto& item) { to_key(item, stream); }, obj);
 }
 
 template <typename S>
-void to_key(std::string_view obj, S& stream) {
+void to_key(std::string_view obj, datastream<S>& stream) {
    for (char ch : obj) {
-      stream.write(ch);
+      stream.write(&ch, 1);
       if (ch == '\0') {
          stream.write('\1');
       }
@@ -230,12 +244,12 @@ void to_key(std::string_view obj, S& stream) {
 }
 
 template <typename S>
-void to_key(const std::string& obj, S& stream) {
+void to_key(const std::string& obj, datastream<S>& stream) {
    to_key(std::string_view(obj), stream);
 }
 
 template <typename S>
-void to_key(bool obj, S& stream) {
+void to_key(bool obj, datastream<S>& stream) {
    stream.write(static_cast<char>(obj ? 1 : 0));
 }
 
@@ -254,7 +268,7 @@ UInt float_to_key(T value) {
 }
 
 template <typename T, typename S>
-void to_key(const T& obj, S& stream) {
+void to_key(const T& obj, datastream<S>& stream) {
    if constexpr (std::is_floating_point_v<T>) {
       if constexpr (sizeof(T) == 4) {
          to_key(float_to_key<uint32_t>(obj), stream);
@@ -266,7 +280,7 @@ void to_key(const T& obj, S& stream) {
       auto v = static_cast<std::make_unsigned_t<T>>(obj);
       v -= static_cast<std::make_unsigned_t<T>>(std::numeric_limits<T>::min());
       std::reverse(reinterpret_cast<char*>(&v), reinterpret_cast<char*>(&v + 1));
-      stream.write_raw(v);
+      stream.write(&v, sizeof(v));
    } else if constexpr (std::is_enum_v<T>) {
       static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
       to_key(static_cast<std::underlying_type_t<T>>(obj), stream);
@@ -279,13 +293,13 @@ void to_key(const T& obj, S& stream) {
 
 template <typename T>
 void convert_to_key(const T& t, std::vector<char>& bin) {
-   size_stream ss;
+   datastream<size_t> ss;
    to_key(t, ss);
    auto orig_size = bin.size();
-   bin.resize(orig_size + ss.size);
-   fixed_buf_stream fbs(bin.data() + orig_size, ss.size);
+   bin.resize(orig_size + ss.tellp());
+   datastream<char*> fbs(bin.data() + orig_size, ss.tellp());
    to_key(t, fbs);
-   check( fbs.pos == fbs.end, convert_stream_error(stream_error::underrun) );
+   check( fbs.valid(), "Stream overrun" );
 }
 
 template <typename T>
