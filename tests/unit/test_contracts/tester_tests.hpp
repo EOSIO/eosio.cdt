@@ -2,13 +2,16 @@
 #include <eosio/action.hpp>
 #include <eosio/name.hpp>
 #include <eosio/multi_index.hpp>
+#include <eosio/crypto.hpp>
 #include <cstdint>
 
 class [[eosio::contract("tester_tests")]] tester_tests : eosio::contract {
 public:
    using contract::contract;
    [[eosio::action]] void putdb(int key, int value);
+   [[eosio::action]] void assertsig(eosio::checksum256 digest, eosio::signature sig, eosio::public_key pub);
    using putdb_action = eosio::action_wrapper<"putdb"_n, &tester_tests::putdb>;
+   using assertsig_action = eosio::action_wrapper<"assertsig"_n, &tester_tests::assertsig, "test"_n>;
    struct [[eosio::table]] table_item {
       int key;
       int value;

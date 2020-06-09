@@ -32,6 +32,7 @@ namespace {
    TESTER_INTRINSIC void     select_chain_for_db(uint32_t chain_index);
    TESTER_INTRINSIC void     shutdown_chain(uint32_t chain);
    TESTER_INTRINSIC void     start_block(uint32_t chain_index, int64_t skip_miliseconds);
+   TESTER_INTRINSIC uint32_t sign(const void* key, uint32_t keylen, const void* digest, void* sig, uint32_t siglen);
 // clang-format on
 
    inline const std::vector<char>& get_args() {
@@ -178,6 +179,19 @@ void eosio::expect_rodeos(const transaction_trace& tt, const char* expected_exce
          eosio::print("rodeos transaction has exception: ", *tt.except, "\n");
       eosio::check(false, "rodeos transaction failed with status " + to_string(tt.status));
    }
+}
+
+eosio::signature eosio::sign(const eosio::private_key& key, const eosio::checksum256& digest) {
+   auto raw_digest = digest.extract_as_byte_array();
+   auto raw_key = eosio::convert_to_bin(key);
+   constexpr uint32_t buffer_size = 80;
+   std::vector<char> buffer(buffer_size);
+   unsigned sz = ::sign(raw_key.data(), raw_key.size(), raw_digest.data(), buffer.data(), buffer.size());
+   buffer.resize(sz);
+   if(sz > buffer_size) {
+      ::sign(raw_key.data(), raw_key.size(), raw_digest.data(), buffer.data(), buffer.size());
+   }
+   return eosio::convert_from_bin<eosio::signature>(buffer);
 }
 
 void eosio::internal_use_do_not_use::hex(const uint8_t* begin, const uint8_t* end, std::ostream& os) {

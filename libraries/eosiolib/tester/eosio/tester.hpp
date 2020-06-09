@@ -124,6 +124,12 @@ std::ostream& operator<<(std::ostream& os, const name& obj);
 class test_rodeos;
 
 /**
+ * Sign a digest.  This is here and not in crypto.hpp, because it is
+ * only available in the tester.
+ */
+signature sign(const private_key& key, const checksum256& digest);
+
+/**
  * Manages a chain.
  * Only one test_chain can exist at a time.
  * The test chain uses simulated time starting at 2020-01-01T00:00:00.000.
