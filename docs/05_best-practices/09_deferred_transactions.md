@@ -6,5 +6,7 @@ Deferred communication conceptually takes the form of action notifications sent 
 
 As already mentioned, deferred communication will get scheduled later at the producer's discretion. From the perspective of the originating transaction, i.e., the transaction that creates the deferred transaction, it can only determine whether the create request was submitted successfully or whether it failed (if it fails, it will fail immediately). Deferred transactions carry the authority of the contract that sends them. A transaction can cancel a deferred transaction.
 
-[[warning | Warning about deferred transaction usage]]
-| Because of the above, it is not recommended to use `deferred transactions`. There is consideration to deprecate deferred transactions in a future version.
+Because all of the above it is not recommended to use `deferred transactions`.
+
+[[warning | Deferred Transactions Are Deprecated]]
+| As of [EOSIO 2.0 RC1](https://github.com/EOSIO/eos/releases/tag/v2.0.0-rc1) deferred transactions are deprecated.
