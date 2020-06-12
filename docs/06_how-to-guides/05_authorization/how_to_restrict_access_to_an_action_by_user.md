@@ -5,7 +5,7 @@ link_text: How To Perform Authorization Checks
 
 ## Preconditions
 
-It is assumed the following:
+The following conditions are assumed:
 
 1. You have the sources of a contract with one of the actions defined, let's call it `hi` action.
 2. The `hi` action has defined one input parameter `user` of type `name`.
