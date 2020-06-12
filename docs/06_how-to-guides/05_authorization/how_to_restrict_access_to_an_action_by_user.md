@@ -9,16 +9,16 @@ The following conditions are assumed:
 
 1. You have the sources of a contract with one of the actions defined, let's call it `hi` action.
 2. The `hi` action has defined one input parameter `user` of type `name`.
-3. The `hi` action is printing the name of the `user` account.
+3. The `hi` action prints the name of the `user` account.
 4. The `hi` action needs to authorize the `user` account.
 
 ## Authorization Methods
 
 To restrict access to the `hi` action, you can do it in three ways.
 
-### 1. Using eosio::check(eosio::has_auth(...)...)
+### 1. Use eosio::check(eosio::has_auth(...)...)
 
-The below code is enforcing the action `hi` to be executed only by the account that is sent as parameter to the action, no matter what permission the account is using to sign the transaction (e.g. owner, active, code).
+The below code enforces the action `hi` to be executed only by the account that is sent as parameter to the action, no matter what permission the account uses to sign the transaction (e.g. owner, active, code).
 
 [[info | Error message is custom]]
 | Observe that in this case the yielded error message is a custom one and thus it can be used to provide a better experience for the user.
@@ -34,9 +34,9 @@ void hi( name user ) {
 
 Another example can be found in the [Tic Tac Toe Tutorial](https://developers.eos.io/welcome/latest/tutorials/tic-tac-toe-game-contract/#action-handler---move).
 
-### 2. Using require_auth
+### 2. Use require_auth
 
-The below code is enforcing the action `hi` to be executed only by the account that is sent as parameter to the action, no matter what permission the account is using to sign the transaction (e.g. owner, active, code).
+The below code enforces the action `hi` to be executed only by the account that is sent as parameter to the action, no matter what permission the account uses to sign the transaction (e.g. owner, active, code).
 
 ```cpp
 void hi( name user ) {
@@ -48,9 +48,9 @@ void hi( name user ) {
 [[info | Error message is not custom]]
 | Note that this time you can not customize the yielded error message, it will be a generic authorization error message.
 
-### 3. Using require_auth2
+### 3. Use require_auth2
 
-The below code is enforcing the action `hi` to be executed only by the account that is sent as parameter to the action and only if the permission used to sign the transaction is the 'active' one. In other words, if the same user is signing the transaction with a different permission (e.g. code, owner) the execution of the action is halted.
+The below code is enforces the action `hi` to be executed only by the account that is sent as parameter to the action and only if the permission used to sign the transaction is the 'active' one. In other words, if the same user uses the transaction with a different permission (e.g. code, owner) the execution of the action is halted.
 
 ```cpp
 #include <capi/eosio/action.h>

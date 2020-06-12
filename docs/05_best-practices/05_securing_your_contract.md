@@ -4,7 +4,7 @@ content_title: Securing your contract
 
 ## Basic Recommendations
 
-The following are basic recommendations which can be the foundation of securing your smart contract.
+The following are basic recommendations which can be the foundation for securing your smart contract.
 
 ### 1. Authorization Checks
 
