@@ -76,7 +76,7 @@ class [[eosio::contract]] singleton_example : public contract {
          uint64_t primary_key() const { return primary_value.value; }
       } test_table_instance;
 
-      using singleton_type = eosio::singleton<"test_table"_n, test_table>;
+      using singleton_type = eosio::singleton<"testsingletona"_n, test_table>;
       singleton_type singleton_instance;
 
       using set_action = action_wrapper<"set"_n, &singleton_example::set>;
