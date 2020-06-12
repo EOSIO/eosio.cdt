@@ -15,13 +15,13 @@ class [[eosio::contract]] singleton_example : public contract {
       [[eosio::action]]
       void get( );
 
-      struct [[eosio::table]] testtable {
+      struct [[eosio::table]] test_table {
          name primary_value;
          uint64_t secondary_value;
          uint64_t primary_key() const { return primary_value.value; }
-      } tt;
+      } test_table_instance;
 
-      using singleton_type = eosio::singleton<"testtable"_n, testtable>;
+      using singleton_type = eosio::singleton<"test_table"_n, test_table>;
       singleton_type singleton_instance;
 
       using set_action = action_wrapper<"set"_n, &singleton_example::set>;
