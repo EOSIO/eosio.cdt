@@ -728,7 +728,7 @@ public:
       T old_value;
 
       auto primary_key = primary_index->get_key(value);
-      auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+      auto tbl_key = table_key(primary_index->prefix, primary_key);
       auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
       if (primary_key_found) {
@@ -743,7 +743,7 @@ public:
       }
 
       for (const auto& idx : secondary_indices) {
-         auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(value));
+         auto sec_tbl_key = table_key(idx->prefix, idx->get_key(value));
          auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
 
          if (!primary_key_found) {
@@ -761,7 +761,7 @@ public:
                   free(buffer);
                }
             } else {
-               auto old_sec_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(old_value));
+               auto old_sec_key = table_key(idx->prefix, idx->get_key(old_value));
                internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
                internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
             }
@@ -791,7 +791,7 @@ public:
       uint32_t value_size;
 
       auto primary_key = primary_index->get_key(value);
-      auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+      auto tbl_key = table_key(primary_index->prefix, primary_key);
       auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
       if (!primary_key_found) {
@@ -799,7 +799,7 @@ public:
       }
 
       for (const auto& idx : secondary_indices) {
-         auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key(value));
+         auto sec_tbl_key = table_key(idx->prefix, idx->get_key(value));
          internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
       }
 
