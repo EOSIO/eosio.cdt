@@ -1,5 +1,4 @@
 #include <eosio/eosio.hpp>
-#include <eosio/key_value_singleton.hpp>
 
 using namespace eosio;
 
