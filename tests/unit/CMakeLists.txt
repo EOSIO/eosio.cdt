@@ -24,6 +24,7 @@ add_cdt_unit_test(rope_tests)
 add_cdt_unit_test(print_tests)
 add_cdt_unit_test(time_tests)
 add_cdt_unit_test(varint_tests)
+add_cdt_unit_test(vector_tests)
 
 target_compile_options( rope_tests PUBLIC -g )
 add_subdirectory(test_contracts)
