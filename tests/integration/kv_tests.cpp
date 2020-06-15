@@ -161,7 +161,7 @@ BOOST_FIXTURE_TEST_CASE(singleton_tests_error, tester) try {
    setup(tester, contracts::kv_singleton_tests_wasm(), contracts::kv_singleton_tests_abi());
    BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(erase), N(kvtest), {}),
                          eosio_assert_message_exception,
-                         eosio_assert_message_is("tried to get a singleton that does not exist"));
+                         eosio_assert_message_is("the singleton 'count' does not exist"));
 } FC_LOG_AND_RETHROW()
 
 BOOST_AUTO_TEST_SUITE_END()
