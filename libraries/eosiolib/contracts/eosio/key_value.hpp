@@ -948,8 +948,14 @@ public:
       return ste.value;
    }
 
-
    void set(const T& val) {
+      auto& ste = get_state();
+      ste.value = val;
+      ste.is_dirty = true;
+      ste.is_cached = true;
+   }
+
+   void set(T&& val) {
       auto& ste = get_state();
       ste.value = val;
       ste.is_dirty = true;
@@ -982,6 +988,7 @@ public:
          if (ste.raw_original_size != data_size || memcmp(ste.raw_original, data_buffer, data_size) != 0) {
             internal_use_do_not_use::kv_set(db_name, contract_name.value, key.data(), key.size(), (const char*)data_buffer, data_size);
          }
+         ste.is_dirty = false;
       }
    }
 
