@@ -4,13 +4,14 @@ content_title: eosio-init tool
 
 This tool is used to generate a skeleton smart contract and directory structure.
 To generate a new smart contract project you can either generate a "bare" project (no CMake) or the default is to generate a CMake project.
+
 Example:
 ```bash
-$ eosio-abigen hello.cpp --contract=hello --output=hello.abi
+$ eosio-init --path=\destination\path\where\to\generate\project\ --project=hello_contract_folder
 ```
 
-This will generate one file:
-* The generated ABI file (hello.abi)
+This will generate a project folder `hello_contract_folder` in the path `\destination\path\where\to\generate\project\` containing the skeleton smart contract and directory structure.
+
 ```
 USAGE: eosio-init [options]
 

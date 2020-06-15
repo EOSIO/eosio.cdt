@@ -8,7 +8,7 @@ if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
-    cmake ..
+    cmake .. -DCMAKE_BUILD_TYPE=Release
     make -j$JOBS
 
 else # Linux
@@ -19,7 +19,7 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    BUILD_COMMANDS="cmake .. && make -j$JOBS"
+    BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
     [[ $IMAGE_TAG == 'ubuntu-16.04' ]] && BUILD_COMMANDS="$BUILD_COMMANDS_1604"
