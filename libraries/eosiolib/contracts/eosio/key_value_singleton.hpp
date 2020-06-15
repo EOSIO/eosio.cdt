@@ -53,7 +53,12 @@ namespace eosio {
       }
 
       const T& get_or_create() {
-          return create_or_modify();
+          if( !exists() ) {
+              auto& ste = get_state();
+              ste.is_cached = true;
+              ste.is_dirty = true;
+          }
+          return get();
       };
 
       T& create_or_modify() {
@@ -66,31 +71,18 @@ namespace eosio {
       };
 
       const T& get() {
-         return modify();
+         auto& ste = get_state();
+         load_state(ste);
+
+         return ste.value;
       }
 
       T& modify() {
          auto& ste = get_state();
-         if (!ste.is_cached) {
-            uint32_t copy_size;
-            uint32_t value_size;
-
-            auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
-
-            if( !success ) {
-                eosio::check(success, "tried to get the singleton '" + std::string(contract_name) + "'/'"+ std::string(name(SingletonName)) + "' that does not exist");
-            }
-
-            ste.raw_original = (char*)malloc(value_size);
-            ste.raw_original_size = value_size;
-            copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, ste.raw_original, value_size);
-
-            deserialize(ste.value, ste.raw_original, copy_size);
-            ste.is_cached = true;
-         }
+         load_state(ste);
          ste.is_dirty = true;
 
-         return get_state().value;
+         return ste.value;
       }
 
 
@@ -183,14 +175,34 @@ namespace eosio {
          return size;
       }
 
-      state& get_state() {
+      state& get_state() const {
          static state value;
          return value;
       }
 
-      const state& get_state()const {
+      const state& get_state() const {
          static state value;
          return value;
+      }
+
+      void load_state(state& ste) {
+         if (!ste.is_cached) {
+            uint32_t copy_size;
+            uint32_t value_size;
+
+            auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
+
+            if( !success ) {
+                eosio::check(success, "the singleton " + eosio::name(SingletonName).to_string() + " does not exist");
+            }
+
+            ste.raw_original = (char*)malloc(value_size);
+            ste.raw_original_size = value_size;
+            copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, ste.raw_original, value_size);
+
+            deserialize(ste.value, ste.raw_original, copy_size);
+            ste.is_cached = true;
+         }
       }
    };
 }
