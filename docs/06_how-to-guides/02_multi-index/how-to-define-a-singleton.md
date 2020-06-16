@@ -19,13 +19,13 @@ struct [[eosio::table]] test_table {
 };
 ```
 
-3. For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testsingletona"` and the `test_table` data structure defined above
+3. For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testtable"`, which has to respect the EOSIO account name restrictions, and the `test_table` data structure defined above
 ```diff
 struct [[eosio::table]] test_table {
    name primary_value;
    uint64_t secondary_value;
 };
-+using singleton_type = eosio::singleton<"testsingletona"_n, test_table>;
++using singleton_type = eosio::singleton<"testtable"_n, test_table>;
 ```
 
 4. Define the singleton table instance declared as a data member of type `singleton_type` defined in the privious step
@@ -35,11 +35,11 @@ struct [[eosio::table]] test_table {
    uint64_t secondary_value;
 };
 
-using singleton_type = eosio::singleton<"testsingletona"_n, test_table>;
+using singleton_type = eosio::singleton<"testtable"_n, test_table>;
 +singleton_type singleton_instance;
 ```
 
-5. Instantiate the data member `singleton_instance` by passing to its constructor the `receiver` and the `code` (in this case `receiver.value`) parameters; these two combined with "testsingletona" provide access to the partition of the RAM cache used by this singleton. In this example you will initialize the `singleton_instance` data member in the smart contract constructor, see below:
+5. Instantiate the data member `singleton_instance` by passing to its constructor the `receiver` and the `code` (in this case `receiver.value`) parameters; these two combined with "testtable" provide access to the partition of the RAM cache used by this singleton. In this example you will initialize the `singleton_instance` data member in the smart contract constructor, see below:
 ```diff
 // singleton contract constructor
 singleton_example( name receiver, name code, datastream<const char*> ds ) :
@@ -76,7 +76,7 @@ class [[eosio::contract]] singleton_example : public contract {
          uint64_t primary_key() const { return primary_value.value; }
       } test_table_instance;
 
-      using singleton_type = eosio::singleton<"testsingletona"_n, test_table>;
+      using singleton_type = eosio::singleton<"testtable"_n, test_table>;
       singleton_type singleton_instance;
 
       using set_action = action_wrapper<"set"_n, &singleton_example::set>;
