@@ -1571,7 +1571,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param itr - an iterator pointing to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
+       *  @param payer - account name of the payer for the storage usage of the updated row
        *  @param updater - lambda function that updates the target object
        *
        *  @pre itr points to an existing element
@@ -1618,7 +1618,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param obj - a reference to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
+       *  @param payer - account name of the payer for the storage usage of the updated row
        *  @param updater - lambda function that updates the target object
        *
        *  @pre obj is an existing object in the table
