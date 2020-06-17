@@ -78,6 +78,20 @@ BOOST_FIXTURE_TEST_CASE(single_tests_iteration, tester) try {
                          eosio_assert_message_is("decremented past the beginning"));
 } FC_LOG_AND_RETHROW()
 
+BOOST_FIXTURE_TEST_CASE(single_tests_reverse_iteration, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
+   tester.push_action(N(kvtest), N(riteration), N(kvtest), {});
+
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(ritrerror1), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("incremented past the end"));
+
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(ritrerror2), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("decremented past the beginning"));
+} FC_LOG_AND_RETHROW()
+
 BOOST_FIXTURE_TEST_CASE(single_tests_range, tester) try {
    TESTER tester;
    setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
