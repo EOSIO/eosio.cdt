@@ -164,4 +164,18 @@ BOOST_DATA_TEST_CASE(makekeytests, data_set) { try {
    tester.push_action(N(kvtest), sample, N(kvtest), {});
 } FC_LOG_AND_RETHROW() }
 
+BOOST_FIXTURE_TEST_CASE(singleton_tests, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_singleton_tests_wasm(), contracts::kv_singleton_tests_abi());
+   tester.push_action(N(kvtest), N(test), N(kvtest), {});
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE(singleton_tests_error, tester) try {
+   TESTER tester;
+   setup(tester, contracts::kv_singleton_tests_wasm(), contracts::kv_singleton_tests_abi());
+   BOOST_CHECK_EXCEPTION(tester.push_action(N(kvtest), N(erase), N(kvtest), {}),
+                         eosio_assert_message_exception,
+                         eosio_assert_message_is("the singleton 'count' does not exist"));
+} FC_LOG_AND_RETHROW()
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -8,6 +8,7 @@ add_contract(kv_single_index_tests kv_single_index_tests kv_single_index_tests.c
 add_contract(kv_multiple_indices_tests kv_multiple_indices_tests kv_multiple_indices_tests.cpp)
 add_contract(kv_make_key_tests kv_make_key_tests kv_make_key_tests.cpp)
 add_contract(kv_variant_tests kv_variant_tests kv_variant_tests.cpp)
+add_contract(kv_singleton_tests kv_singleton_tests kv_singleton_tests.cpp)
 add_contract(capi_tests capi_tests capi/capi.c capi/action.c capi/chain.c capi/crypto.c capi/db.c capi/permission.c
                                    capi/print.c capi/privileged.c capi/system.c capi/transaction.c)
 add_contract(kv_bios kv_bios kv_bios/kv_bios.cpp)
