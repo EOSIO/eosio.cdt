@@ -4,53 +4,38 @@
 #include <new>
 #include <utility>
 
-/*
- * TODO make everything const expr
- */
-
 namespace eosio {
     template<class T>
     class vector {
     public:
 
-        constexpr vector() : m_size(1), m_capacity(1) {
-            m_data = std::unique_ptr<T[]>(new T[m_size]);
+        constexpr vector() : m_size(1), m_capacity(1), m_data(new T[m_size]) {
             m_data[0] = {};
         }
 
-        constexpr vector(size_t size) : m_size(size), m_capacity(size) {
-            m_data = std::unique_ptr<T[]>(new T[m_size]);
+        constexpr vector(size_t size) : m_size(size), m_capacity(size), m_data(new T[size]) {
             for (auto i = 0; i < size; i++) {
                 m_data[i] = {};
             }
         }
 
-        constexpr vector(size_t size, const T& value) : m_size(size), m_capacity(size) {
-            m_data = std::unique_ptr<T[]>(new T[m_size]);
+        constexpr vector(size_t size, const T& value) : m_size(size), m_capacity(size), m_data(new T[size]) {
             for(auto i = 0; i < size; i++) {
                 m_data[i] = value;
             }
         }
 
-        constexpr vector(const vector& v) {
-            m_size = v.m_size;
-            m_capacity = v.m_capacity;
-            m_data = std::unique_ptr<T[]>(new T[m_size]);
+        constexpr vector(const vector& v) : m_size(v.m_size), m_capacity(v.m_capacity), m_data(new T[m_size]) {
             memcpy(m_data.get(), v.m_data.get(), sizeof(T) * m_size);
         }
 
-        constexpr vector(vector&& v) {
-            m_size = v.m_size;
-            m_capacity = v.m_capacity;
-            m_data = std::move(v.m_data);
-        }
+        constexpr vector(vector&& v) : m_size(v.m_size), m_capacity(v.m_capacity), m_data(std::move(v.m_data)) {}
 
-        // replace initializer list with VARGS - template parameter pack
-        constexpr vector(std::initializer_list<T> list) {
-            m_size = list.size();
-            m_capacity = list.size();
-            m_data = std::unique_ptr<T[]>(new T[m_size]);
-            memcpy(m_data.get(), list.begin(), sizeof(T) * m_size);
+        constexpr vector(std::initializer_list<T> init) : m_size(init.size()), m_capacity(init.size()), m_data(new T[init.size()]) {
+           auto i = 0;
+           for(const auto& e : init) {
+              m_data[i++] = e;
+           }
         }
 
         constexpr vector& operator=(const vector& v) {
@@ -261,8 +246,8 @@ namespace eosio {
             m_data = std::move(tmp);
         }
 
-        size_t m_capacity{0};
         size_t m_size{0};
+        size_t m_capacity{0};
         std::unique_ptr<T[]> m_data;
     };
 } // namespace eosio
