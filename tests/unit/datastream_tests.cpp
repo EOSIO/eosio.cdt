@@ -79,7 +79,7 @@ EOSIO_TEST_BEGIN(datastream_test)
    CHECK_EQUAL( ds.read(buffer, 256), true )
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0)
 
-   CHECK_ASSERT( "read", ([&]() {ds.read(buffer, 1);}) )
+   CHECK_ASSERT( "datastream attempted to read past the end", ([&]() {ds.read(buffer, 1);}) )
 
    // T pos()const
    CHECK_EQUAL( ds.pos(), datastream_buffer+256 )
@@ -94,7 +94,7 @@ EOSIO_TEST_BEGIN(datastream_test)
    CHECK_EQUAL( ds.write(buffer, 256), true )
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
 
-   CHECK_ASSERT( "write", ([&]() {ds.write(buffer, 1);}) )
+   CHECK_ASSERT( "datastream attempted to write past the end", ([&]() {ds.write(buffer, 1);}) )
 
    // inline bool put(char)
    ds.seekp(0);
