@@ -2,7 +2,7 @@
 content_title: How to define a singleton
 ---
 
-To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `test_table`, follow the steps below:
+To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`, follow the steps below:
 
 1. Include the `eosio.hpp` and `singleton.hpp` headers and declare the `eosio` namespace usage
 ```
@@ -13,29 +13,29 @@ using namespace eosio;
 
 2. Define the data structure for the multi index table
 ```cpp
-struct [[eosio::table]] test_table {
+struct [[eosio::table]] testtable {
    name primary_value;
    uint64_t secondary_value;
 };
 ```
 
-3. For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testtable"`, which has to respect the EOSIO account name restrictions, and the `test_table` data structure defined above
+3. For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testtable"`, which has to respect the EOSIO account name restrictions, and the `testtable` data structure defined above
 ```diff
-struct [[eosio::table]] test_table {
+struct [[eosio::table]] testtable {
    name primary_value;
    uint64_t secondary_value;
 };
-+using singleton_type = eosio::singleton<"testtable"_n, test_table>;
++using singleton_type = eosio::singleton<"testtable"_n, testtable>;
 ```
 
 4. Define the singleton table instance declared as a data member of type `singleton_type` defined in the privious step
 ```diff
-struct [[eosio::table]] test_table {
+struct [[eosio::table]] testtable {
    name primary_value;
    uint64_t secondary_value;
 };
 
-using singleton_type = eosio::singleton<"testtable"_n, test_table>;
+using singleton_type = eosio::singleton<"testtable"_n, testtable>;
 +singleton_type singleton_instance;
 ```
 
@@ -70,13 +70,13 @@ class [[eosio::contract]] singleton_example : public contract {
       [[eosio::action]]
       void get( );
 
-      struct [[eosio::table]] test_table {
+      struct [[eosio::table]] testtable {
          name primary_value;
          uint64_t secondary_value;
          uint64_t primary_key() const { return primary_value.value; }
-      } test_table_instance;
+      } testtablerow;
 
-      using singleton_type = eosio::singleton<"testtable"_n, test_table>;
+      using singleton_type = eosio::singleton<"testtable"_n, testtable>;
       singleton_type singleton_instance;
 
       using set_action = action_wrapper<"set"_n, &singleton_example::set>;
@@ -91,7 +91,7 @@ __singleton_example.cpp__
 #include <singleton_example.hpp>
 
 [[eosio::action]] void singleton_example::set( name user, uint64_t value ) {
-   auto entry_stored = singleton_instance.get_or_create(user, test_table_instance);
+   auto entry_stored = singleton_instance.get_or_create(user, testtablerow);
    entry_stored.primary_value = user;
    entry_stored.secondary_value = value;
    singleton_instance.set(entry_stored, user);
