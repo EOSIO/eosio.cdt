@@ -221,12 +221,11 @@ EOSIO_TEST_BEGIN(vector_type_test)
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
-   /*bool verbose = false;
+   bool verbose = false;
    if( argc >= 2 && std::strcmp( argv[1], "-v" ) == 0 ) {
       verbose = true;
    }
-   silence_output(!verbose);*/
-   silence_output(false);
+   silence_output(!verbose);
 
    EOSIO_TEST(vector_type_test);
    return has_failed();
