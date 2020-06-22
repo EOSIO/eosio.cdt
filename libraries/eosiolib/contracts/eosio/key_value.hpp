@@ -345,12 +345,11 @@ namespace kv_detail {
    class kv_index {
 
    public:
-
       eosio::name index_name;
       eosio::name table_name;
       eosio::name contract_name;
 
-      key_type to_table_key( const key_type& k )const{ return table_key( prefix, k ); }
+      key_type to_table_key(const key_type& k) const { return table_key(prefix, k); }
 
    protected:
       kv_index() = default;
@@ -657,7 +656,6 @@ public:
 private:
    using kv_index = kv_detail::kv_index;
 
-
    class base_iterator : public kv_detail::iterator_base {
    public:
       using iterator_base::iterator_base;
@@ -821,7 +819,6 @@ private:
    };
 
 public:
-
    using iterator = kv_table::iterator;
    using value_type = T;
 
