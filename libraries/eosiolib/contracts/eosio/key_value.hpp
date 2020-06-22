@@ -332,6 +332,9 @@ inline key_type make_key(T val) {
 static constexpr eosio::name kv_ram = "eosio.kvram"_n;
 static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
 
+template <typename ...Types>
+using non_unique = std::tuple<Types...>;
+
 template<typename T>
 class kv_table;
 
