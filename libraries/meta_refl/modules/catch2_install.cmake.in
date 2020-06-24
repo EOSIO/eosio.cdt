@@ -1,0 +1,30 @@
+# ##################################################################################################
+# Configure and download for Catch2 iff we are going to build the tests. 
+# ##################################################################################################
+project(catch2_download)
+cmake_minimum_required(VERSION 3.8)
+set(found_project 0)
+include(ExternalProject)
+
+if (Catch2::Catch2)
+   set(found_project 1)
+   message(STATUS "Found Catch2 already in use")
+endif()
+
+if (NOT ${found_project})
+   message(STATUS "Adding project Catch2 to @CATCH2_DIRECTORY@/catch2")
+   ExternalProject_Add(
+      catch2_external_proj 
+      GIT_REPOSITORY "https://github.com/catchorg/Catch2" 
+      GIT_TAG "v2.12.2"
+      SOURCE_DIR @CATCH2_DIRECTORY@/catch2
+      BINARY_DIR @CATCH2_DIRECTORY@/catch2
+      BUILD_ALWAYS 0
+      BUILD_COMMAND     ""
+      TEST_COMMAND      ""
+      INSTALL_COMMAND   ""
+      UPDATE_COMMAND    ""
+      PATCH_COMMAND     ""
+      CONFIGURE_COMMAND ""
+   )
+endif()
