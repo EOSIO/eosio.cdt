@@ -13,7 +13,6 @@
 
 #include "datastream.hpp"
 #include <bluegrass/meta/refl.hpp>
-//#include "for_each_field.hpp"
 
 namespace eosio {
 
