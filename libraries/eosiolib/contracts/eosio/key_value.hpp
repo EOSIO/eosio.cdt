@@ -3,7 +3,7 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/varint.hpp"
 
-#include "to_key.hpp"
+#include "../../core/eosio/to_key.hpp"
 
 #include <algorithm>
 #include <cctype>
