@@ -20,3 +20,5 @@ add_subdirectory(eosiolib)
 add_subdirectory(boost)
 add_subdirectory(native)
 add_subdirectory(rt)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include/bluegrass DESTINATION ${BASE_BINARY_DIR}/include)
