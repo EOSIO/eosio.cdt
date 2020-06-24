@@ -11,8 +11,9 @@
 #include <vector>
 #include <cstring>
 
-#include "../../core/eosio/datastream.hpp"
-#include "../../core/eosio/for_each_field.hpp"
+#include "datastream.hpp"
+#include <bluegrass/meta/refl.hpp>
+//#include "for_each_field.hpp"
 
 namespace eosio {
 
@@ -285,7 +286,8 @@ void to_key(const T& obj, datastream<S>& stream) {
       static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
       to_key(static_cast<std::underlying_type_t<T>>(obj), stream);
    } else {
-      eosio::for_each_field(obj, [&](const auto& member) {
+      using ts_meta = bluegrass::meta::meta_object<T>;
+      ts_meta::for_each_field(obj, [&](const auto& member) {
          to_key(member, stream);
       });
    }
