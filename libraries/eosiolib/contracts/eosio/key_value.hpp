@@ -157,10 +157,6 @@ inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint
    return ret;
 }
 
-inline key_type table_key(const key_type& prefix, const key_type& key) {
-   return prefix + key;
-}
-
 template <typename I>
 inline I flip_msb(I val) {
    constexpr static size_t bits = sizeof(I) * 8;
@@ -349,7 +345,7 @@ namespace kv_detail {
       eosio::name table_name;
       eosio::name contract_name;
 
-      key_type to_table_key(const key_type& k) const { return table_key(prefix, k); }
+      key_type to_table_key(const key_type& k) const { return prefix + k; }
 
    protected:
       kv_index() = default;
@@ -401,7 +397,7 @@ namespace kv_detail {
          uint32_t value_size;
 
          auto primary_key = primary_index->get_key_void(value);
-         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+         auto tbl_key = make_prefix(table_name, primary_index->index_name) + primary_key;
 
          auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
@@ -418,7 +414,7 @@ namespace kv_detail {
 
          for (const auto& idx : secondary_indices) {
             uint32_t value_size;
-            auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
+            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(value);
             auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
 
             if (!primary_key_found) {
@@ -436,7 +432,7 @@ namespace kv_detail {
                      free(buffer);
                   }
                } else {
-                  auto old_sec_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(old_value));
+                  auto old_sec_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(old_value);
                   internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
                   internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
                }
@@ -459,7 +455,7 @@ namespace kv_detail {
          uint32_t value_size;
 
          auto primary_key = primary_index->get_key_void(value);
-         auto tbl_key = table_key(make_prefix(table_name, primary_index->index_name), primary_key);
+         auto tbl_key = make_prefix(table_name, primary_index->index_name) + primary_key;
          auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
          if (!primary_key_found) {
@@ -467,7 +463,7 @@ namespace kv_detail {
          }
 
          for (const auto& idx : secondary_indices) {
-            auto sec_tbl_key = table_key(make_prefix(table_name, idx->index_name), idx->get_key_void(value));
+            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(value);
             internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
          }
 
@@ -857,7 +853,7 @@ public:
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
        */
       iterator find(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
+         auto t_key = prefix + make_key(key);
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(tbl)->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
@@ -881,7 +877,7 @@ public:
        */
       bool exists(const K& key) const {
          uint32_t value_size;
-         auto t_key = table_key(prefix, make_key(key));
+         auto t_key = prefix + make_key(key);
 
          return internal_use_do_not_use::kv_get(static_cast<kv_table*>(tbl)->db_name, contract_name.value, t_key.data(), t_key.size(), value_size);
       }
@@ -908,7 +904,7 @@ public:
        */
       std::optional<T> get(const K& key) const {
          std::optional<T> ret_val;
-         auto k = table_key(prefix, make_key(key));
+         auto k = prefix + make_key(key);
          kv_index::get(k, &ret_val, &deserialize_optional_fun);
          return ret_val;
       }
@@ -966,7 +962,7 @@ public:
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
       iterator lower_bound(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
+         auto t_key = prefix + make_key(key);
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(tbl)->db_name, contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
@@ -981,7 +977,7 @@ public:
        * @return An iterator pointing to the first element greater than the given key.
        */
       iterator upper_bound(const K& key) const {
-         auto t_key = table_key(prefix, make_key(key));
+         auto t_key = prefix + make_key(key);
          auto it = lower_bound(key);
 
          int32_t cmp;
