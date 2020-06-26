@@ -328,6 +328,9 @@ inline key_type make_key(T val) {
 static constexpr eosio::name kv_ram = "eosio.kvram"_n;
 static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
 
+/**
+ * non_unique provides a clear way for developers to mark an index as non-unique
+ */
 template <typename ...Types>
 using non_unique = std::tuple<Types...>;
 
@@ -1031,6 +1034,7 @@ public:
       kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun);
    }
 
+   /* @cond PRIVATE */
    static void deserialize_optional_fun(void* value, const void* buffer, std::size_t buffer_size) {
       static_cast<std::optional<T>*>(value)->emplace();
       return detail::deserialize(**static_cast<std::optional<T>*>(value), buffer, buffer_size);
@@ -1044,6 +1048,7 @@ public:
    static std::size_t get_size_fun(const void* value) {
       return detail::get_size(*static_cast<const T*>(value));
    }
+   /* @endcond */
 
    /**
     * Removes a value from the table.
@@ -1101,6 +1106,18 @@ private:
    }
 };
 
+/**
+ * @defgroup keyvalue Key Value Singleton
+ * @ingroup contracts
+ *
+ * @brief Defines an EOSIO Key Value Singleton
+ * @details EOSIO Key Value Singleton API provides a C++ interface to the EOSIO Key Value database, from the viewpoint of a global singleton.
+ * There is only ever 0 or 1 instances of a singleton for a given name.
+ *
+ * @tparam T             - the type of the data stored as the value of the table
+ * @tparam SingletonName - the name of the singleton
+ * @tparam DbName        - the storage type
+  */
 template <typename T, eosio::name::raw SingletonName, eosio::name::raw DbName = "eosio.kvram"_n>
 class kv_singleton {
    struct state {
@@ -1129,6 +1146,11 @@ public:
       }
    }
 
+   /**
+    * Gets the value in the singleton if it exists, and creates it if not.
+    *
+    * @return A constant reference to the value in the singleton
+    */
    const T& get_or_create() {
        if( !exists() ) {
            auto& ste = get_state();
@@ -1138,6 +1160,11 @@ public:
        return get();
    };
 
+   /**
+    * Gets a mutable reference to the value in the singleton if it exists, and creates it if not.
+    *
+    * @return A reference to the value in the singleton
+    */
    T& create_or_modify() {
        if( !exists() ) {
            auto& ste = get_state();
@@ -1147,6 +1174,11 @@ public:
        return modify();
    };
 
+   /**
+    * Gets the value in the singleton.
+    *
+    * @return A constant reference to the value in the singleton
+    */
    const T& get() {
       auto& ste = get_state();
       load_state(ste);
@@ -1154,6 +1186,11 @@ public:
       return ste.value;
    }
 
+   /**
+    * Gets a mutable reference to the value in the singleton.
+    *
+    * @return A reference to the value in the singleton
+    */
    T& modify() {
       auto& ste = get_state();
       load_state(ste);
@@ -1162,6 +1199,11 @@ public:
       return ste.value;
    }
 
+   /**
+    * Sets the value in the singleton.
+    *
+    * @param val - the value to be set
+    */
    void set(const T& val) {
       auto& ste = get_state();
       ste.value = val;
@@ -1169,6 +1211,11 @@ public:
       ste.is_cached = true;
    }
 
+   /**
+    * Sets the value in the singleton.
+    *
+    * @param val - the value to be set
+    */
    void set(T&& val) {
       auto& ste = get_state();
       ste.value = val;
@@ -1176,12 +1223,20 @@ public:
       ste.is_cached = true;
    }
 
+   /**
+    * Check if a value exists.
+    *
+    * @return if the value exists
+    */
    bool exists() const {
       uint32_t value_size;
 
       return internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
    }
 
+   /**
+    * Erase the singleton.
+    */
    void erase() {
       internal_use_do_not_use::kv_erase(db_name, contract_name.value, key.data(), key.size());
       auto& ste = get_state();
@@ -1191,6 +1246,9 @@ public:
       free(ste.raw_original);
    }
 
+   /**
+    * Explicilty write back the data in the singleton.
+    */
    void store() {
       auto& ste = get_state();
       if (ste.is_dirty) {
