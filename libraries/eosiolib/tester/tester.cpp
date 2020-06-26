@@ -388,7 +388,7 @@ std::optional<eosio::test_chain::get_history_result> eosio::test_chain::get_hist
    ship_protocol::result r;
    (void)convert_from_bin(r, ret->memory);
 
-   std::visit([&ret](const auto& v) { build_history_result(*ret, v); }, r);
+   std::visit([&ret](auto& v) { build_history_result(*ret, v); }, r);
    return ret;
 }
 
