@@ -59,6 +59,7 @@ class TypeChecker {
   Result GetLabel(Index depth, Label** out_label);
 
   Result BeginFunction(const TypeVector& sig);
+  Result OnAtomicFence(uint32_t consistency_model);
   Result OnAtomicLoad(Opcode);
   Result OnAtomicNotify(Opcode);
   Result OnAtomicStore(Opcode);
@@ -108,8 +109,8 @@ class TypeChecker {
   Result OnTableSize();
   Result OnTableFill(Type elem_type);
   Result OnRefFuncExpr(Index func_index);
-  Result OnRefNullExpr();
-  Result OnRefIsNullExpr();
+  Result OnRefNullExpr(Type type);
+  Result OnRefIsNullExpr(Type type);
   Result OnRethrow();
   Result OnReturn();
   Result OnSelect(Type expected);
@@ -162,7 +163,7 @@ class TypeChecker {
 
   template <typename... Args>
   void PrintStackIfFailed(Result result, const char* desc, Args... args) {
-    // Minor optimzation, check result before constructing the vector to pass
+    // Minor optimization, check result before constructing the vector to pass
     // to the other overload of PrintStackIfFailed.
     if (Failed(result)) {
       PrintStackIfFailed(result, desc, {args...});

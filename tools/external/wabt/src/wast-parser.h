@@ -131,6 +131,7 @@ class WastParser {
   bool ParseElemExprVarListOpt(ElemExprVector* out_list);
   Result ParseValueType(Type* out_type);
   Result ParseValueTypeList(TypeVector* out_type_list);
+  Result ParseRefKind(Type* out_type);
   Result ParseRefType(Type* out_type);
   bool ParseRefTypeOpt(Type* out_type);
   Result ParseQuotedText(std::string* text);
@@ -169,8 +170,10 @@ class WastParser {
   Result ParseTerminatingInstrList(ExprList*);
   Result ParseInstr(ExprList*);
   Result ParsePlainInstr(std::unique_ptr<Expr>*);
+  Result ParseF32(Const*, ConstType type);
+  Result ParseF64(Const*, ConstType type);
   Result ParseConst(Const*, ConstType type);
-  Result ParseHostRef(Const*);
+  Result ParseExternref(Const*);
   Result ParseExpectedNan(ExpectedNan* expected);
   Result ParseConstList(ConstVector*, ConstType type);
   Result ParseBlockInstr(std::unique_ptr<Expr>*);
@@ -181,6 +184,8 @@ class WastParser {
   Result ParseExprList(ExprList*);
   Result ParseExpr(ExprList*);
   Result ParseGlobalType(Global*);
+  Result ParseField(Field*);
+  Result ParseFieldList(std::vector<Field>*);
 
   template <typename T>
   Result ParsePlainInstrVar(Location, std::unique_ptr<Expr>*);
@@ -199,6 +204,8 @@ class WastParser {
   Result ParseActionCommand(CommandPtr*);
   Result ParseModuleCommand(Script*, CommandPtr*);
   Result ParseRegisterCommand(CommandPtr*);
+  Result ParseInputCommand(CommandPtr*);
+  Result ParseOutputCommand(CommandPtr*);
 
   Result ParseAction(ActionPtr*);
   Result ParseScriptModule(std::unique_ptr<ScriptModule>*);
@@ -212,7 +219,7 @@ class WastParser {
   template <typename T>
   Result ParseAssertScriptModuleCommand(TokenType, CommandPtr*);
 
-  Result ParseSimdV128Const(Const*, TokenType);
+  Result ParseSimdV128Const(Const*, TokenType, ConstType);
 
   void CheckImportOrdering(Module*);
 

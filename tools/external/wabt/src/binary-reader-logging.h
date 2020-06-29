@@ -42,11 +42,13 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
 
   Result BeginTypeSection(Offset size) override;
   Result OnTypeCount(Index count) override;
-  Result OnType(Index index,
-                Index param_count,
-                Type* param_types,
-                Index result_count,
-                Type* result_types) override;
+  Result OnFuncType(Index index,
+                    Index param_count,
+                    Type* param_types,
+                    Index result_count,
+                    Type* result_types) override;
+  Result OnStructType(Index index, Index field_count, TypeMut* fields) override;
+  Result OnArrayType(Index index, TypeMut field) override;
   Result EndTypeSection() override;
 
   Result BeginImportSection(Offset size) override;
@@ -138,6 +140,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnOpcodeF64(uint64_t value) override;
   Result OnOpcodeV128(v128 value) override;
   Result OnOpcodeBlockSig(Type sig_type) override;
+  Result OnOpcodeType(Type type) override;
   Result OnAtomicLoadExpr(Opcode opcode,
                           uint32_t alignment_log2,
                           Address offset) override;
@@ -197,8 +200,8 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnTableSizeExpr(Index table) override;
   Result OnTableFillExpr(Index table) override;
   Result OnRefFuncExpr(Index index) override;
-  Result OnRefNullExpr() override;
-  Result OnRefIsNullExpr() override;
+  Result OnRefNullExpr(Type type) override;
+  Result OnRefIsNullExpr(Type type) override;
   Result OnNopExpr() override;
   Result OnRethrowExpr() override;
   Result OnReturnCallExpr(Index func_index) override;
@@ -216,6 +219,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnAtomicWaitExpr(Opcode opcode,
                           uint32_t alignment_log2,
                           Address offset) override;
+  Result OnAtomicFenceExpr(uint32_t consistency_model) override;
   Result OnAtomicNotifyExpr(Opcode opcode,
                             uint32_t alignment_log2,
                             Address offset) override;
@@ -231,12 +235,12 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnElemSegmentCount(Index count) override;
   Result BeginElemSegment(Index index,
                           Index table_index,
-                          uint8_t flags,
-                          Type elem_type) override;
+                          uint8_t flags) override;
   Result BeginElemSegmentInitExpr(Index index) override;
   Result EndElemSegmentInitExpr(Index index) override;
+  Result OnElemSegmentElemType(Index index, Type elem_type) override;
   Result OnElemSegmentElemExprCount(Index index, Index count) override;
-  Result OnElemSegmentElemExpr_RefNull(Index segment_index) override;
+  Result OnElemSegmentElemExpr_RefNull(Index segment_index, Type type) override;
   Result OnElemSegmentElemExpr_RefFunc(Index segment_index,
                                        Index func_index) override;
   Result EndElemSegment(Index index) override;
@@ -344,7 +348,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnInitExprGlobalGetExpr(Index index, Index global_index) override;
   Result OnInitExprI32ConstExpr(Index index, uint32_t value) override;
   Result OnInitExprI64ConstExpr(Index index, uint64_t value) override;
-  Result OnInitExprRefNull(Index index) override;
+  Result OnInitExprRefNull(Index index, Type type) override;
   Result OnInitExprRefFunc(Index index, Index func_index) override;
 
  private:
@@ -354,6 +358,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   void LogType(Type type);
   void LogTypes(Index type_count, Type* types);
   void LogTypes(TypeVector& types);
+  void LogField(TypeMut field);
 
   Stream* stream_;
   BinaryReaderDelegate* reader_;

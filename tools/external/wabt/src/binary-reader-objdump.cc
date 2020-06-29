@@ -23,6 +23,10 @@
 #include <cstring>
 #include <vector>
 
+#if HAVE_STRCASECMP
+#include <strings.h>
+#endif
+
 #include "src/binary-reader-nop.h"
 #include "src/filenames.h"
 #include "src/literal.h"
@@ -114,6 +118,9 @@ Result BinaryReaderObjdumpBase::BeginModule(uint32_t version) {
       break;
     case ObjdumpMode::Prepass: {
       string_view basename = GetBasename(options_->filename);
+      if (basename == "-") {
+        basename = "<stdin>";
+      }
       printf("%s:\tfile format wasm %#x\n", basename.to_string().c_str(),
              version);
       break;
@@ -396,6 +403,7 @@ class BinaryReaderObjdumpDisassemble : public BinaryReaderObjdumpBase {
   Result OnOpcodeF64(uint64_t value) override;
   Result OnOpcodeV128(v128 value) override;
   Result OnOpcodeBlockSig(Type sig_type) override;
+  Result OnOpcodeType(Type type) override;
 
   Result OnBrTableExpr(Index num_targets,
                        Index* target_depths,
@@ -415,12 +423,12 @@ class BinaryReaderObjdumpDisassemble : public BinaryReaderObjdumpBase {
 };
 
 std::string BinaryReaderObjdumpDisassemble::BlockSigToString(Type type) const {
-  if (IsTypeIndex(type)) {
-    return StringPrintf("type[%d]", GetTypeIndex(type));
+  if (type.IsIndex()) {
+    return StringPrintf("type[%d]", type.GetIndex());
   } else if (type == Type::Void) {
     return "";
   } else {
-    return GetTypeName(type);
+    return type.GetName();
   }
 }
 
@@ -477,7 +485,7 @@ Result BinaryReaderObjdumpDisassemble::OnLocalDecl(Index decl_index,
   }
   local_index_ += count;
 
-  printf("] type=%s\n", GetTypeName(type));
+  printf("] type=%s\n", type.GetName());
 
   last_opcode_end = current_opcode_offset + data_size;
   current_opcode_offset = last_opcode_end;
@@ -595,7 +603,7 @@ Result BinaryReaderObjdumpDisassemble::OnOpcodeUint32(uint32_t value) {
 Result BinaryReaderObjdumpDisassemble::OnOpcodeUint32Uint32(uint32_t value,
                                                             uint32_t value2) {
   Offset immediate_len = state->offset - current_opcode_offset;
-  LogOpcode(immediate_len, "%lu %lu", value, value2);
+  LogOpcode(immediate_len, "%u %u", value, value2);
   return Result::Ok;
 }
 
@@ -624,8 +632,14 @@ Result BinaryReaderObjdumpDisassemble::OnOpcodeF64(uint64_t value) {
 Result BinaryReaderObjdumpDisassemble::OnOpcodeV128(v128 value) {
   Offset immediate_len = state->offset - current_opcode_offset;
   // v128 is always dumped as i32x4:
-  LogOpcode(immediate_len, "0x%08x 0x%08x 0x%08x 0x%08x", value.v[0],
-            value.v[1], value.v[2], value.v[3]);
+  LogOpcode(immediate_len, "0x%08x 0x%08x 0x%08x 0x%08x", value.u32(0),
+            value.u32(1), value.u32(2), value.u32(3));
+  return Result::Ok;
+}
+
+Result BinaryReaderObjdumpDisassemble::OnOpcodeType(Type type) {
+  Offset immediate_len = state->offset - current_opcode_offset;
+  LogOpcode(immediate_len, type.GetRefKindName());
   return Result::Ok;
 }
 
@@ -690,6 +704,8 @@ enum class InitExprType {
   V128,
   Global,
   FuncRef,
+  // TODO: There isn't a nullref anymore, this just represents ref.null of some
+  // type T.
   NullRef,
 };
 
@@ -702,6 +718,7 @@ struct InitExpr {
     uint64_t i64;
     uint64_t f64;
     v128 v128_v;
+    Type type;
   } value;
 };
 
@@ -719,11 +736,13 @@ class BinaryReaderObjdump : public BinaryReaderObjdumpBase {
   Result BeginCustomSection(Offset size, string_view section_name) override;
 
   Result OnTypeCount(Index count) override;
-  Result OnType(Index index,
-                Index param_count,
-                Type* param_types,
-                Index result_count,
-                Type* result_types) override;
+  Result OnFuncType(Index index,
+                    Index param_count,
+                    Type* param_types,
+                    Index result_count,
+                    Type* result_types) override;
+  Result OnStructType(Index index, Index field_count, TypeMut* fields) override;
+  Result OnArrayType(Index index, TypeMut field) override;
 
   Result OnImportCount(Index count) override;
   Result OnImportFunc(Index import_index,
@@ -792,10 +811,10 @@ class BinaryReaderObjdump : public BinaryReaderObjdumpBase {
   Result OnElemSegmentCount(Index count) override;
   Result BeginElemSegment(Index index,
                           Index table_index,
-                          uint8_t flags,
-                          Type elem_type) override;
+                          uint8_t flags) override;
+  Result OnElemSegmentElemType(Index index, Type elem_type) override;
   Result OnElemSegmentElemExprCount(Index index, Index count) override;
-  Result OnElemSegmentElemExpr_RefNull(Index segment_index) override;
+  Result OnElemSegmentElemExpr_RefNull(Index segment_index, Type type) override;
   Result OnElemSegmentElemExpr_RefFunc(Index segment_index,
                                        Index func_index) override;
 
@@ -829,7 +848,7 @@ class BinaryReaderObjdump : public BinaryReaderObjdumpBase {
   Result OnInitExprGlobalGetExpr(Index index, Index global_index) override;
   Result OnInitExprI32ConstExpr(Index index, uint32_t value) override;
   Result OnInitExprI64ConstExpr(Index index, uint64_t value) override;
-  Result OnInitExprRefNull(Index index) override;
+  Result OnInitExprRefNull(Index index, Type type) override;
   Result OnInitExprRefFunc(Index index, Index func_index) override;
 
   Result OnDylinkInfo(uint32_t mem_size,
@@ -1022,11 +1041,11 @@ Result BinaryReaderObjdump::OnTypeCount(Index count) {
   return OnCount(count);
 }
 
-Result BinaryReaderObjdump::OnType(Index index,
-                                   Index param_count,
-                                   Type* param_types,
-                                   Index result_count,
-                                   Type* result_types) {
+Result BinaryReaderObjdump::OnFuncType(Index index,
+                                       Index param_count,
+                                       Type* param_types,
+                                       Index result_count,
+                                       Type* result_types) {
   if (!ShouldPrintDetails()) {
     return Result::Ok;
   }
@@ -1035,7 +1054,7 @@ Result BinaryReaderObjdump::OnType(Index index,
     if (i != 0) {
       printf(", ");
     }
-    printf("%s", GetTypeName(param_types[i]));
+    printf("%s", param_types[i].GetName());
   }
   printf(") -> ");
   switch (result_count) {
@@ -1043,7 +1062,7 @@ Result BinaryReaderObjdump::OnType(Index index,
       printf("nil");
       break;
     case 1:
-      printf("%s", GetTypeName(result_types[0]));
+      printf("%s", result_types[0].GetName());
       break;
     default:
       printf("(");
@@ -1051,12 +1070,48 @@ Result BinaryReaderObjdump::OnType(Index index,
         if (i != 0) {
           printf(", ");
         }
-        printf("%s", GetTypeName(result_types[i]));
+        printf("%s", result_types[i].GetName());
       }
       printf(")");
       break;
   }
   printf("\n");
+  return Result::Ok;
+}
+
+Result BinaryReaderObjdump::OnStructType(Index index,
+                                         Index field_count,
+                                         TypeMut* fields) {
+  if (!ShouldPrintDetails()) {
+    return Result::Ok;
+  }
+  printf(" - type[%" PRIindex "] (struct", index);
+  for (Index i = 0; i < field_count; i++) {
+    if (fields[i].mutable_) {
+      printf(" (mut");
+    }
+    printf(" %s", fields[i].type.GetName());
+    if (fields[i].mutable_) {
+      printf(")");
+    }
+  }
+  printf(")\n");
+  return Result::Ok;
+}
+
+Result BinaryReaderObjdump::OnArrayType(Index index, TypeMut field) {
+  if (!ShouldPrintDetails()) {
+    return Result::Ok;
+  }
+  printf(" - type[%" PRIindex "] (array", index);
+  if (field.mutable_) {
+    printf(" (mut");
+  }
+  printf(" %s", field.type.GetName());
+  if (field.mutable_) {
+    printf(")");
+  }
+  printf(")\n");
   return Result::Ok;
 }
 
@@ -1133,7 +1188,7 @@ Result BinaryReaderObjdump::OnImportTable(Index import_index,
                                           Type elem_type,
                                           const Limits* elem_limits) {
   PrintDetails(" - table[%" PRIindex "] type=%s initial=%" PRId64, table_index,
-               GetTypeName(elem_type), elem_limits->initial);
+               elem_type.GetName(), elem_limits->initial);
   if (elem_limits->has_max) {
     PrintDetails(" max=%" PRId64, elem_limits->max);
   }
@@ -1166,7 +1221,7 @@ Result BinaryReaderObjdump::OnImportGlobal(Index import_index,
                                            Type type,
                                            bool mutable_) {
   PrintDetails(" - global[%" PRIindex "] %s mutable=%d", global_index,
-               GetTypeName(type), mutable_);
+               type.GetName(), mutable_);
   PrintDetails(" <- " PRIstringview "." PRIstringview "\n",
                WABT_PRINTF_STRING_VIEW_ARG(module_name),
                WABT_PRINTF_STRING_VIEW_ARG(field_name));
@@ -1212,7 +1267,7 @@ Result BinaryReaderObjdump::OnTable(Index index,
                                     Type elem_type,
                                     const Limits* elem_limits) {
   PrintDetails(" - table[%" PRIindex "] type=%s initial=%" PRId64, index,
-               GetTypeName(elem_type), elem_limits->initial);
+               elem_type.GetName(), elem_limits->initial);
   if (elem_limits->has_max) {
     PrintDetails(" max=%" PRId64, elem_limits->max);
   }
@@ -1241,8 +1296,10 @@ Result BinaryReaderObjdump::OnExport(Index index,
   return Result::Ok;
 }
 
-Result BinaryReaderObjdump::OnElemSegmentElemExpr_RefNull(Index segment_index) {
-  PrintDetails("  - elem[%" PRIindex "] = nullref\n", elem_offset_ + elem_index_);
+Result BinaryReaderObjdump::OnElemSegmentElemExpr_RefNull(Index segment_index,
+                                                          Type type) {
+  PrintDetails("  - elem[%" PRIindex "] = ref.null %s\n",
+               elem_offset_ + elem_index_, type.GetName());
   elem_index_++;
   return Result::Ok;
 }
@@ -1266,11 +1323,15 @@ Result BinaryReaderObjdump::OnElemSegmentCount(Index count) {
 
 Result BinaryReaderObjdump::BeginElemSegment(Index index,
                                              Index table_index,
-                                             uint8_t flags,
-                                             Type elem_type) {
+                                             uint8_t flags) {
   table_index_ = table_index;
   elem_index_ = 0;
   elem_flags_ = flags;
+  return Result::Ok;
+}
+
+Result BinaryReaderObjdump::OnElemSegmentElemType(Index index, Type elem_type) {
+  // TODO: Add support for this.
   return Result::Ok;
 }
 
@@ -1292,8 +1353,8 @@ Result BinaryReaderObjdump::OnGlobalCount(Index count) {
 }
 
 Result BinaryReaderObjdump::BeginGlobal(Index index, Type type, bool mutable_) {
-  PrintDetails(" - global[%" PRIindex "] %s mutable=%d", index,
-               GetTypeName(type), mutable_);
+  PrintDetails(" - global[%" PRIindex "] %s mutable=%d", index, type.GetName(),
+               mutable_);
   string_view name = GetGlobalName(index);
   if (!name.empty()) {
     PrintDetails(" <" PRIstringview ">", WABT_PRINTF_STRING_VIEW_ARG(name));
@@ -1323,8 +1384,8 @@ void BinaryReaderObjdump::PrintInitExpr(const InitExpr& expr) {
     }
     case InitExprType::V128: {
       PrintDetails(" - init v128=0x%08x 0x%08x 0x%08x 0x%08x \n",
-                   expr.value.v128_v.v[0], expr.value.v128_v.v[1],
-                   expr.value.v128_v.v[2], expr.value.v128_v.v[3]);
+                   expr.value.v128_v.u32(0), expr.value.v128_v.u32(1),
+                   expr.value.v128_v.u32(2), expr.value.v128_v.u32(3));
       break;
     }
     case InitExprType::Global: {
@@ -1346,7 +1407,7 @@ void BinaryReaderObjdump::PrintInitExpr(const InitExpr& expr) {
       break;
     }
     case InitExprType::NullRef: {
-      PrintDetails(" - init nullref\n");
+      PrintDetails(" - init null\n");
       break;
     }
   }
@@ -1440,9 +1501,10 @@ Result BinaryReaderObjdump::OnInitExprI64ConstExpr(Index index,
   return Result::Ok;
 }
 
-Result BinaryReaderObjdump::OnInitExprRefNull(Index index) {
+Result BinaryReaderObjdump::OnInitExprRefNull(Index index, Type type) {
   InitExpr expr;
   expr.type = InitExprType::NullRef;
+  expr.value.type = type;
   HandleInitExpr(expr);
   return Result::Ok;
 }

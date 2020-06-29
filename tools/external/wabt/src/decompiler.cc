@@ -204,12 +204,17 @@ struct Decompiler {
     }
   }
 
+  string_view VarName(string_view name) {
+    assert(!name.empty());
+    return name[0] == '$' ? name.substr(1) : name;
+  }
+
   template<ExprType T> Value Get(const VarExpr<T>& ve) {
-    return Value{{ve.var.name()}, Precedence::Atomic};
+    return Value{{std::string(VarName(ve.var.name()))}, Precedence::Atomic};
   }
 
   template<ExprType T> Value Set(Value& child, const VarExpr<T>& ve) {
-    return WrapChild(child, ve.var.name() + " = ", "", Precedence::Assign);
+    return WrapChild(child, VarName(ve.var.name()) + " = ", "", Precedence::Assign);
   }
 
   std::string TempVarName(Index n) {
@@ -221,15 +226,16 @@ struct Decompiler {
 
   std::string LocalDecl(const std::string& name, Type t) {
     auto struc = lst.GenTypeDecl(name);
-    return cat(name, ":", struc.empty() ? GetDecompTypeName(t) : struc);
+    return cat(VarName(name), ":",
+               struc.empty() ? GetDecompTypeName(t) : struc);
   }
 
   bool ConstIntVal(const Expr* e, uint64_t &dest) {
     dest = 0;
     if (!e || e->type() != ExprType::Const) return false;
     auto& c = cast<ConstExpr>(e)->const_;
-    if (c.type != Type::I32 && c.type != Type::I64) return false;
-    dest = c.type == Type::I32 ? c.u32 : c.u64;
+    if (c.type() != Type::I32 && c.type() != Type::I64) return false;
+    dest = c.type() == Type::I32 ? c.u32() : c.u64();
     return true;
   }
 
@@ -296,7 +302,8 @@ struct Decompiler {
         if (se.opcode == Opcode::I32Shl &&
             const_exp.etype == ExprType::Const) {
           auto& ce = *cast<ConstExpr>(const_exp.e);
-          if (ce.const_.type == Type::I32 && (1 << ce.const_.u32) == align) {
+          if (ce.const_.type() == Type::I32 &&
+              (1U << ce.const_.u32()) == align) {
             // Pfew, case detected :( Lets re-write this in Haskell.
             // TODO: we're decompiling these twice.
             // The thing to the left of << is going to be part of the index.
@@ -359,18 +366,26 @@ struct Decompiler {
         return WrapNAry(args, "return ", "", Precedence::None);
       }
       case NodeType::Decl: {
+        cur_ast->vars_defined[n.u.var->name()].defined = true;
         return Value{
-            {"var " + LocalDecl(n.u.var->name(),
+            {"var " + LocalDecl(std::string(n.u.var->name()),
                                 cur_func->GetLocalType(*n.u.var))},
             Precedence::None};
       }
       case NodeType::DeclInit: {
-        return WrapChild(
-            args[0],
-            cat("var ",
-                LocalDecl(n.u.var->name(), cur_func->GetLocalType(*n.u.var)),
-                " = "),
-            "", Precedence::None);
+        if (cur_ast->vars_defined[n.u.var->name()].defined) {
+          // This has already been pre-declared, output as assign.
+          return WrapChild(args[0], cat(VarName(n.u.var->name()), " = "), "",
+                           Precedence::None);
+        } else {
+          return WrapChild(
+              args[0],
+              cat("var ",
+                  LocalDecl(std::string(n.u.var->name()),
+                            cur_func->GetLocalType(*n.u.var)),
+                  " = "),
+              "", Precedence::None);
+        }
       }
       case NodeType::Expr:
         // We're going to fall thru to the second switch to deal with ExprType.
@@ -383,21 +398,19 @@ struct Decompiler {
     switch (n.etype) {
       case ExprType::Const: {
         auto& c = cast<ConstExpr>(n.e)->const_;
-        switch (c.type) {
+        switch (c.type()) {
           case Type::I32:
-            return Value{{std::to_string(static_cast<int32_t>(c.u32))},
+            return Value{{std::to_string(static_cast<int32_t>(c.u32()))},
                          Precedence::Atomic};
           case Type::I64:
-            return Value{{std::to_string(static_cast<int64_t>(c.u64)) + "L"},
+            return Value{{std::to_string(static_cast<int64_t>(c.u64())) + "L"},
                          Precedence::Atomic};
           case Type::F32: {
-            float f;
-            memcpy(&f, &c.f32_bits, sizeof(float));
+            float f = Bitcast<float>(c.f32_bits());
             return Value{{to_string(f) + "f"}, Precedence::Atomic};
           }
           case Type::F64: {
-            double d;
-            memcpy(&d, &c.f64_bits, sizeof(double));
+            double d = Bitcast<double>(c.f64_bits());
             return Value{{to_string(d)}, Precedence::Atomic};
           }
           case Type::V128:
@@ -502,7 +515,7 @@ struct Decompiler {
       case ExprType::Block: {
         auto& val = args[0];
         val.v.push_back(
-              cat("label ", cast<BlockExpr>(n.e)->block.label, ":"));
+              cat("label ", VarName(cast<BlockExpr>(n.e)->block.label), ":"));
         // If this block is part of a larger statement scope, it doesn't
         // need its own indenting, but if its part of an exp we wrap it in {}.
         if (parent && parent->ntype != NodeType::Statements
@@ -521,7 +534,7 @@ struct Decompiler {
         auto& val = args[0];
         auto& block = cast<LoopExpr>(n.e)->block;
         IndentValue(val, indent_amount, {});
-        val.v.insert(val.v.begin(), cat("loop ", block.label, " {"));
+        val.v.insert(val.v.begin(), cat("loop ", VarName(block.label), " {"));
         val.v.push_back("}");
         val.precedence = Precedence::Atomic;
         return std::move(val);
@@ -529,13 +542,14 @@ struct Decompiler {
       case ExprType::Br: {
         auto be = cast<BrExpr>(n.e);
         return Value{{(n.u.lt == LabelType::Loop ? "continue " : "goto ") +
-                      be->var.name()},
+                      VarName(be->var.name())},
                      Precedence::None};
       }
       case ExprType::BrIf: {
         auto bie = cast<BrIfExpr>(n.e);
         auto jmp = n.u.lt == LabelType::Loop ? "continue" : "goto";
-        return WrapChild(args[0], "if (", cat(") ", jmp, " ", bie->var.name()),
+        return WrapChild(args[0], "if (", cat(") ", jmp, " ",
+                                              VarName(bie->var.name())),
                          Precedence::None);
       }
       case ExprType::Return: {
@@ -562,11 +576,11 @@ struct Decompiler {
         auto bte = cast<BrTableExpr>(n.e);
         std::string ts = "br_table[";
         for (auto &v : bte->targets) {
-          ts += v.name();
+          ts += VarName(v.name());
           ts += ", ";
         }
         ts += "..";
-        ts += bte->default_target.name();
+        ts += VarName(bte->default_target.name());
         ts += "](";
         return WrapChild(args[0], ts, ")", Precedence::Atomic);
       }
@@ -748,6 +762,7 @@ struct Decompiler {
       auto is_import =
           CheckImportExport(s, ExternalKind::Func, func_index, f->name);
       AST ast(mc, f);
+      cur_ast = &ast;
       if (!is_import) {
         ast.Construct(f->exprs, f->GetNumResults(), true);
         lst.Track(ast.exp_stack[0]);
@@ -758,7 +773,7 @@ struct Decompiler {
         if (i)
           s += ", ";
         auto t = f->GetParamType(i);
-        auto name = IndexToAlphaName(i);
+        auto name = "$" + IndexToAlphaName(i);
         s += LocalDecl(name, t);
       }
       s += ")";
@@ -791,6 +806,8 @@ struct Decompiler {
       mc.EndFunc();
       lst.Clear();
       func_index++;
+      cur_ast = nullptr;
+      cur_func = nullptr;
     }
     return s;
   }
@@ -800,6 +817,7 @@ struct Decompiler {
   size_t indent_amount = 2;
   size_t target_exp_width = 70;
   const Func* cur_func = nullptr;
+  AST* cur_ast = nullptr;
   LoadStoreTracking lst;
 };
 

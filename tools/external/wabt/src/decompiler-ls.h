@@ -37,10 +37,9 @@ inline const char *GetDecompTypeName(Type t) {
     case Type::F64: return "double";
     case Type::V128: return "simd";
     case Type::Func: return "func";
-    case Type::Funcref: return "funcref";
-    case Type::Anyref: return "anyref";
-    case Type::Nullref: return "nullref";
-    case Type::Exnref: return "exnref";
+    case Type::FuncRef: return "funcref";
+    case Type::ExternRef: return "externref";
+    case Type::ExnRef: return "exnref";
     case Type::Void: return "void";
     default: return "ILLEGAL";
   }
@@ -188,7 +187,7 @@ struct LoadStoreTracking {
         }
         // Align to next access: all elements are expected to be aligned to
         // a memory address thats a multiple of their own size.
-        auto mask = access.second.byte_size - 1;
+        auto mask = static_cast<uint64_t>(access.second.byte_size - 1);
         cur_offset = (cur_offset + mask) & ~mask;
         if (cur_offset != access.first) {
           var.second.struct_layout = false;

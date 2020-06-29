@@ -21,8 +21,10 @@
 #include "src/cast.h"
 #include "src/expr-visitor.h"
 #include "src/make-unique.h"
+#include "src/resolve-names.h"
 #include "src/stream.h"
 #include "src/utf8.h"
+#include "src/validator.h"
 
 #define WABT_TRACING 0
 #include "src/tracing.h"
@@ -155,6 +157,7 @@ bool IsPlainInstr(TokenType token_type) {
     case TokenType::AtomicRmw:
     case TokenType::AtomicRmwCmpxchg:
     case TokenType::AtomicNotify:
+    case TokenType::AtomicFence:
     case TokenType::AtomicWait:
     case TokenType::Ternary:
     case TokenType::SimdLaneOp:
@@ -226,7 +229,9 @@ bool IsCommand(TokenTypePair pair) {
     case TokenType::AssertUnlinkable:
     case TokenType::Get:
     case TokenType::Invoke:
+    case TokenType::Input:
     case TokenType::Module:
+    case TokenType::Output:
     case TokenType::Register:
       return true;
     default:
@@ -238,7 +243,7 @@ bool IsEmptySignature(const FuncSignature& sig) {
   return sig.result_types.empty() && sig.param_types.empty();
 }
 
-void ResolveFuncTypeWithEmptySignature(const Module& module,
+bool ResolveFuncTypeWithEmptySignature(const Module& module,
                                        FuncDeclaration* decl) {
   // Resolve func type variables where the signature was not specified
   // explicitly, e.g.: (func (type 1) ...)
@@ -246,9 +251,10 @@ void ResolveFuncTypeWithEmptySignature(const Module& module,
     const FuncType* func_type = module.GetFuncType(decl->type_var);
     if (func_type) {
       decl->sig = func_type->sig;
+      return true;
     }
   }
-
+  return false;
 }
 
 void ResolveImplicitlyDefinedFunctionType(const Location& loc,
@@ -258,11 +264,75 @@ void ResolveImplicitlyDefinedFunctionType(const Location& loc,
   if (!decl.has_func_type) {
     Index func_type_index = module->GetFuncTypeIndex(decl.sig);
     if (func_type_index == kInvalidIndex) {
-      auto func_type_field = MakeUnique<FuncTypeModuleField>(loc);
-      func_type_field->func_type.sig = decl.sig;
+      auto func_type_field = MakeUnique<TypeModuleField>(loc);
+      auto func_type = MakeUnique<FuncType>();
+      func_type->sig = decl.sig;
+      func_type_field->type = std::move(func_type);
       module->AppendField(std::move(func_type_field));
     }
   }
+}
+
+Result CheckTypeIndex(const Location& loc,
+                      Type actual,
+                      Type expected,
+                      const char* desc,
+                      Index index,
+                      const char* index_kind,
+                      Errors* errors) {
+  // Types must match exactly; no subtyping should be allowed.
+  if (actual != expected) {
+    errors->emplace_back(ErrorLevel::Error, loc,
+                         StringPrintf("type mismatch for %s %" PRIindex
+                                      " of %s. got %s, expected %s",
+                                      index_kind, index, desc, actual.GetName(),
+                                      expected.GetName()));
+    return Result::Error;
+  }
+  return Result::Ok;
+}
+
+Result CheckTypes(const Location& loc,
+                  const TypeVector& actual,
+                  const TypeVector& expected,
+                  const char* desc,
+                  const char* index_kind,
+                  Errors* errors) {
+  Result result = Result::Ok;
+  if (actual.size() == expected.size()) {
+    for (size_t i = 0; i < actual.size(); ++i) {
+      result |= CheckTypeIndex(loc, actual[i], expected[i], desc, i, index_kind,
+                               errors);
+    }
+  } else {
+    errors->emplace_back(
+        ErrorLevel::Error, loc,
+        StringPrintf("expected %" PRIzd " %ss, got %" PRIzd, expected.size(),
+                     index_kind, actual.size()));
+    result = Result::Error;
+  }
+  return result;
+}
+
+Result CheckFuncTypeVarMatchesExplicit(const Location& loc,
+                                       const Module& module,
+                                       const FuncDeclaration& decl,
+                                       Errors* errors) {
+  Result result = Result::Ok;
+  if (decl.has_func_type) {
+    // This should only be run after resolving names.
+    assert(decl.type_var.is_index());
+    const FuncType* func_type = module.GetFuncType(decl.type_var);
+    if (func_type) {
+      result |=
+          CheckTypes(loc, decl.sig.result_types, func_type->sig.result_types,
+                     "function", "result", errors);
+      result |=
+          CheckTypes(loc, decl.sig.param_types, func_type->sig.param_types,
+                     "function", "argument", errors);
+    }
+  }
+  return result;
 }
 
 bool IsInlinableFuncSignature(const FuncSignature& sig) {
@@ -271,8 +341,8 @@ bool IsInlinableFuncSignature(const FuncSignature& sig) {
 
 class ResolveFuncTypesExprVisitorDelegate : public ExprVisitor::DelegateNop {
  public:
-  explicit ResolveFuncTypesExprVisitorDelegate(Module* module)
-      : module_(module) {}
+  explicit ResolveFuncTypesExprVisitorDelegate(Module* module, Errors* errors)
+      : module_(module), errors_(errors) {}
 
   void ResolveBlockDeclaration(const Location& loc, BlockDeclaration* decl) {
     ResolveFuncTypeWithEmptySignature(*module_, decl);
@@ -283,41 +353,49 @@ class ResolveFuncTypesExprVisitorDelegate : public ExprVisitor::DelegateNop {
 
   Result BeginBlockExpr(BlockExpr* expr) override {
     ResolveBlockDeclaration(expr->loc, &expr->block.decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_,
+                                           expr->block.decl, errors_);
   }
 
   Result BeginIfExpr(IfExpr* expr) override {
     ResolveBlockDeclaration(expr->loc, &expr->true_.decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_,
+                                           expr->true_.decl, errors_);
   }
 
   Result BeginLoopExpr(LoopExpr* expr) override {
     ResolveBlockDeclaration(expr->loc, &expr->block.decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_,
+                                           expr->block.decl, errors_);
   }
 
   Result BeginTryExpr(TryExpr* expr) override {
     ResolveBlockDeclaration(expr->loc, &expr->block.decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_,
+                                           expr->block.decl, errors_);
   }
 
   Result OnCallIndirectExpr(CallIndirectExpr* expr) override {
     ResolveFuncTypeWithEmptySignature(*module_, &expr->decl);
     ResolveImplicitlyDefinedFunctionType(expr->loc, module_, expr->decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_, expr->decl,
+                                           errors_);
   }
 
   Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr* expr) override {
     ResolveFuncTypeWithEmptySignature(*module_, &expr->decl);
     ResolveImplicitlyDefinedFunctionType(expr->loc, module_, expr->decl);
-    return Result::Ok;
+    return CheckFuncTypeVarMatchesExplicit(expr->loc, *module_, expr->decl,
+                                           errors_);
   }
 
  private:
   Module* module_;
+  Errors* errors_;
 };
 
-void ResolveFuncTypes(Module* module) {
+Result ResolveFuncTypes(Module* module, Errors* errors) {
+  Result result = Result::Ok;
   for (ModuleField& field : module->fields) {
     Func* func = nullptr;
     FuncDeclaration* decl = nullptr;
@@ -342,17 +420,34 @@ void ResolveFuncTypes(Module* module) {
       continue;
     }
 
+    bool has_func_type_and_empty_signature = false;
+
     if (decl) {
-      ResolveFuncTypeWithEmptySignature(*module, decl);
+      has_func_type_and_empty_signature =
+          ResolveFuncTypeWithEmptySignature(*module, decl);
       ResolveImplicitlyDefinedFunctionType(field.loc, module, *decl);
+      result |=
+          CheckFuncTypeVarMatchesExplicit(field.loc, *module, *decl, errors);
     }
 
     if (func) {
-      ResolveFuncTypesExprVisitorDelegate delegate(module);
+      if (has_func_type_and_empty_signature) {
+        // The call to ResolveFuncTypeWithEmptySignature may have updated the
+        // function signature so there are parameters. Since parameters and
+        // local variables share the same index space, we need to increment the
+        // local indexes bound to a given name by the number of parameters in
+        // the function.
+        for (auto& pair: func->bindings) {
+          pair.second.index += func->GetNumParams();
+        }
+      }
+
+      ResolveFuncTypesExprVisitorDelegate delegate(module, errors);
       ExprVisitor visitor(&delegate);
-      visitor.VisitFunc(func);
+      result |= visitor.VisitFunc(func);
     }
   }
+  return result;
 }
 
 void AppendInlineExportFields(Module* module,
@@ -646,23 +741,30 @@ Result WastParser::ParseVarList(VarVector* out_var_list) {
 
 bool WastParser::ParseElemExprOpt(ElemExpr* out_elem_expr) {
   Location loc = GetLocation();
-  if (MatchLpar(TokenType::RefNull)) {
+  bool item = MatchLpar(TokenType::Item);
+  bool lpar = Match(TokenType::Lpar);
+  if (Match(TokenType::RefNull)) {
     if (!(options_->features.bulk_memory_enabled() ||
           options_->features.reference_types_enabled())) {
       Error(loc, "ref.null not allowed");
     }
-    *out_elem_expr = ElemExpr();
-    EXPECT(Rpar);
-    return true;
-  } else if (MatchLpar(TokenType::RefFunc)) {
+    Type type;
+    CHECK_RESULT(ParseRefKind(&type));
+    *out_elem_expr = ElemExpr(type);
+  } else if (Match(TokenType::RefFunc)) {
     Var var;
     CHECK_RESULT(ParseVar(&var));
     *out_elem_expr = ElemExpr(var);
-    EXPECT(Rpar);
-    return true;
   } else {
     return false;
   }
+  if (lpar) {
+    EXPECT(Rpar);
+  }
+  if (item) {
+    EXPECT(Rpar);
+  }
+  return true;
 }
 
 bool WastParser::ParseElemExprListOpt(ElemExprVector* out_list) {
@@ -685,7 +787,7 @@ bool WastParser::ParseElemExprVarListOpt(ElemExprVector* out_list) {
 Result WastParser::ParseValueType(Type* out_type) {
   WABT_TRACE(ParseValueType);
   if (!PeekMatch(TokenType::ValueType)) {
-    return ErrorExpected({"i32", "i64", "f32", "f64", "v128", "anyref"});
+    return ErrorExpected({"i32", "i64", "f32", "f64", "v128", "externref"});
   }
 
   Token token = Consume();
@@ -695,11 +797,12 @@ Result WastParser::ParseValueType(Type* out_type) {
     case Type::V128:
       is_enabled = options_->features.simd_enabled();
       break;
-    case Type::Anyref:
-    case Type::Funcref:
-    case Type::Hostref:
-    case Type::Exnref:
+    case Type::FuncRef:
+    case Type::ExternRef:
       is_enabled = options_->features.reference_types_enabled();
+      break;
+    case Type::ExnRef:
+      is_enabled = options_->features.exceptions_enabled();
       break;
     default:
       is_enabled = true;
@@ -707,7 +810,7 @@ Result WastParser::ParseValueType(Type* out_type) {
   }
 
   if (!is_enabled) {
-    Error(token.loc, "value type not allowed: %s", GetTypeName(type));
+    Error(token.loc, "value type not allowed: %s", type.GetName());
     return Result::Error;
   }
 
@@ -723,16 +826,38 @@ Result WastParser::ParseValueTypeList(TypeVector* out_type_list) {
   return Result::Ok;
 }
 
-Result WastParser::ParseRefType(Type* out_type) {
-  WABT_TRACE(ParseRefType);
-  if (!PeekMatch(TokenType::ValueType)) {
-    return ErrorExpected({"funcref", "anyref", "nullref", "exnref"});
+Result WastParser::ParseRefKind(Type* out_type) {
+  WABT_TRACE(ParseRefKind);
+  if (!IsTokenTypeRefKind(Peek())) {
+    return ErrorExpected({"func", "extern", "exn"});
   }
 
   Token token = Consume();
   Type type = token.type();
-  if (type == Type::Anyref && !options_->features.reference_types_enabled()) {
-    Error(token.loc, "value type not allowed: %s", GetTypeName(type));
+
+  if ((type == Type::ExternRef &&
+       !options_->features.reference_types_enabled()) ||
+      ((type == Type::Struct || type == Type::Array) &&
+       !options_->features.gc_enabled())) {
+    Error(token.loc, "value type not allowed: %s", type.GetName());
+    return Result::Error;
+  }
+
+  *out_type = type;
+  return Result::Ok;
+}
+
+Result WastParser::ParseRefType(Type* out_type) {
+  WABT_TRACE(ParseRefType);
+  if (!PeekMatch(TokenType::ValueType)) {
+    return ErrorExpected({"funcref", "externref", "exnref"});
+  }
+
+  Token token = Consume();
+  Type type = token.type();
+  if (type == Type::ExternRef &&
+      !options_->features.reference_types_enabled()) {
+    Error(token.loc, "value type not allowed: %s", type.GetName());
     return Result::Error;
   }
 
@@ -748,7 +873,8 @@ bool WastParser::ParseRefTypeOpt(Type* out_type) {
 
   Token token = Consume();
   Type type = token.type();
-  if (type == Type::Anyref && !options_->features.reference_types_enabled()) {
+  if (type == Type::ExternRef &&
+      !options_->features.reference_types_enabled()) {
     return false;
   }
 
@@ -841,7 +967,8 @@ Result WastParser::ParseNat(uint64_t* out_nat) {
 
   Token token = Consume();
   string_view sv = token.literal().text;
-  if (Failed(ParseUint64(sv.begin(), sv.end(), out_nat))) {
+  if (Failed(ParseUint64(sv.begin(), sv.end(), out_nat)) ||
+      *out_nat > 0xffffffffu) {
     Error(token.loc, "invalid int \"" PRIstringview "\"",
           WABT_PRINTF_STRING_VIEW_ARG(sv));
   }
@@ -913,7 +1040,8 @@ Result WastParser::ParseModuleFieldList(Module* module) {
       CHECK_RESULT(Synchronize(IsModuleField));
     }
   }
-  ResolveFuncTypes(module);
+  CHECK_RESULT(ResolveNamesModule(module, errors_));
+  CHECK_RESULT(ResolveFuncTypes(module, errors_));
   return Result::Ok;
 }
 
@@ -989,6 +1117,10 @@ Result WastParser::ParseElemModuleField(Module* module) {
     segment_name = "";
   }
   auto field = MakeUnique<ElemSegmentModuleField>(loc, segment_name);
+  if (options_->features.reference_types_enabled() &&
+      Match(TokenType::Declare)) {
+    field->elem_segment.kind = SegmentKind::Declared;
+  }
 
   // Optional table specifier
   if (options_->features.bulk_memory_enabled()) {
@@ -1008,14 +1140,15 @@ Result WastParser::ParseElemModuleField(Module* module) {
     }
   }
 
-  if (!ParseOffsetExprOpt(&field->elem_segment.offset)) {
+  if ((field->elem_segment.kind != SegmentKind::Declared) &&
+      !ParseOffsetExprOpt(&field->elem_segment.offset)) {
     field->elem_segment.kind = SegmentKind::Passive;
   }
 
   if (ParseRefTypeOpt(&field->elem_segment.elem_type)) {
     ParseElemExprListOpt(&field->elem_segment.elem_exprs);
   } else {
-    field->elem_segment.elem_type = Type::Funcref;
+    field->elem_segment.elem_type = Type::FuncRef;
     if (PeekMatch(TokenType::Func)) {
       EXPECT(Func);
     }
@@ -1095,17 +1228,78 @@ Result WastParser::ParseFuncModuleField(Module* module) {
 Result WastParser::ParseTypeModuleField(Module* module) {
   WABT_TRACE(ParseTypeModuleField);
   EXPECT(Lpar);
-  auto field = MakeUnique<FuncTypeModuleField>(GetLocation());
+  auto field = MakeUnique<TypeModuleField>(GetLocation());
   EXPECT(Type);
-  ParseBindVarOpt(&field->func_type.name);
+
+  std::string name;
+  ParseBindVarOpt(&name);
   EXPECT(Lpar);
-  EXPECT(Func);
-  BindingHash bindings;
-  CHECK_RESULT(ParseFuncSignature(&field->func_type.sig, &bindings));
-  CHECK_RESULT(ErrorIfLpar({"param", "result"}));
+  Location loc = GetLocation();
+
+  if (Match(TokenType::Func)) {
+    auto func_type = MakeUnique<FuncType>(name);
+    BindingHash bindings;
+    CHECK_RESULT(ParseFuncSignature(&func_type->sig, &bindings));
+    CHECK_RESULT(ErrorIfLpar({"param", "result"}));
+    field->type = std::move(func_type);
+  } else if (Match(TokenType::Struct)) {
+    if (!options_->features.gc_enabled()) {
+      Error(loc, "struct not allowed");
+      return Result::Error;
+    }
+    auto struct_type = MakeUnique<StructType>(name);
+    CHECK_RESULT(ParseFieldList(&struct_type->fields));
+    field->type = std::move(struct_type);
+  } else if (Match(TokenType::Array)) {
+    if (!options_->features.gc_enabled()) {
+      Error(loc, "array type not allowed");
+    }
+    auto array_type = MakeUnique<ArrayType>(name);
+    CHECK_RESULT(ParseField(&array_type->field));
+    field->type = std::move(array_type);
+  } else {
+    return ErrorExpected({"func", "struct", "array"});
+  }
+
   EXPECT(Rpar);
   EXPECT(Rpar);
   module->AppendField(std::move(field));
+  return Result::Ok;
+}
+
+Result WastParser::ParseField(Field* field) {
+  WABT_TRACE(ParseField);
+  auto parse_mut_valuetype = [&]() -> Result {
+    // TODO: Share with ParseGlobalType?
+    if (MatchLpar(TokenType::Mut)) {
+      field->mutable_ = true;
+      CHECK_RESULT(ParseValueType(&field->type));
+      EXPECT(Rpar);
+    } else {
+      field->mutable_ = false;
+      CHECK_RESULT(ParseValueType(&field->type));
+    }
+    return Result::Ok;
+  };
+
+  if (MatchLpar(TokenType::Field)) {
+    ParseBindVarOpt(&field->name);
+    CHECK_RESULT(parse_mut_valuetype());
+    EXPECT(Rpar);
+  } else {
+    CHECK_RESULT(parse_mut_valuetype());
+  }
+
+  return Result::Ok;
+}
+
+Result WastParser::ParseFieldList(std::vector<Field>* fields) {
+  WABT_TRACE(ParseFieldList);
+  while (PeekMatch(TokenType::ValueType) || PeekMatch(TokenType::Lpar)) {
+    Field field;
+    CHECK_RESULT(ParseField(&field));
+    fields->push_back(field);
+  }
   return Result::Ok;
 }
 
@@ -1559,8 +1753,6 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
           MatchLpar(TokenType::Result)) {
         CHECK_RESULT(ParseValueTypeList(&result));
         EXPECT(Rpar);
-      } else {
-        result.push_back(Type::Any);
       }
       out_expr->reset(new SelectExpr(result, loc));
       break;
@@ -1608,7 +1800,7 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
     case TokenType::CallIndirect: {
       Consume();
       auto expr = MakeUnique<CallIndirectExpr>(loc);
-      ParseVarOpt(&expr->table, Var(0));
+      ParseVarOpt(&expr->table, Var(0, loc));
       CHECK_RESULT(ParseTypeUseOpt(&expr->decl));
       CHECK_RESULT(ParseUnboundFuncSignature(&expr->decl.sig));
       *out_expr = std::move(expr);
@@ -1625,7 +1817,7 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       auto expr = MakeUnique<ReturnCallIndirectExpr>(loc);
       CHECK_RESULT(ParseTypeUseOpt(&expr->decl));
       CHECK_RESULT(ParseUnboundFuncSignature(&expr->decl.sig));
-      ParseVarOpt(&expr->table, Var(0));
+      ParseVarOpt(&expr->table, Var(0, loc));
       *out_expr = std::move(expr);
       break;
     }
@@ -1729,14 +1921,11 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
 
     case TokenType::TableCopy: {
       ErrorUnlessOpcodeEnabled(Consume());
-      Var dst(0);
-      Var src(0);
+      Var dst(0, loc);
+      Var src(0, loc);
       if (options_->features.reference_types_enabled()) {
-      // TODO: disabled for now, since the spec tests don't currently use.
-#if 0
-        CHECK_RESULT(ParseVar(&dst));
-        CHECK_RESULT(ParseVar(&src));
-#endif
+        ParseVarOpt(&dst, dst);
+        ParseVarOpt(&src, src);
       }
       out_expr->reset(new TableCopyExpr(dst, src, loc));
       break;
@@ -1749,9 +1938,18 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
 
     case TokenType::TableInit: {
       ErrorUnlessOpcodeEnabled(Consume());
-      Var segment_index(0);
+      Var segment_index(0, loc);
       CHECK_RESULT(ParseVar(&segment_index));
-      Var table_index(0);
+      Var table_index(0, loc);
+      if (ParseVarOpt(&table_index, table_index)) {
+        // Here are the two forms:
+        //
+        //   table.init $elemidx ...
+        //   table.init $tableidx $elemidx ...
+        //
+        // So if both indexes are provided, we need to swap them.
+        std::swap(segment_index, table_index);
+      }
       out_expr->reset(new TableInitExpr(segment_index, table_index, loc));
       break;
     }
@@ -1763,21 +1961,25 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
 
     case TokenType::TableSet:
       ErrorUnlessOpcodeEnabled(Consume());
+      // TODO: Table index.
       CHECK_RESULT(ParsePlainInstrVar<TableSetExpr>(loc, out_expr));
       break;
 
     case TokenType::TableGrow:
       ErrorUnlessOpcodeEnabled(Consume());
+      // TODO: Table index.
       CHECK_RESULT(ParsePlainInstrVar<TableGrowExpr>(loc, out_expr));
       break;
 
     case TokenType::TableSize:
       ErrorUnlessOpcodeEnabled(Consume());
+      // TODO: Table index.
       CHECK_RESULT(ParsePlainInstrVar<TableSizeExpr>(loc, out_expr));
       break;
 
     case TokenType::TableFill:
       ErrorUnlessOpcodeEnabled(Consume());
+      // TODO: Table index.
       CHECK_RESULT(ParsePlainInstrVar<TableFillExpr>(loc, out_expr));
       break;
 
@@ -1786,15 +1988,21 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       CHECK_RESULT(ParsePlainInstrVar<RefFuncExpr>(loc, out_expr));
       break;
 
-    case TokenType::RefNull:
+    case TokenType::RefNull: {
       ErrorUnlessOpcodeEnabled(Consume());
-      out_expr->reset(new RefNullExpr(loc));
+      Type type;
+      CHECK_RESULT(ParseRefKind(&type));
+      out_expr->reset(new RefNullExpr(type, loc));
       break;
+    }
 
-    case TokenType::RefIsNull:
+    case TokenType::RefIsNull: {
       ErrorUnlessOpcodeEnabled(Consume());
-      out_expr->reset(new RefIsNullExpr(loc));
+      Type type;
+      CHECK_RESULT(ParseRefKind(&type));
+      out_expr->reset(new RefIsNullExpr(type, loc));
       break;
+    }
 
     case TokenType::Throw:
       ErrorUnlessOpcodeEnabled(Consume());
@@ -1811,6 +2019,14 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       ErrorUnlessOpcodeEnabled(token);
       CHECK_RESULT(
           ParsePlainLoadStoreInstr<AtomicNotifyExpr>(loc, token, out_expr));
+      break;
+    }
+
+    case TokenType::AtomicFence: {
+      Token token = Consume();
+      ErrorUnlessOpcodeEnabled(token);
+      uint32_t consistency_model = 0x0;
+      out_expr->reset(new AtomicFenceExpr(consistency_model, loc));
       break;
     }
 
@@ -1864,8 +2080,32 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
     case TokenType::SimdLaneOp: {
       Token token = Consume();
       ErrorUnlessOpcodeEnabled(token);
+      if (!PeekMatch(TokenType::Nat) && !PeekMatch(TokenType::Int)) {
+        return ErrorExpected({"a natural number"}, "123");
+      }
+
+      Literal literal = Consume().literal();
       uint64_t lane_idx;
-      CHECK_RESULT(ParseNat(&lane_idx));
+
+      // TODO: The simd tests currently allow a lane number with an optional +,
+      // but probably shouldn't. See
+      // https://github.com/WebAssembly/simd/issues/181#issuecomment-597386919
+      Result result = ParseInt64(literal.text.begin(), literal.text.end(),
+                                 &lane_idx, ParseIntType::SignedAndUnsigned);
+
+      if (Failed(result)) {
+        Error(loc, "invalid literal \"" PRIstringview "\"",
+              WABT_PRINTF_STRING_VIEW_ARG(literal.text));
+        return Result::Error;
+      }
+
+      // TODO: Should share lane validation logic w/ SimdShuffleOp below. (See
+      // comment below for explanation of 255 vs. 32)
+      if (lane_idx > 255) {
+        Error(loc, "lane index \"" PRIstringview "\" out-of-range [0, 32)",
+              WABT_PRINTF_STRING_VIEW_ARG(literal.text));
+        return Result::Error;
+      }
       out_expr->reset(new SimdLaneOpExpr(token.opcode(), lane_idx, loc));
       break;
     }
@@ -1897,8 +2137,11 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
           return Result::Error;
         }
 
-        if (value > 31) {
-          Error(loc, "shuffle index \"" PRIstringview "\" out-of-range [0, 32)",
+        // The valid range is only [0, 32), but it's only malformed if it can't
+        // fit in a byte.
+        if (value > 255) {
+          Error(loc,
+                "shuffle index \"" PRIstringview "\" out-of-range [0, 32)",
                 WABT_PRINTF_STRING_VIEW_ARG(literal.text));
           return Result::Error;
         }
@@ -1921,7 +2164,9 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
   return Result::Ok;
 }
 
-Result WastParser::ParseSimdV128Const(Const* const_, TokenType token_type) {
+Result WastParser::ParseSimdV128Const(Const* const_,
+                                      TokenType token_type,
+                                      ConstType const_type) {
   WABT_TRACE(ParseSimdV128Const);
 
   uint8_t lane_count = 0;
@@ -1946,76 +2191,93 @@ Result WastParser::ParseSimdV128Const(Const* const_, TokenType token_type) {
   }
   Consume();
 
-  uint8_t lane_size = sizeof(v128) / lane_count;
-
-  // The bytes of the v128 are written here first:
-  std::array<char, 16> v128_bytes{};
   const_->loc = GetLocation();
 
-  for (int i = 0; i < lane_count; ++i) {
+  for (int lane = 0; lane < lane_count; ++lane) {
     Location loc = GetLocation();
 
     // Check that the lane literal type matches the element type of the v128:
-    if (!PeekMatch(TokenType::Int) && !PeekMatch(TokenType::Nat)) {
-      if (integer) {
-        return ErrorExpected({"a Nat or Integer literal"}, "123");
-      } else if (!PeekMatch(TokenType::Float)) {
-        return ErrorExpected({"a Float literal"}, "42.0");
-      }
+    Token token = GetToken();
+    switch (token.token_type()) {
+      case TokenType::Nat:
+      case TokenType::Int:
+        // OK.
+        break;
+
+      case TokenType::Float:
+      case TokenType::NanArithmetic:
+      case TokenType::NanCanonical:
+        if (integer) {
+          goto error;
+        }
+        break;
+
+      error:
+      default:
+        if (integer) {
+          return ErrorExpected({"a Nat or Integer literal"}, "123");
+        } else {
+          return ErrorExpected({"a Float literal"}, "42.0");
+        }
     }
 
-    Literal literal = Consume().literal();
-
-    string_view sv = literal.text;
-    const char* s = sv.begin();
-    const char* end = sv.end();
-
-    // Pointer to the lane in the v128 bytes:
-    char* lane_ptr = &v128_bytes[lane_size * i];
     Result result;
 
     // For each type, parse the next literal, bound check it, and write it to
     // the array of bytes:
     if (integer) {
-      switch(lane_count) {
-        case 16:
-          result = ParseInt8(s, end, reinterpret_cast<uint8_t*>(lane_ptr),
-                             ParseIntType::SignedAndUnsigned);
+      string_view sv = Consume().literal().text;
+      const char* s = sv.begin();
+      const char* end = sv.end();
+
+      switch (lane_count) {
+        case 16: {
+          uint8_t value = 0;
+          result = ParseInt8(s, end, &value, ParseIntType::SignedAndUnsigned);
+          const_->set_v128_u8(lane, value);
           break;
-        case 8:
-          result = ParseInt16(s, end, reinterpret_cast<uint16_t*>(lane_ptr),
-                              ParseIntType::SignedAndUnsigned);
+        }
+        case 8: {
+          uint16_t value = 0;
+          result = ParseInt16(s, end, &value, ParseIntType::SignedAndUnsigned);
+          const_->set_v128_u16(lane, value);
           break;
-        case 4:
-          result = ParseInt32(s, end, reinterpret_cast<uint32_t*>(lane_ptr),
-                              ParseIntType::SignedAndUnsigned);
+        }
+        case 4: {
+          uint32_t value = 0;
+          result = ParseInt32(s, end, &value, ParseIntType::SignedAndUnsigned);
+          const_->set_v128_u32(lane, value);
           break;
-        case 2:
-          result = ParseInt64(s, end, reinterpret_cast<uint64_t*>(lane_ptr),
-                              ParseIntType::SignedAndUnsigned);
+        }
+        case 2: {
+          uint64_t value = 0;
+          result = ParseInt64(s, end, &value, ParseIntType::SignedAndUnsigned);
+          const_->set_v128_u64(lane, value);
           break;
+        }
       }
     } else {
-      switch(lane_count) {
+      Const lane_const_;
+      switch (lane_count) {
         case 4:
-          result = ParseFloat(literal.type, s, end,
-                              reinterpret_cast<uint32_t*>(lane_ptr));
+          result = ParseF32(&lane_const_, const_type);
+          const_->set_v128_f32(lane, lane_const_.f32_bits());
           break;
+
         case 2:
-          result = ParseDouble(literal.type, s, end,
-                               reinterpret_cast<uint64_t*>(lane_ptr));
+          result = ParseF64(&lane_const_, const_type);
+          const_->set_v128_f64(lane, lane_const_.f64_bits());
           break;
       }
+
+      const_->set_expected_nan(lane, lane_const_.expected_nan());
     }
 
     if (Failed(result)) {
-      Error(loc, "invalid literal \"" PRIstringview "\"",
-            WABT_PRINTF_STRING_VIEW_ARG(literal.text));
+      Error(loc, "invalid literal \"%s\"", token.to_string().c_str());
       return Result::Error;
     }
   }
-
-  memcpy(&const_->vec128.v, v128_bytes.data(), 16);
 
   return Result::Ok;
 }
@@ -2037,76 +2299,91 @@ Result WastParser::ParseExpectedNan(ExpectedNan* expected) {
   return Result::Ok;
 }
 
-Result WastParser::ParseConst(Const* const_, ConstType type) {
+Result WastParser::ParseF32(Const* const_, ConstType const_type) {
+  ExpectedNan expected;
+  if (const_type == ConstType::Expectation &&
+      Succeeded(ParseExpectedNan(&expected))) {
+    const_->set_f32(expected);
+    return Result::Ok;
+  }
+  auto literal = Consume().literal();
+  uint32_t f32_bits;
+  Result result = ParseFloat(literal.type, literal.text.begin(),
+                             literal.text.end(), &f32_bits);
+  const_->set_f32(f32_bits);
+  return result;
+}
+
+Result WastParser::ParseF64(Const* const_, ConstType const_type) {
+  ExpectedNan expected;
+  if (const_type == ConstType::Expectation &&
+      Succeeded(ParseExpectedNan(&expected))) {
+    const_->set_f64(expected);
+    return Result::Ok;
+  }
+  auto literal = Consume().literal();
+  uint64_t f64_bits;
+  Result result = ParseDouble(literal.type, literal.text.begin(),
+                              literal.text.end(), &f64_bits);
+  const_->set_f64(f64_bits);
+  return result;
+}
+
+Result WastParser::ParseConst(Const* const_, ConstType const_type) {
   WABT_TRACE(ParseConst);
-  Token token = Consume();
-  Opcode opcode = token.opcode();
-  Literal literal;
-  string_view sv;
-  const char* s;
-  const char* end;
+  Token opcode_token = Consume();
+  Opcode opcode = opcode_token.opcode();
   const_->loc = GetLocation();
-  TokenType token_type = Peek();
+  Token token = GetToken();
 
   // V128 is fully handled by ParseSimdV128Const:
   if (opcode != Opcode::V128Const) {
-    switch (token_type) {
-    case TokenType::Nat:
-    case TokenType::Int:
-    case TokenType::Float: {
-      literal = Consume().literal();
-      sv = literal.text;
-      s = sv.begin();
-      end = sv.end();
-      break;
-    }
-    case TokenType::NanArithmetic:
-    case TokenType::NanCanonical:
-      break;
-    default:
-      return ErrorExpected({"a numeric literal"}, "123, -45, 6.7e8");
+    switch (token.token_type()) {
+      case TokenType::Nat:
+      case TokenType::Int:
+      case TokenType::Float:
+        // OK.
+        break;
+      case TokenType::NanArithmetic:
+      case TokenType::NanCanonical:
+        break;
+      default:
+        return ErrorExpected({"a numeric literal"}, "123, -45, 6.7e8");
     }
   }
 
   Result result;
   switch (opcode) {
-    case Opcode::I32Const:
-      const_->type = Type::I32;
-      result =
-          ParseInt32(s, end, &const_->u32, ParseIntType::SignedAndUnsigned);
+    case Opcode::I32Const: {
+      auto sv = Consume().literal().text;
+      uint32_t u32;
+      result = ParseInt32(sv.begin(), sv.end(), &u32,
+                          ParseIntType::SignedAndUnsigned);
+      const_->set_u32(u32);
       break;
+    }
 
-    case Opcode::I64Const:
-      const_->type = Type::I64;
-      result =
-          ParseInt64(s, end, &const_->u64, ParseIntType::SignedAndUnsigned);
+    case Opcode::I64Const: {
+      auto sv = Consume().literal().text;
+      uint64_t u64;
+      result = ParseInt64(sv.begin(), sv.end(), &u64,
+                          ParseIntType::SignedAndUnsigned);
+      const_->set_u64(u64);
       break;
+    }
 
     case Opcode::F32Const:
-      const_->type = Type::F32;
-      if (type == ConstType::Expectation &&
-          ParseExpectedNan(&const_->expected) == Result::Ok) {
-        const_->is_expected_nan = true;
-        break;
-      }
-      result = ParseFloat(literal.type, s, end, &const_->f32_bits);
+      result = ParseF32(const_, const_type);
       break;
 
     case Opcode::F64Const:
-      const_->type = Type::F64;
-      if (type == ConstType::Expectation &&
-          ParseExpectedNan(&const_->expected) == Result::Ok) {
-        const_->is_expected_nan = true;
-        break;
-      }
-      result = ParseDouble(literal.type, s, end, &const_->f64_bits);
+      result = ParseF64(const_, const_type);
       break;
 
     case Opcode::V128Const:
-      ErrorUnlessOpcodeEnabled(token);
-      const_->type = Type::V128;
+      ErrorUnlessOpcodeEnabled(opcode_token);
       // Parse V128 Simd Const (16 bytes).
-      result = ParseSimdV128Const(const_, token_type);
+      result = ParseSimdV128Const(const_, token.token_type(), const_type);
       // ParseSimdV128Const report error already, just return here if parser get
       // errors.
       if (Failed(result)) {
@@ -2120,8 +2397,7 @@ Result WastParser::ParseConst(Const* const_, ConstType type) {
   }
 
   if (Failed(result)) {
-    Error(const_->loc, "invalid literal \"" PRIstringview "\"",
-          WABT_PRINTF_STRING_VIEW_ARG(literal.text));
+    Error(const_->loc, "invalid literal \"%s\"", token.to_string().c_str());
     // Return if parser get errors.
     return Result::Error;
   }
@@ -2129,11 +2405,11 @@ Result WastParser::ParseConst(Const* const_, ConstType type) {
   return Result::Ok;
 }
 
-Result WastParser::ParseHostRef(Const* const_) {
-  WABT_TRACE(ParseHostRef);
+Result WastParser::ParseExternref(Const* const_) {
+  WABT_TRACE(ParseExternref);
   Token token = Consume();
   if (!options_->features.reference_types_enabled()) {
-    Error(token.loc, "hostref not allowed");
+    Error(token.loc, "externref not allowed");
     return Result::Error;
   }
 
@@ -2160,8 +2436,7 @@ Result WastParser::ParseHostRef(Const* const_) {
   uint64_t ref_bits;
   Result result = ParseInt64(s, end, &ref_bits, ParseIntType::UnsignedOnly);
 
-  const_->type = Type::Hostref;
-  const_->ref_bits = static_cast<uintptr_t>(ref_bits);
+  const_->set_externref(static_cast<uintptr_t>(ref_bits));
 
   if (Failed(result)) {
     Error(const_->loc, "invalid literal \"" PRIstringview "\"",
@@ -2176,7 +2451,7 @@ Result WastParser::ParseHostRef(Const* const_) {
 Result WastParser::ParseConstList(ConstVector* consts, ConstType type) {
   WABT_TRACE(ParseConstList);
   while (PeekMatchLpar(TokenType::Const) || PeekMatchLpar(TokenType::RefNull) ||
-         PeekMatchLpar(TokenType::RefHost) ||
+         PeekMatchLpar(TokenType::RefExtern) ||
          PeekMatchLpar(TokenType::RefFunc)) {
     Consume();
     Const const_;
@@ -2186,22 +2461,22 @@ Result WastParser::ParseConstList(ConstVector* consts, ConstType type) {
         break;
       case TokenType::RefNull: {
         auto token = Consume();
+        Type type;
+        CHECK_RESULT(ParseRefKind(&type));
         ErrorUnlessOpcodeEnabled(token);
         const_.loc = GetLocation();
-        const_.type = Type::Nullref;
-        const_.ref_bits = 0;
+        const_.set_null(type);
         break;
       }
       case TokenType::RefFunc: {
         auto token = Consume();
         ErrorUnlessOpcodeEnabled(token);
         const_.loc = GetLocation();
-        const_.type = Type::Funcref;
-        const_.ref_bits = 0;
+        const_.set_funcref();
         break;
       }
-      case TokenType::RefHost:
-        CHECK_RESULT(ParseHostRef(&const_));
+      case TokenType::RefExtern:
+        CHECK_RESULT(ParseExternref(&const_));
         break;
       default:
         assert(!"unreachable");
@@ -2424,8 +2699,11 @@ Result WastParser::ParseExpr(ExprList* exprs) {
         auto expr = MakeUnique<TryExpr>(loc);
         CHECK_RESULT(ParseLabelOpt(&expr->block.label));
         CHECK_RESULT(ParseBlockDeclaration(&expr->block.decl));
+        EXPECT(Lpar);
+        EXPECT(Do);
         CHECK_RESULT(ParseInstrList(&expr->block.exprs));
         expr->block.end_loc = GetLocation();
+        EXPECT(Rpar);
         EXPECT(Lpar);
         EXPECT(Catch);
         CHECK_RESULT(ParseTerminatingInstrList(&expr->catch_));
@@ -2502,6 +2780,12 @@ Result WastParser::ParseCommand(Script* script, CommandPtr* out_command) {
 
     case TokenType::Register:
       return ParseRegisterCommand(out_command);
+
+    case TokenType::Input:
+      return ParseInputCommand(out_command);
+
+    case TokenType::Output:
+      return ParseOutputCommand(out_command);
 
     default:
       assert(!"ParseCommand should only be called when IsCommand() is true");
@@ -2643,6 +2927,40 @@ Result WastParser::ParseRegisterCommand(CommandPtr* out_command) {
   EXPECT(Rpar);
   out_command->reset(new RegisterCommand(text, var));
   return Result::Ok;
+}
+
+Result WastParser::ParseInputCommand(CommandPtr*) {
+  // Parse the input command, but always fail since this command is not
+  // actually supported.
+  WABT_TRACE(ParseInputCommand);
+  EXPECT(Lpar);
+  Location loc = GetLocation();
+  EXPECT(Input);
+  Error(loc, "input command is not supported");
+  Var var;
+  std::string text;
+  ParseVarOpt(&var);
+  CHECK_RESULT(ParseQuotedText(&text));
+  EXPECT(Rpar);
+  return Result::Error;
+}
+
+Result WastParser::ParseOutputCommand(CommandPtr*) {
+  // Parse the output command, but always fail since this command is not
+  // actually supported.
+  WABT_TRACE(ParseOutputCommand);
+  EXPECT(Lpar);
+  Location loc = GetLocation();
+  EXPECT(Output);
+  Error(loc, "output command is not supported");
+  Var var;
+  std::string text;
+  ParseVarOpt(&var);
+  if (Peek() == TokenType::Text) {
+    CHECK_RESULT(ParseQuotedText(&text));
+  }
+  EXPECT(Rpar);
+  return Result::Error;
 }
 
 Result WastParser::ParseAction(ActionPtr* out_action) {
@@ -2795,7 +3113,8 @@ Result ParseWatModule(WastLexer* lexer,
   assert(out_module != nullptr);
   assert(options != nullptr);
   WastParser parser(lexer, errors, options);
-  return parser.ParseModule(out_module);
+  CHECK_RESULT(parser.ParseModule(out_module));
+  return Result::Ok;
 }
 
 Result ParseWastScript(WastLexer* lexer,
@@ -2805,7 +3124,9 @@ Result ParseWastScript(WastLexer* lexer,
   assert(out_script != nullptr);
   assert(options != nullptr);
   WastParser parser(lexer, errors, options);
-  return parser.ParseScript(out_script);
+  CHECK_RESULT(parser.ParseScript(out_script));
+  CHECK_RESULT(ResolveNamesScript(out_script->get(), errors));
+  return Result::Ok;
 }
 
 }  // namespace wabt

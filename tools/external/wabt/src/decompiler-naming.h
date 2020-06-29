@@ -19,6 +19,8 @@
 
 #include "src/decompiler-ast.h"
 
+#include <set>
+
 namespace wabt {
 
 inline void RenameToIdentifier(std::string& name, Index i,
@@ -110,6 +112,52 @@ void RenameToIdentifiers(std::vector<T*>& things, BindingHash& bh,
   }
 }
 
+enum {
+  // This a bit arbitrary, change at will.
+  min_content_identifier_size = 7,
+  max_content_identifier_size = 30
+};
+
+void RenameToContents(std::vector<DataSegment*>& segs, BindingHash& bh) {
+  std::string s;
+  for (auto seg : segs) {
+    if (seg->name.substr(0, 2) != "d_") {
+      // This segment was named explicitly by a symbol.
+      // FIXME: this is not a great check, a symbol could start with d_.
+      continue;
+    }
+    s = "d_";
+    for (auto c : seg->data) {
+      if (isalnum(c) || c == '_') {
+        s += static_cast<char>(c);
+      }
+      if (s.size() >= max_content_identifier_size) {
+        // We truncate any very long names, since those make for hard to
+        // format output. They can be somewhat long though, since data segment
+        // references tend to not occur that often.
+        break;
+      }
+    }
+    if (s.size() < min_content_identifier_size) {
+      // It is useful to have a minimum, since if there few printable characters
+      // in a data section, that is probably a sign of binary, and those few
+      // characters are not going to be very significant.
+      continue;
+    }
+    // We could do the same disambiguition as RenameToIdentifier and
+    // GenerateNames do, but if we come up with a clashing name here it is
+    // likely a sign of not very meaningful binary data, so it is easier to
+    // just keep the original generated name in that case.
+    if (bh.count(s) != 0) {
+      continue;
+    }
+    // Remove original entry.
+    bh.erase(seg->name);
+    seg->name = s;
+    bh.emplace(s, Binding(static_cast<Index>(&seg - &segs[0])));
+  }
+}
+
 // Function names may contain arbitrary C++ syntax, so we want to
 // filter those to look like identifiers. A function name may be set
 // by a name section (applied in ReadBinaryIr, called before this function)
@@ -119,6 +167,7 @@ void RenameToIdentifiers(std::vector<T*>& things, BindingHash& bh,
 // this function).
 // To not have to add too many decompiler-specific code into those systems
 // (using a callback??) we instead rename everything here.
+// Also do data section renaming here.
 void RenameAll(Module& module) {
   // We also filter common C++ keywords/STL idents that make for huge
   // identifiers.
@@ -141,9 +190,20 @@ void RenameAll(Module& module) {
     { "4096ul" },
   };
   RenameToIdentifiers(module.funcs, module.func_bindings, &filter);
-  // Also do this for some other kinds of names.
+  // Also do this for some other kinds of names, but without the keyword
+  // substitution.
   RenameToIdentifiers(module.globals, module.global_bindings, nullptr);
   RenameToIdentifiers(module.tables, module.table_bindings, nullptr);
+  RenameToIdentifiers(module.events, module.event_bindings, nullptr);
+  RenameToIdentifiers(module.exports, module.export_bindings, nullptr);
+  RenameToIdentifiers(module.types, module.type_bindings, nullptr);
+  RenameToIdentifiers(module.memories, module.memory_bindings, nullptr);
+  RenameToIdentifiers(module.data_segments, module.data_segment_bindings,
+                      nullptr);
+  RenameToIdentifiers(module.elem_segments, module.elem_segment_bindings,
+                      nullptr);
+  // Special purpose naming for data segments.
+  RenameToContents(module.data_segments, module.data_segment_bindings);
 }
 
 }  // namespace wabt

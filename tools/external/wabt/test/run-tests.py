@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 WebAssembly Community Group participants
 #
@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
 import argparse
 import difflib
 import fnmatch
@@ -36,7 +35,7 @@ IS_WINDOWS = sys.platform == 'win32'
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT_DIR = os.path.dirname(TEST_DIR)
 OUT_DIR = os.path.join(REPO_ROOT_DIR, 'out')
-DEFAULT_TIMEOUT = 10    # seconds
+DEFAULT_TIMEOUT = 120    # seconds
 SLOW_TIMEOUT_MULTIPLIER = 3
 
 
@@ -89,6 +88,11 @@ TOOLS = {
         ('RUN', '%(wasm-interp)s %(temp_file)s.wasm --run-all-exports'),
         ('VERBOSE-ARGS', ['--print-cmd', '-v']),
     ],
+    'run-interp-wasi': [
+        ('RUN', '%(wat2wasm)s %(in_file)s -o %(temp_file)s.wasm'),
+        ('RUN', '%(wasm-interp)s --wasi %(temp_file)s.wasm'),
+        ('VERBOSE-ARGS', ['--print-cmd', '-v']),
+    ],
     'run-interp-spec': [
         ('RUN', '%(wast2json)s %(in_file)s -o %(temp_file)s.json'),
         ('RUN', '%(spectest-interp)s %(temp_file)s.json'),
@@ -117,6 +121,12 @@ TOOLS = {
         ('RUN', '%(gen_wasm_py)s %(in_file)s -o %(temp_file)s.wasm'),
         ('RUN', '%(wasm-strip)s %(temp_file)s.wasm'),
         ('RUN', '%(wasm-objdump)s -h %(temp_file)s.wasm'),
+        ('VERBOSE-ARGS', ['--print-cmd', '-v']),
+    ],
+    'run-gen-wasm-decompile': [
+        ('RUN', '%(gen_wasm_py)s %(in_file)s -o %(temp_file)s.wasm'),
+        ('RUN', '%(wasm-validate)s %(temp_file)s.wasm'),
+        ('RUN', '%(wasm-decompile)s %(temp_file)s.wasm'),
         ('VERBOSE-ARGS', ['--print-cmd', '-v']),
     ],
     'run-opcodecnt': [
@@ -205,6 +215,7 @@ class CommandTemplate(object):
     def __init__(self, exe):
         self.args = SplitArgs(exe)
         self.verbose_args = []
+        self.stdin = None
         self.expected_returncode = 0
 
     def AppendArgs(self, args):
@@ -219,6 +230,9 @@ class CommandTemplate(object):
                 self.verbose_args.append([])
             self.verbose_args[level] += SplitArgs(level_args)
 
+    def SetStdin(self, filename):
+        self.stdin = filename
+
     def _Format(self, cmd, variables):
         return [arg % variables for arg in cmd]
 
@@ -231,14 +245,18 @@ class CommandTemplate(object):
         if extra_args:
             args += extra_args
         args = self._Format(args, variables)
-        return Command(self, FixPythonExecutable(args))
+        stdin = self.stdin
+        if stdin:
+            stdin = stdin % variables
+        return Command(self, FixPythonExecutable(args), stdin)
 
 
 class Command(object):
 
-    def __init__(self, template, args):
+    def __init__(self, template, args, stdin):
         self.template = template
         self.args = args
+        self.stdin = stdin
 
     def GetExpectedReturncode(self):
         return self.template.expected_returncode
@@ -265,23 +283,27 @@ class Command(object):
             kwargs = {}
             if not IS_WINDOWS:
                 kwargs['preexec_fn'] = os.setsid
+            stdin_data = None
+            if self.stdin:
+                stdin_data = open(self.stdin, 'rb').read()
 
             # http://stackoverflow.com/a/10012262: subprocess with a timeout
             # http://stackoverflow.com/a/22582602: kill subprocess and children
             process = subprocess.Popen(self.args, cwd=cwd, env=env,
                                        stdout=None if console_out else subprocess.PIPE,
                                        stderr=None if console_out else subprocess.PIPE,
+                                       stdin=None if not self.stdin else subprocess.PIPE,
                                        **kwargs)
             timer = threading.Timer(timeout, KillProcess)
             try:
                 timer.start()
-                stdout, stderr = process.communicate()
+                stdout, stderr = process.communicate(input=stdin_data)
             finally:
                 returncode = process.returncode
                 process = None
                 timer.cancel()
             if is_timeout.Get():
-                raise Error('TIMEOUT\nSTDOUT:\n%s\nSTDERR:\n%s\n' % (stdout, stderr))
+                raise Error('TIMEOUT')
             duration = time.time() - start_time
         except OSError as e:
             raise Error(str(e))
@@ -472,6 +494,8 @@ class TestInfo(object):
             pass
         elif key == 'TOOL':
             self.SetTool(value)
+        elif key == 'STDIN':
+            self.GetLastCommand().SetStdin(value)
         elif key == 'ENV':
             # Pattern: FOO=1 BAR=stuff
             self.env = dict(x.split('=') for x in value.split())
@@ -504,17 +528,7 @@ class TestInfo(object):
                 else:
                     m = re.match(b'\\s*;;;(.*)$', line)
                     if m:
-                        # The matched string has type bytes, but in python2
-                        # that is the same as str. In python3 that needs to be
-                        # decoded first. If we decode the string in python2 the
-                        # result is a unicode string, which doesn't work
-                        # everywhere (as used in a subprocess environment, for
-                        # example).
-                        if sys.version_info.major == 3:
-                            directive = m.group(1).decode('utf-8').strip()
-                        else:
-                            directive = m.group(1).strip()
-
+                        directive = m.group(1).decode('utf-8').strip()
                         if state == 'header':
                             key, value = directive.split(':', 1)
                             key = key.strip()
@@ -664,9 +678,13 @@ class Status(object):
         sys.stderr.write('\r%s\r' % (' ' * self.last_length))
 
 
-def FindTestFiles(ext, filter_pattern_re):
+def FindTestFiles(ext, filter_pattern_re, exclude_dirs):
     tests = []
     for root, dirs, files in os.walk(TEST_DIR):
+        for ex in exclude_dirs:
+            if ex in dirs:
+                # Filtering out dirs here causes os.walk not to descend into them
+                dirs.remove(ex)
         for f in files:
             path = os.path.join(root, f)
             if os.path.splitext(f)[1] == ext:
@@ -775,7 +793,7 @@ def HandleTestResult(status, info, result, rebase=False):
 
 # Source : http://stackoverflow.com/questions/3041986/python-command-line-yes-no-input
 def YesNoPrompt(question, default='yes'):
-    """Ask a yes/no question via raw_input() and return their answer.
+    """Ask a yes/no question via input() and return their answer.
 
     "question" is a string that is presented to the user.
     "default" is the presumed answer if the user just hits <Enter>.
@@ -796,7 +814,7 @@ def YesNoPrompt(question, default='yes'):
 
     while True:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:
@@ -899,12 +917,17 @@ def main(args):
             parser.error('--stop-interactive only works with -j1')
 
     if options.patterns:
+        exclude_dirs = []
         pattern_re = '|'.join(
             fnmatch.translate('*%s*' % p) for p in options.patterns)
     else:
         pattern_re = '.*'
+        # By default, exclude wasi tests because WASI support is not include
+        # by int the build by default.
+        # TODO(sbc): Find some way to detect the WASI support.
+        exclude_dirs = ['wasi']
 
-    test_names = FindTestFiles('.txt', pattern_re)
+    test_names = FindTestFiles('.txt', pattern_re, exclude_dirs)
 
     if options.list:
         for test_name in test_names:
@@ -959,8 +982,13 @@ def main(args):
     if status.failed:
         sys.stderr.write('**** FAILED %s\n' % ('*' * (80 - 14)))
         for info, result in status.failed_tests:
-            last_cmd = result.GetLastCommand() if result is not None else ''
-            sys.stderr.write('- %s\n    %s\n' % (info.GetName(), last_cmd))
+            if isinstance(result, TestResult):
+                msg = result.GetLastCommand()
+            elif isinstance(result, Error):
+                msg = result
+            else:
+                msg = ''
+            sys.stderr.write('- %s\n    %s\n' % (info.GetName(), msg))
         ret = 1
 
     return ret

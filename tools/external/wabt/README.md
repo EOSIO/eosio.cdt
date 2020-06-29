@@ -1,5 +1,4 @@
 [![Github CI Status](https://github.com/WebAssembly/wabt/workflows/CI/badge.svg)](https://github.com/WebAssembly/wabt)
-[![Build Status](https://travis-ci.org/WebAssembly/wabt.svg?branch=master)](https://travis-ci.org/WebAssembly/wabt) [![Windows status](https://ci.appveyor.com/api/projects/status/8vl5jwtk5ch6r84t/branch/master?svg=true)](https://ci.appveyor.com/project/WebAssembly/wabt/branch/master)
 
 # WABT: The WebAssembly Binary Toolkit
 
@@ -184,7 +183,7 @@ If you want to add new keywords, you'll need to install
 [gperf](https://www.gnu.org/software/gperf/). Before you upload your PR, please
 run `make update-gperf` to update the prebuilt C++ sources in `src/prebuilt/`.
 
-## Running wat2wasm and wast2json
+## Running wat2wasm
 
 Some examples:
 
@@ -198,10 +197,6 @@ $ bin/wat2wasm test.wat -o test.wasm
 # parse spec-test.wast, and write verbose output to stdout (including the
 # meaning of every byte)
 $ bin/wat2wasm spec-test.wast -v
-
-# parse spec-test.wast, and write files to spec-test.json. Modules are written
-# to spec-test.0.wasm, spec-test.1.wasm, etc.
-$ bin/wast2json spec-test.wast -o spec-test.json
 ```
 
 You can use `--help` to get additional help:
@@ -259,6 +254,10 @@ You can use `--help` to get additional help:
 ```console
 $ bin/wasm-interp --help
 ```
+
+## Running wast2json
+
+See [wast2json.md](docs/wast2json.md).
 
 ## Running wasm-decompile
 

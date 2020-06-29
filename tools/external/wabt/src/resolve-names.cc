@@ -58,6 +58,7 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Result OnDataDropExpr(DataDropExpr*) override;
   Result OnMemoryInitExpr(MemoryInitExpr*) override;
   Result OnElemDropExpr(ElemDropExpr*) override;
+  Result OnTableCopyExpr(TableCopyExpr*) override;
   Result OnTableInitExpr(TableInitExpr*) override;
   Result OnTableGetExpr(TableGetExpr*) override;
   Result OnTableSetExpr(TableSetExpr*) override;
@@ -186,7 +187,7 @@ void NameResolver::ResolveGlobalVar(Var* var) {
 }
 
 void NameResolver::ResolveFuncTypeVar(Var* var) {
-  ResolveVar(&current_module_->func_type_bindings, var, "function type");
+  ResolveVar(&current_module_->type_bindings, var, "type");
 }
 
 void NameResolver::ResolveTableVar(Var* var) {
@@ -354,6 +355,12 @@ Result NameResolver::OnElemDropExpr(ElemDropExpr* expr) {
   return Result::Ok;
 }
 
+Result NameResolver::OnTableCopyExpr(TableCopyExpr* expr) {
+  ResolveTableVar(&expr->dst_table);
+  ResolveTableVar(&expr->src_table);
+  return Result::Ok;
+}
+
 Result NameResolver::OnTableInitExpr(TableInitExpr* expr) {
   ResolveElemSegmentVar(&expr->segment_index);
   ResolveTableVar(&expr->table_index);
@@ -477,7 +484,7 @@ Result NameResolver::VisitModule(Module* module) {
   CheckDuplicateBindings(&module->elem_segment_bindings, "elem");
   CheckDuplicateBindings(&module->func_bindings, "function");
   CheckDuplicateBindings(&module->global_bindings, "global");
-  CheckDuplicateBindings(&module->func_type_bindings, "function type");
+  CheckDuplicateBindings(&module->type_bindings, "type");
   CheckDuplicateBindings(&module->table_bindings, "table");
   CheckDuplicateBindings(&module->memory_bindings, "memory");
   CheckDuplicateBindings(&module->event_bindings, "event");
