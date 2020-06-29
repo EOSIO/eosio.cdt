@@ -327,7 +327,6 @@ set(WABT_LIBRARY_SRC
 )
 
 add_library(wabt STATIC ${WABT_LIBRARY_SRC})
-target_compile_definitions(wabt PUBLIC PROJECT_VERSION="${PROJECT_VERSION}")
 
 # libwasm, which implenents the wasm C API
 if (BUILD_LIBWASM)
