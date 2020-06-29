@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
-
 import argparse
 import os
 import subprocess
@@ -44,6 +42,7 @@ ALL_EXAMPLES = [
 SKIP_EXAMPLES = [
     'threads',  # We don't yet support threads
     'finalize',  # This test is really slow
+    'hostref',  # The wasm module is currently invalid (needs subtyping changes)
 ]
 
 IS_WINDOWS = sys.platform == 'win32'

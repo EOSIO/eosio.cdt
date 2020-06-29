@@ -25,6 +25,7 @@
 namespace {
 
 const char* ExprTypeName[] = {
+  "AtomicFence",
   "AtomicLoad",
   "AtomicRmw",
   "AtomicRmwCmpxchg",
@@ -128,7 +129,7 @@ Index Module::GetMemoryIndex(const Var& var) const {
 }
 
 Index Module::GetFuncTypeIndex(const Var& var) const {
-  return func_type_bindings.FindIndex(var);
+  return type_bindings.FindIndex(var);
 }
 
 Index Module::GetEventIndex(const Var& var) const {
@@ -310,17 +311,19 @@ const FuncType* Module::GetFuncType(const Var& var) const {
 }
 
 FuncType* Module::GetFuncType(const Var& var) {
-  Index index = func_type_bindings.FindIndex(var);
-  if (index >= func_types.size()) {
+  Index index = type_bindings.FindIndex(var);
+  if (index >= types.size()) {
     return nullptr;
   }
-  return func_types[index];
+  return cast<FuncType>(types[index]);
 }
 
 Index Module::GetFuncTypeIndex(const FuncSignature& sig) const {
-  for (size_t i = 0; i < func_types.size(); ++i) {
-    if (func_types[i]->sig == sig) {
-      return i;
+  for (size_t i = 0; i < types.size(); ++i) {
+    if (auto* func_type = dyn_cast<FuncType>(types[i])) {
+      if (func_type->sig == sig) {
+        return i;
+      }
     }
   }
   return kInvalidIndex;
@@ -380,13 +383,12 @@ void Module::AppendField(std::unique_ptr<FuncModuleField> field) {
   fields.push_back(std::move(field));
 }
 
-void Module::AppendField(std::unique_ptr<FuncTypeModuleField> field) {
-  FuncType& func_type = field->func_type;
-  if (!func_type.name.empty()) {
-    func_type_bindings.emplace(func_type.name,
-                               Binding(field->loc, func_types.size()));
+void Module::AppendField(std::unique_ptr<TypeModuleField> field) {
+  TypeEntry& type = *field->type;
+  if (!type.name.empty()) {
+    type_bindings.emplace(type.name, Binding(field->loc, types.size()));
   }
-  func_types.push_back(&func_type);
+  types.push_back(&type);
   fields.push_back(std::move(field));
 }
 
@@ -506,8 +508,8 @@ void Module::AppendField(std::unique_ptr<ModuleField> field) {
       AppendField(cast<ExportModuleField>(std::move(field)));
       break;
 
-    case ModuleFieldType::FuncType:
-      AppendField(cast<FuncTypeModuleField>(std::move(field)));
+    case ModuleFieldType::Type:
+      AppendField(cast<TypeModuleField>(std::move(field)));
       break;
 
     case ModuleFieldType::Table:
@@ -636,23 +638,10 @@ void Var::Destroy() {
   }
 }
 
-Const::Const(I32Tag, uint32_t value, const Location& loc_)
-    : loc(loc_), type(Type::I32), u32(value) {}
-
-Const::Const(I64Tag, uint64_t value, const Location& loc_)
-    : loc(loc_), type(Type::I64), u64(value) {}
-
-Const::Const(F32Tag, uint32_t value, const Location& loc_)
-    : loc(loc_), type(Type::F32), f32_bits(value) {}
-
-Const::Const(F64Tag, uint64_t value, const Location& loc_)
-    : loc(loc_), type(Type::F64), f64_bits(value) {}
-
-Const::Const(V128Tag, v128 value, const Location& loc_)
-    : loc(loc_), type(Type::V128), vec128(value) {}
-
 uint8_t ElemSegment::GetFlags(const Module* module) const {
   uint8_t flags = 0;
+
+  bool all_ref_func = elem_type == Type::FuncRef;
 
   switch (kind) {
     case SegmentKind::Active: {
@@ -672,10 +661,11 @@ uint8_t ElemSegment::GetFlags(const Module* module) const {
       break;
   }
 
-  bool all_ref_func = std::all_of(
-      elem_exprs.begin(), elem_exprs.end(), [](const ElemExpr& elem_expr) {
-        return elem_expr.kind == ElemExprKind::RefFunc;
-      });
+  all_ref_func = all_ref_func &&
+                 std::all_of(elem_exprs.begin(), elem_exprs.end(),
+                             [](const ElemExpr& elem_expr) {
+                               return elem_expr.kind == ElemExprKind::RefFunc;
+                             });
   if (!all_ref_func) {
     flags |= SegUseElemExprs;
   }

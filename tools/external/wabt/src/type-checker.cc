@@ -30,7 +30,7 @@ std::string TypesToString(const TypeVector& types,
   }
 
   for (size_t i = 0; i < types.size(); ++i) {
-    result += GetTypeName(types[i]);
+    result += types[i].GetName();
     if (i < types.size() - 1) {
       result += ", ";
     }
@@ -165,31 +165,13 @@ Result TypeChecker::CheckTypeStackEnd(const char* desc) {
   return result;
 }
 
-static bool IsSubtype(Type sub, Type super) {
-  if (super == sub) {
-    return true;
-  }
-  if (IsRefType(super) != IsRefType(sub)) {
-    return false;
-  }
-  if (super == Type::Anyref) {
-    return IsRefType(sub);
-  }
-  if (IsNullableRefType(super)) {
-    return sub == Type::Nullref;
-  }
-  return false;
-}
-
 Result TypeChecker::CheckType(Type actual, Type expected) {
   if (expected == Type::Any || actual == Type::Any) {
     return Result::Ok;
   }
-
-  if (!IsSubtype(actual, expected)) {
+  if (actual != expected) {
     return Result::Error;
   }
-
   return Result::Ok;
 }
 
@@ -369,6 +351,10 @@ Result TypeChecker::OnAtomicWait(Opcode opcode) {
   return CheckOpcode3(opcode);
 }
 
+Result TypeChecker::OnAtomicFence(uint32_t consistency_model) {
+  return Result::Ok;
+}
+
 Result TypeChecker::OnAtomicNotify(Opcode opcode) {
   return CheckOpcode2(opcode);
 }
@@ -404,7 +390,7 @@ Result TypeChecker::OnBrIf(Index depth) {
 }
 
 Result TypeChecker::OnBrOnExn(Index depth, const TypeVector& types) {
-  Result result = PopAndCheck1Type(Type::Exnref, "br_on_exn");
+  Result result = PopAndCheck1Type(Type::ExnRef, "br_on_exn");
   Label* label;
   CHECK_RESULT(GetLabel(depth, &label));
   if (Failed(CheckTypes(types, label->br_types()))) {
@@ -413,7 +399,7 @@ Result TypeChecker::OnBrOnExn(Index depth, const TypeVector& types) {
                TypesToString(types).c_str());
     result = Result::Error;
   }
-  PushType(Type::Exnref);
+  PushType(Type::ExnRef);
   return result;
 }
 
@@ -511,7 +497,7 @@ Result TypeChecker::OnCatch() {
   ResetTypeStackToLabel(label);
   label->label_type = LabelType::Catch;
   label->unreachable = false;
-  PushType(Type::Exnref);
+  PushType(Type::ExnRef);
   return result;
 }
 
@@ -685,23 +671,23 @@ Result TypeChecker::OnTableFill(Type elem_type) {
 }
 
 Result TypeChecker::OnRefFuncExpr(Index) {
-  PushType(Type::Funcref);
+  PushType(Type::FuncRef);
   return Result::Ok;
 }
 
-Result TypeChecker::OnRefNullExpr() {
-  PushType(Type::Nullref);
+Result TypeChecker::OnRefNullExpr(Type type) {
+  PushType(type);
   return Result::Ok;
 }
 
-Result TypeChecker::OnRefIsNullExpr() {
-  Result result = PopAndCheck1Type(Type::Anyref, "ref.is_null");
+Result TypeChecker::OnRefIsNullExpr(Type type) {
+  Result result = PopAndCheck1Type(type, "ref.is_null");
   PushType(Type::I32);
   return result;
 }
 
 Result TypeChecker::OnRethrow() {
-  Result result = PopAndCheck1Type(Type::Exnref, "rethrow");
+  Result result = PopAndCheck1Type(Type::ExnRef, "rethrow");
   CHECK_RESULT(SetUnreachable());
   return result;
 }
@@ -730,8 +716,8 @@ Result TypeChecker::OnSelect(Type expected) {
   result |= PeekAndCheckType(0, Type::I32);
   result |= PeekType(1, &type1);
   result |= PeekType(2, &type2);
-  if (expected == Type::Any) {
-    if (IsRefType(type1) || IsRefType(type2)) {
+  if (expected == Type::Void) {
+    if (type1.IsRef() || type2.IsRef()) {
       result = Result::Error;
     } else {
       result |= CheckType(type1, type2);
@@ -768,11 +754,12 @@ Result TypeChecker::OnTernary(Opcode opcode) {
 }
 
 Result TypeChecker::OnSimdLaneOp(Opcode opcode, uint64_t lane_idx) {
-  Result result = Result::Error;
+  Result result = Result::Ok;
   uint32_t lane_count = opcode.GetSimdLaneCount();
   if (lane_idx >= lane_count) {
     PrintError("lane index must be less than %d (got %" PRIu64 ")", lane_count,
                lane_idx);
+    result = Result::Error;
   }
 
   switch (opcode) {
@@ -784,7 +771,7 @@ Result TypeChecker::OnSimdLaneOp(Opcode opcode, uint64_t lane_idx) {
     case Opcode::F32X4ExtractLane:
     case Opcode::I64X2ExtractLane:
     case Opcode::F64X2ExtractLane:
-      result = CheckOpcode1(opcode);
+      result |= CheckOpcode1(opcode);
       break;
     case Opcode::I8X16ReplaceLane:
     case Opcode::I16X8ReplaceLane:
@@ -792,7 +779,7 @@ Result TypeChecker::OnSimdLaneOp(Opcode opcode, uint64_t lane_idx) {
     case Opcode::F32X4ReplaceLane:
     case Opcode::I64X2ReplaceLane:
     case Opcode::F64X2ReplaceLane:
-      result = CheckOpcode2(opcode);
+      result |= CheckOpcode2(opcode);
       break;
     default:
       WABT_UNREACHABLE;
@@ -801,16 +788,17 @@ Result TypeChecker::OnSimdLaneOp(Opcode opcode, uint64_t lane_idx) {
 }
 
 Result TypeChecker::OnSimdShuffleOp(Opcode opcode, v128 lane_idx) {
-  Result result = Result::Error;
+  Result result = Result::Ok;
   uint8_t simd_data[16];
   memcpy(simd_data, &lane_idx, 16);
   for (int i = 0; i < 16; i++) {
     if (simd_data[i] >= 32) {
       PrintError("lane index must be less than 32 (got %d)", simd_data[i]);
+      result = Result::Error;
     }
   }
 
-  result = CheckOpcode2(opcode);
+  result |= CheckOpcode2(opcode);
   return result;
 }
 

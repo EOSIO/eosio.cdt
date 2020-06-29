@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 WebAssembly Community Group participants
 #
@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
 import argparse
 import os
 import sys
@@ -93,6 +92,7 @@ def main(args):
     ProcessProposalDir('sign-extension-ops', '--enable-sign-extension')
     ProcessProposalDir('bulk-memory-operations', '--enable-bulk-memory')
     ProcessProposalDir('reference-types', '--enable-reference-types')
+    ProcessProposalDir('simd', '--enable-simd')
 
     return 0
 

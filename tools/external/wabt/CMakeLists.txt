@@ -14,14 +14,32 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 2.6)
-project(WABT)
+cmake_minimum_required(VERSION 3.0.0)
+project(WABT VERSION 1.0.17)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# For git users, attempt to generate a more useful version string
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+  find_package(Git QUIET REQUIRED)
+  execute_process(COMMAND
+          "${GIT_EXECUTABLE}" --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git describe --tags
+          RESULT_VARIABLE
+              GIT_VERSION_RESULT
+          OUTPUT_VARIABLE
+              GIT_VERSION
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if (${GIT_VERSION_RESULT})
+    message(WARNING "Error running git describe to determine version")
+  else ()
+    set(CMAKE_PROJECT_VERSION "${CMAKE_PROJECT_VERSION} (${GIT_VERSION})")
+  endif ()
+endif ()
 
 option(BUILD_TESTS "Build GTest-based tests" OFF)
 option(USE_SYSTEM_GTEST "Use system GTest, instead of building" OFF)
 option(BUILD_TOOLS "Build wabt commandline tools" ON)
+option(BUILD_LIBWASM "Build libwasm" OFF)
 option(USE_ASAN "Use address sanitizer" OFF)
 option(USE_MSAN "Use memory sanitizer" OFF)
 option(USE_LSAN "Use leak sanitizer" OFF)
@@ -29,6 +47,9 @@ option(USE_UBSAN "Use undefined behavior sanitizer" OFF)
 option(CODE_COVERAGE "Build with code coverage enabled" OFF)
 option(WITH_EXCEPTIONS "Build with exceptions enabled" OFF)
 option(WERROR "Build with warnings as errors" OFF)
+# WASI support is still a work in progress.
+# Only a handful of syscalls are supported at this point.
+option(WITH_WASI "Build WASI support via uvwasi" OFF)
 
 if (MSVC)
   set(COMPILER_IS_CLANG 0)
@@ -58,7 +79,6 @@ include(CheckSymbolExists)
 check_include_file("alloca.h" HAVE_ALLOCA_H)
 check_include_file("unistd.h" HAVE_UNISTD_H)
 check_symbol_exists(snprintf "stdio.h" HAVE_SNPRINTF)
-check_symbol_exists(sysconf "unistd.h" HAVE_SYSCONF)
 check_symbol_exists(strcasecmp "strings.h" HAVE_STRCASECMP)
 
 if (WIN32)
@@ -68,22 +88,6 @@ endif ()
 include(CheckTypeSize)
 check_type_size(ssize_t SSIZE_T)
 check_type_size(size_t SIZEOF_SIZE_T)
-
-FIND_PACKAGE(Git QUIET REQUIRED)
-EXECUTE_PROCESS(COMMAND
-        "${GIT_EXECUTABLE}" --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git describe --tags
-        RESULT_VARIABLE
-            GIT_HASH_RESULT
-        OUTPUT_VARIABLE
-            GIT_HASH
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-IF(${GIT_HASH_RESULT} EQUAL 0)
-    SET(WABT_VERSION_INFO "${GIT_HASH}")
-ELSE()
-    MESSAGE(WARNING "Error running git describe to determine version")
-    SET(WABT_VERSION_INFO "(unable to determine version)")
-ENDIF()
 
 configure_file(
   ${WABT_SOURCE_DIR}/src/config.h.in
@@ -117,6 +121,7 @@ else ()
     -Wuninitialized
   )
 
+  set(CMAKE_CXX_EXTENSIONS OFF)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wold-style-cast")
 
   if (WERROR)
@@ -132,11 +137,11 @@ else ()
   # definition, and some libcs (e.g. glibc2.17 and earlier) follow that.
   add_definitions(-D__STDC_LIMIT_MACROS=1 -D__STDC_FORMAT_MACROS=1)
 
-  if (MINGW)
-    # _POSIX is needed to ensure we use mingw printf
+  if (MINGW OR CYGWIN)
+    # On MINGW, _POSIX_C_SOURCE is needed to ensure we use mingw printf
     # instead of the VC runtime one.
-    add_definitions(-D_POSIX)
-  endif ()
+    add_definitions(-D_POSIX_C_SOURCE=200809L)
+  endif()
 
   if (COMPILER_IS_GNU)
     # disable -Wclobbered: it seems to be guessing incorrectly about a local
@@ -284,6 +289,8 @@ set(WABT_LIBRARY_SRC
   src/option-parser.cc
   src/resolve-names.h
   src/resolve-names.cc
+  src/shared-validator.h
+  src/shared-validator.cc
   src/stream.h
   src/stream.cc
   src/string-view.h
@@ -292,6 +299,7 @@ set(WABT_LIBRARY_SRC
   src/token.cc
   src/tracing.h
   src/tracing.cc
+  src/type.h
   src/type-checker.h
   src/type-checker.cc
   src/utf8.h
@@ -308,311 +316,331 @@ set(WABT_LIBRARY_SRC
   # TODO(binji): Move this into its own library?
   src/interp/binary-reader-interp.h
   src/interp/binary-reader-interp.cc
-  src/interp/binary-reader-metadata.h
-  src/interp/binary-reader-metadata.cc
   src/interp/interp.h
   src/interp/interp.cc
-  src/interp/interp-disassemble.cc
-  src/interp/interp-trace.cc
+  src/interp/interp-inl.h
+  src/interp/interp-math.h
+  src/interp/interp-util.h
+  src/interp/interp-util.cc
+  src/interp/istream.h
+  src/interp/istream.cc
 )
 
 add_library(wabt STATIC ${WABT_LIBRARY_SRC})
+target_compile_definitions(wabt PUBLIC PROJECT_VERSION="${PROJECT_VERSION}")
 
 # libwasm, which implenents the wasm C API
-#add_library(wasm SHARED ${WABT_LIBRARY_SRC} src/interp/interp-wasm-c-api.cc)
-add_library(wasm STATIC ${WABT_LIBRARY_SRC} src/interp/interp-wasm-c-api.cc)
-target_link_libraries(wasm wabt)
-target_include_directories(wasm PUBLIC third_party/wasm-c-api/include)
-if (COMPILER_IS_MSVC)
-  target_compile_definitions(wasm PRIVATE "WASM_API_EXTERN=__declspec(dllexport)")
-else ()
-  target_compile_options(wasm PRIVATE -Wno-old-style-cast)
-  target_compile_definitions(wasm PRIVATE "WASM_API_EXTERN=__attribute__((visibility(\"default\")))")
+if (BUILD_LIBWASM)
+  add_library(wasm SHARED ${WABT_LIBRARY_SRC} src/interp/interp-wasm-c-api.cc)
+  target_link_libraries(wasm wabt)
+  target_include_directories(wasm PUBLIC third_party/wasm-c-api/include)
+  if (COMPILER_IS_MSVC)
+    target_compile_definitions(wasm PRIVATE "WASM_API_EXTERN=__declspec(dllexport)")
+  else ()
+    target_compile_options(wasm PRIVATE -Wno-old-style-cast)
+    target_compile_definitions(wasm PRIVATE "WASM_API_EXTERN=__attribute__((visibility(\"default\")))")
+  endif ()
+  set_target_properties(wasm PROPERTIES CXX_VISIBILITY_PRESET hidden)
 endif ()
-set_target_properties(wasm PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-if (NOT EMSCRIPTEN)
-  if (CODE_COVERAGE)
-    add_definitions("-fprofile-arcs -ftest-coverage")
-    if (COMPILER_IS_CLANG)
-      set(CMAKE_EXE_LINKER_FLAGS "--coverage")
-    else ()
-      link_libraries(gcov)
-    endif ()
+if (CODE_COVERAGE)
+  add_definitions("-fprofile-arcs -ftest-coverage")
+  if (COMPILER_IS_CLANG)
+    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+  else ()
+    link_libraries(gcov)
+  endif ()
+endif ()
+
+include(CMakeParseArguments)
+function(wabt_executable)
+  cmake_parse_arguments(EXE "WITH_LIBM;INSTALL" "NAME" "SOURCES;LIBS" ${ARGN})
+
+  # Always link libwabt.
+  set(EXE_LIBS "${EXE_LIBS};wabt")
+
+  # Optionally link libm.
+  if (EXE_WITH_LIBM AND (COMPILER_IS_CLANG OR COMPILER_IS_GNU))
+    set(EXE_LIBS "${EXE_LIBS};m")
   endif ()
 
-  function(wabt_executable)
-    cmake_parse_arguments(EXE "WITH_LIBM;INSTALL" "NAME" "SOURCES;LIBS" ${ARGN})
+  add_executable(${EXE_NAME} ${EXE_SOURCES})
+  add_dependencies(everything ${EXE_NAME})
+  target_link_libraries(${EXE_NAME} ${EXE_LIBS})
+  set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 11)
+  set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+  if (EXE_INSTALL)
+    list(APPEND WABT_EXECUTABLES ${EXE_NAME})
+    set(WABT_EXECUTABLES ${WABT_EXECUTABLES} PARENT_SCOPE)
+
+    add_custom_target(${EXE_NAME}-copy-to-bin ALL
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${WABT_SOURCE_DIR}/bin
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EXE_NAME}> ${WABT_SOURCE_DIR}/bin
+      DEPENDS ${EXE_NAME}
+    )
+  endif ()
+endfunction()
+
+if (BUILD_TOOLS)
+
+   # eospp
+   wabt_executable(
+     NAME ${EOSIO_POSTPASS}
+     SOURCES src/tools/postpass.cc
+     INSTALL
+   )
+
+  # wat2wasm
+  wabt_executable(
+    NAME wat2wasm
+    SOURCES src/tools/wat2wasm.cc
+    INSTALL
+  )
+
+  # wast2json
+  wabt_executable(
+    NAME wast2json
+    SOURCES src/tools/wast2json.cc
+    #INSTALL
+  )
+
+  # wasm2wat
+  wabt_executable(
+    NAME wasm2wat
+    SOURCES src/tools/wasm2wat.cc
+    INSTALL
+  )
+
+  # wasm2c
+  wabt_executable(
+    NAME wasm2c
+    SOURCES src/tools/wasm2c.cc src/c-writer.cc
+    #INSTALL
+  )
+
+  # wasm-opcodecnt
+  wabt_executable(
+    NAME wasm-opcodecnt
+    SOURCES src/tools/wasm-opcodecnt.cc src/binary-reader-opcnt.cc
+    #INSTALL
+  )
+
+  # wasm-objdump
+  wabt_executable(
+    NAME wasm-objdump
+    SOURCES src/tools/wasm-objdump.cc src/binary-reader-objdump.cc
+    #INSTALL
+  )
+
+  if(WITH_WASI)
+    add_subdirectory("third_party/uvwasi" EXCLUDE_FROM_ALL)
+    include_directories(third_party/uvwasi/include)
+    add_definitions(-DWITH_WASI)
+    set(INTERP_LIBS uvwasi_a)
+    set(EXTRA_INTERP_SRC src/interp/interp-wasi.cc)
+  endif()
+
+  # wasm-interp
+
+  wabt_executable(
+    NAME wasm-interp
+    SOURCES src/tools/wasm-interp.cc ${EXTRA_INTERP_SRC}
+    LIBS ${INTERP_LIBS}
+    WITH_LIBM
+    #INSTALL
+  )
 
   # spectest-interp
-  wabt_executable(spectest-interp src/tools/spectest-interp.cc)
-  if (COMPILER_IS_CLANG OR COMPILER_IS_GNU)
-    target_link_libraries(spectest-interp m)
+  wabt_executable(
+    NAME spectest-interp
+    SOURCES src/tools/spectest-interp.cc
+    WITH_LIBM
+    #INSTALL
+  )
+
+  # wat-desugar
+  wabt_executable(
+    NAME wat-desugar
+    SOURCES src/tools/wat-desugar.cc
+    #INSTALL
+  )
+
+  # wasm-validate
+  wabt_executable(
+    NAME wasm-validate
+    SOURCES src/tools/wasm-validate.cc
+    #INSTALL
+  )
+
+  # wasm-strip
+  wabt_executable(
+    NAME wasm-strip
+    SOURCES src/tools/wasm-strip.cc
+    INSTALL
+  )
+
+  # wasm-decompile
+  wabt_executable(
+    NAME wasm-decompile
+    SOURCES src/tools/wasm-decompile.cc
+    #INSTALL
+  )
+endif ()
+
+# Python 3.5 is the version shipped in Ubuntu Xenial
+find_package(PythonInterp 3.5)
+if(BUILD_TESTS AND (NOT PYTHONINTERP_FOUND))
+  set(BUILD_TESTS OFF) 
+  message(WARNING "Skipping tests. Python 3 is required for wabt testing. Please install python3 to run tests.")
+endif()
+
+find_package(Threads)
+if (BUILD_TESTS)
+  if (NOT USE_SYSTEM_GTEST)
+    if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gtest/googletest)
+      message(FATAL_ERROR "Can't find third_party/gtest. Run git submodule update --init, or disable with CMake -DBUILD_TESTS=OFF.")
+    endif ()
+
+    include_directories(
+      third_party/gtest/googletest
+      third_party/gtest/googletest/include
+    )
+
+    # gtest
+    add_library(gtest STATIC
+      third_party/gtest/googletest/src/gtest-all.cc
+    )
+
+    add_library(gtest_main STATIC
+      third_party/gtest/googletest/src/gtest_main.cc
+    )
   endif ()
-    # Always link libwabt.
-    set(EXE_LIBS "${EXE_LIBS};wabt")
 
-    # Optionally link libm.
-    if (EXE_WITH_LIBM AND (COMPILER_IS_CLANG OR COMPILER_IS_GNU))
-      set(EXE_LIBS "${EXE_LIBS};m")
+  # hexfloat-test
+  set(HEXFLOAT_TEST_SRCS
+    src/literal.cc
+    src/test-hexfloat.cc
+  )
+  wabt_executable(
+    NAME hexfloat_test
+    SOURCES ${HEXFLOAT_TEST_SRCS}
+    LIBS gtest_main gtest ${CMAKE_THREAD_LIBS_INIT}
+  )
+
+  # wabt-unittests
+  set(UNITTESTS_SRCS
+    src/test-binary-reader.cc
+    src/test-circular-array.cc
+    src/test-interp.cc
+    src/test-intrusive-list.cc
+    src/test-literal.cc
+    src/test-option-parser.cc
+    src/test-string-view.cc
+    src/test-filenames.cc
+    src/test-utf8.cc
+    src/test-wast-parser.cc
+  )
+  wabt_executable(
+    NAME wabt-unittests
+    SOURCES ${UNITTESTS_SRCS}
+    LIBS gtest_main gtest ${CMAKE_THREAD_LIBS_INIT}
+  )
+
+  if (NOT CMAKE_VERSION VERSION_LESS "3.2")
+    set(USES_TERMINAL USES_TERMINAL)
+  endif ()
+
+  # test running
+  set(RUN_TESTS_PY ${WABT_SOURCE_DIR}/test/run-tests.py)
+
+  add_custom_target(run-tests
+    COMMAND ${PYTHON_EXECUTABLE} ${RUN_TESTS_PY} --bindir $<TARGET_FILE_DIR:wat2wasm>
+    DEPENDS ${WABT_EXECUTABLES}
+    WORKING_DIRECTORY ${WABT_SOURCE_DIR}
+    ${USES_TERMINAL}
+  )
+
+  add_custom_target(run-unittests
+    COMMAND $<TARGET_FILE:wabt-unittests>
+    DEPENDS wabt-unittests
+    WORKING_DIRECTORY ${WABT_SOURCE_DIR}
+    ${USES_TERMINAL}
+  )
+
+  add_custom_target(run-c-api-tests
+    COMMAND ${PYTHON_EXECUTABLE} ${WABT_SOURCE_DIR}/test/run-c-api-examples.py --bindir $<TARGET_FILE_DIR:wat2wasm>
+    WORKING_DIRECTORY ${WABT_SOURCE_DIR}
+    ${USES_TERMINAL}
+  )
+
+  add_custom_target(check DEPENDS run-unittests run-tests run-c-api-tests)
+
+  function(c_api_example NAME)
+    set(EXENAME wasm-c-api-${NAME})
+    add_executable(${EXENAME} third_party/wasm-c-api/example/${NAME}.c)
+    if (NOT COMPILER_IS_MSVC)
+      set_target_properties(${EXENAME} PROPERTIES COMPILE_FLAGS "-std=gnu11 -Wno-pointer-to-int-cast")
     endif ()
-
-    add_executable(${EXE_NAME} ${EXE_SOURCES})
-    add_dependencies(everything ${EXE_NAME})
-    target_link_libraries(${EXE_NAME} ${EXE_LIBS})
-    set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD 11)
-    set_property(TARGET ${EXE_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
-
-    if (EXE_INSTALL)
-      list(APPEND WABT_EXECUTABLES ${EXE_NAME})
-      set(WABT_EXECUTABLES ${WABT_EXECUTABLES} PARENT_SCOPE)
-
-      add_custom_target(${EXE_NAME}-copy-to-bin ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EXE_NAME}> ${CMAKE_BINARY_DIR}/bin
-        DEPENDS ${EXE_NAME}
-      )
-    endif ()
+    target_link_libraries(${EXENAME} wasm Threads::Threads)
+    add_custom_target(${EXENAME}-copy-to-bin ALL
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${WABT_SOURCE_DIR}/bin
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EXENAME}> ${WABT_SOURCE_DIR}/bin/
+      COMMAND ${CMAKE_COMMAND} -E copy ${WABT_SOURCE_DIR}/third_party/wasm-c-api/example/${NAME}.wasm $<TARGET_FILE_DIR:${EXENAME}>/
+      COMMAND ${CMAKE_COMMAND} -E copy ${WABT_SOURCE_DIR}/third_party/wasm-c-api/example/${NAME}.wasm ${WABT_SOURCE_DIR}/bin/
+      DEPENDS ${EXENAME}
+    )
+    add_dependencies(run-c-api-tests ${EXENAME})
   endfunction()
 
-  if (BUILD_TOOLS)
-
-    # eospp
-    wabt_executable(
-      NAME ${EOSIO_POSTPASS}
-      SOURCES src/tools/postpass.cc
-      INSTALL
-    )
-
-    # wat2wasm
-    wabt_executable(
-      NAME wat2wasm
-      SOURCES src/tools/wat2wasm.cc
-      INSTALL
-    )
-
-    # wast2json
-    wabt_executable(
-      NAME wast2json
-      SOURCES src/tools/wast2json.cc
-      #INSTALL
-    )
-
-    # wasm2wat
-    wabt_executable(
-      NAME wasm2wat
-      SOURCES src/tools/wasm2wat.cc
-      #INSTALL
-    )
-
-    # wasm2c
-    wabt_executable(
-      NAME wasm2c
-      SOURCES src/tools/wasm2c.cc src/c-writer.cc
-      #INSTALL
-    )
-
-    # wasm-opcodecnt
-    wabt_executable(
-      NAME wasm-opcodecnt
-      SOURCES src/tools/wasm-opcodecnt.cc src/binary-reader-opcnt.cc
-      #INSTALL
-    )
-
-    # wasm-objdump
-    wabt_executable(
-      NAME wasm-objdump
-      SOURCES src/tools/wasm-objdump.cc src/binary-reader-objdump.cc
-      #INSTALL
-    )
-
-    # wasm-interp
-    wabt_executable(
-      NAME wasm-interp
-      SOURCES src/tools/wasm-interp.cc
-      WITH_LIBM
-      #INSTALL
-    )
-
-    # spectest-interp
-    wabt_executable(
-      NAME spectest-interp
-      SOURCES src/tools/spectest-interp.cc
-      WITH_LIBM
-      #INSTALL
-    )
-
-    # wat-desugar
-    wabt_executable(
-      NAME wat-desugar
-      SOURCES src/tools/wat-desugar.cc
-      #INSTALL
-    )
-
-    # wasm-validate
-    wabt_executable(
-      NAME wasm-validate
-      SOURCES src/tools/wasm-validate.cc
-      #INSTALL
-    )
-
-    # wasm-strip
-    wabt_executable(
-      NAME wasm-strip
-      SOURCES src/tools/wasm-strip.cc
-      INSTALL
-    )
-
-    # wasm-decompile
-    wabt_executable(
-      NAME wasm-decompile
-      SOURCES src/tools/wasm-decompile.cc
-      #INSTALL
-    )
+  c_api_example(callback)
+  c_api_example(finalize)
+  c_api_example(global)
+  c_api_example(hello)
+  c_api_example(hostref)
+  c_api_example(multi)
+  c_api_example(memory)
+  c_api_example(reflect)
+  c_api_example(serialize)
+  c_api_example(start)
+  c_api_example(table)
+  c_api_example(trap)
+  if (NOT WIN32)
+    # depends on pthreads
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    c_api_example(threads)
   endif ()
+endif ()
 
-  find_package(Threads)
-  if (BUILD_TESTS)
-    if (NOT USE_SYSTEM_GTEST)
-      if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gtest/googletest)
-        message(FATAL_ERROR "Can't find third_party/gtest. Run git submodule update --init, or disable with CMake -DBUILD_TESTS=OFF.")
-      endif ()
-
-      include_directories(
-        third_party/gtest/googletest
-        third_party/gtest/googletest/include
-      )
-
-      # gtest
-      add_library(gtest STATIC
-        third_party/gtest/googletest/src/gtest-all.cc
-      )
-
-      add_library(gtest_main STATIC
-        third_party/gtest/googletest/src/gtest_main.cc
-      )
+# install
+if (BUILD_TOOLS OR BUILD_TESTS)
+  install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
+  if (UNIX)
+    if (NOT CMAKE_INSTALL_MANDIR)
+      include(GNUInstallDirs)
     endif ()
-
-    # hexfloat-test
-    set(HEXFLOAT_TEST_SRCS
-      src/literal.cc
-      src/test-hexfloat.cc
-    )
-    wabt_executable(
-      NAME hexfloat_test
-      SOURCES ${HEXFLOAT_TEST_SRCS}
-      LIBS gtest_main gtest ${CMAKE_THREAD_LIBS_INIT}
-    )
-
-    # wabt-unittests
-    set(UNITTESTS_SRCS
-      src/test-binary-reader.cc
-      src/test-circular-array.cc
-      src/test-interp.cc
-      src/test-intrusive-list.cc
-      src/test-literal.cc
-      src/test-option-parser.cc
-      src/test-string-view.cc
-      src/test-filenames.cc
-      src/test-utf8.cc
-      src/test-wast-parser.cc
-    )
-    wabt_executable(
-      NAME wabt-unittests
-      SOURCES ${UNITTESTS_SRCS}
-      LIBS gtest_main gtest ${CMAKE_THREAD_LIBS_INIT}
-    )
-
-    if (NOT CMAKE_VERSION VERSION_LESS "3.2")
-      set(USES_TERMINAL USES_TERMINAL)
-    endif ()
-
-    # test running
-    # TODO(sbc): Requrie python3 for running tests.
-    # For now we don't set a version here due to and issue with github actions
-    # where python 2.7 is in the PATH as "python.exe" but a mingw version is
-    # installed as "python2.7.exe" and cmake will alwasy choose the later (which
-    # we don't want) if we specify 2.7 explictly here.
-    # See: https://github.com/actions/setup-python/issues/40
-    find_package(PythonInterp REQUIRED)
-    set(RUN_TESTS_PY ${WABT_SOURCE_DIR}/test/run-tests.py)
-
-    add_custom_target(run-tests
-      COMMAND ${PYTHON_EXECUTABLE} ${RUN_TESTS_PY} --bindir $<TARGET_FILE_DIR:wat2wasm>
-      DEPENDS ${WABT_EXECUTABLES}
-      WORKING_DIRECTORY ${WABT_SOURCE_DIR}
-      ${USES_TERMINAL}
-    )
-
-    add_custom_target(run-unittests
-      COMMAND $<TARGET_FILE:wabt-unittests>
-      DEPENDS wabt-unittests
-      WORKING_DIRECTORY ${WABT_SOURCE_DIR}
-      ${USES_TERMINAL}
-    )
-
-    add_custom_target(run-c-api-tests
-      COMMAND ${PYTHON_EXECUTABLE} ${WABT_SOURCE_DIR}/test/run-c-api-examples.py --bindir $<TARGET_FILE_DIR:wat2wasm>
-      WORKING_DIRECTORY ${WABT_SOURCE_DIR}
-      ${USES_TERMINAL}
-    )
-
-    add_custom_target(check DEPENDS run-unittests run-tests run-c-api-tests)
-
-    function(c_api_example NAME)
-      set(EXENAME wasm-c-api-${NAME})
-      add_executable(${EXENAME} third_party/wasm-c-api/example/${NAME}.c)
-      if (NOT COMPILER_IS_MSVC)
-        set_target_properties(${EXENAME} PROPERTIES COMPILE_FLAGS "-std=gnu11 -Wno-pointer-to-int-cast")
-      endif ()
-      target_link_libraries(${EXENAME} wasm Threads::Threads)
-      add_custom_target(${EXENAME}-copy-to-bin ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${WABT_SOURCE_DIR}/bin
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EXENAME}> ${WABT_SOURCE_DIR}/bin/
-        COMMAND ${CMAKE_COMMAND} -E copy ${WABT_SOURCE_DIR}/third_party/wasm-c-api/example/${NAME}.wasm $<TARGET_FILE_DIR:${EXENAME}>/
-        COMMAND ${CMAKE_COMMAND} -E copy ${WABT_SOURCE_DIR}/third_party/wasm-c-api/example/${NAME}.wasm ${WABT_SOURCE_DIR}/bin/
-        DEPENDS ${EXENAME}
-      )
-      add_dependencies(run-c-api-tests ${EXENAME})
-    endfunction()
-
-    c_api_example(callback)
-    c_api_example(finalize)
-    c_api_example(global)
-    c_api_example(hello)
-    c_api_example(hostref)
-    c_api_example(multi)
-    c_api_example(memory)
-    c_api_example(reflect)
-    c_api_example(serialize)
-    c_api_example(start)
-    c_api_example(table)
-    c_api_example(trap)
-    if (NOT WIN32)
-      # depends on pthreads
-      set(THREADS_PREFER_PTHREAD_FLAG ON)
-      find_package(Threads REQUIRED)
-      c_api_example(threads)
-    endif ()
+    file(GLOB MAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/man/*.1")
+    foreach(MAN_FILE ${MAN_FILES})
+      install(FILES ${MAN_FILE}
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/)
+    endforeach()
   endif ()
+endif ()
 
-  # install
-  if (BUILD_TOOLS OR BUILD_TESTS)
-    install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
-    if (UNIX)
-      if (NOT CMAKE_INSTALL_MANDIR)
-        include(GNUInstallDirs)
-      endif ()
-      file(GLOB MAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/man/*.1")
-      foreach(MAN_FILE ${MAN_FILES})
-        install(FILES ${MAN_FILE}
-          DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/)
-      endforeach()
-    endif ()
-  endif ()
+if (EMSCRIPTEN)
+  # flags for all emscripten builds
 
-else ()
-  # emscripten stuff
+  # exceptions are never needed
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
+
+  # build to JS for now, as node.js doesn't have code caching for wasm yet, and
+  # wasm startup times are slower
+  foreach(variable CMAKE_EXE_LINKER_FLAGS)
+    set(${variable} "${${variable}} -s NODERAWFS -s SINGLE_FILE -s WASM=0 -Oz -s ALLOW_MEMORY_GROWTH=1")
+  endforeach(variable)
+
+  # wabt.js
 
   # just dump everything into one binary so we can reference it from JavaScript
   add_definitions(-Wno-warn-absolute-paths)
@@ -630,12 +658,8 @@ else ()
     -s EXPORTED_FUNCTIONS=\"@${EMSCRIPTEN_EXPORTED_JSON}\"
     -s RESERVED_FUNCTION_POINTERS=10
     -s NO_EXIT_RUNTIME=1
-    -s ALLOW_MEMORY_GROWTH=1
     -s MODULARIZE=1
     -s EXPORT_NAME=\"'WabtModule'\"
-    -s WASM=0
-    -Oz
-    --llvm-lto 1
   )
   string(REPLACE ";" " " LIBWABT_LINK_FLAGS_STR "${LIBWABT_LINK_FLAGS}")
 

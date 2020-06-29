@@ -74,57 +74,113 @@ struct Var {
 typedef std::vector<Var> VarVector;
 
 struct Const {
-  Const() : Const(I32Tag(), 0, Location()) {}
+  static constexpr uintptr_t kRefNullBits = ~uintptr_t(0);
+
+  Const() : Const(Type::I32, uint32_t(0)) {}
 
   static Const I32(uint32_t val = 0, const Location& loc = Location()) {
-    return Const(I32Tag(), val, loc);
+    return Const(Type::I32, val, loc);
   }
-
   static Const I64(uint64_t val = 0, const Location& loc = Location()) {
-    return Const(I64Tag(), val, loc);
+    return Const(Type::I64, val, loc);
   }
-
   static Const F32(uint32_t val = 0, const Location& loc = Location()) {
-    return Const(F32Tag(), val, loc);
+    return Const(Type::F32, val, loc);
   }
-
   static Const F64(uint64_t val = 0, const Location& loc = Location()) {
-    return Const(F64Tag(), val, loc);
+    return Const(Type::F64, val, loc);
   }
-
   static Const V128(v128 val, const Location& loc = Location()) {
-    return Const(V128Tag(), val, loc);
+    return Const(Type::V128, val, loc);
   }
 
-  Location loc;
-  Type type;
+  Type type() const { return type_; }
+  Type lane_type() const { assert(type_ == Type::V128); return lane_type_; }
 
-  bool is_expected_nan = false;
-  union {
-    uint32_t u32;
-    uint64_t u64;
-    uint32_t f32_bits;
-    uint64_t f64_bits;
-    uintptr_t ref_bits;
-    v128 vec128;
-    ExpectedNan expected;
-  };
+  int lane_count() const {
+    switch (lane_type()) {
+      case Type::I8:  return 16;
+      case Type::I16: return 8;
+      case Type::I32: return 4;
+      case Type::I64: return 2;
+      case Type::F32: return 4;
+      case Type::F64: return 2;
+      default: WABT_UNREACHABLE;
+    }
+  }
+
+  uint32_t u32() const { return data_.u32(0); }
+  uint64_t u64() const { return data_.u64(0); }
+  uint32_t f32_bits() const { return data_.f32_bits(0); }
+  uint64_t f64_bits() const { return data_.f64_bits(0); }
+  uintptr_t ref_bits() const { return data_.To<uintptr_t>(0); }
+  v128 vec128() const { return data_; }
+
+  template <typename T>
+  T v128_lane(int lane) const { return data_.To<T>(lane); }
+
+  void set_u32(uint32_t x) { From(Type::I32, x); }
+  void set_u64(uint64_t x) { From(Type::I64, x); }
+  void set_f32(uint32_t x) { From(Type::F32, x); }
+  void set_f64(uint64_t x) { From(Type::F64, x); }
+
+  void set_v128_u8(int lane, uint8_t x) { set_v128_lane(lane, Type::I8, x); }
+  void set_v128_u16(int lane, uint16_t x) { set_v128_lane(lane, Type::I16, x); }
+  void set_v128_u32(int lane, uint32_t x) { set_v128_lane(lane, Type::I32, x); }
+  void set_v128_u64(int lane, uint64_t x) { set_v128_lane(lane, Type::I64, x); }
+  void set_v128_f32(int lane, uint32_t x) { set_v128_lane(lane, Type::F32, x); }
+  void set_v128_f64(int lane, uint64_t x) { set_v128_lane(lane, Type::F64, x); }
+
+  // Only used for expectations. (e.g. wast assertions)
+  void set_f32(ExpectedNan nan) { set_f32(0); set_expected_nan(0, nan); }
+  void set_f64(ExpectedNan nan) { set_f64(0); set_expected_nan(0, nan); }
+  void set_funcref()            { From<uintptr_t>(Type::FuncRef, 0); }
+  void set_externref(uintptr_t x) { From(Type::ExternRef, x); }
+  void set_null(Type type)      { From<uintptr_t>(type, kRefNullBits); }
+
+  bool is_expected_nan(int lane = 0) const {
+    return expected_nan(lane) != ExpectedNan::None;
+  }
+
+  ExpectedNan expected_nan(int lane = 0) const {
+    return lane < 4 ? nan_[lane] : ExpectedNan::None;
+  }
+
+  void set_expected_nan(int lane, ExpectedNan nan) {
+    if (lane < 4) {
+      nan_[lane] = nan;
+    }
+  }
+
+  // v128 support
+  Location loc;
 
  private:
-  // Struct tags to differentiate constructors.
-  struct I32Tag {};
-  struct I64Tag {};
-  struct F32Tag {};
-  struct F64Tag {};
-  struct RefTag {};
-  struct V128Tag {};
+  template <typename T>
+  void set_v128_lane(int lane, Type lane_type, T x) {
+    lane_type_ = lane_type;
+    From(Type::V128, x, lane);
+    set_expected_nan(lane, ExpectedNan::None);
+  }
 
-  Const(I32Tag, uint32_t val = 0, const Location& loc = Location());
-  Const(I64Tag, uint64_t val = 0, const Location& loc = Location());
-  Const(F32Tag, uint32_t val = 0, const Location& loc = Location());
-  Const(F64Tag, uint64_t val = 0, const Location& loc = Location());
-  Const(RefTag, uintptr_t val = 0, const Location& loc = Location());
-  Const(V128Tag, v128 val = {{0, 0, 0, 0}}, const Location& loc = Location());
+  template <typename T>
+  Const(Type type, T data, const Location& loc = Location()) : loc(loc) {
+    From<T>(type, data);
+  }
+
+  template <typename T>
+  void From(Type type, T data, int lane = 0) {
+    static_assert(sizeof(T) <= sizeof(data_), "Invalid cast!");
+    assert((lane + 1) * sizeof(T) <= sizeof(data_));
+    type_ = type;
+    data_.From<T>(lane, data);
+    set_expected_nan(lane, ExpectedNan::None);
+  }
+
+  Type type_;
+  Type lane_type_;    // Only valid if type_ == Type::V128.
+  v128 data_;
+  ExpectedNan nan_[4];
 };
 typedef std::vector<Const> ConstVector;
 
@@ -140,16 +196,77 @@ struct FuncSignature {
   bool operator==(const FuncSignature&) const;
 };
 
-struct FuncType {
-  explicit FuncType(string_view name) : name(name.to_string()) {}
+enum class TypeEntryKind {
+  Func,
+  Struct,
+  Array,
+};
+
+class TypeEntry {
+ public:
+  WABT_DISALLOW_COPY_AND_ASSIGN(TypeEntry);
+
+  virtual ~TypeEntry() = default;
+
+  TypeEntryKind kind() const { return kind_; }
+
+  Location loc;
+  std::string name;
+
+ protected:
+  explicit TypeEntry(TypeEntryKind kind,
+                     string_view name = string_view(),
+                     const Location& loc = Location())
+      : loc(loc), name(name.to_string()), kind_(kind) {}
+
+  TypeEntryKind kind_;
+};
+
+class FuncType : public TypeEntry {
+ public:
+  static bool classof(const TypeEntry* entry) {
+    return entry->kind() == TypeEntryKind::Func;
+  }
+
+  explicit FuncType(string_view name = string_view())
+      : TypeEntry(TypeEntryKind::Func, name) {}
 
   Index GetNumParams() const { return sig.GetNumParams(); }
   Index GetNumResults() const { return sig.GetNumResults(); }
   Type GetParamType(Index index) const { return sig.GetParamType(index); }
   Type GetResultType(Index index) const { return sig.GetResultType(index); }
 
-  std::string name;
   FuncSignature sig;
+};
+
+struct Field {
+  std::string name;
+  Type type = Type::Void;
+  bool mutable_ = false;
+};
+
+class StructType : public TypeEntry {
+ public:
+  static bool classof(const TypeEntry* entry) {
+    return entry->kind() == TypeEntryKind::Struct;
+  }
+
+  explicit StructType(string_view name = string_view())
+      : TypeEntry(TypeEntryKind::Struct) {}
+
+  std::vector<Field> fields;
+};
+
+class ArrayType : public TypeEntry {
+ public:
+  static bool classof(const TypeEntry* entry) {
+    return entry->kind() == TypeEntryKind::Array;
+  }
+
+  explicit ArrayType(string_view name = string_view())
+      : TypeEntry(TypeEntryKind::Array) {}
+
+  Field field;
 };
 
 struct FuncDeclaration {
@@ -169,6 +286,7 @@ enum class ExprType {
   AtomicRmwCmpxchg,
   AtomicStore,
   AtomicNotify,
+  AtomicFence,
   AtomicWait,
   Binary,
   Block,
@@ -280,8 +398,18 @@ typedef ExprMixin<ExprType::Nop> NopExpr;
 typedef ExprMixin<ExprType::Rethrow> RethrowExpr;
 typedef ExprMixin<ExprType::Return> ReturnExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;
-typedef ExprMixin<ExprType::RefNull> RefNullExpr;
-typedef ExprMixin<ExprType::RefIsNull> RefIsNullExpr;
+
+template <ExprType TypeEnum>
+class RefTypeExpr : public ExprMixin<TypeEnum> {
+ public:
+  RefTypeExpr(Type type, const Location& loc = Location())
+      : ExprMixin<TypeEnum>(loc), type(type) {}
+
+  Type type;
+};
+
+typedef RefTypeExpr<ExprType::RefNull> RefNullExpr;
+typedef RefTypeExpr<ExprType::RefIsNull> RefIsNullExpr;
 
 template <ExprType TypeEnum>
 class OpcodeExpr : public ExprMixin<TypeEnum> {
@@ -480,6 +608,16 @@ typedef LoadStoreExpr<ExprType::AtomicWait> AtomicWaitExpr;
 typedef LoadStoreExpr<ExprType::AtomicNotify> AtomicNotifyExpr;
 typedef LoadStoreExpr<ExprType::LoadSplat> LoadSplatExpr;
 
+class AtomicFenceExpr : public ExprMixin<ExprType::AtomicFence> {
+ public:
+  explicit AtomicFenceExpr(uint32_t consistency_model,
+                           const Location& loc = Location())
+      : ExprMixin<ExprType::AtomicFence>(loc),
+        consistency_model(consistency_model) {}
+
+  uint32_t consistency_model;
+};
+
 struct Event {
   explicit Event(string_view name) : name(name.to_string()) {}
 
@@ -581,7 +719,7 @@ struct Global {
 
 struct Table {
   explicit Table(string_view name)
-      : name(name.to_string()), elem_type(Type::Funcref) {}
+      : name(name.to_string()), elem_type(Type::FuncRef) {}
 
   std::string name;
   Limits elem_limits;
@@ -594,11 +732,13 @@ enum class ElemExprKind {
 };
 
 struct ElemExpr {
-  ElemExpr() : kind(ElemExprKind::RefNull) {}
+  ElemExpr() : kind(ElemExprKind::RefNull), type(Type::FuncRef) {}
   explicit ElemExpr(Var var) : kind(ElemExprKind::RefFunc), var(var) {}
+  explicit ElemExpr(Type type) : kind(ElemExprKind::RefNull), type(type) {}
 
   ElemExprKind kind;
-  Var var;  // Only used when kind == RefFunc.
+  Var var;    // Only used when kind == RefFunc.
+  Type type;  // Only used when kind == RefNull
 };
 
 typedef std::vector<ElemExpr> ElemExprVector;
@@ -711,7 +851,7 @@ enum class ModuleFieldType {
   Global,
   Import,
   Export,
-  FuncType,
+  Type,
   Table,
   ElemSegment,
   Memory,
@@ -787,13 +927,12 @@ class ExportModuleField : public ModuleFieldMixin<ModuleFieldType::Export> {
   Export export_;
 };
 
-class FuncTypeModuleField : public ModuleFieldMixin<ModuleFieldType::FuncType> {
+class TypeModuleField : public ModuleFieldMixin<ModuleFieldType::Type> {
  public:
-  explicit FuncTypeModuleField(const Location& loc = Location(),
-                               string_view name = string_view())
-      : ModuleFieldMixin<ModuleFieldType::FuncType>(loc), func_type(name) {}
+  explicit TypeModuleField(const Location& loc = Location())
+      : ModuleFieldMixin<ModuleFieldType::Type>(loc) {}
 
-  FuncType func_type;
+  std::unique_ptr<TypeEntry> type;
 };
 
 class TableModuleField : public ModuleFieldMixin<ModuleFieldType::Table> {
@@ -892,7 +1031,7 @@ struct Module {
   void AppendField(std::unique_ptr<EventModuleField>);
   void AppendField(std::unique_ptr<ExportModuleField>);
   void AppendField(std::unique_ptr<FuncModuleField>);
-  void AppendField(std::unique_ptr<FuncTypeModuleField>);
+  void AppendField(std::unique_ptr<TypeModuleField>);
   void AppendField(std::unique_ptr<GlobalModuleField>);
   void AppendField(std::unique_ptr<ImportModuleField>);
   void AppendField(std::unique_ptr<MemoryModuleField>);
@@ -918,7 +1057,7 @@ struct Module {
   std::vector<Global*> globals;
   std::vector<Import*> imports;
   std::vector<Export*> exports;
-  std::vector<FuncType*> func_types;
+  std::vector<TypeEntry*> types;
   std::vector<Table*> tables;
   std::vector<ElemSegment*> elem_segments;
   std::vector<Memory*> memories;
@@ -929,7 +1068,7 @@ struct Module {
   BindingHash func_bindings;
   BindingHash global_bindings;
   BindingHash export_bindings;
-  BindingHash func_type_bindings;
+  BindingHash type_bindings;
   BindingHash table_bindings;
   BindingHash memory_bindings;
   BindingHash data_segment_bindings;

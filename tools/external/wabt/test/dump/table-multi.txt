@@ -75,6 +75,8 @@
 0000037: 0b                                        ; end
 0000035: 02                                        ; FIXUP func body size
 0000033: 04                                        ; FIXUP section size
+; move data: [32, 38) -> [2f, 35)
+; truncate to 53 (0x35)
 
 table-multi.wasm:	file format wasm 0x1
 
@@ -92,13 +94,11 @@ Elem[2]:
   - elem[0] = func[0]
  - segment[1] flags=2 table=1 count=1 - init i32=0
   - elem[0] = func[0]
-DataCount:
- - data count: 0
 Code[1]:
  - func[0] size=2
 
 Code Disassembly:
 
-000036 func[0]:
- 000037: 0b                         | end
+000033 func[0]:
+ 000034: 0b                         | end
 ;;; STDOUT ;;)
