@@ -383,12 +383,14 @@ endfunction()
 
 if (BUILD_TOOLS)
 
-   # eospp
-   wabt_executable(
-     NAME ${EOSIO_POSTPASS}
-     SOURCES src/tools/postpass.cc
-     INSTALL
-   )
+  # eospp
+  wabt_executable(
+    NAME ${EOSIO_POSTPASS}
+    SOURCES src/tools/postpass.cc
+    INSTALL
+  )
+  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EOSIO_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
 
   # wat2wasm
   wabt_executable(
@@ -396,6 +398,8 @@ if (BUILD_TOOLS)
     SOURCES src/tools/wat2wasm.cc
     INSTALL
   )
+  add_custom_command( TARGET wat2wasm POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+  add_custom_command( TARGET wat2wasm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:wat2wasm> ${CMAKE_BINARY_DIR}/bin/ )
 
   # wast2json
   wabt_executable(
@@ -410,6 +414,8 @@ if (BUILD_TOOLS)
     SOURCES src/tools/wasm2wat.cc
     INSTALL
   )
+  add_custom_command( TARGET wasm2wat POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+  add_custom_command( TARGET wasm2wat POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:wasm2wat> ${CMAKE_BINARY_DIR}/bin/ )
 
   # wasm2c
   wabt_executable(
@@ -476,7 +482,7 @@ if (BUILD_TOOLS)
   wabt_executable(
     NAME wasm-strip
     SOURCES src/tools/wasm-strip.cc
-    INSTALL
+    #INSTALL
   )
 
   # wasm-decompile
