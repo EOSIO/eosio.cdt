@@ -28,6 +28,12 @@ extern "C" {
    int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size ) {
       return intrinsics::get().call<intrinsics::set_proposed_producers_ex>(producer_data_format, producer_data, producer_data_size);
    }
+   int64_t set_standby_producers( char *producer_data, uint32_t producer_data_size ) {
+      return intrinsics::get().call<intrinsics::set_standby_producers>(producer_data, producer_data_size);
+   }
+   bool enable_standby_producers() {
+      return intrinsics::get().call<intrinsics::enable_standby_producers>();
+   }
    uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::get_blockchain_parameters_packed>(data, datalen);
    }

@@ -35,6 +35,12 @@ namespace eosio {
 
          __attribute__((eosio_wasm_import))
          int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
+
+         __attribute__((eosio_wasm_import))
+         int64_t set_standby_producers( char * producer_data, uint32_t producer_data_size );
+
+         __attribute__((eosio_wasm_import))
+         bool enable_standby_producers();
       }
    }
 
@@ -234,6 +240,18 @@ namespace eosio {
       if (ret >= 0)
         return static_cast<uint64_t>(ret);
       return {};
+   }
+
+   inline std::optional<uint64_t> set_standby_producers( const std::vector<producer_authority>& prods ) {
+      auto packed_prods = eosio::pack( prods );
+      int64_t ret = internal_use_do_not_use::set_standby_producers((char*)packed_prods.data(), packed_prods.size());
+      if (ret >= 0)
+        return static_cast<uint64_t>(ret);
+      return {};
+   }
+
+   inline bool enable_standby_producers() {
+      return internal_use_do_not_use::enable_standby_producers();
    }
 
    /**
