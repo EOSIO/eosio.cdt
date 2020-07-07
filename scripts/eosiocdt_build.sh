@@ -15,25 +15,26 @@ txtbld=$(tput bold)
 bldred=${txtbld}$(tput setaf 1)
 txtrst=$(tput sgr0)
 
-export SRC_LOCATION=${HOME}/src
-export OPT_LOCATION=${HOME}/opt
-export VAR_LOCATION=${HOME}/var
-export ETC_LOCATION=${HOME}/etc
-export BIN_LOCATION=${HOME}/bin
-export DATA_LOCATION=${HOME}/data
+export ROOT_LOCATION=${HOME}/eosio/eosio.cdt/
+export SRC_LOCATION=${ROOT_LOCATION}/src
+export OPT_LOCATION=${ROOT_LOCATION}/opt
+export VAR_LOCATION=${ROOT_LOCATION}/var
+export ETC_LOCATION=${ROOT_LOCATION}/etc
+export BIN_LOCATION=${ROOT_LOCATION}/bin
+export DATA_LOCATION=${ROOT_LOCATION}/data
 export CMAKE_VERSION_MAJOR=3
 export CMAKE_VERSION_MINOR=13
 export CMAKE_VERSION_PATCH=2
 export CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
 export BOOST_VERSION_MAJOR=1
-export BOOST_VERSION_MINOR=67
+export BOOST_VERSION_MINOR=71
 export BOOST_VERSION_PATCH=0
 export BOOST_VERSION=${BOOST_VERSION_MAJOR}_${BOOST_VERSION_MINOR}_${BOOST_VERSION_PATCH}
 export BOOST_ROOT=${SRC_LOCATION}/boost_${BOOST_VERSION}
 export BOOST_LINK_LOCATION=${OPT_LOCATION}/boost
 export TINI_VERSION=0.18.0
 
-export PATH=$HOME/bin:$PATH:$HOME/opt/llvm/bin
+export PATH=$BIN_LOCATION:$PATH:$OPT_LOCATION/llvm/bin
 
 # Setup directories
 mkdir -p $SRC_LOCATION
@@ -86,7 +87,7 @@ export CMAKE=$(command -v cmake 2>/dev/null)
 
 if [ "$ARCH" == "Linux" ]; then
    # Check if cmake is already installed or not and use source install location
-   if [ -z $CMAKE ]; then export CMAKE=$HOME/bin/cmake; fi
+   if [ -z $CMAKE ]; then export CMAKE=$ROOT_LOCATION/bin/cmake; fi
    export OS_NAME=$( cat /etc/os-release | grep ^NAME | cut -d'=' -f2 | sed 's/\"//gI' )
    case "$OS_NAME" in
       "Amazon Linux AMI"|"Amazon Linux")
@@ -111,13 +112,9 @@ if [ "$ARCH" == "Linux" ]; then
       ;;
       "Linux Mint")
          FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
-         CXX_COMPILER=clang++-4.0
-         C_COMPILER=clang-4.0
       ;;
       "Ubuntu")
          FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
-         CXX_COMPILER=clang++-4.0
-         C_COMPILER=clang-4.0
       ;;
       "Debian GNU/Linux")
          FILE="${REPO_ROOT}/scripts/eosiocdt_build_ubuntu.sh"
@@ -155,7 +152,7 @@ cd $BUILD_DIR
 printf "\\n========================================================================\\n"
 printf "======================= Starting EOSIO.CDT Build =======================\\n"
 
-$CMAKE -DCMAKE_INSTALL_PREFIX=$OPT_LOCATION/eosio.cdt "${REPO_ROOT}"
+$CMAKE -DCMAKE_INSTALL_PREFIX=$ROOT_LOCATION "${REPO_ROOT}"
 if [ $? -ne 0 ]; then exit -1; fi
 make -j$CORES
 if [ $? -ne 0 ]; then exit -1; fi

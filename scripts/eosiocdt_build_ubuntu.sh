@@ -35,18 +35,32 @@ case "${OS_NAME}" in
 			printf "You must be running Linux Mint 18.x or higher to install EOSIO.\\n"
 			printf "Exiting now.\\n"
 			exit 1
+		elif [ "${OS_MAJ}" -le 18 ]; then 
+			LLVM_DEP_ARRAY=(llvm-4.0 clang-4.0 libclang-4.0-dev)
+			export CXX_COMPILER=clang++-4.0
+			export C_COMPILER=clang-4.0
+		elif [ "${OS_MAJ}" -gt 18 ]; then
+			LLVM_DEP_ARRAY=(llvm-10 clang-10 libclang-10-dev cmake)
+			export CXX_COMPILER=clang++-10
+			export C_COMPILER=clang-10
 		fi
 	;;
 	"Ubuntu")
-		if [ "${OS_MAJ}" -lt 16 ]; then
-			printf "You must be running Ubuntu 16.04.x or higher to install EOSIO.\\n"
+		if [ "${OS_MAJ}" -lt 18 ]; then
+			printf "You must be running Ubuntu 18.04.x or higher to install EOSIO.\\n"
 			printf "Exiting now.\\n"
 			exit 1
+		elif [ "${OS_MAJ}" -le 18 ]; then 
+			LLVM_DEP_ARRAY=(llvm-4.0 clang-4.0 libclang-4.0-dev)
+			export CXX_COMPILER=clang++-4.0
+			export C_COMPILER=clang-4.0
+		elif [ "${OS_MAJ}" -gt 18 ]; then
+			LLVM_DEP_ARRAY=(llvm-10 clang-10 libclang-10-dev cmake)
+			export CXX_COMPILER=clang++-10
+			export C_COMPILER=clang-10
 		fi
 		# UBUNTU 18 doesn't have MONGODB 3.6.3
-		if [ $OS_MAJ -gt 16 ]; then
-			export MONGODB_VERSION=4.1.1
-		fi
+		export MONGODB_VERSION=4.1.1
 		# We have to re-set this with the new version
 		export MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
 	;;
@@ -67,7 +81,7 @@ fi
 
 # llvm-4.0 is installed into /usr/lib/llvm-4.0
 DEP_ARRAY=(
-	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
+	git make automake libbz2-dev libssl-dev "${LLVM_DEP_ARRAY[@]}" \
 	libgmp3-dev autotools-dev build-essential libicu-dev python2.7 python2.7-dev python3 python3-dev \
 	autoconf libtool curl zlib1g-dev sudo ruby
 )
@@ -144,17 +158,20 @@ printf "\\n"
 
 
 printf "Checking CMAKE installation...\\n"
-if [ ! -d $SRC_LOCATION/cmake-$CMAKE_VERSION ]; then
+# Find and use existing CMAKE
+export CMAKE=$(command -v cmake 2>/dev/null)
+if [ -z $CMAKE ]; then
 	printf "Installing CMAKE...\\n"
 	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
 	&& tar xf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
-	&& ./bootstrap --prefix=$HOME \
+	&& ./bootstrap --prefix=${ROOT_LOCATION} \
 	&& make -j"${JOBS}" \
 	&& make install \
 	&& cd .. \
 	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
 	|| exit 1
+	export CMAKE=$ROOT_LOCATION/bin/cmake
 	printf " - CMAKE successfully installed @ ${CMAKE}.\\n"
 else
 	printf " - CMAKE found @ ${CMAKE}.\\n"

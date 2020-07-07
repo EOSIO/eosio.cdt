@@ -34,9 +34,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="${SCRIPT_DIR}/.."
 BUILD_DIR="${REPO_ROOT}/build"
 
-OPT_LOCATION=$HOME/opt
-BIN_LOCATION=$HOME/bin
-LIB_LOCATION=$HOME/lib
+ROOT_LOCATION=${HOME}/eosio/eosio.cdt/
+OPT_LOCATION=${ROOT_LOCATION}/opt
+BIN_LOCATION=${ROOT_LOCATION}/bin
+LIB_LOCATION=${ROOT_LOCATION}/lib
 
 CMAKE_BUILD_TYPE=Release
 TIME_BEGIN=$( date -u +%s )
@@ -75,7 +76,7 @@ printf "    \\  \\::/       \\  \\::/        /__/:/        \\__\\/      \\  \\::
 printf "     \\__\\/         \\__\\/         \\__\\/                     \\__\\/ \n\n${txtrst}"
 
 printf "==============================================================================================\\n"
-printf "EOSIO has been installed into ${OPT_LOCATION}/eosio.cdt/bin!\\n"
+printf "EOSIO has been installed into ${OPT_LOCATION}/bin!\\n"
 printf "If you need to, you can fully uninstall using eosiocdt_uninstall.sh.\\n"
 printf "==============================================================================================\\n\\n"
 

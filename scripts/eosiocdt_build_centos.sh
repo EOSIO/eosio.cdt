@@ -180,17 +180,20 @@ printf "\\n"
 
 
 printf "Checking CMAKE installation...\\n"
+# Find and use existing CMAKE
+export CMAKE=$(command -v cmake 2>/dev/null)
 if [ -z $CMAKE ]; then
 	printf "Installing CMAKE...\\n"
 	curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
 	&& tar -xzf cmake-$CMAKE_VERSION.tar.gz \
 	&& cd cmake-$CMAKE_VERSION \
-	&& ./bootstrap --prefix=$HOME \
+	&& ./bootstrap --prefix=${ROOT_LOCATION} \
 	&& make -j"${JOBS}" \
 	&& make install \
 	&& cd .. \
 	&& rm -f cmake-$CMAKE_VERSION.tar.gz \
 	|| exit 1
+	export CMAKE=$ROOT_LOCATION/bin/cmake
 	printf " - CMAKE successfully installed @ ${CMAKE}.\\n"
 else
 	printf " - CMAKE found @ ${CMAKE}.\\n"

@@ -1,6 +1,7 @@
 #! /bin/bash
 
-OPT_LOCATION=$HOME/opt
+ROOT_LOCATION=${HOME}/eosio/eosio.cdt/
+OPT_LOCATION=${ROOT_LOCATION}/opt
 
 binaries=(
    eosio-ranlib
@@ -74,7 +75,7 @@ if [ -d "/usr/local/eosio.wasmsdk" ]; then
    done
 fi
 
-if [ -d $OPT_LOCATION/eosio.cdt ] || [[ $1 == "force-new" ]]; then
+if [ -d $ROOT_LOCATION/eosio.cdt ] || [[ $1 == "force-new" ]]; then
    printf "Do you wish to remove this install?\n"
    select yn in "Yes" "No"; do
       case $yn in
