@@ -34,7 +34,7 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct> {
+struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
    KV_NAMED_INDEX("t1"_n, tname)
    KV_NAMED_INDEX("t2"_n, tstring)
    KV_NAMED_INDEX("t3"_n, tui64)
@@ -46,7 +46,7 @@ struct my_table : eosio::kv_table<my_struct> {
    KV_NAMED_INDEX("t14"_n, ttuple)
 
    my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, "eosio.kvram"_n, tname, tstring, tui64, ti32, tui128, tfloat, tdouble, tstruct, ttuple);
+      init(contract_name, tname, tstring, tui64, ti32, tui128, tfloat, tdouble, tstruct, ttuple);
    }
 };
 

@@ -19,7 +19,7 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct> {
+struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
    KV_NAMED_INDEX("primarykey"_n, primary_key)
    KV_NAMED_INDEX("foo"_n, foo)
    KV_NAMED_INDEX("bar"_n, bar)

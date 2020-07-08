@@ -11,7 +11,7 @@ struct my_struct_v2 {
    uint64_t age;
 };
 
-struct my_table : eosio::kv_table<my_struct_v> {
+struct my_table : eosio::kv_table<my_struct_v, "testtable"_n> {
    KV_NAMED_INDEX("fullname"_n, full_name);
    KV_NAMED_INDEX("age"_n, age);
 
@@ -20,7 +20,7 @@ struct my_table : eosio::kv_table<my_struct_v> {
    }
 };
 
-struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>> {
+struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>, "testtable"_n> {
    index<std::string> primary_key{"fullname"_n, [](const auto& obj) {
       return std::visit([&](auto&& a) {
          using V = std::decay_t<decltype(a)>;
