@@ -1250,7 +1250,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
-       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
+       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than a given `primary` key. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
        *
        *  Example:
        *
