@@ -40,21 +40,18 @@ using namespace eosio;
 using namespace eosio::cdt;
 
 namespace eosio { namespace cdt {
+   /*
    DeclarationMatcher function_decl_matcher = cxxMethodDecl().bind("eosio_tool");
    DeclarationMatcher record_decl_matcher   = cxxRecordDecl().bind("eosio_tool");
    DeclarationMatcher typedef_decl_matcher  = typedefDecl().bind("eosio_tool");
    auto               class_tmp_matcher     = classTemplateSpecializationDecl().bind("eosio_tool");
-   abigen_exception  abigen_ex;
-   codegen_exception codegen_ex;
-   Rewriter          codegen_rewriter;
-   CompilerInstance* codegen_ci;
-   std::set<FileID>  codegen_rewritten;
+   */
 
    abigen& get_abigen_ref() {
       static abigen ag;
       return ag;
    }
-
+/*
    class EosioMethodMatcher : public MatchFinder::MatchCallback {
       public:
          virtual void run( const MatchFinder::MatchResult& res ) {
@@ -105,6 +102,7 @@ namespace eosio { namespace cdt {
             }
          }
    };
+*/
 }} // ns eosio::cdt
 
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning) {
@@ -128,12 +126,13 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
    ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
 
-   get_abigen_ref().set_contract_name(contract_name);
-   get_abigen_ref().set_resource_dirs(resource_paths);
-   get_abigen_ref().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
-   get_abigen_ref().set_suppress_ricardian_warning(suppress_ricardian_warning);
+   abigen::get().set_contract_name(contract_name);
+   abigen::get().set_resource_dirs(resource_paths);
+   abigen::get().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
+   abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
    codegen::get().set_contract_name(contract_name);
 
+   /*
    EosioMethodMatcher eosio_method_matcher;
    EosioRecordMatcher eosio_record_matcher;
    MatchFinder finder;
@@ -141,16 +140,18 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    finder.addMatcher(function_decl_matcher, &eosio_method_matcher);
    finder.addMatcher(record_decl_matcher, &eosio_record_matcher);
    finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
+   */
 
    int tool_run = -1;
-   tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+   // tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+   tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("abigen error");
    }
 
-   if (!get_abigen_ref().is_empty()) {
+   if (!abigen::get().is_empty()) {
       std::string abi_s;
-      get_abigen_ref().to_json().dump(abi_s);
+      abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
    }
 
