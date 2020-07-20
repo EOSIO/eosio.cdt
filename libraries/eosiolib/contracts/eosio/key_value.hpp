@@ -461,7 +461,7 @@ namespace kv_detail {
 
          eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
 
-         return {(char*)buffer, actual_value_size};
+         return eosio::key_type{(char*)buffer, actual_value_size};
       }
 
    protected:
