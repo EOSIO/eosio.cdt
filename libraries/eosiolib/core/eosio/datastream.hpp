@@ -113,33 +113,6 @@ class datastream {
       }
 
      /**
-      *  Writes a specified number of bytes into the stream from a buffer
-      *
-      *  @param d - The pointer to the source buffer
-      *  @param s - The number of bytes to write
-      *  @return true
-      */
-      inline bool write( char d ) {
-        eosio::check( _end - _pos >= 1, "write" );
-        *_pos++ = d;
-        return true;
-      }
-
-     /**
-      *  Writes a specified number of bytes into the stream from a buffer
-      *
-      *  @param d - The pointer to the source buffer
-      *  @param s - The number of bytes to write
-      *  @return true
-      */
-      inline bool write( const void* d, size_t s ) {
-        eosio::check( _end - _pos >= (int32_t)s, "write" );
-        memcpy( (void*)_pos, d, s );
-        _pos += s;
-        return true;
-      }
-
-     /**
       *  Writes a byte into the stream
       *
       *  @param c byte to write
