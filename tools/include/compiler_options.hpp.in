@@ -140,6 +140,11 @@ static cl::opt<bool> allow_names_opt (
     "allow-names",
     cl::desc("Allows name section to be created"),
     cl::cat(LD_CAT));
+static cl::opt<std::string> mllvm_opt(
+    "mllvm",
+    cl::desc("Pass arguments to llvm"),
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -456,7 +461,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("--gc-sections");
          ldopts.emplace_back("--strip-all");
       }
-      ldopts.emplace_back("--merge-data-segments");
+      ldopts.emplace_back("--no-merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
@@ -510,6 +515,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       if (!only_export_opt.empty()) {
          ldopts.emplace_back("--only-export");
          ldopts.emplace_back(only_export_opt);
+      }
+
+      if (!mllvm_opt.empty()) {
+         ldopts.emplace_back("-mllvm");
+         ldopts.emplace_back(mllvm_opt);
       }
 
    } else {

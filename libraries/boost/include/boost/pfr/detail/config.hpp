@@ -24,7 +24,7 @@
 #   define BOOST_PFR_USE_LOOPHOLE 1
 #endif
 
-#define BOOST_PFR_USE_CPP17 0
+#define BOOST_PFR_USE_CPP17 1
 
 #ifndef BOOST_PFR_USE_CPP17
 #   ifdef __cpp_structured_bindings
