@@ -19,8 +19,9 @@ else # Linux
 
     . $HELPERS_DIR/docker-hash.sh
 
+    SET_PYTHON_PATH="export CICD_PYTHON_PATH=/usr/local/bin/python3"
     TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
-    COMMANDS="$PRE_COMMANDS && $TEST"
+    COMMANDS="$PRE_COMMANDS && $SET_PYTHON_PATH && $TEST"
 
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
