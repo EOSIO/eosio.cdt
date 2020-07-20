@@ -46,6 +46,7 @@ class Test(ABC):
         args = cf if cf else []
 
         eosio_cpp = os.path.join(Config.cdt_path, "eosio-cpp")
+        print(eosio_cpp)
         self._run(eosio_cpp, args)
 
     def handle_test_result(self, res: subprocess.CompletedProcess, expected_pass=True):
