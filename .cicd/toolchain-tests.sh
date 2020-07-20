@@ -5,13 +5,12 @@ set -eo pipefail
 mkdir -p $BUILD_DIR
 
 PRE_COMMANDS="cd $MOUNTED_DIR/build"
-TEST="./tools/toolchain-tester/toolchain-tester --cdt $MOUNTED_DIR/build/bin/eosio-cpp ../tests/toolchain/"
-COMMANDS="$PRE_COMMANDS && $TEST"
 
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
+    TEST="./tools/toolchain-tester/toolchain-tester --cdt $BUILD_DIR/bin ../tests/toolchain/"
     bash -c "$TEST"
     
 else # Linux
@@ -19,6 +18,9 @@ else # Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 
     . $HELPERS_DIR/docker-hash.sh
+
+    TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
+    COMMANDS="$PRE_COMMANDS && $TEST"
 
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
