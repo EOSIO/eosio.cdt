@@ -887,6 +887,7 @@ public:
       kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun);
    }
 
+<<<<<<< HEAD
    /* @cond PRIVATE */
    static void deserialize_optional_fun(void* value, const void* buffer, std::size_t buffer_size) {
       static_cast<std::optional<T>*>(value)->emplace();
@@ -894,6 +895,60 @@ public:
    }
    static void deserialize_fun(void* value, const void* buffer, std::size_t buffer_size) {
       return detail::deserialize(*static_cast<T*>(value), buffer, buffer_size);
+=======
+      auto primary_key = primary_index->get_key(value);
+      auto tbl_key = table_key(primary_index->prefix, primary_key);
+      auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
+
+      if (primary_key_found) {
+         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+         auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+
+         deserialize(old_value, buffer, copy_size);
+
+         if (value_size > detail::max_stack_buffer_size) {
+            free(buffer);
+         }
+      }
+
+      for (const auto& idx : secondary_indices) {
+         auto sec_tbl_key = table_key(idx->prefix, idx->get_key(value));
+         auto sec_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
+
+         if (!primary_key_found) {
+            eosio::check(!sec_found, "Attempted to store an existing secondary index.");
+            internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+         } else {
+            if (sec_found) {
+               void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
+               auto copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, (char*)buffer, value_size);
+
+               auto res = memcmp(buffer, tbl_key.data(), copy_size);
+               eosio::check(copy_size == tbl_key.size() && res == 0, "Attempted to update an existing secondary index.");
+
+               if (copy_size > detail::max_stack_buffer_size) {
+                  free(buffer);
+               }
+            } else {
+               auto old_sec_key = table_key(idx->prefix, idx->get_key(old_value));
+               internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
+               internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+            }
+         }
+
+      }
+
+      size_t data_size = get_size(value);
+      void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+
+      serialize(value, data_buffer, data_size);
+
+      internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size);
+
+      if (data_size > detail::max_stack_buffer_size) {
+         free(data_buffer);
+      }
+>>>>>>> origin/kv-wrapper-abieos
    }
    static void serialize_fun(const void* value, void* buffer, std::size_t buffer_size) {
       return detail::serialize(*static_cast<const T*>(value), buffer, buffer_size);
@@ -910,7 +965,26 @@ public:
     * @param key - The key of the value to be removed.
     */
    void erase(const T& value) {
+<<<<<<< HEAD
       kv_table_base::erase(&value);
+=======
+      uint32_t value_size;
+
+      auto primary_key = primary_index->get_key(value);
+      auto tbl_key = table_key(primary_index->prefix, primary_key);
+      auto primary_key_found = internal_use_do_not_use::kv_get(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
+
+      if (!primary_key_found) {
+         return;
+      }
+
+      for (const auto& idx : secondary_indices) {
+         auto sec_tbl_key = table_key(idx->prefix, idx->get_key(value));
+         internal_use_do_not_use::kv_erase(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
+      }
+
+      internal_use_do_not_use::kv_erase(db_name, contract_name.value, tbl_key.data(), tbl_key.size());
+>>>>>>> origin/kv-wrapper-abieos
    }
 
 protected:
