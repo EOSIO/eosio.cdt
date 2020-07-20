@@ -5,7 +5,7 @@ set -eo pipefail
 mkdir -p $BUILD_DIR
 
 PRE_COMMANDS="cd $MOUNTED_DIR/build"
-TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
+TEST="./tools/toolchain-tester/toolchain-tester --cdt $MOUNTED_DIR/build/bin/eosio-cpp ../tests/toolchain/"
 COMMANDS="$PRE_COMMANDS && $TEST"
 
 if [[ $(uname) == 'Darwin' ]]; then
