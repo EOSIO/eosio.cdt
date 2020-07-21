@@ -461,7 +461,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("--gc-sections");
          ldopts.emplace_back("--strip-all");
       }
-      ldopts.emplace_back("--merge-data-segments");
+      ldopts.emplace_back("--no-merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");

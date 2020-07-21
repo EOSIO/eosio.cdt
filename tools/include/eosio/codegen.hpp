@@ -405,6 +405,7 @@ namespace eosio { namespace cdt {
                   }
                   // generate apply stub with abi
                   std::stringstream ss;
+                  ss << "\n";
                   ss << "extern \"C\" {\n";
                   ss << "__attribute__((eosio_wasm_import))\n";
                   ss << "void eosio_assert_code(uint32_t, uint64_t);";
