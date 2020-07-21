@@ -11,6 +11,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     # You can't use chained commands in execute
     cd $BUILD_DIR
     TEST="./tools/toolchain-tester/toolchain-tester --cdt $BUILD_DIR/bin ../tests/toolchain/"
+    echo "$ $TEST"
     bash -c "$TEST"
     
 else # Linux
@@ -30,7 +31,7 @@ else # Linux
             evars="$evars --env ${var%%=*}"
         done < "$BUILDKITE_ENV_FILE"
     fi
-
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
-
+    DOCKER_COMMAND="docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\""
+    echo "$ $DOCKER_COMMAND"
+    eval $DOCKER_COMMAND
 fi
