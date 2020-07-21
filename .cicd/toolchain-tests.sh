@@ -13,7 +13,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     DEBUG_COMMAND="$BUILD_DIR/bin/eosio-cpp --version"
     echo "$ $DEBUG_COMMAND"
     eval $DEBUG_COMMAND
-    TEST="./tools/toolchain-tester/toolchain-tester --cdt $BUILD_DIR/bin ../tests/toolchain/"
+    TEST="./tools/toolchain-tester/toolchain-tester --cdt ./bin ../tests/toolchain/"
     echo "$ $TEST"
     bash -c "$TEST"
     
