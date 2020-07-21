@@ -10,6 +10,9 @@ if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
+    DEBUG_COMMAND="$BUILD_DIR/bin/eosio-cpp --version"
+    echo "$ $DEBUG_COMMAND"
+    eval $DEBUG_COMMAND
     TEST="./tools/toolchain-tester/toolchain-tester --cdt $BUILD_DIR/bin ../tests/toolchain/"
     echo "$ $TEST"
     bash -c "$TEST"
