@@ -52,6 +52,8 @@ def main():
     Config.cdt_path = args.cdt
     P.verbose = args.verbose
 
+    print(f"Config.path {Config.cdt_path}")
+
     abs_test_directory = os.path.abspath(args.test_directory)
 
     temp_dir = tempfile.mkdtemp()
@@ -87,6 +89,7 @@ def main():
 
 
 def get_cdt_path() -> str:
+    print('get_cdt_path')
     return os.path.join(
         Path(os.path.realpath(__file__)).parent.parent.parent, "build", "bin"
     )
