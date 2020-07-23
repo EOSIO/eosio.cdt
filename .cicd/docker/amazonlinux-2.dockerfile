@@ -19,3 +19,5 @@ RUN curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
     make install && \
     cd .. && \
     rm -f cmake-3.10.2.tar.gz
+
+RUN ln -sfn /usr/bin/python3 /usr/local/bin/python3
