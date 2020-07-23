@@ -16,3 +16,5 @@ RUN curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     make -j$(nproc) altinstall  && \
     cd .. && \
     rm -rf Python-3.7.4 && rm -rf Python-3.7.4.tar.gz
+
+RUN ln -sfn /usr/local/bin/python3.7 /usr/local/bin/python3

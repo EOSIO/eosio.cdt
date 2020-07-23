@@ -26,6 +26,8 @@ RUN curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
     cd .. && \
     rm -rf Python-3.7.4 && rm -rf Python-3.7.4.tar.gz
 
+RUN ln -sfn /usr/local/bin/python3.7 /usr/local/bin/python3
+
 # install clang 9
 RUN curl -LO https://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz && \
     tar -xvf clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz && \
