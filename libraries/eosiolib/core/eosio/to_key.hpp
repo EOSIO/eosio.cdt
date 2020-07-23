@@ -80,7 +80,7 @@ void to_key_optional(const bool* obj, datastream<S>& stream) {
    else if (!*obj)
       stream.write('\1');
    else {
-      stream.write("\2", 2);
+      stream.write('\2');
    }
 }
 
@@ -235,7 +235,7 @@ void to_key(const std::variant<Ts...>& obj, datastream<S>& stream) {
 template <typename S>
 void to_key(std::string_view obj, datastream<S>& stream) {
    for (char ch : obj) {
-      stream.write(&ch, 1);
+      stream.write(ch);
       if (ch == '\0') {
          stream.write('\1');
       }
