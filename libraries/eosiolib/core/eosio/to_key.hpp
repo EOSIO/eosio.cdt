@@ -16,6 +16,7 @@
 
 namespace eosio {
 
+namespace detail {
 template<typename T>
 constexpr bool has_bitwise_serialization() {
    if constexpr (std::is_arithmetic_v<T>) {
@@ -26,6 +27,7 @@ constexpr bool has_bitwise_serialization() {
    } else {
       return false;
    }
+}
 }
 
 template <typename... Ts, typename S>
@@ -39,9 +41,9 @@ void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
 // - key(a) < key(b) iff a < b
 // - key(a) is not a prefix of key(b)
 //
-// Overloads of to_key for user-defined types can be found by Koenig lookup.
+// Overloads of to_key for user-defined types can be found by Koenig (ADL) lookup.
 //
-// Abieos provides specializations of to_key for the following types
+// to_key is specialized for the following types
 // - std::string and std::string_view
 // - std::vector, std::list, std::deque
 // - std::tuple
@@ -55,11 +57,11 @@ void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
 template <typename T, typename S>
 void to_key(const T& obj, datastream<S>& stream);
 
-template <int i, typename T, typename S>
+template <int I, typename T, typename S>
 void to_key_tuple(const T& obj, datastream<S>& stream) {
-   if constexpr (i < std::tuple_size_v<T>) {
-      to_key(std::get<i>(obj), stream);
-      to_key_tuple<i + 1>(obj, stream);
+   if constexpr (I < std::tuple_size_v<T>) {
+      to_key(std::get<I>(obj), stream);
+      to_key_tuple<I + 1>(obj, stream);
    }
 }
 
@@ -86,7 +88,7 @@ void to_key_optional(const bool* obj, datastream<S>& stream) {
 
 template <typename T, typename S>
 void to_key_optional(const T* obj, datastream<S>& stream) {
-   if constexpr (has_bitwise_serialization<T>() && sizeof(T) == 1) {
+   if constexpr (detail::has_bitwise_serialization<T>() && sizeof(T) == 1) {
       if (obj == nullptr)
          stream.write("\0", 2);
       else {
