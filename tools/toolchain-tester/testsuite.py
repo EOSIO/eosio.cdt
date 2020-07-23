@@ -1,9 +1,26 @@
+from enum import Enum
 import json
 import os
 from typing import List
 
+from errors import MissingCppError, MissingJsonError
 import tests
-from settings import MissingCppError, MissingJsonError, TestType
+
+
+class TestType(Enum):
+    COMPILE_FAIL = 1
+    COMPILE_PASS = 2
+    BUILD_FAIL = 3
+    BUILD_PASS = 4
+    ABIGEN_PASS = 5
+    ABIGEN_FAIL = 6
+
+    @staticmethod
+    def from_str(s):
+        s = s.upper()
+        s = s.replace("-", "_")
+
+        return TestType[s]
 
 
 class TestSuite:

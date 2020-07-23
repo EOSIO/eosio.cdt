@@ -1,19 +1,18 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from testsuite import TestSuite
+from typing import Dict, List
+from abc import ABC, abstractmethod
 
 import difflib
 import json
 import os
 import subprocess
-from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Dict, List
 
 from printer import Printer as P
-from settings import Config, TestFailure
+from errors import TestFailure
+
+if TYPE_CHECKING:
+    from testsuite import TestSuite
 
 
 class Test(ABC):
