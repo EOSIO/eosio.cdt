@@ -12,8 +12,9 @@ class TestSuite:
     by the directory structure.
     """
 
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, cdt_path: str):
         self.directory = directory
+        self.cdt_path = cdt_path
         self.tests: List[tests.Test] = []
         self.name = self._get_name()
         self.test_type = self._get_test_type()
