@@ -137,7 +137,7 @@ namespace eosio { namespace cdt {
          abi_struct tup;
          tup.name = get_type(type);
          for (int i = 0; i < tst->getNumArgs(); ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
+            clang::QualType ftype = std::get<clang::QualType>(get_template_argument(type, i));
             add_type(ftype);
             tup.fields.push_back( {"field_"+std::to_string(i),
                   translate_type(ftype)} );
@@ -147,32 +147,30 @@ namespace eosio { namespace cdt {
 
       void add_pair(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
+            clang::QualType ftype = std::get<clang::QualType>(get_template_argument(type, i));
             std::string ty = translate_type(ftype);
             add_type(ftype);
          }
          abi_struct pair;
          pair.name = get_type(type);
-         pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
-         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );
-         add_type(get_template_argument(type).getAsType());
-         add_type(get_template_argument(type, 1).getAsType());
+         pair.fields.push_back( {"first", get_template_argument_as_string(type)} );
+         pair.fields.push_back( {"second", get_template_argument_as_string(type, 1)} );
+         add_type(std::get<clang::QualType>(get_template_argument(type)));
+         add_type(std::get<clang::QualType>(get_template_argument(type, 1)));
          _abi.structs.insert(pair);
       }
 
       void add_map(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
-            std::string ty = translate_type(ftype);
-            add_type(ftype);
+            add_type(std::get<clang::QualType>(get_template_argument(type, i)));
          }
          abi_struct kv;
          std::string name = get_type(type);
          kv.name = name.substr(0, name.length() - 2);
-         kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
-         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );
-         add_type(get_template_argument(type).getAsType());
-         add_type(get_template_argument(type, 1).getAsType());
+         kv.fields.push_back( {"key", get_template_argument_as_string(type)} );
+         kv.fields.push_back( {"value", get_template_argument_as_string(type, 1)} );
+         add_type(std::get<clang::QualType>(get_template_argument(type)));
+         add_type(std::get<clang::QualType>(get_template_argument(type, 1)));
          _abi.structs.insert(kv);
       }
 
@@ -261,8 +259,8 @@ namespace eosio { namespace cdt {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>((pt) ? pt->desugar().getTypePtr() : t.getTypePtr());
          var.name = get_type(t);
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
-            add_type(get_template_argument( t, i ).getAsType());
+            var.types.push_back(get_template_argument_as_string( t, i ));
+            add_type(std::get<clang::QualType>(get_template_argument( t, i )));
          }
          _abi.variants.insert(var);
       }
@@ -276,7 +274,7 @@ namespace eosio { namespace cdt {
             if (is_aliasing(type))
                add_typedef(type);
             else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
-               add_type(get_template_argument(type).getAsType());
+               add_type(std::get<clang::QualType>(get_template_argument(type)));
             }
             else if (is_template_specialization(type, {"map"}))
                add_map(type);
