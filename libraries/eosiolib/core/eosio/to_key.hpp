@@ -28,6 +28,16 @@ constexpr bool has_bitwise_serialization() {
       return false;
    }
 }
+
+template <template <typename> class C, typename T>
+constexpr bool is_ranged_type(C<T>) {
+   using type = std::decay_t<C<T>>;
+   return
+      std::is_same_v<std::vector<T>, type> ||
+      std::is_same_v<std::list<T>, type>   ||
+      std::is_same_v<std::deque<T>, type>  ||
+      std::is_same_v<std::set<T>, type>;
+}
 }
 
 template <typename... Ts, typename S>
@@ -118,27 +128,11 @@ void to_key(const std::pair<T, U>& obj, datastream<S>& stream) {
 template <typename T, typename S>
 void to_key_range(const T& obj, datastream<S>& stream) {
    for (const auto& elem : obj) { to_key_optional(&elem, stream); }
-   to_key_optional((decltype(&*std::begin(obj))) nullptr, stream);
+   to_key_optional((std::add_pointer_t<decltype(*std::begin(obj))>) nullptr, stream);
 }
 
 template <typename T, typename S>
-void to_key(const std::vector<T>& obj, datastream<S>& stream) {
-   for (const T& elem : obj) { to_key_optional(&elem, stream); }
-   to_key_optional((const T*)nullptr, stream);
-}
-
-template <typename T, typename S>
-void to_key(const std::list<T>& obj, datastream<S>& stream) {
-   to_key_range(obj, stream);
-}
-
-template <typename T, typename S>
-void to_key(const std::deque<T>& obj, datastream<S>& stream) {
-   to_key_range(obj, stream);
-}
-
-template <typename T, typename S>
-void to_key(const std::set<T>& obj, datastream<S>& stream) {
+auto to_key(const T& obj, datastream<S>& stream) -> std::enable_if_t<is_ranged_type(std::declval<T>()), void> {
    to_key_range(obj, stream);
 }
 

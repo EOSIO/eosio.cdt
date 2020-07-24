@@ -124,7 +124,7 @@ namespace detail {
 struct key_type : private std::vector<char> {
    key_type() = default;
 
-   explicit key_type(std::vector<char>&& v) : std::vector<char>(v) {}
+   explicit key_type(std::vector<char>&& v) : std::vector<char>(std::move(v)) {}
 
    explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
 
@@ -140,7 +140,7 @@ struct key_type : private std::vector<char> {
    }
 
    bool operator==(const key_type& b) const {
-      return size() != b.size() && memcmp(data(), b.data(), b.size()) == 0;
+      return size() == b.size() && memcmp(data(), b.data(), b.size()) == 0;
    }
 
    using std::vector<char>::data;
@@ -150,8 +150,8 @@ struct key_type : private std::vector<char> {
 
 /* @cond PRIVATE */
 template <typename T>
-inline key_type make_key(const T& t) {
-   auto bytes = convert_to_key(t);
+inline key_type make_key(T&& t) {
+   auto bytes = convert_to_key(std::forward<T>(t));
    return key_type(std::move(bytes));
 }
 
