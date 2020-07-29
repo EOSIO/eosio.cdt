@@ -22,7 +22,8 @@ namespace eosio {
    */
 
    /**
-    *  Stores the symbol code as a uint64_t value
+    *  @class symbol_code
+    *  @brief Stores the symbol code as a uint64_t value
     *
     *  @ingroup symbol
     */
@@ -236,7 +237,8 @@ namespace eosio {
    }
 
    /**
-    *  Stores information about a symbol, the symbol can be 7 characters long.
+    *  @class symbol
+    *  @brief Stores information about a symbol, the symbol can be 7 characters long
     *
     *  @ingroup symbol
     */
@@ -374,7 +376,8 @@ namespace eosio {
    }
 
    /**
-    *  Extended asset which stores the information of the owner of the symbol
+    *  @class extended_symbol
+    *  @brief Extended asset which stores the information of the owner of the symbol
     *
     *  @ingroup symbol
     */

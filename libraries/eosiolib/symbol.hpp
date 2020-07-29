@@ -24,7 +24,7 @@ namespace eosio {
    */
 
    /**
-    * @class Stores the symbol code
+    * @class symbol_code
     * @brief Stores the symbol code as a uint64_t value
     */
    class symbol_code {
@@ -230,9 +230,9 @@ namespace eosio {
    };
 
    /**
-    * @struct Stores information about a symbol, the symbol can be 7 characters long.
+    * @struct symbol
     *
-    * @brief Stores information about a symbol
+    * @brief information about a symbol, the symbol can be 7 characters long
     */
    class symbol {
    public:
@@ -349,8 +349,9 @@ namespace eosio {
    };
 
    /**
-    * @struct Extended asset which stores the information of the owner of the symbol
-    *
+    * @struct extended_symbol
+    * 
+    * @brief Extended asset which stores the information of the owner of the symbol
     */
    class extended_symbol
    {
