@@ -602,17 +602,6 @@ namespace eosio { namespace cdt {
             if (main_fe) {
                auto fid = src_mgr.getOrCreateFileID(f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
-               /*
-               for (auto ad : visitor->action_decls)
-                  visitor->create_action_dispatch(ad);
-
-               for (auto nd : visitor->notify_decls)
-                  visitor->create_notify_dispatch(nd);
-
-               if (cg.actions.size() < 1 && cg.notify_handlers.size() < 1) {
-                  return;
-               }
-               */
             }
          }
 
