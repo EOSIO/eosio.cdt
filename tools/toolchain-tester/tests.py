@@ -100,9 +100,11 @@ class Test(ABC):
             if expected.get("abi"):
                 expected_abi = expected["abi"]
             else:
-                expected_abi_file = open(expected["abi-file"])
+                full_path = os.path.join(self.test_suite.directory, expected["abi-file"])
+                expected_abi_file = open(full_path)
                 expected_abi = expected_abi_file.read()
                 expected_abi_file.close()
+
             with open(f"{self._name}.abi") as f:
                 actual_abi = f.read()
 
