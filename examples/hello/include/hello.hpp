@@ -17,5 +17,4 @@ class [[eosio::contract]] hello : public contract {
       using hi_action = action_wrapper<"hi"_n, &hello::hi>;
       using check_action = action_wrapper<"check"_n, &hello::check>;
       using checkwithrv_action = action_wrapper<"checkwithrv"_n, &hello::checkwithrv>;
-      using checkwithrv2_action = action_wrapper<"checkwithrv2"_n, &hello::checkwithrv2>;
 };
