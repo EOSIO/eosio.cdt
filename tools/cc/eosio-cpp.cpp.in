@@ -155,12 +155,12 @@ int main(int argc, const char **argv) {
             new_opts.insert(new_opts.begin(), {"-o", output});
             outputs.push_back(output);
          }
-         new_opts.insert(new_opts.begin(), input);
 
-         if (llvm::sys::path::extension(input).equals(".c"))
-            new_opts.insert(new_opts.begin(), "-xc++");
+         new_opts.insert(new_opts.begin(), "-");
 
-         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
+         new_opts.insert(new_opts.begin(), "-xc++");
+
+         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts, false, input)) {
             llvm::sys::fs::remove(tmp_file);
             return -1;
          }
