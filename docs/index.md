@@ -12,13 +12,13 @@ There's been a round of braking changes, if you are upgrading please read the [U
 
 ## Contributing
 
-[Contributing Guide](../CONTRIBUTING.md)
+[Contributing Guide](https://github.com/EOSIO/eosio.cdt/blob/release/1.7.x/CONTRIBUTING.md)
 
-[Code of Conduct](../CONTRIBUTING.md#conduct)
+[Code of Conduct](https://github.com/EOSIO/eosio.cdt/blob/release/1.7.x/CONTRIBUTING.md#conduct)
 
 ## License
 
-[MIT](../LICENSE)
+[MIT](https://github.com/EOSIO/eosio.cdt/blob/release/1.7.x/LICENSE)
 
 ## Important
 
