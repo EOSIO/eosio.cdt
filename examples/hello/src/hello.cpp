@@ -13,17 +13,15 @@ void hello::check( name nm ) {
 
 // Checks the input param `nm` and returns serialized vector of strings.
 [[eosio::action]]
-std::vector<std::string> hello::checkwithrv( name nm ) {
+std::pair<int, std::string> hello::checkwithrv( name nm ) {
    print_f("Name : %\n", nm);
 
-   std::vector<std::string> results;
+   std::pair<int, std::string> results = {0, "NOP"};
    if (nm == "hello"_n) {
-      results.push_back("0");
-      results.push_back("Validation has passed");
+      results = {0, "Validation has passed."};
    }
    else {
-      results.push_back("1");
-      results.push_back("Input param `name` not equal to `hello`");
+      results = {1, "Input param `name` not equal to `hello`."};
    }
    return results; // the `set_action_return_value` intrinsic is invoked automatically here
 }

@@ -10,7 +10,7 @@ class [[eosio::contract]] hello : public contract {
       [[eosio::action]] 
       void check( name nm );
       [[eosio::action]]
-      std::vector<std::string> checkwithrv( name nm );
+      std::pair<int, std::string> checkwithrv( name nm );
 
       using hi_action = action_wrapper<"hi"_n, &hello::hi>;
       using check_action = action_wrapper<"check"_n, &hello::check>;
