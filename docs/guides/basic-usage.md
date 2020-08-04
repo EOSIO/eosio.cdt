@@ -34,4 +34,4 @@ public:
 EOSIO_DISPATCH( test, (testact) )
 ```
 
-To manually compile the source code, use [`eosio-cpp/eosio-cc`](/tools/eosio-cpp.html) and [`eosio-ld`](/tools/eosio-ld.html) as if it were __clang__ and __lld__. All the includes and options specific to EOSIO and CDT are baked in.
+To manually compile the source code, use [`eosio-cpp`](../tools/eosio-cpp.md) and [`eosio-ld`](../tools/eosio-ld.md) as if it were __clang__ and __lld__. All the includes and options specific to EOSIO and CDT are baked in.
