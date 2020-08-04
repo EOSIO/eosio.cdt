@@ -8,7 +8,7 @@ struct my_struct {
    std::string fullname;
    uint32_t age;
 
-   std::tuple<std::string, uint32_t> non_unique_name() const { return {fullname, age}; }
+   eosio::non_unique<std::string, uint32_t> non_unique_name;
 
    bool operator==(const my_struct& b) const {
       return primary_key == b.primary_key &&
@@ -38,35 +38,40 @@ public:
       .foo = "a",
       .bar = 5,
       .fullname = "Bob Smith",
-      .age = 25
+      .age = 25,
+      .non_unique_name = {"Bob Smith", 25}
    };
    my_struct s2{
       .primary_key = "alice"_n,
       .foo = "C",
       .bar = 4,
       .fullname = "Alice Smith",
-      .age = 100
+      .age = 100,
+      .non_unique_name = {"Alice Smith", 100}
    };
    my_struct s3{
       .primary_key = "john"_n,
       .foo = "e",
       .bar = 3,
       .fullname = "John Smith",
-      .age = 42
+      .age = 42,
+      .non_unique_name = {"John Smith", 42}
    };
    my_struct s4{
       .primary_key = "joe"_n,
       .foo = "g",
       .bar = 2,
       .fullname = "Bob Smith",
-      .age = 47
+      .age = 47,
+      .non_unique_name = {"Bob Smith", 47}
    };
    my_struct s5{
       .primary_key = "billy"_n,
       .foo = "I",
       .bar = 1,
       .fullname = "Bob Smith",
-      .age = 26
+      .age = 26,
+      .non_unique_name = {"Bob Smith", 26}
    };
 
    [[eosio::action]]

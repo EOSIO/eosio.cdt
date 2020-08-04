@@ -65,7 +65,7 @@ class datastream {
       *  @return true
       */
       inline bool read( char* d, size_t s ) {
-        eosio::check( size_t(_end - _pos) >= (size_t)s, "read" );
+        eosio::check( size_t(_end - _pos) >= (size_t)s, "datastream attempted to read past the end" );
         memcpy( d, _pos, s );
         _pos += s;
         return true;
@@ -79,7 +79,33 @@ class datastream {
       *  @return true
       */
       inline bool write( const char* d, size_t s ) {
-        eosio::check( _end - _pos >= (int32_t)s, "write" );
+        eosio::check( _end - _pos >= (int32_t)s, "datastream attempted to write past the end" );
+        memcpy( (void*)_pos, d, s );
+        _pos += s;
+        return true;
+      }
+
+     /**
+      *  Writes a specified byte into the stream from a buffer
+      *
+      *  @param d - The byte to be written
+      *  @return true
+      */
+      inline bool write( char d ) {
+        eosio::check( _end - _pos >= 1, "datastream attempted to write past the end" );
+        *_pos++ = d;
+        return true;
+      }
+
+     /**
+      *  Writes a specified number of bytes into the stream from a buffer
+      *
+      *  @param d - The pointer to the source buffer
+      *  @param s - The number of bytes to write
+      *  @return true
+      */
+      inline bool write( const void* d, size_t s ) {
+        eosio::check( _end - _pos >= (int32_t)s, "datastream attempted to write past the end" );
         memcpy( (void*)_pos, d, s );
         _pos += s;
         return true;
@@ -193,6 +219,22 @@ class datastream<size_t> {
       *  @return true
       */
      inline bool     write( const char* ,size_t s )  { _size += s; return true;  }
+
+     /**
+      *  Increment the size by s. This behaves the same as skip( size_t s )
+      *
+      *  @param s - The amount of size to increase
+      *  @return true
+      */
+     inline bool     write( char )  { _size++; return true;  }
+
+     /**
+      *  Increment the size by s. This behaves the same as skip( size_t s )
+      *
+      *  @param s - The amount of size to increase
+      *  @return true
+      */
+     inline bool     write( const void* ,size_t s )  { _size += s; return true;  }
 
      /**
       *  Increment the size by one
