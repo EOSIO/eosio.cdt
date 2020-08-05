@@ -75,7 +75,7 @@
         }
     ],
     "tables": [],
-    "kv_tables": [],
+    "kv_tables": {},
     "ricardian_clauses": [],
     "variants": [],
     "action_results": [
