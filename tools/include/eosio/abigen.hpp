@@ -417,19 +417,25 @@ namespace eosio { namespace cdt {
          return o;
       }
 
-      ojson kv_table_to_json( const abi_kv_table& t ) {
+      std::pair<std::string, ojson> kv_table_to_json( const abi_kv_table& t ) {
          ojson o;
-         o["name"] = t.name;
          o["type"] = t.type;
-         auto indices = ojson::array();
-         for (const auto& i : t.indices) {
-            ojson o;
-            o["name"] = i.name;
-            o["type"] = i.type;
-            indices.push_back(o);
+         auto indices = ojson::object();
+         for (int i = 0; i < t.indices.size(); ++i) {
+            auto idx = t.indices[i];
+            if (i == 0) {
+               ojson oj;
+               oj["name"] = idx.name;
+               oj["type"] = idx.type;
+               o["primary_key"] = oj;
+            } else {
+               ojson o;
+               o["type"] = idx.type;
+               indices.insert_or_assign(idx.name, o);
+            }
          }
          o["indices"] = indices;
-         return o;
+         return {t.name, o};
       }
 
       ojson action_result_to_json( const abi_action_result& result ) {
@@ -591,9 +597,10 @@ namespace eosio { namespace cdt {
          for ( auto t : set_of_tables ) {
             o["tables"].push_back(table_to_json( t ));
          }
-         o["kv_tables"]  = ojson::array();
+         o["kv_tables"]  = ojson::object();
          for ( const auto& t : _abi.kv_tables ) {
-            o["kv_tables"].push_back(kv_table_to_json( t ));
+            auto kv_table = kv_table_to_json(t);
+            o["kv_tables"].insert_or_assign(kv_table.first, kv_table.second);
          }
          o["ricardian_clauses"]  = ojson::array();
          for ( auto rc : _abi.ricardian_clauses ) {
