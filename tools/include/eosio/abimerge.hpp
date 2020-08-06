@@ -105,11 +105,6 @@ class ABIMerger {
                 a["key_types"] == b["key_types"];
       }
 
-      static bool kv_table_is_same(ojson a, ojson b) {
-         return a["name"] == b["name"] &&
-                a["type"] == b["type"];
-      }
-
       static bool clause_is_same(ojson a, ojson b) {
          return a["id"] == b["id"] &&
                 a["body"] == b["body"];
@@ -141,8 +136,7 @@ class ABIMerger {
          }
       }
 
-      template <typename F>
-      void add_object_to_object(ojson& ret, ojson a, ojson b, std::string type, std::string id, F&& is_same_func) {
+      void add_object_to_object(ojson& ret, ojson a, ojson b, std::string type, std::string id) {
          for (auto obj_a : a[type].object_range()) {
             ret.insert_or_assign(obj_a.key(), obj_a.value());
          }
@@ -196,7 +190,7 @@ class ABIMerger {
 
       ojson merge_kv_tables(ojson b) {
          ojson kv_tabs = ojson::object();
-         add_object_to_object(kv_tabs, abi, b, "kv_tables", "name", kv_table_is_same);
+         add_object_to_object(kv_tabs, abi, b, "kv_tables", "name");
          return kv_tabs;
       }
 
