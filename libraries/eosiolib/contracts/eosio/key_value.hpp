@@ -29,7 +29,7 @@ namespace eosio {
          int64_t kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size);
 
          __attribute__((eosio_wasm_import))
-         int64_t kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size);
+         int64_t kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size, uint64_t payer);
 
          __attribute__((eosio_wasm_import))
          bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
@@ -249,7 +249,8 @@ namespace kv_detail {
       void put(const void* value, void* old_value,
                std::size_t (*get_size)(const void*),
                void (*deserialize)(void*, const void*, std::size_t),
-               void (*serialize)(const void*, void*, std::size_t)) {
+               void (*serialize)(const void*, void*, std::size_t),
+               eosio::name payer) {
          uint32_t value_size;
 
          auto primary_key = primary_index->get_key_void(value);
@@ -275,7 +276,7 @@ namespace kv_detail {
 
             if (!primary_key_found) {
                eosio::check(!sec_found, "Attempted to store an existing secondary index.");
-               internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+               internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size(), payer.value);
             } else {
                if (sec_found) {
                   void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
@@ -290,7 +291,7 @@ namespace kv_detail {
                } else {
                   auto old_sec_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(old_value);
                   internal_use_do_not_use::kv_erase(db_name, contract_name.value, old_sec_key.data(), old_sec_key.size());
-                  internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size());
+                  internal_use_do_not_use::kv_set(db_name, contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size(), payer.value);
                }
             }
          }
@@ -300,7 +301,7 @@ namespace kv_detail {
 
          serialize(value, data_buffer, data_size);
 
-         internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size);
+         internal_use_do_not_use::kv_set(db_name, contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size, payer.value);
 
          if (data_size > detail::max_stack_buffer_size) {
             free(data_buffer);
@@ -880,11 +881,15 @@ public:
     * If the put attempts to store over an existing secondary index, the transaction will be aborted.
     *
     * @param value - The entry to be stored in the table.
+    * @param payer - The payer for the entry.
     */
-   void put(const T& value) {
-      uint32_t value_size;
+   void put(const T& value, eosio::name payer) {
       T old_value;
-      kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun);
+      kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun, payer);
+   }
+
+   void put(const T& value) {
+      put(value, kv_table_base::contract_name);
    }
 
    /* @cond PRIVATE */

@@ -112,7 +112,7 @@ public:
 
       t.put(s1);
       t.put(s2);
-      t.put(s3);
+      t.put(s3, "kvtest"_n);
 
       auto itr = t.primary_key.find("Dan Larimer");
       auto val = itr.value();
