@@ -31,7 +31,7 @@ struct __attribute__((eosio_action)) testa {
 };
 ```
 
-If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
+If your action name is not a valid [EOSIO name](../02_naming-conventions.md) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
 
 ## [[eosio::table]]
 Example (two ways to declare a table for ABI generation):
