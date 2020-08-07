@@ -888,10 +888,6 @@ public:
       kv_table_base::put(&value, &old_value, &get_size_fun, &deserialize_fun, &serialize_fun, payer);
    }
 
-   void put(const T& value) {
-      put(value, kv_table_base::contract_name);
-   }
-
    /* @cond PRIVATE */
    static void deserialize_optional_fun(void* value, const void* buffer, std::size_t buffer_size) {
       static_cast<std::optional<T>*>(value)->emplace();
