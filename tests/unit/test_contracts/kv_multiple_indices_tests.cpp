@@ -78,11 +78,10 @@ public:
    void setup() {
       my_table t{"kvtest"_n};
 
-      t.put(s1);
-      t.put(s2);
-      t.put(s3);
-      t.put(s4);
-      t.put(s5);
+      t.put(s2, get_self());
+      t.put(s3, get_self());
+      t.put(s4, get_self());
+      t.put(s5, get_self());
    }
 
    [[eosio::action]]
@@ -189,7 +188,7 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 
    [[eosio::action]]
@@ -202,7 +201,7 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 
    [[eosio::action]]
@@ -215,6 +214,6 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 };
