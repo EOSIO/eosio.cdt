@@ -185,14 +185,6 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         void normalize_type_name(std::string& type_name) {
-            // Currently _Bool is the only one of these oddities but others could be handled here if they arise.
-            auto pos = type_name.find("_Bool");
-            if (pos != std::string::npos) {
-               type_name.replace(pos, 5, "bool");
-            }
-         }
-
          template <size_t N>
          void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
             FullSourceLoc full(loc, inst.getSourceManager());
@@ -270,13 +262,13 @@ namespace eosio { namespace cdt {
                for (auto param : decl->parameters()) {
                   clang::LangOptions lang_opts;
                   lang_opts.CPlusPlus = true;
+                  lang_opts.Bool = true;
                   clang::PrintingPolicy policy(lang_opts);
                   auto qt = param->getOriginalType().getNonReferenceType();
                   qt.removeLocalConst();
                   qt.removeLocalVolatile();
                   qt.removeLocalRestrict();
                   std::string tn = clang::TypeName::getFullyQualifiedName(qt, *(cg.ast_context), policy);
-                  normalize_type_name(tn);
                   ss << tn << " arg" << i << "; ds >> arg" << i << ";\n";
                   i++;
                }
