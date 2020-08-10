@@ -9,7 +9,6 @@ namespace eosio { namespace cdt {
    };
    struct output_stream {
       char output[1024*4];
-      //char output[1024*2];
       size_t index = 0;
       std::string to_string()const { return std::string((const char*)output, index); }
       const char* get()const { return output; }
