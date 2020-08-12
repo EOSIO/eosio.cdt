@@ -16,6 +16,7 @@ public:
       std::optional<float> b;
       std::list<double> c;
       std::vector<int> d;
+      std::variant<int, bool, float> e;
 
       eosio::non_unique<std::string, uint32_t> non_unique_name;
 
