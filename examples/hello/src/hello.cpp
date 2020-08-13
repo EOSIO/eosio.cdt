@@ -11,7 +11,7 @@ void hello::check( name nm ) {
    eosio::check(nm == "hello"_n, "check name not equal to `hello`");
 }
 
-// Checks the input param `nm` and returns serialized vector of strings.
+// Checks the input param `nm` and returns serialized std::pair<int, std::string> instance.
 [[eosio::action]]
 std::pair<int, std::string> hello::checkwithrv( name nm ) {
    print_f("Name : %\n", nm);
