@@ -14,18 +14,18 @@ When you implement an action within a smart contract use the `return` statement 
 
 The following list provides important details for when you return a value from an action:
 
-*   As mentioned above, the `EOSIO` framework does all the heavy lifting for the return value to convey it to the client. The `EOSIO` framework defines and uses a new intrinsic, namely `set_action_return_value`. To learn more about `EOSIO` returned values functionality, refer to its documentation and implementation.
-*   The CPU time and memory limit of your contract (maximum size of wasm), not RAM or NET, defines the limits of the returned value..
-*   The action receipt includes a hash of the serialized returned value.
-*   The action trace includes the serialized returned value.
-*   If the trace log is enabled, the state history trace logs also store the serialized returned value.
-*   If the trace api plugin is enabled, the trace api trace logs also store the serialized returned value.
-*   The returned value is available in the action trace. If the sender is another action, the action trace is not available to the sender action `code`. Therefore the returned value from an inline action can not be read by the action that sent the inline action.
-*   Also inline actions do not execute synchronously. Inline actions execute at a later time. No return value is available to the sender at the time the inline action is sent.
+* As mentioned above, the `EOSIO` framework does all the heavy lifting for the return value to convey it to the client. The `EOSIO` framework defines and uses a new intrinsic, namely `set_action_return_value`. To learn more about `EOSIO` returned values functionality, refer to its documentation and [implementation](https://github.com/EOSIO/eosio.cdt/blob/develop/libraries/native/intrinsics.cpp#L295).
+* The CPU time and memory limit of your contract (maximum size of wasm), not RAM or NET, defines the limits of the returned value..
+* The action receipt includes a hash of the serialized returned value.
+* The action trace includes the serialized returned value.
+* If the trace log is enabled, the state history trace logs also store the serialized returned value.
+* If the trace api plugin is enabled, the trace api trace logs also store the serialized returned value.
+* The returned value is available in the action trace. If the sender is another action, the action trace is not available to the sender action `code`. Therefore the returned value from an inline action can not be read by the action that sent the inline action.
+* Also inline actions do not execute synchronously. Inline actions execute at a later time. No return value is available to the sender at the time the inline action is sent.
 
 ## Examples
 
 For a full working example of a smart contract action which returns a value, refer to the following resources:
 
-*   The [`hello`](https://github.com/`EOSIO`/eosio.cdt/blob/develop/examples/hello/src/hello.cpp#L14) smart contract example, see action ``hello::checkwithrv``.
-*   The [How-to return values from actions](https://github.com/`EOSIO`/eosio.cdt/blob/develop/docs/06_how-to-guides/10_how_to_return_values_from_actions.md).
+* The [`hello`](https://github.com/EOSIO/eosio.cdt/blob/develop/examples/hello/src/hello.cpp#L14) smart contract example, see action `hello::checkwithrv`.
+* The [How-to return values from actions](../06_how-to-guides/10_how_to_return_values_from_actions.md).
