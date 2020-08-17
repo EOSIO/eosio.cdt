@@ -78,6 +78,7 @@ public:
    void setup() {
       my_table t{"kvtest"_n};
 
+      t.put(s1, get_self());
       t.put(s2, get_self());
       t.put(s3, get_self());
       t.put(s4, get_self());
