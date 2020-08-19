@@ -44,6 +44,10 @@
                     "type": "int32[]"
                 },
                 {
+                    "name": "e",
+                    "type": "variant_int32_bool_float32"
+                },
+                {
                     "name": "non_unique_name",
                     "type": "tuple_string_uint32"
                 }
@@ -115,6 +119,11 @@
         }
     },
     "ricardian_clauses": [],
-    "variants": [],
+    "variants": [
+        {
+            "name": "variant_int32_bool_float32",
+            "types": ["int32","bool","float32"]
+        }
+    ],
     "action_results": []
 }
