@@ -288,7 +288,7 @@ namespace eosio { namespace cdt {
                if (const auto d = dyn_cast<clang::TemplateSpecializationType>(decayed_type)) {
                   const auto& decl_type = d->getArg(0);
                   if (const auto dcl_type = dyn_cast<clang::DecltypeType>(decl_type.getAsType())) {
-                     idx_type = get_value_from_decltype(dcl_type);
+                     idx_type = get_type_string_from_kv_index_macro_decltype(dcl_type);
                   }
                }
             } else {
@@ -507,7 +507,7 @@ namespace eosio { namespace cdt {
          auto validate_struct = [&]( abi_struct as ) {
             if ( is_builtin_type(_translate_type(as.name)) )
                return false;
-            if ( is_reserved_type(_translate_type(as.name)) ) {
+            if ( is_reserved(_translate_type(as.name)) ) {
                return false;
             }
             for ( auto s : _abi.structs ) {
@@ -627,18 +627,7 @@ namespace eosio { namespace cdt {
          std::map<std::string, std::string>    rcs;
          std::set<const clang::Type*>          evaluated;
 
-         bool is_kv_table(const clang::CXXRecordDecl* decl) {
-            for (const auto& base : decl->bases()) {
-               auto type = base.getType();
-               if (type.getAsString().find("eosio::kv_table<") != std::string::npos) {
-                  return true;
-               }
-            }
-
-            return false;
-         }
-
-         std::string get_value_from_decltype(const clang::DecltypeType* decl) {
+         std::string get_type_string_from_kv_index_macro_decltype(const clang::DecltypeType* decl) {
             if (const auto ref_type = dyn_cast<clang::LValueReferenceType>(decl->desugar())) {
                const auto pt = ref_type->getPointeeType();
                if (const auto record_type = dyn_cast<clang::RecordType>(pt)) {

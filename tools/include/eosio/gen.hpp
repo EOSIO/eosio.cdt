@@ -304,8 +304,8 @@ struct generation_utils {
                   return true;
                } else {
                   for ( auto name : names )
-                     if ( rt->getDecl()->getName().str() == name ) {
-                        return true;
+                     if ( const auto* decl = rt->getDecl() ) {
+                        return decl->getName().str() == name;
                      }
                }
             }
@@ -588,7 +588,7 @@ struct generation_utils {
       return builtins.count(_translate_type(t)) >= 1;
    }
 
-   inline bool is_reserved_type( const std::string& t ) {
+   inline bool is_reserved( const std::string& t ) {
       return t.find("__") != std::string::npos;
    }
 
@@ -629,11 +629,8 @@ struct generation_utils {
    }
 
    inline bool is_eosio_non_unique(const clang::QualType& t) {
-      auto str_name = t.getAsString();
-      auto nu_re = std::regex("eosio::non_unique<[a-zA-Z]+[a-zA-Z0-9].*>");
-      if (std::regex_match(str_name, nu_re))
-         return true;
-      return false;
+      constexpr std::string_view non_unique_test_str = "eosio::non_unique<";
+      return t.getAsString().substr(0, non_unique_test_str.size()) == non_unique_test_str;
    }
 
    inline clang::QualType get_nested_type(const clang::QualType& t) {
@@ -646,6 +643,17 @@ struct generation_utils {
       }
       CDT_INTERNAL_ERROR("Tried to get a nested template type of a template not containing one");
       __builtin_unreachable();
+   }
+
+   inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
+      for (const auto& base : decl->bases()) {
+         auto type = base.getType();
+         if (type.getAsString().find("eosio::kv_table<") != std::string::npos) {
+            return true;
+         }
+      }
+
+      return false;
    }
 };
 }} // ns eosio::cdt

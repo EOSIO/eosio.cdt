@@ -149,6 +149,11 @@ namespace eosio { namespace cdt {
                ss << "uint32_t action_data_size();\n";
                ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t read_action_data(void*, uint32_t);\n";
+               const auto& return_ty = decl->getReturnType().getAsString();	
+               if (return_ty != "void") {	
+                  ss << "__attribute__((eosio_wasm_import))\n";	
+                  ss << "void set_action_return_value(void*, size_t);\n";	
+               }
                ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
                ss << ":";
@@ -175,13 +180,23 @@ namespace eosio { namespace cdt {
                   ss << tn << " arg" << i << "; ds >> arg" << i << ";\n";
                   i++;
                }
-               ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
-               for (int i=0; i < decl->parameters().size(); i++) {
-                  ss << "arg" << i;
-                  if (i < decl->parameters().size()-1)
-                     ss << ", ";
+               const auto& call_action = [&]() {
+                  ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
+                  for (int i=0; i < decl->parameters().size(); i++) {
+                     ss << "arg" << i;
+                     if (i < decl->parameters().size()-1)
+                        ss << ", ";
+                  }
+                  ss << ");\n";
+               };
+               if (return_ty != "void") {
+                  ss << "const auto& result = ";
                }
-               ss << ");";
+               call_action();
+               if (return_ty != "void") {
+                  ss << "const auto& packed_result = eosio::pack(result);\n";
+                  ss << "set_action_return_value((void*)packed_result.data(), packed_result.size());\n";
+               }
                ss << "}}\n";
 
                rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());

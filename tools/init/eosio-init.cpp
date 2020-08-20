@@ -23,7 +23,6 @@
 #include <map>
 #include <chrono>
 #include <ctime>
-#include <regex>
 
 #include "llvm/Support/CommandLine.h"
 using namespace clang::tooling;
