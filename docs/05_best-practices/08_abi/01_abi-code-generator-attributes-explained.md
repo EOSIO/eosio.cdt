@@ -1,5 +1,6 @@
 ---
 content_title: ABI/Code generator attributes explained
+link_text: ABI/Code generator attributes explained
 ---
 
 The new ABI generator tool uses C++11 or GNU style attributes to mark `actions` and `tables`.
