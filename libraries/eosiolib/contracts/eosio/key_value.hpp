@@ -225,7 +225,7 @@ namespace internal {
 
    private:
       template<typename T>
-      friend class table;
+      friend class eosio::kv::table;
       friend class table_base;
       friend class iterator_base;
 
@@ -327,7 +327,7 @@ namespace internal {
 
          internal_use_do_not_use::kv_erase(db_name, contract_name.value, tbl_key.data(), tbl_key.size());
       }
-   }; // end of table_base
+   };
 
    inline void index_base::get(const key_type& key, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const {
       uint32_t value_size;
@@ -377,7 +377,7 @@ namespace internal {
 
       iterator_base() = default;
 
-      iterator_base(uint32_t itr, status itr_stat, const index_base* idx) : itr{itr}, itr_stat{itr_stat}, idx{idx} {}
+      iterator_base(uint32_t itr, status itr_stat, const index_base* index) : itr{itr}, itr_stat{itr_stat}, index{index} {}
 
       iterator_base(iterator_base&& other) :
          itr(std::exchange(other.itr, 0)),
@@ -428,13 +428,13 @@ namespace internal {
          void* deserialize_buffer = buffer;
          size_t deserialize_size = actual_value_size;
 
-         bool is_primary = idx->index_name == idx->tbl->primary_index_name;
+         bool is_primary = index->index_name == index->tbl->primary_index_name;
          if (!is_primary) {
-            auto success = internal_use_do_not_use::kv_get(idx->tbl->db_name, idx->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
+            auto success = internal_use_do_not_use::kv_get(index->tbl->db_name, index->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
             eosio::check(success, "failure getting primary key in `value()`");
 
             void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            internal_use_do_not_use::kv_get_data(idx->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
+            internal_use_do_not_use::kv_get_data(index->tbl->db_name, 0, (char*)pk_buffer, actual_data_size);
 
             deserialize_buffer = pk_buffer;
             deserialize_size = actual_data_size;
@@ -470,7 +470,7 @@ namespace internal {
       uint32_t itr;
       status itr_stat;
 
-      const index_base* idx;
+      const index_base* index;
 
       int compare(const iterator_base& b) const {
          bool a_is_end = !itr || itr_stat == status::iterator_end;
@@ -485,9 +485,9 @@ namespace internal {
             return internal_use_do_not_use::kv_it_compare(itr, b.itr);
          }
       }
-   }; // end of iterator_base
+   };
 
-}  // namespace internal
+}
 
 /**
  * @defgroup keyvalue Key Value Table
@@ -529,7 +529,7 @@ private:
    class iterator : public base_iterator {
       using base_iterator::itr;
       using base_iterator::itr_stat;
-      using base_iterator::idx;
+      using base_iterator::index;
 
       template<typename K>
       friend class index;
@@ -539,7 +539,7 @@ private:
 
       iterator() = default;
 
-      iterator(uint32_t itr, status itr_stat, const index_base* idx) : base_iterator{itr, itr_stat, idx} {}
+      iterator(uint32_t itr, status itr_stat, const index_base* index) : base_iterator{itr, itr_stat, index} {}
 
       iterator(iterator&& other) : base_iterator{std::move(other)} {}
 
@@ -549,7 +549,7 @@ private:
          }
          itr = std::exchange(other.itr, 0);
          itr_stat = std::move(other.itr_stat);
-         idx = std::move(other.idx);
+         index = std::move(other.index);
          return *this;
       }
 
@@ -561,7 +561,7 @@ private:
 
       iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(static_cast<table*>(idx->tbl)->db_name, idx->contract_name.value, idx->prefix.data(), idx->prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(static_cast<table*>(index->tbl)->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
@@ -596,14 +596,14 @@ private:
    class reverse_iterator : public base_iterator {
       using base_iterator::itr;
       using base_iterator::itr_stat;
-      using base_iterator::idx;
+      using base_iterator::index;
 
    public:
       using status = typename base_iterator::status;
 
       reverse_iterator() = default;
 
-      reverse_iterator(uint32_t itr, status itr_stat, const index_base* idx) : base_iterator{itr, itr_stat, idx} {}
+      reverse_iterator(uint32_t itr, status itr_stat, const index_base* index) : base_iterator{itr, itr_stat, index} {}
 
       reverse_iterator(reverse_iterator&& other) : base_iterator{std::move(other)} {}
 
@@ -613,7 +613,7 @@ private:
          }
          itr = std::exchange(other.itr, 0);
          itr_stat = std::move(other.itr_stat);
-         idx = std::move(other.idx);
+         index = std::move(other.index);
          return *this;
       }
 
@@ -625,7 +625,7 @@ private:
 
       reverse_iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(static_cast<table*>(idx->tbl)->db_name, idx->contract_name.value, idx->prefix.data(), idx->prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(static_cast<table*>(index->tbl)->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
             itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
@@ -688,7 +688,7 @@ public:
     * @tparam K - The type of the key used in the index.
     */
    template<typename K>
-   class tbl_index : public index_base {
+   class index : public index_base {
    public:
       using iterator = table::iterator;
       using table<T>::index_base::tbl;
@@ -698,7 +698,7 @@ public:
       using table<T>::index_base::prefix;
 
       template <typename KF>
-      tbl_index(eosio::name name, KF&& kf) : index_base{name, kf, (T*)nullptr} {
+      index(eosio::name name, KF&& kf) : index_base{name, kf, (T*)nullptr} {
          static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
                "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
       }
@@ -959,6 +959,6 @@ private:
       constexpr bool is_index = std::is_base_of_v<index_base, std::decay_t<Type>>;
       static_assert(is_index, "Incorrect type passed to init. Must be a reference to an index.");
    }
-}; // class table
+};
 } // namespace kv
 } // namespace eosio
