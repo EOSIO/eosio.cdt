@@ -1,6 +1,6 @@
 ---
 content_title: ABI variants
-link_title: ABI variants
+link_text: ABI variants
 ---
 
 ABI variants give the flexibility of using more than one type for a defined variable or data member. 
