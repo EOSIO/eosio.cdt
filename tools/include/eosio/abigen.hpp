@@ -265,7 +265,6 @@ namespace eosio { namespace cdt {
             if (const auto templ_base = dyn_cast<clang::ClassTemplateSpecializationDecl>(base.getType()->getAsCXXRecordDecl())) {
                const auto& templ_type = templ_base->getTemplateArgs()[0];
                table_type = templ_type.getAsType().getTypePtr()->getAsCXXRecordDecl();
-               // TODO: how to handle non_unique
                add_struct(table_type);
 
                const auto templ_val = templ_base->getTemplateArgs()[1].getAsIntegral().getExtValue();
@@ -277,7 +276,37 @@ namespace eosio { namespace cdt {
          t.type = table_type->getNameAsString();
          t.name = templ_name;
 
+         const auto get_string_name_from_kv_index = [&](clang::Expr* expr) {
+            std::string index_name;
+            if (const auto expr_wc = dyn_cast<clang::ExprWithCleanups>(expr)) {
+               if (const auto cc_expr = dyn_cast<clang::CXXConstructExpr>(expr_wc->getSubExpr())) {
+                  const auto arg = cc_expr->getArg(0);
+                  if (const auto cfc_expr = dyn_cast<clang::CXXFunctionalCastExpr>(arg)) {
+                     if (const auto il_expr = dyn_cast<clang::InitListExpr>(cfc_expr->getSubExpr())) {
+                        const auto init = il_expr->getInit(0);
+                        if (const auto udl = dyn_cast<clang::UserDefinedLiteral>(init)) {
+                           const auto child = udl->getRawSubExprs()[0];
+                           if (const auto ice = dyn_cast<clang::ImplicitCastExpr>(child)) {
+                              if (const auto dre = dyn_cast<clang::DeclRefExpr>(ice->getSubExpr())) {
+                                 if (const auto fd = dyn_cast<clang::FunctionDecl>(dre->getDecl())) {
+                                    const auto& templ_pack = fd->getTemplateSpecializationArgs()->get(1);
+                                    for (const auto& ta : templ_pack.pack_elements()) {
+                                       const auto val = (char)ta.getAsIntegral().getExtValue();
+                                       index_name.push_back(val);
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+            return index_name;
+         };
+
          for (const auto field : decl->fields()) {
+            std::string index_name = get_string_name_from_kv_index(field->getInClassInitializer());
             std::string idx_type;
             const auto qt = field->getType();
             const auto index_qtype = std::get<clang::QualType>(get_template_argument(qt));
@@ -295,7 +324,7 @@ namespace eosio { namespace cdt {
                // This is the non-macro case
                idx_type = get_type(index_type.getAsType());
             }
-            t.indices.push_back({field->getNameAsString(), idx_type});
+            t.indices.push_back({index_name, idx_type});
          }
 
          _abi.kv_tables.insert(t);

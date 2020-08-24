@@ -99,7 +99,7 @@
         "testtable": {
             "type": "my_struct",
             "primary_key": {
-                "name": "primary_key",
+                "name": "primarykey",
                 "type": "name"
             },
             "indices": {
@@ -109,7 +109,7 @@
                 "bar": {
                     "type": "uint64"
                 },
-                "non_unique_name": {
+                "nonuniqnme": {
                     "type": "tuple_string_uint32"
                 },
                 "age": {
