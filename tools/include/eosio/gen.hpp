@@ -303,10 +303,13 @@ struct generation_utils {
                if ( names.empty() ) {
                   return true;
                } else {
-                  for ( auto name : names )
+                  for ( auto name : names ) {
                      if ( const auto* decl = rt->getDecl() ) {
-                        return decl->getName().str() == name;
+                        if (decl->getName().str() == name) {
+                           return true;
+                        }
                      }
+                  }
                }
             }
          }
