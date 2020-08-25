@@ -8,7 +8,7 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct> {
+struct my_table : eosio::kv::table<my_struct> {
    KV_NAMED_INDEX("primary"_n, primary_key);
 
    my_table(eosio::name contract_name) {
