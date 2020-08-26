@@ -658,5 +658,21 @@ struct generation_utils {
 
       return false;
    }
+
+   inline bool is_kv_internal(const clang::CXXRecordDecl* decl) {
+      const std::set<std::string> internal_types {
+         "table",
+         "table_base",
+         "index",
+         "index_base"
+      };
+
+      const auto fqn = decl->getQualifiedNameAsString();
+
+      const auto in_kv_namespace = fqn.find("eosio::kv") != std::string::npos;
+      const bool is_internal = internal_types.count(decl->getNameAsString());
+
+      return in_kv_namespace && is_internal;
+   }
 };
 }} // ns eosio::cdt

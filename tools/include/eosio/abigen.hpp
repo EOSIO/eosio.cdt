@@ -178,12 +178,9 @@ namespace eosio { namespace cdt {
       }
 
       void add_struct( const clang::CXXRecordDecl* decl, const std::string& rname="" ) {
-         auto nme = decl->getName().str();
-         if (internal_types.count(nme)) {
+         if (is_kv_internal(decl) || is_kv_table(decl)) {
             return;
          }
-
-         if (is_kv_table(decl)) return;
 
          abi_struct ret;
          if ( decl->getNumBases() == 1 ) {
@@ -688,12 +685,6 @@ namespace eosio { namespace cdt {
             return "";
          }
 
-         const std::set<std::string> internal_types {
-            "kv_table",
-            "kv_table_base",
-            "index",
-            "kv_index"
-         };
    };
 
    class eosio_abigen_visitor : public RecursiveASTVisitor<eosio_abigen_visitor>, public generation_utils {
