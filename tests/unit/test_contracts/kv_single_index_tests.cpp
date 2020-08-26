@@ -8,7 +8,7 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
+struct my_table : eosio::kv::table<my_struct, "testtable"_n> {
    KV_NAMED_INDEX("primary"_n, primary_key);
 
    my_table(eosio::name contract_name) {
@@ -40,11 +40,11 @@ public:
    void setup() {
       my_table t{"kvtest"_n};
 
-      t.put(s3);
-      t.put(s);
-      t.put(s4);
-      t.put(s2);
-      t.put(s5);
+      t.put(s3, get_self());
+      t.put(s, get_self());
+      t.put(s4, get_self());
+      t.put(s2, get_self());
+      t.put(s5, get_self());
    }
 
    [[eosio::action]]

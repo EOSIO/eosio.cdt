@@ -13,7 +13,7 @@ public:
       uint64_t age;
    };
 
-   struct my_table : eosio::kv_table<my_struct_v, "testtable"_n> {
+   struct my_table : eosio::kv::table<my_struct_v, "testtable"_n> {
       KV_NAMED_INDEX("fullname"_n, full_name);
       KV_NAMED_INDEX("age"_n, age);
 
@@ -22,7 +22,7 @@ public:
       }
    };
 
-   struct my_table_v : eosio::kv_table<std::variant<my_struct_v, my_struct_v2>, "testtable"_n> {
+   struct my_table_v : eosio::kv::table<std::variant<my_struct_v, my_struct_v2>, "testtable"_n> {
       index<std::string> primary_key{"fullname"_n, [](const auto& obj) {
          return std::visit([&](auto&& a) {
             using V = std::decay_t<decltype(a)>;
@@ -68,8 +68,8 @@ public:
          .age = 24
       };
 
-      t.put(s1);
-      t.put(s2);
+      t.put(s1, get_self());
+      t.put(s2, get_self());
 
       my_table_v t1{"kvtest"_n};
 
@@ -84,7 +84,7 @@ public:
          .age = 30
       };
 
-      t1.put(s3);
+      t1.put(s3, get_self());
 
       auto val2 = t1.primary_key.get("Bob : Smith");
       auto vval2 = std::get<my_struct_v2>(*val2);
@@ -111,9 +111,9 @@ public:
          .age = 30
       };
 
-      t.put(s1);
-      t.put(s2);
-      t.put(s3);
+      t.put(s1, get_self());
+      t.put(s2, get_self());
+      t.put(s3, get_self());
 
       auto itr = t.primary_key.find("Dan Larimer");
       auto val = itr.value();

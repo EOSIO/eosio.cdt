@@ -21,7 +21,7 @@ public:
       }
    };
 
-   struct [[eosio::table]] my_table : eosio::kv_table<my_struct, "testtable"_n> {
+   struct [[eosio::table]] my_table : eosio::kv::table<my_struct, "testtable"_n> {
       KV_NAMED_INDEX("primarykey"_n, primary_key)
       KV_NAMED_INDEX("foo"_n, foo)
       index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};
@@ -79,11 +79,11 @@ public:
    void setup() {
       my_table t{"kvtest"_n};
 
-      t.put(s1);
-      t.put(s2);
-      t.put(s3);
-      t.put(s4);
-      t.put(s5);
+      t.put(s1, get_self());
+      t.put(s2, get_self());
+      t.put(s3, get_self());
+      t.put(s4, get_self());
+      t.put(s5, get_self());
    }
 
    [[eosio::action]]
@@ -190,7 +190,7 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 
    [[eosio::action]]
@@ -203,7 +203,7 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 
    [[eosio::action]]
@@ -216,6 +216,6 @@ public:
          .bar = 1000,
          .fullname = "Bob Smith",
          .age = 25
-      });
+      }, get_self());
    }
 };
