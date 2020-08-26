@@ -29,7 +29,7 @@ public:
       }
    };
 
-   struct [[eosio::table]] my_table : eosio::kv_table<my_struct, "testtable"_n> {
+   struct [[eosio::table]] my_table : eosio::kv::table<my_struct, "testtable"_n> {
       KV_NAMED_INDEX("primarykey"_n, primary_key)
       KV_NAMED_INDEX("foo"_n, foo)
       index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};

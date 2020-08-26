@@ -651,7 +651,7 @@ struct generation_utils {
    inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
       for (const auto& base : decl->bases()) {
          auto type = base.getType();
-         if (type.getAsString().find("eosio::kv_table<") != std::string::npos) {
+         if (type.getAsString().find("eosio::kv::table<") != std::string::npos) {
             return true;
          }
       }
