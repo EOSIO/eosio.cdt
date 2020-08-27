@@ -44,3 +44,4 @@ __pycache__/
 # Editor Files
 .vscode/
 *.vim
+.idea/

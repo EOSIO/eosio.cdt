@@ -1,0 +1,9 @@
+{
+   "tests" : [
+      {
+         "expected" : {
+            "abi-file" : "action_results_test.abi"
+         }
+      }
+   ]
+}

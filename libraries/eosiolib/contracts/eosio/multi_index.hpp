@@ -868,7 +868,7 @@ class multi_index
        *  // This assumes the code from the constructor example. Replace myaction() {...}
        *
        *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
+       *        address_index addresses("dan"_n, "dan"_n.value); // code, scope
        *        eosio::check(addresses.get_code() == "dan"_n, "Codes don't match.");
        *      }
        *  }
@@ -889,8 +889,8 @@ class multi_index
        *  // This assumes the code from the constructor example. Replace myaction() {...}
        *
        *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio::check(addresses.get_code() == "dan"_n, "Scopes don't match");
+       *        address_index addresses("dan"_n, "dan"_n.value); // code, scope
+       *        eosio::check(addresses.get_scope() == "dan"_n.value, "Scopes don't match");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
@@ -1014,10 +1014,10 @@ class multi_index
       const_iterator begin()const  { return cbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
        *  @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return An iterator referring to the `past-the-end` element in the multi index container.
        *
        *  Example:
        *
@@ -1038,10 +1038,10 @@ class multi_index
       const_iterator cend()const   { return const_iterator( this ); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
        *  @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       *  @return An iterator referring to the `past-the-end` element in the multi index container.
        *
        *  Example:
        *
@@ -1208,7 +1208,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the lower bound search.
-       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
        *
        *  Example:
        *
@@ -1254,7 +1254,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param primary - Primary key that establishes the target value for the upper bound search
-       *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than a given `primary` key. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
        *
        *  Example:
        *
@@ -1574,7 +1574,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param itr - an iterator pointing to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
+       *  @param payer - account name of the payer for the storage usage of the updated row
        *  @param updater - lambda function that updates the target object
        *
        *  @pre itr points to an existing element
@@ -1621,7 +1621,7 @@ class multi_index
        *  @ingroup multiindex
        *
        *  @param obj - a reference to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
+       *  @param payer - account name of the payer for the storage usage of the updated row
        *  @param updater - lambda function that updates the target object
        *
        *  @pre obj is an existing object in the table
@@ -1920,6 +1920,8 @@ class multi_index
             if( i >= 0 )
                secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_remove( i );
          });
+
+         _items_vector.erase(--(itr2.base()));
       }
 
 };

@@ -35,6 +35,12 @@ namespace eosio { namespace cdt {
       abigen() : generation_utils([&](){throw abigen_ex;}) {
       }
 
+
+      void set_abi_version(int major, int minor) {
+         _abi.version_major = major;
+         _abi.version_minor = minor;
+      }
+
       void add_typedef( const clang::QualType& t ) {
          abi_typedef ret;
          ret.new_type_name = get_base_type_name( t );
@@ -51,8 +57,9 @@ namespace eosio { namespace cdt {
          abi_action ret;
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!suppress_ricardian_warnings)
+            if (rcs[get_action_name(decl)].empty())
+               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
@@ -83,8 +90,9 @@ namespace eosio { namespace cdt {
 
          auto action_name = decl->getEosioActionAttr()->getName();
 
-         if (rcs[get_action_name(decl)].empty())
-            std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+         if (!suppress_ricardian_warnings)
+            if (rcs[get_action_name(decl)].empty())
+               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
@@ -106,6 +114,19 @@ namespace eosio { namespace cdt {
          }
          ret.type = decl->getNameAsString();
          _abi.actions.insert(ret);
+         if (translate_type(decl->getReturnType()) != "void") {
+            /** TODO after LLVM 9 update uncomment this code and use new error handling for pretty clang style errors
+            if (decl->getReturnType() == decl->getDeclaredReturnType())
+            */
+            add_type(decl->getReturnType());
+            _abi.action_results.insert({get_action_name(decl), translate_type(decl->getReturnType())});
+            /*
+            else {
+               std::cout << "Error, currently in eosio.cdt v2.0 `auto` is not allowed for actions\n";
+               throw abigen_ex;
+            }
+            */
+         }
       }
 
       void add_tuple(const clang::QualType& type) {
@@ -116,7 +137,7 @@ namespace eosio { namespace cdt {
          abi_struct tup;
          tup.name = get_type(type);
          for (int i = 0; i < tst->getNumArgs(); ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
+            clang::QualType ftype = std::get<clang::QualType>(get_template_argument(type, i));
             add_type(ftype);
             tup.fields.push_back( {"field_"+std::to_string(i),
                   translate_type(ftype)} );
@@ -126,32 +147,30 @@ namespace eosio { namespace cdt {
 
       void add_pair(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
+            clang::QualType ftype = std::get<clang::QualType>(get_template_argument(type, i));
             std::string ty = translate_type(ftype);
             add_type(ftype);
          }
          abi_struct pair;
          pair.name = get_type(type);
-         pair.fields.push_back( {"first", translate_type(get_template_argument(type).getAsType())} );
-         pair.fields.push_back( {"second", translate_type(get_template_argument(type, 1).getAsType())} );   
-         add_type(get_template_argument(type).getAsType());
-         add_type(get_template_argument(type, 1).getAsType());
+         pair.fields.push_back( {"first", get_template_argument_as_string(type)} );
+         pair.fields.push_back( {"second", get_template_argument_as_string(type, 1)} );
+         add_type(std::get<clang::QualType>(get_template_argument(type)));
+         add_type(std::get<clang::QualType>(get_template_argument(type, 1)));
          _abi.structs.insert(pair);
-      } 
+      }
 
       void add_map(const clang::QualType& type) {
          for (int i = 0; i < 2; ++i) {
-            clang::QualType ftype = get_template_argument(type, i).getAsType();
-            std::string ty = translate_type(ftype);
-            add_type(ftype);
+            add_type(std::get<clang::QualType>(get_template_argument(type, i)));
          }
          abi_struct kv;
          std::string name = get_type(type);
          kv.name = name.substr(0, name.length() - 2);
-         kv.fields.push_back( {"key", translate_type(get_template_argument(type).getAsType())} );
-         kv.fields.push_back( {"value", translate_type(get_template_argument(type, 1).getAsType())} );   
-         add_type(get_template_argument(type).getAsType());
-         add_type(get_template_argument(type, 1).getAsType());
+         kv.fields.push_back( {"key", get_template_argument_as_string(type)} );
+         kv.fields.push_back( {"value", get_template_argument_as_string(type, 1)} );
+         add_type(std::get<clang::QualType>(get_template_argument(type)));
+         add_type(std::get<clang::QualType>(get_template_argument(type, 1)));
          _abi.structs.insert(kv);
       }
 
@@ -240,10 +259,10 @@ namespace eosio { namespace cdt {
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>((pt) ? pt->desugar().getTypePtr() : t.getTypePtr());
          var.name = get_type(t);
          for (int i=0; i < tst->getNumArgs(); ++i) {
-            var.types.push_back(translate_type(get_template_argument( t, i ).getAsType()));
-            add_type(get_template_argument( t, i ).getAsType());
+            var.types.push_back(get_template_argument_as_string( t, i ));
+            add_type(std::get<clang::QualType>(get_template_argument( t, i )));
          }
-         _abi.variants.insert(var); 
+         _abi.variants.insert(var);
       }
 
       void add_type( const clang::QualType& t ) {
@@ -255,7 +274,7 @@ namespace eosio { namespace cdt {
             if (is_aliasing(type))
                add_typedef(type);
             else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
-               add_type(get_template_argument(type).getAsType());
+               add_type(std::get<clang::QualType>(get_template_argument(type)));
             }
             else if (is_template_specialization(type, {"map"}))
                add_map(type);
@@ -277,7 +296,7 @@ namespace eosio { namespace cdt {
          std::stringstream ss;
          ss << "This file was generated with eosio-abigen.";
          ss << " DO NOT EDIT ";
-         return ss.str(); 
+         return ss.str();
       }
 
       ojson struct_to_json( const abi_struct& s ) {
@@ -335,7 +354,14 @@ namespace eosio { namespace cdt {
          o["key_types"] = ojson::array();
          return o;
       }
-      
+
+      ojson action_result_to_json( const abi_action_result& result ) {
+         ojson o;
+         o["name"] = result.name;
+         o["result_type"] = result.type;
+         return o;
+      }
+
       bool is_empty() {
          std::set<abi_table> set_of_tables;
          for ( auto t : ctables ) {
@@ -360,11 +386,11 @@ namespace eosio { namespace cdt {
       ojson to_json() {
          ojson o;
          o["____comment"] = generate_json_comment();
-         o["version"]     = _abi.version;
+         o["version"]     = _abi.version_string();
          o["structs"]     = ojson::array();
          auto remove_suffix = [&]( std::string name ) {
             int i = name.length()-1;
-            for (; i >= 0; i--) 
+            for (; i >= 0; i--)
                if ( name[i] != '[' && name[i] != ']' && name[i] != '?' && name[i] != '$' )
                   break;
             return name.substr(0,i+1);
@@ -424,6 +450,10 @@ namespace eosio { namespace cdt {
                if (as.name == _translate_type(remove_suffix(td.type)))
                   return true;
             }
+            for( auto ar : _abi.action_results ) {
+               if (as.name == _translate_type(ar.type))
+                  return true;
+            }
             return false;
          };
 
@@ -452,6 +482,10 @@ namespace eosio { namespace cdt {
             for ( auto _td : _abi.typedefs )
                if ( remove_suffix(_td.type) == td.new_type_name )
                   return true;
+            for ( auto ar : _abi.action_results ) {
+               if ( ar.type == td.new_type_name )
+                  return true;
+            }
             return false;
          };
 
@@ -481,10 +515,16 @@ namespace eosio { namespace cdt {
             o["variants"].push_back(variant_to_json( v ));
          }
          o["abi_extensions"]     = ojson::array();
+         if (_abi.version_major == 1 && _abi.version_minor >= 2) {
+            o["action_results"]  = ojson::array();
+            for ( auto ar : _abi.action_results ) {
+               o["action_results"].push_back(action_result_to_json( ar ));
+            }
+         }
          return o;
       }
 
-      private: 
+      private:
          abi                                   _abi;
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;

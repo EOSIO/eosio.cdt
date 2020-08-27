@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include <string>
+#include <chrono>
+#include <ctime>
+#include <cstdio>
 #include "check.hpp"
 #include "serialize.hpp"
 
@@ -58,6 +61,24 @@ namespace eosio {
         const microseconds& time_since_epoch()const { return elapsed; }
         uint32_t            sec_since_epoch()const  { return uint32_t(elapsed.count() / 1000000); }
 
+        static time_point from_iso_string(const std::string& date_str) {
+           std::tm tm;
+           check(strptime(date_str.c_str(), "%Y-%m-%dT%H:%M:%S", &tm), "date parsing failed");
+
+           auto tp = std::chrono::system_clock::from_time_t( ::mktime( &tm ) );
+           auto duration = std::chrono::duration_cast<std::chrono::microseconds>( tp.time_since_epoch() );
+           return time_point{ microseconds{ static_cast<int64_t>(duration.count()) } };
+        }
+
+        std::string to_string() const {
+           time_t rawtime = sec_since_epoch();
+
+           char buf[100];
+           strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S", gmtime ( &rawtime ));
+
+           return std::string{buf};
+        }
+
         /// @cond INTERNAL
         bool   operator > ( const time_point& t )const                              { return elapsed._count > t.elapsed._count; }
         bool   operator >=( const time_point& t )const                              { return elapsed._count >=t.elapsed._count; }
@@ -97,6 +118,15 @@ namespace eosio {
         static time_point_sec maximum() { return time_point_sec(0xffffffff); }
         static time_point_sec min() { return time_point_sec(0); }
 
+        static time_point_sec from_iso_string(const std::string& date_str) {
+           auto time_p = time_point::from_iso_string(date_str);
+           return time_point_sec{ time_p };
+        }
+
+        std::string to_string() const {
+           return ((time_point)(*this)).to_string();
+        }
+
         operator time_point()const { return time_point( eosio::seconds( utc_seconds) ); }
         uint32_t sec_since_epoch()const { return utc_seconds; }
 
@@ -135,7 +165,7 @@ namespace eosio {
    /**
    *  This class is used in the block headers to represent the block time
    *  It is a parameterised class that takes an Epoch in milliseconds and
-   *  and an interval in milliseconds and computes the number of slots.
+   *  an interval in milliseconds and computes the number of slots.
    *
    *  @ingroup time
    **/
@@ -169,6 +199,15 @@ namespace eosio {
             int64_t msec = slot * (int64_t)block_interval_ms;
             msec += block_timestamp_epoch;
             return time_point(milliseconds(msec));
+         }
+
+         static block_timestamp from_iso_string(const std::string& date_str) {
+            auto time_p = time_point::from_iso_string(date_str);
+            return block_timestamp{ time_p };
+         }
+
+         std::string to_string() const {
+            return to_time_point().to_string();
          }
 
           /// @cond INTERNAL

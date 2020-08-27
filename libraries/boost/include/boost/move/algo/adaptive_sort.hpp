@@ -261,7 +261,7 @@ bool adaptive_sort_combine_all_blocks
       //    Implies l_block == l_intbuf && use_internal_buf == true
       //If l_intbuf is zero, see if half keys can be reused as a reduced emergency buffer,
       //    Implies l_block == n_keys/2 && use_internal_buf == true
-      //Otherwise, just give up and and use all keys to merge using rotations (use_internal_buf = false)
+      //Otherwise, just give up and use all keys to merge using rotations (use_internal_buf = false)
       bool use_internal_buf = false;
       size_type const l_block = lblock_for_combine(l_intbuf, n_keys, 2*l_merged, use_internal_buf);
       BOOST_ASSERT(!l_intbuf || (l_block == l_intbuf));

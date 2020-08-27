@@ -1,5 +1,6 @@
 #pragma once
 #include <eosio/utils.hpp>
+#include <eosio/abi.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <vector>
 #include <string>
@@ -19,6 +20,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<std::string> abi_version_opt(
+    "abi-version",
+    cl::desc("Which ABI version to generate"),
+    cl::cat(LD_CAT));
 static cl::opt<std::string> only_export_opt(
     "only-export",
     cl::desc("Export only this symbol"),
@@ -28,6 +33,11 @@ static cl::opt<std::string> only_export_opt(
 static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
+    cl::cat(LD_CAT));
+static cl::opt<bool> no_missing_ricardian_clause_opt(
+    "no-missing-ricardian-clause",
+    cl::desc("Disable warnings for missing Ricardian clauses"),
+    cl::init(false),
     cl::cat(LD_CAT));
 static cl::opt<bool> fquery_opt(
     "fquery",
@@ -126,6 +136,15 @@ static cl::opt<bool> allow_sse_opt(
     cl::desc("Should not be used, except for build libc"),
     cl::Hidden,
     cl::cat(LD_CAT));
+static cl::opt<bool> allow_names_opt (
+    "allow-names",
+    cl::desc("Allows name section to be created"),
+    cl::cat(LD_CAT));
+static cl::opt<std::string> mllvm_opt(
+    "mllvm",
+    cl::desc("Pass arguments to llvm"),
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -167,22 +186,22 @@ static cl::opt<std::string> abigen_output_opt(
     cl::cat(EosioCompilerToolCategory));
 // ignore for now
 static cl::opt<bool> g_opt(
-      "g",
-      cl::desc("debug build <ignored>"),
-      cl::Hidden,
-      cl::ZeroOrMore,
-      cl::cat(EosioCompilerToolCategory));
+    "g",
+    cl::desc("debug build <ignored>"),
+    cl::Hidden,
+    cl::ZeroOrMore,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<std::string> x_opt(
-      "x",
-      cl::desc("<ignored>"),
-      cl::Hidden,
-      cl::Prefix,
-      cl::cat(EosioCompilerToolCategory));
+    "x",
+    cl::desc("<ignored>"),
+    cl::Hidden,
+    cl::Prefix,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<bool> pch_opt(
-      "fpch-preprocess",
-      cl::desc("<ignored>"),
-      cl::Hidden,
-      cl::cat(EosioCompilerToolCategory));
+    "fpch-preprocess",
+    cl::desc("<ignored>"),
+    cl::Hidden,
+    cl::cat(EosioCompilerToolCategory));
 static cl::opt<bool> CC_opt(
     "CC",
     cl::desc("Include comments from within macros in preprocessed output"),
@@ -354,6 +373,7 @@ struct Options {
    std::vector<std::string> inputs;
    bool link;
    bool abigen;
+   bool suppress_ricardian_warning;
    bool pp_only;
    std::string eosio_pp_dir;
    std::string abigen_output;
@@ -364,11 +384,16 @@ struct Options {
    std::vector<std::string> abigen_resources;
    bool debug;
    bool native;
+   std::pair<int, int> abi_version;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
-   std::string apply_lib;
+   // add the define for whether this is compiling with CDT and version macros
+   copts.emplace_back("-D__eosio_cdt__");
+   copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_minor__=")+"${VERSION_MINOR}");
+   copts.emplace_back(std::string("-D__eosio_cdt_patchlevel__=")+"${VERSION_PATCH}");
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
@@ -387,6 +412,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       if (!fasm_opt) {
          copts.emplace_back("-fno-builtin");
          copts.emplace_back("-mstackrealign");
+         copts.emplace_back("-D__eosio_cdt_native__");
          copts.emplace_back("-DEOSIO_NATIVE");
          copts.emplace_back("-DLLP64");
       }
@@ -431,9 +457,11 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #ifdef ONLY_LD
 static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
-      ldopts.emplace_back("--gc-sections");
-      ldopts.emplace_back("--strip-all");
-      ldopts.emplace_back("--merge-data-segments");
+      if (!allow_names_opt) {
+         ldopts.emplace_back("--gc-sections");
+         ldopts.emplace_back("--strip-all");
+      }
+      ldopts.emplace_back("--no-merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
@@ -444,16 +472,16 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.insert(ldopts.end(), { "--only-export", "main:function" } );
          }
          else {
-            ldopts.insert(ldopts.end(), { "-e", "initialize " } );
+            ldopts.insert(ldopts.end(), { "-e", "initialize" } );
             ldopts.insert(ldopts.end(), { "--only-export", "initialize:function" } );
          }
          if (fquery_server_opt)
-            ldopts.insert(ldopts.end(), { "-export", "run_query " });
+            ldopts.insert(ldopts.end(), { "-export", "run_query" });
          else {
-            ldopts.insert(ldopts.end(), { "-export", "create_query_request " });
-            ldopts.insert(ldopts.end(), { "-export", "decode_query_response " });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_request " });
-            ldopts.insert(ldopts.end(), { "-export", "describe_query_response " });
+            ldopts.insert(ldopts.end(), { "-export", "create_query_request" });
+            ldopts.insert(ldopts.end(), { "-export", "decode_query_response" });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_request" });
+            ldopts.insert(ldopts.end(), { "-export", "describe_query_response" });
          }
          if (fquery_server_opt)
             ldopts.insert(ldopts.end(), { "--only-export", "run_query:function" });
@@ -487,6 +515,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       if (!only_export_opt.empty()) {
          ldopts.emplace_back("--only-export");
          ldopts.emplace_back(only_export_opt);
+      }
+
+      if (!mllvm_opt.empty()) {
+         ldopts.emplace_back("-mllvm");
+         ldopts.emplace_back(mllvm_opt);
       }
 
    } else {
@@ -541,6 +574,10 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fquery-server");
    if (fquery_client_opt)
       ldopts.emplace_back("-fquery-client");
+   if (allow_names_opt) {
+      ldopts.emplace_back("-fno-post-pass");
+      ldopts.emplace_back("--allow-names");
+   }
 #endif
 
    if (!pp_path_opt.empty())
@@ -612,8 +649,9 @@ static Options CreateOptions(bool add_defaults=true) {
       link = false;
       copts.emplace_back("-E");
    }
-   if(g_opt)
+   if(g_opt) {
       copts.emplace_back("-g");
+   }
    if (!x_opt.empty()) {
       // x_opt should precede input files
       copts.insert(copts.begin(), "-x"+x_opt);
@@ -861,9 +899,19 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fuse-main");
 #endif
 
+   /* TODO add some way of defaulting these to the current highest version */
+   int abi_version_major = 1;
+   int abi_version_minor = 2;
+
+   if (!abi_version_opt.empty()) {
+      abi_version_major = std::stoi(abi_version_opt);
+      float tmp         = std::stof(abi_version_opt);
+      abi_version_minor = ((tmp - (int)tmp)*10);
+   }
+
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #else
-   return {output_fn, {}, link, abigen, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
 #endif
 }

@@ -47,7 +47,7 @@ uint64_t string_to_name( const char* str )
 template <typename Lambda>
 void validate_name( const std::string& str, Lambda&& error_handler ) {
    const auto len = str.length();
-   if ( len > 13 ) { 
+   if ( len > 13 ) {
       std::cout << "Error, name {" << str << "} is more than 13 characters long\n";
       return error_handler();
    }
@@ -62,7 +62,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
       str2[12-i] = c;
       tmp >>= (i == 0 ? 4 : 5);
    }
-   
+
    auto trim = [](std::string& s) {
       int i;
       for (i = s.length()-1; i >= 0; i--)
@@ -140,12 +140,12 @@ struct environment {
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
-      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
+      if ( const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
          return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
       }
       else
          return false;
-      return true; 
+      return true;
    }
 
 };

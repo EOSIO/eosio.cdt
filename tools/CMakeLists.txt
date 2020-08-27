@@ -29,9 +29,9 @@ macro (add_tool name)
    set(LLVM_LINK_COMPONENTS support)
 
    include_directories(include)
-   
+
    add_executable(${name} ${CMAKE_BINARY_DIR}/${name}.cpp)
-   set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
+   set_property(TARGET ${name} PROPERTY CXX_STANDARD 17)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
    target_include_directories(${name} PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR})
    target_link_libraries(${name}
@@ -71,7 +71,6 @@ macro (add_tool name)
    add_custom_command( TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/bin/ )
 endmacro()
 
-add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)

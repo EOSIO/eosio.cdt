@@ -433,9 +433,9 @@ namespace eosio {
    }
 
    /**
-    * Wrapper for an action object. 
+    * Wrapper for an action object.
     *
-    * @brief Used to wrap an a particular action to simplify the process of other contracts sending inline actions to "wrapped" action. 
+    * @brief Used to wrap an a particular action to simplify the process of other contracts sending inline actions to "wrapped" action.
     * Example:
     * @code
     * // defined by contract writer of the actions
@@ -576,7 +576,7 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
  * Send an inline-action from inside a contract.
  *
  * @brief A macro to simplify calling inline actions
- * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling new actions from existing actions 
+ * @details The send inline action macro is intended to simplify the process of calling inline actions. When calling new actions from existing actions
  * EOSIO supports two communication models, inline and deferred. Inline actions are executed as part of the current transaction. This macro
  * creates an @ref action using the supplied parameters and automatically calls action.send() on this newly created action.
  *
@@ -584,15 +584,15 @@ INLINE_ACTION_SENDER3( CONTRACT_CLASS, NAME, ::eosio::name(#NAME) )
  * @code
  * SEND_INLINE_ACTION( *this, transfer, {st.issuer,N(active)}, {st.issuer, to, quantity, memo} );
  * @endcode
- * 
- * The example above is taken from eosio.token. 
- * This example:  
- *       uses the passed in, dereferenced `this` pointer, to call this.get_self() i.e. the eosio.token contract; 
- *       calls the eosio.token::transfer() action; 
+ *
+ * The example above is taken from eosio.token.
+ * This example:
+ *       uses the passed in, dereferenced `this` pointer, to call this.get_self() i.e. the eosio.token contract;
+ *       calls the eosio.token::transfer() action;
  *       uses the active permission of the "issuer" account;
- *       uses parameters st.issuer, to, quantity and memo. 
+ *       uses parameters st.issuer, to, quantity and memo.
  * This macro creates an action struct used to 'send()' (call) transfer(account_name from, account_name to, asset quantity, string memo)
- * 
+ *
  * @param CONTRACT - The contract to call, which contains the action being sent, maps to the @ref account
  * @param NAME - The name of the action to be called, maps to a @ref name
  * @param ... - The authorising permission, maps to an @ref authorization , followed by the parameters of the action, maps to a @ref data.

@@ -4,7 +4,7 @@ NAME=$1
 CDT_PREFIX=${PREFIX}/${SUBPREFIX}
 mkdir -p ${PREFIX}/bin/
 mkdir -p ${PREFIX}/lib/cmake/${PROJECT}
-mkdir -p ${CDT_PREFIX}/bin 
+mkdir -p ${CDT_PREFIX}/bin
 mkdir -p ${CDT_PREFIX}/include
 mkdir -p ${CDT_PREFIX}/lib/cmake/${PROJECT}
 mkdir -p ${CDT_PREFIX}/cmake
@@ -13,7 +13,7 @@ mkdir -p ${CDT_PREFIX}/licenses
 
 #echo "${PREFIX} ** ${SUBPREFIX} ** ${CDT_PREFIX}"
 
-# install binaries 
+# install binaries
 cp -R ${BUILD_DIR}/bin/* ${CDT_PREFIX}/bin || exit 1
 cp -R ${BUILD_DIR}/licenses/* ${CDT_PREFIX}/licenses || exit 1
 
@@ -50,10 +50,16 @@ create_symlink eosio-cpp eosio-cpp
 create_symlink eosio-ld eosio-ld
 create_symlink eosio-pp eosio-pp
 create_symlink eosio-init eosio-init
-create_symlink eosio-abigen eosio-abigen
 create_symlink eosio-wasm2wast eosio-wasm2wast
 create_symlink eosio-wast2wasm eosio-wast2wasm
 create_symlink eosio-ar eosio-ar
+create_symlink eosio-abidiff eosio-abidiff
+create_symlink eosio-nm eosio-nm
+create_symlink eosio-objcopy eosio-objcopy
+create_symlink eosio-objdump eosio-objdump
+create_symlink eosio-ranlib eosio-ranlib
+create_symlink eosio-readelf eosio-readelf
+create_symlink eosio-strip eosio-strip
 
 echo "Generating Tarball $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1
