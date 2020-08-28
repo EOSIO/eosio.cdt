@@ -29,11 +29,12 @@ person kv_addr_book::get(name account_name) {
 
       print_person(person_found);
       
-      // return value from action
+      // return found person from action
       return person_found;
    }
    else {
       eosio::print_f("Person not found in addressbook.");
+      // return empty person from action
       return person{};
    }
 }
@@ -47,10 +48,12 @@ person kv_addr_book::getbycntrpid(string country, string personal_id) {
    if (itr != addresses.country_personal_id_uidx.end()) {
       const auto& person_found = itr.value();
       print_person(person_found);
+      // return found person from action
       return person_found;
    }
    else {
       eosio::print_f("Person not found in addressbook.");
+      // return empty person from action
       return person{};
    }
 }
@@ -65,6 +68,7 @@ std::vector<person> kv_addr_book::getbylastname(string last_name) {
    auto list_of_persons = addresses.last_name_idx.range(
       {min_account_name, last_name},
       {max_account_name, last_name});
+   // return found list of person from action
    return list_of_persons;
 }
 
@@ -79,6 +83,7 @@ std::vector<person> kv_addr_book::getbyaddress(
    auto list_of_persons = addresses.address_idx.range(
       {min_account_name, street, city, state, country}, 
       {max_account_name, street, city, state, country});
+   // return found list of person from action
    return list_of_persons;
 }
 
@@ -95,6 +100,7 @@ void kv_addr_book::upsert(
       string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
+   // create the person object which will be stored in kv_table
    const person& person_update = person_factory::get_person(
       account_name,
       first_name,
@@ -105,9 +111,13 @@ void kv_addr_book::upsert(
       country,
       personal_id);
 
+   // retreive the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(person_update.get_account_name());
+
+   // upsert into kv_table
    addresses.put(person_update, get_self());
 
+   // print customized message for insert vs update
    if (existing_person.get_account_name().value == 0) {
       eosio::print_f("Person was successfully added to addressbook.");
    }
@@ -128,6 +138,8 @@ void kv_addr_book::del(name account_name) {
    if (itr != addresses.account_name_uidx.end()) {
       // extract person from iterator and delete it
       const auto& person_found = itr.value();
+      
+      // delete it from kv_table
       addresses.erase(person_found);
       eosio::print_f("Person was successfully deleted from addressbook.");
    }

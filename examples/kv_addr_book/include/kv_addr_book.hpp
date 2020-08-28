@@ -4,6 +4,13 @@ using namespace eosio;
 
 // this structure defines the data stored in the kv_table
 struct person {
+   eosio::name account_name;
+   eosio::non_unique<eosio::name, string> first_name;
+   eosio::non_unique<eosio::name, string> last_name;
+   eosio::non_unique<eosio::name, string, string, string, string> street_city_state_cntry;
+   eosio::non_unique<eosio::name, string> personal_id;
+   std::pair<string, string> country_personal_id;
+
    eosio::name get_account_name() const {
       return this->account_name;
    }
@@ -28,15 +35,6 @@ struct person {
    string get_personal_id() const {
       return get<1>(this->personal_id);
    }
-
-   eosio::name account_name;
-   eosio::non_unique<eosio::name, string> first_name;
-   eosio::non_unique<eosio::name, string> last_name;
-   eosio::non_unique<eosio::name, string, string, string, string> street_city_state_cntry;
-   eosio::non_unique<eosio::name, string> personal_id;
-   std::pair<string, string> country_personal_id;
-
-   friend class address_table;
 };
 
 // helper factory to easily build person objects
@@ -87,13 +85,14 @@ struct address_table : kv_table<person> {
       "address"_n, &person::street_city_state_cntry};
 
    address_table(eosio::name contract_name) {
-      init(contract_name, "addrtable"_n, eosio::kv_ram, 
-      account_name_uidx, 
-      country_personal_id_uidx, 
-      first_name_idx, 
-      last_name_idx,
-      personal_id_idx,
-      address_idx);
+      init(contract_name, 
+         "addrtable"_n, eosio::kv_ram, 
+         account_name_uidx, 
+         country_personal_id_uidx, 
+         first_name_idx, 
+         last_name_idx,
+         personal_id_idx,
+         address_idx);
    }
 };
 
