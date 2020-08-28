@@ -103,10 +103,23 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       kv_addr_book(name receiver, name code, datastream<const char*> ds)
          : contract(receiver, code, ds) {}
 
+      // retrieves a person based on primary key account_name
       [[eosio::action]]
       person get(name account_name);
+
+      // retrieves a person based on unique index defined by country and personal_id
       [[eosio::action]]
-      person getby(string country, string personal_id);
+      person getbycntrpid(string country, string personal_id);
+
+      // retrieves list of persons with the same last name
+      [[eosio::action]]
+      std::vector<person> getbylastname(string last_name);
+
+      // retrieves list of persons living on the same address
+      [[eosio::action]]
+      std::vector<person> getbyaddress(string street, string city, string state, string country);
+
+      // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
       void upsert(eosio::name account_name,
          string first_name,
@@ -116,13 +129,23 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
          string state, 
          string country,
          string personal_id);
+
+      // deletes a person based on primary key account_name
       [[eosio::action]]
-      void del(person user);
+      void del(name account_name);
+
+      // checks if a person exists in addressbook with a specific personal_id and country
+      [[eosio::action]]
+      bool checkpidcntr(string personal_id, string country);
 
       using get_action = action_wrapper<"get"_n, &kv_addr_book::get>;
-      using get_by_action = action_wrapper<"getby"_n, &kv_addr_book::getby>;
+      using get_by_cntry_pers_id_action = action_wrapper<"getbycntrpid"_n, &kv_addr_book::getbycntrpid>;
+      using get_by_last_name_action = action_wrapper<"getbylastname"_n, &kv_addr_book::getbylastname>;
+      using get_buy_address_action = action_wrapper<"getbyaddress"_n, &kv_addr_book::getbyaddress>;
       using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = action_wrapper<"del"_n, &kv_addr_book::del>;
+      using is_pers_id_in_cntry_action = action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
+
 
    private:
       void print_person(const person& person);

@@ -12,14 +12,24 @@ void kv_addr_book::print_person(const person& person) {
       person.get_personal_id());
 }
 
+// retrieves a person based on primary key account_name
+// we make use of index find function, which returns an iterator, 
+//    and then use iterator value
 [[eosio::action]]
 person kv_addr_book::get(name account_name) {
    address_table addresses{"kvaddrbook"_n};
 
+   // search for person by primary key account_name
    auto itr = addresses.account_name_uidx.find(account_name);
+
+   // check if person was found
    if (itr != addresses.account_name_uidx.end()) {
+      // extract person from iterator, print it and return it to the action sender
       const auto& person_found = itr.value();
+
       print_person(person_found);
+      
+      // return value from action
       return person_found;
    }
    else {
@@ -28,8 +38,9 @@ person kv_addr_book::get(name account_name) {
    }
 }
 
-[[eosio::action]] 
-person kv_addr_book::getby(string country, string personal_id) {
+// retrieves a person based on unique index defined by country and personal_id
+[[eosio::action]]
+person kv_addr_book::getbycntrpid(string country, string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
    auto itr = addresses.country_personal_id_uidx.find({country, personal_id});
@@ -44,7 +55,35 @@ person kv_addr_book::getby(string country, string personal_id) {
    }
 }
 
-[[eosio::action]] 
+// retrieves list of persons with the same last name
+[[eosio::action]]
+std::vector<person> kv_addr_book::getbylastname(string last_name) {
+   address_table addresses{"kvaddrbook"_n};
+
+   eosio::name min_account_name{0};
+   eosio::name max_account_name{UINT_MAX};
+   auto list_of_persons = addresses.last_name_idx.range(
+      {min_account_name, last_name},
+      {max_account_name, last_name});
+   return list_of_persons;
+}
+
+// retrieves list of persons living on the same address
+[[eosio::action]]
+std::vector<person> getbyaddress(string street, string city, string state, string country)
+{
+   address_table addresses{"kvaddrbook"_n};
+
+   eosio::name min_account_name{0};
+   eosio::name max_account_name{UINT_MAX};
+   auto list_of_persons = addresses.address_idx.range(
+      {min_account_name, street, city, state, country}, 
+      {max_account_name, street, city, state, country});
+   return list_of_persons;
+}
+
+// creates if not exists, or updates if already exists, a person
+[[eosio::action]]
 void kv_addr_book::upsert(
       eosio::name account_name,
       string first_name,
@@ -77,10 +116,30 @@ void kv_addr_book::upsert(
    }
 }
 
+// deletes a person based on primary key account_name
 [[eosio::action]]
-void kv_addr_book::del(person user) {
+void kv_addr_book::del(name account_name) {
    address_table addresses{"kvaddrbook"_n};
 
-   addresses.erase(user);
-   eosio::print_f("Person was successfully deleted.");
+   // search for person by primary key account_name
+   auto itr = addresses.account_name_uidx.find(account_name);
+
+   // check if person was found
+   if (itr != addresses.account_name_uidx.end()) {
+      // extract person from iterator and delete it
+      const auto& person_found = itr.value();
+      addresses.erase(person_found);
+      eosio::print_f("Person was successfully deleted from addressbook.");
+   }
+   else {
+      eosio::print_f("Person not found in addressbook.");
+   }
+}
+
+// checks if a person exists in addressbook with a specific personal_id and country
+[[eosio::action]]
+bool kv_addr_book::checkpidcntr(string personal_id, string country) {
+   address_table addresses{"kvaddrbook"_n};
+
+   return addresses.country_personal_id_uidx.exists({personal_id, country});
 }
