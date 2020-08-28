@@ -68,10 +68,10 @@ std::vector<person> kv_addr_book::getbylastname(string last_name) {
    return list_of_persons;
 }
 
-// retrieves list of persons living on the same address
+// retrieves list of persons with the same address
 [[eosio::action]]
-std::vector<person> getbyaddress(string street, string city, string state, string country)
-{
+std::vector<person> kv_addr_book::getbyaddress(
+   string street, string city, string state, string country) {
    address_table addresses{"kvaddrbook"_n};
 
    eosio::name min_account_name{0};

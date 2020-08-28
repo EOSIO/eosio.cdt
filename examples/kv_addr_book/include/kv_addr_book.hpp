@@ -115,7 +115,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       std::vector<person> getbylastname(string last_name);
 
-      // retrieves list of persons living on the same address
+      // retrieves list of persons with the same address
       [[eosio::action]]
       std::vector<person> getbyaddress(string street, string city, string state, string country);
 
