@@ -2,7 +2,7 @@
 using namespace std;
 using namespace eosio;
 
-// this structure defiles the data stored in the kv_table
+// this structure defines the data stored in the kv_table
 struct person {
    eosio::name get_account_name() const {
       return this->account_name;
@@ -41,7 +41,7 @@ struct person {
 
 // helper factory to easily build person objects
 struct person_factory {
-   person get_person(
+   static person get_person(
       eosio::name account_name,
       string first_name,
       string last_name,
@@ -62,7 +62,7 @@ struct person_factory {
 };
 
 struct address_table : kv_table<person> {
-   // unique indexes
+   // unique indexes definitions
    // 1. they are defined for just one property of the kv_table parameter type (person)
    // 2. unique indexes for multiple properties of the kv_table parameter type
    //    are defined with the help of a pair or a tuple; a pair if the index has 
@@ -70,7 +70,7 @@ struct address_table : kv_table<person> {
    index<name>   account_name_uidx {"accname"_n, &person::account_name};
    index<pair<string, string>> country_personal_id_uidx {"cntrypersid"_n, &person::country_personal_id};
    
-   // non-unique indexes
+   // non-unique indexes definitions
    // 1. non unique indexes need to be defined for at least two properties, 
    // 2. the first one needs to be a property that stores unique values, because 
    //    under the hood every index (non-unique or unique) is stored as an unique 
@@ -108,7 +108,14 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       person getby(string country, string personal_id);
       [[eosio::action]]
-      void upsert(person user);
+      void upsert(eosio::name account_name,
+         string first_name,
+         string last_name,
+         string street,
+         string city,
+         string state, 
+         string country,
+         string personal_id);
       [[eosio::action]]
       void del(person user);
 

@@ -45,11 +45,29 @@ person kv_addr_book::getby(string country, string personal_id) {
 }
 
 [[eosio::action]] 
-void kv_addr_book::upsert(person user) {
+void kv_addr_book::upsert(
+      eosio::name account_name,
+      string first_name,
+      string last_name,
+      string street,
+      string city,
+      string state, 
+      string country,
+      string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
-   const person& existing_person = get(user.get_account_name());
-   addresses.put(user, get_self());
+   const person& person_update = person_factory::get_person(
+      account_name,
+      first_name,
+      last_name,
+      street,
+      city,
+      state, 
+      country,
+      personal_id);
+
+   const person& existing_person = get(person_update.get_account_name());
+   addresses.put(person_update, get_self());
 
    if (existing_person.get_account_name().value == 0) {
       eosio::print_f("Person was successfully added to addressbook.");
