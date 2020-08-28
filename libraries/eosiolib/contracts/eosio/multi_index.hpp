@@ -1903,8 +1903,6 @@ class multi_index
          });
 
          eosio::check( itr2 != _items_vector.rend(), "attempt to remove object that was not in multi_index" );
-
-         _items_vector.erase(--(itr2.base()));
 #endif
 
          internal_use_do_not_use::db_remove_i64( objitem.__primary_itr );
@@ -1921,7 +1919,9 @@ class multi_index
                secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_remove( i );
          });
 
+#if 0
          _items_vector.erase(--(itr2.base()));
+#endif
       }
 
 };
