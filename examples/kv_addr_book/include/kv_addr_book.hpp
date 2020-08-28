@@ -2,43 +2,98 @@
 using namespace std;
 using namespace eosio;
 
+// this structure defiles the data stored in the kv_table
 struct person {
-   eosio::name account_name;
-   string first_name;
-   string last_name;
-   string street;
-   string city;
-   string state;
-   string country;
-   string personal_id;
+   eosio::name get_account_name() const {
+      return this->account_name;
+   }
+   string get_first_name() const {
+      return get<1>(this->first_name);
+   }
+   string get_last_name() const {
+      return get<1>(this->last_name);
+   }
+   string get_street() const {
+      return get<1>(this->street_city_state_cntry);
+   }
+   string get_city() const {
+      return get<2>(this->street_city_state_cntry);
+   }
+   string get_state() const {
+      return get<3>(this->street_city_state_cntry);
+   }
+   string get_country() const {
+      return get<4>(this->street_city_state_cntry);
+   }
+   string get_personal_id() const {
+      return get<1>(this->personal_id);
+   }
 
-   non_unique<string> get_first_name() const {
-      return first_name;
-   }
-   non_unique<string> get_last_name() const {
-      return last_name;
-   }
-   non_unique<string> get_full_name() const {
-      return {first_name + " " + last_name};
-   }
-   string get_personal_id_and_country() const {
-      return country + " " + personal_id; // unique combination
-   }
+   eosio::name account_name;
+   eosio::non_unique<eosio::name, string> first_name;
+   eosio::non_unique<eosio::name, string> last_name;
+   eosio::non_unique<eosio::name, string, string, string, string> street_city_state_cntry;
+   eosio::non_unique<eosio::name, string> personal_id;
+   std::pair<string, string> country_personal_id;
+
+   friend class address_table;
+};
+
+// helper factory to easily build person objects
+struct person_factory {
+   person get_person(
+      eosio::name account_name,
+      string first_name,
+      string last_name,
+      string street,
+      string city,
+      string state, 
+      string country,
+      string personal_id) {
+         return person {
+            .account_name = account_name,
+            .first_name = {account_name, first_name},
+            .last_name = {account_name, last_name},
+            .street_city_state_cntry = {account_name, street, city, state, country},
+            .personal_id = {account_name, personal_id},
+            .country_personal_id = {country, personal_id}
+         };
+      }
 };
 
 struct address_table : kv_table<person> {
    // unique indexes
-   index<name>               account_name_uidx {"accname"_n, &person::account_name};
-   index<string>             pers_id_cntry_uidx {"uniqueid"_n, &person::get_personal_id_and_country};
-   // non unique indexes
-   index<non_unique<string>> first_name_idx {"firstname"_n, &person::get_first_name};
-   index<non_unique<string>> last_name_idx {"lastname"_n, &person::get_last_name};
-   index<non_unique<string>> full_name_idx {"fullname"_n, &person::get_full_name};
+   // 1. they are defined for just one property of the kv_table parameter type (person)
+   // 2. unique indexes for multiple properties of the kv_table parameter type
+   //    are defined with the help of a pair or a tuple; a pair if the index has 
+   //    two properties or a tuple in case of more than two
+   index<name>   account_name_uidx {"accname"_n, &person::account_name};
+   index<pair<string, string>> country_personal_id_uidx {"cntrypersid"_n, &person::country_personal_id};
+   
+   // non-unique indexes
+   // 1. non unique indexes need to be defined for at least two properties, 
+   // 2. the first one needs to be a property that stores unique values, because 
+   //    under the hood every index (non-unique or unique) is stored as an unique 
+   //    index, and by providing as the first property one that has unique values
+   //    it ensures the uniques of the values combined (including non-unique ones)
+   // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
+   index<non_unique<eosio::name, string>> first_name_idx {
+      "firstname"_n, &person::first_name};
+   index<non_unique<eosio::name, string>> last_name_idx {
+      "lastname"_n, &person::last_name};
+   index<non_unique<eosio::name, string>> personal_id_idx {
+      "persid"_n, &person::personal_id};
+   index<non_unique<eosio::name, string, string, string, string>> address_idx {
+      "address"_n, &person::street_city_state_cntry};
 
    address_table(eosio::name contract_name) {
       init(contract_name, "addrtable"_n, eosio::kv_ram, 
-      account_name_uidx, pers_id_cntry_uidx, first_name_idx, 
-      last_name_idx, full_name_idx);
+      account_name_uidx, 
+      country_personal_id_uidx, 
+      first_name_idx, 
+      last_name_idx,
+      personal_id_idx,
+      address_idx);
    }
 };
 

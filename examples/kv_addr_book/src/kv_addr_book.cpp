@@ -3,13 +3,13 @@
 void kv_addr_book::print_person(const person& person) {
    eosio::print_f(
       "Person found: {%, %, %, %, %, %, %s}\n", 
-      person.first_name, 
-      person.last_name, 
-      person.street,
-      person.city,
-      person.state,
-      person.country,
-      person.personal_id);
+      person.get_first_name(), 
+      person.get_last_name(), 
+      person.get_street(),
+      person.get_city(),
+      person.get_state(),
+      person.get_country(),
+      person.get_personal_id());
 }
 
 [[eosio::action]]
@@ -32,8 +32,8 @@ person kv_addr_book::get(name account_name) {
 person kv_addr_book::getby(string country, string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
-   auto itr = addresses.pers_id_cntry_uidx.find(country + " " + personal_id);
-   if (itr != addresses.pers_id_cntry_uidx.end()) {
+   auto itr = addresses.country_personal_id_uidx.find({country, personal_id});
+   if (itr != addresses.country_personal_id_uidx.end()) {
       const auto& person_found = itr.value();
       print_person(person_found);
       return person_found;
@@ -48,10 +48,10 @@ person kv_addr_book::getby(string country, string personal_id) {
 void kv_addr_book::upsert(person user) {
    address_table addresses{"kvaddrbook"_n};
 
-   const person& existing_person = get(user.account_name);
+   const person& existing_person = get(user.get_account_name());
    addresses.put(user, get_self());
 
-   if (existing_person.account_name.value == 0) {
+   if (existing_person.get_account_name().value == 0) {
       eosio::print_f("Person was successfully added to addressbook.");
    }
    else {
