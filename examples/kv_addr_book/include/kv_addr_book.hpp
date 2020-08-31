@@ -12,28 +12,28 @@ struct person {
    std::pair<string, string> country_personal_id;
 
    eosio::name get_account_name() const {
-      return this->account_name;
+      return account_name;
    }
    string get_first_name() const {
-      return get<1>(this->first_name);
+      return get<1>(first_name);
    }
    string get_last_name() const {
-      return get<1>(this->last_name);
+      return get<1>(last_name);
    }
    string get_street() const {
-      return get<1>(this->street_city_state_cntry);
+      return get<1>(street_city_state_cntry);
    }
    string get_city() const {
-      return get<2>(this->street_city_state_cntry);
+      return get<2>(street_city_state_cntry);
    }
    string get_state() const {
-      return get<3>(this->street_city_state_cntry);
+      return get<3>(street_city_state_cntry);
    }
    string get_country() const {
-      return get<4>(this->street_city_state_cntry);
+      return get<4>(street_city_state_cntry);
    }
    string get_personal_id() const {
-      return get<1>(this->personal_id);
+      return get<1>(personal_id);
    }
 };
 
@@ -81,8 +81,11 @@ struct address_table : kv_table<person> {
       "lastname"_n, &person::last_name};
    index<non_unique<eosio::name, string>> personal_id_idx {
       "persid"_n, &person::personal_id};
-   index<non_unique<eosio::name, string, string, string, string>> address_idx {
-      "address"_n, &person::street_city_state_cntry};
+   // non-unique index defined using the KV_NAMED_INDEX macro
+   // note: you can not name your index like you were able to do before (ending in `_idx`),
+   // instead when using the macro you have to pass the name of the data member which 
+   // is indexed and that will give the name of the index as well
+   KV_NAMED_INDEX("address"_n, street_city_state_cntry)
 
    address_table(eosio::name contract_name) {
       init(contract_name, 
@@ -92,7 +95,7 @@ struct address_table : kv_table<person> {
          first_name_idx, 
          last_name_idx,
          personal_id_idx,
-         address_idx);
+         street_city_state_cntry);
    }
 };
 

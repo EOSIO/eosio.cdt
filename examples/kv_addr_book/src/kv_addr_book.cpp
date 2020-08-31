@@ -44,12 +44,11 @@ person kv_addr_book::get(name account_name) {
 person kv_addr_book::getbycntrpid(string country, string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
-   auto itr = addresses.country_personal_id_uidx.find({country, personal_id});
-   if (itr != addresses.country_personal_id_uidx.end()) {
-      const auto& person_found = itr.value();
-      print_person(person_found);
+   const auto& person_found = addresses.country_personal_id_uidx.get({country, personal_id});
+   if (person_found.has_value()) {
+      print_person(person_found.value());
       // return found person from action
-      return person_found;
+      return person_found.value();
    }
    else {
       eosio::print_f("Person not found in addressbook.");
@@ -80,7 +79,7 @@ std::vector<person> kv_addr_book::getbyaddress(
 
    eosio::name min_account_name{0};
    eosio::name max_account_name{UINT_MAX};
-   auto list_of_persons = addresses.address_idx.range(
+   auto list_of_persons = addresses.street_city_state_cntry.range(
       {min_account_name, street, city, state, country}, 
       {max_account_name, street, city, state, country});
    // return found list of person from action
@@ -138,7 +137,7 @@ void kv_addr_book::del(name account_name) {
    if (itr != addresses.account_name_uidx.end()) {
       // extract person from iterator and delete it
       const auto& person_found = itr.value();
-      
+
       // delete it from kv_table
       addresses.erase(person_found);
       eosio::print_f("Person was successfully deleted from addressbook.");
