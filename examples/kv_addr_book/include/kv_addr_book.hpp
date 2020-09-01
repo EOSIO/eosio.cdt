@@ -15,24 +15,31 @@ struct person {
       return account_name;
    }
    string get_first_name() const {
+      // from the eosio::non_unique tuple we extract the value with key 1, the first name
       return get<1>(first_name);
    }
    string get_last_name() const {
+      // from the eosio::non_unique tuple we extract the value with key 1, the last name
       return get<1>(last_name);
    }
    string get_street() const {
+      // from the eosio::non_unique tuple we extract the value with key 1, the street
       return get<1>(street_city_state_cntry);
    }
    string get_city() const {
+      // from the eosio::non_unique tuple we extract the value with key 2, the city
       return get<2>(street_city_state_cntry);
    }
    string get_state() const {
+      // from the eosio::non_unique tuple we extract the value with key 3, the state
       return get<3>(street_city_state_cntry);
    }
    string get_country() const {
+      // from the eosio::non_unique tuple we extract the value with key 4, the country
       return get<4>(street_city_state_cntry);
    }
    string get_personal_id() const {
+      // from the eosio::non_unique tuple we extract the value with key 1, the personal id
       return get<1>(personal_id);
    }
 };
@@ -147,7 +154,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = action_wrapper<"del"_n, &kv_addr_book::del>;
       using is_pers_id_in_cntry_action = action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
-
 
    private:
       void print_person(const person& person);
