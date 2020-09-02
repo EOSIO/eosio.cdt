@@ -188,7 +188,7 @@ template <typename ...Types>
 using non_unique = std::tuple<Types...>;
 
 namespace kv {
-template<typename T>
+template<typename T, eosio::name::raw TableName>
 class table;
 
 namespace internal {
@@ -224,7 +224,7 @@ namespace internal {
       key_type prefix;
 
    private:
-      template<typename T>
+      template<typename T, eosio::name::raw TableName>
       friend class eosio::kv::table;
       friend class table_base;
       friend class iterator_base;
@@ -501,7 +501,7 @@ namespace internal {
  *
  * @tparam T         - the type of the data stored as the value of the table
   */
-template<typename T>
+template<typename T, eosio::name::raw TableName>
 class table : internal::table_base {
 public:
    template<typename K>
@@ -691,11 +691,11 @@ public:
    class index : public index_base {
    public:
       using iterator = table::iterator;
-      using table<T>::index_base::tbl;
-      using table<T>::index_base::table_name;
-      using table<T>::index_base::contract_name;
-      using table<T>::index_base::index_name;
-      using table<T>::index_base::prefix;
+      using table<T, TableName>::index_base::tbl;
+      using table<T, TableName>::index_base::table_name;
+      using table<T, TableName>::index_base::contract_name;
+      using table<T, TableName>::index_base::index_name;
+      using table<T, TableName>::index_base::prefix;
 
       template <typename KF>
       index(eosio::name name, KF&& kf) : index_base{name, kf, (T*)nullptr} {
@@ -930,13 +930,13 @@ protected:
    }
 
    template <typename PrimaryIndex, typename... SecondaryIndices>
-   void init(eosio::name contract, eosio::name table, eosio::name db, PrimaryIndex& prim_index, SecondaryIndices&... indices) {
+   void init(eosio::name contract, PrimaryIndex& prim_index, SecondaryIndices&... indices) {
       validate_types(prim_index);
       (validate_types(indices), ...);
 
       contract_name = contract;
-      table_name = table;
-      db_name = db.value;
+      table_name = eosio::name{TableName};
+      db_name = eosio::kv_ram.value;
 
       primary_index = &prim_index;
       primary_index->contract_name = contract_name;

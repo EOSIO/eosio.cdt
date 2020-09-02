@@ -3,6 +3,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/Support/Program.h"
+
 #include <stdlib.h>
 #if defined(__APPLE__)
 # include <crt_externs.h>
@@ -48,8 +49,7 @@ template <typename Lambda>
 void validate_name( const std::string& str, Lambda&& error_handler ) {
    const auto len = str.length();
    if ( len > 13 ) {
-      std::cout << "Error, name {" << str << "} is more than 13 characters long\n";
-      return error_handler();
+      return error_handler(std::string("Name {")+str+"} is more than 13 characters long");
    }
    uint64_t value = string_to_name( str.c_str() );
 
@@ -73,8 +73,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
    trim(str2);
 
    if ( str2 != str ) {
-      std::cout << "Error, name not properly normalized\n";
-      return error_handler();
+      return error_handler("name not properly normalized");
    }
 }
 

@@ -39,6 +39,18 @@ struct abi_table {
    bool operator<(const abi_table& t) const { return name < t.name; }
 };
 
+struct abi_kv_index {
+   std::string name;
+   std::string type;
+};
+
+struct abi_kv_table {
+   std::string name;
+   std::string type;
+   std::vector<abi_kv_index> indices;
+   bool operator<(const abi_kv_table& t) const { return name < t.name; }
+};
+
 struct abi_ricardian_clause_pair {
    std::string id;
    std::string body;
@@ -66,14 +78,15 @@ struct abi {
    int version_major = 1;
    int version_minor = 1;
    std::string version_string()const { return std::string("eosio::abi/")+std::to_string(version_major)+"."+std::to_string(version_minor); }
-   std::set<abi_struct>  structs;
-   std::set<abi_typedef> typedefs;
-   std::set<abi_action>  actions;
-   std::set<abi_table>   tables;
-   std::set<abi_variant> variants;
-   std::vector<abi_ricardian_clause_pair>   ricardian_clauses;
-   std::vector<abi_error_message> error_messages;
-   std::set<abi_action_result> action_results;
+   std::set<abi_struct>                   structs;
+   std::set<abi_typedef>                  typedefs;
+   std::set<abi_action>                   actions;
+   std::set<abi_table>                    tables;
+   std::set<abi_kv_table>                 kv_tables;
+   std::set<abi_variant>                  variants;
+   std::vector<abi_ricardian_clause_pair> ricardian_clauses;
+   std::vector<abi_error_message>         error_messages;
+   std::set<abi_action_result>            action_results;
 };
 
 inline void dump( const abi& abi ) {
