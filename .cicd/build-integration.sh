@@ -8,7 +8,7 @@ ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 
 EOSIO_PATH="/root/eosio/build"
 
-. $HELPERS_DIR/docker-hash.sh
+# . $HELPERS_DIR/docker-hash.sh
 
 # PRE_COMMANDS: Executed pre-cmake
 PRE_COMMANDS="cd $MOUNTED_DIR/build"
@@ -30,4 +30,4 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
     done < "$BUILDKITE_ENV_FILE"
 fi
 
-eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+eval docker run $ARGS $evars $IMAGE_TAG bash -c \"$COMMANDS\"
