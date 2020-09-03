@@ -292,7 +292,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_UBUNTU_18}${SKIP_INTEGRATION_TESTS}
 
   - wait:
     continue_on_failure: true
