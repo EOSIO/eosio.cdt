@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eo pipefail
+set -exo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
