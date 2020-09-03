@@ -12,7 +12,7 @@ EOSIO_PATH="/root/eosio/build"
 
 # PRE_COMMANDS: Executed pre-cmake
 PRE_COMMANDS="cd $MOUNTED_DIR/build"
-BUILD_COMMANDS="cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${EOS_PATH} -DEOSIO_RUN_INTEGRATION_TESTS=1 .. && make -j$JOBS"
+BUILD_COMMANDS="cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${EOSIO_PATH} -DEOSIO_RUN_INTEGRATION_TESTS=1 .. && make -j$JOBS"
 
 # Docker Commands
 if [[ $BUILDKITE == true ]]; then
