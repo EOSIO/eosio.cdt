@@ -68,8 +68,7 @@ struct person_factory {
 
 class [[eosio::contract]] kv_addr_book : public eosio::contract {
 
-   [[eosio::table]]
-   struct address_table : kv_table<person> {
+   struct [[eosio::table]] address_table : kv_table<person> {
       // unique indexes definitions
       // 1. they are defined for just one property of the kv_table parameter type (person)
       // 2. unique indexes for multiple properties of the kv_table parameter type
