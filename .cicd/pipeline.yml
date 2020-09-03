@@ -283,6 +283,17 @@ steps:
       - "queue=mac-anka-large-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_TOOLCHAIN_TESTS}
 
+  - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/tests.sh"
+    env:
+      IMAGE_TAG: "eosio/ci-contracts-builder:base-ubuntu-18.04-develop"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_UNIT_TESTS}
+
   - wait:
     continue_on_failure: true
 
