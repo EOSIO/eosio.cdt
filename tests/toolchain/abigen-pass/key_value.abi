@@ -98,11 +98,11 @@
     "kv_tables": {
         "testtable": {
             "type": "my_struct",
-            "primary_key": {
+            "primary_index": {
                 "name": "primarykey",
                 "type": "name"
             },
-            "indices": {
+            "secondary_indices": {
                 "foo": {
                     "type": "string"
                 },
