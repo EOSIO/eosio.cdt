@@ -453,14 +453,14 @@ namespace eosio { namespace cdt {
                ojson oj;
                oj["name"] = idx.name;
                oj["type"] = idx.type;
-               o["primary_key"] = oj;
+               o["primary_index"] = oj;
             } else {
                ojson o;
                o["type"] = idx.type;
                indices.insert_or_assign(idx.name, o);
             }
          }
-         o["indices"] = indices;
+         o["secondary_indices"] = indices;
          return {t.name, o};
       }
 
