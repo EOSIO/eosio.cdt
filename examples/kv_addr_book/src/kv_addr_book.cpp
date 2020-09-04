@@ -164,8 +164,7 @@ std::vector<person> kv_addr_book::iterate(int iterations_count) {
    auto end_itr = addresses.account_name_uidx.end();
 
    int current_iteration = 0;
-   while (begin_itr != end_itr && current_iteration < iterations_count)
-   {
+   while (begin_itr != end_itr && current_iteration < iterations_count) {
       eosio::print_f(
          "Person found: {%, %}\n", 
          begin_itr.value().get_first_name(),
