@@ -130,6 +130,10 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       std::vector<person> getbyaddress(string street, string city, string state, string country);
 
+      // iterates over the first n persons in the table
+      [[eosio::action]]
+      std::vector<person> iterate(int iterations_count);
+
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
       void upsert(eosio::name account_name,
@@ -155,6 +159,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using get_buy_address_action = action_wrapper<"getbyaddress"_n, &kv_addr_book::getbyaddress>;
       using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = action_wrapper<"del"_n, &kv_addr_book::del>;
+      using iterate_action = action_wrapper<"iterate"_n, &kv_addr_book::iterate>;
       using is_pers_id_in_cntry_action = action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
 
    private:

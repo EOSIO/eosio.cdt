@@ -154,3 +154,24 @@ bool kv_addr_book::checkpidcntr(string personal_id, string country) {
 
    return addresses.country_personal_id_uidx.exists({personal_id, country});
 }
+
+// Iterates over the first iterations_count persons in the table
+[[eosio::action]]
+std::vector<person> kv_addr_book::iterate(int iterations_count) {
+   address_table addresses{"kvaddrbook"_n};
+   
+   auto begin_itr = addresses.account_name_uidx.begin();
+   auto end_itr = addresses.account_name_uidx.end();
+
+   int current_iteration = 0;
+   while (begin_itr != end_itr && current_iteration < iterations_count)
+   {
+      eosio::print_f(
+         "Person found: {%, %}\n", 
+         begin_itr.value().get_first_name(),
+         begin_itr.value().get_last_name());
+
+      ++ begin_itr;
+      ++ current_iteration;
+   }
+}
