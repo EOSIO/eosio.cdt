@@ -300,13 +300,11 @@ namespace eosio { namespace cdt {
                   return;
                }
 
-               int fd;
                llvm::SmallString<128> fn;
                try {
-                  SmallString<64> res;
-                  llvm::sys::path::system_temp_directory(true, res);
+                  llvm::sys::fs::createTemporaryFile("eosio", ".cpp", fn);
 
-                  std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str());
+                  std::ofstream out(fn.c_str());
                   {
                      llvm::SmallString<64> abs_file_path(main_fe->getName());
                      llvm::sys::fs::make_absolute(abs_file_path);
