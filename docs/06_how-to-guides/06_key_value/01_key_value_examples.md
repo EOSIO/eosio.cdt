@@ -1,4 +1,4 @@
-### kv_table Example:
+### kv::table Example:
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
@@ -15,7 +15,7 @@ struct address {
    auto full_name() const { return first_name + " " + last_name; }
 };
 
-struct address_table : kv_table<address> {
+struct address_table : kv::table<address> {
    index<name>    account_name{"accname"_n, &address::account_name};
    index<std::string> full_name{"fullname"_n, &address::full_name};
 
@@ -35,7 +35,7 @@ class addressbook : contract {
 ### KV_NAMED_INDEX Example:
 ```cpp
 // Assume the address definition above
-struct address_table : kv_table<address> {
+struct address_table : kv::table<address> {
    KV_NAMED_INDEX("accname"_n, account_name)
    KV_NAMED_INDEX("fullname"_n, full_name)
 
@@ -53,14 +53,14 @@ struct myrecord {
    std::tuple<uint32_t, bool> secondary_2;
 }
 
-struct myramtable : kv_table<myrecord> {
+struct myramtable : kv::table<myrecord> {
     // Assume some indexes
     myramtable(eosio::name contract_name) {
         init(contract_name, "testtable"_n, "eosio.kvram"_n, ...)
     }
 }
 
-struct mydisktable : kv_table<myrecord> {
+struct mydisktable : kv::table<myrecord> {
     // Assume some indexes
     mydisktable(eosio::name contract_name) {
         init(contract_name, "testtable"_n, "eosio.kvdisk"_n, ...)
@@ -68,7 +68,7 @@ struct mydisktable : kv_table<myrecord> {
 }
 ```
 
-### kv_table::put Example:
+### kv::table::put Example:
 ```cpp
 // This assumes the code from the class example.
 void myaction() {
@@ -84,7 +84,7 @@ void myaction() {
 }
 ```
 
-### kv_table::erase Example:
+### kv::table::erase Example:
 ```cpp
 // This assumes the code from the class example.
 void myaction() {

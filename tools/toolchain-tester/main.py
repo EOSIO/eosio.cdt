@@ -54,7 +54,7 @@ def main():
 
     temp_dir = tempfile.mkdtemp()
 
-    P.print(f"Temp files will be written to {temp_dir}...", verbose=True)
+    P.print(f"Temp files will be written to {temp_dir}", verbose=True)
 
     os.chdir(temp_dir)
 

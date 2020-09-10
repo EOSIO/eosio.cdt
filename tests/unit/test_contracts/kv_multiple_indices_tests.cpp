@@ -1,37 +1,38 @@
 #include <eosio/eosio.hpp>
 
-struct my_struct {
-   eosio::name primary_key;
-   std::string foo;
-   uint64_t bar;
-
-   std::string fullname;
-   uint32_t age;
-
-   eosio::non_unique<std::string, uint32_t> non_unique_name;
-
-   bool operator==(const my_struct& b) const {
-      return primary_key == b.primary_key &&
-             foo == b.foo &&
-             bar == b.bar &&
-             fullname == b.fullname &&
-             age == b.age;
-   }
-};
-
-struct my_table : eosio::kv_table<my_struct> {
-   KV_NAMED_INDEX("primarykey"_n, primary_key)
-   KV_NAMED_INDEX("foo"_n, foo)
-   KV_NAMED_INDEX("bar"_n, bar)
-   KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
-
-   my_table(eosio::name contract_name) {
-      init(contract_name, "testtable"_n, primary_key, foo, bar, non_unique_name);
-   }
-};
-
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
+   struct my_struct {
+      eosio::name primary_key;
+      std::string foo;
+      uint64_t bar;
+
+      std::string fullname;
+      uint32_t age;
+
+      eosio::non_unique<std::string, uint32_t> non_unique_name;
+
+      bool operator==(const my_struct& b) const {
+         return primary_key == b.primary_key &&
+                foo == b.foo &&
+                bar == b.bar &&
+                fullname == b.fullname &&
+                age == b.age;
+      }
+   };
+
+   struct [[eosio::table]] my_table : eosio::kv::table<my_struct, "testtable"_n> {
+      KV_NAMED_INDEX("primarykey"_n, primary_key)
+      KV_NAMED_INDEX("foo"_n, foo)
+      index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};
+      KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
+      KV_NAMED_INDEX("age"_n, age)
+
+      my_table(eosio::name contract_name) {
+         init(contract_name, primary_key, foo, bar, non_unique_name, age);
+      }
+   };
+
    using contract::contract;
    my_struct s1{
       .primary_key = "bob"_n,
