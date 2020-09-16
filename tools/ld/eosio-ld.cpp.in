@@ -43,7 +43,12 @@ int main(int argc, const char **argv) {
         std::cout << "Error: eosio.pp not found! (Try reinstalling eosio.wasmsdk)" << std::endl;
         return -1;
      }
-     if (!eosio::cdt::environment::exec_subprogram("eosio-pp", {opts.output_fn})) 
+     std::vector<std::string> pp_opts;
+     if(allow_names_opt) {
+        pp_opts.push_back("--allow-names");
+     }
+     pp_opts.push_back(opts.output_fn);
+     if (!eosio::cdt::environment::exec_subprogram("eosio-pp", pp_opts))
         return -1;
      if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
         return -1;
