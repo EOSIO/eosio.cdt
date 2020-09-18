@@ -25,7 +25,6 @@ else()
    endif()
 endif()
 
-
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 7)
 set(VERSION_PATCH 0)

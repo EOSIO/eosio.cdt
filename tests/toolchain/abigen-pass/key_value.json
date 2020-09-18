@@ -1,0 +1,9 @@
+{
+   "tests" : [
+      {
+         "expected" : {
+            "abi-file" : "key_value.abi"
+         }
+      }
+   ]
+}

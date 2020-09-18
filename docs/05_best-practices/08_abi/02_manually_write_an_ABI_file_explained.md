@@ -1,5 +1,6 @@
 ---
-content_title: Manually write, or fix, an ABI file
+content_title: Manually write/edit an ABI file
+link_text: Manually write/edit an ABI file
 ---
 
 - Advanced features of the newest version of the ABI will require manual construction of the ABI, and odd and advanced C++ patterns could capsize the generator's type deductions. So having a good knowledge of how to write an ABI should be an essential piece of knowledge of a smart contract writer.

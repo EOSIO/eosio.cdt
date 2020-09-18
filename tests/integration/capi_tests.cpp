@@ -19,14 +19,14 @@ using mvo = fc::mutable_variant_object;
 BOOST_AUTO_TEST_SUITE(capi_tests)
 
 BOOST_FIXTURE_TEST_CASE( capi_tests, tester ) try {
-   create_accounts( { N(test) } );
+   create_accounts( { "test"_n } );
    produce_block();
 
-   set_code( N(test), contracts::capi_tests_wasm() );
-   set_abi( N(test), contracts::capi_tests_abi().data() );
+   set_code( "test"_n, contracts::capi_tests_wasm() );
+   set_abi( "test"_n, contracts::capi_tests_abi().data() );
    produce_blocks();
 
-   push_action(N(test), N(act), N(test), {});
+   push_action("test"_n, "act"_n, "test"_n, {});
 } FC_LOG_AND_RETHROW()
 
 BOOST_AUTO_TEST_SUITE_END()

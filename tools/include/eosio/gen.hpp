@@ -6,14 +6,15 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
+#include <eosio/utils.hpp>
+#include <eosio/error_emitter.hpp>
 #include <functional>
 #include <vector>
 #include <string>
 #include <map>
-#include <utility>
 #include <regex>
+#include <utility>
 #include <variant>
-#include <eosio/utils.hpp>
 
 namespace eosio { namespace cdt {
 
@@ -102,13 +103,17 @@ struct simple_ricardian_tokenizer {
 };
 
 struct generation_utils {
-   std::function<void()> error_handler;
    std::vector<std::string> resource_dirs;
    std::string contract_name;
    bool suppress_ricardian_warnings;
 
-   generation_utils( std::function<void()> err ) : error_handler(err), resource_dirs({"./"}) {}
-   generation_utils( std::function<void()> err, const std::vector<std::string>& paths ) : error_handler(err), resource_dirs(paths) {}
+   generation_utils() : resource_dirs({"./"}) {}
+   generation_utils( const std::vector<std::string>& paths ) : resource_dirs(paths) {}
+
+   static error_emitter& get_error_emitter() {
+      static error_emitter ee;
+      return ee;
+   }
 
    static inline bool is_ignorable( const clang::QualType& type ) {
       auto check = [&](const clang::Type* pt) {
@@ -291,7 +296,6 @@ struct generation_utils {
       return cn == name;
    }
 
-
    inline bool is_template_specialization( const clang::QualType& type, const std::vector<std::string>& names ) {
       auto check = [&](const clang::Type* pt) {
          if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt)) {
@@ -299,10 +303,13 @@ struct generation_utils {
                if ( names.empty() ) {
                   return true;
                } else {
-                  for ( auto name : names )
+                  for ( auto name : names ) {
                      if ( const auto* decl = rt->getDecl() ) {
-                        return decl->getName().str() == name;
+                        if (decl->getName().str() == name) {
+                           return true;
+                        }
                      }
+                  }
                }
             }
          }
@@ -337,11 +344,8 @@ struct generation_utils {
                ret_val = arg.getAsExpr();
                return;
             }
-            else
-               error_handler();
          }
-         std::cout << "Internal error, wrong type of template specialization\n";
-         error_handler();
+         CDT_INTERNAL_ERROR("Wrong type of template specialization");
       };
 
       if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()))
@@ -354,8 +358,9 @@ struct generation_utils {
 
    inline std::string get_template_argument_as_string( const clang::QualType& type, int index = 0 ) {
       auto arg = get_template_argument( type, index );
-      if (std::holds_alternative<clang::QualType>(arg))
+      if (std::holds_alternative<clang::QualType>(arg)) {
          return translate_type(std::get<clang::QualType>(arg));
+      }
       else if (std::holds_alternative<clang::Expr*>(arg)) {
          if (auto ce = llvm::dyn_cast<clang::CastExpr>(std::get<clang::Expr*>(arg))) {
             auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
@@ -364,7 +369,7 @@ struct generation_utils {
       } else {
          return std::get<llvm::APSInt>(arg).toString(10);
       }
-      error_handler();
+      CDT_INTERNAL_ERROR("Tried to get a non-existent template argument");
       __builtin_unreachable();
    }
 
@@ -446,6 +451,8 @@ struct generation_utils {
          {"unsigned_int", "varuint32"},
          {"signed_int",   "varint32"},
 
+         {"basic_string<char>", "string"},
+
          {"block_timestamp", "block_timestamp_type"},
          {"capi_name",    "name"},
          {"capi_public_key", "public_key"},
@@ -480,9 +487,10 @@ struct generation_utils {
       auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr());
       std::string ret = tst->getTemplateName().getAsTemplateDecl()->getName().str()+"_";
       for (int i=0; i < tst->getNumArgs(); ++i) {
-         ret += get_template_argument_as_string(type,i);
-         if ( i < tst->getNumArgs()-1 )
+         ret += get_template_argument_as_string(type, i);
+         if (i < tst->getNumArgs() - 1) {
             ret += "_";
+         }
       }
       return _translate_type(replace_in_name(ret));
    }
@@ -501,6 +509,9 @@ struct generation_utils {
          } else {
             return t+"[]";
          }
+      }
+      else if (is_eosio_non_unique(type)) {
+         return translate_type(get_nested_type(type));
       }
       else if ( is_template_specialization( type, {"optional"} ) )
          return get_template_argument_as_string( type )+"?";
@@ -580,6 +591,10 @@ struct generation_utils {
       return builtins.count(_translate_type(t)) >= 1;
    }
 
+   inline bool is_reserved( const std::string& t ) {
+      return t.find("__") != std::string::npos;
+   }
+
    inline bool is_builtin_type( const clang::QualType& t ) {
       std::string nt = translate_type(t);
       return is_builtin_type(nt);
@@ -614,6 +629,50 @@ struct generation_utils {
          return false;
       if (get_base_type_name(t).find("<") != std::string::npos) return false;
       return get_base_type_name(t).compare(get_type_alias_string(t)) != 0;
+   }
+
+   inline bool is_eosio_non_unique(const clang::QualType& t) {
+      constexpr std::string_view non_unique_test_str = "eosio::non_unique<";
+      return t.getAsString().substr(0, non_unique_test_str.size()) == non_unique_test_str;
+   }
+
+   inline clang::QualType get_nested_type(const clang::QualType& t) {
+      if (auto pt = llvm::dyn_cast<clang::ElaboratedType>(t.getTypePtr())) {
+         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt->desugar().getTypePtr())) {
+            if (auto rt = llvm::dyn_cast<clang::ElaboratedType>(tst->desugar())) {
+               return tst->desugar();
+            }
+         }
+      }
+      CDT_INTERNAL_ERROR("Tried to get a nested template type of a template not containing one");
+      __builtin_unreachable();
+   }
+
+   inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
+      for (const auto& base : decl->bases()) {
+         auto type = base.getType();
+         if (type.getAsString().find("eosio::kv::table<") != std::string::npos) {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   inline bool is_kv_internal(const clang::CXXRecordDecl* decl) {
+      const std::set<std::string> internal_types {
+         "table",
+         "table_base",
+         "index",
+         "index_base"
+      };
+
+      const auto fqn = decl->getQualifiedNameAsString();
+
+      const auto in_kv_namespace = fqn.find("eosio::kv") != std::string::npos;
+      const bool is_internal = internal_types.count(decl->getNameAsString());
+
+      return in_kv_namespace && is_internal;
    }
 };
 }} // ns eosio::cdt

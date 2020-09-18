@@ -704,6 +704,11 @@ class multi_index
                _multidx->modify( *itr, payer, std::forward<Lambda&&>(updater) );
             }
 
+            template<typename Lambda>
+            void modify( const T& obj, eosio::name payer, Lambda&& updater ) {
+               _multidx->modify( obj, payer, std::forward<Lambda&&>(updater) );
+            }
+
             const_iterator erase( const_iterator itr ) {
                eosio::check( itr != cend(), "cannot pass end iterator to erase" );
 
