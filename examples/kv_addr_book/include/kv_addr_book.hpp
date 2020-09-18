@@ -130,9 +130,10 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       std::vector<person> getbyaddress(string street, string city, string state, string country);
 
-      // iterates over the first n persons in the table
+      // iterates over the first iterations_count persons in the table 
+      // and prints their first and last names
       [[eosio::action]]
-      std::vector<person> iterate(int iterations_count);
+      void iterate(int iterations_count);
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
