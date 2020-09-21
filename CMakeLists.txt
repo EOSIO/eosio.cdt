@@ -73,7 +73,7 @@ install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CDT_INSTALL
 set(VENDOR "Jeeyong Um")
 set(PROJECT_NAME "${CMAKE_PROJECT_NAME}")
 set(DESC "Toolchain and supporting tools for the EOSIO platform")
-set(URL "https://github.com/turnpike2/eoscc")
+set(URL "https://github.com/turnpike/eoscc")
 set(EMAIL "conr2d@gmail.com")
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_BINARY_DIR}/packages/generate_package.sh @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_deb.sh ${CMAKE_BINARY_DIR}/packages/generate_deb.sh COPYONLY)
