@@ -10,8 +10,8 @@ EOSCC currently supports Linux x86_64 Debian packages and Mac OS X brew.
 
 #### Debian Package Install
 ```sh
-$ wget https://github.com/turnpike/eoscc/releases/download/v1.7.0/eoscc_1.7.0-1-ubuntu-18.04_amd64.deb
-$ sudo apt install ./eoscc_1.7.0-1-ubuntu-18.04_amd64.deb
+$ wget https://github.com/turnpike/eoscc/releases/download/v1.7.0/eoscc_1.7.0-1-ubuntu-20.04_amd64.deb
+$ sudo apt install ./eoscc_1.7.0-1-ubuntu-20.04_amd64.deb
 ```
 #### Debian Package Uninstall
 ```sh
