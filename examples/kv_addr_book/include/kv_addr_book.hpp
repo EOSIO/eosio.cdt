@@ -66,47 +66,54 @@ struct person_factory {
       }
 };
 
-struct address_table : kv_table<person> {
-   // unique indexes definitions
-   // 1. they are defined for just one property of the kv_table parameter type (person)
-   // 2. unique indexes for multiple properties of the kv_table parameter type
-   //    are defined with the help of a pair or a tuple; a pair if the index has 
-   //    two properties or a tuple in case of more than two
-   index<name>   account_name_uidx {"accname"_n, &person::account_name};
-   index<pair<string, string>> country_personal_id_uidx {"cntrypersid"_n, &person::country_personal_id};
-   
-   // non-unique indexes definitions
-   // 1. non unique indexes need to be defined for at least two properties, 
-   // 2. the first one needs to be a property that stores unique values, because 
-   //    under the hood every index (non-unique or unique) is stored as an unique 
-   //    index, and by providing as the first property one that has unique values
-   //    it ensures the uniques of the values combined (including non-unique ones)
-   // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-   index<non_unique<eosio::name, string>> first_name_idx {
-      "firstname"_n, &person::first_name};
-   index<non_unique<eosio::name, string>> last_name_idx {
-      "lastname"_n, &person::last_name};
-   index<non_unique<eosio::name, string>> personal_id_idx {
-      "persid"_n, &person::personal_id};
-   // non-unique index defined using the KV_NAMED_INDEX macro
-   // note: you can not name your index like you were able to do before (ending in `_idx`),
-   // instead when using the macro you have to pass the name of the data member which 
-   // is indexed and that will give the name of the index as well
-   KV_NAMED_INDEX("address"_n, street_city_state_cntry)
-
-   address_table(eosio::name contract_name) {
-      init(contract_name, 
-         "addrtable"_n, eosio::kv_ram, 
-         account_name_uidx, 
-         country_personal_id_uidx, 
-         first_name_idx, 
-         last_name_idx,
-         personal_id_idx,
-         street_city_state_cntry);
-   }
-};
-
 class [[eosio::contract]] kv_addr_book : public eosio::contract {
+
+   struct [[eosio::table]] address_table : eosio::kv::table<person, "kvaddrbook"_n> {
+      // unique indexes definitions
+      // 1. they are defined for just one property of the kv_table parameter type (person)
+      // 2. unique indexes for multiple properties of the kv_table parameter type
+      //    are defined with the help of a pair or a tuple; a pair if the index has 
+      //    two properties or a tuple in case of more than two
+      index<name> account_name_uidx {
+         "accname"_n,
+         &person::account_name };
+      index<pair<string, string>> country_personal_id_uidx {
+         "cntrypersid"_n,
+         &person::country_personal_id };
+      
+      // non-unique indexes definitions
+      // 1. non unique indexes need to be defined for at least two properties, 
+      // 2. the first one needs to be a property that stores unique values, because 
+      //    under the hood every index (non-unique or unique) is stored as an unique 
+      //    index, and by providing as the first property one that has unique values
+      //    it ensures the uniques of the values combined (including non-unique ones)
+      // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
+      index<non_unique<eosio::name, string>> first_name_idx {
+         "firstname"_n,
+         &person::first_name};
+      index<non_unique<eosio::name, string>> last_name_idx {
+         "lastname"_n,
+         &person::last_name};
+      index<non_unique<eosio::name, string>> personal_id_idx {
+         "persid"_n,
+         &person::personal_id};
+      // non-unique index defined using the KV_NAMED_INDEX macro
+      // note: you can not name your index like you were able to do before (ending in `_idx`),
+      // instead when using the macro you have to pass the name of the data member which 
+      // is indexed and that will give the name of the index as well
+      KV_NAMED_INDEX("address"_n, street_city_state_cntry)
+
+      address_table(eosio::name contract_name) {
+         init(contract_name,
+            account_name_uidx,
+            country_personal_id_uidx,
+            first_name_idx,
+            last_name_idx,
+            personal_id_idx,
+            street_city_state_cntry);
+      }
+   };
+
    public:
       using contract::contract;
       kv_addr_book(name receiver, name code, datastream<const char*> ds)
@@ -155,8 +162,8 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using del_action = action_wrapper<"del"_n, &kv_addr_book::del>;
       using is_pers_id_in_cntry_action = action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
 
+      address_table addresses{"kvaddrbook"_n};
+      
    private:
       void print_person(const person& person);
-
-      address_table addresses{"kvaddrbook"_n};
 };
