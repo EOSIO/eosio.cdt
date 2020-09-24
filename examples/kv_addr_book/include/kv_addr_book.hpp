@@ -75,10 +75,10 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    are defined with the help of a pair or a tuple; a pair if the index has 
       //    two properties or a tuple in case of more than two
       index<name> account_name_uidx {
-         "accname"_n,
+         eosio::name{"accname"_n},
          &person::account_name };
       index<pair<string, string>> country_personal_id_uidx {
-         "cntrypersid"_n,
+         eosio::name{"cntrypersid"_n},
          &person::country_personal_id };
       
       // non-unique indexes definitions
@@ -89,13 +89,13 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    it ensures the uniques of the values combined (including non-unique ones)
       // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
       index<non_unique<eosio::name, string>> first_name_idx {
-         "firstname"_n,
+         eosio::name{"firstname"_n},
          &person::first_name};
       index<non_unique<eosio::name, string>> last_name_idx {
-         "lastname"_n,
+         eosio::name{"lastname"_n},
          &person::last_name};
       index<non_unique<eosio::name, string>> personal_id_idx {
-         "persid"_n,
+         eosio::name{"persid"_n},
          &person::personal_id};
       // non-unique index defined using the KV_NAMED_INDEX macro
       // note: you can not name your index like you were able to do before (ending in `_idx`),
@@ -161,9 +161,8 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = action_wrapper<"del"_n, &kv_addr_book::del>;
       using is_pers_id_in_cntry_action = action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
-
-      address_table addresses{"kvaddrbook"_n};
       
    private:
       void print_person(const person& person);
+      address_table addresses{"kvaddrbook"_n};
 };
