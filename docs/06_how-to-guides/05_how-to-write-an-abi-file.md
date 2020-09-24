@@ -586,7 +586,7 @@ A full sample ABI is depicted below:
         },
         "secondary_indices": {
             "foo": {
-            "type": "string"
+              "type": "string"
             },
             "bar": {
               "type": "uint64"
@@ -595,7 +595,7 @@ A full sample ABI is depicted below:
               "type": "tuple_string_bool"
             },
             "age": {
-            "type": "uint32"
+              "type": "uint32"
             },
             "tst": {
               "type": "int32[]"
