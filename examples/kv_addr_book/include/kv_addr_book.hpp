@@ -9,7 +9,7 @@ struct person {
    non_unique<name, string> last_name;
    non_unique<name, string, string, string, string> street_city_state_cntry;
    non_unique<name, string> personal_id;
-   std::pair<string, string> country_personal_id;
+   pair<string, string> country_personal_id;
 
    name get_account_name() const {
       return account_name;
@@ -129,11 +129,11 @@ class [[eosio::contract]] kv_addr_book : public contract {
 
       // retrieves list of persons with the same last name
       [[eosio::action]]
-      std::vector<person> getbylastname(string last_name);
+      vector<person> getbylastname(string last_name);
 
       // retrieves list of persons with the same address
       [[eosio::action]]
-      std::vector<person> getbyaddress(string street, string city, string state, string country);
+      vector<person> getbyaddress(string street, string city, string state, string country);
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]

@@ -59,7 +59,7 @@ person kv_addr_book::getbycntrpid(string country, string personal_id) {
 
 // retrieves list of persons with the same last name
 [[eosio::action]]
-std::vector<person> kv_addr_book::getbylastname(string last_name) {
+vector<person> kv_addr_book::getbylastname(string last_name) {
    address_table addresses{"kvaddrbook"_n};
 
    name min_account_name{0};
@@ -73,7 +73,7 @@ std::vector<person> kv_addr_book::getbylastname(string last_name) {
 
 // retrieves list of persons with the same address
 [[eosio::action]]
-std::vector<person> kv_addr_book::getbyaddress(
+vector<person> kv_addr_book::getbyaddress(
    string street, string city, string state, string country) {
    address_table addresses{"kvaddrbook"_n};
 
