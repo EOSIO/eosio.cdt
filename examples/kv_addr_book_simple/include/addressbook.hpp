@@ -4,11 +4,11 @@ using namespace eosio;
 
 struct person {
  name account_name;
- std::string first_name;
- non_unique<name, std::string> last_name;
- std::string street;
- std::string city;
- std::string state;
+ string first_name;
+ non_unique<name, string> last_name;
+ string street;
+ string city;
+ string state;
 };
 
 class [[eosio::contract]] addressbook : public contract {
@@ -32,7 +32,7 @@ class [[eosio::contract]] addressbook : public contract {
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
-      std::pair<int, std::string> upsert(
+      pair<int, string> upsert(
          name account_name,
          string first_name,
          string last_name,
@@ -46,7 +46,7 @@ class [[eosio::contract]] addressbook : public contract {
 
       // retrieves list of persons with the same last name
       [[eosio::action]]
-      std::vector<person> getbylastname(string last_name);
+      vector<person> getbylastname(string last_name);
 
       using upsert_action = action_wrapper<"upsert"_n, &addressbook::upsert>;
       using del_action = action_wrapper<"del"_n, &addressbook::del>;

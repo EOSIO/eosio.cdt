@@ -2,7 +2,7 @@
 
 // creates if not exists, or updates if already exists, a person
 [[eosio::action]]
-std::pair<int, std::string> addressbook::upsert(
+pair<int, string> addressbook::upsert(
       name account_name,
       string first_name,
       string last_name,
@@ -13,7 +13,7 @@ std::pair<int, std::string> addressbook::upsert(
    require_auth( account_name );
    kv_address_table addresses{"kvaddrbook"_n};
 
-   std::pair<int, std::string> results = {0, "NOP"};
+   pair<int, string> results = {0, "NOP"};
 
    // retreive the person by account name
    auto itr = addresses.account_name_uidx.find(account_name);
@@ -66,7 +66,7 @@ void addressbook::del(name account_name) {
 
 // retrieves list of persons with the same last name
 [[eosio::action]]
-std::vector<person> addressbook::getbylastname(string last_name) {
+vector<person> addressbook::getbylastname(string last_name) {
 
    kv_address_table addresses{"kvaddrbook"_n};
 
