@@ -2,44 +2,44 @@
 using namespace std;
 using namespace eosio;
 
-// this structure defines the data stored in the kv_table
+// this structure defines the data stored in the kv::table
 struct person {
-   eosio::name account_name;
-   eosio::non_unique<eosio::name, string> first_name;
-   eosio::non_unique<eosio::name, string> last_name;
-   eosio::non_unique<eosio::name, string, string, string, string> street_city_state_cntry;
-   eosio::non_unique<eosio::name, string> personal_id;
+   name account_name;
+   non_unique<name, string> first_name;
+   non_unique<name, string> last_name;
+   non_unique<name, string, string, string, string> street_city_state_cntry;
+   non_unique<name, string> personal_id;
    std::pair<string, string> country_personal_id;
 
-   eosio::name get_account_name() const {
+   name get_account_name() const {
       return account_name;
    }
    string get_first_name() const {
-      // from the eosio::non_unique tuple we extract the value with key 1, the first name
+      // from the non_unique tuple we extract the value with key 1, the first name
       return get<1>(first_name);
    }
    string get_last_name() const {
-      // from the eosio::non_unique tuple we extract the value with key 1, the last name
+      // from the non_unique tuple we extract the value with key 1, the last name
       return get<1>(last_name);
    }
    string get_street() const {
-      // from the eosio::non_unique tuple we extract the value with key 1, the street
+      // from the non_unique tuple we extract the value with key 1, the street
       return get<1>(street_city_state_cntry);
    }
    string get_city() const {
-      // from the eosio::non_unique tuple we extract the value with key 2, the city
+      // from the non_unique tuple we extract the value with key 2, the city
       return get<2>(street_city_state_cntry);
    }
    string get_state() const {
-      // from the eosio::non_unique tuple we extract the value with key 3, the state
+      // from the non_unique tuple we extract the value with key 3, the state
       return get<3>(street_city_state_cntry);
    }
    string get_country() const {
-      // from the eosio::non_unique tuple we extract the value with key 4, the country
+      // from the non_unique tuple we extract the value with key 4, the country
       return get<4>(street_city_state_cntry);
    }
    string get_personal_id() const {
-      // from the eosio::non_unique tuple we extract the value with key 1, the personal id
+      // from the non_unique tuple we extract the value with key 1, the personal id
       return get<1>(personal_id);
    }
 };
@@ -47,7 +47,7 @@ struct person {
 // helper factory to easily build person objects
 struct person_factory {
    static person get_person(
-      eosio::name account_name,
+      name account_name,
       string first_name,
       string last_name,
       string street,
@@ -66,19 +66,19 @@ struct person_factory {
       }
 };
 
-class [[eosio::contract]] kv_addr_book : public eosio::contract {
+class [[eosio::contract]] kv_addr_book : public contract {
 
    struct [[eosio::table]] address_table : eosio::kv::table<person, "kvaddrbook"_n> {
       // unique indexes definitions
-      // 1. they are defined for just one property of the kv_table parameter type (person)
-      // 2. unique indexes for multiple properties of the kv_table parameter type
+      // 1. they are defined for just one property of the kv::table parameter type (person)
+      // 2. unique indexes for multiple properties of the kv::table parameter type
       //    are defined with the help of a pair or a tuple; a pair if the index has 
       //    two properties or a tuple in case of more than two
       index<name> account_name_uidx {
-         eosio::name{"accname"_n},
+         name{"accname"_n},
          &person::account_name };
       index<pair<string, string>> country_personal_id_uidx {
-         eosio::name{"cntrypersid"_n},
+         name{"cntrypersid"_n},
          &person::country_personal_id };
       
       // non-unique indexes definitions
@@ -88,14 +88,14 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    index, and by providing as the first property one that has unique values
       //    it ensures the uniques of the values combined (including non-unique ones)
       // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-      index<non_unique<eosio::name, string>> first_name_idx {
-         eosio::name{"firstname"_n},
+      index<non_unique<name, string>> first_name_idx {
+         name{"firstname"_n},
          &person::first_name};
-      index<non_unique<eosio::name, string>> last_name_idx {
-         eosio::name{"lastname"_n},
+      index<non_unique<name, string>> last_name_idx {
+         name{"lastname"_n},
          &person::last_name};
-      index<non_unique<eosio::name, string>> personal_id_idx {
-         eosio::name{"persid"_n},
+      index<non_unique<name, string>> personal_id_idx {
+         name{"persid"_n},
          &person::personal_id};
       // non-unique index defined using the KV_NAMED_INDEX macro
       // note: you can not name your index like you were able to do before (ending in `_idx`),
@@ -103,7 +103,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       // is indexed and that will give the name of the index as well
       KV_NAMED_INDEX("address"_n, street_city_state_cntry)
 
-      address_table(eosio::name contract_name) {
+      address_table(name contract_name) {
          init(contract_name,
             account_name_uidx,
             country_personal_id_uidx,
@@ -137,7 +137,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
-      void upsert(eosio::name account_name,
+      void upsert(name account_name,
          string first_name,
          string last_name,
          string street,

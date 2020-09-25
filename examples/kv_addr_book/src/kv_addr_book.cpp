@@ -1,7 +1,7 @@
 #include <kv_addr_book.hpp>
 
 void kv_addr_book::print_person(const person& person) {
-   eosio::print_f(
+   print_f(
       "Person found: {%, %, %, %, %, %, %s}\n", 
       person.get_first_name(), 
       person.get_last_name(), 
@@ -33,7 +33,7 @@ person kv_addr_book::get(name account_name) {
       return person_found;
    }
    else {
-      eosio::print_f("Person not found in addressbook.");
+      print_f("Person not found in addressbook.");
       // return empty person from action
       return person{};
    }
@@ -51,7 +51,7 @@ person kv_addr_book::getbycntrpid(string country, string personal_id) {
       return person_found.value();
    }
    else {
-      eosio::print_f("Person not found in addressbook.");
+      print_f("Person not found in addressbook.");
       // return empty person from action
       return person{};
    }
@@ -62,8 +62,8 @@ person kv_addr_book::getbycntrpid(string country, string personal_id) {
 std::vector<person> kv_addr_book::getbylastname(string last_name) {
    address_table addresses{"kvaddrbook"_n};
 
-   eosio::name min_account_name{0};
-   eosio::name max_account_name{UINT_MAX};
+   name min_account_name{0};
+   name max_account_name{UINT_MAX};
    auto list_of_persons = addresses.last_name_idx.range(
       {min_account_name, last_name},
       {max_account_name, last_name});
@@ -77,8 +77,8 @@ std::vector<person> kv_addr_book::getbyaddress(
    string street, string city, string state, string country) {
    address_table addresses{"kvaddrbook"_n};
 
-   eosio::name min_account_name{0};
-   eosio::name max_account_name{UINT_MAX};
+   name min_account_name{0};
+   name max_account_name{UINT_MAX};
    auto list_of_persons = addresses.street_city_state_cntry.range(
       {min_account_name, street, city, state, country}, 
       {max_account_name, street, city, state, country});
@@ -89,7 +89,7 @@ std::vector<person> kv_addr_book::getbyaddress(
 // creates if not exists, or updates if already exists, a person
 [[eosio::action]]
 void kv_addr_book::upsert(
-      eosio::name account_name,
+      name account_name,
       string first_name,
       string last_name,
       string street,
@@ -99,7 +99,7 @@ void kv_addr_book::upsert(
       string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
-   // create the person object which will be stored in kv_table
+   // create the person object which will be stored in kv::table
    const person& person_update = person_factory::get_person(
       account_name,
       first_name,
@@ -113,15 +113,15 @@ void kv_addr_book::upsert(
    // retreive the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(person_update.get_account_name());
 
-   // upsert into kv_table
+   // upsert into kv::table
    addresses.put(person_update, get_self());
 
    // print customized message for insert vs update
    if (existing_person.get_account_name().value == 0) {
-      eosio::print_f("Person was successfully added to addressbook.");
+      print_f("Person was successfully added to addressbook.");
    }
    else {
-      eosio::print_f("Person was successfully updated in addressbook.");
+      print_f("Person was successfully updated in addressbook.");
    }
 }
 
@@ -138,12 +138,12 @@ void kv_addr_book::del(name account_name) {
       // extract person from iterator and delete it
       const auto& person_found = itr.value();
 
-      // delete it from kv_table
+      // delete it from kv::table
       addresses.erase(person_found);
-      eosio::print_f("Person was successfully deleted from addressbook.");
+      print_f("Person was successfully deleted from addressbook.");
    }
    else {
-      eosio::print_f("Person not found in addressbook.");
+      print_f("Person not found in addressbook.");
    }
 }
 
