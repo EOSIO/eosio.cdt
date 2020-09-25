@@ -24,8 +24,8 @@ class [[eosio::contract]] addressbook : public contract {
          name{"accname"_n},
          &person::account_name };
       index<non_unique<name, string>> last_name_idx {
-         name{"lastnameidx"}_n, 
-         &person::last_name};
+         name{"lastnameidx"_n},
+         &person::last_name };
 
          kv_address_table(name contract_name) {
             init(contract_name,
