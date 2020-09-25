@@ -15,7 +15,7 @@ pair<int, string> addressbook::upsert(
 
    pair<int, string> results = {0, "NOP"};
 
-   // retreive the person by account name
+   // retrieve the person by account name
    auto itr = addresses.account_name_uidx.find(account_name);
 
    // upsert into kv_table

@@ -20,8 +20,12 @@ class [[eosio::contract]] addressbook : public contract {
 
       struct [[eosio::table]] kv_address_table : eosio::kv::table<person, "kvaddrbook"_n> {
 
-         index<name> account_name_uidx {"accnameuidx"_n, &person::account_name};
-         index<non_unique<name, string>> last_name_idx {"lastnameidx"_n, &person::last_name};
+      index<name> account_name_uidx {
+         name{"accname"_n},
+         &person::account_name };
+      index<non_unique<name, string>> last_name_idx {
+         name{"lastnameidx"}_n, 
+         &person::last_name};
 
          kv_address_table(name contract_name) {
             init(contract_name,
