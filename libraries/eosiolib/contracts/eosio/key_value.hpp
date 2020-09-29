@@ -465,7 +465,7 @@ namespace kv_detail {
          }
       }
 
-      partial_key key() const {
+      full_key key() const {
          uint32_t actual_value_size;
          uint32_t value_size;
 
@@ -477,7 +477,7 @@ namespace kv_detail {
 
          eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
 
-         return partial_key{(char*)buffer, actual_value_size};
+         return full_key{(char*)buffer, actual_value_size};
       }
 
    protected:
