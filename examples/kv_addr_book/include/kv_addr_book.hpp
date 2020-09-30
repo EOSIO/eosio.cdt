@@ -14,31 +14,31 @@ struct person {
    }
    std::string get_first_name() const {
       // from the non_unique tuple we extract the value with key 1, the first name
-      return get<1>(first_name);
+      return std::get<1>(first_name);
    }
    std::string get_last_name() const {
       // from the non_unique tuple we extract the value with key 1, the last name
-      return get<1>(last_name);
+      return std::get<1>(last_name);
    }
    std::string get_street() const {
       // from the non_unique tuple we extract the value with key 1, the street
-      return get<1>(street_city_state_cntry);
+      return std::get<1>(street_city_state_cntry);
    }
    std::string get_city() const {
       // from the non_unique tuple we extract the value with key 2, the city
-      return get<2>(street_city_state_cntry);
+      return std::get<2>(street_city_state_cntry);
    }
    std::string get_state() const {
       // from the non_unique tuple we extract the value with key 3, the state
-      return get<3>(street_city_state_cntry);
+      return std::get<3>(street_city_state_cntry);
    }
    std::string get_country() const {
       // from the non_unique tuple we extract the value with key 4, the country
-      return get<4>(street_city_state_cntry);
+      return std::get<4>(street_city_state_cntry);
    }
    std::string get_personal_id() const {
       // from the non_unique tuple we extract the value with key 1, the personal id
-      return get<1>(personal_id);
+      return std::get<1>(personal_id);
    }
 };
 
