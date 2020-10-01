@@ -81,7 +81,7 @@ class [[eosio::contract]] smrtcontract : public contract {
         string country,
         string personal_id);
 
-     using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
+     using upsert_action = action_wrapper<"upsert"_n, &smrtcontract::upsert>;
 };
 ```
 
@@ -90,7 +90,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 ```cpp
 // creates if not exists, or updates if already exists, a person
 [[eosio::action]]
-void kv_addr_book::upsert(
+void smrtcontract::upsert(
      eosio::name account_name,
      string first_name,
      string last_name,

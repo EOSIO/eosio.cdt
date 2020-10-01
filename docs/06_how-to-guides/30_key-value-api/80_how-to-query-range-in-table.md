@@ -94,7 +94,7 @@ class [[eosio::contract]] smrtcontract : public contract {
      [[eosio::action]]
      std::vector<person> getbylastname(string last_name);
 );
-     using get_by_last_name_action = action_wrapper<"getbylastname"_n, &kv_addr_book::getbylastname>;
+     using get_by_last_name_action = action_wrapper<"getbylastname"_n, &smrtcontract::getbylastname>;
 };
 ```
 
@@ -103,7 +103,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 ```cpp
 // retrieves list of persons with the same last name
 [[eosio::action]]
-std::vector<person> kv_addr_book::getbylastname(string last_name) {
+std::vector<person> smrtcontract::getbylastname(string last_name) {
   address_table addresses{"kvaddrbook"_n};
 
   eosio::name min_account_name{0};

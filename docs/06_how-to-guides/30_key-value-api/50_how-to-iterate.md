@@ -87,7 +87,7 @@ class [[eosio::contract]] smrtcontract : public contract {
      std::vector<person> iterate(int iterations_count
 );
 
-     using iterate_action = action_wrapper<"iterate"_n, &kv_addr_book::iterate>;
+     using iterate_action = action_wrapper<"iterate"_n, &smrtcontract::iterate>;
 };
 ```
 
@@ -96,7 +96,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 ```cpp
 // Iterates over the first iterations_count persons in the table
 [[eosio::action]]
-std::vector<person> kv_addr_book::iterate(int iterations_count) {
+std::vector<person> smrtcontract::iterate(int iterations_count) {
   address_table addresses{"kvaddrbook"_n};
 
 

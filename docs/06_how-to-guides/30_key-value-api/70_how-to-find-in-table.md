@@ -84,7 +84,7 @@ class [[eosio::contract]] smrtcontract : public contract {
      [[eosio::action]]
      bool find(eosio::name account_name);
 
-     using find_action = action_wrapper<"find"_n, &kv_addr_book::find>;
+     using find_action = action_wrapper<"find"_n, &smrtcontract::find>;
 };
 ```
 
@@ -94,7 +94,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 // Finds a person based on the primary key account_name.
 // Makes use of index find function, which returns an iterator, and then uses iterator value.
 [[eosio::action]]
-person kv_addr_book::find(name account_name) {
+person smrtcontract::find(name account_name) {
   address_table addresses{"kvaddrbook"_n};
 
   // search for person by primary key account_name

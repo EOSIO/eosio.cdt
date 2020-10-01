@@ -83,7 +83,7 @@ class [[eosio::contract]] smrtcontract : public contract {
      [[eosio::action]]
      bool verify(eosio::name account_name);
 
-     using verify_action = action_wrapper<"verify"_n, &kv_addr_book::verify>;
+     using verify_action = action_wrapper<"verify"_n, &smrtcontract::verify>;
 };
 ```
 
@@ -92,7 +92,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 ```cpp
 // checks if a person with a specific account name exists in addressbook
 [[eosio::action]]
-bool kv_addr_book::verify(string personal_id, string country) {
+bool smrtcontract::verify(string personal_id, string country) {
   address_table addresses{"kvaddrbook"_n};
 
   return addresses.account_name_uidx.exists({personal_id, country});
