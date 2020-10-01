@@ -1,5 +1,6 @@
 ---
 content_title: How to create and use action wrappers
+link_text: "How to create and use action wrappers"
 ---
 
 1. Start with a contract `multi_index_example` which has an action `mod` defined like below in file `multi_index_example.hpp`; the action modifies the integer value `n` stored for row with key `user`.
