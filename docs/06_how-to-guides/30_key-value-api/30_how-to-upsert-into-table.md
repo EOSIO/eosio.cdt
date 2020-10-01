@@ -97,7 +97,7 @@ void smrtcontract::upsert(
      string personal_id) {
   address_table addresses{"kvaddrbook"_n};
 
-  // upsert into kv table
+  // call put which upserts into kv table
   addresses.put({account_name, first_name, last_name, personal_id}, get_self());
 }
 ```
