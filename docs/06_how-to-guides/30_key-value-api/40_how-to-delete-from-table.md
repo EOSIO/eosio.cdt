@@ -52,7 +52,7 @@ Complete the following steps to delete a `person` object from `address_table`:
 
 1. Create a new action in your contact, let’s call it `delete`, which takes as input parameters an account name, a first name, a last name and a personal id.
 2. In the `delete` action access the instance of `address_table` by declaring a local variable of `address_table` type.
-3. Call the `erase` method of the `address_table` and pass to it a newly created `person` object based on the action’s input parameters. If you try to erase an object which is not present in the `kv table` no error will be raised.
+3. Call the `erase` method of the `address_table` and pass to it the primary key for the object which is deleted. If you try to erase an object which is not present in the `kv table` no error will be raised.
 
 Refer to the following possible implementation to delete a `person` object from `address_table`:
 
@@ -73,15 +73,11 @@ class [[eosio::contract]] smrtcontract : public contract {
   public:
      using contract::contract;
 
-     // creates if not exists, or updates if already exists, a person
+     // deletes a person based on primary key account_name
      [[eosio::action]]
-     void delete(eosio::name account_name,
-        string first_name,
-        string last_name,
-        string country,
-        string personal_id);
+     void del(eosio::name account_name);
 
-     using upsert_action = action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
+     using del_action = eosio::action_wrapper<"del"_n, &smrtcontract::del>;
 };
 ```
 
@@ -89,15 +85,11 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 ```cpp
 [[eosio::action]]
-void kv_addr_book::delete(
-     eosio::name account_name,
-     string first_name,
-     string last_name,
-     string personal_id) {
+void smrtcontract::delete(eosio::name account_name) {
   address_table addresses{"kvaddrbook"_n};
 
   // delete from kv table
-  addresses.erase({account_name, first_name, last_name, personal_id}, get_self());
+  addresses.erase(account_name, get_self());
 }
 ```
 
