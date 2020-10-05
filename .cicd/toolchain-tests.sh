@@ -4,19 +4,22 @@ set -eo pipefail
 
 mkdir -p $BUILD_DIR
 
-PRE_COMMANDS="cd $MOUNTED_DIR/build"
-TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
-COMMANDS="$PRE_COMMANDS && $TEST"
-
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
+    TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
     bash -c "$TEST"
     
 else # Linux
 
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
+
+    PRE_COMMANDS="cd $MOUNTED_DIR/build"
+    SET_PYTHON_PATH="export CICD_PYTHON_PATH=/usr/local/bin/python3"
+    TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
+
+    COMMANDS="$PRE_COMMANDS && $SET_PYTHON_PATH && $TEST"
 
     . $HELPERS_DIR/docker-hash.sh
 
