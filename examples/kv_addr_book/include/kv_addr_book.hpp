@@ -156,6 +156,11 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       bool checkpidcntr(std::string personal_id, std::string country);
 
+      // iterates over the first iterations_count persons in the table 
+      // and prints their first and last names
+      [[eosio::action]]
+      void iterate(int iterations_count);
+
       using get_action = eosio::action_wrapper<"get"_n, &kv_addr_book::get>;
       using get_by_cntry_pers_id_action = eosio::action_wrapper<"getbycntrpid"_n, &kv_addr_book::getbycntrpid>;
       using get_by_last_name_action = eosio::action_wrapper<"getbylastname"_n, &kv_addr_book::getbylastname>;
@@ -163,7 +168,8 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = eosio::action_wrapper<"del"_n, &kv_addr_book::del>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
-      
+      using iterate_action = eosio::action_wrapper<"iterate"_n, &kv_addr_book::iterate>;
+
    private:
       void print_person(const person& person);
       address_table addresses{"kvaddrbook"_n};

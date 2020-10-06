@@ -3,8 +3,8 @@
 #include <eosio/privileged.hpp>
 
 extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
-extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(uint64_t db, void* params, uint32_t size, uint32_t max_version);
-extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(uint64_t db, const void* params, uint32_t size);
+extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(void* params, uint32_t size, uint32_t max_version);
+extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const void* params, uint32_t size);
 
 using namespace eosio;
 
@@ -30,11 +30,11 @@ class [[eosio::contract]] kv_bios : eosio::contract {
       limits[1] = k;
       limits[2] = v;
       limits[3] = i;
-      set_kv_parameters_packed(db.value, limits, sizeof(limits));
-      int sz = get_kv_parameters_packed(db.value, nullptr, 0, 0);
+      set_kv_parameters_packed(limits, sizeof(limits));
+      int sz = get_kv_parameters_packed(nullptr, 0, 0);
       std::fill_n(limits, sizeof(limits)/sizeof(limits[0]), 0xFFFFFFFFu);
       check(sz == 16, "wrong kv parameters size");
-      sz = get_kv_parameters_packed(db.value, limits, sizeof(limits), 0);
+      sz = get_kv_parameters_packed(limits, sizeof(limits), 0);
       check(sz == 16, "wrong kv parameters result");
       check(limits[0] == 0, "wrong version");
       check(limits[1] == k, "wrong key");
