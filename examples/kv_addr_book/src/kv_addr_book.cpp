@@ -1,6 +1,6 @@
 #include <kv_addr_book.hpp>
 
-void kv_addr_book::print_person(const person& person) {
+void kv_addr_book::print_person(const kv_addr_book::person& person) {
    eosio::print_f(
       "Person found: {%, %, %, %, %, %, %s}\n", 
       person.get_first_name(), 
@@ -16,7 +16,7 @@ void kv_addr_book::print_person(const person& person) {
 // we make use of index find function, which returns an iterator, 
 //    and then use iterator value
 [[eosio::action]]
-person kv_addr_book::get(eosio::name account_name) {
+kv_addr_book::person kv_addr_book::get(eosio::name account_name) {
    address_table addresses{"kvaddrbook"_n};
 
    // search for person by primary key account_name
@@ -35,13 +35,13 @@ person kv_addr_book::get(eosio::name account_name) {
    else {
       eosio::print_f("Person not found in addressbook.");
       // return empty person from action
-      return person{};
+      return kv_addr_book::person{};
    }
 }
 
 // retrieves a person based on unique index defined by country and personal_id
 [[eosio::action]]
-person kv_addr_book::getbycntrpid(std::string country, std::string personal_id) {
+kv_addr_book::person kv_addr_book::getbycntrpid(std::string country, std::string personal_id) {
    address_table addresses{"kvaddrbook"_n};
 
    const auto& person_found = addresses.country_personal_id_uidx.get({country, personal_id});
@@ -53,13 +53,13 @@ person kv_addr_book::getbycntrpid(std::string country, std::string personal_id) 
    else {
       eosio::print_f("Person not found in addressbook.");
       // return empty person from action
-      return person{};
+      return kv_addr_book::person{};
    }
 }
 
 // retrieves list of persons with the same last name
 [[eosio::action]]
-std::vector<person> kv_addr_book::getbylastname(std::string last_name) {
+std::vector<kv_addr_book::person> kv_addr_book::getbylstname(std::string last_name) {
    address_table addresses{"kvaddrbook"_n};
 
    eosio::name min_account_name{0};
@@ -73,7 +73,7 @@ std::vector<person> kv_addr_book::getbylastname(std::string last_name) {
 
 // retrieves list of persons with the same address
 [[eosio::action]]
-std::vector<person> kv_addr_book::getbyaddress(
+std::vector<kv_addr_book::person> kv_addr_book::getbyaddress(
    std::string street, std::string city, std::string state, std::string country) {
    address_table addresses{"kvaddrbook"_n};
 
@@ -100,7 +100,7 @@ void kv_addr_book::upsert(
    address_table addresses{"kvaddrbook"_n};
 
    // create the person object which will be stored in kv::table
-   const person& person_update = person_factory::get_person(
+   const kv_addr_book::person& person_update = person_factory::get_person(
       account_name,
       first_name,
       last_name,
@@ -111,7 +111,7 @@ void kv_addr_book::upsert(
       personal_id);
 
    // retreive the person by account name, if it doesn't exist we get an emtpy person
-   const person& existing_person = get(person_update.get_account_name());
+   const kv_addr_book::person& existing_person = get(person_update.get_account_name());
 
    // upsert into kv::table
    addresses.put(person_update, get_self());
