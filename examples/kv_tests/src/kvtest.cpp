@@ -4,7 +4,7 @@
 using namespace eosio;
 
 struct kvtest_record {
-    uint64_t id;
+    std::string id;
     std::string data;
 };
 
@@ -26,11 +26,11 @@ class [[eosio::contract]] kvtest : public contract {
             std::string data = "test";
         
             for (; id < 5000; ++id) {
-                table.put({id, data + std::to_string(id)}, get_self());
+                table.put({std::to_string(id), data + std::to_string(id)}, get_self());
             }
         	
             for (id = 1; id < 5000; ++id) {
-                auto itr = table. id.find(id);
+                auto itr = table. id.find(std::to_string(id));
                 if (itr != table.id.end()) {
                     std::string val = itr.value().data;
                     eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
@@ -47,10 +47,10 @@ class [[eosio::contract]] kvtest : public contract {
 
             uint64_t id = 1;
             for (; id < 200; ++id)
-                table.put({id, std::to_string(id) + data}, get_self());
+                table.put({std::to_string(id), std::to_string(id) + data}, get_self());
         	    
             for (id = 1; id < 200; ++id) {
-                auto itr = table.id.find(id);
+                auto itr = table.id.find(std::to_string(id));
                 if (itr != table.id.end()) {
                     std::string val = itr.value().data;
                     eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val.substr(0, 10) + "...");
