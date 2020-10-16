@@ -1,4 +1,4 @@
---- kv_addr_book Project ---
+--- kv_tests Project ---
 
 --backing-store chainbase -- How to Build with CMake and Make --
    - cd into the 'build' directory
