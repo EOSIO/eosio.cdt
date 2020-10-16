@@ -31,7 +31,7 @@ class [[eosio::contract]] kvtest : public contract {
         	
             for (id = 1; id < 5000; ++id) {
                 auto itr = table. id.find(id);
-        	if (itr != table.id.end()) {
+                if (itr != table.id.end()) {
                     std::string val = itr.value().data;
                     eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
         	}
@@ -43,11 +43,11 @@ class [[eosio::contract]] kvtest : public contract {
             require_auth(_self);
             kvtest_table table{"kvtest"_n};
             
-	    std::string data = std::string(8 * 1024 * 1024, 't');
+            std::string data = std::string(8 * 1024 * 1024, 't');
 
             uint64_t id = 1;
             for (; id < 200; ++id)
-        	table.put({id, std::to_string(id) + data}, get_self());
+                table.put({id, std::to_string(id) + data}, get_self());
         	    
             for (id = 1; id < 200; ++id) {
                 auto itr = table.id.find(id);
