@@ -22,7 +22,7 @@ class [[eosio::contract]] kvtest : public contract {
             require_auth(_self);
             kvtest_table table{"kvtest"_n};
 
-	    uint64_t id = 1;
+            uint64_t id = 1;
             std::string data = "test";
         
             for (; id < 5000; ++id) {
@@ -32,8 +32,8 @@ class [[eosio::contract]] kvtest : public contract {
             for (id = 1; id < 5000; ++id) {
                 auto itr = table. id.find(id);
         	if (itr != table.id.end()) {
-        	    std::string val = itr.value().data;   
-        	    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
+                    std::string val = itr.value().data;
+                    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
         	}
             }
         }
@@ -52,8 +52,8 @@ class [[eosio::contract]] kvtest : public contract {
             for (id = 1; id < 200; ++id) {
                 auto itr = table.id.find(id);
                 if (itr != table.id.end()) {
-        	    std::string val = itr.value().data;   
-        	    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
+                    std::string val = itr.value().data;
+                    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val.substr(0, 10) + "...");
         	}
             }
         }
