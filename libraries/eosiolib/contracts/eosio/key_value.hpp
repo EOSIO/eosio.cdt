@@ -503,6 +503,11 @@ public:
    template<typename K>
    class index;
 
+   table(table&) = delete;                               // disbale copy constructor
+   table(table&&) = default;                             // default move constructor
+   table& operator=(table&) = delete;                    // disbale assginment copy operator
+   table& operator=(table&&) = default;                  // default assginment move operator
+
 private:
    using index_base = internal::index_base;
 
