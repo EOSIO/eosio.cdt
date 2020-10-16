@@ -2,15 +2,15 @@
 
 [[eosio::action]] 
 void multi_index_large::set( uint64_t id, uint64_t u64, uint128_t u128,
-         double f64, long double f128, eosio::checksum256 chk256 ) {
+   double f64, long double f128, eosio::checksum256 chk256 ) {
    auto itr = testtab.find(id);
    if ( itr == testtab.end() ) {
       testtab.emplace( _self, [&]( auto& u ) {
-            u.id = id;
-            u.u64 = u64;
-            u.u128 = u128;
-            u.f128 = f128;
-            u.chk256 = chk256;
+         u.id = id;
+         u.u64 = u64;
+         u.u128 = u128;
+         u.f128 = f128;
+         u.chk256 = chk256;
       });
    }
 }
@@ -64,7 +64,7 @@ void multi_index_large::bychkb( eosio::checksum256 chk256 ) {
 
 [[eosio::action]] 
 void multi_index_large::mod( uint64_t id, uint64_t u64, uint128_t u128,
-         double f64, long double f128, eosio::checksum256 chk256 ) {
+   double f64, long double f128, eosio::checksum256 chk256 ) {
    auto itr = testtab.find(id);
    check( itr != testtab.end(), "id does not exist in table" );
    testtab.modify( itr, _self, [&]( auto& row ) {
@@ -77,13 +77,13 @@ void multi_index_large::mod( uint64_t id, uint64_t u64, uint128_t u128,
 
 [[eosio::action]]
 void multi_index_large::del( uint64_t id ) {
-  // check if the user already exists
-  auto itr = testtab.find(id);
-  if ( itr == testtab.end() ) {
-    printf("user does not exist in table, nothing to delete" );
-    return;
-  }
-  testtab.erase( itr );
+   // check if the user already exists
+   auto itr = testtab.find(id);
+   if ( itr == testtab.end() ) {
+      printf("user does not exist in table, nothing to delete" );
+      return;
+   }
+   testtab.erase( itr );
 }
 
 
