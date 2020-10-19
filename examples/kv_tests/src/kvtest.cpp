@@ -46,7 +46,7 @@ class [[eosio::contract]] kvtest : public contract {
                 auto itr = table. id.find(std::to_string(id));
                 if (itr != table.id.end()) {
                     std::string val = itr.value().data;
-                    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val);
+                    eosio::check(val.compare(data + std::to_string(id)) == 0, "The value for the key " + std::to_string(id) + " is " + val);
         	}
             }
         }
@@ -67,7 +67,7 @@ class [[eosio::contract]] kvtest : public contract {
                 auto itr = table.id.find(std::to_string(id));
                 if (itr != table.id.end()) {
                     std::string val = itr.value().data;
-                    eosio::check(val.compare(data + std::to_string(id)), "The value for the key " + std::to_string(id) + " is " + val.substr(0, 10) + "...");
+                    eosio::check(val.compare(data + std::to_string(id)) == 0, "The value for the key " + std::to_string(id) + " is " + val.substr(0, 10) + "...");
         	}
             }
         }
