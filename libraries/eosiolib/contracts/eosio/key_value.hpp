@@ -503,9 +503,9 @@ public:
    template<typename K>
    class index;
 
-   table(table&) = delete;                               // disbale copy constructor
+   table(const table&) = delete;                         // disbale copy constructor
    table(table&&) = default;                             // default move constructor
-   table& operator=(table&) = delete;                    // disbale assginment copy operator
+   table& operator=(const table&) = delete;              // disbale assginment copy operator
    table& operator=(table&&) = default;                  // default assginment move operator
 
 private:
