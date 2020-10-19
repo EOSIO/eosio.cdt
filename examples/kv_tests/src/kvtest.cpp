@@ -66,8 +66,9 @@ class [[eosio::contract]] kvtest : public contract {
             for (id = 1; id < 200; ++id) {
                 auto itr = table.id.find(std::to_string(id));
                 if (itr != table.id.end()) {
-                    std::string val = itr.value().data;
-                    eosio::check(val.compare(data + std::to_string(id)) == 0, "The value for the key " + std::to_string(id) + " is " + val.substr(0, 10) + "...");
+                    std::string val = itr.value().data.substr(0, 10);
+                    std::string expected = (std::to_string(id) + data).substr(0, 10);
+                    eosio::check(val.compare(expected) == 0, "The value for the key " + std::to_string(id) + " is " + val + "...");
         	}
             }
         }
