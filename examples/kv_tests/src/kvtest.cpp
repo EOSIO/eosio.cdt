@@ -11,7 +11,7 @@ struct kvtest_record {
 };
 
 class [[eosio::contract]] kvtest : public contract {
-    struct [[eosio::table]] kvtest_table : eosio::kv::table<kvtest_record, "kvtest"_n> {
+    struct [[eosio::table]] kvtest_table : eosio::kv::table<kvtest_record, "eosio"_n> {
         KV_NAMED_INDEX("by.id", id);
         kvtest_table(name contract) { init(contract, id); }
     };
@@ -33,7 +33,7 @@ class [[eosio::contract]] kvtest : public contract {
         [[eosio::action]]
         void smalltest() {
             require_auth(_self);
-            kvtest_table table{"kvtest"_n};
+            kvtest_table table{"eosio"_n};
 
             uint64_t id = 1;
             std::string data = "test";
@@ -55,7 +55,7 @@ class [[eosio::contract]] kvtest : public contract {
         void largetest() {
             require_auth(_self);
 
-            kvtest_table table{"kvtest"_n};
+            kvtest_table table{"eosio"_n};
             
             std::string data = std::string(8 * 1024 * 1024, 't');
 
