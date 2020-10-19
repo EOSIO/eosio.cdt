@@ -1,6 +1,8 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 
+extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const void* params, uint32_t size);
+
 using namespace eosio;
 
 struct kvtest_record {
@@ -20,6 +22,14 @@ class [[eosio::contract]] kvtest : public contract {
         [[eosio::action]]
         void smalltest() {
             require_auth(_self);
+
+            uint32_t limits[4];
+            limits[0] = 0;
+            limits[1] = 1000;
+            limits[2] = 1000;
+            limits[3] = 10;
+            set_kv_parameters_packed(limits, sizeof(limits));
+
             kvtest_table table{"kvtest"_n};
 
             uint64_t id = 1;
@@ -41,6 +51,14 @@ class [[eosio::contract]] kvtest : public contract {
         [[eosio::action]]
         void largetest() {
             require_auth(_self);
+
+            uint32_t limits[4];
+            limits[0] = 0;
+            limits[1] = 1000;
+            limits[2] = 8 * 1024 * 1024 + 1000;
+            limits[3] = 10;
+            set_kv_parameters_packed(limits, sizeof(limits));
+
             kvtest_table table{"kvtest"_n};
             
             std::string data = std::string(8 * 1024 * 1024, 't');
