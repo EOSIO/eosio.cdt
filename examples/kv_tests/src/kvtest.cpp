@@ -25,7 +25,7 @@ class [[eosio::contract]] kvtest : public contract {
             uint32_t limits[4];
             limits[0] = 0;
             limits[1] = 1024 * 1024;
-            limits[2] = 8 * 1024 * 1024 + 1000;
+            limits[2] = 9 * 1024 * 1024;
             limits[3] = 10;
             set_kv_parameters_packed(limits, sizeof(limits));
         }
@@ -69,7 +69,7 @@ class [[eosio::contract]] kvtest : public contract {
                     std::string val = itr.value().data.substr(0, 10);
                     std::string expected = (std::to_string(id) + data).substr(0, 10);
                     eosio::check(val.compare(expected) == 0, "The value for the key " + std::to_string(id) + " is " + val + "...");
-        	}
+                }
             }
         }
 };
