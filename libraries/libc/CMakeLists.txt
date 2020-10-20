@@ -158,6 +158,7 @@ add_library(c
    ${THREAD_SOURCES}
    "musl/src/malloc/posix_memalign.c"
    "musl/src/malloc/memalign.c"
+   "musl/src/unistd/lseek.c"
 )
 
 add_native_library(native_c 
@@ -179,6 +180,7 @@ add_native_library(native_c
    ${THREAD_SOURCES}
    "musl/src/malloc/posix_memalign.c"
    "musl/src/malloc/memalign.c"
+   "musl/src/unistd/lseek.c"
 )
 
 target_include_directories(c
