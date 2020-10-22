@@ -1,5 +1,8 @@
 #include <eosio/eosio.hpp>
 
+using namespace eosio;
+using namespace std;
+
 // this structure defines the data stored in the kv::table
 struct person {
    eosio::name account_name;
@@ -72,11 +75,11 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       // 2. unique indexes for multiple properties of the kv::table parameter type
       //    are defined with the help of a pair or a tuple; a pair if the index has 
       //    two properties or a tuple in case of more than two
-      index<eosio::name> account_name_uidx {
-         eosio::name{"accname"_n},
+      index<name> account_name_uidx {
+         name{"accname"_n},
          &person::account_name };
-      index<std::pair<std::string, std::string>> country_personal_id_uidx {
-         eosio::name{"cntrypersid"_n},
+      index<pair<std::string, std::string>> country_personal_id_uidx {
+         name{"cntrypersid"_n},
          &person::country_personal_id };
       
       // non-unique indexes definitions
@@ -86,14 +89,14 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    index, and by providing as the first property one that has unique values
       //    it ensures the uniques of the values combined (including non-unique ones)
       // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-      index<eosio::non_unique<eosio::name, std::string>> first_name_idx {
-         eosio::name{"firstname"_n},
+      index<non_unique<eosio::name, std::string>> first_name_idx {
+         name{"firstname"_n},
          &person::first_name};
-      index<eosio::non_unique<eosio::name, std::string>> last_name_idx {
-         eosio::name{"lastname"_n},
+      index<non_unique<eosio::name, std::string>> last_name_idx {
+         name{"lastname"_n},
          &person::last_name};
-      index<eosio::non_unique<eosio::name, std::string>> personal_id_idx {
-         eosio::name{"persid"_n},
+      index<non_unique<eosio::name, std::string>> personal_id_idx {
+         name{"persid"_n},
          &person::personal_id};
       // non-unique index defined using the KV_NAMED_INDEX macro
       // note: you can not name your index like you were able to do before (ending in `_idx`),
