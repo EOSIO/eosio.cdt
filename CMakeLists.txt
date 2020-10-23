@@ -43,6 +43,14 @@ option(ENABLE_TESTS "enable building tests" OFF)
 
 include(GNUInstallDirs)
 
+if(NOT TOOLS_BUILD_TYPE)
+   set(TOOLS_BUILD_TYPE "Release")
+endif()
+
+if(NOT LIBS_BUILD_TYPE)
+   set(LIBS_BUILD_TYPE "Release")
+endif()
+
 include(modules/ClangExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 
