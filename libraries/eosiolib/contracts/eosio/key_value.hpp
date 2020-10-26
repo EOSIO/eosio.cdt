@@ -587,6 +587,10 @@ private:
       bool operator>=(const iterator& b) const {
          return base_iterator::compare(b) >= 0;
       }
+
+      explicit operator bool() {
+         return base_iterator::compare(this) != 0;
+      }
    };
 
    class reverse_iterator : public base_iterator {
