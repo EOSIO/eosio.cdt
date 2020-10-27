@@ -462,6 +462,11 @@ namespace internal {
          return eosio::key_type{(char*)buffer, actual_value_size};
       }
 
+      bool valid() const {
+         eosio::check(itr_stat != status::iterator_erased, "Iterator was erased");
+         return true;
+      }
+
    protected:
       uint32_t itr;
       status itr_stat;
@@ -589,7 +594,7 @@ private:
       }
 
       explicit operator bool() {
-         return base_iterator::compare(this) != 0;
+         return this.valid();
       }
    };
 
