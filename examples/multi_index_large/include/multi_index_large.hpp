@@ -12,7 +12,7 @@ class [[eosio::contract]] multi_index_large : public contract {
 
          uint64_t           u64 = 0;
          uint128_t          u128 = 0ULL;
-         float              f64 = 0.0L;
+         double             f64 = 0.0L;
          long double        f128 = 0.0L;
          eosio::checksum256 chk256;
 
