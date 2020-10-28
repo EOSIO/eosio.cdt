@@ -504,9 +504,9 @@ public:
    class index;
 
    table(const table&) = delete;                         // disable copy constructor
-   table(table&&) = default;                             // default move constructor
+   table(table&&) = delete;                              // disable move constructor
    table& operator=(const table&) = delete;              // disable assignment copy operator
-   table& operator=(table&&) = default;                  // default assignment move operator
+   table& operator=(table&&) = delete;                   // disable assignment move operator
 
 private:
    using index_base = internal::index_base;
