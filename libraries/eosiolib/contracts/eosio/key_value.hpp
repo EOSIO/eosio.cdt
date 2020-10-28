@@ -591,7 +591,7 @@ private:
       }
 
       explicit operator bool() const {
-         return this.valid();
+         return this->valid();
       }
    };
 
