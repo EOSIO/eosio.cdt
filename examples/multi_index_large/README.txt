@@ -20,7 +20,7 @@
    - You can then do a 'set contract' action with 'cleos' and point to the 'build' directory
 
 cleos create account eosio testtaba your_public_key
-cleos set contract testtaba ~/qa multi_index_large.wasm multi_index_large.abi -p testtaba
+cleos set contract testtaba multi_index_large_wasm_directory multi_index_large.wasm multi_index_large.abi -p testtaba
 
 - example cleos actions
 cleos push action testtaba set '{"id":1, "u64": 1, "u128":"0x00000000000000000000000000000000E", "f64":1.1, "f128":"0x00000000000000000000000000000001", "i128":"0x000000000000000000000000000000001", "chk256":"0987654321ABCDEF0987654321FFFF1234567890ABCDEF001234567890ABCDE0"}' -p testtaba
