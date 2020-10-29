@@ -516,7 +516,6 @@ DataStream& operator >> ( DataStream& ds, std::string& v ) {
  */
 template<typename DataStream, typename T, std::size_t N>
 DataStream& operator << ( DataStream& ds, const std::array<T,N>& v ) {
-   ds << unsigned_int( N );
    for( const auto& i : v )
       ds << i;
    return ds;
@@ -536,6 +535,42 @@ DataStream& operator << ( DataStream& ds, const std::array<T,N>& v ) {
  */
 template<typename DataStream, typename T, std::size_t N>
 DataStream& operator >> ( DataStream& ds, std::array<T,N>& v ) {
+   for( auto& i : v )
+      ds >> i;
+   return ds;
+}
+
+/**
+ *  Serialize a fixed size boost::array
+ *
+ *  @param ds - The stream to write
+ *  @param v - The value to serialize
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the object contained in the array
+ *  @tparam N - Size of the array
+ *  @return DataStream& - Reference to the datastream
+ */
+template<typename DataStream, typename T, std::size_t N>
+DataStream& operator << ( DataStream& ds, const boost::array<T,N>& v ) {
+   ds << unsigned_int( N );
+   for( const auto& i : v )
+      ds << i;
+   return ds;
+}
+
+/**
+ *  Deserialize a fixed size boost::array
+ *
+ *  @brief Deserialize a fixed size boost::array
+ *  @param ds - The stream to read
+ *  @param v - The destination for deserialized value
+ *  @tparam DataStream - Type of datastream
+ *  @tparam T - Type of the object contained in the array
+ *  @tparam N - Size of the array
+ *  @return DataStream& - Reference to the datastream
+ */
+template<typename DataStream, typename T, std::size_t N>
+DataStream& operator >> ( DataStream& ds, boost::array<T,N>& v ) {
    unsigned_int s;
    ds >> s;
    eosio::check(N == s.value, "array size and unpacked size don't match");
