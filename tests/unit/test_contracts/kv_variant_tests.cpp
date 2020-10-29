@@ -13,12 +13,20 @@ public:
       uint64_t age;
    };
 
-   struct my_table : eosio::kv::table<my_struct_v, "testtable"_n> {
-      KV_NAMED_INDEX("fullname"_n, full_name);
-      KV_NAMED_INDEX("age"_n, age);
+   struct my_table : eosio::kv::table<std::variant<my_struct_v>, "testtable"_n> {
+      index<std::string> primary_key{"fullname"_n, [](const auto& obj) {
+         return std::visit([&](auto&& a) {
+            return a.full_name;
+         }, *obj);
+      }};
+      index<uint64_t> age{"age"_n, [](const auto& obj) {
+         return std::visit([&](auto&& a) {
+            return a.age;
+         }, *obj);
+      }};
 
       my_table(eosio::name contract_name) {
-         init(contract_name, full_name, age);
+         init(contract_name, primary_key, age);
       }
    };
 
