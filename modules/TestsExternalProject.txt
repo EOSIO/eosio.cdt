@@ -16,7 +16,7 @@ ExternalProject_Add(
 )
 
 
-find_package(eosio)
+find_package(eosio QUIET)
 
 if (eosio_FOUND)
    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -40,4 +40,6 @@ if (eosio_FOUND)
      INSTALL_COMMAND ""
      BUILD_ALWAYS 1
    )
+else()
+   message(STATUS "eosio package not found, skipping building integration tests")
 endif()
