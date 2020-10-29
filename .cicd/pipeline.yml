@@ -4,7 +4,7 @@ steps:
 
   - label: ":aws: Amazon_Linux 2 - Build"
     command:
-      - "./.cicd/build-integration.sh"
+      - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env:
       IMAGE_TAG: "amazonlinux-2"
@@ -15,7 +15,7 @@ steps:
 
   - label: ":centos: CentOS 7.7 - Build"
     command:
-      - "./.cicd/build-integration.sh"
+      - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env: 
       IMAGE_TAG: "centos-7.7"
@@ -26,7 +26,7 @@ steps:
 
   - label: ":ubuntu: Ubuntu 16.04 - Build"
     command:
-      - "./.cicd/build-integration.sh"
+      - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env: 
       IMAGE_TAG: "ubuntu-16.04"
@@ -37,7 +37,7 @@ steps:
 
   - label: ":ubuntu: Ubuntu 18.04 - Build"
     command:
-      - "./.cicd/build-integration.sh"
+      - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env:
       IMAGE_TAG: "eosio/ci-contracts-builder:base-ubuntu-18.04-develop"
@@ -48,7 +48,7 @@ steps:
 
   - label: ":ubuntu: Ubuntu 20.04 - Build"
     command:
-      - "./.cicd/build-integration.sh"
+      - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env:
       IMAGE_TAG: "ubuntu-20.04"
@@ -63,7 +63,7 @@ steps:
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && ./.cicd/build-integration.sh"
+      - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
       - EOSIO/anka#v0.6.1:
@@ -88,7 +88,7 @@ steps:
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && ./.cicd/build-integration.sh"
+      - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
       - EOSIO/anka#v0.6.1:
