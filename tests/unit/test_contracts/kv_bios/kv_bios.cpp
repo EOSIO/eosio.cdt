@@ -4,7 +4,7 @@
 
 extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
 extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(void* params, uint32_t size, uint32_t max_version);
-extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const void* params, uint32_t size);
+extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const char* params, uint32_t size);
 
 using namespace eosio;
 
@@ -30,7 +30,9 @@ class [[eosio::contract]] kv_bios : eosio::contract {
       limits[1] = k;
       limits[2] = v;
       limits[3] = i;
-      set_kv_parameters_packed(limits, sizeof(limits));
+      char limits_buf[sizeof(limits)];
+      memcpy(limits_buf, limits, sizeof(limits));
+      set_kv_parameters_packed(limits_buf, sizeof(limits));
       int sz = get_kv_parameters_packed(nullptr, 0, 0);
       std::fill_n(limits, sizeof(limits)/sizeof(limits[0]), 0xFFFFFFFFu);
       check(sz == 16, "wrong kv parameters size");

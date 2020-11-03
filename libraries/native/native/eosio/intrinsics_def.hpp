@@ -46,6 +46,7 @@ intrinsic_macro(set_proposed_producers) \
 intrinsic_macro(set_proposed_producers_ex) \
 intrinsic_macro(get_blockchain_parameters_packed) \
 intrinsic_macro(set_blockchain_parameters_packed) \
+intrinsic_macro(set_kv_parameters_packed) \
 intrinsic_macro(is_privileged) \
 intrinsic_macro(set_privileged) \
 intrinsic_macro(is_feature_activated) \
