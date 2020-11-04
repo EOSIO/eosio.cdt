@@ -39,9 +39,17 @@ endif()
 set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.cdt)
 
 option(ENABLE_NATIVE_COMPILER "enable native builds with the eosio.cdt toolchain" ON)
-option(ENABLE_TESTS "enable building tests" OFF)
+option(ENABLE_TESTS "enable building tests" ON)
 
 include(GNUInstallDirs)
+
+if(NOT TOOLS_BUILD_TYPE)
+   set(TOOLS_BUILD_TYPE "Release")
+endif()
+
+if(NOT LIBS_BUILD_TYPE)
+   set(LIBS_BUILD_TYPE "Release")
+endif()
 
 include(modules/ClangExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
