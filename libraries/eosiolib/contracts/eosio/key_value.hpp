@@ -78,29 +78,11 @@ namespace detail {
    template <typename V>
    static void serialize(const V& value, void* buffer, size_t size) {
       datastream<char*> ds((char*)buffer, size);
-      unsigned_int i{0};
-      ds << i;
-      ds << value;
-   }
-
-   template <typename... Vs>
-   static void serialize(const std::variant<Vs...>& value, void* buffer, size_t size) {
-      datastream<char*> ds((char*)buffer, size);
       ds << value;
    }
 
    template <typename V>
    static void deserialize(V& value, const void* buffer, size_t size) {
-      unsigned_int idx;
-      datastream<const char*> ds((char*)buffer, size);
-
-      ds >> idx;
-      eosio::check(idx==unsigned_int(0), "there was an error deserializing this value.");
-      ds >> value;
-   }
-
-   template <typename... Vs>
-   static void deserialize(std::variant<Vs...>& value, const void* buffer, size_t size) {
       datastream<const char*> ds((char*)buffer, size);
       ds >> value;
    }

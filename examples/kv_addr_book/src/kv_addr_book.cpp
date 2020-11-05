@@ -160,7 +160,7 @@ bool kv_addr_book::checkpidcntr(std::string personal_id, std::string country) {
 [[eosio::action]]
 void kv_addr_book::iterate(int iterations_count) {
    address_table addresses{"kvaddrbook"_n};
-   
+
    auto begin_itr = addresses.account_name_uidx.begin();
    auto end_itr = addresses.account_name_uidx.end();
 
