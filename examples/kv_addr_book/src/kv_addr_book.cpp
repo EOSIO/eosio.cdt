@@ -1,6 +1,9 @@
 #include <kv_addr_book.hpp>
 
 void kv_addr_book::print_person(const person& person, bool new_line) {
+   // when using "/n" in the string printed by eosio everything else
+   // printed after this print for the current action will not be shown
+   // in the console, therefore use it as the last print statement only.
    eosio::print_f(
       new_line 
          ? "Person found: {%, %, %, %, %, %, %}\n"
