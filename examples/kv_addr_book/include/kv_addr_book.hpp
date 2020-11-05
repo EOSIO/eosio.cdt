@@ -2,9 +2,10 @@
 
 // this structure defines the data stored in the kv::table
 struct person {
+   
    eosio::name account_name;
-   eosio::non_unique<eosio::name, std::string> first_name;
-   eosio::non_unique<eosio::name, std::string> last_name;
+   eosio::non_unique<std::string, std::string> first_name;
+   eosio::non_unique<std::string, std::string> last_name;
    eosio::non_unique<eosio::name, std::string, std::string, std::string, std::string> street_city_state_cntry;
    eosio::non_unique<eosio::name, std::string> personal_id;
    std::pair<std::string, std::string> country_personal_id;
@@ -14,11 +15,11 @@ struct person {
    }
    std::string get_first_name() const {
       // from the non_unique tuple we extract the value with key 1, the first name
-      return std::get<1>(first_name);
+      return std::get<0>(first_name);
    }
    std::string get_last_name() const {
       // from the non_unique tuple we extract the value with key 1, the last name
-      return std::get<1>(last_name);
+      return std::get<0>(last_name);
    }
    std::string get_street() const {
       // from the non_unique tuple we extract the value with key 1, the street
@@ -55,8 +56,8 @@ struct person_factory {
       std::string personal_id) {
          return person {
             .account_name = account_name,
-            .first_name = {account_name, first_name},
-            .last_name = {account_name, last_name},
+            .first_name = {first_name, last_name},
+            .last_name = {last_name, first_name},
             .street_city_state_cntry = {account_name, street, city, state, country},
             .personal_id = {account_name, personal_id},
             .country_personal_id = {country, personal_id}
@@ -86,15 +87,17 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    index, and by providing as the first property one that has unique values
       //    it ensures the uniques of the values combined (including non-unique ones)
       // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-      index<eosio::non_unique<eosio::name, std::string>> first_name_idx {
-         eosio::name{"firstname"_n},
+      
+      index<eosio::non_unique<std::string, std::string>> first_name_idx {
+         eosio::name{"frstnameidx"_n},
          &person::first_name};
-      index<eosio::non_unique<eosio::name, std::string>> last_name_idx {
-         eosio::name{"lastname"_n},
+      index<eosio::non_unique<std::string, std::string>> last_name_idx {
+         eosio::name{"lastnameidx"_n}, 
          &person::last_name};
       index<eosio::non_unique<eosio::name, std::string>> personal_id_idx {
          eosio::name{"persid"_n},
          &person::personal_id};
+
       // non-unique index defined using the KV_NAMED_INDEX macro
       // note: you can not name your index like you were able to do before (ending in `_idx`),
       // instead when using the macro you have to pass the name of the data member which 
@@ -171,6 +174,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
       
    private:
-      void print_person(const person& person);
+      void print_person(const person& person, bool new_line = true);
       address_table addresses{"kvaddrbook"_n};
 };
