@@ -5,7 +5,7 @@ using namespace std;
 
 using last_name_idx_t = std::tuple<std::string>;
 using fullname_t = std::tuple<std::string, std::string>;
-using street_city_state_cntry_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
+using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
 using country_personal_id_t = std::pair<std::string, std::string>;
 
 // this structure defines the data stored in the kv::table
@@ -22,7 +22,7 @@ struct person {
    // data members supporting the indexes built for this structure
    fullname_t full_name_first_last;
    fullname_t full_name_last_first;
-   street_city_state_cntry_t street_city_state_cntry;
+   address_t address;
    country_personal_id_t country_personal_id;
    last_name_idx_t last_name_idx_data_member;
 };
@@ -49,7 +49,7 @@ struct person_factory {
             .personal_id = personal_id,
             .full_name_first_last = {first_name, last_name},
             .full_name_last_first = {last_name, first_name},
-            .street_city_state_cntry = {street, city, state, country, account_name},
+            .address = {street, city, state, country, account_name},
             .country_personal_id = {country, personal_id},
             .last_name_idx_data_member = {last_name}
          };
@@ -92,7 +92,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       // note: you can not name your index like you were able to do before (ending in `_idx`),
       // instead when using the macro you have to pass the name of the data member which 
       // is indexed and that will give the name of the index as well
-      KV_NAMED_INDEX("address"_n, street_city_state_cntry)
+      KV_NAMED_INDEX("address"_n, address)
 
       address_table(eosio::name contract_name) {
          init(contract_name,
@@ -100,7 +100,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
             country_personal_id_uidx,
             full_name_first_last_idx,
             full_name_last_first_idx,
-            street_city_state_cntry);
+            address);
       }
    };
 
