@@ -19,7 +19,7 @@ struct person {
    std::string country;
    std::string personal_id;
 
-   // data members supporting the indexes built this structure
+   // data members supporting the indexes built for this structure
    fullname_t full_name_first_last;
    fullname_t full_name_last_first;
    street_city_state_cntry_t street_city_state_cntry;

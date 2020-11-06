@@ -78,7 +78,7 @@ std::vector<person> kv_addr_book::getbylastname(std::string last_name) {
    for (auto& person : list_of_persons) {
       print_person(person, false);
    }
-      // return found list of person from action
+   // return found list of person from action
    return list_of_persons;
 }
 
