@@ -3,10 +3,12 @@
 using namespace eosio;
 using namespace std;
 
-using last_name_idx_t = std::tuple<std::string>;
 using fullname_t = std::tuple<std::string, std::string>;
 using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
 using country_personal_id_t = std::pair<std::string, std::string>;
+
+// TO DO: testing...
+using last_name_idx_t = std::tuple<std::string>;
 
 // this structure defines the data stored in the kv::table
 struct person {
@@ -24,6 +26,8 @@ struct person {
    fullname_t full_name_last_first;
    address_t address;
    country_personal_id_t country_personal_id;
+
+   // TO DO: testing...
    last_name_idx_t last_name_idx_data_member;
 };
 
@@ -84,15 +88,14 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       index<fullname_t> full_name_last_first_idx {
          name{"lastnameidx"_n},
          &person::full_name_last_first};
+      index<address_t> address_idx {
+         name{"addressidx"_n},
+         &person::address};
+
+      // TO DO: testing...
       index<last_name_idx_t> last_name_idx {
          name{"lstnameidx"},
          &person::last_name_idx_data_member};
-
-      // non-unique index defined using the KV_NAMED_INDEX macro
-      // note: you can not name your index like you were able to do before (ending in `_idx`),
-      // instead when using the macro you have to pass the name of the data member which 
-      // is indexed and that will give the name of the index as well
-      KV_NAMED_INDEX("address"_n, address)
 
       address_table(eosio::name contract_name) {
          init(contract_name,
@@ -100,7 +103,7 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
             country_personal_id_uidx,
             full_name_first_last_idx,
             full_name_last_first_idx,
-            address);
+            address_idx);
       }
    };
 

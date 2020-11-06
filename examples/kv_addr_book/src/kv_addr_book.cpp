@@ -106,10 +106,17 @@ std::vector<person> kv_addr_book::getbyaddress(
 
    eosio::name min_account_name{0};
    eosio::name max_account_name{UINT_MAX};
-   auto list_of_persons = addresses.address.range(
+
+   auto list_of_persons = addresses.address_idx.range(
       {street, city, state, country, min_account_name}, 
       {street, city, state, country, max_account_name});
-   // return found list of person from action
+
+   eosio::print_f("Found % person(s). ", list_of_persons.size());
+
+   for (auto& person : list_of_persons) {
+      print_person(person, false);
+   }
+   // return found list of persons from action
    return list_of_persons;
 }
 
