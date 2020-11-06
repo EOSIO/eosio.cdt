@@ -9,7 +9,6 @@
 #include <cctype>
 #include <functional>
 
-#define EOSIO_CDT_GET_RETURN_T(value_class, index_name) std::decay_t<decltype(std::invoke(&value_class::index_name, std::declval<const value_class*>()))>
 
 /**
  * @brief Macro to define an index.
@@ -19,8 +18,8 @@
  * @param index_name    - The index name.
  * @param member_name   - The name of the member pointer used for the index. This also defines the index's C++ variable name.
  */
-#define KV_NAMED_INDEX(index_name, member_name)                                                                        \
-   index<EOSIO_CDT_GET_RETURN_T(value_type, member_name)> member_name{eosio::name{index_name}, &value_type::member_name};
+#define KV_NAMED_INDEX(index_name, member_name) \
+   index<eosio::detail::member_pointer_ret_t<&underlying_type_t::member_name>> member_name{eosio::name{index_name}, &underlying_type_t::member_name};
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -73,7 +72,46 @@ namespace eosio {
    }
 
 namespace detail {
-   constexpr inline size_t max_stack_buffer_size = 512;
+   template <typename R, typename C>
+   auto member_pointer_ret_type(R (C::*)) -> R;
+   template <typename R, typename C, typename... Args>
+   auto member_pointer_ret_type(R (C::*)(Args...)) -> R;
+   template <typename R, typename C, typename... Args>
+   auto member_pointer_ret_type(R (C::*)(Args...)const) -> R;
+
+   template <auto MP>
+   using member_pointer_ret_t = decltype(member_pointer_ret_type(MP));
+
+   struct scoped_buffer {
+      constexpr static inline size_t static_size = 512;
+      constexpr inline scoped_buffer(std::size_t sz)
+         : ptr(sz > static_size ? new char[sz] : buffer.data()),
+           sz(sz) {}
+
+      ~scoped_buffer() {
+         if (size() > static_size)
+            delete[] ptr;
+      }
+
+      constexpr inline void reset(std::size_t new_size) {
+         if (new_size > size()) {
+            if (new_size > static_size) {
+               if (size() > static_size)
+                  delete[] ptr;
+               ptr = new char[new_size];
+            }
+         }
+         sz = new_size;
+      }
+
+      constexpr inline char* data() { return ptr; }
+      constexpr inline const char* data() const { return ptr; }
+      constexpr inline std::size_t size() const { return sz; }
+
+      std::array<char, static_size> buffer = {};
+      char* ptr = nullptr;
+      std::size_t sz = 0;
+   };
 
    template <typename V>
    static void serialize(const V& value, void* buffer, size_t size) {
@@ -99,36 +137,6 @@ namespace detail {
       return size;
    }
 }
-
-/**
- * The key_type struct is used to store the binary representation of a key.
- */
-struct key_type : private std::vector<char> {
-   key_type() = default;
-
-   explicit key_type(std::vector<char>&& v) : std::vector<char>(std::move(v)) {}
-
-   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
-
-   key_type operator+(const key_type& b) const {
-      key_type ret = *this;
-      ret += b;
-      return ret;
-   }
-
-   key_type& operator+=(const key_type& b) {
-      this->insert(this->end(), b.begin(), b.end());
-      return *this;
-   }
-
-   bool operator==(const key_type& b) const {
-      return size() == b.size() && memcmp(data(), b.data(), b.size()) == 0;
-   }
-
-   using std::vector<char>::data;
-   using std::vector<char>::size;
-   using std::vector<char>::resize;
-};
 
 /* @cond PRIVATE */
 template <typename T>
@@ -160,12 +168,6 @@ inline key_type make_key(T val) {
 }
 #endif
 
-/**
- * non_unique provides a clear way for developers to mark an index as non-unique
- */
-template <typename ...Types>
-using non_unique = std::tuple<Types...>;
-
 namespace kv {
 template<typename T, eosio::name::raw TableName>
 class table;
@@ -187,15 +189,11 @@ namespace internal {
       index_base() = default;
 
       template <typename KF, typename T>
-      index_base(eosio::name index_name, KF&& kf, T*) : index_name{index_name} {
-         key_function = [=](const void* t) {
-            return make_key(std::invoke(kf, static_cast<const T*>(t)));
-         };
-      }
+      index_base(eosio::name index_name, KF&&, T*)
+         : index_name{index_name},
+           converter(new to_key_converter<KF{}>{}) {}
 
-      template<typename T>
-      key_type get_key(const T& inst) const { return key_function(&inst); }
-      key_type get_key_void(const void* ptr) const { return key_function(ptr); }
+      key_type get_key(const void* ptr) const { return converter->convert(ptr); }
 
       void get(const key_type& key, void* ret_val, void (*deserialize)(void*, const void*, std::size_t)) const;
 
@@ -208,7 +206,7 @@ namespace internal {
       friend class table_base;
       friend class iterator_base;
 
-      std::function<key_type(const void*)> key_function;
+      std::unique_ptr<to_key_converter_base> converter;
 
       virtual void setup() = 0;
    };
@@ -232,25 +230,21 @@ namespace internal {
                eosio::name payer) {
          uint32_t value_size;
 
-         auto primary_key = primary_index->get_key_void(value);
+         auto primary_key = primary_index->get_key(value);
          auto tbl_key = make_prefix(table_name, primary_index->index_name) + primary_key;
 
          auto primary_key_found = internal_use_do_not_use::kv_get(contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
          if (primary_key_found) {
-            void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-            auto copy_size = internal_use_do_not_use::kv_get_data(0, (char*)buffer, value_size);
+            detail::scoped_buffer buff = {value_size};
+            auto copy_size = internal_use_do_not_use::kv_get_data(0, buff.data(), buff.size());
 
-            deserialize(old_value, buffer, copy_size);
-
-            if (value_size > detail::max_stack_buffer_size) {
-               free(buffer);
-            }
+            deserialize(old_value, buff.data(), copy_size);
          }
 
          for (const auto& idx : secondary_indices) {
             uint32_t value_size;
-            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(value);
+            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key(value);
             auto sec_found = internal_use_do_not_use::kv_get(contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), value_size);
 
             if (!primary_key_found) {
@@ -258,39 +252,30 @@ namespace internal {
                internal_use_do_not_use::kv_set(contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size(), payer.value);
             } else {
                if (sec_found) {
-                  void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-                  auto copy_size = internal_use_do_not_use::kv_get_data(0, (char*)buffer, value_size);
+                  detail::scoped_buffer buff = {value_size};
+                  auto copy_size = internal_use_do_not_use::kv_get_data(0, buff.data(), buff.size());
 
-                  auto res = memcmp(buffer, tbl_key.data(), copy_size);
+                  auto res = memcmp(buff.data(), tbl_key.data(), copy_size);
                   eosio::check(copy_size == tbl_key.size() && res == 0, "Attempted to update an existing secondary index.");
-
-                  if (copy_size > detail::max_stack_buffer_size) {
-                     free(buffer);
-                  }
                } else {
-                  auto old_sec_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(old_value);
+                  auto old_sec_key = make_prefix(table_name, idx->index_name) + idx->get_key(old_value);
                   internal_use_do_not_use::kv_erase(contract_name.value, old_sec_key.data(), old_sec_key.size());
                   internal_use_do_not_use::kv_set(contract_name.value, sec_tbl_key.data(), sec_tbl_key.size(), tbl_key.data(), tbl_key.size(), payer.value);
                }
             }
          }
 
-         size_t data_size = get_size(value);
-         void* data_buffer = data_size > detail::max_stack_buffer_size ? malloc(data_size) : alloca(data_size);
+         detail::scoped_buffer buff = {get_size(value)};
 
-         serialize(value, data_buffer, data_size);
+         serialize(value, buff.data(), buff.size());
 
-         internal_use_do_not_use::kv_set(contract_name.value, tbl_key.data(), tbl_key.size(), (const char*)data_buffer, data_size, payer.value);
-
-         if (data_size > detail::max_stack_buffer_size) {
-            free(data_buffer);
-         }
+         internal_use_do_not_use::kv_set(contract_name.value, tbl_key.data(), tbl_key.size(), buff.data(), buff.size(), payer.value);
       }
 
       void erase(const void* value) {
          uint32_t value_size;
 
-         auto primary_key = primary_index->get_key_void(value);
+         auto primary_key = primary_index->get_key(value);
          auto tbl_key = make_prefix(table_name, primary_index->index_name) + primary_key;
          auto primary_key_found = internal_use_do_not_use::kv_get(contract_name.value, tbl_key.data(), tbl_key.size(), value_size);
 
@@ -299,7 +284,7 @@ namespace internal {
          }
 
          for (const auto& idx : secondary_indices) {
-            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key_void(value);
+            auto sec_tbl_key = make_prefix(table_name, idx->index_name) + idx->get_key(value);
             internal_use_do_not_use::kv_erase(contract_name.value, sec_tbl_key.data(), sec_tbl_key.size());
          }
 
@@ -316,33 +301,20 @@ namespace internal {
          return;
       }
 
-      void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-      auto copy_size = internal_use_do_not_use::kv_get_data(0, (char*)buffer, value_size);
+      detail::scoped_buffer buff = {value_size};
 
-      void* deserialize_buffer = buffer;
-      size_t deserialize_size = copy_size;
+      auto copy_size = internal_use_do_not_use::kv_get_data(0, buff.data(), buff.size());
 
       bool is_primary = index_name == tbl->primary_index_name;
       if (!is_primary) {
-         auto success = internal_use_do_not_use::kv_get(contract_name.value, (char*)buffer, copy_size, actual_data_size);
+         auto success = internal_use_do_not_use::kv_get(contract_name.value, buff.data(), copy_size, actual_data_size);
          eosio::check(success, "failure getting primary key");
 
-         void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-         auto pk_copy_size = internal_use_do_not_use::kv_get_data(0, (char*)pk_buffer, actual_data_size);
-
-         deserialize_buffer = pk_buffer;
-         deserialize_size = pk_copy_size;
+         buff.reset(actual_data_size);
+         auto pk_copy_size = internal_use_do_not_use::kv_get_data(0, buff.data(), buff.size());
       }
 
-      deserialize(ret_val, deserialize_buffer, deserialize_size);
-
-      if (value_size > detail::max_stack_buffer_size) {
-         free(buffer);
-      }
-
-      if (!is_primary && actual_data_size > detail::max_stack_buffer_size) {
-         free(deserialize_buffer);
-      }
+      deserialize(ret_val, buff.data(), buff.size());
    }
 
    class iterator_base {
@@ -398,35 +370,21 @@ namespace internal {
          // call once to get the value_size
          internal_use_do_not_use::kv_it_value(itr, 0, (char*)nullptr, 0, value_size);
 
-         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto stat = internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, value_size, actual_value_size);
+         detail::scoped_buffer buff = {value_size};
+         auto stat = internal_use_do_not_use::kv_it_value(itr, offset, buff.data(), buff.size(), actual_value_size);
 
          eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error reading value");
 
-         void* deserialize_buffer = buffer;
-         size_t deserialize_size = actual_value_size;
-
          bool is_primary = index->index_name == index->tbl->primary_index_name;
          if (!is_primary) {
-            auto success = internal_use_do_not_use::kv_get(index->contract_name.value, (char*)buffer, actual_value_size, actual_data_size);
+            auto success = internal_use_do_not_use::kv_get(index->contract_name.value, buff.data(), actual_value_size, actual_data_size);
             eosio::check(success, "failure getting primary key in `value()`");
 
-            void* pk_buffer = actual_data_size > detail::max_stack_buffer_size ? malloc(actual_data_size) : alloca(actual_data_size);
-            internal_use_do_not_use::kv_get_data(0, (char*)pk_buffer, actual_data_size);
-
-            deserialize_buffer = pk_buffer;
-            deserialize_size = actual_data_size;
+            buff.reset(actual_data_size);
+            internal_use_do_not_use::kv_get_data(0, buff.data(), buff.size());
          }
 
-         deserialize(val, deserialize_buffer, deserialize_size);
-
-         if (value_size > detail::max_stack_buffer_size) {
-            free(buffer);
-         }
-
-         if (!is_primary && actual_data_size > detail::max_stack_buffer_size) {
-            free(deserialize_buffer);
-         }
+         deserialize(val, buff.data(), buff.size());
       }
 
       key_type key() const {
@@ -436,12 +394,12 @@ namespace internal {
          // call once to get the value size
          internal_use_do_not_use::kv_it_key(itr, 0, (char*)nullptr, 0, value_size);
 
-         void* buffer = value_size > detail::max_stack_buffer_size ? malloc(value_size) : alloca(value_size);
-         auto stat = internal_use_do_not_use::kv_it_key(itr, 0, (char*)buffer, value_size, actual_value_size);
+         detail::scoped_buffer buff = {value_size};
+         auto stat = internal_use_do_not_use::kv_it_key(itr, 0, buff.data(), buff.size(), actual_value_size);
 
          eosio::check(static_cast<status>(stat) == status::iterator_ok, "Error getting key");
 
-         return eosio::key_type{(char*)buffer, actual_value_size};
+         return eosio::key_type{buff.data(), actual_value_size};
       }
 
    protected:
@@ -482,6 +440,7 @@ namespace internal {
 template<typename T, eosio::name::raw TableName>
 class table : internal::table_base {
 public:
+   using underlying_type_t = T;
    template<typename K>
    class index;
 
@@ -676,7 +635,7 @@ public:
       using table<T, TableName>::index_base::prefix;
 
       template <typename KF>
-      index(eosio::name name, KF&& kf) : index_base{name, kf, (T*)nullptr} {
+      index(eosio::name name, KF&& kf) : index_base{name, std::forward<KF>(kf), (T*)nullptr} {
          static_assert(std::is_same_v<K, std::remove_cv_t<std::decay_t<decltype(std::invoke(kf, std::declval<const T*>()))>>>,
                "Make sure the variable/function passed to the constructor returns the same type as the template parameter.");
       }

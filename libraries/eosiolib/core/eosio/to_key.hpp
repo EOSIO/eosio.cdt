@@ -38,7 +38,44 @@ constexpr bool is_ranged_type(C<T>) {
       std::is_same_v<std::deque<T>, type>  ||
       std::is_same_v<std::set<T>, type>;
 }
-}
+
+template <typename R, typename C>
+auto member_pointer_class(R (C::*)) -> C;
+template <typename R, typename C, typename... Args>
+auto member_pointer_class(R (C::*)(Args...)) -> C;
+template <typename R, typename C, typename... Args>
+auto member_pointer_class(R (C::*)(Args...)const) -> C;
+} // namespace eosio::detail
+
+/**
+ * The key_type struct is used to store the binary representation of a key.
+ */
+struct key_type : private std::vector<char> {
+   key_type() = default;
+
+   explicit key_type(std::vector<char>&& v) : std::vector<char>(std::move(v)) {}
+
+   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
+
+   key_type operator+(const key_type& b) const {
+      key_type ret = *this;
+      ret += b;
+      return ret;
+   }
+
+   key_type& operator+=(const key_type& b) {
+      this->insert(this->end(), b.begin(), b.end());
+      return *this;
+   }
+
+   bool operator==(const key_type& b) const {
+      return size() == b.size() && memcmp(data(), b.data(), b.size()) == 0;
+   }
+
+   using std::vector<char>::data;
+   using std::vector<char>::size;
+   using std::vector<char>::resize;
+};
 
 template <typename... Ts, typename S>
 void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
@@ -289,7 +326,7 @@ void to_key(const T& obj, datastream<S>& stream) {
 }
 
 template <typename T>
-void convert_to_key(const T& t, std::vector<char>& bin) {
+void convert_to_key(const T& t, key_type& bin) {
    datastream<size_t> ss;
    to_key(t, ss);
    auto orig_size = bin.size();
@@ -300,10 +337,22 @@ void convert_to_key(const T& t, std::vector<char>& bin) {
 }
 
 template <typename T>
-std::vector<char> convert_to_key(const T& t) {
-   std::vector<char> result;
+key_type convert_to_key(const T& t) {
+   key_type result;
    convert_to_key(t, result);
    return result;
 }
+
+struct to_key_converter_base {
+   virtual key_type convert(const void*) const = 0;
+   virtual ~to_key_converter_base() {}
+};
+
+template <auto MP>
+struct to_key_converter final : to_key_converter_base {
+   virtual key_type convert(const void* ptr) const {
+      return convert_to_key(std::invoke(MP, static_cast<const decltype(eosio::detail::member_pointer_class(MP))*>(ptr)));
+   }
+};
 
 } // namespace eosio
