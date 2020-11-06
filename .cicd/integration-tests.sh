@@ -19,12 +19,12 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
         evars="$evars --env ${var%%=*}"
     done < "$BUILDKITE_ENV_FILE"
 fi
-set +e
 
 if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
   FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
 fi
 
+set +e
 eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 EXIT_STATUS=$?
 
