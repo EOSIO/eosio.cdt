@@ -40,7 +40,7 @@ steps:
       - "./.cicd/build-integration.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     env:
-      IMAGE_TAG: "eosio/ci-contracts-builder:base-ubuntu-18.04-develop"
+      IMAGE_TAG: "ubuntu-18.04"
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
@@ -321,7 +321,7 @@ steps:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/integration-tests.sh"
     env:
-      IMAGE_TAG: "eosio/ci-contracts-builder:base-ubuntu-18.04-develop"
+      IMAGE_TAG: "ubuntu-18.04"
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}

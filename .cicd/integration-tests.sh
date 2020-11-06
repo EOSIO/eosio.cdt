@@ -20,7 +20,12 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
     done < "$BUILDKITE_ENV_FILE"
 fi
 set +e
-eval docker run $ARGS $evars $IMAGE_TAG bash -c \"$COMMANDS\"
+
+if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
+  FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
+fi
+
+eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 EXIT_STATUS=$?
 
 # buildkite
