@@ -3,9 +3,9 @@
 using namespace eosio;
 using namespace std;
 
-using last_name_idx_t = eosio::non_unique<std::string>;
-using fullname_t = eosio::non_unique<std::string, std::string>;
-using street_city_state_cntry_t = eosio::non_unique<eosio::name, std::string, std::string, std::string, std::string>;
+using last_name_idx_t = std::tuple<std::string>;
+using fullname_t = std::tuple<std::string, std::string>;
+using street_city_state_cntry_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
 using country_personal_id_t = std::pair<std::string, std::string>;
 
 // this structure defines the data stored in the kv::table
@@ -49,7 +49,7 @@ struct person_factory {
             .personal_id = personal_id,
             .full_name_first_last = {first_name, last_name},
             .full_name_last_first = {last_name, first_name},
-            .street_city_state_cntry = {account_name, street, city, state, country},
+            .street_city_state_cntry = {street, city, state, country, account_name},
             .country_personal_id = {country, personal_id},
             .last_name_idx_data_member = {last_name}
          };
