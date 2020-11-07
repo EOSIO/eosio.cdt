@@ -2,7 +2,7 @@
    "tests" : [
       {
          "expected" : {
-            "abi-file" : "kv_addr_book.abi"
+            "abi-file" : "kv_table_key_type.abi"
          }
       }
    ]
