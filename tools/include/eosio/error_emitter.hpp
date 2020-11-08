@@ -28,21 +28,27 @@ namespace eosio { namespace cdt {
          std::map<std::string, uint32_t> diags;
       };
 
-      void set_compiler_instance(clang::CompilerInstance* i) {
+      void set_compiler_instance(clang::CompilerInstance* i, clang::DiagnosticConsumer* c) {
          ci = i;
+         client = c;
          diags = diag_ids(i->getDiagnostics());
       }
       template <typename SrcLoc>
       void emit_error(SrcLoc&& loc, uint32_t id, const std::string& err) {
+         ci->getDiagnostics().setClient(client, false);
          clang::FullSourceLoc full(loc, ci->getSourceManager());
          ci->getDiagnostics().Report(full, id) << err;
+         ci->getDiagnostics().setClient(new clang::IgnoringDiagConsumer());
       }
       template <typename SrcLoc>
       void emit_warning(SrcLoc&& loc, uint32_t id, const std::string& err) {
+         ci->getDiagnostics().setClient(client, false);
          clang::FullSourceLoc full(loc, ci->getSourceManager());
          ci->getDiagnostics().Report(full, id) << err;
+         ci->getDiagnostics().setClient(new clang::IgnoringDiagConsumer());
       }
       clang::CompilerInstance* ci = nullptr;
+      clang::DiagnosticConsumer* client = nullptr;
       diag_ids diags;
    };
 }}

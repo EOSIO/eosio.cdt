@@ -132,7 +132,8 @@ struct environment {
        }
      return env_table;
    }
-   static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
+
+   static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false, const std::string redirect="") {
       std::vector<llvm::StringRef> args;
       args.push_back(prog);
       args.insert(args.end(), options.begin(), options.end());
@@ -140,7 +141,8 @@ struct environment {
       if (root)
          find_path = "/usr/bin";
       if ( const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
-         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
+         llvm::Optional<llvm::StringRef> redirects[] = {llvm::None, llvm::StringRef(redirect), llvm::None};
+         return llvm::sys::ExecuteAndWait(*path, args, {}, redirect.empty() ? llvm::ArrayRef<llvm::Optional<llvm::StringRef>>{} : redirects, 0, 0, nullptr, nullptr) == 0;
       }
       else
          return false;

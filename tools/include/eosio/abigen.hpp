@@ -691,10 +691,12 @@ namespace eosio { namespace cdt {
       private:
          bool has_added_clauses = false;
          abigen& ag = abigen::get();
+         std::unique_ptr<clang::DiagnosticConsumer> client;
 
       public:
-         explicit eosio_abigen_visitor(CompilerInstance *CI) {
-            get_error_emitter().set_compiler_instance(CI);
+         template <typename Client>
+         eosio_abigen_visitor(CompilerInstance *CI, Client&& c) : client(std::move(c)) {
+            get_error_emitter().set_compiler_instance(CI, client.get());
          }
 
          bool shouldVisitTemplateInstantiations() const {
@@ -753,8 +755,8 @@ namespace eosio { namespace cdt {
          CompilerInstance* ci;
 
       public:
-         explicit eosio_abigen_consumer(CompilerInstance *CI, std::string file)
-            : visitor(new eosio_abigen_visitor(CI)), main_file(file), ci(CI) { }
+         explicit eosio_abigen_consumer(CompilerInstance *CI, std::string file, std::unique_ptr<clang::DiagnosticConsumer>&& c)
+            : visitor(new eosio_abigen_visitor(CI, std::move(c))), main_file(file), ci(CI) { }
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
             auto& src_mgr = Context.getSourceManager();
@@ -767,11 +769,13 @@ namespace eosio { namespace cdt {
          }
    };
 
-   class eosio_abigen_frontend_action : public ASTFrontendAction {
+   class eosio_abigen_frontend_action : public ASTViewAction {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+            auto old_client = CI.getDiagnostics().takeClient();
+            CI.getDiagnostics().setClient(new clang::IgnoringDiagConsumer());
             CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return std::make_unique<eosio_abigen_consumer>(&CI, file);
+            return std::make_unique<eosio_abigen_consumer>(&CI, file, std::move(old_client));
          }
    };
 }} // ns eosio::cdt

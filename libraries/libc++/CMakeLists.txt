@@ -23,6 +23,7 @@ target_include_directories(c++
                            ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
                            ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
 
+target_compile_options(c++ PRIVATE "-no-reflect")
 target_link_libraries(c++ c)
 target_compile_definitions(c++ PUBLIC -D_LIBCPP_BUILDING_LIBRARY)
 add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${BASE_BINARY_DIR}/lib )
@@ -42,6 +43,7 @@ if (ENABLE_NATIVE_COMPILER)
    target_link_libraries(native_c++ native_c)
    target_compile_definitions(native_c++ PUBLIC -D_LIBCPP_BUILDING_LIBRARY)
    target_compile_options(native_c++ PUBLIC -allow-sse)
+   target_compile_options(native_c++ PRIVATE "-no-reflect")
    add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )
 endif()
 

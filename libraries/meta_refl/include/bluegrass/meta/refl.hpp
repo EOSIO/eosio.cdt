@@ -8,8 +8,6 @@
 #include <string_view>
 #include <tuple>
 
-#include <eosio/print.hpp>
-
 namespace bluegrass { namespace meta {
    template <typename T>
    constexpr inline std::string_view type_name() {
@@ -30,6 +28,7 @@ namespace bluegrass { namespace meta {
    struct invalid_fields {};
 
    namespace detail {
+      BLUEGRASS_META_HAS_MEMBER_GENERATOR(valid, _bluegrass_meta_refl_valid);
       template <typename C>
       constexpr inline auto which_field_types() {
          if constexpr ( BLUEGRASS_HAS_MEMBER_TY(C, _bluegrass_meta_refl_valid) )
@@ -45,9 +44,6 @@ namespace bluegrass { namespace meta {
          else
             return std::tuple_size_v<T>;
       }
-
-      template<typename... Args>
-      constexpr inline auto va_args_count_helper(Args&&...) { return sizeof...(Args); }
 
       template <typename T, std::size_t>
       struct fwd_t { using type = T; };
@@ -141,34 +137,9 @@ namespace bluegrass { namespace meta {
       }
    };
 
+   template <typename C>
+   constexpr static inline bool is_reflected_v = BLUEGRASS_HAS_MEMBER_TY(C, _bluegrass_meta_refl_valid);
 }} // ns bluegrass::meta
-
-#define BLUEGRASS_META_ADDRESS( ignore, FIELD ) (void*)&FIELD
-#define BLUEGRASS_META_DECLTYPE( ignore, FIELD ) decltype(FIELD)
-#define BLUEGRASS_META_PASS_STR( ignore, X ) #X
-
-#define BLUEGRASS_META_VA_ARGS_SIZE(...)                         \
-   bluegrass::meta::detail::va_args_count_helper(                \
-         BLUEGRASS_META_FOREACH(                                 \
-            BLUEGRASS_META_PASS_STR, "ignored", ##__VA_ARGS__))
-
-#define BLUEGRASS_META_REFL(...)                                                      \
-   constexpr void _bluegrass_meta_refl_valid();                                       \
-   void _bluegrass_meta_refl_fields                                                   \
-      ( BLUEGRASS_META_FOREACH(BLUEGRASS_META_DECLTYPE, "ignored", ##__VA_ARGS__) ){} \
-   inline auto _bluegrass_meta_refl_field_ptrs() const {                              \
-      return std::array<void *, BLUEGRASS_META_VA_ARGS_SIZE(__VA_ARGS__)>{            \
-         BLUEGRASS_META_FOREACH(BLUEGRASS_META_ADDRESS, "ignored", ##__VA_ARGS__)};   \
-   }                                                                                  \
-   template <std::size_t N>                                                           \
-   inline void* _bluegrass_meta_refl_field_ptr() const {                              \
-     return _bluegrass_meta_refl_field_ptrs()[N];                                     \
-   }                                                                                  \
-   constexpr inline static auto _bluegrass_meta_refl_field_names() {                  \
-      return std::array<std::string_view, BLUEGRASS_META_VA_ARGS_SIZE(__VA_ARGS__)> { \
-         BLUEGRASS_META_FOREACH(BLUEGRASS_META_PASS_STR, "ignored", ##__VA_ARGS__)    \
-      };                                                                              \
-   }
 
 // EXPERIMENTAL macro to produce meta_object specializations for homogeneous structures
 #define BLUEGRASS_HOM_META(_C, _FT, ...)                                                    \

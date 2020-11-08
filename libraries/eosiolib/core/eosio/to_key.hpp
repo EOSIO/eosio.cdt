@@ -12,7 +12,7 @@
 #include <cstring>
 
 #include "datastream.hpp"
-#include <bluegrass/meta/refl.hpp>
+#include "reflection.hpp"
 
 namespace eosio {
 
@@ -281,10 +281,7 @@ void to_key(const T& obj, datastream<S>& stream) {
       static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
       to_key(static_cast<std::underlying_type_t<T>>(obj), stream);
    } else {
-      using ts_meta = bluegrass::meta::meta_object<T>;
-      ts_meta::for_each_field(obj, [&](const auto& member) {
-         to_key(member, stream);
-      });
+      meta_object<T>::for_each_field(obj, [&](const auto& m) { to_key(m, stream); });
    }
 }
 

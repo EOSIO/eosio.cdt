@@ -30,6 +30,10 @@ target_include_directories(eosio PUBLIC
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 
+target_compile_options( eosio PRIVATE "-no-reflect" "-no-missing-ricardian-clause" )
+target_compile_options( eosio_malloc PRIVATE "-no-reflect" "-no-missing-ricardian-clause" )
+target_compile_options( eosio_dsm PRIVATE "-no-reflect" "-no-missing-ricardian-clause" )
+target_compile_options( eosio_cmem PRIVATE "-no-reflect" "-no-missing-ricardian-clause" )
 target_link_libraries( eosio c c++ )
 add_custom_command( TARGET eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_malloc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio_malloc> ${BASE_BINARY_DIR}/lib )
@@ -45,6 +49,7 @@ if (ENABLE_NATIVE_COMPILER)
 
    add_dependencies( native_eosio eosio )
    add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
+   target_compile_options( native_eosio PRIVATE "-no-reflect" "-no-missing-ricardian-clause" )
 endif()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")

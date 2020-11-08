@@ -335,6 +335,9 @@ target_include_directories( sf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/sou
 add_native_library ( native STATIC ${softfloat_sources} intrinsics.cpp crt.cpp ${CRT_ASM} )
 target_include_directories( native PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/include" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/source/8086-SSE" "${CMAKE_CURRENT_SOURCE_DIR}/softfloat/build/Linux-x86_64-GCC" ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/eosiolib/capi ${CMAKE_SOURCE_DIR}/eosiolib/contracts ${CMAKE_SOURCE_DIR}/eosiolib/core)
 
+target_compile_options( sf PRIVATE "-no-reflect" )
+target_compile_options( native PRIVATE "-no-reflect" )
+
 add_dependencies(native native_eosio)
 
 add_custom_command( TARGET native POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native> ${BASE_BINARY_DIR}/lib )

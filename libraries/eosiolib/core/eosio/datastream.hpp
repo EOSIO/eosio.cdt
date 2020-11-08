@@ -3,6 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
+#include "reflection.hpp"
 #include "check.hpp"
 #include "varint.hpp"
 
@@ -22,7 +23,6 @@
 #include <boost/fusion/include/std_tuple.hpp>
 
 #include <boost/mp11/tuple.hpp>
-#include <boost/pfr.hpp>
 
 namespace eosio {
 
@@ -894,9 +894,7 @@ datastream<Stream>& operator>>( datastream<Stream>& ds, std::tuple<Args...>& t )
  */
 template<typename DataStream, typename T, std::enable_if_t<std::is_class<T>::value && _datastream_detail::is_datastream<DataStream>::value>* = nullptr>
 DataStream& operator<<( DataStream& ds, const T& v ) {
-   boost::pfr::for_each_field(v, [&](const auto& field) {
-      ds << field;
-   });
+   meta_object<std::decay_t<T>>::for_each_field(v, [&](const auto& f) { ds << f; });
    return ds;
 }
 
@@ -911,9 +909,7 @@ DataStream& operator<<( DataStream& ds, const T& v ) {
  */
 template<typename DataStream, typename T, std::enable_if_t<std::is_class<T>::value && _datastream_detail::is_datastream<DataStream>::value>* = nullptr>
 DataStream& operator>>( DataStream& ds, T& v ) {
-   boost::pfr::for_each_field(v, [&](auto& field) {
-      ds >> field;
-   });
+   meta_object<std::decay_t<T>>::for_each_field(v, [&](auto& f) { ds >> f; });
    return ds;
 }
 

@@ -215,6 +215,26 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    CHECK_EQUAL( ds.remaining(), 0 )
 EOSIO_TEST_END
 
+// -----------------
+// T (non-primitive)
+struct non_prim_test {
+   int val;
+   EOSIO_CDT_REFLECT(_, val);
+};
+// -------------------
+// T[] (non-primitive)
+struct non_prim_array_test {
+   int val;
+   EOSIO_CDT_REFLECT(_, val);
+};
+// -----------
+// std::vector
+struct vec_test {
+   char val;
+   EOSIO_CDT_REFLECT(_, val);
+};
+
+
 // Definitions in `eosio.cdt/libraries/eosio/datastream.hpp`
 EOSIO_TEST_BEGIN(datastream_stream_test)
    static constexpr uint16_t buffer_size{256};
@@ -232,12 +252,6 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> prim;
    CHECK_EQUAL( cprim, prim )
-
-   // -----------------
-   // T (non-primitive)
-   struct non_prim_test {
-      int val;
-   };
 
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
@@ -264,12 +278,6 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(1);
    fill(begin(prim_array), end(prim_array), 0);
    CHECK_ASSERT( "T[] size and unpacked size don't match", [&](){ds >> prim_array;} )
-
-   // -------------------
-   // T[] (non-primitive)
-   struct non_prim_array_test {
-      int val;
-   };
 
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);
@@ -406,12 +414,6 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    ds.seekp(0);
    ds >> v;
    CHECK_EQUAL( cv, v )
-
-   // -----------
-   // std::vector
-   struct vec_test {
-      char val;
-   };
 
    ds.seekp(0);
    fill(begin(datastream_buffer), end(datastream_buffer), 0);

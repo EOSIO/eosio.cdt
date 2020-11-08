@@ -4,6 +4,7 @@
 #include "llvm/Support/Path.h"
 #include "clang/Driver/Options.h"
 #include "clang/AST/AST.h"
+#include "clang/AST/DeclTemplate.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/RecursiveASTVisitor.h"
@@ -135,6 +136,29 @@ namespace eosio { namespace cdt {
             return "";
          }
 
+         void create_reflector(CXXRecordDecl* decl) {
+            std::stringstream ss;
+            for ( const auto& m : decl->methods() ) {
+               if (m->getName() == "_bluegrass_meta_refl_valid")
+                  return;
+            }
+            if ( !decl->isCompleteDefinition() || decl->isLocalClass() || decl->isAnonymousStructOrUnion() || decl->isLocalExternDecl() ||
+                  decl->getDeclContext()->isExternCContext() ||decl->getDeclContext()->isExternCXXContext() ||
+                  dyn_cast<clang::ClassTemplateSpecializationDecl>(decl) )
+               return;
+            ss << "BLUEGRASS_META_REFL( ";
+            for ( const auto& f : decl->fields() ) {
+               std::string fs = f->getNameAsString();
+               if (fs.empty() || f->isAnonymousStructOrUnion())
+                  return;
+               ss << fs << ',';
+            }
+            std::string refl = ss.str();
+            refl.back() = ')';
+            refl += ";";
+            rewriter.InsertTextAfter(decl->getEndLoc(), refl);
+         }
+
          template <typename F>
          void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
             constexpr static uint32_t max_stack_size = 512;
@@ -142,17 +166,15 @@ namespace eosio { namespace cdt {
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "\n\n#include <eosio/datastream.hpp>\n";
-               ss << "#include <eosio/name.hpp>\n";
                ss << "extern \"C\" {\n";
                ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t action_data_size();\n";
                ss << "__attribute__((eosio_wasm_import))\n";
                ss << "uint32_t read_action_data(void*, uint32_t);\n";
-               const auto& return_ty = decl->getReturnType().getAsString();	
-               if (return_ty != "void") {	
-                  ss << "__attribute__((eosio_wasm_import))\n";	
-                  ss << "void set_action_return_value(void*, size_t);\n";	
+               const auto& return_ty = decl->getReturnType().getAsString();
+               if (return_ty != "void") {
+                  ss << "__attribute__((eosio_wasm_import))\n";
+                  ss << "void set_action_return_value(void*, size_t);\n";
                }
                ss << "__attribute__((weak, " << attr << "(\"";
                ss << get_str(decl);
@@ -162,7 +184,7 @@ namespace eosio { namespace cdt {
                ss << "size_t as = ::action_data_size();\n";
                ss << "void* buff = nullptr;\n";
                ss << "if (as > 0) {\n";
-               ss << "buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
+               ss << "buff = as >= " << max_stack_size << " ? malloc(as) : __builtin_alloca(as);\n";
                ss << "::read_action_data(buff, as);\n";
                ss << "}\n";
                ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
@@ -269,6 +291,8 @@ namespace eosio { namespace cdt {
             if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
                if (fd->getNameInfo().getAsString() == "apply")
                   apply_was_found = true;
+            } else if (auto* crd = dyn_cast<clang::CXXRecordDecl>(decl)) {
+               create_reflector(crd);
             }
             return true;
          }
@@ -339,6 +363,7 @@ namespace eosio { namespace cdt {
                   ss << "eosio_assert_code(false, 1);";
                   ss << "}\n";
                   ss << "}";
+                  visitor->get_rewriter().InsertTextBefore(ci->getSourceManager().getLocForStartOfFile(fid), "#define BLUEGRASS_IGNORE_HELPERS\n#include <bluegrass/meta/macro.hpp>\n");
                   visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
                   out << std::string(RewriteBuf.begin(), RewriteBuf.end());
@@ -349,15 +374,15 @@ namespace eosio { namespace cdt {
                }
             }
          }
-
       };
 
-      class eosio_codegen_frontend_action : public ASTFrontendAction {
-      public:
-         virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
-            CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return std::make_unique<eosio_codegen_consumer>(&CI, file);
-         }
+      class eosio_codegen_frontend_action : public ASTViewAction {
+         public:
+            virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+               CI.getDiagnostics().setClient(new clang::IgnoringDiagConsumer());
+               CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
+               return std::make_unique<eosio_codegen_consumer>(&CI, file);
+            }
    };
 
 }} // ns eosio::cdt

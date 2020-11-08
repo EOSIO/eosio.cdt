@@ -15,6 +15,7 @@
 #include <eosio/abigen.hpp>
 #include <eosio/codegen.hpp>
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -39,6 +40,20 @@ using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
 
+template <typename... Strings>
+void add_inclusions(const std::string& input, const std::string& output, Strings&&... inclusions) {
+   std::ifstream in{input.c_str(), std::ifstream::in};
+   std::stringstream ss;
+   std::string str;
+
+   for ( const auto& inc : {inclusions...} ) ss << inc << '\n';
+   while ( std::getline(in, str) ) { ss << str << '\n'; }
+   in.close();
+   std::ofstream out{output.c_str(), std::ofstream::out};
+   out.write(ss.str().c_str(), ss.str().size());
+   out.close();
+}
+
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
@@ -51,7 +66,7 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       options.push_back(base_options[i]);
    }
    options.push_back("-Wno-everything");
-
+   
    int size = options.size();
    const char** new_argv = new const char*[size];
    for (size_t i=0; i < size; i++)
@@ -89,7 +104,7 @@ int main(int argc, const char **argv) {
    // fix to show version info without having to have any other arguments
    for (int i=0; i < argc; i++) {
      if (argv[i] == std::string("-v")) {
-       eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
+       eosio::cdt::environment::exec_subprogram("clang-9", {"-v"});
        return 0;
      }
    }
@@ -107,6 +122,7 @@ int main(int argc, const char **argv) {
          SmallString<64> res;
          llvm::sys::path::system_temp_directory(true, res);
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
+         llvm::sys::fs::remove(tmp_file);
          std::string output;
 
          if (!opts.pp_only) {
@@ -115,16 +131,27 @@ int main(int argc, const char **argv) {
             tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
                                            [&](const auto& opt){ return non_tool_opts.count(opt); }),
                             tool_opts.end());
-            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning);
 
             auto src = SmallString<64>(input);
             llvm::sys::path::remove_filename(src);
             std::string source_path = src.str().empty() ? "." : src.str();
             new_opts.insert(new_opts.begin(), "-I" + source_path);
 
-            if (llvm::sys::fs::exists(tmp_file)) {
+            if (!opts.no_reflect) {
+               std::cout << "REFLECT\n";
+               add_inclusions(input, tmp_file, "#include <bluegrass/meta/macro.hpp>", "#include <eosio/datastream.hpp>", "#include <eosio/name.hpp>");
+               auto sub_opts = new_opts;
+               sub_opts.insert(sub_opts.begin(), tmp_file);
+               sub_opts.insert(sub_opts.begin(), "-E");
+               if (!eosio::cdt::environment::exec_subprogram("clang-9", sub_opts, false, tmp_file+".tmp")) {
+                  llvm::sys::fs::remove(tmp_file);
+                  return -1;
+               }
+               llvm::sys::fs::rename(tmp_file+".tmp", tmp_file);
+               generate(tool_opts, tmp_file, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning);
                input = tmp_file;
             }
+
             output = tmp_file+".o";
 
             if (!opts.link) {
@@ -140,10 +167,11 @@ int main(int argc, const char **argv) {
             new_opts.insert(new_opts.begin(), "-xc++");
 
          if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
-            llvm::sys::fs::remove(tmp_file);
+            //llvm::sys::fs::remove(tmp_file);
             return -1;
          }
-         llvm::sys::fs::remove(tmp_file);
+         if (!opts.leave_temporary)
+            llvm::sys::fs::remove(tmp_file);
       }
    } catch (std::runtime_error& err) {
       llvm::errs() << err.what() << '\n';

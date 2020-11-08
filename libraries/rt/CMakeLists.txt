@@ -22,6 +22,7 @@ add_library ( rt STATIC ${builtins_sources} )
 target_include_directories( rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
                                       "${CMAKE_CURRENT_SOURCE_DIR}/../native/softfloat/source/include" )
 
+target_compile_options( rt PRIVATE "-no-reflect" )
 add_custom_command( TARGET rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:rt> ${BASE_BINARY_DIR}/lib )
 
 if (ENABLE_NATIVE_COMPILER)
@@ -29,5 +30,6 @@ if (ENABLE_NATIVE_COMPILER)
    target_include_directories( native_rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
                                                 "${CMAKE_CURRENT_SOURCE_DIR}/../native/softfloat/source/include" )
 
+   target_compile_options( native_rt PRIVATE "-no-reflect" )
    add_custom_command( TARGET native_rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_rt> ${BASE_BINARY_DIR}/lib )
 endif()

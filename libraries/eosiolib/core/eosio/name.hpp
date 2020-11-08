@@ -6,10 +6,10 @@
 
 #include "check.hpp"
 #include "serialize.hpp"
+#include "reflection.hpp"
 
 #include <string>
 #include <string_view>
-#include <bluegrass/meta/refl.hpp>
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -301,9 +301,7 @@ namespace eosio {
 
       uint64_t value = 0;
 
-      BLUEGRASS_META_REFL(value);
-
-      EOSLIB_SERIALIZE( name, (value) )
+      EOSIO_CDT_REFLECT(_, value);
    };
 
    namespace detail {

@@ -36,6 +36,9 @@ struct contracts {
 
    static std::vector<uint8_t> action_results_test_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.wasm"); }
    static std::vector<char>    action_results_test_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.abi"); }
+
+   static std::vector<uint8_t> reflection_test_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/reflection_tests.wasm"); }
+   static std::vector<char>    reflection_test_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/reflection_tests.abi"); }
 };
  
 }} //ns eosio::testing

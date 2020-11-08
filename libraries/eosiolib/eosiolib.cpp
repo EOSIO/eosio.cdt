@@ -1,7 +1,7 @@
-#include "core/eosio/datastream.hpp"
-#include "core/eosio/powers.hpp"
-#include "contracts/eosio/system.hpp"
-#include "contracts/eosio/privileged.hpp"
+#include <eosio/datastream.hpp>
+#include <eosio/powers.hpp>
+#include <eosio/system.hpp>
+#include <eosio/privileged.hpp>
 
 #include <algorithm>
 

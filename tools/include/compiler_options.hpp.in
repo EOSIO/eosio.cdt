@@ -20,6 +20,17 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> leave_temporary_opt(
+    "leave-temporary",
+    cl::desc("leave temporary compiled artifacts"),
+    cl::Hidden,
+    cl::cat(LD_CAT));
+static cl::opt<bool> no_reflect_opt(
+    "no-reflect",
+    cl::desc("disable automatic reflection"),
+    cl::Hidden,
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 static cl::opt<std::string> abi_version_opt(
     "abi-version",
     cl::desc("Which ABI version to generate"),
@@ -385,6 +396,8 @@ struct Options {
    bool debug;
    bool native;
    std::pair<int, int> abi_version;
+   bool leave_temporary;
+   bool no_reflect;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -910,8 +923,8 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, leave_temporary_opt, no_reflect_opt};
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, leave_temporary_opt, no_reflect_opt};
 #endif
 }
