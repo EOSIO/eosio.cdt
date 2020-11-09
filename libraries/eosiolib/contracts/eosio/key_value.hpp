@@ -485,7 +485,7 @@ public:
    template<typename K>
    class index;
 
-   table(const table&) = delete;                         // disable copy constructor 
+   table(const table&) = delete;                         // disable copy constructor
    table(table&&) = delete;                              // disable move constructor
    table& operator=(const table&) = delete;              // disable assignment copy operator
    table& operator=(table&&) = delete;                   // disable assignment move operator
