@@ -18,7 +18,7 @@ public:
       std::vector<int> d;
       std::variant<int, bool, float> e;
 
-      eosio::non_unique<std::string, uint32_t> non_unique_name;
+      std::tuple<std::string, uint32_t> non_unique_name;
 
       bool operator==(const my_struct& b) const {
          return primary_key == b.primary_key &&
@@ -40,7 +40,7 @@ public:
 
       index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};
 
-      index<eosio::non_unique<std::string, uint32_t>> non_unique_name {
+      index<std::tuple<std::string, uint32_t>> non_unique_name {
           eosio::name{"nonunique"_n},
           &my_struct::non_unique_name };
 
