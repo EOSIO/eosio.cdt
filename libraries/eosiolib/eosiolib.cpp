@@ -14,6 +14,8 @@ namespace eosio {
      __attribute__((eosio_wasm_import))
      uint32_t get_blockchain_parameters_packed(char*, uint32_t);
      __attribute__((eosio_wasm_import))
+     void set_kv_parameters_packed(const char*, uint32_t);
+     __attribute__((eosio_wasm_import))
      int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
      __attribute__((eosio_wasm_import))
      uint32_t get_active_producers(uint64_t*, uint32_t);
@@ -60,6 +62,19 @@ namespace eosio {
       eosio::check( size <= sizeof(buf), "buffer is too small" );
       eosio::datastream<const char*> ds( buf, size_t(size) );
       ds >> params;
+   }
+
+   void set_kv_parameters(const eosio::kv_parameters& params) {
+      // set_kv_parameters_packed expects version, max_key_size,
+      // max_value_size, and max_iterators,
+      // while kv_parameters only contains max_key_size, max_value_size,
+      // and max_iterators. That's why we place uint32_t in front
+      // of kv_parameters in buf
+      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      ds << uint32_t(0);  // fill in version
+      ds << params;
+      set_kv_parameters_packed( buf, ds.tellp() );
    }
 
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods ) {
