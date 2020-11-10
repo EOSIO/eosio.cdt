@@ -315,7 +315,11 @@ namespace eosio { namespace cdt {
                   const auto& decl_type = d->getArg(0);
                   if (const auto dcl_type = dyn_cast<clang::DecltypeType>(decl_type.getAsType())) {
                      idx_type = get_type_string_from_kv_index_macro_decltype(dcl_type);
+                  } else {
+                     idx_type = get_type(index_type.getAsType());
                   }
+               } else {
+                  idx_type = get_type(index_type.getAsType());
                }
             } else {
                // This is the non-macro case
