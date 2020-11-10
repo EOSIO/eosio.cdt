@@ -444,6 +444,8 @@ namespace internal {
          return eosio::key_type{(char*)buffer, actual_value_size};
       }
 
+      bool valid() const { return itr_stat == status::iterator_ok; }
+
    protected:
       uint32_t itr;
       status itr_stat;
@@ -568,6 +570,10 @@ private:
 
       bool operator>=(const iterator& b) const {
          return base_iterator::compare(b) >= 0;
+      }
+
+      explicit operator bool() const {
+         return this->valid();
       }
    };
 
