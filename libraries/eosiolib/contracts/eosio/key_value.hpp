@@ -462,7 +462,7 @@ namespace internal {
          return eosio::key_type{(char*)buffer, actual_value_size};
       }
 
-      bool valid() const { return itr_stat != status::iterator_erased; }
+      bool valid() const { return itr_stat == status::iterator_ok; }
 
    protected:
       uint32_t itr;
