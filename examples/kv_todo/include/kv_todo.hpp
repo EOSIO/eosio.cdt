@@ -58,7 +58,12 @@ class [[eosio::contract]] kv_todo : public contract {
       void del(const std::string& uuid);
 
       using get_by_account_name_action = action_wrapper<"getbyaccname"_n, &kv_todo::getbyaccname>;
-      using cnt_by_account_name_action = action_wrapper<"cntbyaccname"_n, &kv_todo::getbyaccname>;
+      using cnt_by_account_name_action = action_wrapper<"cntbyaccname"_n, &kv_todo::cntbyaccname>;
+      using get_by_task_action = action_wrapper<"getbytask"_n, &kv_todo::getbytask>;
+      using cnt_by_task_action = action_wrapper<"cntbytask"_n, &kv_todo::cntbytask>;
+      using get_by_checked_action = action_wrapper<"getbychecked"_n, &kv_todo::getbychecked>;
+      using cnt_by_checked_action = action_wrapper<"cntbychecked"_n, &kv_todo::cntbychecked>;
+
       using upsert_action = action_wrapper<"upsert"_n, &kv_todo::upsert>;
       using del_action = action_wrapper<"del"_n, &kv_todo::del>;
 
