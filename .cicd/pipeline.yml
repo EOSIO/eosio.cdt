@@ -423,8 +423,8 @@ steps:
 
   - wait
 
-  - command: .cicd/legacy-docker-build.sh | # Docker Build
-    label: "Docker Build Builder"
+  - label: ":docker: Docker Build"
+    command: .cicd/legacy-docker-build.sh | # Docker Build
     agents:
       queue: "automation-docker-builder-fleet"
     timeout: 300
