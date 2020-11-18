@@ -6,7 +6,9 @@ echo '--- :key: Authenticating Google Service Account :gcloud:'
 gcloud --quiet auth activate-service-account b1-automation-svc@b1-automation-dev.iam.gserviceaccount.com --key-file=/etc/gcp-service-account.json
 docker-credential-gcr configure-docker
 echo '+++ :docker: Building Image'
-[[ "$BUILDKITE_TAG" != '' ]] && docker build -f .cicd/legacy.dockerfile -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH -t eosio/cdt:$BUILDKITE_TAG . || docker build -f .cicd/legacy.dockerfile -t eosio/cdt:latest -t eosio/cdt:$BUILDKITE_COMMIT -t eosio/cdt:$BUILDKITE_BRANCH .
+DOCKER_BUILD_COMMAND="docker build -f '.cicd/legacy.dockerfile' -t 'eosio/cdt:latest' -t 'eosio/cdt:$BUILDKITE_COMMIT' -t 'eosio/cdt:$BUILDKITE_BRANCH'$([[ -z "$BUILDKITE_TAG" ]] || echo " -t 'eosio/cdt:$BUILDKITE_TAG'") ."
+echo "$ $DOCKER_BUILD_COMMAND"
+eval $DOCKER_BUILD_COMMAND
 docker tag eosio/cdt:$BUILDKITE_COMMIT gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_COMMIT
 docker tag eosio/cdt:$BUILDKITE_BRANCH gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_BRANCH
 [[ "$BUILDKITE_TAG" != '' ]] && docker tag eosio/cdt:$BUILDKITE_TAG gcr.io/b1-automation-dev/eosio/cdt:$BUILDKITE_TAG || :
