@@ -5,8 +5,8 @@ RUN apt-get update && \
     apt-get install -y ca-certificates curl openssl wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-# Install CDT from deb package
-ADD build/packages/*.deb /
-RUN for filename in $(ls *.deb); do /usr/bin/dpkg -i "$filename" && rm -f "$filename"; done
-
+# eosio.cdt
+ADD ./*.deb /eosio.cdt/
+RUN cd /eosio.cdt && \
+    for filename in $(ls *.deb); do /usr/bin/dpkg -i "$filename" && rm -f "$filename"; done
 USER root
