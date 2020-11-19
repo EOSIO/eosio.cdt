@@ -225,8 +225,8 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( const clang::CXXRecordDecl* decl ) {
+         // short circuit if we happen across `eosio::kv::map` declaration
          if (is_kv_table(decl)) {
-            add_kv_table(decl);
             return;
          }
 
@@ -254,81 +254,24 @@ namespace eosio { namespace cdt {
          _abi.tables.insert(t);
       }
 
-      void add_kv_table(const clang::CXXRecordDecl* const decl) {
-         clang::CXXRecordDecl* table_type;
-         std::string templ_name;
+      void add_kv_map(const clang::ClassTemplateSpecializationDecl* decl) {
+          abi_kv_table akt;
+          const auto& first_arg  = decl->getTemplateArgs()[0];
+          const auto& second_arg = decl->getTemplateArgs()[1];
+          const auto& third_arg  = decl->getTemplateArgs()[2];
 
-         for (const auto& base : decl->bases()) {
-            if (const auto templ_base = dyn_cast<clang::ClassTemplateSpecializationDecl>(base.getType()->getAsCXXRecordDecl())) {
-               const auto& templ_type = templ_base->getTemplateArgs()[0];
-               table_type = templ_type.getAsType().getTypePtr()->getAsCXXRecordDecl();
-               add_struct(table_type);
+          if (first_arg.getKind() != clang::TemplateArgument::ArgKind::Integral)
+             CDT_ERROR("abigen_error", decl->getLocation(), "first template argument to KV map is not an integral const");
+          if (second_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
+             CDT_ERROR("abigen_error", decl->getLocation(), "second template argument to KV map is not a type");
+          if (third_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
+             CDT_ERROR("abigen_error", decl->getLocation(), "third template argument to KV map is not a type");
 
-               const auto templ_val = templ_base->getTemplateArgs()[1].getAsIntegral().getExtValue();
-               templ_name = name_to_string(templ_val);
-            }
-         }
-
-         abi_kv_table t;
-         t.type = table_type->getNameAsString();
-         t.name = templ_name;
-
-         const auto get_string_name_from_kv_index = [&](clang::Expr* expr) {
-            std::string index_name;
-            if (const auto expr_wc = dyn_cast<clang::ExprWithCleanups>(expr)) {
-               if (const auto cc_expr = dyn_cast<clang::CXXConstructExpr>(expr_wc->getSubExpr())) {
-                  const auto arg = cc_expr->getArg(0);
-                  if (const auto cfc_expr = dyn_cast<clang::CXXFunctionalCastExpr>(arg)) {
-                     if (const auto il_expr = dyn_cast<clang::InitListExpr>(cfc_expr->getSubExpr())) {
-                        const auto init = il_expr->getInit(0);
-                        if (const auto udl = dyn_cast<clang::UserDefinedLiteral>(init)) {
-                           const auto child = udl->getRawSubExprs()[0];
-                           if (const auto ice = dyn_cast<clang::ImplicitCastExpr>(child)) {
-                              if (const auto dre = dyn_cast<clang::DeclRefExpr>(ice->getSubExpr())) {
-                                 if (const auto fd = dyn_cast<clang::FunctionDecl>(dre->getDecl())) {
-                                    const auto& templ_pack = fd->getTemplateSpecializationArgs()->get(1);
-                                    for (const auto& ta : templ_pack.pack_elements()) {
-                                       const auto val = (char)ta.getAsIntegral().getExtValue();
-                                       index_name.push_back(val);
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-            return index_name;
-         };
-
-         for (const auto field : decl->fields()) {
-            std::string index_name = get_string_name_from_kv_index(field->getInClassInitializer());
-            std::string idx_type;
-            const auto qt = field->getType();
-            const auto index_qtype = std::get<clang::QualType>(get_template_argument(qt));
-            const auto index_type = clang::TemplateArgument(index_qtype);
-            if (const auto elab_type = dyn_cast<clang::ElaboratedType>(index_type.getAsType().getTypePtr())) {
-               // This is the macro case
-               const auto decayed_type = elab_type->getNamedType();
-               if (const auto d = dyn_cast<clang::TemplateSpecializationType>(decayed_type)) {
-                  const auto& decl_type = d->getArg(0);
-                  if (const auto dcl_type = dyn_cast<clang::DecltypeType>(decl_type.getAsType())) {
-                     idx_type = get_type_string_from_kv_index_macro_decltype(dcl_type);
-                  } else {
-                     idx_type = get_type(index_type.getAsType());
-                  }
-               } else {
-                  idx_type = get_type(index_type.getAsType());
-               }
-            } else {
-               // This is the non-macro case
-               idx_type = get_type(index_type.getAsType());
-            }
-            t.indices.push_back({index_name, idx_type});
-         }
-
-         _abi.kv_tables.insert(t);
+          akt.name = name_to_string(first_arg.getAsIntegral().getExtValue());
+          akt.type = translate_type(third_arg.getAsType()); // pick the "value" type
+          akt.indices.push_back({"map.index",
+                                  translate_type(second_arg.getAsType())}); // set the "key" as the index type
+          _abi.kv_tables.insert(akt);
       }
 
       void add_clauses( const std::vector<std::pair<std::string, std::string>>& clauses ) {
@@ -361,9 +304,6 @@ namespace eosio { namespace cdt {
          if (!is_builtin_type(translate_type(type))) {
             if (is_aliasing(type)) {
                add_typedef(type);
-            }
-            else if (is_eosio_non_unique(type)) {
-               add_tuple(get_nested_type(type));
             }
             else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
                add_type(std::get<clang::QualType>(get_template_argument(type)));
@@ -744,6 +684,9 @@ namespace eosio { namespace cdt {
                if (d->getName() == "multi_index") {
                   ag.add_table(d->getTemplateArgs()[0].getAsIntegral().getExtValue(),
                         (clang::CXXRecordDecl*)((clang::RecordType*)d->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
+               } else if (d->getName() == "map") {
+                  if (d->getSpecializedTemplate()->getTemplatedDecl()->isEosioTable())
+                     ag.add_kv_map(d);
                }
             }
             return true;

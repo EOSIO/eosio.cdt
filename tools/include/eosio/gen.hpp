@@ -510,7 +510,7 @@ struct generation_utils {
             return t+"[]";
          }
       }
-      else if (is_eosio_non_unique(type)) {
+      else if (is_tuple(type)) {
          return translate_type(get_nested_type(type));
       }
       else if ( is_template_specialization( type, {"optional"} ) )
@@ -631,9 +631,9 @@ struct generation_utils {
       return get_base_type_name(t).compare(get_type_alias_string(t)) != 0;
    }
 
-   inline bool is_eosio_non_unique(const clang::QualType& t) {
-      constexpr std::string_view non_unique_test_str = "eosio::non_unique<";
-      return t.getAsString().substr(0, non_unique_test_str.size()) == non_unique_test_str;
+   inline bool is_tuple(const clang::QualType& t) {
+      constexpr std::string_view test_str = "tuple<";
+      return t.getAsString().substr(0, test_str.size()) == test_str;
    }
 
    inline clang::QualType get_nested_type(const clang::QualType& t) {
@@ -649,14 +649,7 @@ struct generation_utils {
    }
 
    inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
-      for (const auto& base : decl->bases()) {
-         auto type = base.getType();
-         if (type.getAsString().find("eosio::kv::table<") != std::string::npos) {
-            return true;
-         }
-      }
-
-      return false;
+      return decl->getQualifiedNameAsString().find("eosio::kv::map<") != std::string::npos;
    }
 
    inline bool is_kv_internal(const clang::CXXRecordDecl* decl) {

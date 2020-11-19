@@ -861,8 +861,8 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-std="+std_opt);
       agopts.emplace_back("-std="+std_opt);
    } else {
-      copts.emplace_back("-std=c++17");
-      agopts.emplace_back("-std=c++17");
+      copts.emplace_back("-std=gnu++2a");
+      agopts.emplace_back("-std=gnu++2a");
    }
 
    if (faligned_allocation_opt) {

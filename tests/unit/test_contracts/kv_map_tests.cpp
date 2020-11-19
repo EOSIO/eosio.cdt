@@ -1,0 +1,82 @@
+#include <eosio/eosio.hpp>
+#include <eosio/map.hpp>
+
+class [[eosio::contract]] kv_map_tests : public eosio::contract {
+public:
+   using contract::contract;
+
+   using table = eosio::kv::map<"hello"_n, int, float>;
+   using table2 = eosio::kv::map<"hello2"_n, std::string, std::string>;
+
+   [[eosio::action]]
+   void test() {
+      table t = { {33, 23.4f}, {10, 13.44f}, {103, 334.3f} };
+
+      auto p = t[33];
+
+      p = 102.23; // note here this will update the held value and do a db set
+
+      table t2;
+
+      eosio::check(p == 102.23f, "should be the same value");
+      eosio::check(p == t2.at(33), "should be the same value");
+
+      auto it = t.begin();
+
+      auto& el = *it;
+
+      eosio::check(el.second() == 13.44f, "should still be the same from before");
+
+      table2 t3 = { {"eosio", "fast"}, {"bit...", "hmm"} };
+
+      auto it2 = t3.begin();
+      auto& el2 = *it2;
+
+      eosio::check(el2.value == std::string("hmm"), "should point to the lowest lexicographic key");
+
+      ++it2;
+      auto& el3 = *it2;
+
+      eosio::check(el3.second() == std::string("fast"), "should now be pointing to the next");
+
+      ++it2;
+
+      auto it3 = std::move(it2);
+
+      it2 = t3.end();
+
+      eosio::check(it2 == it3, "they should be at the end and pointing to the same thing");
+      eosio::check(!it2.is_valid(), "iterator should be at end");
+
+      eosio::check(!it3.is_valid(), "iterator should be at end");
+   }
+
+   [[eosio::action]]
+   void iter() {
+      table t = { {34, 23.4f}, {11, 13.44f}, {104, 334.3f}, {5, 33.42f} };
+
+      float test_vals[7] = {33.42f, 13.44f, 13.44f, 102.23f, 23.4f, 334.3f, 334.3f};
+
+      int i = 0;
+
+      // test that this will work with auto ranged for loop
+      for ( const auto& e : t ) {
+         eosio::check(e.second() == test_vals[i++], "invalid value in iter test");
+      }
+   }
+
+   [[eosio::action]]
+   void erase() {
+      table t;
+
+      t.contains(34);
+      t.erase(34);
+
+      eosio::check(!t.contains(34), "should have erased a value");
+
+      auto r = t.equal_range(100);
+      for (auto it = std::move(r.first); it != r.second; ++it)
+         eosio::print_f("I %", it->second());
+   }
+
+};

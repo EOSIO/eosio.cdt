@@ -9,6 +9,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <string>
 #include <cstring>
 
 #include "datastream.hpp"
@@ -16,69 +17,58 @@
 
 namespace eosio {
 
-namespace detail {
-template<typename T>
-constexpr bool has_bitwise_serialization() {
-   if constexpr (std::is_arithmetic_v<T>) {
-      return true;
-   } else if constexpr (std::is_enum_v<T>) {
-      static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
-      return true;
-   } else {
-      return false;
-   }
-}
+   namespace detail {
+      template<typename T>
+      constexpr bool has_bitwise_serialization() {
+         if constexpr (std::is_arithmetic_v<T>) {
+            return true;
+         } else if constexpr (std::is_enum_v<T>) {
+            static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
+            return true;
+         } else {
+            return false;
+         }
+      }
 
-template <template <typename> class C, typename T>
-constexpr bool is_ranged_type(C<T>) {
-   using type = std::decay_t<C<T>>;
-   return
-      std::is_same_v<std::vector<T>, type> ||
-      std::is_same_v<std::list<T>, type>   ||
-      std::is_same_v<std::deque<T>, type>  ||
-      std::is_same_v<std::set<T>, type>;
-}
+      template <template <typename> class C, typename T>
+      constexpr bool is_ranged_type(C<T>) {
+         using type = std::decay_t<C<T>>;
+         return
+            std::is_same_v<std::vector<T>, type> ||
+            std::is_same_v<std::list<T>, type>   ||
+            std::is_same_v<std::deque<T>, type>  ||
+            std::is_same_v<std::set<T>, type>;
+      }
 
-template <typename R, typename C>
-auto member_pointer_class(R (C::*)) -> C;
-template <typename R, typename C, typename... Args>
-auto member_pointer_class(R (C::*)(Args...)) -> C;
-template <typename R, typename C, typename... Args>
-auto member_pointer_class(R (C::*)(Args...)const) -> C;
-} // namespace eosio::detail
+      template <typename R, typename C>
+      auto member_pointer_class(R (C::*)) -> C;
+      template <typename R, typename C, typename... Args>
+      auto member_pointer_class(R (C::*)(Args...)) -> C;
+      template <typename R, typename C, typename... Args>
+      auto member_pointer_class(R (C::*)(Args...)const) -> C;
 
-/**
- * The key_type struct is used to store the binary representation of a key.
- */
-struct key_type : private std::vector<char> {
-   key_type() = default;
+      template <typename... Args>
+      constexpr inline std::size_t total_bytes_size() { return (sizeof(Args) + ...); }
 
-   explicit key_type(std::vector<char>&& v) : std::vector<char>(std::move(v)) {}
+      // TODO rework the to_key and datastream logic to be constexpr/consteval friendly to get rid of this
+      template <std::size_t I, typename Arg, typename... Args>
+      inline void const_pack_helper(std::string& s, Arg&& arg, Args&&... args) {
+         std::memcpy(s.data()+I, &arg, sizeof(Arg));
+         if constexpr (sizeof...(Args) > 0)
+            return const_pack_helper<I+sizeof(Arg)>(s, std::forward<Args>(args)...);
+      }
 
-   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
+      // TODO rework the to_key and datastream logic to be constexpr/consteval friendly to get rid of this
+      template <typename... Args>
+      inline std::string const_pack(Args&&... args) {
+         std::string s;
+         s.resize(total_bytes_size<Args...>());
+         const_pack_helper<0>(s, std::forward<Args>(args)...);
+         return s;
+      }
+   } // namespace eosio::detail
 
-   key_type operator+(const key_type& b) const {
-      key_type ret = *this;
-      ret += b;
-      return ret;
-   }
-
-   key_type& operator+=(const key_type& b) {
-      this->insert(this->end(), b.begin(), b.end());
-      return *this;
-   }
-
-   bool operator==(const key_type& b) const {
-      return size() == b.size() && memcmp(data(), b.data(), b.size()) == 0;
-   }
-
-   using std::vector<char>::data;
-   using std::vector<char>::size;
-   using std::vector<char>::resize;
-};
-
-template <typename... Ts, typename S>
-void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
+using key_type = std::string;
 
 // to_key defines a conversion from a type to a sequence of bytes whose lexicograpical
 // ordering is the same as the ordering of the original type.
@@ -265,6 +255,11 @@ void to_key(const std::variant<Ts...>& obj, datastream<S>& stream) {
    std::visit([&](const auto& item) { to_key(item, stream); }, obj);
 }
 
+template <std::size_t N, typename S>
+void to_key(const char (&str)[N], datastream<S>& stream) {
+   to_key(std::string_view{str, N-1}, stream);
+}
+
 template <typename S>
 void to_key(std::string_view obj, datastream<S>& stream) {
    for (char ch : obj) {
@@ -342,17 +337,4 @@ key_type convert_to_key(const T& t) {
    convert_to_key(t, result);
    return result;
 }
-
-struct to_key_converter_base {
-   virtual key_type convert(const void*) const = 0;
-   virtual ~to_key_converter_base() {}
-};
-
-template <auto MP>
-struct to_key_converter final : to_key_converter_base {
-   virtual key_type convert(const void* ptr) const {
-      return convert_to_key(std::invoke(MP, static_cast<const decltype(eosio::detail::member_pointer_class(MP))*>(ptr)));
-   }
-};
-
 } // namespace eosio
