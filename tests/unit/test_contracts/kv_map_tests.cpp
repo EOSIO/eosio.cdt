@@ -116,4 +116,26 @@ public:
 
       eosio::check(!it.is_valid(), "should be pointing to end");
    }
+
+   [[eosio::action]]
+   void ranges() {
+      testmap3_t t = {{17, 9.9f}};
+
+      auto range = t.equal_range(16);
+
+      eosio::check(range.first->first() == testmap3_t::full_key((int)17), "should be pointing to 17");
+      eosio::check(range.second->first() == testmap3_t::full_key((int)17), "should be pointing to 17");
+
+      range = t.equal_range(1);
+
+      eosio::check(range.first->first() == testmap3_t::full_key((int)2), "should be pointing to 2");
+      eosio::check(range.second->first() == testmap3_t::full_key((int)2), "should be pointing to 2");
+
+      auto vec = t.ranged_slice(10, 30);
+
+      eosio::check(vec.size() == 3, "should contain 3 elements");
+      eosio::check((float)vec[0].second() == 41.2f, "should contain 41.2");
+      eosio::check((float)vec[1].second() == 100.100f, "should contain 100.100");
+      eosio::check((float)vec[2].second() == 9.9f, "should contain 9.9");
+   }
 };

@@ -469,8 +469,9 @@ namespace eosio::kv {
          std::vector<elem_t> ranged_slice(const key_t& l, const key_t& h) {
             std::vector<elem_t> ret;
 
-            for (auto itr = lower_bound(l), end_itr = lower_bound(h); itr != end_itr; ++itr)
+            for (auto itr = lower_bound(l), end_itr = lower_bound(h); itr == end_itr; ++itr) {
                ret.emplace_back(std::move(*itr));
+            }
 
             return ret;
          }

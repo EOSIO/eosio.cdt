@@ -82,6 +82,7 @@ BOOST_AUTO_TEST_CASE(map_tests) try {
    t.push_action("erase"_n);
    t.push_action("eraseexcp"_n, "key not found");
    t.push_action("bounds"_n);
+   t.push_action("ranges"_n);
 } FC_LOG_AND_RETHROW()
 
 // TODO replace these tests with new table tests after this release
