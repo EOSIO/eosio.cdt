@@ -1,25 +1,33 @@
 #include <eosio/eosio.hpp>
-#include <eosio/map.hpp>
+#include <eosio/table.hpp>
+
+struct test_record {
+   int pk;
+   float s;
+   std::string n;
+};
 
 class [[eosio::contract]] kv_map_tests : public eosio::contract {
 public:
    using contract::contract;
 
-   using table = eosio::kv::map<"hello"_n, int, float>;
-   using table2 = eosio::kv::map<"hello2"_n, std::string, std::string>;
+   using hello_t = eosio::kv::map<"hello"_n, int, float>;
+   using hello2_t = eosio::kv::map<"hello2"_n, std::string, std::string>;
 
    [[eosio::action]]
    void test() {
-      table t = { {33, 23.4f}, {10, 13.44f}, {103, 334.3f} };
+      hello_t t = { {33, 23.4f}, {10, 13.44f}, {103, 334.3f} };
 
       auto p = t[33];
 
       p = 102.23; // note here this will update the held value and do a db set
 
-      table t2;
+      hello_t t2;
 
+      eosio::print_f("Before");
       eosio::check(p == 102.23f, "should be the same value");
       eosio::check(p == t2.at(33), "should be the same value");
+      eosio::print_f("after");
 
       auto it = t.begin();
 
@@ -27,7 +35,7 @@ public:
 
       eosio::check(el.second() == 13.44f, "should still be the same from before");
 
-      table2 t3 = { {"eosio", "fast"}, {"bit...", "hmm"} };
+      hello2_t t3 = { {"eosio", "fast"}, {"bit...", "hmm"} };
 
       auto it2 = t3.begin();
       auto& el2 = *it2;
@@ -53,7 +61,7 @@ public:
 
    [[eosio::action]]
    void iter() {
-      table t = { {34, 23.4f}, {11, 13.44f}, {104, 334.3f}, {5, 33.42f} };
+      hello_t t = { {34, 23.4f}, {11, 13.44f}, {104, 334.3f}, {5, 33.42f} };
 
       float test_vals[7] = {33.42f, 13.44f, 13.44f, 102.23f, 23.4f, 334.3f, 334.3f};
 
@@ -67,7 +75,7 @@ public:
 
    [[eosio::action]]
    void erase() {
-      table t;
+      hello_t t;
 
       t.contains(34);
       t.erase(34);
@@ -77,6 +85,23 @@ public:
       auto r = t.equal_range(100);
       for (auto it = std::move(r.first); it != r.second; ++it)
          eosio::print_f("I %", it->second());
-   }
 
+      using namespace eosio;
+
+      using mi = kv::table<"mi"_n, kv::index<"foo"_n, &test_record::pk>,
+                               kv::index<"bar"_n, &test_record::s>,
+                               kv::index<"baz"_n, &test_record::n>>;
+
+      mi m;
+      test_record rec = {34, 42.42f, "hello"};
+      test_record rec2 = {10, 33.33f, "good bye"};
+
+      m.put(rec);
+
+      m.put(rec2);
+
+      eosio::print_f("Before\n");
+      auto v = m.get(34);
+      eosio::print_f("After\n");
+   }
 };

@@ -6,23 +6,10 @@
 
 #include "../../core/eosio/key_utils.hpp"
 
-#include "kv_table.hpp"
-
 #include <algorithm>
 #include <cctype>
 #include <functional>
 #include <string_view>
-
-/**
- * @brief Macro to define an index.
- * @details This macro allows users to conveniently define an index without having to specify
- * the index template type, as those can be large/unwieldy to type out. It can be used for both primary and secondary indexes.
- *
- * @param index_name    - The index name.
- * @param member_name   - The name of the member pointer used for the index. This also defines the index's C++ variable name.
- */
-#define KV_NAMED_INDEX(index_name, member_name) \
-   index<EOSIO_CDT_GET_RETURN_T(underlying_type_t, member_name)> member_name{eosio::name{index_name}, &underlying_type_t::member_name};
 
 namespace eosio::kv {
    namespace internal_use_do_not_use {
@@ -74,11 +61,14 @@ namespace eosio::kv {
       }
    }
 
+   // tag used by some of the types to delineate overloads between key_type (std::string) and the map's key type
+   struct packed_tag {};
+
    namespace detail {
       static inline void increment_bytes(key_type& kt) {
          // this will terminate without have to lengthen by one byte given the way prefixes are formed
          // need to re-evaluate if that changes
-         for (std::size_t i=kt.size(); i >= 0; i--) {
+         for (std::size_t i=kt.size()-1; i >= 0; i--) {
             uint16_t v = kt[i]+1;
             if (v <= 0xFF)
                break;
@@ -87,6 +77,7 @@ namespace eosio::kv {
       }
 
       struct packed_view {
+         packed_view() = default;
          constexpr inline packed_view(char* p, std::size_t s)
             : ptr(p), sz(s) {}
 
@@ -142,15 +133,14 @@ namespace eosio::kv {
 
       template <typename KV>
       struct elem {
+         using key_t   = typename KV::key_t;
          using value_t = typename KV::value_t;
          elem() = default;
-         template <typename Key, typename Value>
-         constexpr inline elem(Key&& k, Value&& v, name p=current_context_contract())
-            : key(KV::full_key(std::forward<Key>(k))), value(std::forward<Value>(v)), payer(p) {}
+         constexpr inline elem(const key_t& k, value_t v, name p=current_context_contract())
+            : key(KV::full_key(k)), value(std::move(v)), payer(p) {}
 
-         template <typename Value>
-         inline elem(key_type k, Value&& v, name p=current_context_contract())
-            : key(std::move(k)), value(std::forward<Value>(v)), payer(p) {}
+         inline elem(key_type k, value_t v, name p, packed_tag)
+            : key(std::move(k)), value(std::move(v)), payer(p) {}
 
          constexpr inline bool operator==(const elem& e) const {
             return std::tie(key, value) == std::tie(e.key, e.value);
@@ -316,7 +306,6 @@ namespace eosio::kv {
 
             itr_value(handle, nullptr, 0, sz);
             auto val_bytes = KV::get_tmp_buffer(sz);
-            char* cc = (char*)malloc(10);
             auto status = itr_value(handle, val_bytes.data(), val_bytes.size(), sz);
             check(query_status<status::ok>(status), "failure getting value");
             unpack<value_t>(element.value, val_bytes.data(), val_bytes.size());
@@ -326,10 +315,9 @@ namespace eosio::kv {
          uint32_t handle;
          status   current_status = status::ok;
       };
-
    } // namespace eosio::kv::detail
 
-   template <eosio::name::raw TableName, typename K, typename V>
+   template <eosio::name::raw TableName, typename K, typename V, eosio::name::raw IndexName="map.index"_n>
    class [[eosio::table]] map {
       public:
          constexpr static inline uint8_t magic = 1;
@@ -338,13 +326,12 @@ namespace eosio::kv {
          using value_t = V;
          using self_t  = map<TableName, K, V>;
 
-         static inline const key_type& prefix() {
+         static const key_type& prefix() {
             static key_type prfx = eosio::detail::const_pack(table_name, index_name, magic);
             return prfx;
          }
 
-         template <typename Key>
-         static inline key_type full_key(Key&& k) { return prefix() + convert_to_key(std::forward<Key>(k)); }
+         static key_type full_key(const key_t& k) { return prefix() + convert_to_key(k); }
 
          using elem_t = detail::elem<self_t>;
          using iterator_t = detail::iterator<false, self_t>;
@@ -352,19 +339,19 @@ namespace eosio::kv {
 
          struct writable_wrapper {
             writable_wrapper(key_type k, value_t v, name p, name o=current_context_contract())
-               : element(std::move(k), std::move(v), p), owner(o) {}
+               : element(std::move(k), std::move(v), p, packed_tag{}), owner(o) {}
 
             explicit operator value_t&() { return element.value; }
             operator value_t() const { return element.value; }
 
             writable_wrapper& operator=(const value_t& o) {
-               map{owner}.set(element.key, o, element.payer);
+               map{owner}.set(element.key, o, element.payer, packed_tag{});
                element.value = o;
                return *this;
             }
 
             writable_wrapper& operator=(value_t&& o) {
-               map{owner}.set(element.key, o, element.payer);
+               map{owner}.set(element.key, o, element.payer, packed_tag{});
                element.value = std::move(o);
                return *this;
             }
@@ -381,7 +368,7 @@ namespace eosio::kv {
           */
          inline map(std::initializer_list<elem_t> l) {
             for ( const auto& e : l ) {
-               set(e.key, e.value, e.payer);
+               set(e.key, e.value, e.payer, packed_tag{});
             }
          }
 
@@ -391,25 +378,21 @@ namespace eosio::kv {
          inline map(name owner, std::initializer_list<elem_t> l)
             : owner(owner) {
             for ( const auto& e : l ) {
-               set(e.key, e.value, e.payer);
+               set(e.key, e.value, e.payer, packed_tag{});
             }
          }
 
-         template <typename Key>
-         writable_wrapper operator[](Key&& k) {
-            auto v = get(std::forward<Key>(k));
-            if (std::get<0>(v))
-               return {std::get<1>(v), *std::get<0>(v), owner, owner};
-            set(std::get<1>(v), value_t{}, owner);
-            return {std::move(std::get<1>(v)), value_t{}, owner, owner};
-         }
-
-         writable_wrapper operator[](std::pair<key_t, name> key_payer) {
+         writable_wrapper operator[](const std::pair<key_t, name>& key_payer) {
             auto v = get(key_payer.first);
             if (std::get<0>(v))
                return {std::get<1>(v), *std::get<0>(v), key_payer.second, owner};
-            set(std::get<1>(v), value_t{}, owner);
+
+            set(std::get<1>(v), value_t{}, owner, packed_tag{});
             return {std::move(std::get<1>(v)), value_t{}, key_payer.second, owner};
+         }
+
+         writable_wrapper operator[](const key_t& k) {
+            return (*this)[std::pair{k, owner}];
          }
 
          template <typename Key>
@@ -499,36 +482,66 @@ namespace eosio::kv {
             return static_cast<bool>(kv_get(owner.value, fk.data(), fk.size(), _vs));
          }
 
-         friend iterator_t;
-
-      protected:
-         constexpr static inline name index_name = "map.index"_n; // hard fixed in ABIGen
-
-         template <typename Key>
-         std::tuple<value_t*, key_type> get(Key&& k) {
+         bool raw_write(const key_t& k, std::string_view bytes, name payer=current_context_contract()) const {
             using namespace internal_use_do_not_use;
-            key_type packed_key = full_key(std::forward<Key>(k));
+            const auto& fk = full_key(k);
+            auto wrote = kv_set(owner.value, fk.data(), fk.size(), bytes.data(), bytes.size(), payer.value);
+            return wrote == bytes.size();
+         }
+
+         constexpr static inline name index_name = name{IndexName};
+
+         writable_wrapper at(const key_type& bytes, name payer=current_context_contract()) {
+            auto v = get(bytes, packed_tag{});
+            check(std::get<0>(v), "key not found");
+            return {std::get<1>(v), *std::get<0>(v), payer, owner};
+         }
+
+         /**
+          * @param out is an output variable for the raw bytes, this memory is managed by eosio::map
+          */
+         void get_raw(const key_t& k, detail::packed_view& out) const {
+            using namespace internal_use_do_not_use;
+            const auto& fk = full_key(k);
+
+            if (!kv_get(owner.value, fk.data(), fk.size(), out.sz))
+               return false; // key not found
+
+            out = get_tmp_buffer(out.sz);
+            check(kv_get_data(0, out.data(), out.size()) == out.size(), "map internal failure");
+         }
+
+         bool values_equal(const key_t& k, std::string_view bytes) const {
+            detail::packed_view pv;
+            get_raw(k, pv);
+            return pv.size() == bytes.size() && std::memcmp(pv.data(), bytes.data(), pv.size()) == 0;
+         }
+
+         std::tuple<value_t*, key_type> get(key_type k, packed_tag) {
+            using namespace internal_use_do_not_use;
             uint32_t sz;
-            if (!kv_get(owner.value, packed_key.data(), packed_key.size(), sz))
-               return {nullptr, {}};
+            if (!kv_get(owner.value, k.data(), k.size(), sz))
+               return {nullptr, std::move(k)};
 
             auto val_bytes = get_tmp_buffer(sz);
             check(kv_get_data(0, val_bytes.data(), val_bytes.size()) == val_bytes.size(), "kv get internal failure");
             temp = unpack<value_t>(val_bytes.data(), val_bytes.size());
-            return {&temp, std::move(packed_key)};
+            return {&temp, std::move(k)};
          }
 
-         template <typename Key, typename Value>
-         inline bool set(Key&& k, Value&& v, name payer) const {
+         std::tuple<value_t*, key_type> get(const key_t& k) {
+            return get(full_key(k), packed_tag{});
+         }
+
+         inline bool set(const key_type& k, const value_t& v, name payer, packed_tag) const {
             using namespace internal_use_do_not_use;
-            key_type packed_key;
-            if constexpr (std::is_same_v<std::decay_t<Key>, key_type>)
-               packed_key = k;
-            else
-               packed_key = full_key(std::forward<Key>(k));
-            const auto& packed_value = pack_value(std::forward<Value>(v));
-            auto wrote = kv_set(owner.value, packed_key.data(), packed_key.size(), packed_value.data(), packed_value.size(), payer.value);
+            const auto& packed_value = pack_value(v);
+            auto wrote = kv_set(owner.value, k.data(), k.size(), packed_value.data(), packed_value.size(), payer.value);
             return wrote == packed_value.size();
+         }
+
+         inline bool set(const key_t& k, const value_t& v, name payer) const {
+            return set(full_key(k), v, payer, packed_tag{});
          }
 
          static detail::packed_view get_tmp_buffer(std::size_t size_needed=0) {
@@ -556,4 +569,5 @@ namespace eosio::kv {
          name    owner = current_context_contract();
          value_t temp; // used for
    };
+
 } // namespace eosio::kv

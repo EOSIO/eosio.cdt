@@ -259,6 +259,7 @@ namespace eosio { namespace cdt {
           const auto& first_arg  = decl->getTemplateArgs()[0];
           const auto& second_arg = decl->getTemplateArgs()[1];
           const auto& third_arg  = decl->getTemplateArgs()[2];
+          const auto& fourth_arg = decl->getTemplateArgs()[3];
 
           if (first_arg.getKind() != clang::TemplateArgument::ArgKind::Integral)
              CDT_ERROR("abigen_error", decl->getLocation(), "first template argument to KV map is not an integral const");
@@ -269,7 +270,8 @@ namespace eosio { namespace cdt {
 
           akt.name = name_to_string(first_arg.getAsIntegral().getExtValue());
           akt.type = translate_type(third_arg.getAsType()); // pick the "value" type
-          akt.indices.push_back({"map.index",
+          add_type(third_arg.getAsType());
+          akt.indices.push_back({name_to_string(fourth_arg.getAsIntegral().getExtValue()),
                                   translate_type(second_arg.getAsType())}); // set the "key" as the index type
           _abi.kv_tables.insert(akt);
       }

@@ -41,11 +41,9 @@ namespace eosio {
       }
 
       template <typename R, typename C>
+      auto member_pointer_type(R (C::*)) -> R;
+      template <typename R, typename C>
       auto member_pointer_class(R (C::*)) -> C;
-      template <typename R, typename C, typename... Args>
-      auto member_pointer_class(R (C::*)(Args...)) -> C;
-      template <typename R, typename C, typename... Args>
-      auto member_pointer_class(R (C::*)(Args...)const) -> C;
 
       template <typename... Args>
       constexpr inline std::size_t total_bytes_size() { return (sizeof(Args) + ...); }

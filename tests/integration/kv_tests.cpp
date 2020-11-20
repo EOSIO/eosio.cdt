@@ -13,34 +13,35 @@ using namespace eosio::testing;
 
 using mvo = fc::mutable_variant_object;
 
+struct kv_tester {
+   kv_tester(std::vector<uint8_t> wasm, std::vector<char> abi) {
+      chain.create_accounts({"kvtest"_n});
+      chain.produce_block();
+      chain.set_code("kvtest"_n, wasm);
+      chain.set_abi("kvtest"_n, abi.data());
+      chain.produce_blocks();
 
-void setup(tester& chain, std::vector<uint8_t> wasm, std::vector<char> abi) {
-   chain.close();
-   auto cfg = chain.get_config();
-   cfg.backing_store = eosio::chain::backing_store_type::ROCKSDB;
-   chain.init(cfg);
-   chain.create_accounts( { "kvtest"_n } );
-   chain.produce_block();
-   chain.set_code( "kvtest"_n, wasm );
-   chain.set_abi( "kvtest"_n, abi.data() );
-   chain.produce_blocks();
+      chain.set_code(config::system_account_name, contracts::kv_bios_wasm());
+      chain.set_abi(config::system_account_name, contracts::kv_bios_abi().data());
 
-   chain.set_code(config::system_account_name, contracts::kv_bios_wasm());
-   chain.set_abi(config::system_account_name, contracts::kv_bios_abi().data());
+      chain.push_action(config::system_account_name, "ramkvlimits"_n, config::system_account_name,
+            mvo()("k", 1024)("v", 1024*1024)("i", 256));
+      chain.produce_blocks();
+   }
 
-   auto data = mvo()("k", 1024)("v", 1024*1024)("i", 256);
-   chain.push_action(config::system_account_name, "ramkvlimits"_n, config::system_account_name, data);
-   chain.produce_blocks();
-}
+   void push_action(name act) {
+      chain.push_action("kvtest"_n, act, "kvtest"_n, {});
+   }
+   tester chain;
+};
 
 BOOST_AUTO_TEST_SUITE(key_value_tests)
 
 BOOST_AUTO_TEST_CASE(map_tests) try {
-   tester chain;
-   setup(chain, contracts::kv_map_tests_wasm(), contracts::kv_map_tests_abi());
-   chain.push_action("kvtest"_n, "test"_n, "kvtest"_n, {});
-   chain.push_action("kvtest"_n, "iter"_n, "kvtest"_n, {});
-   chain.push_action("kvtest"_n, "erase"_n, "kvtest"_n, {});
+   kv_tester t = {contracts::kv_map_tests_wasm(), contracts::kv_map_tests_abi()};
+   t.push_action("test"_n);
+   t.push_action("iter"_n);
+   t.push_action("erase"_n);
 
    //BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "finderror"_n, "kvtest"_n, {}),
    //                      eosio_assert_message_exception,
