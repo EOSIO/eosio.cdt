@@ -61,6 +61,7 @@ namespace eosio::kv {
       }
    }
 
+   /* @cond PRIVATE */
    // tag used by some of the types to delineate overloads between key_type (std::string) and the map's key type
    struct packed_tag {};
 
@@ -316,6 +317,11 @@ namespace eosio::kv {
          status   current_status = status::ok;
       };
    } // namespace eosio::kv::detail
+/* @endcond */
+
+#if EOSIO_CDT_DOXYGEN
+#include "doxy/map_iterator.dox"
+#endif
 
    template <eosio::name::raw TableName, typename K, typename V, eosio::name::raw IndexName="map.index"_n>
    class [[eosio::table]] map {
