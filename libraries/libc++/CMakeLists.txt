@@ -8,6 +8,7 @@ FOREACH(FN ${SRC_FILENAMES})
    LIST(APPEND SRC_FILES "libcxx/src/${FN}")
 ENDFOREACH(FN)
 LIST(APPEND SRC_FILES "libcxxabi/src/private_typeinfo.cpp")
+LIST(APPEND SRC_FILES "libcxxabi/src/cxa_demangle.cpp")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything -frtti")
 
@@ -49,6 +50,7 @@ add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TAR
 add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${BASE_BINARY_DIR}/include/libcxx)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxxabi/include/ DESTINATION ${BASE_BINARY_DIR}/include/libcxxabi)
 
 set(UNSUPPORTED_HEADERS
    ${BASE_BINARY_DIR}/include/libcxx/fstream

@@ -662,6 +662,7 @@ static Options CreateOptions(bool add_defaults=true) {
    if (!sysroot_opt.empty()) {
       copts.emplace_back("--sysroot="+sysroot_opt);
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxx");
+      copts.emplace_back("-I"+sysroot_opt+"/include/libcxxabi");
       copts.emplace_back("-I"+sysroot_opt+"/include/libc");
 
       // only allow capi for native builds and for eosio-cc
@@ -682,10 +683,12 @@ static Options CreateOptions(bool add_defaults=true) {
    }
    else {
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
+      copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxxabi");
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
       copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
       copts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
       agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxx");
+      agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libcxxabi");
       agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/libc");
       agopts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
       agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
