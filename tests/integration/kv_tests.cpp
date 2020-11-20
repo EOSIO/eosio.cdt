@@ -21,6 +21,13 @@ using mvo = fc::mutable_variant_object;
 
 struct kv_tester {
    kv_tester(std::vector<uint8_t> wasm, std::vector<char> abi) {
+      /*
+      chain.close();
+      auto cfg = chain.get_config();
+      cfg.backing_store = eosio::chain::backing_store_type::ROCKSDB;
+      chain.init(cfg);
+      */
+
       chain.create_accounts({"kvtest"_n});
       chain.produce_block();
       chain.set_code("kvtest"_n, wasm);
@@ -35,9 +42,16 @@ struct kv_tester {
       chain.produce_blocks();
    }
 
-   void push_action(name act) {
-      chain.push_action("kvtest"_n, act, "kvtest"_n, {});
+   void push_action(name act, std::string exception_msg="") {
+      if (exception_msg.empty()) {
+         chain.push_action("kvtest"_n, act, "kvtest"_n, {});
+      } else {
+         BOOST_CHECK_EXCEPTION(chain.push_action("kvtest"_n, act, "kvtest"_n, {}),
+                               eosio_assert_message_exception,
+                               eosio_assert_message_is(exception_msg));
+      }
    }
+
    tester chain;
 };
 
@@ -66,6 +80,8 @@ BOOST_AUTO_TEST_CASE(map_tests) try {
    t.push_action("test"_n);
    t.push_action("iter"_n);
    t.push_action("erase"_n);
+   t.push_action("eraseexcp"_n, "key not found");
+   t.push_action("bounds"_n);
 } FC_LOG_AND_RETHROW()
 
 // TODO replace these tests with new table tests after this release

@@ -70,9 +70,9 @@ namespace eosio::kv {
          // need to re-evaluate if that changes
          for (std::size_t i=kt.size()-1; i >= 0; i--) {
             uint16_t v = kt[i]+1;
+            kt[i] = v;
             if (v <= 0xFF)
                break;
-            kt[i] = v;
          }
       }
 
