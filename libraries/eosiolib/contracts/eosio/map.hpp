@@ -489,32 +489,15 @@ namespace eosio::kv {
             return wrote == bytes.size();
          }
 
+         friend iterator_t;
+
+      protected:
          constexpr static inline name index_name = name{IndexName};
 
          writable_wrapper at(const key_type& bytes, name payer=current_context_contract()) {
             auto v = get(bytes, packed_tag{});
             check(std::get<0>(v), "key not found");
             return {std::get<1>(v), *std::get<0>(v), payer, owner};
-         }
-
-         /**
-          * @param out is an output variable for the raw bytes, this memory is managed by eosio::map
-          */
-         void get_raw(const key_t& k, detail::packed_view& out) const {
-            using namespace internal_use_do_not_use;
-            const auto& fk = full_key(k);
-
-            if (!kv_get(owner.value, fk.data(), fk.size(), out.sz))
-               return false; // key not found
-
-            out = get_tmp_buffer(out.sz);
-            check(kv_get_data(0, out.data(), out.size()) == out.size(), "map internal failure");
-         }
-
-         bool values_equal(const key_t& k, std::string_view bytes) const {
-            detail::packed_view pv;
-            get_raw(k, pv);
-            return pv.size() == bytes.size() && std::memcmp(pv.data(), bytes.data(), pv.size()) == 0;
          }
 
          std::tuple<value_t*, key_type> get(key_type k, packed_tag) {

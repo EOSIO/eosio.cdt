@@ -648,8 +648,20 @@ struct generation_utils {
       __builtin_unreachable();
    }
 
-   inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
+   inline bool is_kv_map(const clang::CXXRecordDecl* decl) {
       return decl->getQualifiedNameAsString().find("eosio::kv::map<") != std::string::npos;
+   }
+
+   // TODO replace this body after this release to reflect the new table type
+   inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
+      for (const auto& base : decl->bases()) {
+         auto type = base.getType();
+         if (type.getAsString().find("eosio::kv::table<") != std::string::npos) {
+            return true;
+         }
+      }
+
+      return false;
    }
 
    inline bool is_kv_internal(const clang::CXXRecordDecl* decl) {

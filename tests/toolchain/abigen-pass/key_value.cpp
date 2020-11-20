@@ -1,47 +1,35 @@
 #include <eosio/eosio.hpp>
 
-class [[eosio::contract]] key_value : public eosio::contract {
-public:
-   using contract::contract;
+using namespace eosio;
 
-   struct my_struct {
-      eosio::name primary_key;
-      std::string foo;
-      uint64_t bar;
+struct some_record {
+   std::string full_name;
+   uint8_t     age;
+   std::tuple<int, float, char> arbitrary;
+};
 
-      std::string fullname;
-      uint32_t age;
+class [[eosio::contract]] key_value : eosio::contract {
+   public:
+      using eosio::contract::contract;
 
-      std::pair<int, int> a;
-      std::optional<float> b;
-      std::list<double> c;
-      std::vector<int> d;
-      std::variant<int, bool, float> e;
+      [[eosio::action]]
+      void act1(int k, std::string s) {
+         test[k] = s;
 
-      eosio::non_unique<std::string, uint32_t> non_unique_name;
-
-      bool operator==(const my_struct& b) const {
-         return primary_key == b.primary_key &&
-                foo == b.foo &&
-                bar == b.bar &&
-                fullname == b.fullname &&
-                age == b.age;
+         test3[s] = some_record{"Block McChain", 42, {13, 42.42f, 'a'}};
       }
-   };
 
-   struct [[eosio::table]] my_table : eosio::kv::table<my_struct, "testtable"_n> {
-      KV_NAMED_INDEX("primarykey"_n, primary_key)
-      KV_NAMED_INDEX("foo"_n, foo)
-      index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};
-      KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
-      KV_NAMED_INDEX("age"_n, age)
-
-      my_table(eosio::name contract_name) {
-         init(contract_name, primary_key, foo, bar, non_unique_name, age);
+      [[eosio::action]]
+      void act2(float f, uint64_t v) {
+         test2[f] = v;
       }
-   };
 
-   [[eosio::action]]   
-   void noop() {}
+      using test_map  = kv::map<"test.map"_n, int, std::string>;
+      using test2_map = kv::map<"test2.map"_n, float, uint64_t>;
+      using test3_map = kv::map<"test3.map"_n, std::string, some_record>;
 
+   private:
+      test_map  test;
+      test2_map test2;
+      test3_map test3;
 };

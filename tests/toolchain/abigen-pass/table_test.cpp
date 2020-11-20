@@ -1,7 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/table.hpp>
 
-class [[eosio::contract]] kv_table_key_type : public eosio::contract {
+class [[eosio::contract]] table_test : public eosio::contract {
 public:
    using contract::contract;
 
@@ -31,20 +31,10 @@ public:
    };
 
    struct [[eosio::table]] my_table : eosio::kv::table<my_struct, "testtable"_n> {
-      index<eosio::name> primary_key {
-         eosio::name{"primarykey"_n},
-         &my_struct::primary_key };
-
-      index<std::string> foo {
-         eosio::name{"foo"_n},
-         &my_struct::foo };
-
+      KV_NAMED_INDEX("primarykey"_n, primary_key)
+      KV_NAMED_INDEX("foo"_n, foo)
       index<uint64_t> bar{eosio::name{"bar"_n}, &value_type::bar};
-
-      index<std::tuple<std::string, uint32_t>> non_unique_name {
-          eosio::name{"nonunique"_n},
-          &my_struct::non_unique_name };
-
+      KV_NAMED_INDEX("nonuniqnme"_n, non_unique_name)
       KV_NAMED_INDEX("age"_n, age)
 
       my_table(eosio::name contract_name) {

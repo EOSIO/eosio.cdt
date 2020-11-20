@@ -226,7 +226,10 @@ namespace eosio { namespace cdt {
 
       void add_table( const clang::CXXRecordDecl* decl ) {
          // short circuit if we happen across `eosio::kv::map` declaration
+         if (is_kv_map(decl))
+            return;
          if (is_kv_table(decl)) {
+            add_kv_table(decl);
             return;
          }
 
@@ -274,6 +277,84 @@ namespace eosio { namespace cdt {
           akt.indices.push_back({name_to_string(fourth_arg.getAsIntegral().getExtValue()),
                                   translate_type(second_arg.getAsType())}); // set the "key" as the index type
           _abi.kv_tables.insert(akt);
+      }
+
+      // TODO remove this after the next release and extend the above for handling the new table type
+      void add_kv_table(const clang::CXXRecordDecl* const decl) {
+         clang::CXXRecordDecl* table_type;
+         std::string templ_name;
+
+         for (const auto& base : decl->bases()) {
+            if (const auto templ_base = dyn_cast<clang::ClassTemplateSpecializationDecl>(base.getType()->getAsCXXRecordDecl())) {
+               const auto& templ_type = templ_base->getTemplateArgs()[0];
+               table_type = templ_type.getAsType().getTypePtr()->getAsCXXRecordDecl();
+               add_struct(table_type);
+
+               const auto templ_val = templ_base->getTemplateArgs()[1].getAsIntegral().getExtValue();
+               templ_name = name_to_string(templ_val);
+            }
+         }
+
+         abi_kv_table t;
+         t.type = table_type->getNameAsString();
+         t.name = templ_name;
+
+         const auto get_string_name_from_kv_index = [&](clang::Expr* expr) {
+            std::string index_name;
+            if (const auto expr_wc = dyn_cast<clang::ExprWithCleanups>(expr)) {
+               if (const auto cc_expr = dyn_cast<clang::CXXConstructExpr>(expr_wc->getSubExpr())) {
+                  const auto arg = cc_expr->getArg(0);
+                  if (const auto cfc_expr = dyn_cast<clang::CXXFunctionalCastExpr>(arg)) {
+                     if (const auto il_expr = dyn_cast<clang::InitListExpr>(cfc_expr->getSubExpr())) {
+                        const auto init = il_expr->getInit(0);
+                        if (const auto udl = dyn_cast<clang::UserDefinedLiteral>(init)) {
+                           const auto child = udl->getRawSubExprs()[0];
+                           if (const auto ice = dyn_cast<clang::ImplicitCastExpr>(child)) {
+                              if (const auto dre = dyn_cast<clang::DeclRefExpr>(ice->getSubExpr())) {
+                                 if (const auto fd = dyn_cast<clang::FunctionDecl>(dre->getDecl())) {
+                                    const auto& templ_pack = fd->getTemplateSpecializationArgs()->get(1);
+                                    for (const auto& ta : templ_pack.pack_elements()) {
+                                       const auto val = (char)ta.getAsIntegral().getExtValue();
+                                       index_name.push_back(val);
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+            return index_name;
+         };
+
+         for (const auto field : decl->fields()) {
+            std::string index_name = get_string_name_from_kv_index(field->getInClassInitializer());
+            std::string idx_type;
+            const auto qt = field->getType();
+            const auto index_qtype = std::get<clang::QualType>(get_template_argument(qt));
+            const auto index_type = clang::TemplateArgument(index_qtype);
+            if (const auto elab_type = dyn_cast<clang::ElaboratedType>(index_type.getAsType().getTypePtr())) {
+               // This is the macro case
+               const auto decayed_type = elab_type->getNamedType();
+               if (const auto d = dyn_cast<clang::TemplateSpecializationType>(decayed_type)) {
+                  const auto& decl_type = d->getArg(0);
+                  if (const auto dcl_type = dyn_cast<clang::DecltypeType>(decl_type.getAsType())) {
+                     idx_type = get_type_string_from_kv_index_macro_decltype(dcl_type);
+                  } else {
+                     idx_type = get_type(index_type.getAsType());
+                  }
+               } else {
+                  idx_type = get_type(index_type.getAsType());
+               }
+            } else {
+               // This is the non-macro case
+               idx_type = get_type(index_type.getAsType());
+            }
+            t.indices.push_back({index_name, idx_type});
+         }
+
+         _abi.kv_tables.insert(t);
       }
 
       void add_clauses( const std::vector<std::pair<std::string, std::string>>& clauses ) {

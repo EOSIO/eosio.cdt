@@ -86,22 +86,5 @@ public:
       for (auto it = std::move(r.first); it != r.second; ++it)
          eosio::print_f("I %", it->second());
 
-      using namespace eosio;
-
-      using mi = kv::table<"mi"_n, kv::index<"foo"_n, &test_record::pk>,
-                               kv::index<"bar"_n, &test_record::s>,
-                               kv::index<"baz"_n, &test_record::n>>;
-
-      mi m;
-      test_record rec = {34, 42.42f, "hello"};
-      test_record rec2 = {10, 33.33f, "good bye"};
-
-      m.put(rec);
-
-      m.put(rec2);
-
-      eosio::print_f("Before\n");
-      auto v = m.get(34);
-      eosio::print_f("After\n");
    }
 };

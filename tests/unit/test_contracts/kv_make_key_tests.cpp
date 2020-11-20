@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+#include <eosio/table.hpp>
 
 struct testing_struct {
    uint16_t a;
