@@ -367,6 +367,8 @@ namespace internal {
          return eosio::key_type{(char*)buffer, actual_value_size};
       }
 
+      bool valid() const { return itr_stat == status::iterator_ok; }
+
    protected:
       uint32_t itr;
       status itr_stat;
@@ -407,6 +409,11 @@ class table : internal::table_base {
 public:
    template<typename K>
    class index;
+
+   table(const table&) = delete;                         // disable copy constructor
+   table(table&&) = delete;                              // disable move constructor
+   table& operator=(const table&) = delete;              // disable assignment copy operator
+   table& operator=(table&&) = delete;                   // disable assignment move operator
 
 private:
    using index_base = internal::index_base;
@@ -491,6 +498,10 @@ private:
 
       bool operator>=(const iterator& b) const {
          return base_iterator::compare(b) >= 0;
+      }
+
+      explicit operator bool() const {
+         return this->valid();
       }
    };
 
