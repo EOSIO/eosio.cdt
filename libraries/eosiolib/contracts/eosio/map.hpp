@@ -293,7 +293,7 @@ namespace eosio::kv {
             // ignoring key_size and value_size as they shouldn't play a role in equality
             return (std::tie(handle, current_status) == std::tie(o.handle, o.current_status)) ||
                    (query_status<status::end>(current_status) && query_status<status::end>(o.current_status)) ||
-                   itr_compare(handle, o.handle);
+                   !itr_compare(handle, o.handle);
          }
 
          inline bool operator!=(const iterator& o) const { return !((*this) == o); }
@@ -475,7 +475,7 @@ namespace eosio::kv {
          std::vector<elem_t> ranged_slice(const key_t& l, const key_t& h) {
             std::vector<elem_t> ret;
 
-            for (auto itr = lower_bound(l), end_itr = lower_bound(h); itr == end_itr; ++itr) {
+            for (auto itr = lower_bound(l); itr != lower_bound(h); ++itr) {
                ret.emplace_back(std::move(*itr));
             }
 
