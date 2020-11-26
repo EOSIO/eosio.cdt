@@ -1,43 +1,44 @@
 #include <eosio/eosio.hpp>
+#include <eosio/table.hpp>
 
 // this structure defines the data stored in the kv::table
 struct person {
    eosio::name account_name;
-   eosio::non_unique<eosio::name, std::string> first_name;
-   eosio::non_unique<eosio::name, std::string> last_name;
-   eosio::non_unique<eosio::name, std::string, std::string, std::string, std::string> street_city_state_cntry;
-   eosio::non_unique<eosio::name, std::string> personal_id;
+   std::tuple<eosio::name, std::string> first_name;
+   std::tuple<eosio::name, std::string> last_name;
+   std::tuple<eosio::name, std::string, std::string, std::string, std::string> street_city_state_cntry;
+   std::tuple<eosio::name, std::string> personal_id;
    std::pair<std::string, std::string> country_personal_id;
 
    eosio::name get_account_name() const {
       return account_name;
    }
    std::string get_first_name() const {
-      // from the non_unique tuple we extract the value with key 1, the first name
+      // from the std::tuple we extract the value with key 1, the first name
       return std::get<1>(first_name);
    }
    std::string get_last_name() const {
-      // from the non_unique tuple we extract the value with key 1, the last name
+      // from the std::tuple we extract the value with key 1, the last name
       return std::get<1>(last_name);
    }
    std::string get_street() const {
-      // from the non_unique tuple we extract the value with key 1, the street
+      // from the std::tuple we extract the value with key 1, the street
       return std::get<1>(street_city_state_cntry);
    }
    std::string get_city() const {
-      // from the non_unique tuple we extract the value with key 2, the city
+      // from the std::tuple we extract the value with key 2, the city
       return std::get<2>(street_city_state_cntry);
    }
    std::string get_state() const {
-      // from the non_unique tuple we extract the value with key 3, the state
+      // from the std::tuple we extract the value with key 3, the state
       return std::get<3>(street_city_state_cntry);
    }
    std::string get_country() const {
-      // from the non_unique tuple we extract the value with key 4, the country
+      // from the std::tuple we extract the value with key 4, the country
       return std::get<4>(street_city_state_cntry);
    }
    std::string get_personal_id() const {
-      // from the non_unique tuple we extract the value with key 1, the personal id
+      // from the std::tuple we extract the value with key 1, the personal id
       return std::get<1>(personal_id);
    }
 };
@@ -86,13 +87,13 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       //    index, and by providing as the first property one that has unique values
       //    it ensures the uniques of the values combined (including non-unique ones)
       // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-      index<eosio::non_unique<eosio::name, std::string>> first_name_idx {
+      index<std::tuple<eosio::name, std::string>> first_name_idx {
          eosio::name{"firstname"_n},
          &person::first_name};
-      index<eosio::non_unique<eosio::name, std::string>> last_name_idx {
+      index<std::tuple<eosio::name, std::string>> last_name_idx {
          eosio::name{"lastname"_n},
          &person::last_name};
-      index<eosio::non_unique<eosio::name, std::string>> personal_id_idx {
+      index<std::tuple<eosio::name, std::string>> personal_id_idx {
          eosio::name{"persid"_n},
          &person::personal_id};
       // non-unique index defined using the KV_NAMED_INDEX macro
