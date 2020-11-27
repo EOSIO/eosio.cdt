@@ -5,8 +5,8 @@
 #pragma once
 #include <utility>
 #include <string>
-
-
+#include <string_view>
+#include <type_traits>
 
 namespace eosio {
    namespace internal_use_do_not_use {
@@ -44,6 +44,25 @@ namespace eosio {
          __attribute__((eosio_wasm_import))
          void printhex(const void*, uint32_t);
       }
+
+
+      template <typename U>
+      struct has_print_member_function
+      {
+      private:
+         template <typename T>
+         struct drop {};
+
+         template <typename T>
+         static auto test(int)
+            -> std::enable_if_t<(drop<decltype(std::declval<T>().print())>{}, true),
+                                std::true_type>;
+
+         template <typename>
+         static auto test(...) -> std::false_type;
+      public:
+         static constexpr bool value = std::is_same_v<decltype(test<U>(0)), std::true_type>;
+      };
    };
 
    /**
@@ -86,7 +105,7 @@ namespace eosio {
     *  @param len - number of chars to print
     */
    inline void printl( const char* ptr, size_t len ) {
-     internal_use_do_not_use::prints_l(ptr, len);
+      internal_use_do_not_use::prints_l(ptr, len);
    }
 
    /**
@@ -96,7 +115,27 @@ namespace eosio {
     *  @param ptr - a null terminated string
     */
    inline void print( const char* ptr ) {
-     internal_use_do_not_use::prints(ptr);
+      internal_use_do_not_use::prints(ptr);
+   }
+
+   /**
+    *  Prints string
+    *
+    *  @ingroup console
+    *  @param str - an std::string
+    */
+   inline void print( const std::string& str ) {
+      internal_use_do_not_use::prints_l(str.c_str(), str.size());
+   }
+
+   /**
+    *  Prints string
+    *
+    *  @ingroup console
+    *  @param str - an std::string_view
+    */
+   inline void print( std::string_view str ) {
+      internal_use_do_not_use::prints_l(str.data(), str.size());
    }
 
    /**
@@ -160,16 +199,14 @@ namespace eosio {
     *
     *  @ingroup console
     *  @param t to be printed
-    *  @pre T must implements print() function
+    *  @pre T must implement print() function
     */
-   template<typename T, std::enable_if_t<!std::is_integral<std::decay_t<T>>::value, int> = 0>
-   inline void print( T&& t ) {
-      if constexpr (std::is_same<std::decay_t<T>, std::string>::value)
-         internal_use_do_not_use::prints_l( t.c_str(), t.size() );
-      else if constexpr (std::is_same<std::decay_t<T>, char*>::value)
-         internal_use_do_not_use::prints(t);
-      else
-         t.print();
+   template <typename T, std::enable_if_t<
+                           internal_use_do_not_use::has_print_member_function<
+                              std::decay_t<T>>::value,
+                           int> = 0>
+   inline void print(T&& t) {
+      std::forward<T>(t).print();
    }
 
    /**
@@ -179,7 +216,7 @@ namespace eosio {
     *  @param s null terminated string to be printed
     */
    inline void print_f( const char* s ) {
-     internal_use_do_not_use::prints(s);
+      internal_use_do_not_use::prints(s);
    }
 
    /**
@@ -229,7 +266,8 @@ namespace eosio {
      *  @endcode
      */
    template<typename Arg, typename... Args>
-   void print( Arg&& a, Args&&... args ) {
+   auto print( Arg&& a, Args&&... args ) -> std::enable_if_t<sizeof...(Args) != 0, void>
+   {
       print(std::forward<Arg>(a));
       print(std::forward<Args>(args)...);
    }
