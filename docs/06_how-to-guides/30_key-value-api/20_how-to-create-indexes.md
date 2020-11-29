@@ -14,6 +14,9 @@ This how-to procedure provides instructions to create the following indexes on a
 
 The  `KV_NAMED_INDEX` macro and the `eosio::kv::table::index` template class are provided by the KV API.
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 ## Prerequisites
 
 Before you begin, complete the following prerequisites:

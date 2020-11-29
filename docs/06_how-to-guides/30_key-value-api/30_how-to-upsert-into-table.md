@@ -7,6 +7,9 @@ link_text: "How-To Upsert Into Key-Value Table"
 
 This how-to procedure provides instructions to upsert into `Key-Value Table` (`kv table`).
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 Use the method `put` defined by the `eosio::kv::table` type to accomplish this task.
 
 ## Prerequisites

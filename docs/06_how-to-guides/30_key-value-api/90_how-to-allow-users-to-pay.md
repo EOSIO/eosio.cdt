@@ -7,6 +7,9 @@ link_text: "How-To Allow Users to Pay for Key-Value Table Resources"
 
 This how-to procedure provides instructions to allow users to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 Use the method `put` defined by the `eosio::kv::table` type to accomplish this task and provide as the second parameter the account name which is the payer for the resources needed.
 
 ## Prerequisites
