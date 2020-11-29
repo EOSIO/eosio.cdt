@@ -4,12 +4,7 @@
 using namespace eosio;
 using namespace std;
 
-using fullname_t = std::tuple<std::string, std::string>;
-using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
 using country_personal_id_t = std::pair<std::string, std::string>;
-
-// TO DO: testing...
-using last_name_idx_t = std::tuple<std::string>;
 
 // this structure defines the data stored in the kv::table
 struct person {
@@ -23,13 +18,7 @@ struct person {
    std::string personal_id;
 
    // data members supporting the indexes built for this structure
-   fullname_t full_name_first_last;
-   fullname_t full_name_last_first;
-   address_t address;
    country_personal_id_t country_personal_id;
-
-   // TO DO: testing...
-   last_name_idx_t last_name_idx_data_member;
 };
 
 // helper factory to easily build person objects
@@ -52,11 +41,7 @@ struct person_factory {
             .state = state,
             .country = country,
             .personal_id = personal_id,
-            .full_name_first_last = {first_name, last_name},
-            .full_name_last_first = {last_name, first_name},
-            .address = {street, city, state, country, account_name},
             .country_personal_id = {country, personal_id},
-            .last_name_idx_data_member = {last_name}
          };
       }
 };
@@ -76,29 +61,10 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
          name{"cntrypersid"_n},
          &person::country_personal_id };
       
-      // non-unique indexes definitions
-      index<fullname_t> full_name_first_last_idx {
-         name{"frstnameidx"_n},
-         &person::full_name_first_last};
-      index<fullname_t> full_name_last_first_idx {
-         name{"lastnameidx"_n},
-         &person::full_name_last_first};
-      index<address_t> address_idx {
-         name{"addressidx"_n},
-         &person::address};
-
-      // TO DO: testing...
-      index<last_name_idx_t> last_name_idx {
-         name{"lstnameidx"},
-         &person::last_name_idx_data_member};
-
       address_table(eosio::name contract_name) {
          init(contract_name,
             account_name_uidx,
-            country_personal_id_uidx,
-            full_name_first_last_idx,
-            full_name_last_first_idx,
-            address_idx);
+            country_personal_id_uidx);
       }
    };
 
@@ -114,21 +80,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       // retrieves a person based on unique index defined by country and personal_id
       [[eosio::action]]
       person getbycntrpid(std::string country, std::string personal_id);
-
-      // retrieves list of persons with the same last name
-      [[eosio::action]]
-      std::vector<person> getbylastname(std::string last_name);
-
-      //[[eosio::action]]
-      //std::vector<person> getbylstname(std::string last_name);
-
-
-      [[eosio::action]]
-      std::vector<person> getbyaddress(
-         std::string street, 
-         std::string city, 
-         std::string state, 
-         std::string country);
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
@@ -156,9 +107,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
 
       using get_action = eosio::action_wrapper<"get"_n, &kv_addr_book::get>;
       using get_by_cntry_pers_id_action = eosio::action_wrapper<"getbycntrpid"_n, &kv_addr_book::getbycntrpid>;
-      using get_by_last_name_action = eosio::action_wrapper<"getbylastname"_n, &kv_addr_book::getbylastname>;
-      //using get_by_lst_name_action = eosio::action_wrapper<"getbylstname"_n, &kv_addr_book::getbylstname>;
-      using get_buy_address_action = eosio::action_wrapper<"getbyaddress"_n, &kv_addr_book::getbyaddress>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = eosio::action_wrapper<"del"_n, &kv_addr_book::del>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_addr_book::checkpidcntr>;
