@@ -225,6 +225,9 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( const clang::CXXRecordDecl* decl ) {
+         // short circuit if we happen across `eosio::kv::map` declaration
+         if (is_kv_map(decl))
+            return;
          if (is_kv_table(decl)) {
             add_kv_table(decl);
             return;
@@ -254,6 +257,29 @@ namespace eosio { namespace cdt {
          _abi.tables.insert(t);
       }
 
+      void add_kv_map(const clang::ClassTemplateSpecializationDecl* decl) {
+          abi_kv_table akt;
+          const auto& first_arg  = decl->getTemplateArgs()[0];
+          const auto& second_arg = decl->getTemplateArgs()[1];
+          const auto& third_arg  = decl->getTemplateArgs()[2];
+          const auto& fourth_arg = decl->getTemplateArgs()[3];
+
+          if (first_arg.getKind() != clang::TemplateArgument::ArgKind::Integral)
+             CDT_ERROR("abigen_error", decl->getLocation(), "first template argument to KV map is not an integral const");
+          if (second_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
+             CDT_ERROR("abigen_error", decl->getLocation(), "second template argument to KV map is not a type");
+          if (third_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
+             CDT_ERROR("abigen_error", decl->getLocation(), "third template argument to KV map is not a type");
+
+          akt.name = name_to_string(first_arg.getAsIntegral().getExtValue());
+          akt.type = translate_type(third_arg.getAsType()); // pick the "value" type
+          add_type(third_arg.getAsType());
+          akt.indices.push_back({name_to_string(fourth_arg.getAsIntegral().getExtValue()),
+                                  translate_type(second_arg.getAsType())}); // set the "key" as the index type
+          _abi.kv_tables.insert(akt);
+      }
+
+      // TODO remove this after the next release and extend the above for handling the new table type
       void add_kv_table(const clang::CXXRecordDecl* const decl) {
          clang::CXXRecordDecl* table_type;
          std::string templ_name;
@@ -361,9 +387,6 @@ namespace eosio { namespace cdt {
          if (!is_builtin_type(translate_type(type))) {
             if (is_aliasing(type)) {
                add_typedef(type);
-            }
-            else if (is_eosio_non_unique(type)) {
-               add_tuple(get_nested_type(type));
             }
             else if (is_template_specialization(type, {"vector", "set", "deque", "list", "optional", "binary_extension", "ignore"})) {
                add_type(std::get<clang::QualType>(get_template_argument(type)));
@@ -744,6 +767,9 @@ namespace eosio { namespace cdt {
                if (d->getName() == "multi_index") {
                   ag.add_table(d->getTemplateArgs()[0].getAsIntegral().getExtValue(),
                         (clang::CXXRecordDecl*)((clang::RecordType*)d->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
+               } else if (d->getName() == "map") {
+                  if (d->getSpecializedTemplate()->getTemplatedDecl()->isEosioTable())
+                     ag.add_kv_map(d);
                }
             }
             return true;

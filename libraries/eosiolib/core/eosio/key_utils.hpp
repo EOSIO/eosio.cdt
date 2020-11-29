@@ -9,6 +9,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <string>
 #include <cstring>
 
 #include "datastream.hpp"
@@ -16,32 +17,56 @@
 
 namespace eosio {
 
-namespace detail {
-template<typename T>
-constexpr bool has_bitwise_serialization() {
-   if constexpr (std::is_arithmetic_v<T>) {
-      return true;
-   } else if constexpr (std::is_enum_v<T>) {
-      static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
-      return true;
-   } else {
-      return false;
-   }
-}
+   namespace detail {
+      template<typename T>
+      constexpr bool has_bitwise_serialization() {
+         if constexpr (std::is_arithmetic_v<T>) {
+            return true;
+         } else if constexpr (std::is_enum_v<T>) {
+            static_assert(!std::is_convertible_v<T, std::underlying_type_t<T>>, "Serializing unscoped enum");
+            return true;
+         } else {
+            return false;
+         }
+      }
 
-template <template <typename> class C, typename T>
-constexpr bool is_ranged_type(C<T>) {
-   using type = std::decay_t<C<T>>;
-   return
-      std::is_same_v<std::vector<T>, type> ||
-      std::is_same_v<std::list<T>, type>   ||
-      std::is_same_v<std::deque<T>, type>  ||
-      std::is_same_v<std::set<T>, type>;
-}
-}
+      template <template <typename> class C, typename T>
+      constexpr bool is_ranged_type(C<T>) {
+         using type = std::decay_t<C<T>>;
+         return
+            std::is_same_v<std::vector<T>, type> ||
+            std::is_same_v<std::list<T>, type>   ||
+            std::is_same_v<std::deque<T>, type>  ||
+            std::is_same_v<std::set<T>, type>;
+      }
 
-template <typename... Ts, typename S>
-void to_key(const std::tuple<Ts...>& obj, datastream<S>& stream);
+      template <typename R, typename C>
+      auto member_pointer_type(R (C::*)) -> R;
+      template <typename R, typename C>
+      auto member_pointer_class(R (C::*)) -> C;
+
+      template <typename... Args>
+      constexpr inline std::size_t total_bytes_size() { return (sizeof(Args) + ...); }
+
+      // TODO rework the to_key and datastream logic to be constexpr/consteval friendly to get rid of this
+      template <std::size_t I, typename Arg, typename... Args>
+      inline void const_pack_helper(std::string& s, Arg&& arg, Args&&... args) {
+         std::memcpy(s.data()+I, &arg, sizeof(Arg));
+         if constexpr (sizeof...(Args) > 0)
+            return const_pack_helper<I+sizeof(Arg)>(s, std::forward<Args>(args)...);
+      }
+
+      // TODO rework the to_key and datastream logic to be constexpr/consteval friendly to get rid of this
+      template <typename... Args>
+      inline std::string const_pack(Args&&... args) {
+         std::string s;
+         s.resize(total_bytes_size<Args...>());
+         const_pack_helper<0>(s, std::forward<Args>(args)...);
+         return s;
+      }
+   } // namespace eosio::detail
+
+using key_type = std::string;
 
 // to_key defines a conversion from a type to a sequence of bytes whose lexicograpical
 // ordering is the same as the ordering of the original type.
@@ -228,6 +253,11 @@ void to_key(const std::variant<Ts...>& obj, datastream<S>& stream) {
    std::visit([&](const auto& item) { to_key(item, stream); }, obj);
 }
 
+template <std::size_t N, typename S>
+void to_key(const char (&str)[N], datastream<S>& stream) {
+   to_key(std::string_view{str, N-1}, stream);
+}
+
 template <typename S>
 void to_key(std::string_view obj, datastream<S>& stream) {
    for (char ch : obj) {
@@ -289,7 +319,7 @@ void to_key(const T& obj, datastream<S>& stream) {
 }
 
 template <typename T>
-void convert_to_key(const T& t, std::vector<char>& bin) {
+void convert_to_key(const T& t, key_type& bin) {
    datastream<size_t> ss;
    to_key(t, ss);
    auto orig_size = bin.size();
@@ -300,10 +330,9 @@ void convert_to_key(const T& t, std::vector<char>& bin) {
 }
 
 template <typename T>
-std::vector<char> convert_to_key(const T& t) {
-   std::vector<char> result;
+key_type convert_to_key(const T& t) {
+   key_type result;
    convert_to_key(t, result);
    return result;
 }
-
 } // namespace eosio

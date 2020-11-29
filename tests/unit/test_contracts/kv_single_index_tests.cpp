@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+#include <eosio/table.hpp>
 
 struct my_struct {
    eosio::name primary_key;
