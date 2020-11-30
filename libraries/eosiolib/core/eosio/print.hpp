@@ -45,24 +45,6 @@ namespace eosio {
          void printhex(const void*, uint32_t);
       }
 
-
-      template <typename U>
-      struct has_print_member_function
-      {
-      private:
-         template <typename T>
-         struct drop {};
-
-         template <typename T>
-         static auto test(int)
-            -> std::enable_if_t<(drop<decltype(std::declval<T>().print())>{}, true),
-                                std::true_type>;
-
-         template <typename>
-         static auto test(...) -> std::false_type;
-      public:
-         static constexpr bool value = std::is_same_v<decltype(test<U>(0)), std::true_type>;
-      };
    };
 
    /**
@@ -201,11 +183,9 @@ namespace eosio {
     *  @param t to be printed
     *  @pre T must implement print() function
     */
-   template <typename T, std::enable_if_t<
-                           internal_use_do_not_use::has_print_member_function<
-                              std::decay_t<T>>::value,
-                           int> = 0>
-   inline void print(T&& t) {
+   template <typename T>
+   inline auto print(T&& t) -> std::void_t<decltype(t.print())> 
+   {
       std::forward<T>(t).print();
    }
 
