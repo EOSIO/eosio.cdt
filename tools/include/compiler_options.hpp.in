@@ -879,8 +879,10 @@ static Options CreateOptions(bool add_defaults=true) {
          llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str();
       } else {
-         ldopts.emplace_back("a.out");
+         output_fn = "a.out";
       }
+      ldopts.emplace_back("-o");
+      ldopts.emplace_back(output_fn);
 #else
       if (inputs.size() == 1) {
          llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
