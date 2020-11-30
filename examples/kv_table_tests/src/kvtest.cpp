@@ -1,5 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/table.hpp>
 
 extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const void* params, uint32_t size);
 
