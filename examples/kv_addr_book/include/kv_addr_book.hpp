@@ -4,12 +4,9 @@
 using namespace eosio;
 using namespace std;
 
-using fullname_t = std::tuple<std::string, std::string>;
+using fullname_t = std::tuple<std::string, std::string, eosio::name>;
 using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
 using country_personal_id_t = std::pair<std::string, std::string>;
-
-// TO DO: testing...
-using last_name_idx_t = std::tuple<std::string>;
 
 // this structure defines the data stored in the kv::table
 struct person {
@@ -27,9 +24,6 @@ struct person {
    fullname_t full_name_last_first;
    address_t address;
    country_personal_id_t country_personal_id;
-
-   // TO DO: testing...
-   last_name_idx_t last_name_idx_data_member;
 };
 
 // helper factory to easily build person objects
@@ -52,11 +46,10 @@ struct person_factory {
             .state = state,
             .country = country,
             .personal_id = personal_id,
-            .full_name_first_last = {first_name, last_name},
-            .full_name_last_first = {last_name, first_name},
+            .full_name_first_last = {first_name, last_name, account_name},
+            .full_name_last_first = {last_name, first_name, account_name},
             .address = {street, city, state, country, account_name},
             .country_personal_id = {country, personal_id},
-            .last_name_idx_data_member = {last_name}
          };
       }
 };
@@ -77,6 +70,12 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
          &person::country_personal_id };
       
       // non-unique indexes definitions
+      // 1. non unique indexes need to be defined for at least two properties, 
+      // 2. first properties, besides the last, are the ones wanted to be indexed non-uniquely
+      // 3. the last one needs to be a property that stores unique values, because 
+      //    under the hood every index (non-unique or unique) is stored as an unique 
+      //    index, and by providing as the last property one that has unique values
+      //    it ensures the uniques of the values combined (including non-unique ones)
       index<fullname_t> full_name_first_last_idx {
          name{"frstnameidx"_n},
          &person::full_name_first_last};
@@ -86,11 +85,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       index<address_t> address_idx {
          name{"addressidx"_n},
          &person::address};
-
-      // TO DO: testing...
-      index<last_name_idx_t> last_name_idx {
-         name{"lstnameidx"},
-         &person::last_name_idx_data_member};
 
       address_table(eosio::name contract_name) {
          init(contract_name,

@@ -69,9 +69,12 @@ std::vector<person> kv_addr_book::getbylastname(std::string last_name) {
 
    std::string min_first_name("A");
    std::string max_first_name(100, 'z');
+   eosio::name min_account_name{0};
+   eosio::name max_account_name{UINT_MAX};
+
    auto list_of_persons = addresses.full_name_last_first_idx.range(
-      {last_name, min_first_name},
-      {last_name, max_first_name});
+      {last_name, min_first_name, min_account_name},
+      {last_name, max_first_name, max_account_name});
 
    eosio::print_f("Found % person(s). ", list_of_persons.size());
 
@@ -81,22 +84,6 @@ std::vector<person> kv_addr_book::getbylastname(std::string last_name) {
    // return found list of person from action
    return list_of_persons;
 }
-
-// retrieves list of persons with the same last name using last_name_idx
-// [[eosio::action]]
-// std::vector<person> kv_addr_book::getbylstname(std::string last_name) {
-//    address_table addresses{"kvaddrbook"_n};
-//
-//    auto list_of_persons = addresses.last_name_idx.range({"A"}, {last_name});
-//
-//    eosio::print_f("Found % person(s). ", list_of_persons.size());
-//
-//    for (auto& person : list_of_persons) {
-//       print_person(person, false);
-//    }
-//       // return found list of person from action
-//    return list_of_persons;
-// }
 
 // retrieves list of persons with the same address
 [[eosio::action]]
