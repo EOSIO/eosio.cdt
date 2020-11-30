@@ -149,7 +149,7 @@ namespace eosio { namespace cdt {
          codegen& cg = codegen::get();
          FileID    main_fid;
          StringRef main_name;
-         Rewriter  rewriter;
+         std::stringstream ss;
          CompilerInstance* ci;
          bool apply_was_found = false;
 
@@ -161,7 +161,6 @@ namespace eosio { namespace cdt {
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
-            rewriter.setSourceMgr(CI->getASTContext().getSourceManager(), CI->getASTContext().getLangOpts());
          }
 
          void set_main_fid(FileID fid) {
@@ -172,9 +171,7 @@ namespace eosio { namespace cdt {
             main_name = mn;
          }
 
-         Rewriter& get_rewriter() {
-            return rewriter;
-         }
+         auto& get_ss() { return ss; }
 
          bool is_datastream(const QualType& qt) {
             auto str_name = qt.getAsString();
@@ -227,7 +224,6 @@ namespace eosio { namespace cdt {
          template <typename F>
          void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
             constexpr static uint32_t max_stack_size = 512;
-            std::stringstream ss;
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
@@ -293,7 +289,6 @@ namespace eosio { namespace cdt {
                }
                ss << "}}\n";
 
-               rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
          }
 
@@ -394,19 +389,19 @@ namespace eosio { namespace cdt {
                   return;
                }
 
-               int fd;
                llvm::SmallString<128> fn;
                try {
-                  SmallString<64> res;
-                  llvm::sys::path::system_temp_directory(true, res);
+                  llvm::sys::fs::createTemporaryFile("eosio", ".cpp", fn);
 
-                  std::ofstream out(std::string(res.c_str())+"/"+llvm::sys::path::filename(main_fe->getName()).str());
-                  for (auto inc : global_includes[main_file]) {
-                     visitor->get_rewriter().ReplaceText(inc.range,
-                           std::string("\"")+inc.file_name+"\"\n");
+                  std::ofstream out(fn.c_str());
+                  {
+                     llvm::SmallString<64> abs_file_path(main_fe->getName());
+                     llvm::sys::fs::make_absolute(abs_file_path);
+                     out << "#include \"" << abs_file_path.c_str() << "\"\n";
                   }
+
                   // generate apply stub with abi
-                  std::stringstream ss;
+                  std::stringstream& ss = visitor->get_ss();
                   ss << "extern \"C\" {\n";
                   ss << "__attribute__((eosio_wasm_import))\n";
                   ss << "void eosio_assert_code(uint32_t, uint64_t);";
@@ -419,9 +414,7 @@ namespace eosio { namespace cdt {
                   ss << "}\n";
                   ss << "}";
 
-                  visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
-                  auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
-                  out << std::string(RewriteBuf.begin(), RewriteBuf.end());
+                  out << ss.rdbuf();
                   cg.tmp_files.emplace(main_file, fn.str());
                   out.close();
                } catch (...) {
