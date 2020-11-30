@@ -1,13 +1,14 @@
 #include <eosio/eosio.hpp>
 #include <eosio/system.hpp>
+#include <eosio/table.hpp>
 using namespace eosio;
 
 struct todo_entry {
   std::string uuid;
-  eosio::non_unique<eosio::name, std::string> account_name;
-  eosio::non_unique<std::string, std::string> task;
-  eosio::non_unique<bool, std::string> checked;
-  eosio::non_unique<uint32_t, std::string> created;
+  std::tuple<eosio::name, std::string> account_name;
+  std::tuple<std::string, std::string> task;
+  std::tuple<bool, std::string> checked;
+  std::tuple<uint32_t, std::string> created;
 
   std::string get_uuid() const { return uuid; }
   eosio::name get_account_name() const { return std::get<0>(account_name); }
