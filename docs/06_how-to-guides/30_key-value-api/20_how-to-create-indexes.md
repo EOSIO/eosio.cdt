@@ -14,6 +14,9 @@ This how-to procedure provides instructions to create the following indexes on a
 
 The  `KV_NAMED_INDEX` macro and the `eosio::kv::table::index` template class are provided by the KV API.
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 ## Prerequisites
 
 Before you begin, complete the following prerequisites:
@@ -107,10 +110,10 @@ class [[eosio::contract]] smrtcontract : public contract {
 ### Define a non-unique index on property first_name using the macro KV_NAMED_INDEX
 
 1. Use the `KV_NAMED_INDEX` with two parameters.
-2. Pass the name of the index as the first parameter. The parameter must be a qualified `eosio:name`. See documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
+2. Pass the name of the index as the first parameter. The parameter must be a qualified `eosio::name`. See documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
 3. Pass the name of the property for which the index is defined as the second parameter.
 
-The property used for the second parameter must be of template type `eosio::non_unique`. The first parameter of the template type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property`account_name` is unique. And the second parameter must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the property indexed non-uniquely. It is important to mention that multiple properties can be indexed non-uniquely, thus after the first parameter type is specified multiple parameter types can follow, corresponding to more than one properties being indexed, not just one, like in your case.
+The property used for the second parameter must be of template type `std::tuple`. The first parameter must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the property indexed non-uniquely. And the last parameter of the tuple type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameters types correspond to the properties being indexed. And, as previously already mentioned, the last parameter correspond to the type of a property name which is unique.
 
 Refer to the following possible implementation of a non-unique index on property `account_name` using macro `KV_NAMED_INDEX`:
 
@@ -119,7 +122,7 @@ Refer to the following possible implementation of a non-unique index on property
 ```cpp
 struct person {
   eosio::name account_name;
-  eosio::non_unique<eosio::name, std::string> first_name;
+  std::tuple<std::string, eosio::name> first_name;
   std::string last_name;
   std::string personal_id;
 };
@@ -144,7 +147,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 2. Pass as the first parameter the name of the index. It must be a qualified `eosio:name`, see documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
 3. Pass the reference to the property for which the index is defined, `&person::last_name`, as the second parameter.
 
-The property used for the second parameter must be of template type `eosio::non_unique`. The first parameter of the template type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property`account_name` is unique. And the second parameter must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `last_name` is the property indexed non-uniquely. It is important to mention that multiple properties can be indexed non-uniquely, thus after the first parameter type is specified multiple parameter types can follow, corresponding to more than one properties being indexed, not just one, like in your case.
+The property used for the second parameter must be of template type `std::tuple`. The first parameter must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the property indexed non-uniquely. And the last parameter of the tuple type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameters types correspond to the properties being indexed. And, as previously already mentioned, the last parameter correspond to the type of a property name which is unique.
 
 Refer to the following possible implementation of a non-unique index on property `last_name` using `eosio::kv::table::index` template class:
 
@@ -154,14 +157,14 @@ Refer to the following possible implementation of a non-unique index on property
 struct person {
   eosio::name account_name;
   std::string first_name;
-  eosio::non_unique<eosio::name, std::string> last_name;
+  std::tuple<std::string, eosio::name> last_name;
   std::string personal_id;
 };
 
 class [[eosio::contract]] smrtcontract : public contract {
     struct [[eosio::table]] address_table : eosio::kv::table<person, "kvaddrbook"_n> {
 
-     index<non_unique<name, string>> last_name_idx {
+     index<std::tuple<name, string>> last_name_idx {
         name{"persid"_n},
         &person::last_name};
 

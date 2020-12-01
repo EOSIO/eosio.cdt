@@ -7,6 +7,9 @@ link_text: "How-To Check a Record in a Key-Value Table"
 
 This how-to procedure provides instructions to check if a specific object exists in a `Key-Value Table` (`kv table`).
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 Use the  method `exists` defined by the `eosio::kv::table::index` class to accomplish this task.
 
 ## Prerequisites
