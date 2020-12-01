@@ -157,7 +157,7 @@ Refer to the following possible implementation of a non-unique index on property
 struct person {
   eosio::name account_name;
   std::string first_name;
-  eosio::non_unique<std::string, eosio::name> last_name;
+  std::tuple<std::string, eosio::name> last_name;
   std::string personal_id;
 };
 

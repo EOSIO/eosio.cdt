@@ -113,10 +113,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       std::vector<person> getbylastname(std::string last_name);
 
-      //[[eosio::action]]
-      //std::vector<person> getbylstname(std::string last_name);
-
-
       [[eosio::action]]
       std::vector<person> getbyaddress(
          std::string street, 
@@ -151,7 +147,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using get_action = eosio::action_wrapper<"get"_n, &kv_addr_book::get>;
       using get_by_cntry_pers_id_action = eosio::action_wrapper<"getbycntrpid"_n, &kv_addr_book::getbycntrpid>;
       using get_by_last_name_action = eosio::action_wrapper<"getbylastname"_n, &kv_addr_book::getbylastname>;
-      //using get_by_lst_name_action = eosio::action_wrapper<"getbylstname"_n, &kv_addr_book::getbylstname>;
       using get_buy_address_action = eosio::action_wrapper<"getbyaddress"_n, &kv_addr_book::getbyaddress>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_addr_book::upsert>;
       using del_action = eosio::action_wrapper<"del"_n, &kv_addr_book::del>;
