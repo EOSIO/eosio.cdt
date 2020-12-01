@@ -21,9 +21,9 @@ void kv_map::print_person(const person& person, bool new_line) {
 // we make use of index find function, which returns an iterator, 
 //    and then use iterator value
 [[eosio::action]]
-person kv_map::get(std::string map_id) {
+person kv_map::get(int id) {
 
-   auto itr = my_map.find(map_id);
+   auto itr = my_map.find(id);
 
    // check if person was found
    if (itr != my_map.end()) {
@@ -36,7 +36,7 @@ person kv_map::get(std::string map_id) {
       return person_found;
    }
    else {
-      eosio::print_f("Person with ID % not found.", map_id);
+      eosio::print_f("Person with ID % not found.", id);
       // return empty person from action
       return person{};
    }
@@ -45,7 +45,7 @@ person kv_map::get(std::string map_id) {
 // creates if not exists, or updates if already exists, a person
 [[eosio::action]]
 void kv_map::upsert(
-      std::string map_id,
+      int id,
       eosio::name account_name,
       std::string first_name,
       std::string last_name,
@@ -67,10 +67,10 @@ void kv_map::upsert(
       personal_id);
 
    // retreive the person by account name, if it doesn't exist we get an emtpy person
-   const person& existing_person = get(map_id);
+   const person& existing_person = get(id);
 
    // upsert into kv::map
-   my_map[map_id] = person_update;
+   my_map[id] = person_update;
 
    // print customized message for insert vs update
    if (existing_person.account_name.value == 0) {
@@ -78,16 +78,16 @@ void kv_map::upsert(
          person_update.first_name, person_update.last_name, person_update.personal_id);
    }
    else {
-      eosio::print_f("Person with ID % was successfully updated.", map_id);
+      eosio::print_f("Person with ID % was successfully updated.", id);
    }
 }
 
 // deletes a person based on primary key account_name
 [[eosio::action]]
-void kv_map::del(std::string map_id) {
+void kv_map::del(int id) {
 
    // search for person by primary key account_name
-   auto itr = my_map.find(map_id);
+   auto itr = my_map.find(id);
 
    // check if person was found
    if (itr != my_map.end()) {
@@ -95,12 +95,12 @@ void kv_map::del(std::string map_id) {
       const auto& person_found = itr->second();
 
       // delete it from kv::map
-      my_map.erase(map_id);
+      my_map.erase(id);
       eosio::print_f("Person (%, %, %) was successfully deleted.",
          person_found.first_name, person_found.last_name, person_found.personal_id);
    }
    else {
-      eosio::print_f("Person with ID % not found.", map_id);
+      eosio::print_f("Person with ID % not found.", id);
    }
 }
 
@@ -109,10 +109,16 @@ void kv_map::del(std::string map_id) {
 bool kv_map::checkpidcntr(std::string personal_id, std::string country) {
    
    for ( const auto& person_detail : my_map ) {
-      if (person_detail.second().country == country
-            && person_detail.second().personal_id == personal_id);
+      if (person_detail.second().country == country && 
+          person_detail.second().personal_id == personal_id) {
+         eosio::print_f("Person with personal id % and country % found in db with ID %d.",
+                        personal_id, 
+                        country, 
+                        person_detail.key);
          return true;
+      }
    }
+   eosio::print_f("Person with personal id % not found in country %.", personal_id, country);
    return false;
 }
 

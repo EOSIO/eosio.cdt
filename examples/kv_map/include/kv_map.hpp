@@ -56,7 +56,7 @@ struct person_factory {
 
 class [[eosio::contract]] kv_map : public eosio::contract {
 
-   using my_map_t = eosio::kv::map<"kvmap"_n, std::string, person>;
+   using my_map_t = eosio::kv::map<"kvmap"_n, int, person>;
 
    public:
       using contract::contract;
@@ -65,11 +65,11 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       // retrieves a person based on map key
       [[eosio::action]]
-      person get(std::string);
+      person get(int id);
 
       // creates if not exists, or updates if already exists, a person
       [[eosio::action]]
-      void upsert(std::string map_id,
+      void upsert(int id,
          eosio::name account_name,
          std::string first_name,
          std::string last_name,
@@ -81,7 +81,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       // deletes a person based on primary key account_name
       [[eosio::action]]
-      void del(std::string map_id);
+      void del(int id);
 
       // checks if a person exists with a given personal_id and country
       [[eosio::action]]
