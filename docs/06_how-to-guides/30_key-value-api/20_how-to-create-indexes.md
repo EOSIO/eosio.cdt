@@ -164,7 +164,7 @@ struct person {
 class [[eosio::contract]] smrtcontract : public contract {
     struct [[eosio::table]] address_table : eosio::kv::table<person, "kvaddrbook"_n> {
 
-     index<non_unique<name, string>> last_name_idx {
+     index<std::tuple<name, string>> last_name_idx {
         name{"persid"_n},
         &person::last_name};
 

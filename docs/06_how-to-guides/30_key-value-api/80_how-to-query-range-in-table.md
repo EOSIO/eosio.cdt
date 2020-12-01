@@ -47,7 +47,7 @@ class [[eosio::contract]] smrtcontract : public contract {
         name{"accname"_n},
         &person::account_name };
 
-     index<non_unique<name, string>> last_name_idx {
+     index<std::tuple<name, string>> last_name_idx {
         name{"lastname"_n},
         &person::last_name};
 
@@ -82,7 +82,7 @@ class [[eosio::contract]] smrtcontract : public contract {
         name{"accname"_n},
         &person::account_name };
 
-     index<non_unique<name, string>> last_name_idx {
+     index<std::tuple<name, string>> last_name_idx {
         name{"lastname"_n},
         &person::last_name};
 
