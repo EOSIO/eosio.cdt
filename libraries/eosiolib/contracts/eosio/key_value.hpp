@@ -395,7 +395,8 @@ namespace kv_detail {
 
       iterator_base(iterator_base&& other) :
          itr(std::exchange(other.itr, 0)),
-         itr_stat(std::move(other.itr_stat))
+         itr_stat(std::move(other.itr_stat)),
+         index(std::move(other.index))
       {}
 
       ~iterator_base() {
@@ -410,6 +411,7 @@ namespace kv_detail {
          }
          itr = std::exchange(other.itr, 0);
          itr_stat = std::move(other.itr_stat);
+         index = std::move(other.index);
          return *this;
       }
 
