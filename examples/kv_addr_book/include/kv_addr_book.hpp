@@ -1,6 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/table.hpp>
 
+
 using namespace eosio;
 using namespace std;
 
