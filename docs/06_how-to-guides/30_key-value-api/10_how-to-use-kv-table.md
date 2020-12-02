@@ -9,9 +9,6 @@ This how-to procedure demonstrates how to define and use a `Key-Value Table` (`k
 
 To accomplish this task, define the user type which will be stored in the `kv table`, and extend the `eosio::kv::table` template class with a specialized definition based on the user defined type.
 
-[[caution | Alpha version]]
-| `Key-Value Table` is designated as `alpha` and should not be used in production code.
-
 ## Prerequisites
 
 * The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.

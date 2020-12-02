@@ -5,10 +5,7 @@ link_text: "How-To Delete from Key-Value Table"
 
 ## Summary
 
-This how-to procedure provides instructions to delete an object from a `Key-Value Table` (`kv table`).
-
-[[caution | Alpha version]]
-| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+This how-to procedure provides instructions to delete an object from a `Key-Value Table` (`kv table’).
 
 Use the method `erase` defined by the `eosio::kv::table` type to accomplish this task.
 

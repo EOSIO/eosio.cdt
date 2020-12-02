@@ -7,10 +7,8 @@ link_text: "How-To Iterate Through Key-Value Table"
 
 This how-to procedure provides instructions to iterate through a `Key-Value Table` (`kv table`) and read values from it.
 
-[[caution | Alpha version]]
-| `Key-Value Table` is designated as `alpha` and should not be used in production code.
-
 Use the `iterator` defined by the `eosio::kv::table::index` class to accomplish this task.
+
 
 ## Prerequisites
 

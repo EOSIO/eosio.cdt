@@ -7,9 +7,6 @@ link_text: "How-To Find in Key-Value Table"
 
 This how-to procedure provides instructions to find a specific object in a `Key-Value Table` (`kv table`).
 
-[[caution | Alpha version]]
-| `Key-Value Table` is designated as `alpha` and should not be used in production code.
-
 Use the method  `find()` defined by the `eosio::kv::table::index` class to accomplish this task.
 
 ## Prerequisites
