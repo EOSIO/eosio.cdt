@@ -1,46 +1,30 @@
 #include <eosio/eosio.hpp>
 #include <eosio/table.hpp>
 
+
+using namespace eosio;
+using namespace std;
+
+using fullname_t = std::tuple<std::string, std::string, eosio::name>;
+using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
+using country_personal_id_t = std::pair<std::string, std::string>;
+
 // this structure defines the data stored in the kv::table
 struct person {
    eosio::name account_name;
-   std::tuple<eosio::name, std::string> first_name;
-   std::tuple<eosio::name, std::string> last_name;
-   std::tuple<eosio::name, std::string, std::string, std::string, std::string> street_city_state_cntry;
-   std::tuple<eosio::name, std::string> personal_id;
-   std::pair<std::string, std::string> country_personal_id;
+   std::string first_name;
+   std::string last_name;
+   std::string street;
+   std::string city;
+   std::string state; 
+   std::string country;
+   std::string personal_id;
 
-   eosio::name get_account_name() const {
-      return account_name;
-   }
-   std::string get_first_name() const {
-      // from the tuple we extract the value with key 1, the first name
-      return std::get<1>(first_name);
-   }
-   std::string get_last_name() const {
-      // from the tuple we extract the value with key 1, the last name
-      return std::get<1>(last_name);
-   }
-   std::string get_street() const {
-      // from the tuple we extract the value with key 1, the street
-      return std::get<1>(street_city_state_cntry);
-   }
-   std::string get_city() const {
-      // from the tuple we extract the value with key 2, the city
-      return std::get<2>(street_city_state_cntry);
-   }
-   std::string get_state() const {
-      // from the tuple we extract the value with key 3, the state
-      return std::get<3>(street_city_state_cntry);
-   }
-   std::string get_country() const {
-      // from the tuple we extract the value with key 4, the country
-      return std::get<4>(street_city_state_cntry);
-   }
-   std::string get_personal_id() const {
-      // from the tuple we extract the value with key 1, the personal id
-      return std::get<1>(personal_id);
-   }
+   // data members supporting the indexes built for this structure
+   fullname_t full_name_first_last;
+   fullname_t full_name_last_first;
+   address_t address;
+   country_personal_id_t country_personal_id;
 };
 
 // helper factory to easily build person objects
@@ -56,11 +40,17 @@ struct person_factory {
       std::string personal_id) {
          return person {
             .account_name = account_name,
-            .first_name = {account_name, first_name},
-            .last_name = {account_name, last_name},
-            .street_city_state_cntry = {account_name, street, city, state, country},
-            .personal_id = {account_name, personal_id},
-            .country_personal_id = {country, personal_id}
+            .first_name = first_name,
+            .last_name = last_name,
+            .street = street,
+            .city = city,
+            .state = state,
+            .country = country,
+            .personal_id = personal_id,
+            .full_name_first_last = {first_name, last_name, account_name},
+            .full_name_last_first = {last_name, first_name, account_name},
+            .address = {street, city, state, country, account_name},
+            .country_personal_id = {country, personal_id},
          };
       }
 };
@@ -73,43 +63,37 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       // 2. unique indexes for multiple properties of the kv::table parameter type
       //    are defined with the help of a pair or a tuple; a pair if the index has 
       //    two properties or a tuple in case of more than two
-      index<eosio::name> account_name_uidx {
-         eosio::name{"accname"_n},
+      index<name> account_name_uidx {
+         name{"accname"_n},
          &person::account_name };
-      index<std::pair<std::string, std::string>> country_personal_id_uidx {
-         eosio::name{"cntrypersid"_n},
+      index<country_personal_id_t> country_personal_id_uidx {
+         name{"cntrypersid"_n},
          &person::country_personal_id };
       
       // non-unique indexes definitions
       // 1. non unique indexes need to be defined for at least two properties, 
-      // 2. the first one needs to be a property that stores unique values, because 
+      // 2. first properties, besides the last, are the ones wanted to be indexed non-uniquely
+      // 3. the last one needs to be a property that stores unique values, because 
       //    under the hood every index (non-unique or unique) is stored as an unique 
-      //    index, and by providing as the first property one that has unique values
+      //    index, and by providing as the last property one that has unique values
       //    it ensures the uniques of the values combined (including non-unique ones)
-      // 3. the rest of the properties are the ones wanted to be indexed non-uniquely
-      index<std::tuple<eosio::name, std::string>> first_name_idx {
-         eosio::name{"firstname"_n},
-         &person::first_name};
-      index<std::tuple<eosio::name, std::string>> last_name_idx {
-         eosio::name{"lastname"_n},
-         &person::last_name};
-      index<std::tuple<eosio::name, std::string>> personal_id_idx {
-         eosio::name{"persid"_n},
-         &person::personal_id};
-      // non-unique index defined using the KV_NAMED_INDEX macro
-      // note: you can not name your index like you were able to do before (ending in `_idx`),
-      // instead when using the macro you have to pass the name of the data member which 
-      // is indexed and that will give the name of the index as well
-      KV_NAMED_INDEX("address"_n, street_city_state_cntry)
+      index<fullname_t> full_name_first_last_idx {
+         name{"frstnameidx"_n},
+         &person::full_name_first_last};
+      index<fullname_t> full_name_last_first_idx {
+         name{"lastnameidx"_n},
+         &person::full_name_last_first};
+      index<address_t> address_idx {
+         name{"addressidx"_n},
+         &person::address};
 
       address_table(eosio::name contract_name) {
          init(contract_name,
             account_name_uidx,
             country_personal_id_uidx,
-            first_name_idx,
-            last_name_idx,
-            personal_id_idx,
-            street_city_state_cntry);
+            full_name_first_last_idx,
+            full_name_last_first_idx,
+            address_idx);
       }
    };
 
@@ -130,7 +114,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       [[eosio::action]]
       std::vector<person> getbylastname(std::string last_name);
 
-      // retrieves list of persons with the same address
       [[eosio::action]]
       std::vector<person> getbyaddress(
          std::string street, 
@@ -172,6 +155,6 @@ class [[eosio::contract]] kv_addr_book : public eosio::contract {
       using iterate_action = eosio::action_wrapper<"iterate"_n, &kv_addr_book::iterate>;
 
    private:
-      void print_person(const person& person);
+      void print_person(const person& person, bool new_line = true);
       address_table addresses{"kvaddrbook"_n};
 };
