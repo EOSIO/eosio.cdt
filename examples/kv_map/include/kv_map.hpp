@@ -53,7 +53,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       [[eosio::action]]
       person get(int id);
 
-      // creates if not exists, or updates if already exists, a person
+      // inserts if not exists, or updates if already exists, a person
       [[eosio::action]]
       void upsert(int id,
          eosio::name account_name,

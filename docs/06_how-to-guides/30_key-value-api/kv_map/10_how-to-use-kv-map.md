@@ -24,11 +24,6 @@ struct person {
   eosio::name account_name;
   std::string first_name;
   std::string last_name;
-  std::string street;
-  std::string city;
-  std::string state;
-  std::string country;
-  std::string personal_id;
 };
 
 class [[eosio::contract]] smartcontract : public eosio::contract {

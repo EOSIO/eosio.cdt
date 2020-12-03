@@ -42,7 +42,7 @@ person kv_map::get(int id) {
    }
 }
 
-// creates if not exists, or updates if already exists, a person
+// inserts if not exists, or updates if already exists, a person
 [[eosio::action]]
 void kv_map::upsert(
       int id,
@@ -66,7 +66,7 @@ void kv_map::upsert(
       country,
       personal_id);
 
-   // retreive the person by account name, if it doesn't exist we get an emtpy person
+   // retrieve the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(id);
 
    // upsert into kv::map
