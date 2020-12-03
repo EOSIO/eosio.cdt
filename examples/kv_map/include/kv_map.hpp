@@ -4,10 +4,6 @@
 using namespace eosio;
 using namespace std;
 
-using fullname_t = std::tuple<std::string, std::string, eosio::name>;
-using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
-using country_personal_id_t = std::pair<std::string, std::string>;
-
 // this structure defines the data stored in the kv::map
 struct person {
    eosio::name account_name;
@@ -18,12 +14,6 @@ struct person {
    std::string state; 
    std::string country;
    std::string personal_id;
-
-   // data members supporting the indexes built for this structure
-   fullname_t full_name_first_last;
-   fullname_t full_name_last_first;
-   address_t address;
-   country_personal_id_t country_personal_id;
 };
 
 // helper factory to easily build person objects
@@ -45,11 +35,7 @@ struct person_factory {
             .city = city,
             .state = state,
             .country = country,
-            .personal_id = personal_id,
-            .full_name_first_last = {first_name, last_name, account_name},
-            .full_name_last_first = {last_name, first_name, account_name},
-            .address = {street, city, state, country, account_name},
-            .country_personal_id = {country, personal_id},
+            .personal_id = personal_id
          };
       }
 };
