@@ -220,7 +220,18 @@ namespace eosio {
     *  @ingroup privileged
     *  @param params - New kv parameters to set
     */
-   void set_kv_parameters(const eosio::kv_parameters& params);
+   inline void set_kv_parameters(const eosio::kv_parameters& params) {
+      // set_kv_parameters_packed expects version, max_key_size,
+      // max_value_size, and max_iterators,
+      // while kv_parameters only contains max_key_size, max_value_size,
+      // and max_iterators. That's why we place uint32_t in front
+      // of kv_parameters in buf
+      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      ds << uint32_t(0);  // fill in version
+      ds << params;
+      internal_use_do_not_use::set_kv_parameters_packed( buf, ds.tellp() );
+   }
 
     /**
     *  Get the resource limits of an account
