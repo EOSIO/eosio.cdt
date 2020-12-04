@@ -40,7 +40,9 @@ person kv_map::get(int id) {
    }
 }
 
-// inserts a person if not exists, or updates it if already exists
+// inserts a person if not exists, or updates it if already exists.
+// the payer for the resources consumed is the account that created the kv::map
+// object in the first place, the account that owns this smart contract.
 [[eosio::action]]
 void kv_map::upsert(
       int id,
@@ -53,7 +55,6 @@ void kv_map::upsert(
       std::string country,
       std::string personal_id) {
 
-   // create the person object which will be stored in kv::map
    const person& person_update = person_factory::get_person(
       account_name,
       first_name,
@@ -67,8 +68,48 @@ void kv_map::upsert(
    // retrieve the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(id);
 
-   // upsert into kv::map
+   // upsert into kv::map, the payer is the account owning the kv::map, owning the smart contract
    my_map[id] = person_update;
+
+   // print customized message for insert vs update
+   if (existing_person.account_name.value == 0) {
+      eosio::print_f("Person (%, %, %) was successfully added.",
+         person_update.first_name, person_update.last_name, person_update.personal_id);
+   }
+   else {
+      eosio::print_f("Person with ID % was successfully updated.", id);
+   }
+}
+
+// inserts a person if not exists, or updates it if already exists.
+// the payer is the account_name, specified as input parameter.
+[[eosio::action]]
+void kv_map::upsertwpayer(
+      int id,
+      eosio::name account_name,
+      std::string first_name,
+      std::string last_name,
+      std::string street,
+      std::string city,
+      std::string state, 
+      std::string country,
+      std::string personal_id) {
+
+   const person& person_update = person_factory::get_person(
+      account_name,
+      first_name,
+      last_name,
+      street,
+      city,
+      state, 
+      country,
+      personal_id);
+
+   // retrieve the person by account name, if it doesn't exist we get an emtpy person
+   const person& existing_person = get(id);
+
+   // upsert into kv::map and set the payer to be the account_name
+   my_map[std::pair<int, eosio::name>(id, account_name)] = person_update;
 
    // print customized message for insert vs update
    if (existing_person.account_name.value == 0) {

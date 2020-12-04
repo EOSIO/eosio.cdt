@@ -49,13 +49,28 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       kv_map(eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds)
          : contract(receiver, code, ds) {}
 
-      // retrieves a person based on map key
+      // retrieves a person based on map key.
       [[eosio::action]]
       person get(int id);
 
-      // inserts a person if not exists, or updates it if already exists
+      // inserts a person if not exists, or updates it if already exists.
+      // the payer for the resources consumed is the account that created the kv::map
+      // object in the first place, the account that owns this smart contract.
       [[eosio::action]]
       void upsert(int id,
+         eosio::name account_name,
+         std::string first_name,
+         std::string last_name,
+         std::string street,
+         std::string city,
+         std::string state, 
+         std::string country,
+         std::string personal_id);
+
+      // inserts a person if not exists, or updates it if already exists.
+      // the payer is the account_name, specified as input parameter.
+      [[eosio::action]]
+      void upsertwpayer(int id,
          eosio::name account_name,
          std::string first_name,
          std::string last_name,
@@ -85,6 +100,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       using get_action = eosio::action_wrapper<"get"_n, &kv_map::get>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_map::upsert>;
+      using upsertwpayer_action = eosio::action_wrapper<"upsertwpayer"_n, &kv_map::upsertwpayer>;
       using del_action = eosio::action_wrapper<"del"_n, &kv_map::del>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_map::checkpidcntr>;
       using witerate_action = eosio::action_wrapper<"witerate"_n, &kv_map::witerate>;
