@@ -65,7 +65,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
          std::string country,
          std::string personal_id);
 
-      // deletes a person based on primary key account_name
+      // deletes a person based on unique key
       [[eosio::action]]
       void del(int id);
 

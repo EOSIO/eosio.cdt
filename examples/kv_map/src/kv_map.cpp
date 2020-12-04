@@ -82,17 +82,17 @@ void kv_map::upsert(
    }
 }
 
-// deletes a person based on primary key account_name
+// deletes a person based on unique key
 [[eosio::action]]
 void kv_map::del(int id) {
 
-   // search for person by primary key account_name
+   // search for person by unique key
    auto itr = my_map.find(id);
 
    // check if person was found
    if (itr != my_map.end()) {
       // extract person from iterator and delete it
-      const auto& person_found = itr->second();
+      const auto person_found = itr->second();
 
       // delete it from kv::map
       my_map.erase(id);
