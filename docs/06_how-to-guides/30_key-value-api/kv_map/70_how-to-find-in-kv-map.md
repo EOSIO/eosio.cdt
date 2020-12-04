@@ -1,11 +1,11 @@
 ---
-content_title: How-To Delete from Key-Value Map
-link_text: "How-To Delete from Key-Value Map"
+content_title: How-To Find in Key-Value Map
+link_text: "How-To Find in Key-Value Map"
 ---
 
 ## Summary
 
-This how-to procedure provides instructions to delete from `Key-Value Map` (`kv map`) based on the unique key.
+This how-to procedure provides instructions to find an object in `Key-Value Map` (`kv map`) based on the unique key.
 
 ## Prerequisites
 
@@ -43,14 +43,12 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 ## Procedure
 
-Complete the following steps to delete a `person` object with a given ID from the `kv map`, and print an informative message otherwise:
+Complete the following steps to find a `person` object with a given ID:
 
 1. Create a new action in your contract, named `delete`, which takes as input parameters the person ID.
-2. Use the `find()` function defined for the `kv::map` type, with the give ID as parameter, to find the `person` which is to be deleted.
-3. If the `person` with the give ID is found use the `erase()` function defined for the `kv::map`, with the given ID as parameter, to erase the person object from the map.
-4. If the `person` with the given ID is not found print an informative error message.
+2. Use the `find()` function defined for the `kv::map` type, with the give ID as parameter, to find the `person` with the given ID as unique key.
 
-Refer to the following possible implementation to delete a `person` object from the `kv map`:
+Refer to the following possible implementation to find `person` object with a given ID as unique key:
 
 `smartcontract.hpp file`
 
@@ -70,9 +68,9 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
       smartcontract(eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds)
          : contract(receiver, code, ds) {}
 
-      // deletes a person based on unique id
+      // finds a person based on unique id
       [[eosio::action]]
-      void del(int id);
+      void find(int id);
 
    private:
       my_map_t my_map{};
@@ -82,11 +80,10 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 `smartcontract.cpp file`
 
 ```cpp
-// deletes a person based on unique id
+// finds a person based on unique id
 [[eosio::action]]
-void kv_map::delete(int id) {
+void kv_map::find(int id) {
 
-   // search for person based on unique id
    auto itr = my_map.find(id);
 
    // check if person was found
@@ -94,13 +91,16 @@ void kv_map::delete(int id) {
       // extract person from iterator and delete it
       const auto person_found = itr->second();
 
-      // delete it from kv::map
-      my_map.erase(id);
-      eosio::print_f("Person (%, %, %) was successfully deleted.",
-         person_found.first_name, person_found.last_name, person_found.personal_id);
+      eosio::print_f("Person with unique ID=% was found: %, %, %.",
+         id, person_found.first_name, person_found.last_name, person_found.personal_id);
    }
    else {
       eosio::print_f("Person with ID % not found.", id);
    }
 }
 ```
+
+The following options are available when you complete the procedure:
+
+* Update the `person` found.
+* Delete the `person` found.
