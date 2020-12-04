@@ -14,7 +14,7 @@ Before you begin, complete the following prerequisites:
 * An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
-* A `kv map` object which stores objects of type `person`, with unique keys of type `int`.
+* A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
 Refer to the following possible implementation of your starting point.
 

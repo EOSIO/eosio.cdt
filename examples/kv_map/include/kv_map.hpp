@@ -73,12 +73,12 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       [[eosio::action]]
       bool checkpidcntr(std::string personal_id, std::string country);
 
-      // iterates over the first iterations_count persons in the table 
+      // iterates over the first iterations_count persons in the table using for loop
       // and prints their first and last names
       [[eosio::action]]
       void fiterate(int iterations_count);
 
-      // iterates over the first iterations_count persons in the table 
+      // iterates over the first iterations_count persons in the table using while loop
       // and prints their first and last names
       [[eosio::action]]
       void witerate(int iterations_count);

@@ -148,10 +148,10 @@ void kv_map::fiterate(int iterations_count) {
 
    int current_iteration = 0;
    for ( const auto& person_detail : my_map ) {
-      if (++ current_iteration < iterations_count) {
+      if (current_iteration ++ < iterations_count) {
          eosio::print_f(
             "Person %: {%, %}. ",
-            current_iteration + 1,
+            current_iteration,
             person_detail.second().first_name,
             person_detail.second().last_name);
       }
