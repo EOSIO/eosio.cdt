@@ -120,10 +120,10 @@ bool kv_map::checkpidcntr(std::string personal_id, std::string country) {
    return false;
 }
 
-// iterates over the first iterations_count persons 
+// iterates over the first iterations_count persons using while loop
 // and prints their first and last names
 [[eosio::action]]
-void kv_map::iterate(int iterations_count) {
+void kv_map::witerate(int iterations_count) {
 
    auto begin_itr = my_map.begin();
    auto end_itr = my_map.end();
@@ -138,5 +138,25 @@ void kv_map::iterate(int iterations_count) {
 
       ++ begin_itr;
       ++ current_iteration;
+   }
+}
+
+// iterates over the first iterations_count persons using for loop
+// and prints their first and last names
+[[eosio::action]]
+void kv_map::fiterate(int iterations_count) {
+
+   int current_iteration = 0;
+   for ( const auto& person_detail : my_map ) {
+      if (++ current_iteration < iterations_count) {
+         eosio::print_f(
+            "Person %: {%, %}. ",
+            current_iteration + 1,
+            person_detail.second().first_name,
+            person_detail.second().last_name);
+      }
+      else {
+         break;
+      }
    }
 }

@@ -76,13 +76,19 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       // iterates over the first iterations_count persons in the table 
       // and prints their first and last names
       [[eosio::action]]
-      void iterate(int iterations_count);
+      void fiterate(int iterations_count);
+
+      // iterates over the first iterations_count persons in the table 
+      // and prints their first and last names
+      [[eosio::action]]
+      void witerate(int iterations_count);
 
       using get_action = eosio::action_wrapper<"get"_n, &kv_map::get>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_map::upsert>;
       using del_action = eosio::action_wrapper<"del"_n, &kv_map::del>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_map::checkpidcntr>;
-      using iterate_action = eosio::action_wrapper<"iterate"_n, &kv_map::iterate>;
+      using witerate_action = eosio::action_wrapper<"witerate"_n, &kv_map::witerate>;
+      using fiterate_action = eosio::action_wrapper<"fiterate"_n, &kv_map::fiterate>;
 
    private:
       void print_person(const person& person, bool new_line = true);
