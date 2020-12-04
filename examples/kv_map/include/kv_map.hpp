@@ -53,7 +53,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       [[eosio::action]]
       person get(int id);
 
-      // inserts if not exists, or updates if already exists, a person
+      // inserts a person if not exists, or updates it if already exists
       [[eosio::action]]
       void upsert(int id,
          eosio::name account_name,
@@ -65,7 +65,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
          std::string country,
          std::string personal_id);
 
-      // deletes a person based on unique key
+      // deletes a person based on unique id
       [[eosio::action]]
       void del(int id);
 

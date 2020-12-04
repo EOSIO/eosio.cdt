@@ -17,9 +17,7 @@ void kv_map::print_person(const person& person, bool new_line) {
       person.personal_id);
 }
 
-// retrieves a person based on primary key account_name
-// we make use of index find function, which returns an iterator, 
-//    and then use iterator value
+// retrieves a person based on unique id
 [[eosio::action]]
 person kv_map::get(int id) {
 
@@ -42,7 +40,7 @@ person kv_map::get(int id) {
    }
 }
 
-// inserts if not exists, or updates if already exists, a person
+// inserts a person if not exists, or updates it if already exists
 [[eosio::action]]
 void kv_map::upsert(
       int id,
@@ -82,11 +80,11 @@ void kv_map::upsert(
    }
 }
 
-// deletes a person based on unique key
+// deletes a person based on unique id
 [[eosio::action]]
 void kv_map::del(int id) {
 
-   // search for person by unique key
+   // search for person by unique id
    auto itr = my_map.find(id);
 
    // check if person was found
