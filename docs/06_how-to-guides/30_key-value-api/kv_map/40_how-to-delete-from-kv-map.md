@@ -15,7 +15,6 @@ Before you begin, complete the following prerequisites:
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object which stores objects of type `person`, with unique keys of type `int`.
-* A `person` object with key value 1, of type integer, is stored in the `kv map` object.
 
 Refer to the following possible implementation of your starting point.
 
@@ -44,13 +43,14 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 ## Procedure
 
-Complete the following steps to insert a new `person` object with a given ID, if it doesn't exist already, or update it in the `kv map` if the `person` with the given ID already exists:
+Complete the following steps to delete a `person` object with a given ID from the `kv map`, and print an informative message otherwise:
 
-1. Create a new action in your contract, named `upsert`, which takes as input parameters the person ID, an account name, a first name and a last name.
-2. Create an instance of the `person` class, named `person_upsert`, based on the input parameters: `account_name`, `first_name` and `last_name`.
-3. Use the `[]` operator defined for the `kv::map` type, and set the newly created `person_upsert` object as the value for the `ID` key.
+1. Create a new action in your contract, named `delete`, which takes as input parameters the person ID, which is a `kv map` unique key value.
+2. Use the `find()` function defined for the `kv::map` type, with the give ID as parameter, to find the `person` which is to be deleted.
+3. If the `person` with the give ID is found use the `erase()` function defined for the `kv::map`, with the given ID as parameter, to erase the person object from the map.
+4. If the `person` with the given ID is not found print an informative error message.
 
-Refer to the following possible implementation to insert a new `person` object, and then update it, in the `kv map`:
+Refer to the following possible implementation to delete a `person` object from the `kv map`:
 
 `smartcontract.hpp file`
 
@@ -70,9 +70,9 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
       smartcontract(eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds)
          : contract(receiver, code, ds) {}
 
-      // inserts if not exists, or updates if already exists, a person
+      // deletes a person based on unique key
       [[eosio::action]]
-      void delete(int id);
+      void del(int id);
 
    private:
       my_map_t my_map{};
