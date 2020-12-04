@@ -55,7 +55,7 @@ void kv_map::upsert(
       std::string country,
       std::string personal_id) {
 
-   const person& person_update = person_factory::get_person(
+   const person& person_upsert = person_factory::get_person(
       account_name,
       first_name,
       last_name,
@@ -69,12 +69,12 @@ void kv_map::upsert(
    const person& existing_person = get(id);
 
    // upsert into kv::map, the payer is the account owning the kv::map, owning the smart contract
-   my_map[id] = person_update;
+   my_map[id] = person_upsert;
 
    // print customized message for insert vs update
    if (existing_person.account_name.value == 0) {
       eosio::print_f("Person (%, %, %) was successfully added.",
-         person_update.first_name, person_update.last_name, person_update.personal_id);
+         person_upsert.first_name, person_upsert.last_name, person_upsert.personal_id);
    }
    else {
       eosio::print_f("Person with ID % was successfully updated.", id);
@@ -95,7 +95,7 @@ void kv_map::upsertwpayer(
       std::string country,
       std::string personal_id) {
 
-   const person& person_update = person_factory::get_person(
+   const person& person_upsert = person_factory::get_person(
       account_name,
       first_name,
       last_name,
@@ -109,12 +109,12 @@ void kv_map::upsertwpayer(
    const person& existing_person = get(id);
 
    // upsert into kv::map and set the payer to be the account_name
-   my_map[std::pair<int, eosio::name>(id, account_name)] = person_update;
+   my_map[std::pair<int, eosio::name>(id, account_name)] = person_upsert;
 
    // print customized message for insert vs update
    if (existing_person.account_name.value == 0) {
       eosio::print_f("Person (%, %, %) was successfully added.",
-         person_update.first_name, person_update.last_name, person_update.personal_id);
+         person_upsert.first_name, person_upsert.last_name, person_upsert.personal_id);
    }
    else {
       eosio::print_f("Person with ID % was successfully updated.", id);
@@ -123,7 +123,7 @@ void kv_map::upsertwpayer(
 
 // deletes a person based on unique id
 [[eosio::action]]
-void kv_map::del(int id) {
+void kv_map::erase(int id) {
 
    // search for person by unique id
    auto itr = my_map.find(id);
@@ -143,7 +143,7 @@ void kv_map::del(int id) {
    }
 }
 
-// checks if a person exists with a given personal_id and country
+// checks if a person exists with a given personal_id and country.
 [[eosio::action]]
 bool kv_map::checkpidcntr(std::string personal_id, std::string country) {
    
@@ -161,8 +161,8 @@ bool kv_map::checkpidcntr(std::string personal_id, std::string country) {
    return false;
 }
 
-// iterates over the first iterations_count persons using while loop
-// and prints their first and last names
+// iterates over the first iterations_count persons using while loop,
+// and prints their first and last names.
 [[eosio::action]]
 void kv_map::witerate(int iterations_count) {
 
@@ -182,8 +182,8 @@ void kv_map::witerate(int iterations_count) {
    }
 }
 
-// iterates over the first iterations_count persons using for loop
-// and prints their first and last names
+// iterates over the first iterations_count persons using for loop,
+// and prints their first and last names.
 [[eosio::action]]
 void kv_map::fiterate(int iterations_count) {
 
@@ -196,8 +196,6 @@ void kv_map::fiterate(int iterations_count) {
             person_detail.second().first_name,
             person_detail.second().last_name);
       }
-      else {
-         break;
-      }
+      else break;
    }
 }

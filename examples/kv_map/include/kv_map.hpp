@@ -82,7 +82,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       // deletes a person based on unique id
       [[eosio::action]]
-      void del(int id);
+      void erase(int id);
 
       // checks if a person exists with a given personal_id and country
       [[eosio::action]]
@@ -101,7 +101,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       using get_action = eosio::action_wrapper<"get"_n, &kv_map::get>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_map::upsert>;
       using upsertwpayer_action = eosio::action_wrapper<"upsertwpayer"_n, &kv_map::upsertwpayer>;
-      using del_action = eosio::action_wrapper<"del"_n, &kv_map::del>;
+      using erase_action = eosio::action_wrapper<"erase"_n, &kv_map::erase>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_map::checkpidcntr>;
       using witerate_action = eosio::action_wrapper<"witerate"_n, &kv_map::witerate>;
       using fiterate_action = eosio::action_wrapper<"fiterate"_n, &kv_map::fiterate>;

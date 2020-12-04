@@ -1,13 +1,11 @@
 ---
-content_title: How-To Upsert Into Key-Value Map
-link_text: "How-To Upsert Into Key-Value Map"
+content_title: How-To Allow Users to Pay for Key-Value Map Resources
+link_text: "How-To Allow Users to Pay for Key-Value Map Resources"
 ---
 
 ## Summary
 
-This how-to procedure provides instructions to upsert into `Key-Value Map` (`kv map`). Upsert means insert when the item doesn't already exist, and update the item if it already exists in the map.
-
-## Prerequisites
+This how-to procedure provides instructions to allow users to pay for the resources needed to store data in a `Key-Value Map` (`kv map`).
 
 Before you begin, complete the following prerequisites:
 
@@ -43,11 +41,11 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 ## Procedure
 
-Complete the following steps to insert a new `person` object with a given ID, if it doesn't exist already, or update it in the `kv map` if the `person` with the given ID already exists:
+Complete the following steps to allow the payer for the resources needed to store the `person` object in the `my_map` object, to be the person account which is stored.
 
 1. Create a new action in your contract, named `upsert`, which takes as input parameters the person `id`, an `account_name`, a `first_name` and a `last_name`.
 2. Create an instance of the `person` class, named `person_upsert`, based on the input parameters: `account_name`, `first_name` and `last_name`.
-3. Use the `[]` operator defined for the `kv::map` type, and set the newly created `person_upsert` object as the value for the `id` key.
+3. Use the `[]` operator defined for the `kv::map` type. Pass as the input parameter for the `[]` operator an `std::pair<int, person>` instance with its first parameter the unique `id` and the second parameter the account which is paying for the resources `account_name`.
 
 Refer to the following possible implementation to insert a new `person` object, and then update it, in the `kv map`:
 
@@ -70,8 +68,7 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
          : contract(receiver, code, ds) {}
 
       // inserts a person if not exists, or updates it if already exists.
-      // the payer for the resources consumed is the account that created the kv::map
-      // object in the first place, the account that owns this smart contract.
+      // the payer is the account_name, specified as input parameter.
       [[eosio::action]]
       void upsert(int id,
          eosio::name account_name,
@@ -100,8 +97,8 @@ void smartcontract::upsert(
       first_name = first_name,
       last_name = last_name};
 
-   // upsert into kv::map
-   my_map[id] = person_upsert;
+   // upsert into kv::map and set the payer to be the account_name
+   my_map[std::pair<int, eosio::name>(id, account_name)] = person_upsert;
 }
 ```
 
