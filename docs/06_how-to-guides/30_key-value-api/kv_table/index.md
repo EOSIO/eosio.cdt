@@ -36,7 +36,7 @@ The main operations provided by the KV API are the following:
 * Retrieve a range of objects from the `KV Table` instance
 * Iterate through the objects store in the `KV Table` instance
 
-Consult the [KV Table Reference](../../classeosio_1_1kv_1_1table/#class-eosiokvtable) and the `KV Table How-To`s listed below for details.
+Consult the [KV Table Reference](../../../classeosio_1_1kv_1_1table/#class-eosiokvtable) and the `KV Table How-To`s listed below for details.
 
 * [How To Use KV Table](./10_how-to-use-kv-table.md)
 * [How To Create Indexes](./20_how-to-create-indexes-kv-table.md)
