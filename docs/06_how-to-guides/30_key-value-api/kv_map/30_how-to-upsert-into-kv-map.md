@@ -5,15 +5,15 @@ link_text: "How-To Upsert Into Key-Value Map"
 
 ## Summary
 
-This how-to procedure provides instructions to upsert into `Key-Value Map` (`kv map`).
+This how-to procedure provides instructions to upsert into `Key-Value Map` (`kv map`). Upsert means insert when the item doesn't already exist, and update the item if it already exists in the map.
 
 ## Prerequisites
 
 Before you begin, complete the following prerequisites:
 
 * An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
-* A smart contract, let’s call it `smrtcontract`
-* A user defined type, let’s call it `person`, which defines the data which is stored in the map
+* A smart contract named `smrtcontract`
+* A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object which stores objects of type `person`, with unique keys of type `int`.
 
 Refer to the following possible implementation of your starting point.
@@ -45,9 +45,9 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 Complete the following steps to insert a new `person` object with a given ID, if it doesn't exist already, or update it in the `kv map` if the `person` with the given ID already exists:
 
-1. Create a new action in your contact, let’s call it `upsert`, which takes as input parameters the person ID, an account name, a first name and a last name.
-2. Create an instance of the `person` class, named `person_upsert`, based on the input parameters: account name, first name and last name.
-3. Use the `[]` operator defined for the `kv::map` type, and set the `person_upsert` as the value for the `ID` key.
+1. Create a new action in your contract, named `upsert`, which takes as input parameters the person ID, an account name, a first name and a last name.
+2. Create an instance of the `person` class, named `person_upsert`, based on the input parameters: `account_name`, `first_name` and `last_name`.
+3. Use the `[]` operator defined for the `kv::map` type, and set the newly created `person_upsert` object as the value for the `ID` key.
 
 Refer to the following possible implementation to insert a new `person` object, and then update it, in the `kv map`:
 

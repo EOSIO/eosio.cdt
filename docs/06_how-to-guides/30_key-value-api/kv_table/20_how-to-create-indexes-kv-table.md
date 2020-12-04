@@ -22,9 +22,9 @@ The  `KV_NAMED_INDEX` macro and the `eosio::kv::table::index` template class are
 Before you begin, complete the following prerequisites:
 
 * An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
-* A smart contract, let’s call it `smrtcontract`
-* A user defined type which defines the data stored in the table, let’s call it `person`
-* A `kv table` type which stores objects of type `person`, let’s call it `address_table`
+* A smart contract named `smrtcontract`
+* A user defined type which defines the data stored in the table, named `person`
+* A `kv table` type which stores objects of type `person`, named `address_table`
 * Each `person` object has the following properties:
   * `account_name`,
   * `first_name`,

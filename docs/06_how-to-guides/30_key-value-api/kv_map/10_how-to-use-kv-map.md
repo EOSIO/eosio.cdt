@@ -12,8 +12,8 @@ To accomplish this task use `eosio::kv::map` template class, specify the name fo
 ## Prerequisites
 
 * The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract, let’s call it `smrtcontract`.
-* A user defined type, let’s call it `person`, which defines the data which is stored in the map.
+* A smart contract named `smrtcontract`.
+* A user defined type named `person`, which defines the data stored in the map.
 
 Refer to the following possible implementation of your starting point.
 

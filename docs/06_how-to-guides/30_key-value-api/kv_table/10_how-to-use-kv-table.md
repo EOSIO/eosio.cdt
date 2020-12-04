@@ -15,8 +15,8 @@ To accomplish this task, define the user type which will be stored in the `kv ta
 ## Prerequisites
 
 * The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract, let’s call it `smrtcontract`.
-* A user defined type, let’s call it `person`, which defines the data which is stored in the table.
+* A smart contract named `smrtcontract`.
+* A user defined type named `person`, which defines the data stored in the table.
 
 Refer to the following possible implementation of your starting point.
 
