@@ -298,7 +298,7 @@ namespace eosio::kv {
 
          inline bool operator!=(const iterator& o) const { return !((*this) == o); }
 
-         void materialize() {
+         void materialize() const {
             using namespace internal_use_do_not_use;
             uint32_t sz;
             itr_key(handle, nullptr, 0, sz);
@@ -312,9 +312,9 @@ namespace eosio::kv {
             unpack<value_t>(element.value, val_bytes.data(), val_bytes.size());
          }
 
-         elem_t   element;
-         uint32_t handle;
-         status   current_status = status::ok;
+         mutable elem_t element;
+         uint32_t       handle;
+         status         current_status = status::ok;
       };
    } // namespace eosio::kv::detail
 /* @endcond */
