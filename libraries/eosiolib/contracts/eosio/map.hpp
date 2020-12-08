@@ -431,7 +431,8 @@ namespace eosio::kv {
          }
 
          inline bool empty() const {
-            auto it = lower_bound("");
+            iterator_t it = {owner};
+            it.lower_bound(key_type{""});
             return it == end();
          }
 
@@ -498,6 +499,19 @@ namespace eosio::kv {
 
          friend iterator_t;
 
+         static detail::packed_view get_tmp_buffer(std::size_t size_needed=0) {
+            constexpr std::size_t max_size = 512;
+            static char static_data[max_size];
+            static std::vector<char> dynamic_data = {0};
+            if (size_needed > max_size) {
+               if (dynamic_data.size() < size_needed)
+                  dynamic_data.resize(size_needed);
+               return {dynamic_data.data(), size_needed};
+            } else {
+               return {&static_data[0], size_needed};
+            }
+         }
+
       protected:
          constexpr static inline name index_name = name{IndexName};
 
@@ -534,19 +548,6 @@ namespace eosio::kv {
             return set(full_key(k), v, payer, packed_tag{});
          }
 
-         static detail::packed_view get_tmp_buffer(std::size_t size_needed=0) {
-            constexpr std::size_t max_size = 512;
-            static char static_data[max_size];
-            static std::vector<char> dynamic_data = {0};
-            if (size_needed > max_size) {
-               if (dynamic_data.size() < size_needed)
-                  dynamic_data.resize(size_needed);
-               return {dynamic_data.data(), size_needed};
-            } else {
-               return {&static_data[0], size_needed};
-            }
-         }
-
          template <typename Value>
          inline detail::packed_view pack_value(Value&& v) const {
             auto pv = get_tmp_buffer(pack_size(v));
@@ -558,6 +559,8 @@ namespace eosio::kv {
       private:
          name    owner = current_context_contract();
          value_t temp; // used for
+
+         CDT_REFLECT(owner, temp);
    };
 
 } // namespace eosio::kv

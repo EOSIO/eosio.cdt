@@ -14,6 +14,7 @@ public:
    using testmap_t = eosio::kv::map<"testmap"_n, int, float>;
    using testmap2_t = eosio::kv::map<"testmap2"_n, std::string, std::string>;
    using testmap3_t = eosio::kv::map<"testmap3"_n, int, float>;
+   using testmap4_t = eosio::kv::map<"testmap4"_n, int, float>;
 
    [[eosio::action]]
    void test() {
@@ -138,4 +139,45 @@ public:
       eosio::check((float)vec[1].second() == 100.100f, "should contain 100.100");
       eosio::check((float)vec[2].second() == 9.9f, "should contain 9.9");
    }
+
+   [[eosio::action]]
+   void empty() {
+      testmap3_t t = {{33, 10}, {10, 41.2f}, {11, 100.100f}, {2, 17.42f}};
+
+      eosio::check(!t.empty(), "t shouldn't be empty");
+
+      testmap4_t t2 = {{10, 10}, {13, 13}};
+
+      eosio::check(!t2.empty(), "t2 shouln't be empty");
+
+      t2.erase(10);
+      t2.erase(13);
+
+      eosio::check(t2.empty(), "t2 should now be empty");
+   }
+
+   [[eosio::action]]
+   void gettmpbuf() {
+      testmap3_t t = {{33, 10}, {10, 41.2f}, {11, 100.100f}, {2, 17.42f}};
+
+      auto buff = t.get_tmp_buffer(34); // ensure this interface doesn't regress
+
+      auto iter = t.lower_bound(11);
+
+      eosio::check(iter->value == 100.100f, "should be equal and not fail to compile");
+   }
+
+   [[eosio::action]]
+   void constrct() {
+      using map_t = eosio::kv::map<"map"_n, float, eosio::time_point>;
+      map_t m = {{13.3f, eosio::time_point{}}};
+
+      m[13.3f] = eosio::time_point{eosio::microseconds{(int64_t)13}};
+
+      auto iter = m.find(13.3f);
+      auto val = iter->second();
+      auto expected = eosio::time_point{eosio::microseconds{(int64_t)13}};
+      eosio::check(val == expected, "should be equal and not fail to compile");
+   }
+
 };
