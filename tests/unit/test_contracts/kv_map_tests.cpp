@@ -178,6 +178,9 @@ public:
       auto val = iter->second();
       auto expected = eosio::time_point{eosio::microseconds{(int64_t)13}};
       eosio::check(val == expected, "should be equal and not fail to compile");
+
+      auto iter2 = m.find(10);
+      eosio::check(iter2 != m.end(), "shouldn't be found");
    }
 
 };

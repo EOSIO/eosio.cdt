@@ -13,7 +13,7 @@
 #include <cstring>
 
 #include "datastream.hpp"
-#include <bluegrass/meta/refl.hpp>
+#include "reflect.hpp"
 
 namespace eosio {
 
