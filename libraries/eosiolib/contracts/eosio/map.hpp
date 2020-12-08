@@ -333,7 +333,7 @@ namespace eosio::kv {
          using self_t  = map<TableName, K, V>;
 
          static const key_type& prefix() {
-            static key_type prfx = eosio::detail::const_pack(table_name, index_name, magic);
+            static key_type prfx = eosio::detail::const_pack(magic, table_name, index_name);
             return prfx;
          }
 
