@@ -52,11 +52,11 @@ namespace eosio {
       template <std::size_t I, typename Arg, typename... Args>
       inline void const_pack_helper(std::string& s, Arg&& arg, Args&&... args) {
          std::memcpy(s.data()+I, &arg, sizeof(Arg));
-         if constexpr (sizeof...(Args) > 0) {
-            if constexpr (std::is_integral_v<std::decay_t<Arg>> ||
+         if constexpr (std::is_integral_v<std::decay_t<Arg>> ||
                   std::is_same_v<std::decay_t<Arg>, eosio::name>) {
-               std::reverse(s.data()+I, s.data()+I+sizeof(Arg));
-            }
+            std::reverse(s.data()+I, s.data()+I+sizeof(Arg));
+         }
+         if constexpr (sizeof...(Args) > 0) {
             return const_pack_helper<I+sizeof(Arg)>(s, std::forward<Args>(args)...);
          }
       }
