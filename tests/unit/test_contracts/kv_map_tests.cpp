@@ -181,10 +181,35 @@ public:
       eosio::check(val == expected, "should be equal and not fail to compile");
 
       auto iter2 = m.find(10);
-      eosio::check(iter2 != m.end(), "shouldn't be found");
+      eosio::check(iter2 == m.end(), "shouldn't be found");
 
       const auto citer = m.find(13.3f);
       eosio::check(citer->second() == val, "should still be the same with const and shouldn't fail to compile");
    }
 
+   struct key_struct_fragments {
+      uint8_t  magic;
+      uint64_t table;
+      uint64_t index;
+   };
+
+   [[eosio::action]]
+   void keys() {
+      using map_t = eosio::kv::map<"map"_n, float, eosio::time_point>;
+      map_t m = {{13.3f, eosio::time_point{}}};
+
+      auto iter = m.find(13.3f);
+      auto k = iter->first();
+
+      key_struct_fragments kfs;
+      memcpy(&kfs, iter->first().data(), sizeof(kfs));
+
+      // un-reverse
+      std::reverse(&kfs.table, &kfs.table+sizeof(uint64_t));
+      std::reverse(&kfs.index, &kfs.index+sizeof(uint64_t));
+
+      eosio::check(kfs.magic == 1, "should still be hardcoded to 1 for now");
+      eosio::check(kfs.table == eosio::name("map").value, "table should be named 'map'");
+      eosio::check(kfs.index == eosio::name("map.index").value, "index should be named 'map.index'");
+   }
 };
