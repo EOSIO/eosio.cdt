@@ -187,7 +187,7 @@ public:
       eosio::check(citer->second() == val, "should still be the same with const and shouldn't fail to compile");
    }
 
-   struct key_struct_fragments {
+   struct __attribute__((packed)) key_struct_fragments {
       uint8_t  magic;
       uint64_t table;
       uint64_t index;
@@ -204,9 +204,8 @@ public:
       key_struct_fragments kfs;
       memcpy(&kfs, iter->first().data(), sizeof(kfs));
 
-      // un-reverse
-      std::reverse(&kfs.table, &kfs.table+sizeof(uint64_t));
-      std::reverse(&kfs.index, &kfs.index+sizeof(uint64_t));
+      kfs.table = __builtin_bswap64(kfs.table);
+      kfs.index = __builtin_bswap64(kfs.index);
 
       eosio::check(kfs.magic == 1, "should still be hardcoded to 1 for now");
       eosio::check(kfs.table == eosio::name("map").value, "table should be named 'map'");
