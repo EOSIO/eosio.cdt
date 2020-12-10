@@ -14,6 +14,7 @@ public:
    using testmap_t = eosio::kv::map<"testmap"_n, int, float>;
    using testmap2_t = eosio::kv::map<"testmap2"_n, std::string, std::string>;
    using testmap3_t = eosio::kv::map<"testmap3"_n, int, float>;
+   using testmap4_t = eosio::kv::map<"testmap4"_n, int, float>;
 
    [[eosio::action]]
    void test() {
@@ -137,5 +138,77 @@ public:
       eosio::check((float)vec[0].second() == 41.2f, "should contain 41.2");
       eosio::check((float)vec[1].second() == 100.100f, "should contain 100.100");
       eosio::check((float)vec[2].second() == 9.9f, "should contain 9.9");
+   }
+
+   [[eosio::action]]
+   void empty() {
+      testmap3_t t = {{33, 10}, {10, 41.2f}, {11, 100.100f}, {2, 17.42f}};
+
+      eosio::check(!t.empty(), "t shouldn't be empty");
+
+      testmap4_t t2 = {{10, 10}, {13, 13}};
+
+      eosio::check(!t2.empty(), "t2 shouln't be empty");
+
+      t2.erase(10);
+      t2.erase(13);
+
+      eosio::check(t2.empty(), "t2 should now be empty");
+   }
+
+   [[eosio::action]]
+   void gettmpbuf() {
+      testmap3_t t = {{33, 10}, {10, 41.2f}, {11, 100.100f}, {2, 17.42f}};
+
+      auto buff = t.get_tmp_buffer(34); // ensure this interface doesn't regress
+
+      auto iter = t.lower_bound(11);
+
+      eosio::check(iter->value == 100.100f, "should be equal and not fail to compile");
+   }
+
+   [[eosio::action]]
+   void constrct() {
+      using map_t = eosio::kv::map<"map"_n, float, eosio::time_point>;
+      map_t m = {{13.3f, eosio::time_point{}}};
+
+      m[13.3f] = eosio::time_point{eosio::microseconds{(int64_t)13}};
+
+      auto iter = m.find(13.3f);
+      auto val = iter->second();
+
+      auto expected = eosio::time_point{eosio::microseconds{(int64_t)13}};
+      eosio::check(val == expected, "should be equal and not fail to compile");
+
+      auto iter2 = m.find(10);
+      eosio::check(iter2 == m.end(), "shouldn't be found");
+
+      const auto citer = m.find(13.3f);
+      eosio::check(citer->second() == val, "should still be the same with const and shouldn't fail to compile");
+   }
+
+   struct __attribute__((packed)) key_struct_fragments {
+      uint8_t  magic;
+      uint64_t table;
+      uint64_t index;
+   };
+
+   [[eosio::action]]
+   void keys() {
+      using map_t = eosio::kv::map<"map"_n, float, eosio::time_point>;
+      map_t m = {{13.3f, eosio::time_point{}}};
+
+      auto iter = m.find(13.3f);
+      auto k = iter->first();
+
+      key_struct_fragments kfs;
+      memcpy(&kfs, iter->first().data(), sizeof(kfs));
+
+      kfs.table = __builtin_bswap64(kfs.table);
+      kfs.index = __builtin_bswap64(kfs.index);
+
+      eosio::check(kfs.magic == 1, "should still be hardcoded to 1 for now");
+      eosio::check(kfs.table == eosio::name("map").value, "table should be named 'map'");
+      eosio::check(kfs.index == eosio::name("map.index").value, "index should be named 'map.index'");
    }
 };
