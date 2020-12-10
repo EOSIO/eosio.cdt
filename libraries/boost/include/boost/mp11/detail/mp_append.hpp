@@ -10,8 +10,7 @@
 
 #include <boost/mp11/detail/mp_list.hpp>
 #include <boost/mp11/utility.hpp>
-#include <boost/config.hpp>
-#include <boost/config/workaround.hpp>
+#include <boost/mp11/detail/config.hpp>
 
 namespace boost
 {
@@ -25,7 +24,11 @@ namespace detail
 
 template<class... L> struct mp_append_impl;
 
-#if BOOST_WORKAROUND( BOOST_MSVC, <= 1800 )
+#if BOOST_MP11_WORKAROUND( BOOST_MP11_MSVC, <= 1800 )
+
+template<class... L> struct mp_append_impl
+{
+};
 
 template<> struct mp_append_impl<>
 {
@@ -37,14 +40,31 @@ template<template<class...> class L, class... T> struct mp_append_impl<L<T...>>
     using type = L<T...>;
 };
 
-template<template<class...> class L1, class... T1, template<class...> class L2, class... T2, class... Lr> struct mp_append_impl<L1<T1...>, L2<T2...>, Lr...>
+template<template<class...> class L1, class... T1, template<class...> class L2, class... T2> struct mp_append_impl<L1<T1...>, L2<T2...>>
 {
-    using type = typename mp_append_impl<L1<T1..., T2...>, Lr...>::type;
+    using type = L1<T1..., T2...>;
+};
+
+template<template<class...> class L1, class... T1, template<class...> class L2, class... T2, template<class...> class L3, class... T3> struct mp_append_impl<L1<T1...>, L2<T2...>, L3<T3...>>
+{
+    using type = L1<T1..., T2..., T3...>;
+};
+
+template<template<class...> class L1, class... T1, template<class...> class L2, class... T2, template<class...> class L3, class... T3, template<class...> class L4, class... T4> struct mp_append_impl<L1<T1...>, L2<T2...>, L3<T3...>, L4<T4...>>
+{
+    using type = L1<T1..., T2..., T3..., T4...>;
+};
+
+template<template<class...> class L1, class... T1, template<class...> class L2, class... T2, template<class...> class L3, class... T3, template<class...> class L4, class... T4, template<class...> class L5, class... T5, class... Lr> struct mp_append_impl<L1<T1...>, L2<T2...>, L3<T3...>, L4<T4...>, L5<T5...>, Lr...>
+{
+    using type = typename mp_append_impl<L1<T1..., T2..., T3..., T4..., T5...>, Lr...>::type;
 };
 
 #else
 
-template<class L1 = mp_list<>, class L2 = mp_list<>, class L3 = mp_list<>, class L4 = mp_list<>, class L5 = mp_list<>, class L6 = mp_list<>, class L7 = mp_list<>, class L8 = mp_list<>, class L9 = mp_list<>, class L10 = mp_list<>, class L11 = mp_list<>> struct append_11_impl;
+template<class L1 = mp_list<>, class L2 = mp_list<>, class L3 = mp_list<>, class L4 = mp_list<>, class L5 = mp_list<>, class L6 = mp_list<>, class L7 = mp_list<>, class L8 = mp_list<>, class L9 = mp_list<>, class L10 = mp_list<>, class L11 = mp_list<>> struct append_11_impl
+{
+};
 
 template<
     template<class...> class L1, class... T1,
@@ -133,9 +153,25 @@ template<
     using type = typename mp_append_impl<prefix, Lr...>::type;
 };
 
-template<class... L> struct mp_append_impl: mp_if_c<(sizeof...(L) > 111), mp_quote<append_inf_impl>, mp_if_c<(sizeof...(L) > 11), mp_quote<append_111_impl>, mp_quote<append_11_impl>>>::template fn<L...>
+#if BOOST_MP11_WORKAROUND( BOOST_MP11_CUDA, >= 9000000 && BOOST_MP11_CUDA < 10000000 )
+
+template<class... L>
+struct mp_append_impl_cuda_workaround
+{
+    using type = mp_if_c<(sizeof...(L) > 111), mp_quote<append_inf_impl>, mp_if_c<(sizeof...(L) > 11), mp_quote<append_111_impl>, mp_quote<append_11_impl> > >;
+};
+
+template<class... L> struct mp_append_impl: mp_append_impl_cuda_workaround<L...>::type::template fn<L...>
 {
 };
+
+#else
+
+template<class... L> struct mp_append_impl: mp_if_c<(sizeof...(L) > 111), mp_quote<append_inf_impl>, mp_if_c<(sizeof...(L) > 11), mp_quote<append_111_impl>, mp_quote<append_11_impl> > >::template fn<L...>
+{
+};
+
+#endif
 
 #endif
 

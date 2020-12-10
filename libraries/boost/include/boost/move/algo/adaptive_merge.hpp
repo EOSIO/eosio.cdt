@@ -107,34 +107,41 @@ inline void adaptive_merge_final_merge( RandIt first
 {
    typedef typename iterator_traits<RandIt>::size_type size_type;
    (void)l_block;
+   (void)use_internal_buf;
    size_type n_keys = collected-l_intbuf;
    size_type len = len1+len2;
-   if(use_internal_buf){
-      if(xbuf_used){
-         xbuf.clear();
-         //Nothing to do
-         if(n_keys){
-            unstable_sort(first, first+n_keys, comp, xbuf);
-            stable_merge(first, first+n_keys, first+len, comp, xbuf);
-            BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   A key mrg: ", len);
-         }
-      }
-      else{
-         xbuf.clear();
-         unstable_sort(first, first+collected, comp, xbuf);
-         BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   A k/b srt: ", len);
-         stable_merge(first, first+collected, first+len, comp, xbuf);
-         BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   A k/b mrg: ", len);
-      }
-   }
-   else{
+   if (!xbuf_used || n_keys) {
       xbuf.clear();
-      unstable_sort(first, first+collected, comp, xbuf);
+      const size_type middle = xbuf_used && n_keys ? n_keys: collected;
+      unstable_sort(first, first + middle, comp, xbuf);
       BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   A k/b srt: ", len);
-      stable_merge(first, first+collected, first+len1+len2, comp, xbuf);
-      BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   A k/b mrg: ", len);
+      stable_merge(first, first + middle, first + len, comp, xbuf);
    }
    BOOST_MOVE_ADAPTIVE_SORT_PRINT_L1("   A fin mrg: ", len);
+}
+
+template<class SizeType>
+inline static SizeType adaptive_merge_n_keys_without_external_keys(SizeType l_block, SizeType len1, SizeType len2, SizeType l_intbuf)
+{
+   typedef SizeType size_type;
+   //This is the minimum number of keys to implement the ideal algorithm
+   size_type n_keys = len1/l_block+len2/l_block;
+   const size_type second_half_blocks = len2/l_block;
+   const size_type first_half_aux = len1-l_intbuf;
+   while(n_keys >= ((first_half_aux-n_keys)/l_block + second_half_blocks)){
+      --n_keys;
+   }
+   ++n_keys;
+   return n_keys;
+}
+
+template<class SizeType>
+inline static SizeType adaptive_merge_n_keys_with_external_keys(SizeType l_block, SizeType len1, SizeType len2, SizeType l_intbuf)
+{
+   typedef SizeType size_type;
+   //This is the minimum number of keys to implement the ideal algorithm
+   size_type n_keys = (len1-l_intbuf)/l_block + len2/l_block;
+   return n_keys;
 }
 
 template<class SizeType, class Xbuf>
@@ -144,19 +151,18 @@ inline SizeType adaptive_merge_n_keys_intbuf(SizeType &rl_block, SizeType len1, 
    size_type l_block = rl_block;
    size_type l_intbuf = xbuf.capacity() >= l_block ? 0u : l_block;
 
-   while(xbuf.capacity() >= l_block*2){
-      l_block *= 2;
+   if (xbuf.capacity() > l_block){
+      l_block = xbuf.capacity();
    }
 
    //This is the minimum number of keys to implement the ideal algorithm
-   size_type n_keys = len1/l_block+len2/l_block;
-   while(n_keys >= ((len1-l_intbuf-n_keys)/l_block + len2/l_block)){
-      --n_keys;
-   }
-   ++n_keys;
+   size_type n_keys = adaptive_merge_n_keys_without_external_keys(l_block, len1, len2, l_intbuf);
    BOOST_ASSERT(n_keys >= ((len1-l_intbuf-n_keys)/l_block + len2/l_block));
 
-   if(xbuf.template supports_aligned_trailing<size_type>(l_block, n_keys)){
+   if(xbuf.template supports_aligned_trailing<size_type>
+      ( l_block
+      , adaptive_merge_n_keys_with_external_keys(l_block, len1, len2, l_intbuf)))
+   {
       n_keys = 0u;
    }
    l_intbuf_inout = l_intbuf;
@@ -303,12 +309,38 @@ void adaptive_merge_impl
 template<class RandIt, class Compare>
 void adaptive_merge( RandIt first, RandIt middle, RandIt last, Compare comp
                 , typename iterator_traits<RandIt>::value_type* uninitialized = 0
-                , std::size_t uninitialized_len = 0)
+                , typename iterator_traits<RandIt>::size_type uninitialized_len = 0)
 {
    typedef typename iterator_traits<RandIt>::size_type  size_type;
    typedef typename iterator_traits<RandIt>::value_type value_type;
 
-   ::boost::movelib::detail_adaptive::adaptive_xbuf<value_type> xbuf(uninitialized, uninitialized_len);
+   if (first == middle || middle == last){
+      return;
+   }
+
+   //Reduce ranges to merge if possible
+   do {
+      if (comp(*middle, *first)){
+         break;
+      }
+      ++first;
+      if (first == middle)
+         return;
+   } while(1);
+
+   RandIt first_high(middle);
+   --first_high;
+   do {
+      --last;
+      if (comp(*last, *first_high)){
+         ++last;
+         break;
+      }
+      if (last == middle)
+         return;
+   } while(1);
+
+   ::boost::movelib::adaptive_xbuf<value_type, value_type*, size_type> xbuf(uninitialized, size_type(uninitialized_len));
    ::boost::movelib::detail_adaptive::adaptive_merge_impl(first, size_type(middle - first), size_type(last - middle), comp, xbuf);
 }
 

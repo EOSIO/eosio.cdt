@@ -34,7 +34,21 @@
 // other
 #include <boost/core/no_exceptions_support.hpp>
 // std
-#include <cstring> //for emmove/memcpy
+#include <cstring> //for memmove/memcpy
+
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#pragma GCC diagnostic push
+//pair memcpy optimizations rightfully detected by GCC
+#  if defined(BOOST_GCC) && (BOOST_GCC >= 80000)
+#     pragma GCC diagnostic ignored "-Wclass-memaccess"
+#  endif
+//GCC 8 seems a bit confused about array access error with static_vector
+//when out of bound exceptions are being thrown.
+#  if defined(BOOST_GCC) && (BOOST_GCC >= 80000) && (BOOST_GCC < 80200)
+#     pragma GCC diagnostic ignored "-Wstringop-overflow"
+#  endif
+#  pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 
 namespace boost {
 namespace container {
@@ -160,9 +174,12 @@ template
 inline F memmove(I f, I l, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
    typedef typename boost::container::iterator_traits<I>::value_type value_type;
-   typename boost::container::iterator_traits<I>::difference_type n = boost::container::iterator_distance(f, l);
-   if(n){
-      std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+   value_type *const dest_raw = boost::movelib::iterator_to_raw_pointer(r);
+   const value_type *const beg_raw = boost::movelib::iterator_to_raw_pointer(f);
+   const value_type *const end_raw = boost::movelib::iterator_to_raw_pointer(l);
+   if(BOOST_LIKELY(beg_raw != end_raw && dest_raw && beg_raw)){
+      const typename boost::container::iterator_traits<I>::difference_type n = end_raw - beg_raw;
+      std::memmove(dest_raw, beg_raw, sizeof(value_type)*n);
       boost::container::iterator_advance(r, n);
    }
    return r;
@@ -175,10 +192,11 @@ template
 F memmove_n(I f, U n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
    typedef typename boost::container::iterator_traits<I>::value_type value_type;
-   if(n){
+   if(BOOST_LIKELY(n)){
       std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
       boost::container::iterator_advance(r, n);
    }
+
    return r;
 }
 
@@ -188,7 +206,7 @@ template
     typename F> // F models ForwardIterator
 I memmove_n_source(I f, U n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
-   if(n){
+   if(BOOST_LIKELY(n)){
       typedef typename boost::container::iterator_traits<I>::value_type value_type;
       std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
       boost::container::iterator_advance(f, n);
@@ -203,7 +221,7 @@ template
 I memmove_n_source_dest(I f, U n, F &r) BOOST_NOEXCEPT_OR_NOTHROW
 {
    typedef typename boost::container::iterator_traits<I>::value_type value_type;
-   if(n){
+   if(BOOST_LIKELY(n)){
       std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
       boost::container::iterator_advance(f, n);
       boost::container::iterator_advance(r, n);
@@ -503,9 +521,9 @@ inline typename dtl::disable_if_memtransfer_copy_constructible<I, F, I>::type
 {
    F back = r;
    BOOST_TRY{
-      while (n--) {
+      while (n) {
          boost::container::construct_in_place(a, boost::movelib::iterator_to_raw_pointer(r), f);
-         ++f; ++r;
+         ++f; ++r; --n;
       }
    }
    BOOST_CATCH(...){
@@ -569,8 +587,10 @@ inline typename dtl::enable_if_memzero_initializable<F, F>::type
    uninitialized_value_init_alloc_n(Allocator &, typename boost::container::allocator_traits<Allocator>::size_type n, F r)
 {
    typedef typename boost::container::iterator_traits<F>::value_type value_type;
-   std::memset((void*)boost::movelib::iterator_to_raw_pointer(r), 0, sizeof(value_type)*n);
-   boost::container::iterator_advance(r, n);
+   if (BOOST_LIKELY(n)){
+      std::memset((void*)boost::movelib::iterator_to_raw_pointer(r), 0, sizeof(value_type)*n);
+      boost::container::iterator_advance(r, n);
+   }
    return r;
 }
 
@@ -720,7 +740,8 @@ typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
    copy_n(I f, U n, F r)
 {
-   while (n--) {
+   while (n) {
+      --n;
       *r = *f;
       ++f; ++r;
    }
@@ -873,8 +894,10 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 {
    typedef typename boost::container::iterator_traits<I>::value_type value_type;
    const typename boost::container::iterator_traits<I>::difference_type n = boost::container::iterator_distance(f, l);
-   r -= n;
-   std::memmove((boost::movelib::iterator_to_raw_pointer)(r), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
+   if (BOOST_LIKELY(n)){
+      r -= n;
+      std::memmove((boost::movelib::iterator_to_raw_pointer)(r), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
+   }
    return r;
 }
 
@@ -1140,5 +1163,10 @@ void move_assign_range_alloc_n( Allocator &a, I inp_start, typename allocator_tr
 
 }  //namespace container {
 }  //namespace boost {
+
+//#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#pragma GCC diagnostic pop
+#endif
 
 #endif   //#ifndef BOOST_CONTAINER_DETAIL_COPY_MOVE_ALGO_HPP

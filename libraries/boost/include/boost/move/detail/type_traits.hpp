@@ -193,7 +193,7 @@
 #   define BOOST_MOVE_ALIGNMENT_OF(T) __alignof__(T)
 #endif
 
-# if defined(__CODEGEARC__)
+# if defined(BOOST_CODEGEARC)
 #   define BOOST_MOVE_IS_UNION(T) __is_union(T)
 #   define BOOST_MOVE_IS_POD(T) __is_pod(T)
 #   define BOOST_MOVE_IS_EMPTY(T) __is_empty(T)
@@ -902,6 +902,7 @@ struct alignment_of_hack
    char c;
    T t2;
    alignment_of_hack();
+   ~alignment_of_hack();
 };
 
 template <unsigned A, unsigned S>
@@ -973,7 +974,7 @@ struct aligned_struct;
 template<std::size_t Len>\
 struct BOOST_ALIGNMENT(A) aligned_struct<Len, A>\
 {\
-   char data[Len];\
+   unsigned char data[Len];\
 };\
 //
 
@@ -1000,7 +1001,7 @@ template<std::size_t Len, std::size_t Align>
 union aligned_struct_wrapper
 {
    aligned_struct<Len, Align> aligner;
-   char data[sizeof(aligned_struct<Len, Align>)];
+   unsigned char data[sizeof(aligned_struct<Len, Align>)];
 };
 
 template<std::size_t Len, std::size_t Align>
@@ -1015,7 +1016,7 @@ template<class T, std::size_t Len>
 union aligned_union
 {   
    T aligner;
-   char data[Len];
+   unsigned char data[Len];
 };
 
 template<std::size_t Len, std::size_t Align, class T, bool Ok>

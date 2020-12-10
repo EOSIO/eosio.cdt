@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Antony Polukhin
+// Copyright (c) 2016-2020 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,17 @@ constexpr auto make_stdtuple_from_tietuple(const T& t, std::index_sequence<I...>
 template <class T, std::size_t... I>
 constexpr auto make_stdtiedtuple_from_tietuple(const T& t, std::index_sequence<I...>) noexcept {
     return std::tie(
+        boost::pfr::detail::sequence_tuple::get<I>(t)...
+    );
+}
+
+template <class T, std::size_t... I>
+constexpr auto make_conststdtiedtuple_from_tietuple(const T& t, std::index_sequence<I...>) noexcept {
+    return std::tuple<
+        std::add_lvalue_reference_t<std::add_const_t<
+            std::remove_reference_t<decltype(boost::pfr::detail::sequence_tuple::get<I>(t))>
+        >>...
+    >(
         boost::pfr::detail::sequence_tuple::get<I>(t)...
     );
 }

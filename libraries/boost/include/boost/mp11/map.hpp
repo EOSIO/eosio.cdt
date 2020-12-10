@@ -58,7 +58,7 @@ template<class M, class T, template<class...> class F> struct mp_map_update_impl
     template<class U> using _f = std::is_same<mp_first<T>, mp_first<U>>;
 
     // _f3<L<X, Y...>> -> L<X, F<X, Y...>>
-    template<class L> using _f3 = mp_assign<L, mp_list<mp_first<L>, mp_rename<L, F>>>;
+    template<class L> using _f3 = mp_assign<L, mp_list<mp_first<L>, mp_rename<L, F> > >;
 
     using type = mp_if< mp_map_contains<M, mp_first<T>>, mp_transform_if<_f, _f3, M>, mp_push_back<M, T> >;
 };
