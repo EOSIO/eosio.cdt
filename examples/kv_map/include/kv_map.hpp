@@ -4,10 +4,6 @@
 using namespace eosio;
 using namespace std;
 
-using fullname_t = std::tuple<std::string, std::string, eosio::name>;
-using address_t = std::tuple<std::string, std::string, std::string, std::string, eosio::name>;
-using country_personal_id_t = std::pair<std::string, std::string>;
-
 // this structure defines the data stored in the kv::map
 struct person {
    eosio::name account_name;
@@ -18,12 +14,6 @@ struct person {
    std::string state; 
    std::string country;
    std::string personal_id;
-
-   // data members supporting the indexes built for this structure
-   fullname_t full_name_first_last;
-   fullname_t full_name_last_first;
-   address_t address;
-   country_personal_id_t country_personal_id;
 };
 
 // helper factory to easily build person objects
@@ -45,11 +35,7 @@ struct person_factory {
             .city = city,
             .state = state,
             .country = country,
-            .personal_id = personal_id,
-            .full_name_first_last = {first_name, last_name, account_name},
-            .full_name_last_first = {last_name, first_name, account_name},
-            .address = {street, city, state, country, account_name},
-            .country_personal_id = {country, personal_id},
+            .personal_id = personal_id
          };
       }
 };
@@ -63,11 +49,13 @@ class [[eosio::contract]] kv_map : public eosio::contract {
       kv_map(eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds)
          : contract(receiver, code, ds) {}
 
-      // retrieves a person based on map key
+      // retrieves a person based on map key.
       [[eosio::action]]
       person get(int id);
 
-      // creates if not exists, or updates if already exists, a person
+      // inserts a person if not exists, or updates it if already exists.
+      // the payer for the resources consumed is the account that created the kv::map
+      // object in the first place, the account that owns this smart contract.
       [[eosio::action]]
       void upsert(int id,
          eosio::name account_name,
@@ -79,24 +67,44 @@ class [[eosio::contract]] kv_map : public eosio::contract {
          std::string country,
          std::string personal_id);
 
-      // deletes a person based on primary key account_name
+      // inserts a person if not exists, or updates it if already exists.
+      // the payer is the account_name, specified as input parameter.
       [[eosio::action]]
-      void del(int id);
+      void upsertwpayer(int id,
+         eosio::name account_name,
+         std::string first_name,
+         std::string last_name,
+         std::string street,
+         std::string city,
+         std::string state, 
+         std::string country,
+         std::string personal_id);
+
+      // deletes a person based on unique id
+      [[eosio::action]]
+      void erase(int id);
 
       // checks if a person exists with a given personal_id and country
       [[eosio::action]]
       bool checkpidcntr(std::string personal_id, std::string country);
 
-      // iterates over the first iterations_count persons in the table 
+      // iterates over the first iterations_count persons in the table using for loop
       // and prints their first and last names
       [[eosio::action]]
-      void iterate(int iterations_count);
+      void fiterate(int iterations_count);
+
+      // iterates over the first iterations_count persons in the table using while loop
+      // and prints their first and last names
+      [[eosio::action]]
+      void witerate(int iterations_count);
 
       using get_action = eosio::action_wrapper<"get"_n, &kv_map::get>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_map::upsert>;
-      using del_action = eosio::action_wrapper<"del"_n, &kv_map::del>;
+      using upsertwpayer_action = eosio::action_wrapper<"upsertwpayer"_n, &kv_map::upsertwpayer>;
+      using erase_action = eosio::action_wrapper<"erase"_n, &kv_map::erase>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_map::checkpidcntr>;
-      using iterate_action = eosio::action_wrapper<"iterate"_n, &kv_map::iterate>;
+      using witerate_action = eosio::action_wrapper<"witerate"_n, &kv_map::witerate>;
+      using fiterate_action = eosio::action_wrapper<"fiterate"_n, &kv_map::fiterate>;
 
    private:
       void print_person(const person& person, bool new_line = true);
