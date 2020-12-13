@@ -60,8 +60,9 @@ namespace eosio { namespace cdt {
       public:
          virtual void run( const MatchFinder::MatchResult& res ) {
             if (const clang::CXXMethodDecl* decl = res.Nodes.getNodeAs<clang::CXXMethodDecl>("eosio_tool")->getCanonicalDecl()) {
+               auto _decl = clang_wrapper::Decl<decltype(decl)>(decl);
                abi abi;
-               if (decl->isEosioAction() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
+               if (_decl.isEosioAction() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
                   get_abigen_ref().add_struct(decl);
                   get_abigen_ref().add_action(decl);
                   auto params = decl->parameters();
@@ -78,19 +79,20 @@ namespace eosio { namespace cdt {
          bool has_added_clauses = false;
          virtual void run( const MatchFinder::MatchResult& res ) {
             if (const clang::CXXRecordDecl* decl = res.Nodes.getNodeAs<clang::CXXRecordDecl>("eosio_tool")) {
+               auto _decl = clang_wrapper::Decl<decltype(decl)>(decl);
                if (!has_added_clauses) {
                   get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses());
                   get_abigen_ref().add_contracts(get_abigen_ref().parse_contracts());
                   has_added_clauses = true;
                }
-               if (decl->isEosioAction() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
+               if (_decl.isEosioAction() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
                   get_abigen_ref().add_struct(decl);
                   get_abigen_ref().add_action(decl);
                   for (auto field : decl->fields()) {
                      get_abigen_ref().add_type( field->getType() );
                   }
                }
-               if (decl->isEosioTable() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
+               if (_decl.isEosioTable() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
                   get_abigen_ref().add_struct(decl);
                   get_abigen_ref().add_table(decl);
                   for (auto field : decl->fields())
@@ -110,7 +112,7 @@ namespace eosio { namespace cdt {
 
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
    std::vector<std::string> options;
-   options.push_back("eosio-cpp");
+   options.push_back(COMPILER_NAME);
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");

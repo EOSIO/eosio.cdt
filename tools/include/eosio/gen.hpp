@@ -13,6 +13,7 @@
 #include <utility>
 #include <regex>
 #include <eosio/utils.hpp>
+#include <eosio/clang_wrapper.hpp>
 
 namespace eosio { namespace cdt {
 
@@ -111,9 +112,10 @@ struct generation_utils {
    static inline bool is_ignorable( const clang::QualType& type ) {
       auto check = [&](const clang::Type* pt) {
         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
-         if (auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar()))
-            return rt->getDecl()->isEosioIgnore();
-
+         if (auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
+            auto decl = rt->getDecl();
+            return clang_wrapper::Decl<decltype(decl)>(decl).isEosioIgnore();
+         }
          return false;
       };
 
@@ -130,8 +132,10 @@ struct generation_utils {
          return type;
       auto get = [&](const clang::Type* pt) {
          if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
-            if (auto decl = llvm::dyn_cast<clang::RecordType>(tst->desugar()))
-               return decl->getDecl()->isEosioIgnore() ? tst->getArg(0).getAsType() : type;
+            if (auto decl = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
+               auto _decl = decl->getDecl();
+               return clang_wrapper::Decl<decltype(_decl)>(_decl).isEosioIgnore() ? tst->getArg(0).getAsType() : type;
+            }
          return type;
       };
 
@@ -151,48 +155,59 @@ struct generation_utils {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
       if (!has_real_path)
-         resource_dirs.push_back(cwd.str());
+         resource_dirs.push_back(cwd.str().str());
       for ( auto res : rd ) {
          llvm::SmallString<128> rp;
          auto has_real_path = llvm::sys::fs::real_path(res, rp, true);
          if (!has_real_path)
-            resource_dirs.push_back(rp.str());
+            resource_dirs.push_back(rp.str().str());
       }
    }
 
-   static inline bool has_eosio_ricardian( const clang::CXXMethodDecl* decl ) {
-      return decl->hasEosioRicardian();
-   }
-   static inline bool has_eosio_ricardian( const clang::CXXRecordDecl* decl ) {
-      return decl->hasEosioRicardian();
+   template<typename T>
+   static inline bool has_eosio_ricardian( const clang_wrapper::Decl<T>& decl ) {
+      return decl.hasEosioRicardian();
    }
 
-   static inline std::string get_eosio_ricardian( const clang::CXXMethodDecl* decl ) {
-      return decl->getEosioRicardianAttr()->getName();
-   }
-   static inline std::string get_eosio_ricardian( const clang::CXXRecordDecl* decl ) {
-      return decl->getEosioRicardianAttr()->getName();
+   template<typename T>
+   static inline bool get_eosio_ricardian( const clang_wrapper::Decl<T>& decl ) {
+      return decl.getEosioRicardianAttr()->getName();
    }
 
-   static inline std::string get_action_name( const clang::CXXMethodDecl* decl ) {
+   template<typename T>
+   static inline std::string get_action_name( const clang_wrapper::Decl<T>& decl ) {
       std::string action_name = "";
-      auto tmp = decl->getEosioActionAttr()->getName();
+      auto tmp = decl.getEosioActionAttr()->getNameAsString();
       if (!tmp.empty())
          return tmp;
-      return decl->getNameAsString();
+      auto _decl = decl.getDecl();
+      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(_decl)) {
+         return r->getNameAsString();
+      } else {
+         auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(_decl);
+         return m->getNameAsString();
+      }
    }
-   static inline std::string get_notify_pair( const clang::CXXMethodDecl* decl ) {
+
+   template<typename T>
+   static inline std::string get_action_name( T decl ) {
+      auto _decl = clang_wrapper::Decl<T>(decl);
+      return get_action_name(_decl);
+   }
+
+   template<typename T>
+   static inline std::string get_notify_pair( const clang_wrapper::Decl<T>& decl ) {
       std::string notify_pair = "";
-      auto tmp = decl->getEosioNotifyAttr()->getName();
+      auto tmp = decl.getEosioNotifyAttr()->getNameAsString();
       return tmp;
    }
-   static inline std::string get_action_name( const clang::CXXRecordDecl* decl ) {
-      std::string action_name = "";
-      auto tmp = decl->getEosioActionAttr()->getName();
-      if (!tmp.empty())
-         return tmp;
-      return decl->getName();
+
+   template<typename T>
+   static inline std::string get_notify_pair( T decl ) {
+      auto _decl = clang_wrapper::Decl<T>(decl);
+      return get_notify_pair(_decl);
    }
+
    inline std::string get_rc_filename() {
       return contract_name+".contracts.md";
    }
@@ -255,32 +270,39 @@ struct generation_utils {
       return clause_pairs;
    }
 
-   static inline bool is_eosio_contract( const clang::CXXMethodDecl* decl, const std::string& cn ) {
+   template<typename T>
+   static inline bool is_eosio_contract( const clang_wrapper::Decl<T>& decl, const std::string& cn ) {
       std::string name = "";
-      if (decl->isEosioContract())
-         name = decl->getEosioContractAttr()->getName();
-      else if (decl->getParent()->isEosioContract())
-         name = decl->getParent()->getEosioContractAttr()->getName();
-      if (name.empty()) {
-         name = decl->getParent()->getName().str();
+      auto _decl = decl.getDecl();
+      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(_decl)) {
+         auto pd = decl.getParent();
+         if (decl.isEosioContract()) {
+            auto nm = decl.getEosioContractAttr()->getNameAsString();
+            name = nm.empty() ? r->getName().str() : nm;
+         } else if (pd && pd.isEosioContract()) {
+            auto nm = pd.getEosioContractAttr()->getNameAsString();
+            name = nm.empty() ? pd->getName().str() : nm;
+         }
+         return name == cn;
+      } else {
+         auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(_decl);
+         if (decl.isEosioContract()) {
+            name = decl.getEosioContractAttr()->getNameAsString();
+         } else if (decl.getParent().isEosioContract()) {
+            name = decl.getParent().getEosioContractAttr()->getNameAsString();
+         }
+         if (name.empty()) {
+            name = decl.getParent()->getName().str();
+         }
+         return name == cn;
       }
-      return name == cn;
    }
 
-   static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
-      std::string name = "";
-      auto pd = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
-      if (decl->isEosioContract()) {
-         auto nm = decl->getEosioContractAttr()->getName().str();
-         name = nm.empty() ? decl->getName().str() : nm;
-      }
-      else if (pd && pd->isEosioContract()) {
-         auto nm = pd->getEosioContractAttr()->getName().str();
-         name = nm.empty() ? pd->getName().str() : nm;
-      }
-      return cn == name;
+   template<typename T>
+   static inline bool is_eosio_contract( T decl, const std::string& cn ) {
+      auto _decl = clang_wrapper::Decl<T>(decl);
+      return is_eosio_contract(_decl, cn);
    }
-
 
    inline bool is_template_specialization( const clang::QualType& type, const std::vector<std::string>& names ) {
       auto check = [&](const clang::Type* pt) {

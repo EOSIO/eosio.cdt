@@ -4,6 +4,7 @@
 #include <eosio/utils.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <eosio/abi.hpp>
+#include <eosio/clang_wrapper.hpp>
 
 #include <exception>
 #include <iostream>
@@ -47,9 +48,10 @@ namespace eosio { namespace cdt {
          _abi.typedefs.insert(ret);
       }
 
-      void add_action( const clang::CXXRecordDecl* decl ) {
+      void add_action( const clang::CXXRecordDecl* _decl ) {
+         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
          abi_action ret;
-         auto action_name = decl->getEosioActionAttr()->getName();
+         auto action_name = decl.getEosioActionAttr()->getName();
 
          if (rcs[get_action_name(decl)].empty())
             std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
@@ -78,10 +80,11 @@ namespace eosio { namespace cdt {
          _abi.actions.insert(ret);
       }
 
-      void add_action( const clang::CXXMethodDecl* decl ) {
+      void add_action( const clang::CXXMethodDecl* _decl ) {
+         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
          abi_action ret;
 
-         auto action_name = decl->getEosioActionAttr()->getName();
+         auto action_name = decl.getEosioActionAttr()->getName();
 
          if (rcs[get_action_name(decl)].empty())
             std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
@@ -197,11 +200,12 @@ namespace eosio { namespace cdt {
          return "i64";
       }
 
-      void add_table( const clang::CXXRecordDecl* decl ) {
-         tables.insert(decl);
+      void add_table( const clang::CXXRecordDecl* _decl ) {
+         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         tables.insert(_decl);
          abi_table t;
          t.type = decl->getNameAsString();
-         auto table_name = decl->getEosioTableAttr()->getName();
+         auto table_name = decl.getEosioTableAttr()->getName();
          if (!table_name.empty()) {
             try {
                validate_name( table_name.str(), error_handler );
@@ -215,8 +219,9 @@ namespace eosio { namespace cdt {
          ctables.insert(t);
       }
 
-      void add_table( uint64_t name, const clang::CXXRecordDecl* decl ) {
-         if (!(decl->isEosioTable() && abigen::is_eosio_contract(decl, get_contract_name())))
+      void add_table( uint64_t name, const clang::CXXRecordDecl* _decl ) {
+         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         if (!(decl.isEosioTable() && abigen::is_eosio_contract(decl, get_contract_name())))
             return;
          abi_table t;
          t.type = decl->getNameAsString();

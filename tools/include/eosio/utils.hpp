@@ -8,7 +8,8 @@
 # include <crt_externs.h>
 #elif !defined(_MSC_VER)
 // Forward declare environ in case it's not provided by stdlib.h.
-extern char **environ;
+//extern char **environ;
+#include <unistd.h>
 #endif
 
 #include "whereami/whereami.hpp"

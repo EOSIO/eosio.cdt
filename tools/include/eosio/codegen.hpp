@@ -222,8 +222,8 @@ namespace eosio { namespace cdt {
          }
          */
 
-         template <typename F>
-         void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
+         template <typename F, typename D>
+         void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, D decl) {
             constexpr static uint32_t max_stack_size = 512;
             std::stringstream ss;
             codegen& cg = codegen::get();
@@ -278,9 +278,19 @@ namespace eosio { namespace cdt {
             }
          }
 
+         void create_action_dispatch(clang_wrapper::Decl<CXXMethodDecl*> decl) {
+            auto func = [](clang_wrapper::Decl<CXXMethodDecl*> d) { return generation_utils::get_action_name(d); };
+            create_dispatch("eosio_wasm_action", "__eosio_action_", func, decl);
+         }
+
          void create_action_dispatch(CXXMethodDecl* decl) {
             auto func = [](CXXMethodDecl* d) { return generation_utils::get_action_name(d); };
             create_dispatch("eosio_wasm_action", "__eosio_action_", func, decl);
+         }
+
+         void create_notify_dispatch(clang_wrapper::Decl<CXXMethodDecl*> decl) {
+            auto func = [](clang_wrapper::Decl<CXXMethodDecl*> d) { return generation_utils::get_notify_pair(d); };
+            create_dispatch("eosio_wasm_notify", "__eosio_notify_", func, decl);
          }
 
          void create_notify_dispatch(CXXMethodDecl* decl) {
@@ -288,11 +298,12 @@ namespace eosio { namespace cdt {
             create_dispatch("eosio_wasm_notify", "__eosio_notify_", func, decl);
          }
 
-         virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
+         virtual bool VisitCXXMethodDecl(CXXMethodDecl* _decl) {
+            auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
             std::string name = decl->getNameAsString();
             static std::set<std::string> _action_set; //used for validations
             static std::set<std::string> _notify_set; //used for validations
-            if (decl->isEosioAction()) {
+            if (decl.isEosioAction()) {
                name = generation_utils::get_action_name(decl);
                validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
                if (!_action_set.count(name))
@@ -308,7 +319,7 @@ namespace eosio { namespace cdt {
                }
                cg.actions.insert(full_action_name); // insert the method action, so we don't create the dispatcher twice
             }
-            else if (decl->isEosioNotify()) {
+            else if (decl.isEosioNotify()) {
 
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
