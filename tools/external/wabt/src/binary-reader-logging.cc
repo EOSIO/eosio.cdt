@@ -130,12 +130,13 @@ Result BinaryReaderLogging::BeginSection(Index section_index,
   return reader_->BeginSection(section_index, section_type, size);
 }
 
-Result BinaryReaderLogging::BeginCustomSection(Offset size,
+Result BinaryReaderLogging::BeginCustomSection(Index section_index,
+                                               Offset size,
                                                string_view section_name) {
   LOGF("BeginCustomSection('" PRIstringview "', size: %" PRIzd ")\n",
        WABT_PRINTF_STRING_VIEW_ARG(section_name), size);
   Indent();
-  return reader_->BeginCustomSection(size, section_name);
+  return reader_->BeginCustomSection(section_index, size, section_name);
 }
 
 Result BinaryReaderLogging::OnFuncType(Index index,
@@ -469,6 +470,25 @@ Result BinaryReaderLogging::OnLocalName(Index func_index,
   return reader_->OnLocalName(func_index, local_index, name);
 }
 
+Result BinaryReaderLogging::OnNameSubsection(
+    Index index,
+    NameSectionSubsection subsection_type,
+    Offset subsection_size) {
+  LOGF("OnNameSubsection(index: %" PRIindex ", type: %s, size:%" PRIzd ")\n",
+       index, GetNameSectionSubsectionName(subsection_type), subsection_size);
+  return reader_->OnNameSubsection(index, subsection_type, subsection_size);
+}
+
+Result BinaryReaderLogging::OnNameEntry(NameSectionSubsection type,
+                                        Index index,
+                                        string_view name) {
+  LOGF("OnNameEntry(type: %s, index: %" PRIindex ", name: \"" PRIstringview
+       "\")\n",
+       GetNameSectionSubsectionName(type), index,
+       WABT_PRINTF_STRING_VIEW_ARG(name));
+  return reader_->OnNameEntry(type, index, name);
+}
+
 Result BinaryReaderLogging::OnInitExprF32ConstExpr(Index index,
                                                    uint32_t value_bits) {
   float value;
@@ -602,12 +622,22 @@ Result BinaryReaderLogging::OnEventSymbol(Index index,
   return reader_->OnEventSymbol(index, flags, name, event_index);
 }
 
+Result BinaryReaderLogging::OnTableSymbol(Index index,
+                                          uint32_t flags,
+                                          string_view name,
+                                          Index table_index) {
+  LOGF("OnTableSymbol(name: " PRIstringview " flags: 0x%x index: %" PRIindex
+           ")\n",
+       WABT_PRINTF_STRING_VIEW_ARG(name), flags, table_index);
+  return reader_->OnTableSymbol(index, flags, name, table_index);
+}
+
 Result BinaryReaderLogging::OnSegmentInfo(Index index,
                                           string_view name,
-                                          uint32_t alignment,
+                                          Address alignment,
                                           uint32_t flags) {
-  LOGF("OnSegmentInfo(%d name: " PRIstringview
-       ", alignment: %d, flags: 0x%x)\n",
+  LOGF("OnSegmentInfo(%d name: " PRIstringview ", alignment: %" PRIaddress
+       ", flags: 0x%x)\n",
        index, WABT_PRINTF_STRING_VIEW_ARG(name), alignment, flags);
   return reader_->OnSegmentInfo(index, name, alignment, flags);
 }
@@ -692,13 +722,13 @@ Result BinaryReaderLogging::OnComdatEntry(ComdatType kind, Index index) {
     return reader_->name(opcode);                                      \
   }
 
-#define DEFINE_LOAD_STORE_OPCODE(name)                                      \
-  Result BinaryReaderLogging::name(Opcode opcode, uint32_t alignment_log2,  \
-                                   Address offset) {                        \
-    LOGF(#name "(opcode: \"%s\" (%u), align log2: %u, offset: %" PRIaddress \
-               ")\n",                                                       \
-         opcode.GetName(), opcode.GetCode(), alignment_log2, offset);       \
-    return reader_->name(opcode, alignment_log2, offset);                   \
+#define DEFINE_LOAD_STORE_OPCODE(name)                                    \
+  Result BinaryReaderLogging::name(Opcode opcode, Address alignment_log2, \
+                                   Address offset) {                      \
+    LOGF(#name "(opcode: \"%s\" (%u), align log2: %" PRIaddress           \
+               ", offset: %" PRIaddress ")\n",                            \
+         opcode.GetName(), opcode.GetCode(), alignment_log2, offset);     \
+    return reader_->name(opcode, alignment_log2, offset);                 \
   }
 
 #define DEFINE0(name)                  \
@@ -790,7 +820,7 @@ DEFINE_INDEX(OnTableSizeExpr)
 DEFINE_INDEX_DESC(OnTableFillExpr, "table index")
 DEFINE_INDEX(OnRefFuncExpr)
 DEFINE_TYPE(OnRefNullExpr)
-DEFINE_TYPE(OnRefIsNullExpr)
+DEFINE0(OnRefIsNullExpr)
 DEFINE0(OnNopExpr)
 DEFINE0(OnRethrowExpr);
 DEFINE_INDEX_DESC(OnReturnCallExpr, "func_index")
@@ -831,6 +861,7 @@ DEFINE_BEGIN(BeginNamesSection)
 DEFINE_INDEX(OnFunctionNamesCount)
 DEFINE_INDEX(OnLocalNameFunctionCount)
 DEFINE_INDEX_INDEX(OnLocalNameLocalCount, "index", "count")
+DEFINE_INDEX(OnNameCount);
 DEFINE_END(EndNamesSection)
 
 DEFINE_BEGIN(BeginRelocSection)

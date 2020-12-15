@@ -409,7 +409,7 @@ class RefTypeExpr : public ExprMixin<TypeEnum> {
 };
 
 typedef RefTypeExpr<ExprType::RefNull> RefNullExpr;
-typedef RefTypeExpr<ExprType::RefIsNull> RefIsNullExpr;
+typedef ExprMixin<ExprType::RefIsNull> RefIsNullExpr;
 
 template <ExprType TypeEnum>
 class OpcodeExpr : public ExprMixin<TypeEnum> {
@@ -586,7 +586,7 @@ class LoadStoreExpr : public ExprMixin<TypeEnum> {
  public:
   LoadStoreExpr(Opcode opcode,
                 Address align,
-                uint32_t offset,
+                Address offset,
                 const Location& loc = Location())
       : ExprMixin<TypeEnum>(loc),
         opcode(opcode),
@@ -595,7 +595,7 @@ class LoadStoreExpr : public ExprMixin<TypeEnum> {
 
   Opcode opcode;
   Address align;
-  uint32_t offset;
+  Address offset;
 };
 
 typedef LoadStoreExpr<ExprType::Load> LoadExpr;

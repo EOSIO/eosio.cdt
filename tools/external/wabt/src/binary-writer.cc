@@ -21,6 +21,7 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
+#include <set>
 #include <vector>
 
 #include "config.h"
@@ -61,6 +62,7 @@ void WriteType(Stream* stream, Type type, const char* desc) {
 void WriteLimits(Stream* stream, const Limits* limits) {
   uint32_t flags = limits->has_max ? WABT_BINARY_LIMITS_HAS_MAX_FLAG : 0;
   flags |= limits->is_shared ? WABT_BINARY_LIMITS_IS_SHARED_FLAG : 0;
+  flags |= limits->is_64 ? WABT_BINARY_LIMITS_IS_64_FLAG : 0;
   WriteU32Leb128(stream, flags, "limits: flags");
   WriteU32Leb128(stream, limits->initial, "limits: initial");
   if (limits->has_max) {
@@ -96,10 +98,243 @@ struct RelocSection {
   std::vector<Reloc> relocations;
 };
 
-struct Symbol {
-  Index symbol_index;
-  SymbolType type;
-  Index element_index;
+class Symbol {
+ public:
+  struct Function {
+    static const SymbolType type = SymbolType::Function;
+    Index index;
+  };
+  struct Data {
+    static const SymbolType type = SymbolType::Data;
+    Index index;
+    Offset offset;
+    Address size;
+  };
+  struct Global {
+    static const SymbolType type = SymbolType::Global;
+    Index index;
+  };
+  struct Section {
+    static const SymbolType type = SymbolType::Section;
+    Index section;
+  };
+  struct Event {
+    static const SymbolType type = SymbolType::Event;
+    Index index;
+  };
+  struct Table {
+    static const SymbolType type = SymbolType::Table;
+    Index index;
+  };
+
+ private:
+  SymbolType type_;
+  string_view name_;
+  uint8_t flags_;
+  union {
+    Function function_;
+    Data data_;
+    Global global_;
+    Section section_;
+    Event event_;
+    Table table_;
+  };
+
+ public:
+  Symbol(const string_view& name, uint8_t flags, const Function& f)
+      : type_(Function::type), name_(name), flags_(flags), function_(f) {}
+  Symbol(const string_view& name, uint8_t flags, const Data& d)
+      : type_(Data::type), name_(name), flags_(flags), data_(d) {}
+  Symbol(const string_view& name, uint8_t flags, const Global& g)
+      : type_(Global::type), name_(name), flags_(flags), global_(g) {}
+  Symbol(const string_view& name, uint8_t flags, const Section& s)
+      : type_(Section::type), name_(name), flags_(flags), section_(s) {}
+  Symbol(const string_view& name, uint8_t flags, const Event& e)
+      : type_(Event::type), name_(name), flags_(flags), event_(e) {}
+  Symbol(const string_view& name, uint8_t flags, const Table& t)
+      : type_(Table::type), name_(name), flags_(flags), table_(t) {}
+
+  SymbolType type() const { return type_; }
+  const string_view& name() const { return name_; }
+  uint8_t flags() const { return flags_; }
+
+  SymbolVisibility visibility() const {
+    return static_cast<SymbolVisibility>(flags() & WABT_SYMBOL_MASK_VISIBILITY);
+  }
+  SymbolBinding binding() const {
+    return static_cast<SymbolBinding>(flags() & WABT_SYMBOL_MASK_BINDING);
+  }
+  bool undefined() const { return flags() & WABT_SYMBOL_FLAG_UNDEFINED; }
+  bool defined() const { return !undefined(); }
+  bool exported() const { return flags() & WABT_SYMBOL_FLAG_EXPORTED; }
+  bool explicit_name() const { return flags() & WABT_SYMBOL_FLAG_EXPLICIT_NAME; }
+  bool no_strip() const { return flags() & WABT_SYMBOL_FLAG_NO_STRIP; }
+
+  bool IsFunction() const { return type() == Function::type; }
+  bool IsData() const { return type() == Data::type; }
+  bool IsGlobal() const { return type() == Global::type; }
+  bool IsSection() const { return type() == Section::type; }
+  bool IsEvent() const { return type() == Event::type; }
+  bool IsTable() const { return type() == Table::type; }
+
+  const Function& AsFunction() const {
+    assert(IsFunction());
+    return function_;
+  }
+  const Data& AsData() const {
+    assert(IsData());
+    return data_;
+  }
+  const Global& AsGlobal() const {
+    assert(IsGlobal());
+    return global_;
+  }
+  const Section& AsSection() const {
+    assert(IsSection());
+    return section_;
+  }
+  const Event& AsEvent() const {
+    assert(IsEvent());
+    return event_;
+  }
+  const Table& AsTable() const {
+    assert(IsTable());
+    return table_;
+  }
+};
+
+class SymbolTable {
+  WABT_DISALLOW_COPY_AND_ASSIGN(SymbolTable);
+
+  std::vector<Symbol> symbols_;
+
+  std::vector<Index> functions_;
+  std::vector<Index> tables_;
+  std::vector<Index> globals_;
+
+  std::set<string_view> seen_names_;
+
+  Result EnsureUnique(const string_view& name) {
+    if (seen_names_.count(name)) {
+      fprintf(stderr, "error: duplicate symbol when writing relocatable "
+              "binary: %s\n", &name[0]);
+      return Result::Error;
+    }
+    seen_names_.insert(name);
+    return Result::Ok;
+  };
+
+  template <typename T>
+  Result AddSymbol(std::vector<Index>* map, string_view name,
+                   bool imported, bool exported, T&& sym) {
+    uint8_t flags = 0;
+    if (imported) {
+      flags |= WABT_SYMBOL_FLAG_UNDEFINED;
+      // Wabt currently has no way for a user to explicitly specify the name of
+      // an import, so never set the EXPLICIT_NAME flag, and ignore any display
+      // name fabricated by wabt.
+      name = string_view();
+    } else {
+      if (name.empty()) {
+        // Definitions without a name are local.
+        flags |= uint8_t(SymbolBinding::Local);
+        flags |= uint8_t(SymbolVisibility::Hidden);
+      } else {
+        // Otherwise, strip the dollar off the name; a definition $foo is
+        // available for linking as "foo".
+        assert(name[0] == '$');
+        name.remove_prefix(1);
+      }
+
+      if (exported) {
+        CHECK_RESULT(EnsureUnique(name));
+        flags |= uint8_t(SymbolVisibility::Hidden);
+        flags |= WABT_SYMBOL_FLAG_NO_STRIP;
+      }
+    }
+    if (exported) {
+      flags |= WABT_SYMBOL_FLAG_EXPORTED;
+    }
+
+    map->push_back(symbols_.size());
+    symbols_.emplace_back(name, flags, sym);
+    return Result::Ok;
+  };
+
+  Index SymbolIndex(const std::vector<Index>& table, Index index) const {
+    // For well-formed modules, an index into (e.g.) functions_ will always be
+    // within bounds; the out-of-bounds case here is just to allow --relocatable
+    // to write known-invalid modules.
+    return index < table.size() ? table[index] : kInvalidIndex;
+  }
+
+ public:
+  SymbolTable() {}
+
+  Result Populate(const Module* module) {
+    std::set<Index> exported_funcs;
+    std::set<Index> exported_globals;
+    std::set<Index> exported_events;
+    std::set<Index> exported_tables;
+
+    for (const Export* export_ : module->exports) {
+      switch (export_->kind) {
+      case ExternalKind::Func:
+        exported_funcs.insert(module->GetFuncIndex(export_->var));
+        break;
+      case ExternalKind::Table:
+        exported_tables.insert(module->GetTableIndex(export_->var));
+        break;
+      case ExternalKind::Memory:
+        break;
+      case ExternalKind::Global:
+        exported_globals.insert(module->GetGlobalIndex(export_->var));
+        break;
+      case ExternalKind::Event:
+        exported_events.insert(module->GetEventIndex(export_->var));
+        break;
+      }
+    }
+
+    // We currently only create symbol table entries for function, table, and
+    // global symbols.
+    for (size_t i = 0; i < module->funcs.size(); ++i) {
+      const Func* func = module->funcs[i];
+      bool imported = i < module->num_func_imports;
+      bool exported = exported_funcs.count(i);
+      CHECK_RESULT(AddSymbol(&functions_, func->name, imported, exported,
+                             Symbol::Function{Index(i)}));
+    }
+
+    for (size_t i = 0; i < module->tables.size(); ++i) {
+      const Table* table = module->tables[i];
+      bool imported = i < module->num_table_imports;
+      bool exported = exported_tables.count(i);
+      CHECK_RESULT(AddSymbol(&tables_, table->name, imported, exported,
+                             Symbol::Table{Index(i)}));
+    }
+
+    for (size_t i = 0; i < module->globals.size(); ++i) {
+      const Global* global = module->globals[i];
+      bool imported = i < module->num_global_imports;
+      bool exported = exported_globals.count(i);
+      CHECK_RESULT(AddSymbol(&globals_, global->name, imported, exported,
+                             Symbol::Global{Index(i)}));
+    }
+
+    return Result::Ok;
+  }
+
+  const std::vector<Symbol>& symbols() const { return symbols_; }
+  Index FunctionSymbolIndex(Index index) const {
+    return SymbolIndex(functions_, index);
+  }
+  Index TableSymbolIndex(Index index) const {
+    return SymbolIndex(tables_, index);
+  }
+  Index GlobalSymbolIndex(Index index) const {
+    return SymbolIndex(globals_, index);
+  }
 };
 
 class BinaryWriter {
@@ -133,6 +368,10 @@ class BinaryWriter {
   void WriteU32Leb128WithReloc(Index index,
                                const char* desc,
                                RelocType reloc_type);
+  void WriteS32Leb128WithReloc(int32_t value,
+                               const char* desc,
+                               RelocType reloc_type);
+  void WriteTableNumberWithReloc(Index table_number, const char* desc);
   template <typename T>
   void WriteLoadStoreExpr(const Func* func, const Expr* expr, const char* desc);
   void WriteExpr(const Func* func, const Expr* expr);
@@ -146,13 +385,14 @@ class BinaryWriter {
   void WriteEventType(const Event* event);
   void WriteRelocSection(const RelocSection* reloc_section);
   void WriteLinkingSection();
+  template <typename T>
+  void WriteNames(const std::vector<T*>& elems, NameSectionSubsection type);
 
   Stream* stream_;
   const WriteBinaryOptions& options_;
   const Module* module_;
 
-  std::unordered_map<std::string, Index> symtab_;
-  std::vector<Symbol> symbols_;
+  SymbolTable symtab_;
   std::vector<RelocSection> reloc_sections_;
   RelocSection* current_reloc_section_ = nullptr;
 
@@ -167,7 +407,8 @@ class BinaryWriter {
   size_t last_subsection_payload_offset_ = 0;
 
   // Information about the data count section, so it can be removed if it is
-  // not needed.
+  // not needed, and relocs relative to the code section patched up.
+  size_t code_start_ = 0;
   size_t data_count_start_ = 0;
   size_t data_count_end_ = 0;
   bool has_data_segment_instruction_ = false;
@@ -244,7 +485,7 @@ void BinaryWriter::WriteBlockDecl(const BlockDeclaration& decl) {
   Index index = decl.has_func_type ? module_->GetFuncTypeIndex(decl.type_var)
                                    : module_->GetFuncTypeIndex(decl.sig);
   assert(index != kInvalidIndex);
-  WriteS32Leb128(stream_, index, "block type function index");
+  WriteS32Leb128WithReloc(index, "block type function index", RelocType::TypeIndexLEB);
 }
 
 void BinaryWriter::WriteSectionHeader(const char* desc,
@@ -276,13 +517,8 @@ void BinaryWriter::BeginCustomSection(const char* name) {
 
 void BinaryWriter::EndSection() {
   assert(last_section_leb_size_guess_ != 0);
-  Offset delta = WriteFixupU32Leb128Size(
-      last_section_offset_, last_section_leb_size_guess_, "FIXUP section size");
-  if (current_reloc_section_ && delta != 0) {
-    for (Reloc& reloc : current_reloc_section_->relocations) {
-      reloc.offset += delta;
-    }
-  }
+  WriteFixupU32Leb128Size(last_section_offset_, last_section_leb_size_guess_,
+                          "FIXUP section size");
   last_section_leb_size_guess_ = 0;
   section_count_++;
 }
@@ -312,31 +548,22 @@ Index BinaryWriter::GetEventVarDepth(const Var* var) {
 }
 
 Index BinaryWriter::GetSymbolIndex(RelocType reloc_type, Index index) {
-  std::string name;
-  SymbolType type = SymbolType::Function;
   switch (reloc_type) {
     case RelocType::FuncIndexLEB:
-      name = module_->funcs[index]->name;
-      break;
+      return symtab_.FunctionSymbolIndex(index);
+    case RelocType::TableNumberLEB:
+      return symtab_.TableSymbolIndex(index);
     case RelocType::GlobalIndexLEB:
-      type = SymbolType::Global;
-      name = module_->globals[index]->name;
-      break;
+      return symtab_.GlobalSymbolIndex(index);
+    case RelocType::TypeIndexLEB:
+      // Type indexes don't create entries in the symbol table; instead their
+      // index is used directly.
+      return index;
     default:
-      // TODO: Add support for TypeIndexLEB.
       fprintf(stderr, "warning: unsupported relocation type: %s\n",
               GetRelocTypeName(reloc_type));
       return kInvalidIndex;
   }
-  auto iter = symtab_.find(name);
-  if (iter != symtab_.end()) {
-    return iter->second;
-  }
-
-  Index sym_index = Index(symbols_.size());
-  symtab_[name] = sym_index;
-  symbols_.push_back(Symbol{sym_index, type, index});
-  return sym_index;
 }
 
 void BinaryWriter::AddReloc(RelocType reloc_type, Index index) {
@@ -350,6 +577,12 @@ void BinaryWriter::AddReloc(RelocType reloc_type, Index index) {
   // Add a new relocation to the curent reloc section
   size_t offset = stream_->offset() - last_section_payload_offset_;
   Index symbol_index = GetSymbolIndex(reloc_type, index);
+  if (symbol_index == kInvalidIndex) {
+    // The file is invalid, for example a reference to function 42 where only 10
+    // functions are defined.  The user must have already passed --no-check, so
+    // no extra warning here is needed.
+    return;
+  }
   current_reloc_section_->relocations.emplace_back(reloc_type, offset,
                                                    symbol_index);
 }
@@ -362,6 +595,29 @@ void BinaryWriter::WriteU32Leb128WithReloc(Index index,
     WriteFixedU32Leb128(stream_, index, desc);
   } else {
     WriteU32Leb128(stream_, index, desc);
+  }
+}
+
+void BinaryWriter::WriteS32Leb128WithReloc(int32_t value,
+                                           const char* desc,
+                                           RelocType reloc_type) {
+  if (options_.relocatable) {
+    AddReloc(reloc_type, value);
+    WriteFixedS32Leb128(stream_, value, desc);
+  } else {
+    WriteS32Leb128(stream_, value, desc);
+  }
+}
+
+void BinaryWriter::WriteTableNumberWithReloc(Index value,
+                                             const char* desc) {
+  // Unless reference types are enabled, all references to tables refer to table
+  // 0, so no relocs need be emitted when making relocatable binaries.
+  if (options_.relocatable && options_.features.reference_types_enabled()) {
+    AddReloc(RelocType::TableNumberLEB, value);
+    WriteFixedS32Leb128(stream_, value, desc);
+  } else {
+    WriteS32Leb128(stream_, value, desc);
   }
 }
 
@@ -476,7 +732,7 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
         module_->GetTableIndex(cast<CallIndirectExpr>(expr)->table);
       WriteOpcode(stream_, Opcode::CallIndirect);
       WriteU32Leb128WithReloc(sig_index, "signature index", RelocType::TypeIndexLEB);
-      WriteU32Leb128(stream_, table_index, "table index");
+      WriteTableNumberWithReloc(table_index, "table index");
       break;
     }
     case ExprType::ReturnCallIndirect: {
@@ -486,7 +742,7 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
           module_->GetTableIndex(cast<ReturnCallIndirectExpr>(expr)->table);
       WriteOpcode(stream_, Opcode::ReturnCallIndirect);
       WriteU32Leb128WithReloc(sig_index, "signature index", RelocType::TypeIndexLEB);
-      WriteU32Leb128(stream_, table_index, "table index");
+      WriteTableNumberWithReloc(table_index, "table index");
       break;
     }
     case ExprType::Compare:
@@ -617,8 +873,8 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
       Index dst = module_->GetTableIndex(copy_expr->dst_table);
       Index src = module_->GetTableIndex(copy_expr->src_table);
       WriteOpcode(stream_, Opcode::TableCopy);
-      WriteU32Leb128(stream_, dst, "table.copy dst_table");
-      WriteU32Leb128(stream_, src, "table.copy src_table");
+      WriteTableNumberWithReloc(dst, "table.copy dst_table");
+      WriteTableNumberWithReloc(src, "table.copy src_table");
       break;
     }
     case ExprType::ElemDrop: {
@@ -635,42 +891,42 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
           module_->GetElemSegmentIndex(init_expr->segment_index);
       WriteOpcode(stream_, Opcode::TableInit);
       WriteU32Leb128(stream_, segment_index, "table.init segment");
-      WriteU32Leb128(stream_, table_index, "table.init table");
+      WriteTableNumberWithReloc(table_index, "table.init table");
       break;
     }
     case ExprType::TableGet: {
       Index index =
           module_->GetTableIndex(cast<TableGetExpr>(expr)->var);
       WriteOpcode(stream_, Opcode::TableGet);
-      WriteU32Leb128(stream_, index, "table.get table index");
+      WriteTableNumberWithReloc(index, "table.get table index");
       break;
     }
     case ExprType::TableSet: {
       Index index =
           module_->GetTableIndex(cast<TableSetExpr>(expr)->var);
       WriteOpcode(stream_, Opcode::TableSet);
-      WriteU32Leb128(stream_, index, "table.set table index");
+      WriteTableNumberWithReloc(index, "table.set table index");
       break;
     }
     case ExprType::TableGrow: {
       Index index =
           module_->GetTableIndex(cast<TableGrowExpr>(expr)->var);
       WriteOpcode(stream_, Opcode::TableGrow);
-      WriteU32Leb128(stream_, index, "table.grow table index");
+      WriteTableNumberWithReloc(index, "table.grow table index");
       break;
     }
     case ExprType::TableSize: {
       Index index =
           module_->GetTableIndex(cast<TableSizeExpr>(expr)->var);
       WriteOpcode(stream_, Opcode::TableSize);
-      WriteU32Leb128(stream_, index, "table.size table index");
+      WriteTableNumberWithReloc(index, "table.size table index");
       break;
     }
     case ExprType::TableFill: {
       Index index =
           module_->GetTableIndex(cast<TableFillExpr>(expr)->var);
       WriteOpcode(stream_, Opcode::TableFill);
-      WriteU32Leb128(stream_, index, "table.fill table index");
+      WriteTableNumberWithReloc(index, "table.fill table index");
       break;
     }
     case ExprType::RefFunc: {
@@ -684,11 +940,9 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
       WriteType(stream_, cast<RefNullExpr>(expr)->type, "ref.null type");
       break;
     }
-    case ExprType::RefIsNull: {
+    case ExprType::RefIsNull:
       WriteOpcode(stream_, Opcode::RefIsNull);
-      WriteType(stream_, cast<RefIsNullExpr>(expr)->type, "ref.is_null type");
       break;
-    }
     case ExprType::Nop:
       WriteOpcode(stream_, Opcode::Nop);
       break;
@@ -826,15 +1080,31 @@ void BinaryWriter::WriteRelocSection(const RelocSection* reloc_section) {
     WriteU32Leb128(stream_, reloc.index, "reloc index");
     switch (reloc.type) {
       case RelocType::MemoryAddressLEB:
+      case RelocType::MemoryAddressLEB64:
       case RelocType::MemoryAddressSLEB:
+      case RelocType::MemoryAddressSLEB64:
       case RelocType::MemoryAddressRelSLEB:
+      case RelocType::MemoryAddressRelSLEB64:
       case RelocType::MemoryAddressI32:
+      case RelocType::MemoryAddressI64:
       case RelocType::FunctionOffsetI32:
       case RelocType::SectionOffsetI32:
         WriteU32Leb128(stream_, reloc.addend, "reloc addend");
         break;
-      default:
+      case RelocType::FuncIndexLEB:
+      case RelocType::TableIndexSLEB:
+      case RelocType::TableIndexSLEB64:
+      case RelocType::TableIndexI32:
+      case RelocType::TableIndexI64:
+      case RelocType::TypeIndexLEB:
+      case RelocType::GlobalIndexLEB:
+      case RelocType::EventIndexLEB:
+      case RelocType::TableIndexRelSLEB:
+      case RelocType::TableNumberLEB:
         break;
+      default:
+        fprintf(stderr, "warning: unsupported relocation type: %s\n",
+                GetRelocTypeName(reloc.type));
     }
   }
 
@@ -844,35 +1114,51 @@ void BinaryWriter::WriteRelocSection(const RelocSection* reloc_section) {
 void BinaryWriter::WriteLinkingSection() {
   BeginCustomSection(WABT_BINARY_SECTION_LINKING);
   WriteU32Leb128(stream_, 2, "metadata version");
-  if (symbols_.size()) {
+  const std::vector<Symbol>& symbols = symtab_.symbols();
+  if (symbols.size()) {
     stream_->WriteU8Enum(LinkingEntryType::SymbolTable, "symbol table");
     BeginSubsection("symbol table");
-    WriteU32Leb128(stream_, symbols_.size(), "num symbols");
+    WriteU32Leb128(stream_, symbols.size(), "num symbols");
 
-    for (const Symbol& sym : symbols_) {
-      bool is_defined = true;
-      if (sym.type == SymbolType::Function) {
-        if (sym.element_index < module_->num_func_imports) {
-          is_defined = false;
-        }
-      }
-      if (sym.type == SymbolType::Global) {
-        if (sym.element_index < module_->num_global_imports) {
-          is_defined = false;
-        }
-      }
-      stream_->WriteU8Enum(sym.type, "symbol type");
-      WriteU32Leb128(stream_, is_defined ? 0 : WABT_SYMBOL_FLAG_UNDEFINED,
-                     "symbol flags");
-      WriteU32Leb128(stream_, sym.element_index, "element index");
-      if (is_defined) {
-        if (sym.type == SymbolType::Function) {
-          WriteStr(stream_, module_->funcs[sym.element_index]->name,
-                   "function name", PrintChars::Yes);
-        } else if (sym.type == SymbolType::Global) {
-          WriteStr(stream_, module_->globals[sym.element_index]->name,
-                   "global name", PrintChars::Yes);
-        }
+    for (const Symbol& sym : symbols) {
+      stream_->WriteU8Enum(sym.type(), "symbol type");
+      WriteU32Leb128(stream_, sym.flags(), "symbol flags");
+      switch (sym.type()) {
+        case SymbolType::Function:
+          WriteU32Leb128(stream_, sym.AsFunction().index, "function index");
+          if (sym.defined() || sym.explicit_name()) {
+            WriteStr(stream_, sym.name(), "function name", PrintChars::Yes);
+          }
+          break;
+        case SymbolType::Data:
+          WriteStr(stream_, sym.name(), "data name", PrintChars::Yes);
+          if (sym.defined()) {
+            WriteU32Leb128(stream_, sym.AsData().index, "data index");
+            WriteU32Leb128(stream_, sym.AsData().offset, "data offset");
+            WriteU32Leb128(stream_, sym.AsData().size, "data size");
+          }
+          break;
+        case SymbolType::Global:
+          WriteU32Leb128(stream_, sym.AsGlobal().index, "global index");
+          if (sym.defined() || sym.explicit_name()) {
+            WriteStr(stream_, sym.name(), "global name", PrintChars::Yes);
+          }
+          break;
+        case SymbolType::Section:
+          WriteU32Leb128(stream_, sym.AsSection().section, "section index");
+          break;
+        case SymbolType::Event:
+          WriteU32Leb128(stream_, sym.AsEvent().index, "event index");
+          if (sym.defined() || sym.explicit_name()) {
+            WriteStr(stream_, sym.name(), "event name", PrintChars::Yes);
+          }
+          break;
+        case SymbolType::Table:
+          WriteU32Leb128(stream_, sym.AsTable().index, "table index");
+          if (sym.defined() || sym.explicit_name()) {
+            WriteStr(stream_, sym.name(), "table name", PrintChars::Yes);
+          }
+          break;
       }
     }
     EndSubsection();
@@ -880,9 +1166,44 @@ void BinaryWriter::WriteLinkingSection() {
   EndSection();
 }
 
+template <typename T>
+void BinaryWriter::WriteNames(const std::vector<T*>& elems,
+                              NameSectionSubsection type) {
+  size_t num_named_elems = 0;
+  for (const T* elem : elems) {
+    if (!elem->name.empty()) {
+      num_named_elems++;
+    }
+  }
+
+  if (!num_named_elems) {
+    return;
+  }
+
+  WriteU32Leb128(stream_, type, "name subsection type");
+  BeginSubsection("name subsection");
+
+  char desc[100];
+  WriteU32Leb128(stream_, num_named_elems, "num names");
+  for (size_t i = 0; i < elems.size(); ++i) {
+    const T* elem = elems[i];
+    if (elem->name.empty()) {
+      continue;
+    }
+    WriteU32Leb128(stream_, i, "elem index");
+    wabt_snprintf(desc, sizeof(desc), "elem name %" PRIzd, i);
+    WriteDebugName(stream_, elem->name, desc);
+  }
+  EndSubsection();
+}
+
 Result BinaryWriter::WriteModule() {
   stream_->WriteU32(WABT_BINARY_MAGIC, "WASM_BINARY_MAGIC");
   stream_->WriteU32(WABT_BINARY_VERSION, "WASM_BINARY_VERSION");
+
+  if (options_.relocatable) {
+    CHECK_RESULT(symtab_.Populate(module_));
+  }
 
   if (module_->types.size()) {
     BeginKnownSection(BinarySection::Type);
@@ -1132,9 +1453,7 @@ Result BinaryWriter::WriteModule() {
 
             case ElemExprKind::RefFunc:
               WriteOpcode(stream_, Opcode::RefFunc);
-              WriteU32Leb128WithReloc(module_->GetFuncIndex(elem_expr.var),
-                                      "elem expr function index",
-                                      RelocType::FuncIndexLEB);
+              WriteU32Leb128(stream_, module_->GetFuncIndex(elem_expr.var), "elem expr function index");
               break;
           }
           WriteOpcode(stream_, Opcode::End);
@@ -1142,9 +1461,7 @@ Result BinaryWriter::WriteModule() {
       } else {
         for (const ElemExpr& elem_expr : segment->elem_exprs) {
           assert(elem_expr.kind == ElemExprKind::RefFunc);
-          WriteU32Leb128WithReloc(module_->GetFuncIndex(elem_expr.var),
-                                  "elem function index",
-                                  RelocType::FuncIndexLEB);
+          WriteU32Leb128(stream_, module_->GetFuncIndex(elem_expr.var), "elem function index");
         }
       }
     }
@@ -1162,6 +1479,7 @@ Result BinaryWriter::WriteModule() {
   }
 
   if (num_funcs) {
+    code_start_ = stream_->offset();
     BeginKnownSection(BinarySection::Code);
     WriteU32Leb128(stream_, num_funcs, "num functions");
 
@@ -1174,8 +1492,17 @@ Result BinaryWriter::WriteModule() {
       Offset body_size_offset =
           WriteU32Leb128Space(leb_size_guess, "func body size (guess)");
       WriteFunc(func);
-      WriteFixupU32Leb128Size(body_size_offset, leb_size_guess,
+      auto func_start_offset = body_size_offset - last_section_payload_offset_;
+      auto func_end_offset = stream_->offset() - last_section_payload_offset_;
+      auto delta = WriteFixupU32Leb128Size(body_size_offset, leb_size_guess,
                               "FIXUP func body size");
+      if (current_reloc_section_ && delta != 0) {
+        for (Reloc& reloc : current_reloc_section_->relocations) {
+          if (reloc.offset >= func_start_offset && reloc.offset <= func_end_offset) {
+            reloc.offset += delta;
+          }
+        }
+      }
     }
     EndSection();
   }
@@ -1184,10 +1511,26 @@ Result BinaryWriter::WriteModule() {
   if (options_.features.bulk_memory_enabled() &&
       !has_data_segment_instruction_) {
     Offset size = stream_->offset() - data_count_end_;
-    if (data_count_start_ != data_count_end_) {
+    if (size) {
+      // If the DataCount section was followed by anything, assert that it's
+      // only the Code section.  This limits the amount of fixing-up that we
+      // need to do.
+      assert(data_count_end_ == code_start_);
+      assert(last_section_type_ == BinarySection::Code);
       stream_->MoveData(data_count_start_, data_count_end_, size);
     }
     stream_->Truncate(data_count_start_ + size);
+
+    --section_count_;
+
+    // We just effectively decremented the code section's index; adjust anything
+    // that might have captured it.
+    for (RelocSection& section : reloc_sections_) {
+      if (section.section_index == section_count_) {
+        assert(last_section_type_ == BinarySection::Code);
+        --section.section_index;
+      }
+    }
   }
 
   if (module_->data_segments.size()) {
@@ -1215,36 +1558,15 @@ Result BinaryWriter::WriteModule() {
     char desc[100];
     BeginCustomSection(WABT_BINARY_SECTION_NAME);
 
-    size_t named_functions = 0;
-    for (const Func* func : module_->funcs) {
-      if (!func->name.empty()) {
-        named_functions++;
-      }
-    }
-
     if (!module_->name.empty()) {
-      WriteU32Leb128(stream_, 0, "module name type");
+      WriteU32Leb128(stream_, NameSectionSubsection::Module,
+                     "module name type");
       BeginSubsection("module name subsection");
       WriteDebugName(stream_, module_->name, "module name");
       EndSubsection();
     }
 
-    if (named_functions > 0) {
-      WriteU32Leb128(stream_, 1, "function name type");
-      BeginSubsection("function name subsection");
-
-      WriteU32Leb128(stream_, named_functions, "num functions");
-      for (size_t i = 0; i < module_->funcs.size(); ++i) {
-        const Func* func = module_->funcs[i];
-        if (func->name.empty()) {
-          continue;
-        }
-        WriteU32Leb128(stream_, i, "function index");
-        wabt_snprintf(desc, sizeof(desc), "func name %" PRIzd, i);
-        WriteDebugName(stream_, func->name, desc);
-      }
-      EndSubsection();
-    }
+    WriteNames<Func>(module_->funcs, NameSectionSubsection::Function);
 
     WriteU32Leb128(stream_, 2, "local name type");
 
@@ -1267,6 +1589,16 @@ Result BinaryWriter::WriteModule() {
       }
     }
     EndSubsection();
+
+    WriteNames<TypeEntry>(module_->types, NameSectionSubsection::Type);
+    WriteNames<Table>(module_->tables, NameSectionSubsection::Table);
+    WriteNames<Memory>(module_->memories, NameSectionSubsection::Memory);
+    WriteNames<Global>(module_->globals, NameSectionSubsection::Global);
+    WriteNames<DataSegment>(module_->data_segments,
+                            NameSectionSubsection::DataSegment);
+    WriteNames<ElemSegment>(module_->elem_segments,
+                            NameSectionSubsection::ElemSegment);
+
     EndSection();
   }
 

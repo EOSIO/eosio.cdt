@@ -23,6 +23,10 @@
 #define WABT_BINARY_VERSION 1
 #define WABT_BINARY_LIMITS_HAS_MAX_FLAG 0x1
 #define WABT_BINARY_LIMITS_IS_SHARED_FLAG 0x2
+#define WABT_BINARY_LIMITS_IS_64_FLAG 0x4
+#define WABT_BINARY_LIMITS_ALL_FLAGS                                     \
+  (WABT_BINARY_LIMITS_HAS_MAX_FLAG | WABT_BINARY_LIMITS_IS_SHARED_FLAG | \
+   WABT_BINARY_LIMITS_IS_64_FLAG)
 
 #define WABT_BINARY_SECTION_NAME "name"
 #define WABT_BINARY_SECTION_RELOC "reloc"
@@ -73,7 +77,16 @@ enum class NameSectionSubsection {
   Module = 0,
   Function = 1,
   Local = 2,
+  Label = 3,
+  Type = 4,
+  Table = 5,
+  Memory = 6,
+  Global = 7,
+  ElemSegment = 8,
+  DataSegment = 9,
+  Last = DataSegment,
 };
+const char* GetNameSectionSubsectionName(NameSectionSubsection subsec);
 
 }  // namespace wabt
 

@@ -171,6 +171,7 @@ ModuleContext::Arities ModuleContext::GetExprArity(const Expr& expr) const {
     case ExprType::MemoryFill:
     case ExprType::MemoryCopy:
     case ExprType::TableCopy:
+    case ExprType::TableFill:
       return { 3, 0 };
 
     case ExprType::AtomicLoad:
@@ -181,6 +182,7 @@ ModuleContext::Arities ModuleContext::GetExprArity(const Expr& expr) const {
     case ExprType::Unary:
     case ExprType::TableGet:
     case ExprType::RefIsNull:
+    case ExprType::LoadSplat:
       return { 1, 1 };
 
     case ExprType::Drop:
@@ -221,7 +223,6 @@ ModuleContext::Arities ModuleContext::GetExprArity(const Expr& expr) const {
 
     case ExprType::Try:
       return { 0, cast<TryExpr>(&expr)->block.decl.sig.GetNumResults() };
-      break;
 
     case ExprType::Ternary:
       return { 3, 1 };
@@ -257,10 +258,7 @@ ModuleContext::Arities ModuleContext::GetExprArity(const Expr& expr) const {
 
     case ExprType::SimdShuffleOp:
       return { 2, 1 };
-
-    default:
-      fprintf(stderr, "bad expr type: %s\n", GetExprTypeName(expr));
-      assert(0);
-      return { 0, 0 };
   }
+
+  WABT_UNREACHABLE;
 }

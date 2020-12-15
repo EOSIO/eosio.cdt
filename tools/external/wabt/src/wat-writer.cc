@@ -496,10 +496,10 @@ void WatWriter::WriteLoadStoreExpr(const Expr* expr) {
   auto typed_expr = cast<T>(expr);
   WritePutsSpace(typed_expr->opcode.GetName());
   if (typed_expr->offset) {
-    Writef("offset=%u", typed_expr->offset);
+    Writef("offset=%" PRIaddress, typed_expr->offset);
   }
   if (!typed_expr->opcode.IsNaturallyAligned(typed_expr->align)) {
-    Writef("align=%u", typed_expr->align);
+    Writef("align=%" PRIaddress, typed_expr->align);
   }
   WriteNewline(NO_FORCE_NEWLINE);
 }
@@ -823,8 +823,7 @@ Result WatWriter::ExprVisitorDelegate::OnRefNullExpr(RefNullExpr* expr) {
 }
 
 Result WatWriter::ExprVisitorDelegate::OnRefIsNullExpr(RefIsNullExpr* expr) {
-  writer_->WritePutsSpace(Opcode::RefIsNull_Opcode.GetName());
-  writer_->WriteRefKind(expr->type, NextChar::Newline);
+  writer_->WritePutsNewline(Opcode::RefIsNull_Opcode.GetName());
   return Result::Ok;
 }
 
@@ -905,7 +904,7 @@ Result WatWriter::ExprVisitorDelegate::OnThrowExpr(ThrowExpr* expr) {
 }
 
 Result WatWriter::ExprVisitorDelegate::OnRethrowExpr(RethrowExpr* expr) {
-  writer_->WritePutsSpace(Opcode::Rethrow_Opcode.GetName());
+  writer_->WritePutsNewline(Opcode::Rethrow_Opcode.GetName());
   return Result::Ok;
 }
 
@@ -1268,6 +1267,9 @@ void WatWriter::WriteEvent(const Event& event) {
 }
 
 void WatWriter::WriteLimits(const Limits& limits) {
+  if (limits.is_64) {
+    Writef("i64");
+  }
   Writef("%" PRIu64, limits.initial);
   if (limits.has_max) {
     Writef("%" PRIu64, limits.max);

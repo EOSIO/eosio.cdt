@@ -63,7 +63,7 @@ def ProcessDir(wabt_test_dir, testsuite_dir, tool, flags=None):
 
         with open(test_filename, 'w') as f:
             f.write(';;; TOOL: %s\n' % tool)
-            f.write(';;; STDIN_FILE: %s\n' % wast_filename)
+            f.write(';;; STDIN_FILE: %s\n' % wast_filename.replace(os.sep, '/'))
             if flags:
                 f.write(';;; ARGS*: %s\n' % flags)
 
@@ -93,6 +93,7 @@ def main(args):
     ProcessProposalDir('bulk-memory-operations', '--enable-bulk-memory')
     ProcessProposalDir('reference-types', '--enable-reference-types')
     ProcessProposalDir('simd', '--enable-simd')
+    ProcessProposalDir('memory64', '--enable-memory64')
 
     return 0
 
