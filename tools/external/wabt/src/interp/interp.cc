@@ -169,7 +169,8 @@ Result Match(const EventType& expected,
 }
 
 //// Limits ////
-bool CanGrow(const Limits& limits, u32 old_size, u32 delta, u32* new_size) {
+template <typename T>
+bool CanGrow(const Limits& limits, T old_size, T delta, T* new_size) {
   if (limits.max >= delta && old_size <= limits.max - delta) {
     *new_size = old_size + delta;
     return true;
@@ -456,7 +457,7 @@ Result Table::Grow(Store& store, u32 count, Ref ref) {
   size_t old_size = elements_.size();
   u32 new_size;
   if (store.HasValueType(ref, type_.element) &&
-      CanGrow(type_.limits, old_size, count, &new_size)) {
+      CanGrow<u32>(type_.limits, old_size, count, &new_size)) {
     elements_.resize(new_size);
     Fill(store, old_size, ref, new_size - old_size);
     return Result::Ok;
@@ -527,9 +528,9 @@ Result Memory::Match(class Store& store,
   return MatchImpl(store, import_type, type_, out_trap);
 }
 
-Result Memory::Grow(u32 count) {
-  u32 new_pages;
-  if (CanGrow(type_.limits, pages_, count, &new_pages)) {
+Result Memory::Grow(u64 count) {
+  u64 new_pages;
+  if (CanGrow<u64>(type_.limits, pages_, count, &new_pages)) {
     pages_ = new_pages;
     data_.resize(new_pages * WABT_PAGE_SIZE);
     return Result::Ok;
@@ -537,7 +538,7 @@ Result Memory::Grow(u32 count) {
   return Result::Error;
 }
 
-Result Memory::Fill(u32 offset, u8 value, u32 size) {
+Result Memory::Fill(u64 offset, u8 value, u64 size) {
   if (IsValidAccess(offset, 0, size)) {
     std::fill(data_.begin() + offset, data_.begin() + offset + size, value);
     return Result::Ok;
@@ -545,10 +546,10 @@ Result Memory::Fill(u32 offset, u8 value, u32 size) {
   return Result::Error;
 }
 
-Result Memory::Init(u32 dst_offset,
+Result Memory::Init(u64 dst_offset,
                     const DataSegment& src,
-                    u32 src_offset,
-                    u32 size) {
+                    u64 src_offset,
+                    u64 size) {
   if (IsValidAccess(dst_offset, 0, size) &&
       src.IsValidRange(src_offset, size)) {
     std::copy(src.desc().data.begin() + src_offset,
@@ -561,10 +562,10 @@ Result Memory::Init(u32 dst_offset,
 
 // static
 Result Memory::Copy(Memory& dst,
-                    u32 dst_offset,
+                    u64 dst_offset,
                     const Memory& src,
-                    u32 src_offset,
-                    u32 size) {
+                    u64 src_offset,
+                    u64 size) {
   if (dst.IsValidAccess(dst_offset, 0, size) &&
       src.IsValidAccess(src_offset, 0, size)) {
     auto src_begin = src.data_.begin() + src_offset;
@@ -614,7 +615,7 @@ Global::Global(Store& store, GlobalType type, Value value)
 
 void Global::Mark(Store& store) {
   if (IsReference(type_.type)) {
-    store.Mark(value_.ref_);
+    store.Mark(value_.Get<Ref>());
   }
 }
 
@@ -673,8 +674,8 @@ bool ElemSegment::IsValidRange(u32 offset, u32 size) const {
 DataSegment::DataSegment(const DataDesc* desc)
     : desc_(desc), size_(desc->data.size()) {}
 
-bool DataSegment::IsValidRange(u32 offset, u32 size) const {
-  u32 data_size = size_;
+bool DataSegment::IsValidRange(u64 offset, u64 size) const {
+  u64 data_size = size_;
   return size <= data_size && offset <= data_size - size;
 }
 
@@ -845,8 +846,8 @@ Instance::Ptr Instance::Instantiate(Store& store,
           *out_trap = Trap::New(
               store,
               StringPrintf("out of bounds memory access: data segment is "
-                           "out of bounds: [%u, %" PRIu64 ") >= max value %u",
-                           offset, u64{offset} + segment.size(),
+                           "out of bounds: [%u, %" PRIu64 ") >= max value %"
+                           PRIu64, offset, u64{offset} + segment.size(),
                            memory->ByteSize()));
           return {};
         }
@@ -898,7 +899,7 @@ void Thread::Mark(Store& store) {
     frame.Mark(store);
   }
   for (auto index: refs_) {
-    store.Mark(values_[index].ref_);
+    store.Mark(values_[index].Get<Ref>());
   }
 }
 
@@ -1020,6 +1021,10 @@ Value Thread::Pop() {
   auto value = values_.back();
   values_.pop_back();
   return value;
+}
+
+u64 Thread::PopPtr(const Memory::Ptr& memory) {
+  return memory->type().limits.is_64 ? Pop<u64>() : Pop<u32>();
 }
 
 template <typename T>
@@ -1175,17 +1180,29 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
 
     case O::MemorySize: {
       Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32]};
-      Push(memory->PageSize());
+      if (memory->type().limits.is_64) {
+        Push<u64>(memory->PageSize());
+      } else {
+        Push<u32>(static_cast<u32>(memory->PageSize()));
+      }
       break;
     }
 
     case O::MemoryGrow: {
       Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32]};
-      u32 old_size = memory->PageSize();
-      if (Failed(memory->Grow(Pop<u32>()))) {
-        Push<s32>(-1);
+      u64 old_size = memory->PageSize();
+      if (memory->type().limits.is_64) {
+        if (Failed(memory->Grow(Pop<u64>()))) {
+          Push<s64>(-1);
+        } else {
+          Push<u64>(old_size);
+        }
       } else {
-        Push<u32>(old_size);
+        if (Failed(memory->Grow(Pop<u32>()))) {
+          Push<s32>(-1);
+        } else {
+          Push<u32>(old_size);
+        }
       }
       break;
     }
@@ -1484,16 +1501,17 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
 
     case O::I8X16Neg:          return DoSimdUnop(IntNeg<u8>);
     case O::I8X16AnyTrue:      return DoSimdIsTrue<u8x16, 1>();
+    case O::I8X16Bitmask:      return DoSimdBitmask<s8x16>();
     case O::I8X16AllTrue:      return DoSimdIsTrue<u8x16, 16>();
     case O::I8X16Shl:          return DoSimdShift(IntShl<u8>);
     case O::I8X16ShrS:         return DoSimdShift(IntShr<s8>);
     case O::I8X16ShrU:         return DoSimdShift(IntShr<u8>);
     case O::I8X16Add:          return DoSimdBinop(Add<u8>);
-    case O::I8X16AddSaturateS: return DoSimdBinop(IntAddSat<s8>);
-    case O::I8X16AddSaturateU: return DoSimdBinop(IntAddSat<u8>);
+    case O::I8X16AddSatS:      return DoSimdBinop(IntAddSat<s8>);
+    case O::I8X16AddSatU:      return DoSimdBinop(IntAddSat<u8>);
     case O::I8X16Sub:          return DoSimdBinop(Sub<u8>);
-    case O::I8X16SubSaturateS: return DoSimdBinop(IntSubSat<s8>);
-    case O::I8X16SubSaturateU: return DoSimdBinop(IntSubSat<u8>);
+    case O::I8X16SubSatS:      return DoSimdBinop(IntSubSat<s8>);
+    case O::I8X16SubSatU:      return DoSimdBinop(IntSubSat<u8>);
     case O::I8X16MinS:         return DoSimdBinop(IntMin<s8>);
     case O::I8X16MinU:         return DoSimdBinop(IntMin<u8>);
     case O::I8X16MaxS:         return DoSimdBinop(IntMax<s8>);
@@ -1501,16 +1519,17 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
 
     case O::I16X8Neg:          return DoSimdUnop(IntNeg<u16>);
     case O::I16X8AnyTrue:      return DoSimdIsTrue<u16x8, 1>();
+    case O::I16X8Bitmask:      return DoSimdBitmask<s16x8>();
     case O::I16X8AllTrue:      return DoSimdIsTrue<u16x8, 8>();
     case O::I16X8Shl:          return DoSimdShift(IntShl<u16>);
     case O::I16X8ShrS:         return DoSimdShift(IntShr<s16>);
     case O::I16X8ShrU:         return DoSimdShift(IntShr<u16>);
     case O::I16X8Add:          return DoSimdBinop(Add<u16>);
-    case O::I16X8AddSaturateS: return DoSimdBinop(IntAddSat<s16>);
-    case O::I16X8AddSaturateU: return DoSimdBinop(IntAddSat<u16>);
+    case O::I16X8AddSatS:      return DoSimdBinop(IntAddSat<s16>);
+    case O::I16X8AddSatU:      return DoSimdBinop(IntAddSat<u16>);
     case O::I16X8Sub:          return DoSimdBinop(Sub<u16>);
-    case O::I16X8SubSaturateS: return DoSimdBinop(IntSubSat<s16>);
-    case O::I16X8SubSaturateU: return DoSimdBinop(IntSubSat<u16>);
+    case O::I16X8SubSatS:      return DoSimdBinop(IntSubSat<s16>);
+    case O::I16X8SubSatU:      return DoSimdBinop(IntSubSat<u16>);
     case O::I16X8Mul:          return DoSimdBinop(Mul<u16>);
     case O::I16X8MinS:         return DoSimdBinop(IntMin<s16>);
     case O::I16X8MinU:         return DoSimdBinop(IntMin<u16>);
@@ -1519,6 +1538,7 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
 
     case O::I32X4Neg:          return DoSimdUnop(IntNeg<u32>);
     case O::I32X4AnyTrue:      return DoSimdIsTrue<u32x4, 1>();
+    case O::I32X4Bitmask:      return DoSimdBitmask<s32x4>();
     case O::I32X4AllTrue:      return DoSimdIsTrue<u32x4, 4>();
     case O::I32X4Shl:          return DoSimdShift(IntShl<u32>);
     case O::I32X4ShrS:         return DoSimdShift(IntShr<s32>);
@@ -1539,6 +1559,16 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
     case O::I64X2Sub:          return DoSimdBinop(Sub<u64>);
     case O::I64X2Mul:          return DoSimdBinop(Mul<u64>);
 
+    case O::F32X4Ceil:         return DoSimdUnop(FloatCeil<f32>);
+    case O::F32X4Floor:        return DoSimdUnop(FloatFloor<f32>);
+    case O::F32X4Trunc:        return DoSimdUnop(FloatTrunc<f32>);
+    case O::F32X4Nearest:      return DoSimdUnop(FloatNearest<f32>);
+
+    case O::F64X2Ceil:         return DoSimdUnop(FloatCeil<f64>);
+    case O::F64X2Floor:        return DoSimdUnop(FloatFloor<f64>);
+    case O::F64X2Trunc:        return DoSimdUnop(FloatTrunc<f64>);
+    case O::F64X2Nearest:      return DoSimdUnop(FloatNearest<f64>);
+
     case O::F32X4Abs:          return DoSimdUnop(FloatAbs<f32>);
     case O::F32X4Neg:          return DoSimdUnop(FloatNeg<f32>);
     case O::F32X4Sqrt:         return DoSimdUnop(FloatSqrt<f32>);
@@ -1548,6 +1578,8 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
     case O::F32X4Div:          return DoSimdBinop(FloatDiv<f32>);
     case O::F32X4Min:          return DoSimdBinop(FloatMin<f32>);
     case O::F32X4Max:          return DoSimdBinop(FloatMax<f32>);
+    case O::F32X4PMin:         return DoSimdBinop(FloatPMin<f32>);
+    case O::F32X4PMax:         return DoSimdBinop(FloatPMax<f32>);
 
     case O::F64X2Abs:          return DoSimdUnop(FloatAbs<f64>);
     case O::F64X2Neg:          return DoSimdUnop(FloatNeg<f64>);
@@ -1558,19 +1590,21 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
     case O::F64X2Div:          return DoSimdBinop(FloatDiv<f64>);
     case O::F64X2Min:          return DoSimdBinop(FloatMin<f64>);
     case O::F64X2Max:          return DoSimdBinop(FloatMax<f64>);
+    case O::F64X2PMin:         return DoSimdBinop(FloatPMin<f64>);
+    case O::F64X2PMax:         return DoSimdBinop(FloatPMax<f64>);
 
     case O::I32X4TruncSatF32X4S: return DoSimdUnop(IntTruncSat<s32, f32>);
     case O::I32X4TruncSatF32X4U: return DoSimdUnop(IntTruncSat<u32, f32>);
     case O::F32X4ConvertI32X4S:  return DoSimdUnop(Convert<f32, s32>);
     case O::F32X4ConvertI32X4U:  return DoSimdUnop(Convert<f32, u32>);
 
-    case O::V8X16Swizzle:     return DoSimdSwizzle();
-    case O::V8X16Shuffle:     return DoSimdShuffle(instr);
+    case O::I8X16Swizzle:     return DoSimdSwizzle();
+    case O::I8X16Shuffle:     return DoSimdShuffle(instr);
 
-    case O::V8X16LoadSplat:   return DoSimdLoadSplat<u8x16, u32>(instr, out_trap);
-    case O::V16X8LoadSplat:   return DoSimdLoadSplat<u16x8, u32>(instr, out_trap);
-    case O::V32X4LoadSplat:   return DoSimdLoadSplat<u32x4, u32>(instr, out_trap);
-    case O::V64X2LoadSplat:   return DoSimdLoadSplat<u64x2, u64>(instr, out_trap);
+    case O::V128Load8Splat:    return DoSimdLoadSplat<u8x16, u32>(instr, out_trap);
+    case O::V128Load16Splat:   return DoSimdLoadSplat<u16x8, u32>(instr, out_trap);
+    case O::V128Load32Splat:   return DoSimdLoadSplat<u32x4, u32>(instr, out_trap);
+    case O::V128Load64Splat:   return DoSimdLoadSplat<u64x2, u64>(instr, out_trap);
 
     case O::I8X16NarrowI16X8S:    return DoSimdNarrow<s8x16, s16x8>();
     case O::I8X16NarrowI16X8U:    return DoSimdNarrow<u8x16, s16x8>();
@@ -1585,12 +1619,12 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
     case O::I32X4WidenLowI16X8U:  return DoSimdWiden<u32x4, u16x8, true>();
     case O::I32X4WidenHighI16X8U: return DoSimdWiden<u32x4, u16x8, false>();
 
-    case O::I16X8Load8X8S:  return DoSimdLoadExtend<s16x8, s8x8>(instr, out_trap);
-    case O::I16X8Load8X8U:  return DoSimdLoadExtend<u16x8, u8x8>(instr, out_trap);
-    case O::I32X4Load16X4S: return DoSimdLoadExtend<s32x4, s16x4>(instr, out_trap);
-    case O::I32X4Load16X4U: return DoSimdLoadExtend<u32x4, u16x4>(instr, out_trap);
-    case O::I64X2Load32X2S: return DoSimdLoadExtend<s64x2, s32x2>(instr, out_trap);
-    case O::I64X2Load32X2U: return DoSimdLoadExtend<u64x2, u32x2>(instr, out_trap);
+    case O::V128Load8X8S:  return DoSimdLoadExtend<s16x8, s8x8>(instr, out_trap);
+    case O::V128Load8X8U:  return DoSimdLoadExtend<u16x8, u8x8>(instr, out_trap);
+    case O::V128Load16X4S: return DoSimdLoadExtend<s32x4, s16x4>(instr, out_trap);
+    case O::V128Load16X4U: return DoSimdLoadExtend<u32x4, u16x4>(instr, out_trap);
+    case O::V128Load32X2S: return DoSimdLoadExtend<s64x2, s32x2>(instr, out_trap);
+    case O::V128Load32X2U: return DoSimdLoadExtend<u64x2, u32x2>(instr, out_trap);
 
     case O::V128Andnot: return DoSimdBinop(IntAndNot<u64>);
     case O::I8X16AvgrU: return DoSimdBinop(IntAvgr<u8>);
@@ -1601,9 +1635,9 @@ RunResult Thread::StepInternal(Trap::Ptr* out_trap) {
     case O::I32X4Abs: return DoSimdUnop(IntAbs<u32>);
 
     case O::AtomicFence:
-    case O::AtomicNotify:
-    case O::I32AtomicWait:
-    case O::I64AtomicWait:
+    case O::MemoryAtomicNotify:
+    case O::MemoryAtomicWait32:
+    case O::MemoryAtomicWait64:
       return TRAP("not implemented");
 
     case O::I32AtomicLoad:       return DoAtomicLoad<u32>(instr, out_trap);
@@ -1724,11 +1758,11 @@ RunResult Thread::DoCall(const Func::Ptr& func, Trap::Ptr* out_trap) {
 template <typename T>
 RunResult Thread::Load(Instr instr, T* out, Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32x2.fst]};
-  u32 offset = Pop<u32>();
+  u64 offset = PopPtr(memory);
   TRAP_IF(Failed(memory->Load(offset, instr.imm_u32x2.snd, out)),
           StringPrintf("out of bounds memory access: access at %" PRIu64
-                       "+%" PRIzd " >= max value %u",
-                       u64{offset} + instr.imm_u32x2.snd, sizeof(T),
+                       "+%" PRIzd " >= max value %" PRIu64,
+                       offset + instr.imm_u32x2.snd, sizeof(T),
                        memory->ByteSize()));
   return RunResult::Ok;
 }
@@ -1747,11 +1781,11 @@ template <typename T, typename V>
 RunResult Thread::DoStore(Instr instr, Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32x2.fst]};
   V val = static_cast<V>(Pop<T>());
-  u32 offset = Pop<u32>();
+  u64 offset = PopPtr(memory);
   TRAP_IF(Failed(memory->Store(offset, instr.imm_u32x2.snd, val)),
           StringPrintf("out of bounds memory access: access at %" PRIu64
-                       "+%" PRIzd " >= max value %u",
-                       u64{offset} + instr.imm_u32x2.snd, sizeof(V),
+                       "+%" PRIzd " >= max value %" PRIu64,
+                       offset + instr.imm_u32x2.snd, sizeof(V),
                        memory->ByteSize()));
   return RunResult::Ok;
 }
@@ -1813,7 +1847,7 @@ RunResult Thread::DoMemoryInit(Instr instr, Trap::Ptr* out_trap) {
   auto&& data = inst_->datas()[instr.imm_u32x2.snd];
   auto size = Pop<u32>();
   auto src = Pop<u32>();
-  auto dst = Pop<u32>();
+  auto dst = PopPtr(memory);
   TRAP_IF(Failed(memory->Init(dst, data, src, size)),
           "out of bounds memory access: memory.init out of bounds");
   return RunResult::Ok;
@@ -1827,9 +1861,9 @@ RunResult Thread::DoDataDrop(Instr instr) {
 RunResult Thread::DoMemoryCopy(Instr instr, Trap::Ptr* out_trap) {
   Memory::Ptr mem_dst{store_, inst_->memories()[instr.imm_u32x2.fst]};
   Memory::Ptr mem_src{store_, inst_->memories()[instr.imm_u32x2.snd]};
-  auto size = Pop<u32>();
-  auto src = Pop<u32>();
-  auto dst = Pop<u32>();
+  auto size = PopPtr(mem_src);
+  auto src = PopPtr(mem_src);
+  auto dst = PopPtr(mem_dst);
   // TODO: change to "out of bounds"
   TRAP_IF(Failed(Memory::Copy(*mem_dst, dst, *mem_src, src, size)),
           "out of bounds memory access: memory.copy out of bound");
@@ -1838,9 +1872,9 @@ RunResult Thread::DoMemoryCopy(Instr instr, Trap::Ptr* out_trap) {
 
 RunResult Thread::DoMemoryFill(Instr instr, Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32]};
-  auto size = Pop<u32>();
+  auto size = PopPtr(memory);
   auto value = Pop<u32>();
-  auto dst = Pop<u32>();
+  auto dst = PopPtr(memory);
   TRAP_IF(Failed(memory->Fill(dst, value, size)),
           "out of bounds memory access: memory.fill out of bounds");
   return RunResult::Ok;
@@ -2009,12 +2043,25 @@ RunResult Thread::DoSimdIsTrue() {
   return RunResult::Ok;
 }
 
+template <typename S>
+RunResult Thread::DoSimdBitmask() {
+  auto val = Pop<S>();
+  u32 result = 0;
+  for (u8 i = 0; i < S::lanes; ++i) {
+    if (val.v[i] < 0) {
+      result |= 1 << i;
+    }
+  }
+  Push(result);
+  return RunResult::Ok;
+}
+
 template <typename R, typename T>
 RunResult Thread::DoSimdShift(BinopFunc<R, T> f) {
   using ST = typename Simd128<T>::Type;
   using SR = typename Simd128<R>::Type;
   static_assert(ST::lanes == SR::lanes, "SIMD lanes don't match");
-  auto amount = Pop<T>();
+  auto amount = Pop<u32>();
   auto lhs = Pop<ST>();
   SR result;
   for (u8 i = 0; i < SR::lanes; ++i) {
@@ -2108,10 +2155,10 @@ RunResult Thread::DoSimdLoadExtend(Instr instr, Trap::Ptr* out_trap) {
 template <typename T, typename V>
 RunResult Thread::DoAtomicLoad(Instr instr, Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32x2.fst]};
-  u32 offset = Pop<u32>();
+  u64 offset = PopPtr(memory);
   V val;
   TRAP_IF(Failed(memory->AtomicLoad(offset, instr.imm_u32x2.snd, &val)),
-          StringPrintf("invalid atomic access at %u+%u", offset,
+          StringPrintf("invalid atomic access at %" PRIaddress "+%u", offset,
                        instr.imm_u32x2.snd));
   Push(static_cast<T>(val));
   return RunResult::Ok;
@@ -2121,9 +2168,9 @@ template <typename T, typename V>
 RunResult Thread::DoAtomicStore(Instr instr, Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32x2.fst]};
   V val = static_cast<V>(Pop<T>());
-  u32 offset = Pop<u32>();
+  u64 offset = PopPtr(memory);
   TRAP_IF(Failed(memory->AtomicStore(offset, instr.imm_u32x2.snd, val)),
-          StringPrintf("invalid atomic access at %u+%u", offset,
+          StringPrintf("invalid atomic access at %" PRIaddress "+%u", offset,
                        instr.imm_u32x2.snd));
   return RunResult::Ok;
 }
@@ -2133,11 +2180,11 @@ RunResult Thread::DoAtomicRmw(BinopFunc<T, T> f,
                               Instr instr,
                               Trap::Ptr* out_trap) {
   Memory::Ptr memory{store_, inst_->memories()[instr.imm_u32x2.fst]};
-  T val = Pop<T>();
-  u32 offset = Pop<u32>();
+  T val = static_cast<T>(Pop<R>());
+  u64 offset = PopPtr(memory);
   T old;
   TRAP_IF(Failed(memory->AtomicRmw(offset, instr.imm_u32x2.snd, val, f, &old)),
-          StringPrintf("invalid atomic access at %u+%u", offset,
+          StringPrintf("invalid atomic access at %" PRIaddress "+%u", offset,
                        instr.imm_u32x2.snd));
   Push(static_cast<R>(old));
   return RunResult::Ok;
@@ -2149,10 +2196,10 @@ RunResult Thread::DoAtomicRmwCmpxchg(Instr instr, Trap::Ptr* out_trap) {
   V replace = static_cast<V>(Pop<T>());
   V expect = static_cast<V>(Pop<T>());
   V old;
-  u32 offset = Pop<u32>();
+  u64 offset = PopPtr(memory);
   TRAP_IF(Failed(memory->AtomicRmwCmpxchg(offset, instr.imm_u32x2.snd, expect,
                                           replace, &old)),
-          StringPrintf("invalid atomic access at %u+%u", offset,
+          StringPrintf("invalid atomic access at %" PRIaddress "+%u", offset,
                        instr.imm_u32x2.snd));
   Push(static_cast<T>(old));
   return RunResult::Ok;
@@ -2169,8 +2216,19 @@ std::string Thread::TraceSource::Header(Istream::Offset offset) {
 std::string Thread::TraceSource::Pick(Index index, Instr instr) {
   Value val = thread_->Pick(index);
   const char* reftype;
-  // TODO: the opcode index and pick index go in opposite directions.
-  auto type = instr.op.GetParamType(index);
+  // Estimate number of operands.
+  // TODO: Instead, record this accurately in opcode.def.
+  Index num_operands = 3;
+  for (Index i = 3; i >= 1; i--) {
+    if (instr.op.GetParamType(i) == ValueType::Void) {
+      num_operands--;
+    } else {
+      break;
+    }
+  }
+  auto type = index > num_operands
+    ? Type(ValueType::Void)
+    : instr.op.GetParamType(num_operands - index + 1);
   if (type == ValueType::Void) {
     // Void should never be displayed normally; we only expect to see it when
     // the stack may have different a different type. This is likely to occur

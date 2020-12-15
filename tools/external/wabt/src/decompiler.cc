@@ -303,7 +303,7 @@ struct Decompiler {
             const_exp.etype == ExprType::Const) {
           auto& ce = *cast<ConstExpr>(const_exp.e);
           if (ce.const_.type() == Type::I32 &&
-              (1U << ce.const_.u32()) == align) {
+              (1ULL << ce.const_.u32()) == align) {
             // Pfew, case detected :( Lets re-write this in Haskell.
             // TODO: we're decompiling these twice.
             // The thing to the left of << is going to be part of the index.
@@ -661,7 +661,7 @@ struct Decompiler {
   std::string InitExp(const ExprList &el) {
     assert(!el.empty());
     AST ast(mc, nullptr);
-    ast.Construct(el, 1, false);
+    ast.Construct(el, 1, 0, false);
     auto val = DecompileExpr(ast.exp_stack[0], nullptr);
     assert(ast.exp_stack.size() == 1 && val.v.size() == 1);
     return std::move(val.v[0]);
@@ -764,7 +764,7 @@ struct Decompiler {
       AST ast(mc, f);
       cur_ast = &ast;
       if (!is_import) {
-        ast.Construct(f->exprs, f->GetNumResults(), true);
+        ast.Construct(f->exprs, f->GetNumResults(), 0, true);
         lst.Track(ast.exp_stack[0]);
         lst.CheckLayouts();
       }

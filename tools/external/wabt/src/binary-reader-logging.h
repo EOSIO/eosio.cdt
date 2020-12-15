@@ -37,7 +37,9 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
                       BinarySection section_type,
                       Offset size) override;
 
-  Result BeginCustomSection(Offset size, string_view section_name) override;
+  Result BeginCustomSection(Index section_index,
+                            Offset size,
+                            string_view section_name) override;
   Result EndCustomSection() override;
 
   Result BeginTypeSection(Offset size) override;
@@ -142,16 +144,16 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnOpcodeBlockSig(Type sig_type) override;
   Result OnOpcodeType(Type type) override;
   Result OnAtomicLoadExpr(Opcode opcode,
-                          uint32_t alignment_log2,
+                          Address alignment_log2,
                           Address offset) override;
   Result OnAtomicStoreExpr(Opcode opcode,
-                           uint32_t alignment_log2,
+                           Address alignment_log2,
                            Address offset) override;
   Result OnAtomicRmwExpr(Opcode opcode,
-                         uint32_t alignment_log2,
+                         Address alignment_log2,
                          Address offset) override;
   Result OnAtomicRmwCmpxchgExpr(Opcode opcode,
-                                uint32_t alignment_log2,
+                                Address alignment_log2,
                                 Address offset) override;
   Result OnBinaryExpr(Opcode opcode) override;
   Result OnBlockExpr(Type sig_type) override;
@@ -179,7 +181,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnI64ConstExpr(uint64_t value) override;
   Result OnIfExpr(Type sig_type) override;
   Result OnLoadExpr(Opcode opcode,
-                    uint32_t alignment_log2,
+                    Address alignment_log2,
                     Address offset) override;
   Result OnLocalGetExpr(Index local_index) override;
   Result OnLocalSetExpr(Index local_index) override;
@@ -201,7 +203,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnTableFillExpr(Index table) override;
   Result OnRefFuncExpr(Index index) override;
   Result OnRefNullExpr(Type type) override;
-  Result OnRefIsNullExpr(Type type) override;
+  Result OnRefIsNullExpr() override;
   Result OnNopExpr() override;
   Result OnRethrowExpr() override;
   Result OnReturnCallExpr(Index func_index) override;
@@ -209,7 +211,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnReturnExpr() override;
   Result OnSelectExpr(Type result_type) override;
   Result OnStoreExpr(Opcode opcode,
-                     uint32_t alignment_log2,
+                     Address alignment_log2,
                      Address offset) override;
   Result OnThrowExpr(Index event_index) override;
   Result OnTryExpr(Type sig_type) override;
@@ -217,18 +219,18 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnTernaryExpr(Opcode opcode) override;
   Result OnUnreachableExpr() override;
   Result OnAtomicWaitExpr(Opcode opcode,
-                          uint32_t alignment_log2,
+                          Address alignment_log2,
                           Address offset) override;
   Result OnAtomicFenceExpr(uint32_t consistency_model) override;
   Result OnAtomicNotifyExpr(Opcode opcode,
-                            uint32_t alignment_log2,
+                            Address alignment_log2,
                             Address offset) override;
   Result EndFunctionBody(Index index) override;
   Result EndCodeSection() override;
   Result OnSimdLaneOpExpr(Opcode opcode, uint64_t value) override;
   Result OnSimdShuffleOpExpr(Opcode opcode, v128 value) override;
   Result OnLoadSplatExpr(Opcode opcode,
-                         uint32_t alignment_log2,
+                         Address alignment_log2,
                          Address offset) override;
 
   Result BeginElemSection(Offset size) override;
@@ -282,6 +284,13 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnLocalName(Index function_index,
                      Index local_index,
                      string_view local_name) override;
+  Result OnNameSubsection(Index index,
+                          NameSectionSubsection subsection_type,
+                          Offset subsection_size) override;
+  Result OnNameEntry(NameSectionSubsection type,
+                     Index index,
+                     string_view name) override;
+  Result OnNameCount(Index num_names) override;
   Result EndNamesSection() override;
 
   Result BeginRelocSection(Offset size) override;
@@ -325,10 +334,14 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
                        uint32_t flags,
                        string_view name,
                        Index event_index) override;
+  Result OnTableSymbol(Index index,
+                       uint32_t flags,
+                       string_view name,
+                       Index event_index) override;
   Result OnSegmentInfoCount(Index count) override;
   Result OnSegmentInfo(Index index,
                        string_view name,
-                       uint32_t alignment,
+                       Address alignment,
                        uint32_t flags) override;
   Result OnInitFunctionCount(Index count) override;
   Result OnInitFunction(uint32_t priority, Index function_index) override;

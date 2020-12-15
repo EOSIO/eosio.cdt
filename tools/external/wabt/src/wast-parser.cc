@@ -320,8 +320,6 @@ Result CheckFuncTypeVarMatchesExplicit(const Location& loc,
                                        Errors* errors) {
   Result result = Result::Ok;
   if (decl.has_func_type) {
-    // This should only be run after resolving names.
-    assert(decl.type_var.is_index());
     const FuncType* func_type = module.GetFuncType(decl.type_var);
     if (func_type) {
       result |=
@@ -896,7 +894,7 @@ Result WastParser::ParseQuotedText(std::string* text) {
   return Result::Ok;
 }
 
-bool WastParser::ParseOffsetOpt(uint32_t* out_offset) {
+bool WastParser::ParseOffsetOpt(Address* out_offset) {
   WABT_TRACE(ParseOffsetOpt);
   if (PeekMatch(TokenType::OffsetEqNat)) {
     Token token = Consume();
@@ -907,11 +905,11 @@ bool WastParser::ParseOffsetOpt(uint32_t* out_offset) {
       Error(token.loc, "invalid offset \"" PRIstringview "\"",
             WABT_PRINTF_STRING_VIEW_ARG(sv));
     }
+    // FIXME: make this depend on the current memory.
     if (offset64 > UINT32_MAX) {
       Error(token.loc, "offset must be less than or equal to 0xffffffff");
     }
-
-    *out_offset = static_cast<uint32_t>(offset64);
+    *out_offset = offset64;
     return true;
   } else {
     *out_offset = 0;
@@ -919,12 +917,12 @@ bool WastParser::ParseOffsetOpt(uint32_t* out_offset) {
   }
 }
 
-bool WastParser::ParseAlignOpt(uint32_t* out_align) {
+bool WastParser::ParseAlignOpt(Address* out_align) {
   WABT_TRACE(ParseAlignOpt);
   if (PeekMatch(TokenType::AlignEqNat)) {
     Token token = Consume();
     string_view sv = token.text();
-    if (Failed(ParseInt32(sv.begin(), sv.end(), out_align,
+    if (Failed(ParseInt64(sv.begin(), sv.end(), out_align,
                           ParseIntType::UnsignedOnly))) {
       Error(token.loc, "invalid alignment \"" PRIstringview "\"",
             WABT_PRINTF_STRING_VIEW_ARG(sv));
@@ -939,6 +937,22 @@ bool WastParser::ParseAlignOpt(uint32_t* out_align) {
     *out_align = WABT_USE_NATURAL_ALIGNMENT;
     return false;
   }
+}
+
+Result WastParser::ParseLimitsIndex(Limits* out_limits) {
+  WABT_TRACE(ParseLimitsIndex);
+
+  if (PeekMatch(TokenType::ValueType)) {
+    if (GetToken().type() == Type::I64) {
+      Consume();
+      out_limits->is_64 = true;
+    } else if (GetToken().type() == Type::I32) {
+      Consume();
+      out_limits->is_64 = false;
+    }
+  }
+
+  return Result::Ok;
 }
 
 Result WastParser::ParseLimits(Limits* out_limits) {
@@ -1040,8 +1054,8 @@ Result WastParser::ParseModuleFieldList(Module* module) {
       CHECK_RESULT(Synchronize(IsModuleField));
     }
   }
-  CHECK_RESULT(ResolveNamesModule(module, errors_));
   CHECK_RESULT(ResolveFuncTypes(module, errors_));
+  CHECK_RESULT(ResolveNamesModule(module, errors_));
   return Result::Ok;
 }
 
@@ -1384,6 +1398,7 @@ Result WastParser::ParseImportModuleField(Module* module) {
       Consume();
       ParseBindVarOpt(&name);
       auto import = MakeUnique<MemoryImport>(name);
+      CHECK_RESULT(ParseLimitsIndex(&import->memory.page_limits));
       CHECK_RESULT(ParseLimits(&import->memory.page_limits));
       EXPECT(Rpar);
       field = MakeUnique<ImportModuleField>(std::move(import), loc);
@@ -1438,32 +1453,35 @@ Result WastParser::ParseMemoryModuleField(Module* module) {
     CheckImportOrdering(module);
     auto import = MakeUnique<MemoryImport>(name);
     CHECK_RESULT(ParseInlineImport(import.get()));
+    CHECK_RESULT(ParseLimitsIndex(&import->memory.page_limits));
     CHECK_RESULT(ParseLimits(&import->memory.page_limits));
     auto field =
         MakeUnique<ImportModuleField>(std::move(import), GetLocation());
     module->AppendField(std::move(field));
-  } else if (MatchLpar(TokenType::Data)) {
-    auto data_segment_field = MakeUnique<DataSegmentModuleField>(loc);
-    DataSegment& data_segment = data_segment_field->data_segment;
-    data_segment.memory_var = Var(module->memories.size());
-    data_segment.offset.push_back(MakeUnique<ConstExpr>(Const::I32(0)));
-    data_segment.offset.back().loc = loc;
-    ParseTextListOpt(&data_segment.data);
-    EXPECT(Rpar);
-
-    auto memory_field = MakeUnique<MemoryModuleField>(loc, name);
-    uint32_t byte_size = WABT_ALIGN_UP_TO_PAGE(data_segment.data.size());
-    uint32_t page_size = WABT_BYTES_TO_PAGES(byte_size);
-    memory_field->memory.page_limits.initial = page_size;
-    memory_field->memory.page_limits.max = page_size;
-    memory_field->memory.page_limits.has_max = true;
-
-    module->AppendField(std::move(memory_field));
-    module->AppendField(std::move(data_segment_field));
   } else {
     auto field = MakeUnique<MemoryModuleField>(loc, name);
-    CHECK_RESULT(ParseLimits(&field->memory.page_limits));
-    module->AppendField(std::move(field));
+    CHECK_RESULT(ParseLimitsIndex(&field->memory.page_limits));
+    if (MatchLpar(TokenType::Data)) {
+      auto data_segment_field = MakeUnique<DataSegmentModuleField>(loc);
+      DataSegment& data_segment = data_segment_field->data_segment;
+      data_segment.memory_var = Var(module->memories.size());
+      data_segment.offset.push_back(MakeUnique<ConstExpr>(Const::I32(0)));
+      data_segment.offset.back().loc = loc;
+      ParseTextListOpt(&data_segment.data);
+      EXPECT(Rpar);
+
+      uint32_t byte_size = WABT_ALIGN_UP_TO_PAGE(data_segment.data.size());
+      uint32_t page_size = WABT_BYTES_TO_PAGES(byte_size);
+      field->memory.page_limits.initial = page_size;
+      field->memory.page_limits.max = page_size;
+      field->memory.page_limits.has_max = true;
+
+      module->AppendField(std::move(field));
+      module->AppendField(std::move(data_segment_field));
+    } else {
+      CHECK_RESULT(ParseLimits(&field->memory.page_limits));
+      module->AppendField(std::move(field));
+    }
   }
 
   AppendInlineExportFields(module, &export_fields, module->memories.size() - 1);
@@ -1719,8 +1737,8 @@ Result WastParser::ParsePlainLoadStoreInstr(Location loc,
                                             Token token,
                                             std::unique_ptr<Expr>* out_expr) {
   Opcode opcode = token.opcode();
-  uint32_t offset;
-  uint32_t align;
+  Address offset;
+  Address align;
   ParseOffsetOpt(&offset);
   ParseAlignOpt(&align);
   out_expr->reset(new T(opcode, align, offset, loc));
@@ -1996,13 +2014,10 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       break;
     }
 
-    case TokenType::RefIsNull: {
+    case TokenType::RefIsNull:
       ErrorUnlessOpcodeEnabled(Consume());
-      Type type;
-      CHECK_RESULT(ParseRefKind(&type));
-      out_expr->reset(new RefIsNullExpr(type, loc));
+      out_expr->reset(new RefIsNullExpr(loc));
       break;
-    }
 
     case TokenType::Throw:
       ErrorUnlessOpcodeEnabled(Consume());
@@ -2087,11 +2102,8 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       Literal literal = Consume().literal();
       uint64_t lane_idx;
 
-      // TODO: The simd tests currently allow a lane number with an optional +,
-      // but probably shouldn't. See
-      // https://github.com/WebAssembly/simd/issues/181#issuecomment-597386919
       Result result = ParseInt64(literal.text.begin(), literal.text.end(),
-                                 &lane_idx, ParseIntType::SignedAndUnsigned);
+                                 &lane_idx, ParseIntType::UnsignedOnly);
 
       if (Failed(result)) {
         Error(loc, "invalid literal \"" PRIstringview "\"",

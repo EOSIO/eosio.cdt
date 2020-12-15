@@ -507,8 +507,7 @@ class RefPtr {
   Store::RootList::Index root_index_;
 };
 
-union Value {
-  Value() = default;
+struct Value {
   static Value WABT_VECTORCALL Make(s32);
   static Value WABT_VECTORCALL Make(u32);
   static Value WABT_VECTORCALL Make(s64);
@@ -525,12 +524,31 @@ union Value {
   template <typename T>
   void WABT_VECTORCALL Set(T);
 
-  u32 i32_;
-  u64 i64_;
-  f32 f32_;
-  f64 f64_;
-  v128 v128_;
-  Ref ref_;
+ private:
+  union {
+    u32 i32_;
+    u64 i64_;
+    f32 f32_;
+    f64 f64_;
+    v128 v128_;
+    Ref ref_;
+  };
+
+ public:
+#ifndef NDEBUG
+  Value() : v128_(0, 0, 0, 0), type(ValueType::Any) {}
+  void SetType(ValueType t) { type = t; }
+  void CheckType(ValueType t) const {
+    // Sadly we must allow Any here, since locals may be uninitialized.
+    // Alternatively we could modify InterpAlloca to set the type.
+    assert(t == type || type == ValueType::Any);
+  }
+  ValueType type;
+#else
+  Value() : v128_(0, 0, 0, 0) {}
+  void SetType(ValueType) {}
+  void CheckType(ValueType) const {}
+#endif
 };
 using Values = std::vector<Value>;
 
@@ -782,38 +800,38 @@ class Memory : public Extern {
 
   Result Match(Store&, const ImportType&, Trap::Ptr* out_trap) override;
 
-  bool IsValidAccess(u32 offset, u32 addend, size_t size) const;
-  bool IsValidAtomicAccess(u32 offset, u32 addend, size_t size) const;
+  bool IsValidAccess(u64 offset, u64 addend, u64 size) const;
+  bool IsValidAtomicAccess(u64 offset, u64 addend, u64 size) const;
 
   template <typename T>
-  Result Load(u32 offset, u32 addend, T* out) const;
+  Result Load(u64 offset, u64 addend, T* out) const;
   template <typename T>
-  Result WABT_VECTORCALL Store(u32 offset, u32 addend, T);
-  Result Grow(u32 pages);
-  Result Fill(u32 offset, u8 value, u32 size);
-  Result Init(u32 dst_offset, const DataSegment&, u32 src_offset, u32 size);
+  Result WABT_VECTORCALL Store(u64 offset, u64 addend, T);
+  Result Grow(u64 pages);
+  Result Fill(u64 offset, u8 value, u64 size);
+  Result Init(u64 dst_offset, const DataSegment&, u64 src_offset, u64 size);
   static Result Copy(Memory& dst,
-                     u32 dst_offset,
+                     u64 dst_offset,
                      const Memory& src,
-                     u32 src_offset,
-                     u32 size);
+                     u64 src_offset,
+                     u64 size);
 
   // Fake atomics; just checks alignment.
   template <typename T>
-  Result AtomicLoad(u32 offset, u32 addend, T* out) const;
+  Result AtomicLoad(u64 offset, u64 addend, T* out) const;
   template <typename T>
-  Result AtomicStore(u32 offset, u32 addend, T);
+  Result AtomicStore(u64 offset, u64 addend, T);
   template <typename T, typename F>
-  Result AtomicRmw(u32 offset, u32 addend, T, F&& func, T* out);
+  Result AtomicRmw(u64 offset, u64 addend, T, F&& func, T* out);
   template <typename T>
-  Result AtomicRmwCmpxchg(u32 offset, u32 addend, T expect, T replace, T* out);
+  Result AtomicRmwCmpxchg(u64 offset, u64 addend, T expect, T replace, T* out);
 
-  u32 ByteSize() const;
-  u32 PageSize() const;
+  u64 ByteSize() const;
+  u64 PageSize() const;
 
   // Unsafe API.
   template <typename T>
-  T WABT_VECTORCALL UnsafeLoad(u32 offset, u32 addend) const;
+  T WABT_VECTORCALL UnsafeLoad(u64 offset, u64 addend) const;
   u8* UnsafeData();
 
   const ExternType& extern_type() override;
@@ -826,7 +844,7 @@ class Memory : public Extern {
 
   MemoryType type_;
   Buffer data_;
-  u32 pages_;
+  u64 pages_;
 };
 
 class Global : public Extern {
@@ -908,15 +926,15 @@ class DataSegment {
  public:
   explicit DataSegment(const DataDesc*);
 
-  bool IsValidRange(u32 offset, u32 size) const;
+  bool IsValidRange(u64 offset, u64 size) const;
   void Drop();
 
   const DataDesc& desc() const;
-  u32 size() const;
+  u64 size() const;
 
  private:
   const DataDesc* desc_;  // Borrowed from the Module.
-  u32 size_;
+  u64 size_;
 };
 
 class Module : public Object {
@@ -1047,6 +1065,7 @@ class Thread : public Object {
   template <typename T>
   T WABT_VECTORCALL Pop();
   Value Pop();
+  u64 PopPtr(const Memory::Ptr& memory);
 
   template <typename T>
   void WABT_VECTORCALL Push(T);
@@ -1111,6 +1130,8 @@ class Thread : public Object {
   RunResult DoSimdBitSelect();
   template <typename S, u8 count>
   RunResult DoSimdIsTrue();
+  template <typename S>
+  RunResult DoSimdBitmask();
   template <typename R, typename T>
   RunResult DoSimdShift(BinopFunc<R, T>);
   template <typename S, typename T>

@@ -37,25 +37,27 @@ Wabt has been compiled to JavaScript via emscripten. Some of the functionality i
 ## Supported Proposals
 
 * Proposal: Name and link to the WebAssembly proposal repo
-* flag: Flag to pass to the tool to enable support for the feature
+* flag: Flag to pass to the tool to enable/disable support for the feature
+* default: Whether the feature is enabled by default
 * binary: Whether wabt can read/write the binary format
 * text: Whether wabt can read/write the text format
 * validate: Whether wabt can validate the syntax
 * interpret: Whether wabt can execute these operations in `wasm-interp` or `spectest-interp`
 
-| Proposal | flag | binary | text | validate | interpret |
-| - | - | - | - | - | - |
-| [exception handling][] | `--enable-exceptions` | ✓ | ✓ | ✓ | ✓ |
-| [mutable globals][] | `--disable-mutable-globals` | ✓ | ✓ | ✓ | ✓ |
-| [nontrapping float-to-int conversions][] | `--enable-saturating-float-to-int` | ✓ | ✓ | ✓ | ✓ |
-| [sign extension][] | `--enable-sign-extension` | ✓ | ✓ | ✓ | ✓ |
-| [simd][] | `--enable-simd` | ✓ | ✓ | ✓ | ✓ |
-| [threads][] | `--enable-threads` | ✓ | ✓ | ✓ | ✓ |
-| [multi-value][] | `--enable-multi-value` | ✓ | ✓ | ✓ | ✓ |
-| [tail-call][] | `--enable-tail-call` | ✓ | ✓ | ✓ | ✓ |
-| [bulk memory][] | `--enable-bulk-memory` | ✓ | ✓ | ✓ | ✓ |
-| [reference types][] | `--enable-reference-types` | ✓ | ✓ | ✓ | ✓ |
-| [annotations][] | `--enable-annotations` | | ✓ | | |
+| Proposal | flag | default | binary | text | validate | interpret |
+| - | - | - | - | - | - | - |
+| [exception handling][] | `--enable-exceptions` | | ✓ | ✓ | ✓ | ✓ |
+| [mutable globals][] | `--disable-mutable-globals` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [nontrapping float-to-int conversions][] | `--disable-saturating-float-to-int` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [sign extension][] | `--disable-sign-extension` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [simd][] | `--enable-simd` | | ✓ | ✓ | ✓ | ✓ |
+| [threads][] | `--enable-threads` | | ✓ | ✓ | ✓ | ✓ |
+| [multi-value][] | `--disable-multi-value` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [tail-call][] | `--enable-tail-call` | | ✓ | ✓ | ✓ | ✓ |
+| [bulk memory][] | `--enable-bulk-memory` | | ✓ | ✓ | ✓ | ✓ |
+| [reference types][] | `--enable-reference-types` | | ✓ | ✓ | ✓ | ✓ |
+| [annotations][] | `--enable-annotations` | | | ✓ | | |
+| [memory64][] | `--enable-memory64` | | | | | |
 
 [exception handling]: https://github.com/WebAssembly/exception-handling
 [mutable globals]: https://github.com/WebAssembly/mutable-global
@@ -68,6 +70,7 @@ Wabt has been compiled to JavaScript via emscripten. Some of the functionality i
 [bulk memory]: https://github.com/WebAssembly/bulk-memory-operations
 [reference types]: https://github.com/WebAssembly/reference-types
 [annotations]: https://github.com/WebAssembly/annotations
+[memory64]: https://github.com/WebAssembly/memory64
 
 ## Cloning
 
@@ -120,9 +123,9 @@ There are many make targets available for other configurations as well. They
 are generated from every combination of a compiler, build type and
 configuration.
 
- - compilers: `gcc`, `clang`, `gcc-i686`, `gcc-fuzz`
+ - compilers: `gcc`, `clang`, `gcc-i686`, `emcc`
  - build types: `debug`, `release`
- - configurations: empty, `asan`, `msan`, `lsan`, `ubsan`, `no-tests`
+ - configurations: empty, `asan`, `msan`, `lsan`, `ubsan`, `fuzz`, `no-tests`
 
 They are combined with dashes, for example:
 
@@ -333,3 +336,23 @@ $ CC=gcc scripts/travis-test.sh
 $ CC=clang scripts/travis-build.sh
 $ CC=clang scripts/travis-test.sh
 ```
+
+## Fuzzing
+
+To build using the [LLVM fuzzer support](https://llvm.org/docs/LibFuzzer.html),
+append `fuzz` to the target:
+
+```console
+$ make clang-debug-fuzz
+```
+
+This will produce a `wasm2wat_fuzz` binary. It can be used to fuzz the binary
+reader, as well as reproduce fuzzer errors found by
+[oss-fuzz](https://github.com/google/oss-fuzz/tree/master/projects/wabt).
+
+```console
+$ out/clang/Debug/fuzz/wasm2wat_fuzz ...
+```
+
+See the [libFuzzer documentation](https://llvm.org/docs/LibFuzzer.html) for
+more information about how to use this tool.
