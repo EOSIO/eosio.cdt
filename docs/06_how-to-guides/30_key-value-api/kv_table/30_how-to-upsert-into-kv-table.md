@@ -109,6 +109,6 @@ void smrtcontract::upsert(
 
 The following options are available when you complete the procedure:
 
-* Verify if the newly inserted `person` actually exists in the table. To accomplish this task, use the `exists()` function of any index defined for the table.
-* Retrieve the newly inserted or updated `person` from the table. To accomplish this task, use the `find()` function of any index defined for the table.
-* Delete the newly created or updated `person` from the table. To accomplish this task, use the `erase()` function of the `kv table`.
+* [Check](60_how-to-check-a-record-kv-table.md) if the newly inserted `person` actually exists in the table. To accomplish this task, use the `exists()` function of any index defined for the table.
+* [Retrieve](70_how-to-find-in-kv-table.md) the newly inserted or updated `person` from the table. To accomplish this task, use the `find()` function of any index defined for the table.
+* [Delete](40_how-to-delete-from-kv-table.md) the newly created or updated `person` from the table. To accomplish this task, use the `erase()` function of the `kv table`.
