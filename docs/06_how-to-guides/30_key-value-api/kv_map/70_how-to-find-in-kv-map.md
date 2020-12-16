@@ -102,5 +102,5 @@ void kv_map::find(int id) {
 
 The following options are available when you complete the procedure:
 
-* Update the `person` found.
-* Delete the `person` found.
+* [Update](30_how-to-upsert-into-kv-map.md) the `person` found.
+* [Delete](40_how-to-delete-from-kv-map.md) the `person` found.
