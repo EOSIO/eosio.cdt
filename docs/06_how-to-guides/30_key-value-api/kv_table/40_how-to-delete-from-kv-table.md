@@ -100,4 +100,4 @@ void smrtcontract::delete(eosio::name account_name) {
 
 The following options are available when you complete the procedure:
 
-* Verify if the newly inserted `person` was actually deleted from the table. To accomplish this task, use the `exists()` function of any index defined for the table.
+* [Check](60_how-to-check-a-record-kv-table.md) if the newly inserted `person` was actually deleted from the table. To accomplish this task, use the `exists()` function of any index defined for the table.

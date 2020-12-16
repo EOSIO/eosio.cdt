@@ -76,6 +76,13 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 The following options are available when you complete the procedure:
 
-* You can define one or more **unique indexes** using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
-* You can define one or more **non-unique indexes** using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
-* You can access the defined `kv table` and perform operations on it and its defined indexes.
+* You can [create one or more unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
+* You can [create one or more non-unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
+* You can access the defined `kv table` and perform operations on it and its defined indexes:
+  * [How To Upsert Into KV Table](./30_how-to-upsert-into-kv-table.md)
+  * [How To Delete From KV Table](./40_how-to-delete-from-kv-table.md)
+  * [How To Iterate A KV Table](./50_how-to-iterate-kv-table.md)
+  * [How To Check A Record In KV Table](./60_how-to-check-a-record-kv-table.md)
+  * [How To Find In KV Table](./70_how-to-find-in-kv-table.md)
+  * [How To Query Range In KV Table](./80_how-to-query-range-in-kv-table.md)
+  * [How To Allow Users To Pay](./90_how-to-allow-users-to-pay-kv-table.md)

@@ -109,5 +109,5 @@ void smartcontract::upsert(
 
 The following options are available when you complete the procedure:
 
-* Verify if the newly inserted `person` actually exists in the map. To accomplish this task use the `find()` function of the `kv_map`.
-* Delete the newly created or updated `person` from the map. To accomplish this task, use the `erase()` function of the `kv map`.
+* [Verify](70_how-to-find-in-kv-map.md) if the newly inserted `person` actually exists in the map. To accomplish this task use the `find()` function of the `kv_map`.
+* [Delete](40_how-to-delete-from-kv-map.md) the newly created or updated `person` from the map. To accomplish this task, use the `erase()` function of the `kv map`.

@@ -67,4 +67,4 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 The following option is available when you complete the procedure:
 
-* You can can add values in the map object created.
+* You [can add values](30_how-to-upsert-into-kv-map.md) in the map object created.
