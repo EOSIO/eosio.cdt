@@ -181,6 +181,5 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 The following options are available when you complete the procedure:
 
-* Access the defined indexes by their names.
-* Search by index key for values or range of values in the defined `kv table`.
-* Check if a particular key exists in an index.
+* [Search](70_how-to-find-in-kv-table.md) by index key for values or range of values in the defined `kv table`.
+* [Check](60_how-to-check-a-record-kv-table.md) if a particular key exists in an index.
