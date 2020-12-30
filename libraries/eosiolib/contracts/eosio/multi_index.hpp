@@ -695,7 +695,11 @@ class multi_index
 
                return {this, &mi};
             }
-
+            /**
+             *  Warning: the interator_to can have undefined behavior if the caller 
+             *  passes in a reference to a stack-allocated object rather than the 
+             *  reference returned by get or by dereferencing a const_iterator.
+             */
             const_iterator iterator_to( const T& obj ) {
                using namespace _multi_index_detail;
 
@@ -1498,6 +1502,10 @@ class multi_index
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
        *  @endcode
+       * 
+       *  Warning: the interator_to can have undefined behavior if the caller 
+       *  passes in a reference to a stack-allocated object rather than the 
+       *  reference returned by get or by dereferencing a const_iterator.
        */
       const_iterator iterator_to( const T& obj )const {
          const auto& objitem = static_cast<const item&>(obj);
