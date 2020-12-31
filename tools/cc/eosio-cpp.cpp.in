@@ -76,6 +76,8 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       std::string abi_s;
       abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
+   } else {
+      throw std::runtime_error("abigen error");
    }
 
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
