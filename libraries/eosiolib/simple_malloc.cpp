@@ -9,8 +9,8 @@
 #define CURRENT_MEMORY _current_memory()
 #define GROW_MEMORY(X) _grow_memory(X)
 #else
-#define CURRENT_MEMORY __builtin_wasm_current_memory()
-#define GROW_MEMORY(X) __builtin_wasm_grow_memory(X)
+#define CURRENT_MEMORY __builtin_wasm_memory_size(0)
+#define GROW_MEMORY(X) __builtin_wasm_memory_grow(0, X)
 #endif
 
 namespace eosio {   

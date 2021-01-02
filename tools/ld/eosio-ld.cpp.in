@@ -1,55 +1,158 @@
-// Declares clang::SyntaxOnlyAction.
-#include "clang/Frontend/FrontendActions.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
-#include <iostream>
-#include <sstream>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/FileSystem.h>
 
-// Declares llvm::cl::extrahelp.
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/FileSystem.h"
-using namespace clang::tooling;
+#include <eosio/abigen.hpp>
+#include <eosio/abimerge.hpp>
+
 using namespace llvm;
-#define LINKER_NAME "${EOSIO_LINKER}"
-#define POSTPASS_NAME "${EOSIO_POSTPASS}"
+using namespace jsoncons;
+
+#define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
+#define LINKER_NAME "@EOSIO_LINKER@"
+#define LINKER_BACKEND "@EOSIO_LINKER_BACKEND@"
 #define ONLY_LD
 #include <compiler_options.hpp>
 
-int main(int argc, const char **argv) {
+std::string generate_apply(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
+   std::string output;
+   try {
+      output = get_temporary_path(std::to_string(getpid())+".cpp");
 
-  cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << LINKER_NAME << " version " << "${VERSION_FULL}" << "\n";
-  });
-  cl::ParseCommandLineOptions(argc, argv, std::string(LINKER_NAME)+" (WebAssembly linker)");
-  Options opts = CreateOptions();
-
-  std::string line;
-  if (opts.native) {
-#ifdef __APPLE__
-     if (!eosio::cdt::environment::exec_subprogram("ld", opts.ld_options, true))
-#else
-     if (!eosio::cdt::environment::exec_subprogram("ld.lld", opts.ld_options))
-#endif
-         return -1;
-  } else {
-      if (!eosio::cdt::environment::exec_subprogram("wasm-ld", opts.ld_options))
-         return -1;
-  }
-  if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
-     return -1;
-  }
-
-  // finally any post processing
-  if (!fno_post_pass_opt && !opts.native) {
-     if ( !llvm::sys::fs::exists( opts.eosio_pp_dir+"/"+POSTPASS_NAME ) ) {
-        std::cout << "Error: " << POSTPASS_NAME << " not found! (Try reinstalling eosio.wasmsdk)" << std::endl;
-        return -1;
-     }
-     if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {opts.output_fn}))
-        return -1;
-     if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
-        return -1;
-     }
+      std::ofstream ofs(output);
+      if (!ofs) throw;
+      ofs << "#include <cstdint>\n";
+      ofs << "extern \"C\" {\n";
+      for (auto& wa : wasm_actions) {
+         ofs << "  void " << wa.handler << "(uint64_t r, uint64_t c);\n";
+      }
+      for (auto& wn : wasm_notifies) {
+         ofs << "  void " << wn.handler << "(uint64_t r, uint64_t c);\n";
+      }
+      ofs << "  __attribute__((weak, eosio_wasm_entry))\n";
+      ofs << "  void apply(uint64_t r, uint64_t c, uint64_t a) {\n";
+      ofs << "    if (c == r) {\n";
+      if (wasm_actions.size()) {
+         ofs << "      switch (a) {\n";
+         for (auto& wa : wasm_actions) {
+            ofs << "      case " << string_to_name(wa.name.c_str()) << "ull:\n";
+            ofs << "        " << wa.handler << "(r, c);\n";
+            ofs << "        break;\n";
+         }
+         ofs << "      }\n";
+      }
+      ofs << "    } else {\n";
+      if (wasm_notifies.size()) {
+         std::string action;
+         for (auto& wn : wasm_notifies) {
+            if (wn.name != action) {
+               if (action.empty()) {
+                  ofs << "      if (a == " << string_to_name(wn.name.c_str()) << "ull) {\n";
+               } else {
+                  ofs << "        }\n";
+                  ofs << "      }\n";
+                  ofs << "      else if (a == " << string_to_name(wn.name.c_str()) << "ull) {\n";
+               }
+               ofs << "        switch (c) {\n";
+               action = wn.name;
+            }
+            if (wn.contract != "*")
+               ofs << "        case " << string_to_name(wn.contract.c_str()) << "ull:\n";
+            else
+               ofs << "        default:\n";
+            ofs << "          " << wn.handler << "(r, c);\n";
+            ofs << "          break;\n";
+         }
+         ofs << "        }\n";
+         ofs << "      }\n";
+      }
+      ofs << "    }\n";
+      ofs << "  }\n";
+      ofs << "}\n";
+      ofs.close();
+   } catch (...) {
+      llvm::outs() << "Failed to create an entry point \"apply\"\n";
    }
-  return 0;
+   return output;
+}
+
+int main(int argc, const char** argv) {
+   llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+      os << LINKER_NAME << " version " << "@VERSION_FULL@" << "\n";
+   });
+   llvm::cl::ParseCommandLineOptions(argc, argv, std::string(LINKER_NAME)+" (WebAssembly linker)");
+   Options opts = CreateOptions();
+
+   std::set<wasm_action> wasm_actions;
+   std::set<wasm_notify> wasm_notifies;
+   std::string main_file;
+
+   try {
+      ojson abi;
+      for (auto input : opts.inputs) {
+         if (llvm::sys::fs::exists(input+".desc")) {
+            std::ifstream ifs(input+".desc");
+            auto desc = ojson::parse(ifs);
+            ifs.close();
+
+            if (abi.empty()) {
+               abi = abigen{}.to_json();
+            }
+            abi = ABIMerger(abi).merge(desc);
+
+            for (auto wa : desc["wasm_actions"].array_range()) {
+               wasm_action act;
+               act.name = wa["name"].as_string();
+               act.handler = wa["handler"].as_string();
+               wasm_actions.insert(act);
+            }
+            for (auto wn : desc["wasm_notifies"].array_range()) {
+               wasm_notify noti;
+               noti.contract = wn["contract"].as_string();
+               noti.name = wn["name"].as_string();
+               noti.handler = wn["handler"].as_string();
+               wasm_notifies.insert(noti);
+            }
+            llvm::sys::fs::remove(input+".desc");
+         }
+      }
+      if (opts.abigen && !abi.empty()) {
+         llvm::SmallString<PATH_MAX> output_fullpath = llvm::StringRef(opts.output_fn);
+         llvm::sys::path::replace_extension(output_fullpath, ".abi");
+
+
+         std::ofstream ofs(output_fullpath.str().str());
+         if (!ofs) throw;
+         ofs << pretty_print(abi);
+         ofs.close();
+      }
+      if (!wasm_actions.empty() || !wasm_notifies.empty()) {
+         main_file = generate_apply(wasm_actions, wasm_notifies);
+         if (!main_file.empty()) {
+            std::vector<std::string> new_opts;
+            new_opts.insert(new_opts.begin(), main_file);
+            new_opts.insert(new_opts.begin(), "-o "+main_file+".o");
+            new_opts.insert(new_opts.begin(), "-c");
+            if (!eosio::cdt::environment::exec_subprogram(COMPILER_NAME, new_opts)) {
+               return -1;
+            }
+            opts.ld_options.insert(opts.ld_options.begin(), main_file+".o");
+         }
+      }
+   } catch (std::runtime_error& err) {
+      llvm::errs() << err.what() << '\n';
+      return -1;
+   }
+
+   if (!eosio::cdt::environment::exec_subprogram(LINKER_BACKEND, opts.ld_options)) {
+      llvm::sys::fs::remove(main_file);
+      llvm::sys::fs::remove(main_file+".o");
+      return -1;
+   }
+   llvm::sys::fs::remove(main_file);
+   llvm::sys::fs::remove(main_file+".o");
+   if (!llvm::sys::fs::exists(opts.output_fn)) {
+      return -1;
+   }
+
+   return 0;
 }

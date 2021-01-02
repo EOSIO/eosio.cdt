@@ -1,114 +1,16 @@
-// Declares clang::SyntaxOnlyAction.
-#include "clang/Frontend/FrontendActions.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
-#include "clang/ASTMatchers/ASTMatchers.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-#include "clang/AST/DeclCXX.h"
-#include "clang/AST/DeclTemplate.h"
-#include "clang/AST/Expr.h"
-#include "clang/Basic/Builtins.h"
-#include "clang/Rewrite/Core/Rewriter.h"
-#include "clang/Rewrite/Frontend/Rewriters.h"
-#include "llvm/Support/FileSystem.h"
+#include <clang/Tooling/Tooling.h>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
 
-#include <eosio/abigen.hpp>
 #include <eosio/codegen.hpp>
-
-#include <iostream>
-#include <sstream>
-
-// Declares llvm::cl::extrahelp.
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
-
-using namespace clang::tooling;
-using namespace llvm;
+#include <eosio/EosioAttrs.hpp>
 
 #define CPP_COMP 1
-#define COMPILER_NAME "${EOSIO_CXX_COMPILER}"
-#define LINKER_NAME "${EOSIO_LINKER}"
+#define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
+#define LINKER_NAME "@EOSIO_LINKER@"
+#define COMPILER_BACKEND "@EOSIO_COMPILER_BACKEND@"
 #include <compiler_options.hpp>
-
-#include <set>
-#include <sstream>
-
-using namespace clang::tooling;
-using namespace clang::ast_matchers;
-using namespace llvm;
-using namespace eosio;
-using namespace eosio::cdt;
-
-namespace eosio { namespace cdt {
-   DeclarationMatcher function_decl_matcher = cxxMethodDecl().bind("eosio_tool");
-   DeclarationMatcher record_decl_matcher   = cxxRecordDecl().bind("eosio_tool");
-   DeclarationMatcher typedef_decl_matcher  = typedefDecl().bind("eosio_tool");
-   auto               class_tmp_matcher     = classTemplateSpecializationDecl().bind("eosio_tool");
-   abigen_exception  abigen_ex;
-   codegen_exception codegen_ex;
-   Rewriter          codegen_rewriter;
-   CompilerInstance* codegen_ci;
-   std::set<FileID>  codegen_rewritten;
-
-   abigen& get_abigen_ref() {
-      static abigen ag;
-      return ag;
-   }
-
-   class EosioMethodMatcher : public MatchFinder::MatchCallback {
-      public:
-         virtual void run( const MatchFinder::MatchResult& res ) {
-            if (const clang::CXXMethodDecl* decl = res.Nodes.getNodeAs<clang::CXXMethodDecl>("eosio_tool")->getCanonicalDecl()) {
-               auto _decl = clang_wrapper::Decl<decltype(decl)>(decl);
-               abi abi;
-               if (_decl.isEosioAction() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_action(decl);
-                  auto params = decl->parameters();
-                  for (auto param : params) {
-                     get_abigen_ref().add_type(param->getType());
-                  }
-               }
-            }
-         }
-   };
-
-   class EosioRecordMatcher : public MatchFinder::MatchCallback {
-      public:
-         bool has_added_clauses = false;
-         virtual void run( const MatchFinder::MatchResult& res ) {
-            if (const clang::CXXRecordDecl* decl = res.Nodes.getNodeAs<clang::CXXRecordDecl>("eosio_tool")) {
-               auto _decl = clang_wrapper::Decl<decltype(decl)>(decl);
-               if (!has_added_clauses) {
-                  get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses());
-                  get_abigen_ref().add_contracts(get_abigen_ref().parse_contracts());
-                  has_added_clauses = true;
-               }
-               if (_decl.isEosioAction() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_action(decl);
-                  for (auto field : decl->fields()) {
-                     get_abigen_ref().add_type( field->getType() );
-                  }
-               }
-               if (_decl.isEosioTable() && abigen::is_eosio_contract(_decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_table(decl);
-                  for (auto field : decl->fields())
-                     get_abigen_ref().add_type( field->getType() );
-               }
-            }
-
-            if (const clang::ClassTemplateSpecializationDecl* decl = res.Nodes.getNodeAs<clang::ClassTemplateSpecializationDecl>("eosio_tool")) {
-               if ( decl->getName() == "multi_index" ) {
-                  get_abigen_ref().add_table(decl->getTemplateArgs()[0].getAsIntegral().getExtValue(),
-                                          (clang::CXXRecordDecl*)((clang::RecordType*)decl->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
-               }
-            }
-         }
-   };
-}} // ns eosio::cdt
 
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
    std::vector<std::string> options;
@@ -129,88 +31,85 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       new_argv[i] = options[i].c_str();
 
    CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
-   ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
+   ClangTool ctool(opts.getCompilations(), input);
 
-   get_abigen_ref().set_contract_name(contract_name);
-   get_abigen_ref().set_resource_dirs(resource_paths);
-   codegen::get().set_contract_name(contract_name);
+   auto& cg = codegen::get();
+   cg.set_contract_name(contract_name);
+   cg.ag.set_contract_name(contract_name);
+   cg.ag.set_resource_dirs(resource_paths);
 
-   EosioMethodMatcher eosio_method_matcher;
-   EosioRecordMatcher eosio_record_matcher;
-   MatchFinder finder;
-
-   finder.addMatcher(function_decl_matcher, &eosio_method_matcher);
-   finder.addMatcher(record_decl_matcher, &eosio_record_matcher);
-   finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
-
-   int tool_run = -1;
-   tool_run = ctool.run(newFrontendActionFactory(&finder).get());
-   if (tool_run != 0) {
-      throw std::runtime_error("abigen error");
-   }
-
-   if (!get_abigen_ref().is_empty()) {
-      std::string abi_s;
-      get_abigen_ref().to_json().dump(abi_s);
-      codegen::get().set_abi(abi_s);
-   }
-
-   tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
-   if (tool_run != 0) {
+   if (ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get())) {
       throw std::runtime_error("codegen error");
+   }
+
+   if (!cg.ag.is_empty()) {
+      std::ofstream ofs (cg.output+".desc");
+      if (!ofs) throw;
+      ofs << jsoncons::pretty_print(cg.ag.to_json_debug());
+      ofs.close();
    }
 }
 
-int main(int argc, const char **argv) {
-
+int main(int argc, const char** argv) {
    // fix to show version info without having to have any other arguments
-   for (int i=0; i < argc; i++) {
-     if (argv[i] == std::string("-v")) {
-       eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
-       return 0;
-     }
+   if (std::find(argv, argv+argc, std::string("-v")) != argv+argc) {
+      eosio::cdt::environment::exec_subprogram(COMPILER_BACKEND, {"-v"});
+      return 0;
    }
 
-   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-         os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
+   llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+      os << COMPILER_NAME << " version " << "@VERSION_FULL@" << "\n";
    });
-   cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
+   llvm::cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
    Options opts = CreateOptions();
 
    std::vector<std::string> outputs;
+
+   if (opts.inputs.size() > 1 && !opts.link && !opts.output_fn.empty()) {
+      llvm::errs() << COMPILER_NAME << ": error: cannot specify -o when generating multiple output files" << '\n';
+      return -1;
+   }
+
    try {
       for (auto input : opts.inputs) {
          std::vector<std::string> new_opts = opts.comp_options;
-         SmallString<64> res;
-         llvm::sys::path::system_temp_directory(true, res);
-         std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
          std::string output;
 
+         auto input_fullpath = string_to_fullpath(input);
+
+         if (!opts.link) {
+            if (!opts.output_fn.empty()) {
+               output = opts.output_fn;
+            } else {
+               llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
+               llvm::sys::path::replace_extension(fn, ".o");
+               output = fn.str().str();
+            }
+         } else {
+            auto ifs = input_fullpath.str().str();
+            output = get_temporary_path(std::to_string(std::hash<std::string>{}(ifs))+".o");
+         }
+
+         output = string_to_fullpath(output).str().str();
+
+         codegen::get().output = output;
          generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
 
-         auto src = SmallString<64>(input);
-         llvm::sys::path::remove_filename(src);
-         std::string source_path = src.str().empty() ? "." : src.str();
-         new_opts.insert(new_opts.begin(), "-I" + source_path);
-
+         auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".cpp");
          if (llvm::sys::fs::exists(tmp_file)) {
             input = tmp_file;
          }
-         output = tmp_file+".o";
+
+         auto input_fulldir = input_fullpath;
+         llvm::sys::path::remove_filename(input_fulldir);
+         new_opts.insert(new_opts.end(), "-I" + input_fulldir.str().str());
 
          new_opts.insert(new_opts.begin(), input);
-         
-         if (!opts.link) {
-            output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
-         }
 
          new_opts.insert(new_opts.begin(), "-o "+output);
          outputs.push_back(output);
 
-         if (llvm::sys::path::extension(input).equals(".c"))
-            new_opts.insert(new_opts.begin(), "-xc++");
-
-         if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
+         if (!eosio::cdt::environment::exec_subprogram(COMPILER_BACKEND, new_opts)) {
             llvm::sys::fs::remove(tmp_file);
             return -1;
          }
@@ -223,6 +122,9 @@ int main(int argc, const char **argv) {
 
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
+      if (opts.implicit_output && !opts.output_fn.empty()) {
+         new_opts.insert(new_opts.begin(), "-o "+opts.output_fn);
+      }
       for (auto input : outputs) {
          new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
       }
@@ -236,21 +138,10 @@ int main(int argc, const char **argv) {
       for (auto input : outputs) {
          llvm::sys::fs::remove(input);
       }
-      if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
+      if (!llvm::sys::fs::exists(opts.output_fn)) {
          return -1;
       }
-
-// need to generate dSYM for mac OSX
-#ifdef __APPLE__
-      if (opts.native) {
-         if (opts.debug) {
-            if (!eosio::cdt::environment::exec_subprogram("dsymutil", std::vector<std::string>{opts.output_fn}, true)) {
-               return -1;
-            }
-         }
-      }
-#endif
    }
 
-  return 0;
+   return 0;
 }

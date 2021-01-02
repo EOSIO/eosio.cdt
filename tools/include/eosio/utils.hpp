@@ -14,6 +14,7 @@
 
 #include "whereami/whereami.hpp"
 #include <vector>
+#include <iostream>
 #include <sstream>
 
 namespace eosio { namespace cdt {
@@ -141,12 +142,45 @@ struct environment {
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
+      int ret = 0;
       if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) )
-         std::system((*path+" "+args.str()).c_str());
+         ret = std::system((*path+" "+args.str()).c_str());
+      else if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"}) )
+         ret = std::system((*path+" "+args.str()).c_str());
       else
          return false;
-      return true; 
+      return !ret; 
    }
 
 };
+
+template<typename T>
+llvm::SmallString<PATH_MAX> string_to_fullpath(T&& path) {
+   llvm::SmallString<PATH_MAX> fullpath = llvm::StringRef(path);
+   llvm::sys::fs::make_absolute(fullpath);
+   return fullpath;
+}
+
+template<typename T>
+std::string get_temporary_path(T&& path) {
+   static std::string tmp_dir;
+   if (tmp_dir.empty()) {
+      llvm::SmallString<PATH_MAX> system_temp_dir;
+      llvm::sys::path::system_temp_directory(true, system_temp_dir);
+      tmp_dir = system_temp_dir.str().str();
+   }
+   return tmp_dir+"/"+path;
+}
+
+template<typename T>
+void print_traverse(T&& container) {
+   std::for_each(container.begin(), container.end(), [](auto e){ std::cout << e << " "; });
+   std::cout << std::endl;
+}
+
+void print_traverse(const char** begin, size_t length) {
+   std::for_each(begin, begin+length, [](auto e){ std::cout << e << " "; });
+   std::cout << std::endl;
+}
+
 }} // ns eosio::cdt

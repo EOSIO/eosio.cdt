@@ -48,8 +48,32 @@ namespace eosio { namespace cdt {
          _abi.typedefs.insert(ret);
       }
 
+      template<typename T>
+      void add_wasm_action(const clang_wrapper::Decl<T>& decl, const std::string& handler) {
+         wasm_action ret;
+         ret.name = get_action_name(decl);
+         ret.handler = handler;
+         _abi.wasm_actions.insert(ret);
+
+      }
+
+      template<typename T>
+      void add_wasm_notify(const clang_wrapper::Decl<T>& decl, const std::string& handler) {
+         wasm_notify ret;
+         auto str = get_notify_pair(decl);
+         auto pos = str.find("::");
+         if (pos == std::string::npos) {
+            std::cerr << "Error, the argument of eosio::on_notify attribute should have separator '::'" << std::endl;
+            throw;
+         }
+         ret.contract = str.substr(0, pos);
+         ret.name = str.substr(pos+2);
+         ret.handler = handler;
+         _abi.wasm_notifies.insert(ret);
+      }
+
       void add_action( const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         auto decl = clang_wrapper::make_decl(_decl);
          abi_action ret;
          auto action_name = decl.getEosioActionAttr()->getName();
 
@@ -81,7 +105,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_action( const clang::CXXMethodDecl* _decl ) {
-         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         auto decl = clang_wrapper::make_decl(_decl);
          abi_action ret;
 
          auto action_name = decl.getEosioActionAttr()->getName();
@@ -201,7 +225,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         auto decl = clang_wrapper::make_decl(_decl);
          tables.insert(_decl);
          abi_table t;
          t.type = decl->getNameAsString();
@@ -220,7 +244,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( uint64_t name, const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::Decl<decltype(_decl)>(_decl);
+         auto decl = clang_wrapper::make_decl(_decl);
          if (!(decl.isEosioTable() && abigen::is_eosio_contract(decl, get_contract_name())))
             return;
          abi_table t;
@@ -338,6 +362,21 @@ namespace eosio { namespace cdt {
          o["index_type"] = "i64";
          o["key_names"] = ojson::array();
          o["key_types"] = ojson::array();
+         return o;
+      }
+
+      ojson wasm_action_to_json(const wasm_action& a) {
+         ojson o;
+         o["name"] = a.name;
+         o["handler"] = a.handler;
+         return o;
+      }
+
+      ojson wasm_notify_to_json(const wasm_notify& n) {
+         ojson o;
+         o["contract"] = n.contract;
+         o["name"] = n.name;
+         o["handler"] = n.handler;
          return o;
       }
       
@@ -485,6 +524,19 @@ namespace eosio { namespace cdt {
             o["variants"].push_back(variant_to_json( v ));
          }
          o["abi_extensions"]     = ojson::array();
+         return o;
+      }
+
+      ojson to_json_debug() {
+         auto o = to_json();
+         o["wasm_actions"] = ojson::array();
+         for (auto& a : _abi.wasm_actions) {
+            o["wasm_actions"].push_back(wasm_action_to_json(a));
+         }
+         o["wasm_notifies"] = ojson::array();
+         for (auto& n : _abi.wasm_notifies) {
+            o["wasm_notifies"].push_back(wasm_notify_to_json(n));
+         }
          return o;
       }
 

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-find_package(LLVM REQUIRED CONFIG)
+
+find_package(LLVM 11 REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
@@ -14,6 +15,8 @@ else()
       set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
    endif()
 endif()
+
+include(../modules/EosioExecutableNames.txt)
 
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${LLVM_SRCDIR}/tools/clang/include)
@@ -38,7 +41,7 @@ macro (add_tool name)
    find_package(Boost REQUIRED)
    
    add_executable(${name} ${SOURCES})
-   set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
+   set_property(TARGET ${name} PROPERTY CXX_STANDARD 20)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
    target_include_directories(${name} PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../jsoncons/include ${CMAKE_SOURCE_DIR}/eosio_llvm/tools/clang/include ${LLVM_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
    target_link_libraries(${name}
@@ -78,11 +81,11 @@ macro (add_tool name)
    add_custom_command( TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/bin/ )
 endmacro()
 
-add_subdirectory(abigen)
+#add_subdirectory(abigen)
 add_subdirectory(abidiff)
 add_subdirectory(cc)
 add_subdirectory(ld)
-add_subdirectory(init)
-add_subdirectory(external)
+#add_subdirectory(init)
+#add_subdirectory(external)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/compiler_options.hpp.in ${CMAKE_BINARY_DIR}/compiler_options.hpp)

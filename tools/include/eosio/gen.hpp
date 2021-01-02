@@ -1,11 +1,12 @@
 #pragma once
 
-#include "clang/AST/DeclCXX.h"
-#include "clang/AST/Expr.h"
-#include "clang/Basic/Builtins.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
-#include "llvm/Support/raw_ostream.h"
+#include <clang/AST/DeclCXX.h>
+#include <clang/AST/DeclTemplate.h>
+#include <clang/AST/Expr.h>
+#include <clang/Basic/Builtins.h>
+#include <clang/Tooling/CommonOptionsParser.h>
+#include <clang/Tooling/Tooling.h>
+#include <llvm/Support/raw_ostream.h>
 #include <functional>
 #include <vector>
 #include <string>
@@ -114,7 +115,7 @@ struct generation_utils {
         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
          if (auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
             auto decl = rt->getDecl();
-            return clang_wrapper::Decl<decltype(decl)>(decl).isEosioIgnore();
+            return clang_wrapper::make_decl(decl).isEosioIgnore();
          }
          return false;
       };
@@ -134,7 +135,7 @@ struct generation_utils {
          if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
             if (auto decl = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
                auto _decl = decl->getDecl();
-               return clang_wrapper::Decl<decltype(_decl)>(_decl).isEosioIgnore() ? tst->getArg(0).getAsType() : type;
+               return clang_wrapper::make_decl(_decl).isEosioIgnore() ? tst->getArg(0).getAsType() : type;
             }
          return type;
       };
@@ -152,12 +153,12 @@ struct generation_utils {
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
-      llvm::SmallString<128> cwd;
+      llvm::SmallString<PATH_MAX> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
       if (!has_real_path)
          resource_dirs.push_back(cwd.str().str());
       for ( auto res : rd ) {
-         llvm::SmallString<128> rp;
+         llvm::SmallString<PATH_MAX> rp;
          auto has_real_path = llvm::sys::fs::real_path(res, rp, true);
          if (!has_real_path)
             resource_dirs.push_back(rp.str().str());
@@ -180,18 +181,17 @@ struct generation_utils {
       auto tmp = decl.getEosioActionAttr()->getNameAsString();
       if (!tmp.empty())
          return tmp;
-      auto _decl = decl.getDecl();
-      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(_decl)) {
+      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(*decl)) {
          return r->getNameAsString();
       } else {
-         auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(_decl);
+         auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(*decl);
          return m->getNameAsString();
       }
    }
 
    template<typename T>
    static inline std::string get_action_name( T decl ) {
-      auto _decl = clang_wrapper::Decl<T>(decl);
+      auto _decl = clang_wrapper::make_decl(decl);
       return get_action_name(_decl);
    }
 
@@ -204,7 +204,7 @@ struct generation_utils {
 
    template<typename T>
    static inline std::string get_notify_pair( T decl ) {
-      auto _decl = clang_wrapper::Decl<T>(decl);
+      auto _decl = clang_wrapper::make_decl(decl);
       return get_notify_pair(_decl);
    }
 
@@ -243,7 +243,7 @@ struct generation_utils {
       std::map<std::string, std::string> rcs;
       simple_ricardian_tokenizer srt(contracts);
       if (contracts.empty()) {
-         std::cout << "Warning, empty ricardian clause file\n";
+         //std::cout << "Warning, empty ricardian clause file\n";
          return rcs;
       }
 
@@ -259,7 +259,7 @@ struct generation_utils {
       std::vector<std::pair<std::string, std::string>> clause_pairs;
       simple_ricardian_tokenizer srt(clauses);
       if (clauses.empty()) {
-         std::cout << "Warning, empty ricardian clause file\n";
+         //std::cout << "Warning, empty ricardian clause file\n";
          return clause_pairs;
       }
 
@@ -273,8 +273,7 @@ struct generation_utils {
    template<typename T>
    static inline bool is_eosio_contract( const clang_wrapper::Decl<T>& decl, const std::string& cn ) {
       std::string name = "";
-      auto _decl = decl.getDecl();
-      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(_decl)) {
+      if (auto* r = llvm::dyn_cast<clang::CXXRecordDecl>(*decl)) {
          auto pd = decl.getParent();
          if (decl.isEosioContract()) {
             auto nm = decl.getEosioContractAttr()->getNameAsString();
@@ -284,8 +283,7 @@ struct generation_utils {
             name = nm.empty() ? pd->getName().str() : nm;
          }
          return name == cn;
-      } else {
-         auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(_decl);
+      } else if (auto* m = llvm::dyn_cast<clang::CXXMethodDecl>(*decl)) {
          if (decl.isEosioContract()) {
             name = decl.getEosioContractAttr()->getNameAsString();
          } else if (decl.getParent().isEosioContract()) {
@@ -296,11 +294,12 @@ struct generation_utils {
          }
          return name == cn;
       }
+      return false;
    }
 
    template<typename T>
    static inline bool is_eosio_contract( T decl, const std::string& cn ) {
-      auto _decl = clang_wrapper::Decl<T>(decl);
+      auto _decl = clang_wrapper::make_decl(decl);
       return is_eosio_contract(_decl, cn);
    }
 

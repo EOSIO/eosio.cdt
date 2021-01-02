@@ -155,8 +155,12 @@ static cl::opt<bool> abigen_opt(
     "abigen",
     cl::desc("Generate ABI"),
     cl::cat(EosioCompilerToolCategory));
-static cl::opt<std::string> abigen_output_opt(
+static cl::opt<std::string> _abigen_output_opt(
     "abigen_output",
+    cl::desc("ABIGEN output (Deprecated: Use abigen-output)"),
+    cl::cat(EosioCompilerToolCategory));
+static cl::opt<std::string> abigen_output_opt(
+    "abigen-output",
     cl::desc("ABIGEN output"),
     cl::cat(EosioCompilerToolCategory));
 // ignore for now
@@ -362,6 +366,7 @@ struct Options {
    std::vector<std::string> abigen_resources;
    bool debug;
    bool native;
+   bool implicit_output;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -372,6 +377,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
    copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
    copts.emplace_back(std::string("-D__eosio_cdt_minor__=")+"${VERSION_MINOR}");
    copts.emplace_back(std::string("-D__eosio_cdt_patchlevel__=")+"${VERSION_PATCH}");
+
    if (!fnative_opt) {
       copts.emplace_back("--target=wasm32");
       copts.emplace_back("-ffreestanding");
@@ -395,6 +401,14 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          copts.emplace_back("-DLLP64");
       }
    }
+
+   copts.emplace_back("-Xclang");
+   copts.emplace_back("-load");
+   copts.emplace_back("-Xclang");
+   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+eosio_apply_suff))
+      copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+eosio_apply_suff);
+   else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+eosio_apply_suff))
+      copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+eosio_apply_suff);
 
    if (!fasm_opt) {
       copts.emplace_back("-fno-threadsafe-statics");
@@ -424,10 +438,12 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff))
             copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff);
       }
+      /*
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff))
          copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff))
          copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff);
+      */
    }
 }
 
@@ -469,9 +485,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       } else {
          if (fuse_main_opt)
             ldopts.emplace_back("-e main");
-         else
+         else {
             ldopts.emplace_back("-e apply");
-         ldopts.emplace_back("--only-export \"apply:function\"");
+            ldopts.emplace_back("--no-entry");
+         }
+         //ldopts.emplace_back("--only-export \"apply:function\"");
       }
       ldopts.emplace_back("-lc++ -lc -leosio");
       if (use_old_malloc_opt)
@@ -506,12 +524,13 @@ static Options CreateOptions(bool add_defaults=true) {
    std::string pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
+   bool implicit_output = false;
 
 #ifdef ONLY_LD
-   bool abigen = false;
+   bool abigen = !no_abigen_opt;
 #else
    bool abigen = abigen_opt;
-   abigen_output = abigen_output_opt;
+   abigen_output = _abigen_output_opt.size() ? _abigen_output_opt : abigen_output_opt;
    debug = g_opt;
 #endif
 
@@ -567,7 +586,6 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 #endif
 #ifndef ONLY_LD
-   copts.emplace_back("-I./");
 
    if (!isystem_opt.empty()) {
       copts.emplace_back("-isystem="+isystem_opt);
@@ -772,20 +790,21 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-l"+library);
    }
    if (o_opt.empty()) {
+      implicit_output = true;
 #ifndef ONLY_LD
       if (inputs.size() == 1) {
-         llvm::SmallString<256> fn  = llvm::sys::path::filename(inputs[0]);
-         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
-         output_fn = fn.str();
+         llvm::SmallString<PATH_MAX> fn  = llvm::sys::path::filename(inputs[0]);
+         llvm::sys::path::replace_extension(fn, fnative_opt ? "" : c_opt ? ".o" : ".wasm");
+         output_fn = fn.str().str();
       } else {
          ldopts.emplace_back("a.out");
       }
 #else
       if (inputs.size() == 1) {      
-         llvm::SmallString<256> fn = llvm::sys::path::filename(inputs[0]);
+         llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(inputs[0]);
          llvm::sys::path::replace_extension(fn, "");
          llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
-         output_fn = fn.str();
+         output_fn = fn.str().str();
          ldopts.emplace_back("-o "+output_fn);
       } else {
          output_fn = "a.out";
@@ -845,11 +864,11 @@ static Options CreateOptions(bool add_defaults=true) {
    else {
       llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
       llvm::sys::path::replace_extension(fn, "");
-      abigen_contract = fn.str();
+      abigen_contract = fn.str().str();
    }
 
    for ( auto resource : resources ) {
-      agresources.emplace_back(resource);
+      //agresources.emplace_back(resource);
    }
    if (fnative_opt)
       ldopts.emplace_back("-fnative");
@@ -858,8 +877,8 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, implicit_output};
 #else
-   return {output_fn, {}, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt};
+   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, implicit_output};
 #endif
 }

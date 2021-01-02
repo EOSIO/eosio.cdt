@@ -1,7 +1,6 @@
 #pragma once
 
 #include <algorithm>
-#include <clang/AST/Attr.h>
 #include <clang/AST/DeclBase.h>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
@@ -49,14 +48,15 @@ namespace eosio { namespace cdt { namespace clang_wrapper {
          };
 
          auto operator->() { return decl; }
-         const auto operator->() const { return decl; }
-         auto operator*() { return decl; }
-         const auto operator*() const { return decl; }
          operator bool() { return decl != nullptr; }
 
          auto getParent() const {
             auto p = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
             return Decl<decltype(p)>(p);
+         }
+
+         T getDecl() const {
+            return decl;
          }
 
          bool isEosioAction() const {
@@ -81,11 +81,6 @@ namespace eosio { namespace cdt { namespace clang_wrapper {
 
          bool hasEosioRicardian() const {
             return false;
-         }
-
-         bool isEosioWasmEntry() const {
-            auto* wasm_entry = decl->template getAttr<clang::WebAssemblyExportNameAttr>();
-            return !!wasm_entry;
          }
 
          const Attr* getEosioActionAttr() const {
@@ -113,10 +108,5 @@ namespace eosio { namespace cdt { namespace clang_wrapper {
          T decl;
          std::map<std::string,Attr> attrs;
    };
-
-   template<typename T>
-   Decl<T> make_decl(T decl) {
-      return {decl};
-   }
 
 } } }

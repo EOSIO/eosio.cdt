@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(eoscc)
+project(blanc)
 
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
@@ -26,17 +26,10 @@ endif()
 
 set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME})
 
-set(EOSIO_PREFIX eos)
-set(EOSIO_C_COMPILER ${EOSIO_PREFIX}cc)
-set(EOSIO_CXX_COMPILER ${EOSIO_PREFIX}c++)
-set(EOSIO_LINKER ${EOSIO_PREFIX}ld)
-set(EOSIO_POSTPASS ${EOSIO_PREFIX}pp)
-set(EOSIO_AR ${EOSIO_PREFIX}ar)
-set(EOSIO_RANLIB ${EOSIO_PREFIX}ranlib)
-
 include(GNUInstallDirs)
 
-include(modules/ClangExternalProject.txt)
+include(modules/EosioExecutableNames.txt)
+include(modules/EosioPluginsExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 
 set(WASM_SDK_BUILD true)
@@ -87,8 +80,8 @@ configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DI
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
 
-include(modules/TestsExternalProject.txt)
+#include(modules/TestsExternalProject.txt)
 
-include(CTest)
-enable_testing()
-add_subdirectory(tests)
+#include(CTest)
+#enable_testing()
+#add_subdirectory(tests)
