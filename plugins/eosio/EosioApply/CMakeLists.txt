@@ -1,0 +1,1 @@
+add_llvm_component_library(LLVMEosioApply EosioApply.cpp MODULE DEPENDS intrinsics_gen PLUGIN_TOOL opt)

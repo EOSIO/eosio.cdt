@@ -38,20 +38,10 @@ endif()
 
 set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.cdt)
 
-option(ENABLE_NATIVE_COMPILER "enable native builds with the eosio.cdt toolchain" ON)
-option(ENABLE_TESTS "enable building tests" ON)
-
 include(GNUInstallDirs)
 
-if(NOT TOOLS_BUILD_TYPE)
-   set(TOOLS_BUILD_TYPE "Release")
-endif()
-
-if(NOT LIBS_BUILD_TYPE)
-   set(LIBS_BUILD_TYPE "Release")
-endif()
-
-include(modules/ClangExternalProject.txt)
+include(modules/EosioExecutableNames.txt)
+include(modules/EosioPluginsExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 
 set(WASM_SDK_BUILD true)
@@ -106,8 +96,8 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/eosiolib/tester/fpconv.license ${CM
 configure_file(${CMAKE_SOURCE_DIR}/libraries/fmt/LICENSE.rst ${CMAKE_BINARY_DIR}/licenses/fmt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/rapidjson/license.txt ${CMAKE_BINARY_DIR}/licenses/rapidjson.license COPYONLY)
 
-include(modules/TestsExternalProject.txt)
+#include(modules/TestsExternalProject.txt)
 
-include(CTest)
-enable_testing()
-add_subdirectory(tests)
+#include(CTest)
+#enable_testing()
+#add_subdirectory(tests)

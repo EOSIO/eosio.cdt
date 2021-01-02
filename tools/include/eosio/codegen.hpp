@@ -1,27 +1,26 @@
 #pragma once
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
-#include "clang/Driver/Options.h"
-#include "clang/AST/AST.h"
-#include "clang/AST/ASTContext.h"
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/RecursiveASTVisitor.h"
-#include "clang/AST/QualTypeNames.h"
-#include "clang/Frontend/ASTConsumers.h"
-#include "clang/Frontend/FrontendActions.h"
-#include "clang/Frontend/CompilerInstance.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
-#include "clang/Rewrite/Core/Rewriter.h"
-#include "clang/Rewrite/Frontend/Rewriters.h"
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
+#include <clang/Driver/Options.h>
+#include <clang/AST/AST.h>
+#include <clang/AST/ASTContext.h>
+#include <clang/AST/ASTConsumer.h>
+#include <clang/AST/RecursiveASTVisitor.h>
+#include <clang/AST/QualTypeNames.h>
+#include <clang/Frontend/ASTConsumers.h>
+#include <clang/Frontend/FrontendActions.h>
+#include <clang/Frontend/CompilerInstance.h>
+#include <clang/Tooling/CommonOptionsParser.h>
+#include <clang/Tooling/Tooling.h>
+#include <clang/Rewrite/Core/Rewriter.h>
+#include <clang/Rewrite/Frontend/Rewriters.h>
 
 #include <eosio/gen.hpp>
 
 #include <eosio/utils.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <eosio/abi.hpp>
-#include <eosio/ppcallbacks.hpp>
 
 #include <exception>
 #include <iostream>
@@ -33,7 +32,8 @@
 #include <chrono>
 #include <ctime>
 #include <utility>
-#include <regex>
+
+#include "abigen.hpp"
 
 using namespace clang;
 using namespace clang::driver;
@@ -43,15 +43,30 @@ using namespace eosio;
 using namespace eosio::cdt;
 
 namespace eosio { namespace cdt {
+
+   struct codegen_exception : public std::exception {
+      virtual const char* what() const throw() {
+         return "eosio.codegen fatal error";
+      }
+   };
+
+   struct include_double {
+      include_double(std::string fn, SourceRange sr) : file_name(fn), range(sr) {}
+      std::string    file_name;
+      SourceRange    range;
+   };
+
    class codegen : public generation_utils {
       public:
+         codegen_exception codegen_ex;
          Rewriter          codegen_rewriter;
          CompilerInstance* codegen_ci;
          std::string       contract_name;
          std::string       abi;
+         abigen            ag;
          std::set<std::string> defined_datastreams;
          std::set<std::string> datastream_uses;
-         std::set<std::string> actions;
+         std::map<std::string,std::string> actions;
          std::set<std::string> notify_handlers;
          ASTContext *ast_context;
          std::map<std::string, CXXMethodDecl*> cxx_methods;
@@ -61,9 +76,11 @@ namespace eosio { namespace cdt {
          llvm::ArrayRef<std::string>           sources;
          size_t                                source_index = 0;
          std::map<std::string, std::string>    tmp_files;
-         bool                                  warn_action_read_only;
+         bool                                  apply_was_found = false;
+         std::string                           output;
 
-         using generation_utils::generation_utils;
+         codegen() : generation_utils([&](){throw codegen_ex;}) {
+         }
 
          static codegen& get() {
             static codegen inst;
@@ -77,10 +94,43 @@ namespace eosio { namespace cdt {
          void set_abi(std::string s) {
             abi = s;
          }
+   };
 
-         void set_warn_action_read_only(bool w) {
-            warn_action_read_only = w;
+   std::map<std::string, std::vector<include_double>>  global_includes;
+
+   // remove after v1.7.0
+   bool has_eosiolib = false;
+
+   class eosio_ppcallbacks : public PPCallbacks {
+      public:
+         eosio_ppcallbacks(SourceManager& sm, std::string file) : sources(sm), fn(file) {}
+      protected:
+         virtual void InclusionDirective(
+            SourceLocation hash_loc,
+            const Token &include_token,
+            StringRef file_name,
+            bool is_angled,
+            CharSourceRange filename_range,
+            const FileEntry *file,
+            StringRef search_path,
+            StringRef relative_path,
+            const clang::Module *imported,
+            clang::SrcMgr::CharacteristicKind file_type) {
+            auto fid = sources.getFileID(hash_loc);
+            auto fe  = sources.getFileEntryForID(fid);
+
+            if (!is_angled && llvm::sys::path::filename(fe->getName()) == llvm::sys::path::filename(fn)) {
+               global_includes[fe->getName().str()].emplace_back(
+                     (search_path + llvm::sys::path::get_separator() + file_name).str(),
+                     filename_range.getAsRange());
+            }
+
+            if ( file_name.find("eosiolib") != StringRef::npos )
+               has_eosiolib = true;
          }
+
+         std::string fn;
+         SourceManager& sources;
    };
 
    class eosio_codegen_visitor : public RecursiveASTVisitor<eosio_codegen_visitor>, public generation_utils {
@@ -88,26 +138,18 @@ namespace eosio { namespace cdt {
          codegen& cg = codegen::get();
          FileID    main_fid;
          StringRef main_name;
-         std::stringstream ss;
+         Rewriter  rewriter;
          CompilerInstance* ci;
-         bool apply_was_found = false;
 
       public:
          std::vector<CXXMethodDecl*> action_decls;
          std::vector<CXXMethodDecl*> notify_decls;
 
-         using call_map_t = std::map<FunctionDecl*, std::vector<CallExpr*>>;
-         using indirect_func_map_t = std::map<NamedDecl*, FunctionDecl*>;
-
-         std::set<CXXMethodDecl*>    read_only_actions;
-         call_map_t                  func_calls;
-         indirect_func_map_t         indi_func_map;
-
          explicit eosio_codegen_visitor(CompilerInstance *CI)
-               : generation_utils(), ci(CI) {
+               : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
-            get_error_emitter().set_compiler_instance(CI);
+            rewriter.setSourceMgr(CI->getASTContext().getSourceManager(), CI->getASTContext().getLangOpts());
          }
 
          void set_main_fid(FileID fid) {
@@ -118,7 +160,9 @@ namespace eosio { namespace cdt {
             main_name = mn;
          }
 
-         auto& get_ss() { return ss; }
+         Rewriter& get_rewriter() {
+            return rewriter;
+         }
 
          bool is_datastream(const QualType& qt) {
             auto str_name = qt.getAsString();
@@ -129,6 +173,13 @@ namespace eosio { namespace cdt {
          }
          bool is_type_of(const QualType& qt, const std::string& t, const std::string& ns="") {
             return true;
+         }
+
+         template <size_t N>
+         void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
+            FullSourceLoc full(loc, inst.getSourceManager());
+            unsigned id = inst.getDiagnostics().getCustomDiagID(clang::DiagnosticsEngine::Error, err);
+            inst.getDiagnostics().Report(full, id);
          }
 
          std::string get_base_type(const QualType& qt) {
@@ -145,70 +196,84 @@ namespace eosio { namespace cdt {
             return "";
          }
 
-         template <typename F>
-         void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, CXXMethodDecl* decl) {
+         /*
+         virtual bool VisitFunctionTemplateDecl(FunctionTemplateDecl* decl) {
+            if (decl->getNameAsString() == "operator<<") {
+               if (decl->getTemplatedDecl()->getNumParams() == 2) {
+                  auto param0 = decl->getTemplatedDecl()->getParamDecl(0)->getOriginalType();
+                  if (is_datastream(param0)) {
+                     if (auto tp = dyn_cast<NamedDecl>(decl->getTemplatedDecl()->getParamDecl(1)->getOriginalType().getTypePtr()->getPointeeCXXRecordDecl())) {
+                        cg.defined_datastreams.insert(tp->getQualifiedNameAsString());
+                     }
+                  }
+               }
+            }
+            return true;
+         }
+         */
+
+         template <typename F, typename D>
+         void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, D decl) {
             constexpr static uint32_t max_stack_size = 512;
+            std::stringstream ss;
             codegen& cg = codegen::get();
             std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
             if (cg.is_eosio_contract(decl, cg.contract_name)) {
-               ss << "\n\n#include <eosio/datastream.hpp>\n";
-               ss << "#include <eosio/name.hpp>\n";
-               ss << "extern \"C\" {\n";
-               ss << "__attribute__((eosio_wasm_import))\n";
-               ss << "uint32_t action_data_size();\n";
-               ss << "__attribute__((eosio_wasm_import))\n";
-               ss << "uint32_t read_action_data(void*, uint32_t);\n";
-               const auto& return_ty = decl->getReturnType().getAsString();	
-               if (return_ty != "void") {	
-                  ss << "__attribute__((eosio_wasm_import))\n";	
-                  ss << "void set_action_return_value(void*, size_t);\n";	
+               if (has_eosiolib) {
+                  ss << "\n\n#include <eosiolib/datastream.hpp>\n";
+                  ss << "#include <eosiolib/name.hpp>\n";
+               } else {
+                  ss << "\n\n#include <eosio/datastream.hpp>\n";
+                  ss << "#include <eosio/name.hpp>\n";
                }
-               ss << "__attribute__((weak, " << attr << "(\"";
-               ss << get_str(decl);
-               ss << ":";
-               ss << func_name << nm;
-               ss << "\"))) void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
-               ss << "size_t as = ::action_data_size();\n";
-               ss << "void* buff = nullptr;\n";
-               ss << "if (as > 0) {\n";
-               ss << "buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
-               ss << "::read_action_data(buff, as);\n";
-               ss << "}\n";
-               ss << "eosio::datastream<const char*> ds{(char*)buff, as};\n";
+               ss << "extern \"C\" {\n";
+               ss << "  uint32_t action_data_size();\n";
+               ss << "  uint32_t read_action_data(void*, uint32_t);\n";
+               //ss << "__attribute__((weak, " << attr << "(\"";
+               //ss << get_str(decl);
+               //ss << ":";
+               //ss << func_name << nm;
+               //ss << "\")))\n";
+               ss << "  __attribute__((weak))\n";
+               ss << "  void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
+               ss << "    size_t as = ::action_data_size();\n";
+               ss << "    void* buff = nullptr;\n";
+               ss << "    if (as > 0) {\n";
+               ss << "      buff = as >= " << max_stack_size << " ? malloc(as) : alloca(as);\n";
+               ss << "    ::read_action_data(buff, as);\n";
+               ss << "    }\n";
+               ss << "    eosio::datastream<const char*> ds{(char*)buff, as};\n";
                int i=0;
                for (auto param : decl->parameters()) {
                   clang::LangOptions lang_opts;
                   lang_opts.CPlusPlus = true;
-                  lang_opts.Bool = true;
                   clang::PrintingPolicy policy(lang_opts);
                   auto qt = param->getOriginalType().getNonReferenceType();
                   qt.removeLocalConst();
                   qt.removeLocalVolatile();
                   qt.removeLocalRestrict();
                   std::string tn = clang::TypeName::getFullyQualifiedName(qt, *(cg.ast_context), policy);
-                  ss << tn << " arg" << i << "; ds >> arg" << i << ";\n";
+                  tn = tn == "_Bool" ? "bool" : tn; // TODO look out for more of these oddities
+                  ss << "    " << tn << " arg" << i << "; ds >> arg" << i << ";\n";
                   i++;
                }
-               const auto& call_action = [&]() {
-                  ss << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
-                  for (int i=0; i < decl->parameters().size(); i++) {
-                     ss << "arg" << i;
-                     if (i < decl->parameters().size()-1)
-                        ss << ", ";
-                  }
-                  ss << ");\n";
-               };
-               if (return_ty != "void") {
-                  ss << "const auto& result = ";
+               ss << "    " << decl->getParent()->getQualifiedNameAsString() << "{eosio::name{r},eosio::name{c},ds}." << decl->getNameAsString() << "(";
+               for (int i=0; i < decl->parameters().size(); i++) {
+                  ss << "arg" << i;
+                  if (i < decl->parameters().size()-1)
+                     ss << ", ";
                }
-               call_action();
-               if (return_ty != "void") {
-                  ss << "const auto& packed_result = eosio::pack(result);\n";
-                  ss << "set_action_return_value((void*)packed_result.data(), packed_result.size());\n";
-               }
-               ss << "}}\n";
+               ss << ");\n";
+               ss << "  }\n";
+               ss << "}\n";
 
+               rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
             }
+         }
+
+         void create_action_dispatch(clang_wrapper::Decl<CXXMethodDecl*> decl) {
+            auto func = [](clang_wrapper::Decl<CXXMethodDecl*> d) { return generation_utils::get_action_name(d); };
+            create_dispatch("eosio_wasm_action", "__eosio_action_", func, decl);
          }
 
          void create_action_dispatch(CXXMethodDecl* decl) {
@@ -216,227 +281,148 @@ namespace eosio { namespace cdt {
             create_dispatch("eosio_wasm_action", "__eosio_action_", func, decl);
          }
 
+         void create_notify_dispatch(clang_wrapper::Decl<CXXMethodDecl*> decl) {
+            auto func = [](clang_wrapper::Decl<CXXMethodDecl*> d) { return generation_utils::get_notify_pair(d); };
+            create_dispatch("eosio_wasm_notify", "__eosio_notify_", func, decl);
+         }
+
          void create_notify_dispatch(CXXMethodDecl* decl) {
             auto func = [](CXXMethodDecl* d) { return generation_utils::get_notify_pair(d); };
             create_dispatch("eosio_wasm_notify", "__eosio_notify_", func, decl);
          }
 
-         virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
+         bool shouldVisitTemplateInstantiations() const {
+            return true;
+         }
+
+         virtual bool VisitCXXMethodDecl(CXXMethodDecl* _decl) {
+            auto decl = clang_wrapper::make_decl(_decl);
             std::string name = decl->getNameAsString();
             static std::set<std::string> _action_set; //used for validations
             static std::set<std::string> _notify_set; //used for validations
-            if (decl->isEosioAction()) {
+            if (decl.isEosioAction() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
                name = generation_utils::get_action_name(decl);
-               // validate_name(name, [&](auto s) {
-               //    CDT_ERROR("codegen_error", decl->getLocation(), std::string("action name (")+s+") is not a valid eosio name");
-               // });
-
+               validate_name(name, [&]() {emitError(*ci, decl->getLocation(), "action not a valid eosio name");});
                if (!_action_set.count(name))
                   _action_set.insert(name);
                else {
                   auto itr = _action_set.find(name);
-                  CDT_CHECK_ERROR(*itr == name, "codegen_error", decl->getLocation(), "action declaration doesn't match previous declaration");
+                  if (*itr != name)
+                     emitError(*ci, decl->getLocation(), "action declaration doesn't match previous declaration");
                }
-               std::string full_action_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
-               if (cg.actions.count(full_action_name) == 0) {
+               std::string full_action_name = "__eosio_action_" + decl->getNameAsString() + ((decl->getParent()) ? "_"+decl->getParent()->getNameAsString() : "");
+               if (cg.actions.find(name) == cg.actions.end()) {
                   create_action_dispatch(decl);
-               }
-               cg.actions.insert(full_action_name); // insert the method action, so we don't create the dispatcher twice
-
-               if (decl->isEosioReadOnly()) {
-                  read_only_actions.insert(decl);
+                  cg.actions.emplace(name, full_action_name);
+                  cg.ag.add_wasm_action(decl, full_action_name);
                }
             }
-            else if (decl->isEosioNotify()) {
+            else if (decl.isEosioNotify() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
                if (first != "*")
-                  validate_name(first, [&](auto s) {
-                     CDT_ERROR("codegen_error", decl->getLocation(), std::string("name (")+s+") is invalid");
-                  });
+                  validate_name(first, [&]() {emitError(*ci, decl->getLocation(), "invalid contract name");});
                auto second = name.substr(name.find("::")+2);
-               // validate_name(second, [&](auto s) {
-               //    CDT_ERROR("codegen_error", decl->getLocation(), std::string("name (")+s+") is invalid");
-               // });
+               validate_name(second, [&]() {emitError(*ci, decl->getLocation(), "invalid action name");});
 
                if (!_notify_set.count(name))
                   _notify_set.insert(name);
                else {
                   auto itr = _notify_set.find(name);
-                  CDT_CHECK_ERROR(*itr == name, "codegen_error", decl->getLocation(), "action declaration doesn't match previous declaration");
+                  if (*itr != name)
+                     emitError(*ci, decl->getLocation(), "notify handler declaration doesn't match previous declaration");
                }
 
-               std::string full_notify_name = decl->getNameAsString() + ((decl->getParent()) ? decl->getParent()->getNameAsString() : "");
+               std::string full_notify_name = "__eosio_notify_" + decl->getNameAsString() + ((decl->getParent()) ? "_"+decl->getParent()->getNameAsString() : "");
                if (cg.notify_handlers.count(full_notify_name) == 0) {
                   create_notify_dispatch(decl);
+                  cg.ag.add_wasm_notify(decl, full_notify_name);
                }
                cg.notify_handlers.insert(full_notify_name); // insert the method action, so we don't create the dispatcher twice
             }
 
-            return true;
-         }
-
-         void process_indi_callee(FunctionDecl* fd, CallExpr *call) {
-            if (Expr *expr = call->getCallee()) {
-               while (auto* ice = dyn_cast<ImplicitCastExpr>(expr)) {
-                  expr = ice->getSubExpr();
-               }
-               if (auto* dre = dyn_cast<DeclRefExpr>(expr)) {
-                  if (indi_func_map.count(dre->getFoundDecl()) != 0) {
-                     func_calls[fd].push_back(call);
-                  }
-               } else if (auto* me = dyn_cast<MemberExpr>(expr)) {
-                  if (indi_func_map.count(me->getMemberDecl()) != 0) {
-                     func_calls[fd].push_back(call);
-                  }
+            if (decl.isEosioAction() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
+               cg.ag.add_struct(_decl);
+               cg.ag.add_action(_decl);
+               auto params = _decl->parameters();
+               for (auto param : params) {
+                  cg.ag.add_type(param->getType());
                }
             }
-         }
 
-         FunctionDecl* get_rhs_fd(Expr *rhs) const {
-            while (auto* ice = dyn_cast<ImplicitCastExpr>(rhs)) {
-               rhs = ice->getSubExpr();
-            }
-            if (auto* rhs_dre = dyn_cast<DeclRefExpr>(rhs)) {
-               if (auto* fd = dyn_cast<FunctionDecl>(rhs_dre->getFoundDecl())) {
-                  return fd;
-               }
-            }
-            return nullptr;
-         }
-
-         void update_indi_func_map(NamedDecl *nd, FunctionDecl *fd) {
-            if (func_calls.count(fd) != 0) {
-               indi_func_map[nd] = fd;
-            } else if (indi_func_map.count(nd)) {
-               indi_func_map.erase(nd);
-            }
-         }
-
-         void process_decl_init(NamedDecl *nd, Expr *init) {
-            if (FunctionDecl *fd = get_rhs_fd(init)) {
-               if (func_calls.count(fd) != 0) {
-                  indi_func_map[nd] = fd;
-               }
-            }
-         }
-
-         void process_function(FunctionDecl* func_decl) {
-            if (func_decl->isThisDeclarationADefinition() && func_decl->hasBody()) {
-               Stmt *stmts = func_decl->getBody();
-               for (auto it = stmts->child_begin(); it != stmts->child_end(); ++it) {
-                  if (Stmt *s = *it) {
-                     if (auto* ec = dyn_cast<ExprWithCleanups>(s)) {
-                        s = ec->getSubExpr();
-                        while (auto* ice = dyn_cast<ImplicitCastExpr>(s))
-                           s = ice->getSubExpr();
-                     }
-
-                     if (auto* call = dyn_cast<CallExpr>(s)) {
-                        if (FunctionDecl *fd = call->getDirectCallee()) {
-                           if (func_calls.count(fd) == 0) {
-                              process_function(fd);
-                           }
-                           if (!func_calls[fd].empty()) {
-                              func_calls[func_decl].push_back(call);
-                              break;
-                           }
-                        } else {
-                           process_indi_callee(func_decl, call);
-                        }
-                     } else if (auto* ds = dyn_cast<DeclStmt>(s)) {
-                        auto process_decl = [this]( DeclStmt *s ) {
-                           for (auto it = s->decl_begin(); it != s->decl_end(); ++it) {
-                              if (auto* vd = dyn_cast<VarDecl>(*it)) {
-                                 if (Expr *init = vd->getInit()) {
-                                    process_decl_init(vd, init);
-                                 }
-                              }
-                           }
-                        };
-                        process_decl(ds);
-                     } else if (auto* bo = dyn_cast<BinaryOperator>(s)) {
-                        auto process_assignment = [this]( BinaryOperator *b ) {
-                           Expr *lhs = nullptr, *rhs = nullptr;
-                           if ((lhs = b->getLHS()) && (rhs = b->getRHS())) {
-                              if (FunctionDecl *fd = get_rhs_fd(rhs)) {
-                                 if (auto* lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
-                                    update_indi_func_map(lhs_dre->getFoundDecl(), fd);
-                                 } else if (auto* lhs_me = dyn_cast<MemberExpr>(lhs)) {
-                                    update_indi_func_map(lhs_me->getMemberDecl(), fd);
-                                 }
-                              }
-                           }
-                        };
-                        process_assignment(bo);
-                     }
-                  }
-               }
-            }
-         }
-
-         virtual bool VisitFunctionDecl(FunctionDecl* func_decl) {
-            if (func_calls.count(func_decl) == 0 && is_write_host_func(func_decl)) {
-               func_calls[func_decl] = {(CallExpr*)func_decl};
-            } else {
-               process_function(func_decl);
-            }
             return true;
          }
 
          virtual bool VisitDecl(clang::Decl* decl) {
+            auto _decl = clang_wrapper::make_decl(decl);
             if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
-               if (fd->getNameInfo().getAsString() == "apply")
-                  apply_was_found = true;
-            } else {
-               auto process_global_var = [this]( clang::Decl* d ) {
-                  if (auto* vd = dyn_cast<VarDecl>(d)) {
-                     if (vd->hasGlobalStorage()) {
-                        if (Expr *init = vd->getInit()) {
-                           process_decl_init(vd, init);
-                        }
-                     }
-                  }
-               };
-               process_global_var(decl);
+               if (fd->getNameInfo().getAsString() == "apply" && _decl.isEosioWasmEntry())
+                  codegen::get().apply_was_found = true;
+            }
+            if (const auto* d = dyn_cast<clang::ClassTemplateSpecializationDecl>(decl)) {
+               if (d->getName() == "multi_index") {
+                  cg.ag.add_table(d->getTemplateArgs()[0].getAsIntegral().getExtValue(),
+                     (clang::CXXRecordDecl*)((clang::RecordType*)d->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
+               }
             }
             return true;
          }
 
-         virtual bool VisitCXXRecordDecl(CXXRecordDecl* decl) {
-            if (decl->isEosioContract()) {
-               auto process_data_member = [this]( CXXRecordDecl* rd ) {
-                  for (auto it = rd->decls_begin(); it != rd->decls_end(); ++it) {
-                     if (auto* f = dyn_cast<FieldDecl>(*it) ) {
-                        if (Expr *init = f->getInClassInitializer()) {
-                           process_decl_init(f, init);
-                        }
-                     }
-                  }
-               };
-               process_data_member(decl);
-            }
+         /*
+         virtual bool VisitRecordDecl(RecordDecl* decl) {
+            static std::set<std::string> _action_set; //used for validations
+            std::string rec_name = decl->getQualifiedNameAsString();
+            cg.records.emplace(rec_name, decl);
             return true;
          }
-
-         void process_read_only_actions() const {
-            codegen& cg = codegen::get();
-            for (auto const& ra : read_only_actions) {
-               auto it = func_calls.find(ra);
-               if (it != func_calls.end()) {
-                  std::string msg = "read-only action cannot call write host function";
-                  if (cg.warn_action_read_only) {
-                     CDT_WARN("codegen_warning", ra->getLocation(), msg);
-                  } else {
-                     CDT_ERROR("codegen_error", ra->getLocation(), msg);
+         virtual bool VisitCallExpr(CallExpr* expr) {
+            if (auto callee = expr->getDirectCallee()) {
+               if (callee->getNumParams() == 2) {
+                  if (is_datastream(callee->getParamDecl(0)->getOriginalType())) {
+                     cg.datastream_uses.insert(get_base_type(callee->getParamDecl(1)->getOriginalType()));
                   }
                }
             }
+            return true;
          }
+         */
+         virtual bool VisitCXXRecordDecl(CXXRecordDecl* _decl) {
+            /*
+            std::string rec_name = decl->getQualifiedNameAsString();
+            if (decl->isEosioAction()) {
+               rec_name = generation_utils::get_action_name(decl);
+               cg.actions.insert(rec_name);
+            }
+            cg.cxx_records.emplace(rec_name, decl);
+            */
+            bool has_added_clauses = false;
 
+            auto decl = clang_wrapper::make_decl(_decl);
+            auto& cg = codegen::get();
+
+            if (!has_added_clauses) {
+               cg.ag.add_clauses(cg.ag.parse_clauses());
+               cg.ag.add_contracts(cg.ag.parse_contracts());
+            }
+            if (decl.isEosioAction() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
+               cg.ag.add_struct(_decl);
+               cg.ag.add_action(_decl);
+               for (auto field : decl->fields()) {
+                  cg.ag.add_type(field->getType());
+               }
+            }
+            if (decl.isEosioTable() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
+               cg.ag.add_struct(_decl);
+               cg.ag.add_table(_decl);
+               for (auto field : decl->fields()) {
+                  cg.ag.add_type(field->getType());
+               }
+            }
+            return true;
+         }
       };
 
-      class eosio_codegen_consumer : public ASTConsumer, public generation_utils {
+      class eosio_codegen_consumer : public ASTConsumer {
       private:
          eosio_codegen_visitor *visitor;
          std::string main_file;
@@ -453,15 +439,13 @@ namespace eosio { namespace cdt {
             auto& f_mgr = src_mgr.getFileManager();
             auto main_fe = f_mgr.getFile(main_file);
             if (main_fe) {
-               auto fid = src_mgr.getOrCreateFileID(f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
+               auto fid = src_mgr.getOrCreateFileID(*f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
                visitor->set_main_fid(fid);
-               visitor->set_main_name(main_fe->getName());
+               visitor->set_main_name(main_fe.get()->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
-               visitor->process_read_only_actions();
-
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
-
+               
                for (auto nd : visitor->notify_decls)
                   visitor->create_notify_dispatch(nd);
 
@@ -469,42 +453,32 @@ namespace eosio { namespace cdt {
                   return;
                }
 
+               int fd;
                llvm::SmallString<128> fn;
                try {
-                  llvm::sys::fs::createTemporaryFile("eosio", ".cpp", fn);
-
-                  std::ofstream out(fn.c_str());
-                  {
-                     llvm::SmallString<64> abs_file_path(main_fe->getName());
-                     llvm::sys::fs::make_absolute(abs_file_path);
-                     out << "#include \"" << abs_file_path.c_str() << "\"\n";
+                  std::ofstream ofs(get_temporary_path(std::to_string(std::hash<std::string>{}(cg.output))+".cpp"));
+                  if (!ofs) throw;
+                  for (auto inc : global_includes[main_file]) {
+                     visitor->get_rewriter().ReplaceText(inc.range,
+                           std::string("\"")+inc.file_name+"\"\n");
                   }
-                  const auto& quoted = [](const std::string& s) {
-                     std::stringstream ss;
-                     for (char c : s) {
-                        if (c == '"' || c == '\\')
-                           ss << '\\';
-                        ss << c;
-                     }
-                     return ss.str();
-                  };
-
                   // generate apply stub with abi
-                  std::stringstream& ss = visitor->get_ss();
-                  ss << "extern \"C\" {\n";
-                  ss << "__attribute__((eosio_wasm_import))\n";
-                  ss << "void eosio_assert_code(uint32_t, uint64_t);";
-                  ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
-                  ss << "\"" << quoted(cg.abi) << "\"";
-                  ss << ")))\n";
-                  ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
-                  ss << "eosio_assert_code(false, 1);";
-                  ss << "}\n";
-                  ss << "}";
-
-                  out << ss.rdbuf();
+                  //std::stringstream ss;
+                  //ss << "extern \"C\" {\n";
+                  //ss << "void eosio_assert_code(uint32_t, uint64_t);";
+                  //ss << "\t__attribute__((weak, eosio_wasm_entry, eosio_wasm_abi(";
+                  //std::string abi = "\"" + cg.abi + "\"";
+                  //ss << std::quoted(abi);
+                  //ss << ")))\n";
+                  //ss << "\tvoid __insert_eosio_abi(unsigned long long r, unsigned long long c, unsigned long long a){";
+                  //ss << "eosio_assert_code(false, 1);";
+                  //ss << "}\n";
+                  //ss << "}";
+                  //visitor->get_rewriter().InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(fid), ss.str());
                   cg.tmp_files.emplace(main_file, fn.str());
-                  out.close();
+                  auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
+                  ofs << std::string(RewriteBuf.begin(), RewriteBuf.end());
+                  ofs.close();
                } catch (...) {
                   llvm::outs() << "Failed to create temporary file\n";
                }
@@ -517,7 +491,7 @@ namespace eosio { namespace cdt {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
             CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return std::make_unique<eosio_codegen_consumer>(&CI, file);
+            return std::make_unique<eosio_codegen_consumer>(&CI, file.str());
          }
    };
 

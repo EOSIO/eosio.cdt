@@ -3,17 +3,18 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/Support/Program.h"
-
 #include <stdlib.h>
 #if defined(__APPLE__)
 # include <crt_externs.h>
 #elif !defined(_MSC_VER)
 // Forward declare environ in case it's not provided by stdlib.h.
-extern char **environ;
+//extern char **environ;
+#include <unistd.h>
 #endif
 
 #include "whereami/whereami.hpp"
 #include <vector>
+#include <iostream>
 #include <sstream>
 
 namespace eosio { namespace cdt {
@@ -48,8 +49,9 @@ uint64_t string_to_name( const char* str )
 template <typename Lambda>
 void validate_name( const std::string& str, Lambda&& error_handler ) {
    const auto len = str.length();
-   if ( len > 13 ) {
-      return error_handler(std::string("Name {")+str+"} is more than 13 characters long");
+   if ( len > 13 ) { 
+      std::cout << "Error, name {" << str << "} is more than 13 characters long\n";
+      return error_handler();
    }
    uint64_t value = string_to_name( str.c_str() );
 
@@ -62,7 +64,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
       str2[12-i] = c;
       tmp >>= (i == 0 ? 4 : 5);
    }
-
+   
    auto trim = [](std::string& s) {
       int i;
       for (i = s.length()-1; i >= 0; i--)
@@ -73,7 +75,8 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
    trim(str2);
 
    if ( str2 != str ) {
-      return error_handler("name not properly normalized");
+      std::cout << "Error, name not properly normalized\n";
+      return error_handler();
    }
 }
 
@@ -132,25 +135,52 @@ struct environment {
        }
      return env_table;
    }
-   static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false,
-                               llvm::Optional<std::string> stdin_file = llvm::None) {
-      std::vector<llvm::StringRef> args;
-      args.push_back(prog);
-      args.insert(args.end(), options.begin(), options.end());
+   static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
+      std::stringstream args;
+      for (auto s : options)
+         args << s << " ";
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
-      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
-         std::vector<llvm::Optional<llvm::StringRef>> redirects;
-         if(stdin_file) {
-            redirects = { llvm::StringRef{*stdin_file}, llvm::None, llvm::None };
-         }
-         return llvm::sys::ExecuteAndWait(*path, args, {}, redirects, 0, 0, nullptr, nullptr) == 0;
-      }
+      int ret = 0;
+      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) )
+         ret = std::system((*path+" "+args.str()).c_str());
+      else if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"}) )
+         ret = std::system((*path+" "+args.str()).c_str());
       else
          return false;
-      return true;
+      return !ret; 
    }
 
 };
+
+template<typename T>
+llvm::SmallString<PATH_MAX> string_to_fullpath(T&& path) {
+   llvm::SmallString<PATH_MAX> fullpath = llvm::StringRef(path);
+   llvm::sys::fs::make_absolute(fullpath);
+   return fullpath;
+}
+
+template<typename T>
+std::string get_temporary_path(T&& path) {
+   static std::string tmp_dir;
+   if (tmp_dir.empty()) {
+      llvm::SmallString<PATH_MAX> system_temp_dir;
+      llvm::sys::path::system_temp_directory(true, system_temp_dir);
+      tmp_dir = system_temp_dir.str().str();
+   }
+   return tmp_dir+"/"+path;
+}
+
+template<typename T>
+void print_traverse(T&& container) {
+   std::for_each(container.begin(), container.end(), [](auto e){ std::cout << e << " "; });
+   std::cout << std::endl;
+}
+
+void print_traverse(const char** begin, size_t length) {
+   std::for_each(begin, begin+length, [](auto e){ std::cout << e << " "; });
+   std::cout << std::endl;
+}
+
 }} // ns eosio::cdt

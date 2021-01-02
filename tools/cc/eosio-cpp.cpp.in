@@ -1,49 +1,20 @@
-// Declares clang::SyntaxOnlyAction.
-#include "clang/Frontend/FrontendActions.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
-#include "clang/ASTMatchers/ASTMatchers.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-#include "clang/AST/DeclCXX.h"
-#include "clang/AST/DeclTemplate.h"
-#include "clang/AST/Expr.h"
-#include "clang/Basic/Builtins.h"
-#include "clang/Rewrite/Core/Rewriter.h"
-#include "clang/Rewrite/Frontend/Rewriters.h"
-#include "llvm/Support/FileSystem.h"
+#include <clang/Tooling/Tooling.h>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
 
-#include <eosio/abigen.hpp>
 #include <eosio/codegen.hpp>
-
-#include <iostream>
-#include <sstream>
-
-// Declares llvm::cl::extrahelp.
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
-
-using namespace clang::tooling;
-using namespace llvm;
+#include <eosio/EosioAttrs.hpp>
 
 #define CPP_COMP 1
-#define COMPILER_NAME "eosio-cpp"
+#define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
+#define LINKER_NAME "@EOSIO_LINKER@"
+#define COMPILER_BACKEND "@EOSIO_COMPILER_BACKEND@"
 #include <compiler_options.hpp>
 
-#include <set>
-#include <sstream>
-
-using namespace clang::tooling;
-using namespace clang::ast_matchers;
-using namespace llvm;
-using namespace eosio;
-using namespace eosio::cdt;
-
-void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt);
-
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt, bool warn_action_read_only) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
    std::vector<std::string> options;
-   options.push_back("eosio-cpp");
+   options.push_back(COMPILER_NAME);
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
    options.push_back(input);
    options.push_back("--");
@@ -60,121 +31,89 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       new_argv[i] = options[i].c_str();
 
    CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
-   ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
+   ClangTool ctool(opts.getCompilations(), input);
 
-   abigen::get().set_contract_name(contract_name);
-   abigen::get().set_resource_dirs(resource_paths);
-   abigen::get().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
-   abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
-   codegen::get().set_contract_name(contract_name);
-   codegen::get().set_warn_action_read_only(warn_action_read_only);
+   auto& cg = codegen::get();
+   cg.set_contract_name(contract_name);
+   cg.ag.set_contract_name(contract_name);
+   cg.ag.set_resource_dirs(resource_paths);
 
-   int tool_run = -1;
-   tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
-   if (tool_run != 0) {
-      throw std::runtime_error("abigen error");
-   }
-
-   if (!abigen::get().is_empty()) {
-      std::string abi_s;
-      abigen::get().to_json().dump(abi_s);
-      codegen::get().set_abi(abi_s);
-   } else if (abigen) {
-      handle_empty_abigen(contract_name, has_o_opt, has_contract_opt);
-   }
-
-   tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
-   if (tool_run != 0) {
+   if (ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get())) {
       throw std::runtime_error("codegen error");
    }
-}
 
-void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt) {
-   const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
-   if (parsed_contract_name.empty()) {
-      // if no contract name could be obtained by parsing methods/records, it means the contract is empty
-      std::cout << "Warning, contract is empty and ABI is not generated\n";
-   } else if (contract_name != parsed_contract_name) {
-      // if contract is empty but the contract file contains other contracts, the parsed contract name could be wrong
-      std::string err = "abigen error: contract is empty, or ";
-      // or, the contract is not empty but the specified or inferred contract name is wrong
-      err += has_contract_opt ? "'--contract' specified name" : (has_o_opt ? "'-o' specified name" : "contract filename");
-      err += " doesn't match the real contract name";
-      throw std::runtime_error(err);
-   } else {
-      throw std::runtime_error("abigen error"); // unknown error
+   if (!cg.ag.is_empty()) {
+      std::ofstream ofs (cg.output+".desc");
+      if (!ofs) throw;
+      ofs << jsoncons::pretty_print(cg.ag.to_json_debug());
+      ofs.close();
    }
 }
 
-int main(int argc, const char **argv) {
-
+int main(int argc, const char** argv) {
    // fix to show version info without having to have any other arguments
-   for (int i=0; i < argc; i++) {
-     if (argv[i] == std::string("-v")) {
-       eosio::cdt::environment::exec_subprogram("clang-9", {"-v"});
-       return 0;
-     }
+   if (std::find(argv, argv+argc, std::string("-v")) != argv+argc) {
+      eosio::cdt::environment::exec_subprogram(COMPILER_BACKEND, {"-v"});
+      return 0;
    }
 
-   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-         os << COMPILER_NAME << " version " << "${VERSION_FULL}" << "\n";
+   llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+      os << COMPILER_NAME << " version " << "@VERSION_FULL@" << "\n";
    });
-   cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
+   llvm::cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
    Options opts = CreateOptions();
 
    std::vector<std::string> outputs;
+
+   if (opts.inputs.size() > 1 && !opts.link && !opts.output_fn.empty()) {
+      llvm::errs() << COMPILER_NAME << ": error: cannot specify -o when generating multiple output files" << '\n';
+      return -1;
+   }
+
    try {
       for (auto input : opts.inputs) {
          std::vector<std::string> new_opts = opts.comp_options;
          std::string output;
 
-         if (!opts.pp_only) {
-            auto tool_opts = opts.comp_options;
-            std::set<std::string> non_tool_opts = { "-S", "-emit-llvm", "-emit-ast" };
-            tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
-                                           [&](const auto& opt){ return non_tool_opts.count(opt); }),
-                            tool_opts.end());
-            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning, opts.has_o_opt, opts.has_contract_opt, opts.warn_action_read_only);
+         auto input_fullpath = string_to_fullpath(input);
 
-            auto src = SmallString<64>(input);
-            llvm::sys::path::remove_filename(src);
-            std::string source_path = src.str().empty() ? "." : src.str();
-            new_opts.insert(new_opts.begin(), "-I" + source_path);
-
-            if (!opts.link) {
-               output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
+         if (!opts.link) {
+            if (!opts.output_fn.empty()) {
+               output = opts.output_fn;
             } else {
-               SmallString<64> res;
-               llvm::sys::fs::createTemporaryFile("eosio", ".o", res);
-               output = res.c_str();
+               llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
+               llvm::sys::path::replace_extension(fn, ".o");
+               output = fn.str().str();
             }
-
-            new_opts.insert(new_opts.begin(), {"-o", output});
-            outputs.push_back(output);
-         }
-
-         llvm::Optional<std::string> stdin_redirect;
-         llvm::SmallString<64> abs_input(input.c_str());
-         llvm::sys::fs::make_absolute(abs_input);
-         auto file_iter = codegen::get().tmp_files.find(abs_input.c_str());
-         if (file_iter != codegen::get().tmp_files.end()) {
-            stdin_redirect = file_iter->second;
-            new_opts.insert(new_opts.begin(), "-");
          } else {
-            new_opts.insert(new_opts.begin(), input);
+            auto ifs = input_fullpath.str().str();
+            output = get_temporary_path(std::to_string(std::hash<std::string>{}(ifs))+".o");
          }
 
-         new_opts.insert(new_opts.begin(), "-xc++");
+         output = string_to_fullpath(output).str().str();
 
-         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts, false, stdin_redirect)) {
-            if(stdin_redirect) {
-               llvm::sys::fs::remove(*stdin_redirect);
-            }
+         codegen::get().output = output;
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
+
+         auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".cpp");
+         if (llvm::sys::fs::exists(tmp_file)) {
+            input = tmp_file;
+         }
+
+         auto input_fulldir = input_fullpath;
+         llvm::sys::path::remove_filename(input_fulldir);
+         new_opts.insert(new_opts.end(), "-I" + input_fulldir.str().str());
+
+         new_opts.insert(new_opts.begin(), input);
+
+         new_opts.insert(new_opts.begin(), "-o "+output);
+         outputs.push_back(output);
+
+         if (!eosio::cdt::environment::exec_subprogram(COMPILER_BACKEND, new_opts)) {
+            llvm::sys::fs::remove(tmp_file);
             return -1;
          }
-         if(stdin_redirect) {
-            llvm::sys::fs::remove(*stdin_redirect);
-         }
+         llvm::sys::fs::remove(tmp_file);
       }
    } catch (std::runtime_error& err) {
       llvm::errs() << err.what() << '\n';
@@ -183,11 +122,14 @@ int main(int argc, const char **argv) {
 
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
+      if (opts.implicit_output && !opts.output_fn.empty()) {
+         new_opts.insert(new_opts.begin(), "-o "+opts.output_fn);
+      }
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), input);
+         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
       }
    
-      if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
+      if (!eosio::cdt::environment::exec_subprogram(LINKER_NAME, new_opts)) {
          for (auto input : outputs) {
             llvm::sys::fs::remove(input);
          }
@@ -196,21 +138,10 @@ int main(int argc, const char **argv) {
       for (auto input : outputs) {
          llvm::sys::fs::remove(input);
       }
-      if ( !llvm::sys::fs::exists( opts.output_fn ) ) {
+      if (!llvm::sys::fs::exists(opts.output_fn)) {
          return -1;
       }
-
-// need to generate dSYM for mac OSX
-#ifdef __APPLE__
-      if (opts.native) {
-         if (opts.debug) {
-            if (!eosio::cdt::environment::exec_subprogram("dsymutil", std::vector<std::string>{opts.output_fn}, true)) {
-               return -1;
-            }
-         }
-      }
-#endif
    }
 
-  return 0;
+   return 0;
 }

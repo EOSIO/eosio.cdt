@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <set>
 
 struct abi_typedef {
    std::string new_type_name;
@@ -39,18 +39,6 @@ struct abi_table {
    bool operator<(const abi_table& t) const { return name < t.name; }
 };
 
-struct abi_kv_index {
-   std::string name;
-   std::string type;
-};
-
-struct abi_kv_table {
-   std::string name;
-   std::string type;
-   std::vector<abi_kv_index> indices;
-   bool operator<(const abi_kv_table& t) const { return name < t.name; }
-};
-
 struct abi_ricardian_clause_pair {
    std::string id;
    std::string body;
@@ -67,31 +55,57 @@ struct abi_error_message {
    std::string error_msg;
 };
 
-struct abi_action_result {
+struct wasm_action {
    std::string name;
-   std::string type;
-   bool operator<(const abi_action_result& ar) const { return name < ar.name; }
+   std::string handler;
 };
+
+struct wasm_notify {
+   std::string name;
+   std::string contract;
+   std::string handler;
+};
+
+namespace std {
+   template<>
+   struct less<wasm_action> {
+      bool operator()(const wasm_action& lhs, const wasm_action& rhs) const {
+         return lhs.name < rhs.name;
+      }
+   };
+
+   template<>
+   struct less<wasm_notify> {
+      bool operator()(const wasm_notify& lhs, const wasm_notify& rhs) const {
+         if (lhs.name == rhs.name) {
+            if (lhs.contract == "*" && rhs.contract != "*") {
+               return false;
+            } else if (lhs.contract != "*" && rhs.contract == "*") {
+               return true;
+            }
+         }
+         return std::tie(lhs.name, lhs.contract) < std::tie(rhs.name, rhs.contract);
+      }
+   };
+}
 
 /// From eosio libraries/chain/include/eosio/chain/abi_def.hpp
 struct abi {
-   int version_major = 1;
-   int version_minor = 1;
-   std::string version_string()const { return std::string("eosio::abi/")+std::to_string(version_major)+"."+std::to_string(version_minor); }
-   std::set<abi_struct>                   structs;
-   std::set<abi_typedef>                  typedefs;
-   std::set<abi_action>                   actions;
-   std::set<abi_table>                    tables;
-   std::set<abi_kv_table>                 kv_tables;
-   std::set<abi_variant>                  variants;
-   std::vector<abi_ricardian_clause_pair> ricardian_clauses;
-   std::vector<abi_error_message>         error_messages;
-   std::set<abi_action_result>            action_results;
+   std::string version = "eosio::abi/1.1";
+   std::set<abi_struct>  structs;
+   std::set<abi_typedef> typedefs;
+   std::set<abi_action>  actions;
+   std::set<abi_table>   tables;
+   std::set<abi_variant> variants;
+   std::vector<abi_ricardian_clause_pair>   ricardian_clauses;
+   std::vector<abi_error_message> error_messages;
+   std::set<wasm_action> wasm_actions;
+   std::set<wasm_notify> wasm_notifies;
 };
 
 inline void dump( const abi& abi ) {
-   std::cout << "ABI : ";
-   std::cout << "\n\tversion : " << abi.version_string();
+   std::cout << "ABI : "; 
+   std::cout << "\n\tversion : " << abi.version;
    std::cout << "\n\tstructs : ";
    for (auto s : abi.structs) {
       std::cout << "\n\t\tstruct : ";
