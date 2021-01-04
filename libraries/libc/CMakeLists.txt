@@ -86,6 +86,7 @@ set(THREAD_SOURCES musl/src/thread/__lock.c) #only for __lock __unlock
 set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c musl/src/internal/shgetc.c musl/src/internal/libc.c)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse -D_XOPEN_SOURCE=700")
+set(CMAKE_BUILD_TYPE "Release")
 
 set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/alloca.h
