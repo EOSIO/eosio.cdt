@@ -87,7 +87,7 @@ endmacro( eosio_libraries_install )
 eosio_tool_pre_symlink(${EOSIO_RANLIB_BACKEND} ${EOSIO_RANLIB})
 eosio_tool_pre_symlink(${EOSIO_AR_BACKEND} ${EOSIO_AR})
 
-#eosio_tool_install_and_symlink(${EOSIO_POSTPASS} ${EOSIO_POSTPASS})
+eosio_tool_install_and_symlink(${EOSIO_POSTPASS} ${EOSIO_POSTPASS})
 #eosio_tool_install_and_symlink(wat2wasm eosio-wast2wasm)
 #eosio_tool_install_and_symlink(wasm2wat eosio-wasm2wast)
 eosio_tool_install_and_symlink(${EOSIO_C_COMPILER} ${EOSIO_C_COMPILER})
