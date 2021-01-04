@@ -10,6 +10,7 @@ using namespace jsoncons;
 #define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
 #define LINKER_NAME "@EOSIO_LINKER@"
 #define LINKER_BACKEND "@EOSIO_LINKER_BACKEND@"
+#define POSTPASS_NAME "@EOSIO_POSTPASS@"
 #define ONLY_LD
 #include <compiler_options.hpp>
 
@@ -154,5 +155,13 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
+   if (!fno_post_pass_opt && !opts.native) {
+      if (!llvm::sys::fs::exists(opts.eosio_pp_dir+"/"+POSTPASS_NAME))
+         return -1;
+      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {opts.output_fn}))
+         return -1;
+      if (!llvm::sys::fs::exists(opts.output_fn))
+         return -1;
+   }
    return 0;
 }

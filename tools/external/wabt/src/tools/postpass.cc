@@ -126,6 +126,17 @@ void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& 
    mod.data_segments.push_back(&ds);
 }
 
+void StripExports(Module& mod) {
+   std::vector<Export*> exports;
+   for (auto exp : mod.exports) {
+      if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
+         exports.push_back(exp);
+         break;
+      }
+   }
+   mod.exports = exports;
+}
+
 void construct_apply( Module& mod ) {
 }
 
@@ -159,6 +170,7 @@ int ProgramMain(int argc, char** argv) {
       size_t fixup = 0;
       StripZeroedData(module, fixup);
       AddHeapPointerData(module, fixup, file_data, _hds);
+      StripExports(module);
      if (Succeeded(result)) {
       MemoryStream stream(s_log_stream.get());
       result =
