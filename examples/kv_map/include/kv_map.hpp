@@ -67,6 +67,10 @@ class [[eosio::contract]] kv_map : public eosio::contract {
          std::string country,
          std::string personal_id);
 
+      // same as upsert only that it takes a user defined type as input parameter
+      [[eosio::action]]
+      void upsert2(int id, person pers);
+
       // inserts a person if not exists, or updates it if already exists.
       // the payer is the account_name, specified as input parameter.
       [[eosio::action]]
@@ -100,6 +104,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       using get_action = eosio::action_wrapper<"get"_n, &kv_map::get>;
       using upsert_action = eosio::action_wrapper<"upsert"_n, &kv_map::upsert>;
+      using upsert_action2 = eosio::action_wrapper<"upsert2"_n, &kv_map::upsert2>;
       using upsertwpayer_action = eosio::action_wrapper<"upsertwpayer"_n, &kv_map::upsertwpayer>;
       using erase_action = eosio::action_wrapper<"erase"_n, &kv_map::erase>;
       using is_pers_id_in_cntry_action = eosio::action_wrapper<"checkpidcntr"_n, &kv_map::checkpidcntr>;
