@@ -35,7 +35,7 @@ Start with an empty ABI, for exemplification we will work based on the `eosio.to
 An ABI enables any client or interface to interpret and even generate a GUI for your contract. For this to work consistently, describe the custom types that are used as a parameter in any public action or struct that needs to be described in the ABI.
 
 [[info | Built-in Types]]
-| EOSIO implements a number of custom built-ins. Built-in types don't need to be described in an ABI file. If you would like to familiarize yourself with EOSIO's built-ins, they are defined [here](https://github.com/EOSIO/eos/blob/master/libraries/chain/abi_serializer.cpp#L59-L100)
+| EOSIO implements a number of custom built-ins. Built-in types don't need to be described in an ABI file. If you would like to familiarize yourself with EOSIO's built-ins, they are defined [here](https://github.com/EOSIO/eos/blob/release/2.1.x/libraries/chain/abi_serializer.cpp#L85)
 
 
 ```json
