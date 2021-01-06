@@ -28,7 +28,11 @@ endmacro( eosio_plugin_install )
 
 add_custom_command( TARGET EosioTools PRE_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
 macro( eosio_tool_pre_symlink file symlink )
-   add_custom_command( TARGET EosioTools PRE_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf /usr/bin/${file} ${symlink} )
+   if(APPLE)
+      add_custom_command( TARGET EosioTools PRE_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${BREW_LLVM_PATH}/bin/${file} ${symlink} )
+   else()
+      add_custom_command( TARGET EosioTools PRE_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf /usr/bin/${file} ${symlink} )
+   endif()
    install(FILES ${BINARY_DIR}/${file}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

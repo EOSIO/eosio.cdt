@@ -44,7 +44,11 @@ include(modules/EosioExecutableNames.txt)
 include(modules/EosioPluginsExternalProject.txt)
 include(modules/ToolsExternalProject.txt)
 
-set(WASM_SDK_BUILD true)
+if(APPLE)
+   set(CMAKE_C_COMPILER "${BREW_LLVM_PATH}/bin/clang")
+   set(CMAKE_CXX_COMPILER "${BREW_LLVM_PATH}/bin/clang++")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_DARWIN_C_SOURCE")
+endif()
 
 ### Configure the EosioWasmToolchain.cmakes
 set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
