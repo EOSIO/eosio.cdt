@@ -69,7 +69,7 @@ class [[eosio::contract]] kv_map : public eosio::contract {
 
       // same as upsert only that it takes a user defined type as input parameter
       [[eosio::action]]
-      void upsert2(int id, person pers);
+      void upsert2(int id, const person pers);
 
       // inserts a person if not exists, or updates it if already exists.
       // the payer is the account_name, specified as input parameter.

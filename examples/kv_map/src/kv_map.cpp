@@ -82,29 +82,18 @@ void kv_map::upsert(
 }
 
 [[eosio::action]]
-void kv_map::upsert2(
-      int id, person pers) {
-
-   const person& person_upsert = person_factory::get_person(
-      pers.account_name,
-      pers.first_name,
-      pers.last_name,
-      pers.street,
-      pers.city,
-      pers.state, 
-      pers.country,
-      pers.personal_id);
+void kv_map::upsert2(int id, const person pers) {
 
    // retrieve the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(id);
 
    // upsert into kv::map, the payer is the account owning the kv::map, owning the smart contract
-   my_map[id] = person_upsert;
+   my_map[id] = pers;
 
    // print customized message for insert vs update
    if (existing_person.account_name.value == 0) {
       eosio::print_f("Person (%, %, %) was successfully added.",
-         person_upsert.first_name, person_upsert.last_name, person_upsert.personal_id);
+         pers.first_name, pers.last_name, pers.personal_id);
    }
    else {
       eosio::print_f("Person with ID % was successfully updated.", id);
