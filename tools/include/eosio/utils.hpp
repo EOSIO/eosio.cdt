@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #if defined(__APPLE__)
 # include <crt_externs.h>
+# include <sys/_types/_mach_port_t.h>
 #elif !defined(_MSC_VER)
 // Forward declare environ in case it's not provided by stdlib.h.
 //extern char **environ;
@@ -145,6 +146,10 @@ struct environment {
       int ret = 0;
       if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) )
          ret = std::system((*path+" "+args.str()).c_str());
+#ifdef __APPLE__
+      else if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/local/opt/llvm/bin"}) )
+         ret = std::system((*path+" "+args.str()).c_str());
+#endif
       else if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"}) )
          ret = std::system((*path+" "+args.str()).c_str());
       else
