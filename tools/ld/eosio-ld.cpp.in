@@ -144,10 +144,22 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (!eosio::cdt::environment::exec_subprogram(LINKER_BACKEND, opts.ld_options)) {
-      llvm::sys::fs::remove(main_file);
-      llvm::sys::fs::remove(main_file+".o");
-      return -1;
+   if (!opts.native) {
+      if (!eosio::cdt::environment::exec_subprogram(LINKER_BACKEND, opts.ld_options)) {
+         llvm::sys::fs::remove(main_file);
+         llvm::sys::fs::remove(main_file+".o");
+         return -1;
+      }
+   } else {
+#ifdef __APPLE__
+      if (!eosio::cdt::environment::exec_subprogram("ld", opts.ld_options, true)) {
+#else
+      if (!eosio::cdt::environment::exec_subprogram("ld.lld", opts.ld_options)) {
+#endif
+         llvm::sys::fs::remove(main_file);
+         llvm::sys::fs::remove(main_file+".o");
+         return -1;
+      }
    }
    llvm::sys::fs::remove(main_file);
    llvm::sys::fs::remove(main_file+".o");
