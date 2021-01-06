@@ -9,7 +9,7 @@
 #define CPP_COMP 1
 #define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
 #define LINKER_NAME "@EOSIO_LINKER@"
-#define COMPILER_BACKEND "@EOSIO_COMPILER_BACKEND@"
+#define COMPILER_BACKEND "@EOSIO_CXX_COMPILER_BACKEND@"
 #include <compiler_options.hpp>
 
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
