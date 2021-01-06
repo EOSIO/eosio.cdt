@@ -4,6 +4,8 @@ find_package(LLVM 11 REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
+find_package(Boost REQUIRED)
+
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
    message(STATUS "Using sccache")
@@ -38,8 +40,6 @@ macro (add_tool name)
       list(APPEND SOURCES ${CMAKE_BINARY_DIR}/${name}.cpp)
    endif()
 
-   find_package(Boost REQUIRED)
-   
    add_executable(${name} ${SOURCES})
    set_property(TARGET ${name} PROPERTY CXX_STANDARD 20)
    target_compile_options(${name} PRIVATE -fexceptions -fno-rtti)
