@@ -86,6 +86,7 @@ int main(int argc, const char** argv) {
    std::set<wasm_action> wasm_actions;
    std::set<wasm_notify> wasm_notifies;
    std::string main_file;
+   bool apply_was_found = false;
 
    try {
       ojson abi;
@@ -113,6 +114,15 @@ int main(int argc, const char** argv) {
                noti.handler = wn["handler"].as_string();
                wasm_notifies.insert(noti);
             }
+            if (!apply_was_found) {
+               for (auto we : desc["wasm_entries"].array_range()) {
+                  auto name = we.as_string();
+                  if (name == "apply") {
+                     apply_was_found = true;
+                     break;
+                  }
+               }
+            }
             llvm::sys::fs::remove(input+".desc");
          }
       }
@@ -126,7 +136,7 @@ int main(int argc, const char** argv) {
          ofs << pretty_print(abi);
          ofs.close();
       }
-      if (!wasm_actions.empty() || !wasm_notifies.empty()) {
+      if (!apply_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
          main_file = generate_apply(wasm_actions, wasm_notifies);
          if (!main_file.empty()) {
             std::vector<std::string> new_opts;

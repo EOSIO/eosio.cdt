@@ -109,6 +109,11 @@ namespace eosio { namespace cdt { namespace clang_wrapper {
             return &empty;
          }
 
+         const auto* getEosioWasmEntry() const {
+            auto* wasm_entry = decl->template getAttr<clang::WebAssemblyExportNameAttr>();
+            return wasm_entry;
+         }
+
       private:
          T decl;
          std::map<std::string,Attr> attrs;

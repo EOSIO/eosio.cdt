@@ -72,6 +72,13 @@ namespace eosio { namespace cdt {
          _abi.wasm_notifies.insert(ret);
       }
 
+      template<typename T>
+      void add_wasm_entries(const clang_wrapper::Decl<T>& decl) {
+         if (const auto* Attr = decl->template getAttr<clang::WebAssemblyExportNameAttr>()) {
+            _abi.wasm_entries.insert(Attr->getExportName().str());
+         }
+      }
+
       void add_action( const clang::CXXRecordDecl* _decl ) {
          auto decl = clang_wrapper::make_decl(_decl);
          abi_action ret;
@@ -536,6 +543,10 @@ namespace eosio { namespace cdt {
          o["wasm_notifies"] = ojson::array();
          for (auto& n : _abi.wasm_notifies) {
             o["wasm_notifies"].push_back(wasm_notify_to_json(n));
+         }
+         o["wasm_entries"] = ojson::array();
+         for (auto& e : _abi.wasm_entries) {
+            o["wasm_entries"].push_back(e);
          }
          return o;
       }
