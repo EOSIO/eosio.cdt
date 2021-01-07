@@ -101,6 +101,7 @@ struct abi {
    std::vector<abi_error_message> error_messages;
    std::set<wasm_action> wasm_actions;
    std::set<wasm_notify> wasm_notifies;
+   std::set<std::string> wasm_entries;
 };
 
 inline void dump( const abi& abi ) {
