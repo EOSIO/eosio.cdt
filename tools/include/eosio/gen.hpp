@@ -105,6 +105,7 @@ struct simple_ricardian_tokenizer {
 struct generation_utils {
    std::vector<std::string> resource_dirs;
    std::string contract_name;
+   inline static std::string name = ""; // internal contract name
    bool suppress_ricardian_warnings;
 
    generation_utils() : resource_dirs({"./"}) {}
@@ -154,6 +155,7 @@ struct generation_utils {
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
+   static inline std::string get_internal_contract_name() { return name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
@@ -271,7 +273,9 @@ struct generation_utils {
    }
 
    static inline bool is_eosio_contract( const clang::CXXMethodDecl* decl, const std::string& cn ) {
-      std::string name = "";
+      if (!name.empty()) {
+         return name == cn;
+      }
       if (decl->isEosioContract())
          name = decl->getEosioContractAttr()->getName();
       else if (decl->getParent()->isEosioContract())
@@ -283,7 +287,9 @@ struct generation_utils {
    }
 
    static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
-      std::string name = "";
+      if (!name.empty()) {
+         return name == cn;
+      }
       auto pd = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
       if (decl->isEosioContract()) {
          auto nm = decl->getEosioContractAttr()->getName().str();
