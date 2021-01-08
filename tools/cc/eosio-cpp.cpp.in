@@ -77,7 +77,16 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
    } else {
-      throw std::runtime_error("abigen error");
+      const std::string& name = abigen::get().get_internal_contract_name();
+      if (name.empty()) {
+         // there are no actions, tables or maps, so the actural contract name could not be retrieved
+         // a warning is output, and later `wasm-ld` will output an error
+         std::cout << "Warning, ABI is empty and will not be generated\n";
+      } else if (name != contract_name) {
+         throw std::runtime_error("abigen error: please check the specified WASM name or contract name is correct");
+      } else {
+         throw std::runtime_error("abigen error"); // unknown error
+      }
    }
 
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
