@@ -67,7 +67,8 @@ namespace eosio { namespace cdt {
       std::map<std::string,std::string> actions;
       std::set<std::string> notify_handlers;
       ASTContext *ast_context;
-      std::string                           output;
+      std::string output;
+      bool has_added_clauses = false;
 
       codegen() : generation_utils([&](){throw codegen_ex;}) {
       }
@@ -297,14 +298,13 @@ namespace eosio { namespace cdt {
       }
 
       virtual bool VisitCXXRecordDecl(CXXRecordDecl* _decl) {
-         bool has_added_clauses = false;
-
          auto decl = clang_wrapper::make_decl(_decl);
          auto& cg = codegen::get();
 
-         if (!has_added_clauses) {
+         if (!cg.has_added_clauses) {
             cg.ag.add_clauses(cg.ag.parse_clauses());
             cg.ag.add_contracts(cg.ag.parse_contracts());
+            cg.has_added_clauses = true;
          }
          if (decl.isEosioAction() && abigen::is_eosio_contract(decl, cg.ag.get_contract_name())) {
             cg.ag.add_struct(_decl);
