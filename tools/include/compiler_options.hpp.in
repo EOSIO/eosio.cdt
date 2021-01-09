@@ -59,10 +59,19 @@ static cl::opt<bool> fno_lto_opt(
     "fno-lto",
     cl::desc("Disable LTO"),
     cl::cat(LD_CAT));
-static cl::opt<bool> fno_cfl_aa_opt(
-      "fno-cfl-aa",
-      cl::desc("Disable CFL Alias Analysis"),
-      cl::cat(LD_CAT));
+// Experimental option to use CFL-AA in codegen
+enum class CFLAAType { None, Steensgaard, Andersen, Both };
+static cl::opt<CFLAAType> use_cfl_aa_opt(
+    "use-cfl-aa-in-codegen", cl::init(CFLAAType::None), cl::Hidden,
+    cl::desc("Enable the new, experimental CFL alias analysis in CodeGen"),
+    cl::values(clEnumValN(CFLAAType::None, "none", "Disable CFL-AA"),
+               clEnumValN(CFLAAType::Steensgaard, "steens",
+                          "Enable unification-based CFL-AA"),
+               clEnumValN(CFLAAType::Andersen, "anders",
+                          "Enable inclusion-based CFL-AA"),
+               clEnumValN(CFLAAType::Both, "both",
+                          "Enable both variants of CFL-AA")),
+    cl::cat(LD_CAT));
 static cl::opt<bool> fno_stack_first_opt(
       "fno-stack-first",
       cl::desc("Don't set the stack first in memory"),
@@ -561,17 +570,25 @@ static Options CreateOptions(bool add_defaults=true) {
    else
       pp_dir = eosio::cdt::whereami::where();
 
-   if (!fno_cfl_aa_opt) {
+   if (use_cfl_aa_opt != CFLAAType::None) {
+      std::string optarg = "-use-cfl-aa-in-codegen=";
+      switch (use_cfl_aa_opt) {
+      case CFLAAType::Steensgaard:
+         optarg += "steens";
+         break;
+      case CFLAAType::Andersen:
+         optarg += "anders";
+         break;
+      case CFLAAType::Both:
+         optarg += "both";
+         break;
+      }
       copts.emplace_back("-mllvm");
-      copts.emplace_back("-use-cfl-aa-in-codegen=both");
+      copts.emplace_back(optarg);
       agopts.emplace_back("-mllvm");
-      agopts.emplace_back("-use-cfl-aa-in-codegen=both");
-#ifdef ONLY_LD
+      agopts.emplace_back(optarg);
       ldopts.emplace_back("-mllvm");
-      ldopts.emplace_back("-use-cfl-aa-in-codegen=both");
-#else
-      ldopts.emplace_back("-fno-cfl-aa");
-#endif
+      ldopts.emplace_back(optarg);
    }
    for ( auto input_filename : input_filename_opt ) {
 #ifdef ONLY_LD
