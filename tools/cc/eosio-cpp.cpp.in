@@ -75,14 +75,15 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    if (!abigen::get().is_empty()) {
       std::string abi_s;
       abigen::get().to_json().dump(abi_s);
+      codegen::get().set_abi(abi_s);
    } else if (abigen) {
       const std::string& real_contract_name = abigen::get().get_real_contract_name();
       if (real_contract_name.empty()) {
          // if the contract is empty, the real contract name could not be obtained by parsing methods or records
-         // a warning is output, and later `wasm-ld` will output an error
+         // a warning is output here, and `wasm-ld` will output an error later
          std::cout << "Warning, contract is empty and ABI file is not generated\n";
       } else if (contract_name != real_contract_name) {
-         throw std::runtime_error("abigen error: the contract name from -o or --contract doesn't match the real contract name");
+         throw std::runtime_error("abigen error: the specified contract name by WASM name or --contract doesn't match the real contract name");
       } else {
          throw std::runtime_error("abigen error"); // unknown error
       }
