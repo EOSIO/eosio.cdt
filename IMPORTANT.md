@@ -1,5 +1,7 @@
 # Important Notice
 
+You can find the original contents from [here](https://github.com/EOSIO/eosio.cdt/blob/master/IMPORTANT.md). The many parts of this project comes from [eosio.cdt](https://github.com/EOSIO/eosio.cdt) and the contents below will applied to this project too.
+
 We (block.one and its affiliates) make available EOSIO and other software, updates, patches and documentation (collectively, Software) on a voluntary basis as a member of the EOSIO community.  A condition of you accessing any Software, websites, articles, media, publications, documents or other material (collectively, Material) is your acceptance of the terms of this important notice.
 
 ## Software

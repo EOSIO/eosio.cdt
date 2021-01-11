@@ -1,48 +1,58 @@
-# EOSCC
-## Version : 1.7.4
+# Blanc
 
-The EOSIO Compiler Collection (EOSCC) is a toolchain for WebAssembly (WASM) and set of tools to facilitate contract writing for the EOSIO platform.  In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that EOSCC has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are not available or incomplete.
+**Toolchain for WebAssembly-based Blockchain Contracts**
+
+## Overview
+
+Welcome to Blanc!  Blanc is the toolchain for WebAssembly-based blockchain contracts, and the name of "BLANC" comes from BLockcAiN Contract toolchain.  Currently, Blanc supports [EOSIO](https://github.com/EOSIO) only, but we have a plan to support other WebAssembly-based contracts like [Cosmwasm](https://github.com/CosmWasm) which is widely used in blockchains based on Cosmos SDK (It is well known for its consensus algorithm, Tendermint).  In EOSIO ecosystem, there is the official version of contract toolchain provided by block.one already, but Blanc takes a different approach from it.  eosio.cdt uses the modified version of Clang/LLVM, so you have to wait for block.one's updates to utilize the latest version of Clang/LLVM.  Blanc was adapted from eosio.cdt, but uses the vanilla Clang/LLVM for easier maintenance and faster adoption of state-of-the-art technologies.  At this point in time (Jan, 2021), eosio.cdt uses Clang-7, and its upcoming release uses Clang-9, but Blanc uses Clang-11 (and Clang-12 in development can be used also).  The only thing you need to care about is that your Clang/LLVM installed in your system supports Clang plugins and WASM binary generation.  You should have Clang-11 or higher, and in MacOS, you need to install `llvm` by brew.  Clang/LLVM installed by Xcode were not built for supporting plugins.
+
+By using the latest Clang/LLVM, generated WASM binaries will have smaller size by about 10%. (eg. `eosio.token` 18KB &rightarrow; 16KB, `eosio.system` 276KB &rightarrow; 252KB)  All unit tests provided by eosio.cdt and [eosio.contracts](https://github.com/EOSIO/eosio.contracts) are passed and all generated ABIs are identical.
+
 
 ### Binary Releases
-EOSCC currently supports Linux x86_64 Debian packages and Mac OS X brew.
 
-**If you have previously installed EOSCC (or EOSIO.CDT), please run the `uninstall` script (it is in the directory where you cloned EOSCC) before downloading and using the binary releases.**
+The prebuilt binares are provided for Ubuntu 20.04 and MacOS Catalina.
 
-#### Debian Package Install
+#### Ubuntu 20.04
+
+Clang-11 is not in the default Ubuntu repository, so it needs to be installed from llvm.org.  Launchpad PPA will be supported in the future. (The offical repository needs to provide Clang-11 or higher, but not yet in focal)
+
 ```sh
-$ wget https://github.com/turnpike/eoscc/releases/download/v1.7.4/eoscc_1.7.4-1-ubuntu-20.04_amd64.deb
-$ sudo apt install ./eoscc_1.7.4-1-ubuntu-20.04_amd64.deb
-```
-#### Debian Package Uninstall
-```sh
-$ sudo apt remove eoscc
+bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 ```
 
-#### Mac OS X Brew Install
+Download debian package and install with apt.
+
 ```sh
-$ brew tap turnpike/eoscc
-$ brew install eoscc
-```
-#### Mac OS X Brew Uninstall
-```sh
-$ brew remove eoscc
+export BLANC_DOWNLOAD_URL=$(curl https://api.github.com/repos/turnpike/blanc/releases/latest | awk '/browser_download_url.*deb/{ print $2 }' | tr -d '"')
+wget $BLANC_DOWNLOAD_URL
+sudo apt install ./$(echo $BLANC_DOWNLOAD_URL | awk -F "/" '{ print $NF }')
+unset BLANC_DOWNLOAD_URL
 ```
 
-### Guided Installation (Building from Scratch)
+#### MacOS
+
+You can install Clang/LLVM compatible with Blanc by package manager [brew](https://brew.sh/).
+
 ```sh
-$ git clone --recursive https://github.com/turnpike/eoscc
-$ cd eoscc
-$ ./build.sh
-$ sudo ./install.sh
+brew install llvm
+```
+
+Install Blanc by brew.
+
+```sh
+brew tap turnpike/blanc
+brew install blanc
 ```
 
 ### Installed Tools
 ---
-* eosc++
-* eoscc
-* eosld
-* eosranlib
-* eosar
+* blanc++
+* blanc
+* blanc-ld
+* blanc-pp
+* blanc-ar
+* blanc-ranlib
 
 ## Contributing
 

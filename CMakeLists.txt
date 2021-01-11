@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+
 project(blanc)
 
 find_program(SCCACHE_FOUND sccache)
@@ -14,9 +15,9 @@ else()
 endif()
 
 
-set(VERSION_MAJOR 1)
-set(VERSION_MINOR 7)
-set(VERSION_PATCH 4)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 8)
+set(VERSION_PATCH 0)
 
 if (VERSION_SUFFIX)
    set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
@@ -69,8 +70,8 @@ install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CDT_INSTALL
 # section for package construction
 set(VENDOR "Jeeyong Um")
 set(PROJECT_NAME "${CMAKE_PROJECT_NAME}")
-set(DESC "Toolchain and supporting tools for the EOSIO platform")
-set(URL "https://github.com/turnpike/eoscc")
+set(DESC "Toolchain for WebAssembly-based blockchain contracts")
+set(URL "https://github.com/turnpike/blanc")
 set(EMAIL "conr2d@gmail.com")
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_BINARY_DIR}/packages/generate_package.sh @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_deb.sh ${CMAKE_BINARY_DIR}/packages/generate_deb.sh COPYONLY)
