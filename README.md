@@ -27,10 +27,11 @@ Download debian package and install with apt.
 export BLANC_DOWNLOAD_URL=$(curl https://api.github.com/repos/turnpike/blanc/releases/latest | awk '/browser_download_url.*deb/{ print $2 }' | tr -d '"')
 wget $BLANC_DOWNLOAD_URL
 sudo apt install ./$(echo $BLANC_DOWNLOAD_URL | awk -F "/" '{ print $NF }')
+rm $BLANC_DOWNLOAD_URL
 unset BLANC_DOWNLOAD_URL
 ```
 
-#### MacOS
+#### MacOS Big Sur
 
 You can install Clang/LLVM compatible with Blanc by package manager [brew](https://brew.sh/).
 
