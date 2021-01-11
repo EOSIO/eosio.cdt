@@ -105,7 +105,7 @@ struct simple_ricardian_tokenizer {
 struct generation_utils {
    std::vector<std::string> resource_dirs;
    std::string contract_name;
-   inline static std::string real_contract_name = ""; // obtained by parsing methods/records
+   inline static std::string parsed_contract_name = ""; // obtained by parsing methods/records
    bool suppress_ricardian_warnings;
 
    generation_utils() : resource_dirs({"./"}) {}
@@ -155,7 +155,7 @@ struct generation_utils {
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
-   static inline std::string get_real_contract_name() { return real_contract_name; }
+   static inline std::string get_parsed_contract_name() { return parsed_contract_name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
@@ -273,31 +273,31 @@ struct generation_utils {
    }
 
    static inline bool is_eosio_contract( const clang::CXXMethodDecl* decl, const std::string& cn ) {
-      if (real_contract_name.empty()) {
-         if (decl->isEosioContract())
-            real_contract_name = decl->getEosioContractAttr()->getName();
-         else if (decl->getParent()->isEosioContract())
-            real_contract_name = decl->getParent()->getEosioContractAttr()->getName();
-         if (real_contract_name.empty()) {
-            real_contract_name = decl->getParent()->getName().str();
-         }
+      std::string name = "";
+      if (decl->isEosioContract())
+         name = decl->getEosioContractAttr()->getName();
+      else if (decl->getParent()->isEosioContract())
+         name = decl->getParent()->getEosioContractAttr()->getName();
+      if (name.empty()) {
+         name = decl->getParent()->getName().str();
       }
-      return cn == real_contract_name;
+      parsed_contract_name = name;
+      return cn == parsed_contract_name;
    }
 
    static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
-      if (real_contract_name.empty()) {
-         auto pd = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
-         if (decl->isEosioContract()) {
-            auto nm = decl->getEosioContractAttr()->getName().str();
-            real_contract_name = nm.empty() ? decl->getName().str() : nm;
-         }
-         else if (pd && pd->isEosioContract()) {
-            auto nm = pd->getEosioContractAttr()->getName().str();
-            real_contract_name = nm.empty() ? pd->getName().str() : nm;
-         }
+      std::string name = "";
+      auto pd = llvm::dyn_cast<clang::CXXRecordDecl>(decl->getParent());
+      if (decl->isEosioContract()) {
+         auto nm = decl->getEosioContractAttr()->getName().str();
+         name = nm.empty() ? decl->getName().str() : nm;
       }
-      return cn == real_contract_name;
+      else if (pd && pd->isEosioContract()) {
+         auto nm = pd->getEosioContractAttr()->getName().str();
+         name = nm.empty() ? pd->getName().str() : nm;
+      }
+      parsed_contract_name = name;
+      return cn == parsed_contract_name;
    }
 
    inline bool is_template_specialization( const clang::QualType& type, const std::vector<std::string>& names ) {

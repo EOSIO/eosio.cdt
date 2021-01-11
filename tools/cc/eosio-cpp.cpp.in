@@ -39,7 +39,7 @@ using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
 
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -77,13 +77,19 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
    } else if (abigen) {
-      const std::string& real_contract_name = abigen::get().get_real_contract_name();
-      if (real_contract_name.empty()) {
-         // if the contract is empty, the real contract name could not be obtained by parsing methods or records
+      const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
+      if (parsed_contract_name.empty()) {
+         // if the contract is empty, the contract name could not be obtained by parsing methods or records
          // a warning is output here, and `wasm-ld` will output an error later
-         std::cout << "Warning, contract is empty and ABI file is not generated\n";
-      } else if (contract_name != real_contract_name) {
-         throw std::runtime_error("abigen error: the specified contract name by WASM name or --contract doesn't match the real contract name");
+         std::cout << "Warning, contract is empty and ABI is not generated\n";
+      } else if (contract_name != parsed_contract_name) {
+         if (has_contract_opt) {
+            throw std::runtime_error("abigen error: '--contract' specified name doesn't match the real contract name");
+         } else if (has_o_opt) {
+            throw std::runtime_error("abigen error: '-o' specified WASM name doesn't match the real contract name");
+         } else {
+            throw std::runtime_error("abigen error: contract filename doesn't match the real contract name");
+         }
       } else {
          throw std::runtime_error("abigen error"); // unknown error
       }
@@ -126,7 +132,7 @@ int main(int argc, const char **argv) {
             tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
                                            [&](const auto& opt){ return non_tool_opts.count(opt); }),
                             tool_opts.end());
-            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning);
+            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning, opts.has_o_opt, opts.has_contract_opt);
 
             auto src = SmallString<64>(input);
             llvm::sys::path::remove_filename(src);
@@ -137,7 +143,7 @@ int main(int argc, const char **argv) {
                input = tmp_file;
             }
             output = tmp_file+".o";
-     
+
             if (!opts.link) {
                output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
             }
