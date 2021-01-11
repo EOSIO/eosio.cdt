@@ -66,7 +66,7 @@ function uninstall() {
             "" ) echo "What would you like to do?";;
             0 | true | [Yy]* )
                if [[ $3 && "$(id -u)" -ne 0 ]]; then
-                  echo "This requires sudo, please run ./eoscc_uninstall.sh with sudo"
+                  echo "This requires sudo, please run ./blanc_uninstall.sh with sudo"
                   echo ""
                   exit -1
                fi
@@ -87,4 +87,4 @@ function uninstall() {
    exit 1
 }
                
-uninstall "${EOSIO_INSTALL_DIR}" "eoscc"
+uninstall "${EOSIO_INSTALL_DIR}" "blanc"

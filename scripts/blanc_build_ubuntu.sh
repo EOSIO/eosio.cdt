@@ -11,7 +11,7 @@ echo "Disk space available: ${DISK_AVAIL}G"
 [[ "${DISK_AVAIL}" -lt "${DISK_MIN}" ]] && echo " - You must have at least ${DISK_MIN}GB of available storage to install EOSIO." && exit 1
 
 ensure-build-essential
-ensure-apt-packages "${REPO_ROOT}/scripts/eoscc_build_ubuntu_deps" $(echo ${EXTRA_DEPS[@]})
+ensure-apt-packages "${REPO_ROOT}/scripts/blanc_build_ubuntu_deps" $(echo ${EXTRA_DEPS[@]})
 echo ""
 # CMAKE Installation
 #ensure-cmake

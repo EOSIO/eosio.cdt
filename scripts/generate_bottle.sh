@@ -6,7 +6,7 @@ then
    VERS=`sw_vers -productVersion | awk '/10\.15.*/{print $0}'`
    if [[ -z "$VERS" ]];
    then
-      echo "Error, unsupported OS X version"
+      echo "Error, unsupported MacOS version"
       exit -1
    fi
    MAC_VERSION="catalina"
@@ -32,11 +32,11 @@ bash generate_tarball.sh ${NAME}
 
 hash=`openssl dgst -sha256 ${NAME} | awk 'NF>1{print $NF}'`
 
-echo "class Eoscc < Formula
+echo "class Blanc < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/turnpike/eoscc/archive/v${VERSION}.tar.gz\"
+   url \"https://github.com/turnpike/blanc/archive/v${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
@@ -55,7 +55,7 @@ echo "class Eoscc < Formula
    depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/turnpike/eoscc/releases/download/v${VERSION}\"
+      root_url \"https://github.com/turnpike/blanc/releases/download/v${VERSION}\"
       sha256 \"${hash}\" => :${MAC_VERSION}
    end
    def install

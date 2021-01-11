@@ -12,7 +12,7 @@ cd $( dirname "${BASH_SOURCE[0]}" )/..
 . ./scripts/helpers/eosio.sh
 
 $VERBOSE && echo "Build Script Version: ${SCRIPT_VERSION}"
-echo "EOSCC Version: ${EOSIO_VERSION_FULL}"
+echo "Blanc Version: ${EOSIO_VERSION_FULL}"
 echo "$( date -u )"
 echo "User: ${CURRENT_USER}"
 # echo "git head id: %s" "$( cat .git/refs/heads/master )"
@@ -56,7 +56,7 @@ if [[ $ARCH == "Linux" ]]; then
    [[ ! -e /etc/os-release ]] && print_supported_linux_distros_and_exit
    case $NAME in
       "Ubuntu")
-         FILE="${REPO_ROOT}/scripts/eoscc_build_ubuntu.sh"
+         FILE="${REPO_ROOT}/scripts/blanc_build_ubuntu.sh"
       ;;
       *) print_supported_linux_distros_and_exit;;
    esac
@@ -65,12 +65,12 @@ fi
 
 if [ "$ARCH" == "Darwin" ]; then
    CMAKE_PREFIX_PATHS="${EOSIO_INSTALL_DIR}"
-   FILE="${SCRIPT_DIR}/eoscc_build_darwin.sh"
+   FILE="${SCRIPT_DIR}/blanc_build_darwin.sh"
    export CMAKE=${CMAKE}
 fi
 
 echo "${COLOR_CYAN}====================================================================================="
-echo "======================= ${COLOR_WHITE}Starting EOSCC Dependency Install${COLOR_CYAN} ===========================${COLOR_NC}"
+echo "======================= ${COLOR_WHITE}Starting Blanc Dependency Install${COLOR_CYAN} ===========================${COLOR_NC}"
 execute cd $SRC_DIR
 set_system_vars # JOBS, Memory, disk space available, etc
 echo "Architecture: ${ARCH}"
@@ -79,7 +79,7 @@ execute cd $REPO_ROOT
 
 echo ""
 echo "${COLOR_CYAN}========================================================================"
-echo "======================= ${COLOR_WHITE}Starting EOSCC Build${COLOR_CYAN} ===========================${COLOR_NC}"
+echo "======================= ${COLOR_WHITE}Starting Blanc Build${COLOR_CYAN} ===========================${COLOR_NC}"
 if $VERBOSE; then
    echo "CXX: $CXX"
    echo "CC: $CC"
@@ -89,25 +89,25 @@ execute cd $BUILD_DIR
 execute bash -c "$CMAKE -DCMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}' -DCMAKE_INSTALL_PREFIX='${EOSIO_INSTALL_DIR}' '${REPO_ROOT}'"
 if ! execute make -j$JOBS; then
    echo ""
-   echo "${COLOR_RED}Building EOSCC has exited with the above error.${COLOR_NC}"
+   echo "${COLOR_RED}Building Blanc has exited with the above error.${COLOR_NC}"
    exit -1
 fi
 execute cd $REPO_ROOT 1>/dev/null
 
 TIME_END=$(( $(date -u +%s) - $TIME_BEGIN ))
 
-echo "                                         "
-echo "███████╗ ██████╗ ███████╗ ██████╗ ██████╗"
-echo "██╔════╝██╔═══██╗██╔════╝██╔════╝██╔════╝"
-echo "█████╗  ██║   ██║███████╗██║     ██║     "
-echo "██╔══╝  ██║   ██║╚════██║██║     ██║     "
-echo "███████╗╚██████╔╝███████║╚██████╗╚██████╗"
-echo "╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝"
+echo "                                          "
+echo "██████╗ ██╗      █████╗ ███╗   ██╗ ██████╗"
+echo "██╔══██╗██║     ██╔══██╗████╗  ██║██╔════╝"
+echo "██████╔╝██║     ███████║██╔██╗ ██║██║     "
+echo "██╔══██╗██║     ██╔══██║██║╚██╗██║██║     "
+echo "██████╔╝███████╗██║  ██║██║ ╚████║╚██████╗"
+echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝"
 echo "=========================================${COLOR_NC}"
 
-echo "${COLOR_GREEN}EOSCC has been successfully built. $(($TIME_END/3600)):$(($TIME_END%3600/60)):$(($TIME_END%60))"
-echo "${COLOR_GREEN}You can now install using: ${SCRIPT_DIR}/eoscc_install.sh${COLOR_NC}"
-echo "${COLOR_YELLOW}Uninstall with: ${SCRIPT_DIR}/eoscc_uninstall.sh${COLOR_NC}"
+echo "${COLOR_GREEN}Blanc has been successfully built. $(($TIME_END/3600)):$(($TIME_END%3600/60)):$(($TIME_END%60))"
+echo "${COLOR_GREEN}You can now install using: ${SCRIPT_DIR}/blanc_install.sh${COLOR_NC}"
+echo "${COLOR_YELLOW}Uninstall with: ${SCRIPT_DIR}/blanc_uninstall.sh${COLOR_NC}"
 
 echo ""
 resources
