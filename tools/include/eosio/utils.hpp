@@ -136,6 +136,7 @@ struct environment {
        }
      return env_table;
    }
+
    static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
       std::stringstream args;
       for (auto s : options)
@@ -155,6 +156,15 @@ struct environment {
       else
          return false;
       return !ret; 
+   }
+
+   static bool exec_subprogram(const std::vector<std::string> progs, std::vector<std::string> options, bool root=false) {
+      for (const auto& prog : progs) {
+         if (exec_subprogram(prog, options, root)) {
+            return true;
+         }
+      }
+      return false;
    }
 
 };

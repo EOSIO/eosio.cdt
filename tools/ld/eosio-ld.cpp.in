@@ -10,6 +10,7 @@ using namespace jsoncons;
 #define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
 #define LINKER_NAME "@EOSIO_LINKER@"
 #define LINKER_BACKEND "@EOSIO_LINKER_BACKEND@"
+#define LINKER_BACKEND_PREFERRED "@EOSIO_LINKER_BACKEND_PREFERRED@"
 #define POSTPASS_NAME "@EOSIO_POSTPASS@"
 #define ONLY_LD
 #include <compiler_options.hpp>
@@ -77,6 +78,8 @@ std::string generate_apply(const std::set<wasm_action>& wasm_actions, const std:
 }
 
 int main(int argc, const char** argv) {
+   std::vector<std::string> backends = { LINKER_BACKEND_PREFERRED, LINKER_BACKEND };
+
    llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
       os << LINKER_NAME << " version " << "@VERSION_FULL@" << "\n";
    });
@@ -155,7 +158,7 @@ int main(int argc, const char** argv) {
    }
 
    if (!opts.native) {
-      if (!eosio::cdt::environment::exec_subprogram(LINKER_BACKEND, opts.ld_options)) {
+      if (!eosio::cdt::environment::exec_subprogram(backends, opts.ld_options)) {
          llvm::sys::fs::remove(main_file);
          llvm::sys::fs::remove(main_file+".o");
          return -1;
