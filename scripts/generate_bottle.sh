@@ -9,7 +9,7 @@ then
       echo "Error, unsupported MacOS version"
       exit -1
    fi
-   MAC_VERSION="bigsur"
+   MAC_VERSION="big_sur"
 else
    MAC_VERSION="catalina"
 fi
