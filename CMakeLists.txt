@@ -100,8 +100,12 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/eosiolib/tester/fpconv.license ${CM
 configure_file(${CMAKE_SOURCE_DIR}/libraries/fmt/LICENSE.rst ${CMAKE_BINARY_DIR}/licenses/fmt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/rapidjson/license.txt ${CMAKE_BINARY_DIR}/licenses/rapidjson.license COPYONLY)
 
-#include(modules/TestsExternalProject.txt)
+set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
-#include(CTest)
-#enable_testing()
-#add_subdirectory(tests)
+if(BUILD_TESTS)
+  include(modules/TestsExternalProject.txt)
+
+  include(CTest)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
