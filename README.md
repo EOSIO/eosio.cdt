@@ -11,7 +11,7 @@ By using the latest Clang/LLVM, generated WASM binaries will have smaller size b
 
 ### Binary Releases
 
-The prebuilt binares are provided for Ubuntu 20.04 and MacOS Catalina.
+The prebuilt binares are provided for Ubuntu 20.04 and MacOS Big Sur.
 
 #### Ubuntu 20.04
 

@@ -1,17 +1,17 @@
 #! /bin/bash
 
-VERS=`sw_vers -productVersion | awk '/10\.14\..*/{print $0}'`
+VERS=`sw_vers -productVersion | awk '/^10\.15\..*/{print $0}'`
 if [[ -z "$VERS" ]];
 then
-   VERS=`sw_vers -productVersion | awk '/10\.15.*/{print $0}'`
+   VERS=`sw_vers -productVersion | awk '/^11\..*/{print $0}'`
    if [[ -z "$VERS" ]];
    then
       echo "Error, unsupported MacOS version"
       exit -1
    fi
-   MAC_VERSION="catalina"
+   MAC_VERSION="bigsur"
 else
-   MAC_VERSION="mojave"
+   MAC_VERSION="catalina"
 fi
 
 NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
@@ -36,7 +36,7 @@ echo "class Blanc < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/turnpike/blanc/archive/v${VERSION}.tar.gz\"
+   url \"https://github.com/turnpike/blanc/archive/${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
@@ -51,11 +51,11 @@ echo "class Blanc < Formula
    depends_on \"graphviz\" => :build
    depends_on \"lcov\" => :build
    depends_on :xcode => :build
-   depends_on :macos => :high_sierra
+   depends_on :macos => :catalina
    depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/turnpike/blanc/releases/download/v${VERSION}\"
+      root_url \"https://github.com/turnpike/blanc/releases/download/${VERSION}\"
       sha256 \"${hash}\" => :${MAC_VERSION}
    end
    def install
