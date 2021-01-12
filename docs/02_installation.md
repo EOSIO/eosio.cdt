@@ -7,39 +7,46 @@ EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Li
 **If you have previously installed EOSIO.CDT, run the `uninstall` script (it is in the directory where you cloned EOSIO.CDT) before downloading and using the binary releases.**
 
 ## Mac OS X Brew Install
+
 ```sh
 $ brew tap eosio/eosio.cdt
 $ brew install eosio.cdt
 ```
 
 ## Mac OS X Brew Uninstall
+
 ```sh
 $ brew remove eosio.cdt
 ```
 
 ## Debian Package Install
+
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
-$ sudo apt install ./eosio.cdt_1.6.3-1-ubuntu-18.04_amd64.deb
+$ wget https://github.com/EOSIO/eosio.cdt/releases/download/v1.7.0/eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
+$ sudo apt install ./eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
 ```
 
 ## Debian Package Uninstall
+
 ```sh
 $ sudo apt remove eosio.cdt
 ```
 
 ## RPM Package Install
+
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.6.3/eosio.cdt-1.6.3-1.el7.x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.6.3-1.el7.x86_64.rpm
+$ wget https://github.com/EOSIO/eosio.cdt/releases/download/v1.7.0/eosio.cdt-1.7.0-1.el7.x86_64.rpm
+$ sudo yum install ./eosio.cdt-1.7.0-1.el7.x86_64.rpm
 ```
 
 ## RPM Package Uninstall
+
 ```sh
 $ sudo yum remove eosio.cdt
 ```
 
 # Guided Installation or Building from Scratch
+
 ```sh
 $ git clone --recursive https://github.com/eosio/eosio.cdt
 $ cd eosio.cdt
@@ -64,7 +71,6 @@ $ sudo rm -fr /usr/local/lib/cmake/eosio.cdt
 $ sudo rm /usr/local/bin/eosio-*
 ```
 
-
 # Installed Tools
 
 * eosio-cpp
@@ -79,14 +85,13 @@ $ sudo rm /usr/local/bin/eosio-*
 * eosio-objdump
 * eosio-readelf
 
-Below tools are not installed after brew install, you get them only by building the repository and installing from scracth, [see here](#guided_installation_or_building_from_scratch)
-eosio-abidiff
-eosio-ranlib
-eosio-ar
-eosio-objdump
-eosio-readelf
+The following tools are not installed after brew install, you get them when build the repository and install it from scratch, [see here](#guided-installation-or-building-from-scratch):
 
+* eosio-abidiff
+* eosio-ranlib
+* eosio-ar
+* eosio-objdump
+* eosio-readelf
 
 License
-
 [MIT](../LICENSE)
