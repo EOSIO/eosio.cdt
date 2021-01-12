@@ -37,11 +37,12 @@ namespace eosio {
     *  This is used to bypass all cleanup / destructors that would normally be
     *  called.
     *
-    *  WARNING: this method will immediately abort execution of wasm code that is on
-    *           the stack and would be executed as the method normally returned.
-    *           Problems can occur with write-caches, RAII, reference counting
-    *           when this method aborts execution of wasm code immediately.
-    *
+       <html><p><b>
+       WARNING: this method will immediately abort execution of wasm code that is on
+                the stack and would be executed as the method normally returned.
+                Problems can occur with write-caches, RAII, reference counting
+                when this method aborts execution of wasm code immediately.
+       </b></p></html>
     *  @ingroup system
     *
     *  @param code - the exit code
