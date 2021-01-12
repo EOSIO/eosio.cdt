@@ -3,11 +3,13 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/varint.hpp"
 
-#include "../../core/eosio/to_key.hpp"
+#include "../../core/eosio/key_utils.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <functional>
+
+#warning "eosio::kv::table is designated as `alpha` and should not be used in production code"
 
 #define EOSIO_CDT_GET_RETURN_T(value_class, index_name) std::decay_t<decltype(std::invoke(&value_class::index_name, std::declval<const value_class*>()))>
 
@@ -22,55 +24,7 @@
 #define KV_NAMED_INDEX(index_name, member_name)                                                                        \
    index<EOSIO_CDT_GET_RETURN_T(value_type, member_name)> member_name{eosio::name{index_name}, &value_type::member_name};
 
-namespace eosio {
-   namespace internal_use_do_not_use {
-      extern "C" {
-         __attribute__((eosio_wasm_import))
-         int64_t kv_erase(uint64_t contract, const char* key, uint32_t key_size);
-
-         __attribute__((eosio_wasm_import))
-         int64_t kv_set(uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size, uint64_t payer);
-
-         __attribute__((eosio_wasm_import))
-         bool kv_get(uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
-
-         __attribute__((eosio_wasm_import))
-         uint32_t kv_get_data(uint32_t offset, char* data, uint32_t data_size);
-
-         __attribute__((eosio_wasm_import))
-         uint32_t kv_it_create(uint64_t contract, const char* prefix, uint32_t size);
-
-         __attribute__((eosio_wasm_import))
-         void kv_it_destroy(uint32_t itr);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_status(uint32_t itr);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_compare(uint32_t itr_a, uint32_t itr_b);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_key_compare(uint32_t itr, const char* key, uint32_t size);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_move_to_end(uint32_t itr);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_next(uint32_t itr, uint32_t& found_key_size = (uint32_t&)std::move(uint32_t(0)), uint32_t& found_value_size = (uint32_t&)std::move(uint32_t(0)));
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_prev(uint32_t itr, uint32_t& found_key_size = (uint32_t&)std::move(uint32_t(0)), uint32_t& found_value_size = (uint32_t&)std::move(uint32_t(0)));
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_lower_bound(uint32_t itr, const char* key, uint32_t size, uint32_t& found_key_size = (uint32_t&)std::move(uint32_t(0)), uint32_t& found_value_size = (uint32_t&)std::move(uint32_t(0)));
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_key(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
-
-         __attribute__((eosio_wasm_import))
-         int32_t kv_it_value(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
-      }
-   }
+namespace eosio::kv {
 
 namespace detail {
    constexpr inline size_t max_stack_buffer_size = 512;
@@ -99,36 +53,6 @@ namespace detail {
       return size;
    }
 }
-
-/**
- * The key_type struct is used to store the binary representation of a key.
- */
-struct key_type : private std::vector<char> {
-   key_type() = default;
-
-   explicit key_type(std::vector<char>&& v) : std::vector<char>(std::move(v)) {}
-
-   explicit key_type(char* str, size_t size) : std::vector<char>(str, str+size) {}
-
-   key_type operator+(const key_type& b) const {
-      key_type ret = *this;
-      ret += b;
-      return ret;
-   }
-
-   key_type& operator+=(const key_type& b) {
-      this->insert(this->end(), b.begin(), b.end());
-      return *this;
-   }
-
-   bool operator==(const key_type& b) const {
-      return size() == b.size() && memcmp(data(), b.data(), b.size()) == 0;
-   }
-
-   using std::vector<char>::data;
-   using std::vector<char>::size;
-   using std::vector<char>::resize;
-};
 
 /* @cond PRIVATE */
 template <typename T>
@@ -166,7 +90,6 @@ inline key_type make_key(T val) {
 template <typename ...Types>
 using non_unique = std::tuple<Types...>;
 
-namespace kv {
 template<typename T, eosio::name::raw TableName>
 class table;
 
@@ -540,7 +463,7 @@ private:
 
       iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "cannot increment end iterator");
-         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
+         itr_stat = static_cast<status>(detail::itr_next(itr));
          return *this;
       }
 
@@ -548,7 +471,7 @@ private:
          if (!itr) {
             itr = internal_use_do_not_use::kv_it_create(index->contract_name.value, index->prefix.data(), index->prefix.size());
          }
-         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
+         itr_stat = static_cast<status>(detail::itr_prev(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
          return *this;
       }
@@ -608,16 +531,16 @@ private:
 
       reverse_iterator& operator++() {
          eosio::check(itr_stat != status::iterator_end, "incremented past the end");
-         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
+         itr_stat = static_cast<status>(detail::itr_prev(itr));
          return *this;
       }
 
       reverse_iterator& operator--() {
          if (!itr) {
             itr = internal_use_do_not_use::kv_it_create(index->contract_name.value, index->prefix.data(), index->prefix.size());
-            itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
+            itr_stat = static_cast<status>(detail::itr_lower_bound(itr));
          }
-         itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
+         itr_stat = static_cast<status>(detail::itr_next(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
          return *this;
       }
@@ -703,7 +626,7 @@ public:
          auto t_key = prefix + make_key(key);
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+         int32_t itr_stat = detail::itr_lower_bound(itr, {t_key.data(), t_key.size()});
 
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, t_key.data(), t_key.size());
 
@@ -764,7 +687,7 @@ public:
        */
       iterator begin() const {
          uint32_t itr = internal_use_do_not_use::kv_it_create(contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
+         int32_t itr_stat = detail::itr_lower_bound(itr);
 
          return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
@@ -787,7 +710,7 @@ public:
        */
       reverse_iterator rbegin() const {
          uint32_t itr = internal_use_do_not_use::kv_it_create(contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_prev(itr);
+         int32_t itr_stat = detail::itr_prev(itr);
 
          return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
@@ -812,7 +735,7 @@ public:
          auto t_key = prefix + make_key(key);
 
          uint32_t itr = internal_use_do_not_use::kv_it_create(contract_name.value, prefix.data(), prefix.size());
-         int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, t_key.data(), t_key.size());
+         int32_t itr_stat = detail::itr_lower_bound(itr, {t_key.data(), t_key.size()});
 
          return {itr, static_cast<typename iterator::status>(itr_stat), this};
       }
@@ -948,5 +871,4 @@ private:
       static_assert(is_index, "Incorrect type passed to init. Must be a reference to an index.");
    }
 };
-} // namespace kv
-} // namespace eosio
+} // namespace eosio::kv

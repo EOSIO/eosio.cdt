@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+#include <eosio/table.hpp>
 
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
@@ -10,7 +11,7 @@ public:
       std::string fullname;
       uint32_t age;
 
-      eosio::non_unique<std::string, uint32_t> non_unique_name;
+      std::tuple<std::string, uint32_t> non_unique_name;
 
       bool operator==(const my_struct& b) const {
          return primary_key == b.primary_key &&

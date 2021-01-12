@@ -9,11 +9,14 @@ This how-to procedure demonstrates how to define and use a `Key-Value Table` (`k
 
 To accomplish this task, define the user type which will be stored in the `kv table`, and extend the `eosio::kv::table` template class with a specialized definition based on the user defined type.
 
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
+
 ## Prerequisites
 
 * The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract, let’s call it `smrtcontract`.
-* A user defined type, let’s call it `person`, which defines the data which is stored in the table.
+* A smart contract named `smrtcontract`.
+* A user defined type named `person`, which defines the data stored in the table.
 
 Refer to the following possible implementation of your starting point.
 
@@ -73,6 +76,13 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 The following options are available when you complete the procedure:
 
-* You can define one or more **unique indexes** using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
-* You can define one or more **non-unique indexes** using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
-* You can access the defined `kv table` and perform operations on it and its defined indexes.
+* You can [create one or more unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
+* You can [create one or more non-unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
+* You can access the defined `kv table` and perform operations on it and its defined indexes:
+  * [How To Upsert Into KV Table](./30_how-to-upsert-into-kv-table.md)
+  * [How To Delete From KV Table](./40_how-to-delete-from-kv-table.md)
+  * [How To Iterate A KV Table](./50_how-to-iterate-kv-table.md)
+  * [How To Check A Record In KV Table](./60_how-to-check-a-record-kv-table.md)
+  * [How To Find In KV Table](./70_how-to-find-in-kv-table.md)
+  * [How To Query Range In KV Table](./80_how-to-query-range-in-kv-table.md)
+  * [How To Allow Users To Pay](./90_how-to-allow-users-to-pay-kv-table.md)

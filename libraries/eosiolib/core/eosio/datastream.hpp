@@ -965,6 +965,22 @@ T unpack( const char* buffer, size_t len ) {
 }
 
 /**
+ * Unpack data inside a fixed size buffer as T
+ *
+ * @ingroup datastream
+ * @tparam T - Type of the unpacked data
+ * @param res - Variable to fill with the unpacking
+ * @param buffer - Pointer to the buffer
+ * @param len - Length of the buffer
+ * @return T - The unpacked data
+ */
+template<typename T>
+void unpack( T& res, const char* buffer, size_t len ) {
+   datastream<const char*> ds(buffer,len);
+   ds >> res;
+}
+
+/**
  * Unpack data inside a variable size buffer as T
  *
  * @ingroup datastream

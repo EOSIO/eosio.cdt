@@ -7,23 +7,25 @@ link_text: "How-To Iterate Through Key-Value Table"
 
 This how-to procedure provides instructions to iterate through a `Key-Value Table` (`kv table`) and read values from it.
 
-Use the `iterator` defined by the `eosio::kv::table::index` class to accomplish this task.
+[[caution | Alpha version]]
+| `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
+Use the `iterator` defined by the `eosio::kv::table::index` class to accomplish this task.
 
 ## Prerequisites
 
 Before you begin, complete the following prerequisites:
 
 * An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract, let’s call it `smrtcontract`.
-* A user defined type which defines the data stored in the table, let’s call it `person`.
-* A `kv table` type which stores objects of type `person`, let’s call it `address_table`.
+* A smart contract named `smrtcontract`.
+* A user defined type which defines the data stored in the table, named `person`.
+* A `kv table` type which stores objects of type `person`, named `address_table`.
 * Each `person` object has the following properties:
   * `account_name`,
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index defined on the `account_name` property, let’s call it `account_name_uidx`.
+* A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
 Refer to the following possible implementation of your starting point.
 
@@ -57,7 +59,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 Complete the following steps to implement an action that is iterating through the first N `person` objects in `address_table` and prints their first and last names:
 
-1. Create a new action in your contact, let’s call it `iterate`, which takes as an input parameter the number of iterations to be executed.
+1. Create a new action `iterate`, which takes as an input parameter the number of iterations to be executed.
 2. In the `iterate` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. Capture the `begin` and the `end` of the `account_name_uidx` index defined.
 4. Use the iterator `value` to access the current value of the iterator.

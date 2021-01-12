@@ -5,6 +5,9 @@
 
 #include <algorithm>
 
+extern "C" volatile uint64_t eosio_contract_name = 0;
+extern "C" volatile void eosio_set_contract_name(uint64_t n) { eosio_contract_name = n; } // LLVM creates the call to this at the beginning of apply
+
 namespace eosio {
    extern "C" {
       __attribute__((eosio_wasm_import))
@@ -13,8 +16,6 @@ namespace eosio {
      void set_blockchain_parameters_packed(char*, uint32_t);
      __attribute__((eosio_wasm_import))
      uint32_t get_blockchain_parameters_packed(char*, uint32_t);
-     __attribute__((eosio_wasm_import))
-     void set_kv_parameters_packed(const char*, uint32_t);
      __attribute__((eosio_wasm_import))
      int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
      __attribute__((eosio_wasm_import))
@@ -64,19 +65,6 @@ namespace eosio {
       ds >> params;
    }
 
-   void set_kv_parameters(const eosio::kv_parameters& params) {
-      // set_kv_parameters_packed expects version, max_key_size,
-      // max_value_size, and max_iterators,
-      // while kv_parameters only contains max_key_size, max_value_size,
-      // and max_iterators. That's why we place uint32_t in front
-      // of kv_parameters in buf
-      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
-      eosio::datastream<char *> ds( buf, sizeof(buf) );
-      ds << uint32_t(0);  // fill in version
-      ds << params;
-      set_kv_parameters_packed( buf, ds.tellp() );
-   }
-
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods ) {
       auto packed_prods = eosio::pack( prods );
       int64_t ret = set_proposed_producers((char*)packed_prods.data(), packed_prods.size());
@@ -122,7 +110,6 @@ namespace eosio {
     *  @post If the output string fits within the range [begin, end), the range [begin, returned pointer) contains the string representation of the number. Nothing is written if dry_run == true or returned pointer > end (insufficient space) or if returned pointer < begin (overflow in calculating desired end).
     */
    char* write_decimal( char* begin, char* end, bool dry_run, uint64_t number, uint8_t num_decimal_places, bool negative ) {
-      constexpr static uint8_t log10_max_uint64 = powers_of_base<10, uint64_t>.size() - 1; // 19
       const auto& powers_of_ten = powers_of_base<10, uint64_t>;
 
       uint8_t num_digits = (std::upper_bound( powers_of_ten.begin(), powers_of_ten.end(), number ) - powers_of_ten.begin()); // num_digits == 0 iff number == 0

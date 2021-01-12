@@ -7,7 +7,7 @@ link_text: How To Perform Authorization Checks
 
 The following conditions are assumed:
 
-1. You have the sources of a contract with one of the actions defined, let's call it `hi` action.
+1. You have the sources of a contract with `hi` action defined.
 2. The `hi` action has defined one input parameter `user` of type `name`.
 3. The `hi` action prints the name of the `user` account.
 4. The `hi` action needs to authorize the `user` account.

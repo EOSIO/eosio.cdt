@@ -22,7 +22,7 @@ BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
    create_accounts( { "test"_n, "eosio.token"_n, "someone"_n, "other"_n } );
    produce_block();
 
-   set_code( "eosio.token"_n, contracts::transfer_wasm() );
+   set_code( "eosio.token"_n,  contracts::transfer_wasm() );
    set_abi(  "eosio.token"_n,  contracts::transfer_abi().data() );
 
    set_code( "someone"_n, contracts::transfer_wasm() );
@@ -51,7 +51,7 @@ BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
 
    set_abi( "test"_n,  contracts::simple_wrong_abi().data() );
    produce_blocks();
-  
+
    BOOST_CHECK_THROW(push_action("test"_n, "test3"_n, "test"_n, mvo() ("arg0", 33) ("arg1", "some string")), fc::exception);
 
    set_abi( "test"_n,  contracts::simple_abi().data() );
@@ -86,7 +86,7 @@ BOOST_FIXTURE_TEST_CASE( simple_eosio_tests, tester ) try {
          ("arg1", "some string"));
    BOOST_CHECK_THROW(push_action("eosio"_n, "test2"_n, "eosio"_n, mvo() ("arg0", 30)("arg1", "some string")), fc::exception);
    BOOST_CHECK_THROW(push_action("eosio"_n, "test2"_n, "eosio"_n, mvo() ("arg0", 33)("arg1", "not some string")), fc::exception);
-   
+
    push_action("eosio"_n, "test3"_n, "eosio"_n,
          mvo()
          ("arg0", 33)

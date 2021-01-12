@@ -50,7 +50,7 @@ R"(  Read a file in the WebAssembly binary format, strip bss or any data segment
   $ eosio-pp test.wasm -o test.stripped.wasm
 
   # or original replacement
-  $ wasm2wat test.wasm 
+  $ wasm2wat test.wasm
 )";
 
 static void ParseOptions(int argc, char** argv) {
@@ -115,8 +115,8 @@ void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& 
    ds.offset = ExprList{std::move(ce)};
    uint8_t* dat = reinterpret_cast<uint8_t*>(&heap_ptr);
    ds.data = std::vector<uint8_t>{dat[0],
-                                   dat[1], 
-                                   dat[2], 
+                                   dat[1],
+                                   dat[2],
                                    dat[3]};
    mod.data_segments.push_back(&ds);
 }
@@ -131,10 +131,10 @@ void WriteBufferToFile(string_view filename,
 
 int ProgramMain(int argc, char** argv) {
   Result result;
-  
+
   InitStdio();
   ParseOptions(argc, argv);
-  
+
   std::vector<uint8_t> file_data;
   bool stub = false;
   std::unique_ptr<FileStream> s_log_stream_s;
@@ -166,7 +166,7 @@ int ProgramMain(int argc, char** argv) {
         WriteBufferToFile(s_outfile.c_str(), stream.output_buffer());
       }
     }
-   } 
+   }
 
   }
   return result != Result::Ok;
