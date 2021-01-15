@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-find_package(LLVM 11 REQUIRED CONFIG)
+find_package(LLVM REQUIRED CONFIG)
+if(LLVM_VERSION_MAJOR VERSION_LESS 11)
+  message(FATAL_ERROR "Blanc requires LLVM 11 or higher")
+endif()
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 

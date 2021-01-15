@@ -4,7 +4,10 @@ project(eosio_plugins)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(LLVM 11 REQUIRED CONFIG)
+find_package(LLVM REQUIRED CONFIG)
+if(LLVM_VERSION_MAJOR VERSION_LESS 11)
+  message(FATAL_ERROR "Blanc requires LLVM 11 or higher")
+endif()
 find_package(Clang REQUIRED)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
