@@ -634,11 +634,26 @@ class multi_index
                return lb;
             }
 
+            /**
+             * Gets the object with the smallest primary key in the case where the secondary key is not unique.
+             * 
+             * Avoid the common pitfall of copy-assigning the T& reference returned 
+             * to a stack-allocated local variable and then passing that into modify of the multi-index.
+             * The most common mistake is when the local variable is defined as auto 
+             * typename, instead it should be of type auto& or decltype(auto).
+             */
             const T& get( secondary_key_type&& secondary, const char* error_msg = "unable to find secondary key" )const {
                return get( secondary, error_msg );
             }
 
-            // Gets the object with the smallest primary key in the case where the secondary key is not unique.
+            /**
+             * Gets the object with the smallest primary key in the case where the secondary key is not unique.
+             * 
+             * Avoid the common pitfall of copy-assigning the T& reference returned 
+             * to a stack-allocated local variable and then passing that into modify of the multi-index.
+             * The most common mistake is when the local variable is defined as auto 
+             * typename, instead it should be of type auto& or decltype(auto).
+             */
             const T& get( const secondary_key_type& secondary, const char* error_msg = "unable to find secondary key" )const {
                auto result = find( secondary );
                eosio::check( result != cend(), error_msg );
@@ -680,7 +695,11 @@ class multi_index
 
                return {this, &mi};
             }
-
+            /**
+             *  Warning: the interator_to can have undefined behavior if the caller 
+             *  passes in a reference to a stack-allocated object rather than the 
+             *  reference returned by get or by dereferencing a const_iterator.
+             */
             const_iterator iterator_to( const T& obj ) {
                using namespace _multi_index_detail;
 
@@ -1483,6 +1502,10 @@ class multi_index
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
        *  @endcode
+       * 
+       *  Warning: the interator_to can have undefined behavior if the caller 
+       *  passes in a reference to a stack-allocated object rather than the 
+       *  reference returned by get or by dereferencing a const_iterator.
        */
       const_iterator iterator_to( const T& obj )const {
          const auto& objitem = static_cast<const item&>(obj);
@@ -1719,10 +1742,10 @@ class multi_index
        *  Retrieves an existing object from a table using its primary key.
        *  @ingroup multiindex
        *
-       *  @param primary - Primary key value of the object
-       *  @return A constant reference to the object containing the specified primary key.
+       *  @param primary - Primary key value of the object.
+       *  @return A constant reference to the object containing the specified primary key. 
        *
-       *  Exception - No object matches the given key
+       *  Exception - No object matches the given key. 
        *
        *  Example:
        *
@@ -1733,12 +1756,19 @@ class multi_index
        *        // create reference to address_index  - see emplace example
        *        // add dan account to table           - see emplace example
        *
-       *        auto user = addresses.get("dan"_n);
+       *        auto& user = addresses.get("dan"_n);
        *        eosio::check(user.first_name == "Daniel", "Couldn't get him.");
        *      }
        *  }
        *  EOSIO_DISPATCH( addressbook, (myaction) )
        *  @endcode
+       * 
+       *  Warning: 
+       * 
+       *  Avoid the common pitfall of copy-assigning the T& reference returned 
+       *  to a stack-allocated local variable and then passing that into modify of the multi-index.
+       *  The most common mistake is when the local variable is defined as auto 
+       *  typename, instead it should be of type auto& or decltype(auto).
        */
       const T& get( uint64_t primary, const char* error_msg = "unable to find key" )const {
          auto result = find( primary );
