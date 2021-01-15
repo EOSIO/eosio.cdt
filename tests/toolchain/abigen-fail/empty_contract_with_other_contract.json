@@ -1,0 +1,22 @@
+{
+  "tests" : [
+    {
+      "compile_flags": ["--abigen", "--contract=hello"],
+      "expected" : {
+        "stderr": "abigen error"
+      }
+    },
+    {
+      "compile_flags": ["--abigen", "-o=hello.wasm"],
+      "expected" : {
+          "stderr": "abigen error"
+      }
+    },
+    {
+      "compile_flags": ["--abigen"],
+      "expected" : {
+        "stderr": "abigen error"
+      }
+    }
+  ]
+}
