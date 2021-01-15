@@ -39,6 +39,8 @@ using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
 
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt);
+
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
@@ -77,27 +79,29 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
    } else if (abigen) {
-      const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
-      if (parsed_contract_name.empty()) {
-         // if the contract is empty, the contract name could not be obtained by parsing methods or records
-         // a warning is output here, and `wasm-ld` will output an error later
-         std::cout << "Warning, contract is empty and ABI is not generated\n";
-      } else if (contract_name != parsed_contract_name) {
-         if (has_contract_opt) {
-            throw std::runtime_error("abigen error: '--contract' specified name doesn't match the real contract name");
-         } else if (has_o_opt) {
-            throw std::runtime_error("abigen error: '-o' specified WASM name doesn't match the real contract name");
-         } else {
-            throw std::runtime_error("abigen error: contract filename doesn't match the real contract name");
-         }
-      } else {
-         throw std::runtime_error("abigen error"); // unknown error
-      }
+      handle_empty_abigen(contract_name, has_o_opt, has_contract_opt);
    }
 
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("codegen error");
+   }
+}
+
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt) {
+   const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
+   if (parsed_contract_name.empty()) {
+      // if no contract name could be obtained by parsing methods/records, it means the contract is empty
+      std::cout << "Warning, contract is empty and ABI is not generated\n";
+   } else if (contract_name != parsed_contract_name) {
+      // if contract is empty but the contract file contains other contracts, the parsed contract name could be wrong
+      std::string err = "abigen error: contract is empty, or ";
+      // or, the contract is not empty but the specified or inferred contract name is wrong
+      err += has_contract_opt ? "'--contract' specified name" : (has_o_opt ? "'-o' specified name" : "contract filename");
+      err += " doesn't match the real contract name";
+      throw std::runtime_error(err);
+   } else {
+      throw std::runtime_error("abigen error"); // unknown error
    }
 }
 
