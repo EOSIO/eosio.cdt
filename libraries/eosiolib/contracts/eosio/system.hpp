@@ -33,19 +33,28 @@ namespace eosio {
    */
 
    /**
-    *  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
+    *  This method will abort execution of wasm without failing the contract.
+    *  This is used to bypass all cleanup / destructors that would normally be
+    *  called.
     *
+       <html><p><b>
+       WARNING: this method will immediately abort execution of wasm code that is on
+                the stack and would be executed as the method normally returned.
+                Problems can occur with write-caches, RAII, reference counting
+                when this method aborts execution of wasm code immediately.
+       </b></p></html>
     *  @ingroup system
-    *  @param code - the exit code
-    *  Example:
     *
-    *  @code
-    *  eosio_exit(0);
-    *  eosio_exit(1);
-    *  eosio_exit(2);
-    *  eosio_exit(3);
-    *  @endcode
-    */
+    *  @param code - the exit code
+    *    Example:
+    *
+    *      @code
+    *      eosio_exit(0);
+    *      eosio_exit(1);
+    *      eosio_exit(2);
+    *      eosio_exit(3);
+    *      @endcode
+   */
    inline void eosio_exit( int32_t code ) {
      internal_use_do_not_use::eosio_exit(code);
    }
