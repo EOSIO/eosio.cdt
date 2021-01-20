@@ -61,6 +61,11 @@ int32_t db_store_i64(uint64_t scope, capi_name table, capi_name payer, uint64_t 
   *  @pre `*((uint64_t*)data)` stores the primary key
   *  @pre `iterator` points to an existing table row in the table
   *  @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
+  *  @details This function does not allow changing the primary key of a 
+  *  table row. The serialized data that is stored in the table row of a 
+  *  primary table may include a primary key and that primary key value 
+  *  could be changed by the contract calling the db_update_i64 intrinsic; 
+  *  but that does not change the actual primary key of the table row.
   */
 __attribute__((eosio_wasm_import))
 void db_update_i64(int32_t iterator, capi_name payer, const void* data, uint32_t len);

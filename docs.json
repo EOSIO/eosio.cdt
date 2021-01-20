@@ -11,7 +11,11 @@
 			"name": "doxygen_to_xml",
 			"options": {
 				"INPUT": "libraries/eosiolib",
-				"EXCLUDE_PATTERNS": "*.cpp *.c *.h"
+				"EXCLUDE_PATTERNS": "*.cpp *.c",
+				"ENABLE_PREPROCESSING": "YES",
+				"MACRO_EXPANSION": "YES",
+				"EXPAND_ONLY_PREDEF": "YES",
+				"PREDEFINED": "__attribute__(x)="
 			}
 		},
     	{
