@@ -403,7 +403,7 @@ namespace internal {
  * Indexes must be a member variable or a member function.
  *
  * @tparam T         - the type of the data stored as the value of the table
-  */
+ */
 template<typename T, eosio::name::raw TableName>
 class table : internal::table_base {
 public:

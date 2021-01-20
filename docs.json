@@ -11,7 +11,7 @@
 			"name": "doxygen_to_xml",
 			"options": {
 				"INPUT": "libraries/eosiolib",
-				"EXCLUDE_PATTERNS": "*.cpp *.c *.h"
+				"EXCLUDE_PATTERNS": "*.cpp *.c"
 			}
 		},
     	{

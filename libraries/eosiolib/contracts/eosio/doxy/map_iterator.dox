@@ -1,102 +1,125 @@
-//  -*-c++-*-
+/**
+ * @defgroup keyvaluemap Key Value Map
+ *
+ * @ingroup contracts
+ */
 
 /**
- * @brief This class represents the iterator for the `eosio::kv::map` data type.
+ * @class map
+ *
+ * @ingroup keyvaluemap
+ *
+ * This class represents the 'eosio::kv::map' data type.
+ *
+ * @details TO DO add details here
+ */
+
+/**
+ * @class iterator
+ * @ingroup keyvaluemap
+ *
+ * This class represents the iterator for the 'eosio::kv::map' data type.
+ *
  * @details You will use the sets of functions and operations associated with this type to
  * iterate through values in the map and reference them.
  * 
- * Note that this iterator type in `eosio::kv::map` is defined as `eosio::kv::map::iterator_t`.
- * There is also a reverse iterator available, it is defined as `eosio::kv::map::reverse_iterator_t`.
+ * Note that this iterator type in 'eosio::kv::map' is defined as 'eosio::kv::map::iterator_t'.
+ * There is also a reverse iterator available, it is defined as 'eosio::kv::map::reverse_iterator_t'.
  * The only difference between iterator_t and reverse_iterator_t is the direction the ++ and -- operators go.
  */
-class iterator {
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Constructor for the iterator type.
-    * @param owner This is the owner of the table object.
-    */
-   iterator(name owner);
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Utility function to see if the iterator is valid or is pointing at `end` or one past the last or first element.
-    */
-   bool is_valid() const;
+/**
+ * @fn iterator::is_valid
+ *
+ * Utility function to see if the iterator is valid or is pointing at 'end' or one past the last or first element.
+ *
+ * @returns bool
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief This will take a `key_type` key and find the value that is equal to or greater than that key.
-    * @details If no element is greater than or equal to the key the iterator will now hold `end`.
-    * @param key This is the key which you wish to query with.
-    */
-   iterator& lower_bound(const key_type& key);
+/**
+ * @fn iterator::lower_bound
+ *
+ * This will take a 'key_type' key and find the value that is equal to or greater than that key.
+ *
+ * @details If no element is greater than or equal to the key the iterator will now hold 'end'.
+ *
+ * @param key This is the key which you wish to query with.
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief This will take a `key_type` key and find the value that is strictly greater than that key.
-    * @details If no element is strictly greater than the key the iterator will now hold `end`.
-    * @param key This is the key which you wish to query with.
-    */
-   iterator& upper_bound(const key_type& key);
+/**
+ * @fn iterator::upper_bound
+ *
+ * This will take a 'key_type' key and find the value that is strictly greater than that key.
+ *
+ * @details If no element is strictly greater than the key the iterator will now hold 'end'.
+ *
+ * @param key This is the key which you wish to query with.
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief This will take a `key_type` key and find the value that exactly matches that key.
-    * @details If no element is equal to the key the iterator will now hold `end`.
-    * @param key This is the key which you wish to query with.
-    */
-   iterator& find(const key_type& key);
+/**
+ * @fn iterator::find
+ *
+ * This will take a 'key_type' key and find the value that exactly matches that key.
+ *
+ * @details If no element is equal to the key the iterator will now hold 'end'.
+ *
+ * @param key This is the key which you wish to query with.
+ *
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Function to advance the iterator to the beginning of the map's key value pairs.
-    */
-   iterator& seek_to_begin();
+/**
+ * @fn iterator::seek_to_begin
+ *
+ * Function to advance the iterator to the beginning of the map's key value pairs.
+ *
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Function to advance the iterator to the element past the last element of the map's key value pairs.
-    */
-   iterator& seek_to_end();
+/**
+ * @fn iterator::seek_to_end
+ *
+ * Function to advance the iterator to the element past the last element of the map's key value pairs.
+ *
+ * @returns iterator reference
+ */
 
-   /* @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Function to advance the iterator to the last element of the map's key value pairs.
-    */
-   iterator& seek_to_last();
+/**
+ * @fn iterator::seek_to_last
+ *
+ * Function to advance the iterator to the last element of the map's key value pairs.
+ *
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Function to increment the iterator to the next element (sorted in lexicographic order).
-    * @details Note this is the prefix operator, i.e. `++it`, the `it++` operator is explicitly missing because
-    * of performance issues. If you increment past the last element this iterator will then be invalid and point to `end`.
-    */
-   iterator& operator++();
+/**
+ * @fn iterator::operator++
+ *
+ * Function to increment the iterator to the next element (sorted in lexicographic order).
+ *
+ * @details Note this is the prefix operator, i.e. '++it', the 'it++' operator is explicitly missing because
+ * of performance issues. If you increment past the last element this iterator will then be invalid and point to 'end'.
+ *
+ * @returns iterator reference
+ */
 
-   /**
-    * @defgroup keyvalue Key Value Map
-    * @ingroup contracts
-    *
-    * @brief Function to decrement the iterator to the next element (sorted in lexicographic order).
-    * @details Note this is the prefix operator, i.e. `--it`, the `it--` operator is explicitly missing because
-    * of performance issues. If you decrement past the first element this iterator will then be invalid and point to `end`.
-    */
-   iterator& operator--();
-};
+/**
+ * @fn iterator::operator--
+ *
+ * Function to decrement the iterator to the next element (sorted in lexicographic order).
+ *
+ * @details Note this is the prefix operator, i.e. '--it', the 'it--' operator is explicitly missing because
+ * of performance issues. If you decrement past the first element this iterator will then be invalid and point to 'end'.
+ *
+ * @returns iterator reference
+ */
+
+/**
+ * @fn iterator::iterator
+ *
+ * Constructor for the iterator type.
+ *
+ * @param owner This is the owner of the table object.
+ */
