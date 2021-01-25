@@ -200,7 +200,6 @@ inline partial_key make_key(T val) {
 #endif
 
 static constexpr eosio::name kv_ram = "eosio.kvram"_n;
-static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
 
 template<typename T>
 class kv_table;
@@ -571,7 +570,7 @@ class kv_table : kv_detail::kv_table_base {
 
       iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(index->tbl)->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(index->contract_name.value, index->prefix.data(), index->prefix.size());
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_prev(itr));
          eosio::check(itr_stat != status::iterator_end, "decremented past the beginning");
@@ -643,7 +642,7 @@ class kv_table : kv_detail::kv_table_base {
 
       reverse_iterator& operator--() {
          if (!itr) {
-            itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(index->tbl)->db_name, index->contract_name.value, index->prefix.data(), index->prefix.size());
+            itr = internal_use_do_not_use::kv_it_create(index->contract_name.value, index->prefix.data(), index->prefix.size());
             itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_lower_bound(itr, "", 0));
          }
          itr_stat = static_cast<status>(internal_use_do_not_use::kv_it_next(itr));
@@ -734,7 +733,7 @@ public:
       }
 
       iterator find(const full_key& key) const {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(static_cast<kv_table*>(tbl)->db_name, contract_name.value, prefix.data(), prefix.size());
+         uint32_t itr = internal_use_do_not_use::kv_it_create(contract_name.value, prefix.data(), prefix.size());
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, key.data(), key.size());
 
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, key.data(), key.size());
