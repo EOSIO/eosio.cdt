@@ -242,6 +242,20 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_PACKAGE_BUILDER}
 
+  - label: ":ubuntu: Ubuntu 16.04 - Package Builder"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/package.sh"
+    env:
+      BUILDKITE_AGENT_ACCESS_TOKEN:
+      IMAGE_TAG: "ubuntu-16.04"
+      OS: "ubuntu-16.04" # OS and PKGTYPE required for lambdas
+      PKGTYPE: "deb"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_16}${SKIP_PACKAGE_BUILDER}
+
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
