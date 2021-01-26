@@ -48,6 +48,7 @@ steps:
 
   - label: ":darwin: macOS 10.14 - Build"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
@@ -73,6 +74,7 @@ steps:
 
   - label: ":darwin: macOS 10.15 - Build"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
@@ -143,6 +145,7 @@ steps:
 
   - label: ":darwin: macOS 10.14 - Unit Tests"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
@@ -168,6 +171,7 @@ steps:
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
@@ -235,6 +239,7 @@ steps:
 
   - label: ":darwin: macOS 10.14 - Toolchain Tests"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
@@ -260,6 +265,7 @@ steps:
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
     command:
+      - "brew upgrade"
       - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
