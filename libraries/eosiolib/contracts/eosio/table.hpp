@@ -11,9 +11,16 @@
 
 #warning "eosio::kv::table is designated as `alpha` and should not be used in production code"
 
+/**
+ * @defgroup keyvaluetable Key Value Table
+ * @ingroup contracts
+ */
+
 #define EOSIO_CDT_GET_RETURN_T(value_class, index_name) std::decay_t<decltype(std::invoke(&value_class::index_name, std::declval<const value_class*>()))>
 
 /**
+ * @ingroup keyvaluetable
+ * 
  * @brief Macro to define an index.
  * @details This macro allows users to conveniently define an index without having to specify
  * the index template type, as those can be large/unwieldy to type out. It can be used for both primary and secondary indexes.
@@ -304,7 +311,7 @@ namespace internal {
 
       /**
        * Returns the value that the iterator points to.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return The value that the iterator points to.
        */
@@ -393,9 +400,8 @@ namespace internal {
 }
 
 /**
- * @defgroup keyvalue Key Value Table
- * @ingroup contracts
- *
+ * @ingroup keyvaluetable
+ * 
  * @brief Defines an EOSIO Key Value Table
  * @details EOSIO Key Value API provides a C++ interface to the EOSIO Key Value database.
  * Key Value Tables require 1 primary index, of any type that can be serialized to a binary representation.
@@ -403,7 +409,7 @@ namespace internal {
  * Indexes must be a member variable or a member function.
  *
  * @tparam T         - the type of the data stored as the value of the table
-  */
+ */
 template<typename T, eosio::name::raw TableName>
 class table : internal::table_base {
 public:
@@ -423,7 +429,7 @@ private:
       using iterator_base::iterator_base;
       /**
        * Returns the value that the iterator points to.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return The value that the iterator points to.
        */
@@ -589,7 +595,7 @@ public:
    using value_type = T;
 
    /**
-    * @ingroup keyvalue
+    * @ingroup keyvaluetable
     *
     * @brief Defines an index on an EOSIO Key Value Table
     * @details A Key Value Index allows a user of the table to search based on a given field.
@@ -617,7 +623,7 @@ public:
 
       /**
        * Search for an existing object in a table by the index, using the given key.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @param key - The key to search for.
        * @return An iterator to the found object OR the `end` iterator if the given key was not found.
@@ -640,7 +646,7 @@ public:
 
       /**
        * Check if a given key exists in the index.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @param key - The key to check for.
        * @return If the key exists or not.
@@ -654,7 +660,7 @@ public:
 
       /**
        * Get the value for an existing object in a table by the index, using the given key.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @param key - The key to search for.
        * @return The value corresponding to the key.
@@ -667,7 +673,7 @@ public:
 
       /**
        * Get the value for an existing object in a table by the index, using the given key.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @param key - The key to search for.
        * @return A std::optional of the value corresponding to the key.
@@ -681,7 +687,7 @@ public:
 
       /**
        * Returns an iterator to the object with the lowest key (by this index) in the table.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return An iterator to the object with the lowest key (by this index) in the table.
        */
@@ -694,7 +700,7 @@ public:
 
       /**
        * Returns an iterator pointing past the end. It does not point to any element, therefore `value` should not be called on it.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return An iterator pointing past the end.
        */
@@ -704,7 +710,7 @@ public:
 
       /**
        * Returns a reverse iterator to the object with the highest key (by this index) in the table.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return A reverse iterator to the object with the highest key (by this index) in the table.
        */
@@ -717,7 +723,7 @@ public:
 
       /**
        * Returns a reverse iterator pointing past the beginning. It does not point to any element, therefore `value` should not be called on it.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return A reverse iterator pointing past the beginning.
        */
@@ -727,7 +733,7 @@ public:
 
       /**
        * Returns an iterator pointing to the element with the lowest key greater than or equal to the given key.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return An iterator pointing to the element with the lowest key greater than or equal to the given key.
        */
@@ -742,7 +748,7 @@ public:
 
       /**
        * Returns an iterator pointing to the first element greater than the given key.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @return An iterator pointing to the first element greater than the given key.
        */
@@ -766,7 +772,7 @@ public:
 
       /**
        * Returns a vector of objects that fall between the specifed range. The range is inclusive, exclusive.
-       * @ingroup keyvalue
+       * @ingroup keyvaluetable
        *
        * @param begin - The beginning of the range (inclusive).
        * @param end - The end of the range (exclusive).
@@ -788,7 +794,7 @@ public:
    };
 
    /**
-    * @ingroup keyvalue
+    * @ingroup keyvaluetable
     * Puts a value into the table. If the value already exists, it updates the existing entry.
     * The key is determined from the defined primary index.
     * If the put attempts to store over an existing secondary index, the transaction will be aborted.
@@ -819,7 +825,7 @@ public:
 
    /**
     * Removes a value from the table.
-    * @ingroup keyvalue
+    * @ingroup keyvaluetable
     *
     * @param key - The key of the value to be removed.
     */
