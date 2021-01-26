@@ -15,7 +15,7 @@
  */
 
 /**
- * @class map::iterator
+ * @class iterator
  * @ingroup keyvaluemap
  *
  * @brief This class represents the iterator for the 'eosio::kv::map' data type.
@@ -29,7 +29,7 @@
  */
 
 /**
- * @fn map::iterator::iterator
+ * @fn iterator::iterator
  * @ingroup keyvaluemap
  *
  * Constructor for the iterator type.
@@ -38,7 +38,7 @@
  */
 
 /**
- * @fn map::iterator::is_valid
+ * @fn iterator::is_valid
  * @ingroup keyvaluemap
  *
  * Utility function to see if the iterator is valid or is pointing at 'end' or one past the last or first element.
@@ -47,7 +47,7 @@
  */
 
 /**
- * @fn map::iterator::lower_bound
+ * @fn iterator::lower_bound
  *
  * This will take a 'key_type' key and find the value that is equal to or greater than that key.
  *
@@ -58,7 +58,7 @@
  */
 
 /**
- * @fn map::iterator::upper_bound
+ * @fn iterator::upper_bound
  *
  * This will take a 'key_type' key and find the value that is strictly greater than that key.
  *
@@ -69,7 +69,7 @@
  */
 
 /**
- * @fn map::iterator::find
+ * @fn iterator::find
  *
  * This will take a 'key_type' key and find the value that exactly matches that key.
  *
@@ -81,7 +81,7 @@
  */
 
 /**
- * @fn map::iterator::seek_to_begin
+ * @fn iterator::seek_to_begin
  *
  * Function to advance the iterator to the beginning of the map's key value pairs.
  *
@@ -89,7 +89,7 @@
  */
 
 /**
- * @fn map::iterator::seek_to_end
+ * @fn iterator::seek_to_end
  *
  * Function to advance the iterator to the element past the last element of the map's key value pairs.
  *
@@ -97,7 +97,7 @@
  */
 
 /**
- * @fn map::iterator::seek_to_last
+ * @fn iterator::seek_to_last
  *
  * Function to advance the iterator to the last element of the map's key value pairs.
  *
@@ -105,7 +105,7 @@
  */
 
 /**
- * @fn map::iterator::operator++
+ * @fn iterator::operator++
  *
  * Function to increment the iterator to the next element (sorted in lexicographic order).
  *
@@ -116,7 +116,7 @@
  */
 
 /**
- * @fn map::iterator::operator--
+ * @fn iterator::operator--
  *
  * Function to decrement the iterator to the next element (sorted in lexicographic order).
  *
