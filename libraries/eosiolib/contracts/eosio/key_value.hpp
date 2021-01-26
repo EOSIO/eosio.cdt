@@ -199,7 +199,9 @@ inline partial_key make_key(T val) {
 }
 #endif
 
+// Ignored by kv_table, maintained for now so contracts do not have to change
 static constexpr eosio::name kv_ram = "eosio.kvram"_n;
+static constexpr eosio::name kv_disk = "eosio.kvdisk"_n;
 
 template<typename T>
 class kv_table;

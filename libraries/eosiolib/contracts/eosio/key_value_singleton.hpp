@@ -24,7 +24,7 @@ namespace eosio {
       }
    }
 
-   template <typename T, eosio::name::raw SingletonName, eosio::name::raw DbName = "eosio.kvram"_n>
+   template <typename T, eosio::name::raw SingletonName>
    class kv_singleton {
       struct state {
          T value;
@@ -154,7 +154,6 @@ namespace eosio {
       }
 
    private:
-      constexpr static uint64_t db_name = static_cast<uint64_t>(DbName);
       constexpr static uint64_t singleton_name = static_cast<uint64_t>(SingletonName);
 
       eosio::name contract_name;
