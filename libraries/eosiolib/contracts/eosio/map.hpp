@@ -140,8 +140,8 @@ namespace eosio::kv {
        * @ingroup keyvaluemap
        * 
        * @brief This struct represents the data type stored in map.
-       * @details You will use the sets of functions and operations associated with this type to
-       * access the items stored in the map.
+       * @details You will use the set of functions and operations associated 
+       * with this type to access the items stored in the map.
        * 
        * Note that this type in `eosio::kv::map` is defined as `eosio::kv::map::elem_t`.
        */
@@ -174,8 +174,8 @@ namespace eosio::kv {
        * @ingroup keyvaluemap
        * 
        * @brief This struct represents the iterator for the `eosio::kv::map` data type.
-       * @details You will use the sets of functions and operations associated with this type to
-       * iterate through values in the map and reference them.
+       * @details You will use the set of functions and operations associated with 
+       * this type to iterate through values in the map and reference them.
        * 
        * Note that this iterator type in `eosio::kv::map` is defined as `eosio::kv::map::iterator_t`.
        * There is also a reverse iterator available, it is defined as `eosio::kv::map::reverse_iterator_t`.
@@ -249,8 +249,9 @@ namespace eosio::kv {
          /**
           * @ingroup keyvaluemap
           *
-          * @brief Utility function to see if the iterator is valid or is pointing 
-          * at `end` or one past the last or first element.
+          * @brief Utility function which returns true if iterator is valid or false 
+          * if iterator is not valid. An iterator is not valid if is pointing at 
+          * `end` or one past the last or first element.
           */
          inline bool is_valid() const { return query_status<status::ok>(current_status); }
 

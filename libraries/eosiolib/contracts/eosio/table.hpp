@@ -408,7 +408,7 @@ namespace internal {
  * Key Value Tables support 0 or more secondary index, of any type that can be serialized to a binary representation.
  * Indexes must be a member variable or a member function.
  *
- * @tparam T         - the type of the data stored as the value of the table
+ * @tparam T         - the type of the data stored as the value in the table
  */
 template<typename T, eosio::name::raw TableName>
 class table : internal::table_base {
