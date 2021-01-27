@@ -58,13 +58,6 @@ struct myramtable : kv_table<myrecord> {
         init(contract_name, "testtable"_n, "eosio.kvram"_n, ...)
     }
 }
-
-struct mydisktable : kv_table<myrecord> {
-    // Assume some indexes
-    mydisktable(eosio::name contract_name) {
-        init(contract_name, "testtable"_n, "eosio.kvdisk"_n, ...)
-    }
-}
 ```
 
 ### kv_table::put Example:

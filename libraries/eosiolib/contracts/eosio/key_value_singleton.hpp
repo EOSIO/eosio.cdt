@@ -11,20 +11,20 @@ namespace eosio {
    namespace internal_use_do_not_use {
       extern "C" {
          __attribute__((eosio_wasm_import))
-         int64_t kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size);
+         int64_t kv_erase(uint64_t contract, const char* key, uint32_t key_size);
 
          __attribute__((eosio_wasm_import))
-         int64_t kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size);
+         int64_t kv_set(uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size, uint64_t payer);
 
          __attribute__((eosio_wasm_import))
-         bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
+         bool kv_get(uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
 
          __attribute__((eosio_wasm_import))
-         uint32_t kv_get_data(uint64_t db, uint32_t offset, char* data, uint32_t data_size);
+         uint32_t kv_get_data(uint32_t offset, char* data, uint32_t data_size);
       }
    }
 
-   template <typename T, eosio::name::raw SingletonName, eosio::name::raw DbName = "eosio.kvram"_n>
+   template <typename T, eosio::name::raw SingletonName>
    class kv_singleton {
       struct state {
          T value;
@@ -75,7 +75,7 @@ namespace eosio {
             uint32_t copy_size;
             uint32_t value_size;
 
-            auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
+            auto success = internal_use_do_not_use::kv_get(contract_name.value, key.data(), key.size(), value_size);
 
             if( !success ) {
                 eosio::check(success, "tried to get the singleton '" + std::string(contract_name) + "'/'"+ std::string(name(SingletonName)) + "' that does not exist");
@@ -83,7 +83,7 @@ namespace eosio {
 
             ste.raw_original = (char*)malloc(value_size);
             ste.raw_original_size = value_size;
-            copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, ste.raw_original, value_size);
+            copy_size = internal_use_do_not_use::kv_get_data(0, ste.raw_original, value_size);
 
             deserialize(ste.value, ste.raw_original, copy_size);
             ste.is_cached = true;
@@ -98,7 +98,7 @@ namespace eosio {
             uint32_t copy_size;
             uint32_t value_size;
 
-            auto success = internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
+            auto success = internal_use_do_not_use::kv_get(contract_name.value, key.data(), key.size(), value_size);
 
             if( !success ) {
                 eosio::check(success, "tried to get the singleton '" + std::string(contract_name) + "'/'"+ std::string(name(SingletonName)) + "' that does not exist");
@@ -106,7 +106,7 @@ namespace eosio {
 
             ste.raw_original = (char*)malloc(value_size);
             ste.raw_original_size = value_size;
-            copy_size = internal_use_do_not_use::kv_get_data(db_name, 0, ste.raw_original, value_size);
+            copy_size = internal_use_do_not_use::kv_get_data(0, ste.raw_original, value_size);
 
             deserialize(ste.value, ste.raw_original, copy_size);
             ste.is_cached = true;
@@ -127,11 +127,11 @@ namespace eosio {
       bool exists() const {
          uint32_t value_size;
 
-         return internal_use_do_not_use::kv_get(db_name, contract_name.value, key.data(), key.size(), value_size);
+         return internal_use_do_not_use::kv_get(contract_name.value, key.data(), key.size(), value_size);
       }
 
       void erase() {
-         internal_use_do_not_use::kv_erase(db_name, contract_name.value, key.data(), key.size());
+         internal_use_do_not_use::kv_erase(contract_name.value, key.data(), key.size());
          auto& ste = get_state();
          ste.is_cached = false;
          ste.is_dirty = false;
@@ -148,13 +148,12 @@ namespace eosio {
             serialize(ste.value, data_buffer, data_size);
 
             if (ste.raw_original_size != data_size || memcmp(ste.raw_original, data_buffer, data_size) != 0) {
-               internal_use_do_not_use::kv_set(db_name, contract_name.value, key.data(), key.size(), (const char*)data_buffer, data_size);
+               internal_use_do_not_use::kv_set(contract_name.value, key.data(), key.size(), (const char*)data_buffer, data_size, contract_name.value);
             }
          }
       }
 
    private:
-      constexpr static uint64_t db_name = static_cast<uint64_t>(DbName);
       constexpr static uint64_t singleton_name = static_cast<uint64_t>(SingletonName);
 
       eosio::name contract_name;
