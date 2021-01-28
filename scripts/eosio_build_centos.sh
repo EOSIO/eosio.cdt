@@ -49,60 +49,66 @@
 	fi
 	
 	printf "\\tYum installation found at %s.\\n" "${YUM}"
-	printf "\\n\\tChecking installation of Centos Software Collections Repository.\\n"
-	
-	SCL=$( command -v scl 2>/dev/null )
-	if [ -z "${SCL}" ]; then
-		printf "\\n\\tThe Centos Software Collections Repository, devtoolset-7 and Python3 are required to install EOSIO.\\n"
-		printf "\\tDo you wish to install and enable this repository, devtoolset-7 and Python3 packages?\\n"
-		select yn in "Yes" "No"; do
-			case $yn in
-				[Yy]* ) 
-					printf "\\n\\n\\tInstalling SCL.\\n\\n"
-					if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl 2>/dev/null
-					then
-						printf "\\n\\tCentos Software Collections Repository installation failed.\\n"
-						printf "\\n\\tExiting now.\\n\\n"
-						exit 1;
-					else
-						printf "\\n\\tCentos Software Collections Repository installed successfully.\\n"
-					fi
-					printf "\\n\\n\\tInstalling devtoolset-7.\\n\\n"
-					if ! sudo "${YUM}" install -y devtoolset-7 2>/dev/null
-					then
-						printf "\\n\\tCentos devtoolset-7 installation failed.\\n"
-						printf "\\n\\tExiting now.\\n\\n"
-						exit 1;
-					else
-						printf "\\n\\tCentos devtoolset installed successfully.\\n"
-					fi
-					printf "\\n\\n\\tInstalling Python3.\\n\\n"
-					if ! sudo "${YUM}" install -y python33.x86_64 2>/dev/null
-					then
-						printf "\\n\\tCentos Python3 installation failed.\\n"
-						printf "\\n\\tExiting now.\\n\\n"
-						exit 1;
-					else
-						printf "\\n\\tCentos Python3 installed successfully.\\n"
-					fi
-				break;;
-				[Nn]* ) echo "User aborting installation of required Centos Software Collections Repository, Exiting now."; exit;;
-				* ) echo "Please type 1 for yes or 2 for no.";;
-			esac
-		done
-	else 
-		printf "\\tCentos Software Collections Repository found.\\n\\n"
-	fi
 
-	printf "\\n\\tEnabling Centos devtoolset-7.\\n"
+	if [ "${OS_VER}" -lt 8 ]; then
+		printf "\\n\\tChecking installation of Centos Software Collections Repository.\\n"
+		
+		SCL=$( command -v scl 2>/dev/null )
+		if [ -z "${SCL}" ]; then
+			printf "\\n\\tThe Centos Software Collections Repository, devtoolset-7 and Python3 are required to install EOSIO.\\n"
+			printf "\\tDo you wish to install and enable this repository, devtoolset-7 and Python3 packages?\\n"
+			select yn in "Yes" "No"; do
+				case $yn in
+					[Yy]* ) 
+						printf "\\n\\n\\tInstalling SCL.\\n\\n"
+						if ! sudo "${YUM}" -y --enablerepo=extras install centos-release-scl 2>/dev/null
+						then
+							printf "\\n\\tCentos Software Collections Repository installation failed.\\n"
+							printf "\\n\\tExiting now.\\n\\n"
+							exit 1;
+						else
+							printf "\\n\\tCentos Software Collections Repository installed successfully.\\n"
+						fi
+						printf "\\n\\n\\tInstalling devtoolset-7.\\n\\n"
+						if ! sudo "${YUM}" install -y devtoolset-7 2>/dev/null
+						then
+							printf "\\n\\tCentos devtoolset-7 installation failed.\\n"
+							printf "\\n\\tExiting now.\\n\\n"
+							exit 1;
+						else
+							printf "\\n\\tCentos devtoolset installed successfully.\\n"
+						fi
+						printf "\\n\\n\\tInstalling Python3.\\n\\n"
+						if ! sudo "${YUM}" install -y python33.x86_64 2>/dev/null
+						then
+							printf "\\n\\tCentos Python3 installation failed.\\n"
+							printf "\\n\\tExiting now.\\n\\n"
+							exit 1;
+						else
+							printf "\\n\\tCentos Python3 installed successfully.\\n"
+						fi
+					break;;
+					[Nn]* ) echo "User aborting installation of required Centos Software Collections Repository, Exiting now."; exit;;
+					* ) echo "Please type 1 for yes or 2 for no.";;
+				esac
+			done
+		else 
+			printf "\\tCentos Software Collections Repository found.\\n\\n"
+		fi
+	
+		printf "\\n\\tEnabling Centos devtoolset-7.\\n"
 # shellcheck disable=SC1091
-	if ! source "/opt/rh/devtoolset-7/enable" 2>/dev/null
-	then
-		printf "\\n\\tUnable to enable Centos devtoolset-7 at this time.\\n"
-		printf "\\n\\tExiting now.\\n\\n"
-		exit 1;
+		if ! source "/opt/rh/devtoolset-7/enable" 2>/dev/null
+		then
+			printf "\\n\\tUnable to enable Centos devtoolset-7 at this time.\\n"
+			printf "\\n\\tExiting now.\\n\\n"
+			exit 1;
+		fi
+		printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
+
+	elif [ "${OS_VER}" -eq 8 ]; then
+		sudo "${YUM}" install -y gdisk 2>/dev/null
 	fi
-	printf "\\tCentos devtoolset-7 successfully enabled.\\n\\n"
 
 # 	printf "\\n\\tEnabling Centos python3 installation.\\n"
 # shellcheck disable=SC1091
@@ -125,9 +131,15 @@
 
 	printf "\\n\\tYUM repository successfully updated.\\n\\n"
 
-	DEP_ARRAY=( git autoconf automake bzip2 libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
-	libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
-	python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64)
+	if [ "${OS_VER}" -eq 7 ]; then
+		DEP_ARRAY=( git autoconf automake bzip2 libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
+		libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
+		python-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64)
+	elif [ "${OS_VER}" -eq 8 ]; then
+		DEP_ARRAY=( git autoconf automake bzip2 libtool make \
+		libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 gmp-devel.x86_64 \
+		python38 python3-devel gettext-devel.x86_64 gcc-c++.x86_64)
+	fi
 	COUNT=1
 	DISPLAY=""
 	DEP=""
