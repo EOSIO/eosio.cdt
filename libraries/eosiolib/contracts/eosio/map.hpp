@@ -11,6 +11,11 @@
 #include <functional>
 #include <string_view>
 
+/**
+ * @defgroup keyvaluemap Key Value Map
+ * @ingroup contracts
+ */
+
 namespace eosio::kv {
    namespace internal_use_do_not_use {
       extern "C" {
@@ -61,7 +66,6 @@ namespace eosio::kv {
       }
    }
 
-   /* @cond PRIVATE */
    // tag used by some of the types to delineate overloads between key_type (std::string) and the map's key type
    struct packed_tag {};
 
@@ -132,6 +136,15 @@ namespace eosio::kv {
          return internal_use_do_not_use::kv_it_lower_bound(itr, "", 0, _k, _v);
       }
 
+      /**
+       * @ingroup keyvaluemap
+       * 
+       * @brief This struct represents the data type stored in map.
+       * @details You will use the set of functions and operations associated 
+       * with this type to access the items stored in the map.
+       * 
+       * Note that this type in `eosio::kv::map` is defined as `eosio::kv::map::elem_t`.
+       */
       template <typename KV>
       struct elem {
          using key_t   = typename KV::key_t;
@@ -157,6 +170,17 @@ namespace eosio::kv {
          name     payer;
       };
 
+      /**
+       * @ingroup keyvaluemap
+       * 
+       * @brief This struct represents the iterator for the `eosio::kv::map` data type.
+       * @details You will use the set of functions and operations associated with 
+       * this type to iterate through values in the map and reference them.
+       * 
+       * Note that this iterator type in `eosio::kv::map` is defined as `eosio::kv::map::iterator_t`.
+       * There is also a reverse iterator available, it is defined as `eosio::kv::map::reverse_iterator_t`.
+       * The only difference between iterator_t and reverse_iterator_t is the direction the ++ and -- operators go.
+       */
       template <bool Reverse, typename KV>
       struct iterator {
          using elem_t = elem<KV>;
@@ -176,6 +200,12 @@ namespace eosio::kv {
             return Stat == static_cast<status>(stat);
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Constructor for the iterator type.
+          * @param owner This is the owner of the table object.
+          */
          inline iterator(name owner)
             : element(),
               handle(itr_create(owner, {KV::prefix().data(), KV::prefix().size()})) {}
@@ -216,29 +246,65 @@ namespace eosio::kv {
                itr_destroy(handle);
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Utility function which returns true if iterator is valid or false 
+          * if iterator is not valid. An iterator is not valid if is pointing at 
+          * `end` or one past the last or first element.
+          */
          inline bool is_valid() const { return query_status<status::ok>(current_status); }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to advance the iterator to the beginning of the map's key value pairs.
+          */
          iterator& seek_to_begin() {
             current_status = static_cast<status>(itr_lower_bound(handle));
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to advance the iterator to the last element of the map's key value pairs.
+          */
          iterator& seek_to_last() {
             current_status = static_cast<status>(itr_move_to_end(handle));
             current_status = static_cast<status>(itr_prev(handle));
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to advance the iterator to the element past the last element of the map's key value pairs.
+          */
          iterator& seek_to_end() {
             current_status = static_cast<status>(itr_move_to_end(handle));
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief This will take a `key_type` key and find the value that is equal to or greater than that key.
+          * @details If no element is greater than or equal to the key the iterator will now hold `end`.
+          * @param key This is the key which you wish to query with.
+          */
          iterator& lower_bound(const key_type& k) {
             current_status = static_cast<status>(itr_lower_bound(handle, {k.data(), k.size()}));
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief This will take a `key_type` key and find the value that exactly matches that key.
+          * @details If no element is equal to the key the iterator will now hold `end`.
+          * @param key This is the key which you wish to query with.
+          */
          iterator& find(const key_type& k) {
             lower_bound(k);
             if (itr_key_compare(handle, {k.data(), k.size()}) != 0)
@@ -263,6 +329,13 @@ namespace eosio::kv {
             return &element;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to increment the iterator to the next element (sorted in lexicographic order).
+          * @details Note this is the prefix operator, i.e. `++it`, the `it++` operator is explicitly missing because
+          * of performance issues. If you increment past the last element this iterator will then be invalid and point to `end`.
+          */
          iterator& operator++() {
             if constexpr (Reverse) {
                current_status = static_cast<status>(itr_prev(handle));
@@ -276,6 +349,13 @@ namespace eosio::kv {
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to decrement the iterator to the next element (sorted in lexicographic order).
+          * @details Note this is the prefix operator, i.e. `--it`, the `it--` operator is explicitly missing because
+          * of performance issues. If you decrement past the first element this iterator will then be invalid and point to `end`.
+          */
          iterator& operator--() {
             if constexpr (Reverse) {
                check(query_status<status::ok>(current_status), "decrementing past end or an erased iterator");
@@ -289,6 +369,11 @@ namespace eosio::kv {
             return *this;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to test equality.
+          */
          inline bool operator==(const iterator& o) const {
             // ignoring key_size and value_size as they shouldn't play a role in equality
             return (std::tie(handle, current_status) == std::tie(o.handle, o.current_status)) ||
@@ -296,6 +381,11 @@ namespace eosio::kv {
                    !itr_compare(handle, o.handle);
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief Function to test inequality.
+          */
          inline bool operator!=(const iterator& o) const { return !((*this) == o); }
 
          void materialize() const {
@@ -317,12 +407,21 @@ namespace eosio::kv {
          status         current_status = status::ok;
       };
    } // namespace eosio::kv::detail
-/* @endcond */
 
-#if EOSIO_CDT_DOXYGEN
-#include "doxy/map_iterator.dox"
-#endif
-
+   /**
+    * @ingroup keyvaluemap
+    *
+    * @brief Defines an EOSIO Key Value Map
+    * @details EOSIO Key Value API provides a C++ interface to the EOSIO Key Value database.
+    * The Key Value Map offered by the KV API serves as a storage location which is organized 
+    * as a sorted associative container that contains key-value pairs with unique keys.
+    * Keys are sorted lexicographically. Search, removal, and insertion operations have
+    * logarithmic complexity, O(log(n)). 'KV Map' is designed to offer a comparable 
+    * interface to std::map template class.
+    *
+    * @tparam K         - the type of the data stored as the key of the map
+    * @tparam V         - the type of the data stored as the value of the map
+    */
    template <eosio::name::raw TableName, typename K, typename V, eosio::name::raw IndexName="map.index"_n>
    class [[eosio::table]] map {
       public:
@@ -436,6 +535,13 @@ namespace eosio::kv {
             return it == end();
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief This will take a `key_t` key and find the value that exactly matches that key.
+          * @details If no element is equal to the key the iterator will now hold `end`.
+          * @param key This is the key which you wish to query with.
+          */
          iterator_t find(const key_t& k) const {
             auto fk = full_key(k);
             iterator_t it = {owner};
@@ -457,12 +563,26 @@ namespace eosio::kv {
             return it;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief This will take a `key_t` key and find the value that is equal to or greater than that key.
+          * @details If no element is greater than or equal to the key the iterator will now hold `end`.
+          * @param key This is the key which you wish to query with.
+          */
          inline iterator_t lower_bound(const key_t& k) const {
             iterator_t it = {owner};
             it.lower_bound(full_key(k));
             return it;
          }
 
+         /**
+          * @ingroup keyvaluemap
+          *
+          * @brief This will take a `key_t` key and find the value that is strictly greater than that key.
+          * @details If no element is strictly greater than the key the iterator will now hold `end`.
+          * @param key This is the key which you wish to query with.
+          */
          inline iterator_t upper_bound(const key_t& k) const {
             auto fk = full_key(k);
             detail::increment_bytes(fk); // add '1' to the last byte, this should get us to the next value up
