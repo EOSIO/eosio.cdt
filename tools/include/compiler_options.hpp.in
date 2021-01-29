@@ -891,8 +891,7 @@ static Options CreateOptions(bool add_defaults=true) {
    if (!contract_name.empty()) {
       abigen_contract = contract_name;
       has_contract_opt = true;
-   }
-   else {
+   } else {
       llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
       llvm::sys::path::replace_extension(fn, "");
       abigen_contract = fn.str();
