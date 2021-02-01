@@ -385,6 +385,8 @@ struct Options {
    bool debug;
    bool native;
    std::pair<int, int> abi_version;
+   bool has_o_opt;
+   bool has_contract_opt;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -544,6 +546,8 @@ static Options CreateOptions(bool add_defaults=true) {
    std::string pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
+   bool has_o_opt;
+   bool has_contract_opt;
 
 #ifdef ONLY_LD
    bool abigen = false;
@@ -833,11 +837,13 @@ static Options CreateOptions(bool add_defaults=true) {
          ldopts.emplace_back("-o"+output_fn);
       }
 #endif
+      has_o_opt = false;
    }
    else {
       ldopts.emplace_back("-o");
       ldopts.emplace_back(o_opt);
       output_fn = o_opt;
+      has_o_opt = true;
    }
 
    if (!fnative_opt) {
@@ -882,12 +888,14 @@ static Options CreateOptions(bool add_defaults=true) {
       agopts.emplace_back("-fstrict-vtable-pointers");
    }
 #endif
-   if (!contract_name.empty())
+   if (!contract_name.empty()) {
       abigen_contract = contract_name;
-   else {
+      has_contract_opt = true;
+   } else {
       llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
       llvm::sys::path::replace_extension(fn, "");
       abigen_contract = fn.str();
+      has_contract_opt = false;
    }
 
    for ( auto resource : resources ) {
@@ -910,8 +918,8 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt};
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt};
 #endif
 }

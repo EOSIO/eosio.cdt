@@ -105,6 +105,7 @@ struct simple_ricardian_tokenizer {
 struct generation_utils {
    std::vector<std::string> resource_dirs;
    std::string contract_name;
+   inline static std::string parsed_contract_name = ""; // obtained by parsing methods/records
    bool suppress_ricardian_warnings;
 
    generation_utils() : resource_dirs({"./"}) {}
@@ -154,6 +155,7 @@ struct generation_utils {
 
    inline void set_contract_name( const std::string& cn ) { contract_name = cn; }
    inline std::string get_contract_name()const { return contract_name; }
+   static inline std::string get_parsed_contract_name() { return parsed_contract_name; }
    inline void set_resource_dirs( const std::vector<std::string>& rd ) {
       llvm::SmallString<128> cwd;
       auto has_real_path = llvm::sys::fs::real_path("./", cwd, true);
@@ -279,7 +281,8 @@ struct generation_utils {
       if (name.empty()) {
          name = decl->getParent()->getName().str();
       }
-      return name == cn;
+      parsed_contract_name = name;
+      return cn == parsed_contract_name;
    }
 
    static inline bool is_eosio_contract( const clang::CXXRecordDecl* decl, const std::string& cn ) {
@@ -293,7 +296,8 @@ struct generation_utils {
          auto nm = pd->getEosioContractAttr()->getName().str();
          name = nm.empty() ? pd->getName().str() : nm;
       }
-      return cn == name;
+      parsed_contract_name = name;
+      return cn == parsed_contract_name;
    }
 
    inline bool is_template_specialization( const clang::QualType& type, const std::vector<std::string>& names ) {
