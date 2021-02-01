@@ -194,3 +194,12 @@ class CompileFailTest(Test):
         self.handle_test_result(res, expected_pass=False)
 
         return res
+
+class AbigenFailTest(Test):
+    def _run(self, eosio_cpp, args):
+        command = [eosio_cpp, self.cpp_file, "-abigen_output=''"]
+        command.extend(args)
+        res = subprocess.run(command, capture_output=True)
+        self.handle_test_result(res, expected_pass=False)
+        
+        return res
