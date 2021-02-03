@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo '--- :evergreen_tree: Configuring Environment'
 set -euo pipefail
 
 buildkite-agent artifact download '*.deb' --step ':ubuntu: Ubuntu 18.04 - Package Builder' .
@@ -11,6 +11,7 @@ echo "$SANITIZED_BRANCH"
 echo "$SANITIZED_TAG"
 
 # do docker build
+echo '+++ :docker: Building Container'
 echo ":docker::build: Building image..."
 DOCKERHUB_REGISTRY="docker.io/eosio/eosio.cdt"
 
@@ -20,7 +21,7 @@ echo "$ $DOCKER_BUILD_GEN"
 eval $DOCKER_BUILD_GEN
 
 #tag and push on each destination AWS & DOCKERHUB
-
+echo '+++ :arrow_up: Pushing Container'
 EOSIO_REGS=("$EOSIO_REGISTRY" "$DOCKERHUB_REGISTRY")
 for REG in ${EOSIO_REGS[@]}; do
     DOCKER_TAG_COMMIT="docker tag eosio_cdt_image:$BUILD_TAG $REG:$BUILDKITE_COMMIT"
