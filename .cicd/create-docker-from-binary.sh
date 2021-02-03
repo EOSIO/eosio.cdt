@@ -16,13 +16,13 @@ echo ":docker::build: Building image..."
 DOCKERHUB_REGISTRY="docker.io/eosio/eosio.cdt"
 
 BUILD_TAG=${BUILDKITE_BUILD_NUMBER:-latest}
-DOCKER_BUILD_GEN="docker build -t eosio_cdt_image:$BUILD_TAG -f ./docker/Dockerfile ."
+DOCKER_BUILD_GEN="docker build -t eosio_cdt_image:$BUILD_TAG -f ./docker/dockerfile ."
 echo "$ $DOCKER_BUILD_GEN"
 eval $DOCKER_BUILD_GEN
 
 #tag and push on each destination AWS & DOCKERHUB
 echo '+++ :arrow_up: Pushing Container'
-EOSIO_REGS=("$EOSIO_REGISTRY" "$DOCKERHUB_REGISTRY")
+EOSIO_REGS=("$EOSIO_CDT_REGISTRY" "$DOCKERHUB_REGISTRY")
 for REG in ${EOSIO_REGS[@]}; do
     DOCKER_TAG_COMMIT="docker tag eosio_cdt_image:$BUILD_TAG $REG:$BUILDKITE_COMMIT"
     DOCKER_TAG_BRANCH="docker tag eosio_cdt_image:$BUILD_TAG $REG:$SANITIZED_BRANCH"
