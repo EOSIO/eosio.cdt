@@ -160,5 +160,5 @@ Error Details:
 assertion failure with message: system contract must first be initialized
 ```
 
-The failure is stating that `eosio.system` init action hasn't been called yet. The init action implementation is done through `void init(uint64_t, symbol)` function. The first parameter is the version, this should always be `0` for now, until a new version of `init` will be created that handles more information.
-The second parameter is the system's symbol (i.e. for main net this is `EOS`). If you followed the [BIOS Boot Sequence](https://developers.eos.io/welcome/latest/tutorials/bios-boot-sequence) tutorial and created a system with the default symbol `SYS` then `SYS` shall be used as the system's symbol in the init action. It is whatever symbol you as the chain creator want to use in your `EOSIO` based blockchain.
+The failure is stating that `eosio.system` `init` action hasn't been called yet. The `init` action implementation is done through `void init(uint64_t, symbol)` function. The first parameter is the version, this should always be `0` for now, until a new version of `init` will be created that handles more information.
+The second parameter is the system's symbol (i.e. for main net this is `EOS`). If you followed the [BIOS Boot Sequence](https://developers.eos.io/welcome/latest/tutorials/bios-boot-sequence) tutorial and created a system with the default symbol `SYS` then `SYS` shall be used as the system's symbol in the `init` action. It is whatever symbol you as the chain creator want to use in your `EOSIO` based blockchain.
