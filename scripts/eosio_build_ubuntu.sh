@@ -53,9 +53,15 @@
 		exit 1
 	fi
 
-	DEP_ARRAY=(clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
-	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
-    autoconf libtool curl zlib1g-dev doxygen graphviz)
+	if [ "${OS_MAJ}" -lt 20 ]; then
+		DEP_ARRAY=(clang-4.0 lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
+		libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
+		autoconf libtool curl zlib1g-dev doxygen graphviz)
+	else 
+		DEP_ARRAY=(clang-6.0 lldb-6.0 libclang-6.0-dev cmake make automake libbz2-dev libssl-dev \
+		libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev python3-dev \
+		autoconf libtool curl zlib1g-dev doxygen graphviz)
+	fi
 	COUNT=1
 	DISPLAY=""
 	DEP=""
