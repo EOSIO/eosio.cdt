@@ -426,7 +426,7 @@ steps:
   - label: ":docker::ubuntu: Docker - Build 18.04 Docker Image"
     command: "./.cicd/create-docker-from-binary.sh"
     agents:
-      queue: "automation-eks-eos-builder-fleet"
+      queue: "automation-eks-eos-tester-fleet"
     timeout: 10
 
   - label: ":git: Git Submodule Regression Check"
