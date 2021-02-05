@@ -211,6 +211,14 @@ steps:
     timeout: 10
     skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
 
+  - wait
+  
+  - label: ":docker::ubuntu: Docker - Build 18.04 Docker Image"
+    command: "./.cicd/create-docker-from-binary.sh"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: 10
+
   - label: ":git: Git Submodule Regression Check"
     command:
       - "./.cicd/submodule-regression-checker.sh"
