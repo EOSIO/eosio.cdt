@@ -1,0 +1,6 @@
+FROM ubuntu:18.04
+COPY *.deb /
+RUN apt-get update && \
+    apt-get install -y /*.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
