@@ -66,11 +66,17 @@ if [ "${DISK_AVAIL%.*}" -lt "${DISK_MIN}" ]; then
 fi
 
 # llvm-4.0 is installed into /usr/lib/llvm-4.0
-DEP_ARRAY=(
-	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
+if [ "${OS_MAJ}" -lt 20 ]; then
+    DEP_ARRAY=( 
+    	git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev \
+    	libgmp3-dev autotools-dev build-essential libicu-dev python2.7 python2.7-dev python3 python3-dev \
+    	autoconf libtool curl zlib1g-dev sudo ruby
+    )
+else
+	DEP_ARRAY=(git clang-6.0 llvm-6.0 libclang-6.0-dev make automake libbz2-dev libssl-dev \
 	libgmp3-dev autotools-dev build-essential libicu-dev python2.7 python2.7-dev python3 python3-dev \
-	autoconf libtool curl zlib1g-dev sudo ruby
-)
+	autoconf libtool curl zlib1g-dev sudo ruby ncurses5)
+fi
 COUNT=1
 DISPLAY=""
 DEP=""
