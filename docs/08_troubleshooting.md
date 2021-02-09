@@ -153,8 +153,11 @@ The code above has one `print` statement before the `singleton_set.send` and ano
 
 ## Assertion failure while creating an account after eosio.system was installed
 
-```console
+```sh
 cleos create account eosio bob EOS5HUanbay86UUnr1d4fuBsQ3ksjfgZYoLUVvrYVLy6pj4i8xqVY
+```
+
+```console
 Error 3050003: eosio_assert_message assertion failure
 Error Details:
 assertion failure with message: system contract must first be initialized
