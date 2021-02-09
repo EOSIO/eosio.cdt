@@ -313,11 +313,7 @@ namespace eosio {
    } /// namespace detail
 } /// namespace eosio
 
-/// @cond IMPLEMENTATIONS
-
 /**
- * %name literal operator
- *
  * @ingroup name
  * @brief "foo"_n is a shortcut for name("foo")
  */
@@ -329,5 +325,3 @@ inline constexpr eosio::name operator""_n() {
    return x;
 }
 #pragma clang diagnostic pop
-
-/// @endcond
