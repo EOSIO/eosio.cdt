@@ -18,7 +18,7 @@ else # Linux
     if [[ "$IMAGE_TAG" == "centos-8" ]]; then
         PRE_COMMANDS="cd $MOUNTED_DIR/build"
         PACKAGE_COMMANDS="yum install -y python38"
-        SET_PYTHON_PATH="export CICD_PYTHON_PATH=/usr/local/bin/python3.8"
+        SET_PYTHON_PATH="export CICD_PYTHON_PATH=/usr/bin/python3.8"
         TEST="./tools/toolchain-tester/toolchain-tester ../tests/toolchain/"
 
         COMMANDS="$PRE_COMMANDS && $PACKAGE_COMMANDS && $SET_PYTHON_PATH && $TEST"
