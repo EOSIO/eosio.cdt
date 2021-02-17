@@ -26,24 +26,12 @@ macro( eosio_tool_install file )
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endmacro( eosio_tool_install )
 
-#macro( eosio_tool_install_and_symlink file symlink )
-#   set(BINARY_DIR ${CMAKE_BINARY_DIR}/tools/bin)
-#   add_custom_command( TARGET EosioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-#   install(FILES ${BINARY_DIR}/${file}
-#      DESTINATION ${CDT_INSTALL_PREFIX}/bin
-#      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-#   install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
-#   install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
-#endmacro( eosio_tool_install_and_symlink )
-
 macro( eosio_tool_install_and_symlink file symlink )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/tools/bin)
    add_custom_command( TARGET EosioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   # install(FILES ${BINARY_DIR}/${file}
-   #    DESTINATION ${CDT_INSTALL_PREFIX}/bin
-   #    PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-   install(TARGETS ${file}
-      RUNTIME DESTINATION ${CDT_INSTALL_PREFIX}/bin)
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CDT_INSTALL_PREFIX}/bin
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
 endmacro( eosio_tool_install_and_symlink )
