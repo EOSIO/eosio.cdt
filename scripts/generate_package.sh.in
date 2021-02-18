@@ -1,6 +1,7 @@
 #! /bin/bash
 
 VARIANT=$1
+OS=$2
 
 VERSION_NO_SUFFIX="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
 VERSION_SUFFIX="@VERSION_SUFFIX@"
@@ -30,7 +31,7 @@ mkdir -p tmp
 if [[ ${VARIANT} == "brew" ]]; then
    . ./generate_bottle.sh
 elif [[ ${VARIANT} == "deb" ]]; then
-   . ./generate_deb.sh
+   . ./generate_deb.sh ${OS}
 elif [[ ${VARIANT} == "rpm" ]]; then
    . ./generate_rpm.sh
 else
