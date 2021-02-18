@@ -1,5 +1,7 @@
 #! /bin/bash
 
+OS=$1
+
 PREFIX="usr"
 SPREFIX=${PREFIX}
 SUBPREFIX="opt/${PROJECT}/${VERSION}"
@@ -29,7 +31,11 @@ export SUBPREFIX
 export SPREFIX
 export SSUBPREFIX
 
-. ./generate_tarball.sh ${NAME}
+if [[ "$OS" == "ubuntu-16.04" ]]; then
+    . ./generate_tarball_ubuntu-16.04.sh ${NAME}
+else
+    . ./generate_tarball.sh ${NAME}
+fi
 echo "Unpacking tarball: ${NAME}.tar.gz..."
 tar -xzvf ${NAME}.tar.gz -C ${PROJECT} || exit 1
 dpkg-deb --build ${PROJECT} || exit 1

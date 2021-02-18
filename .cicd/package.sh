@@ -32,7 +32,7 @@ else # Linux
     if [[ "$IMAGE_TAG" =~ "ubuntu" ]]; then
         ARTIFACT='*.deb'
         PACKAGE_TYPE='deb'
-        PACKAGE_COMMANDS="./generate_package.sh $PACKAGE_TYPE"
+        PACKAGE_COMMANDS="./generate_package.sh $PACKAGE_TYPE $OS"
     elif [[ "$IMAGE_TAG" =~ "centos" || "$IMAGE_TAG" =~ "amazonlinux" ]]; then
         ARTIFACT='*.rpm'
         PACKAGE_TYPE='rpm'
