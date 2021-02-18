@@ -39,9 +39,11 @@ cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib || exit 1
 if [[ "$OS" == "ubuntu-16.04" ]]; then
     cp /usr/lib/libc++.so.1.0 ${CDT_PREFIX}/lib || exit 1
     cp /usr/lib/libc++abi.so.1.0 ${CDT_PREFIX}/lib || exit 1
+    DIR=`pwd`
     cd ${CDT_PREFIX}/lib || exit 1
     ln -sf libc++.so.1.0 libc++.so.1 || exit 1
     ln -sf libc++abi.so.1.0 libc++abi.so.1 || exit 1
+    cd ${DIR} || exit 1
 fi
 
 # make symlinks
