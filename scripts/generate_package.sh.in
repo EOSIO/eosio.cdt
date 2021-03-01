@@ -1,7 +1,14 @@
 #! /bin/bash
 
 VARIANT=$1
-OS=$2
+if [[ ${VARIANT} == "deb" ]]; then
+    if [ -z "$2" ]; then
+        echo "Error, OS argument missing for deb package type"
+        exit -1
+    else
+        OS=$2
+    fi
+fi
 
 VERSION_NO_SUFFIX="@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
 VERSION_SUFFIX="@VERSION_SUFFIX@"
