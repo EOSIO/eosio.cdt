@@ -87,6 +87,7 @@ namespace eosio { namespace cdt {
          llvm::ArrayRef<std::string>           sources;
          size_t                                source_index = 0;
          std::map<std::string, std::string>    tmp_files;
+         std::set<CXXMethodDecl*>              read_only_actions;
 
          codegen() : generation_utils([&](){throw codegen_ex;}) {
          }
@@ -321,6 +322,13 @@ namespace eosio { namespace cdt {
                   create_action_dispatch(decl);
                }
                cg.actions.insert(full_action_name); // insert the method action, so we don't create the dispatcher twice
+
+               if (decl->isEosioReadOnly()) {
+                  cg.read_only_actions.insert(decl);
+                  // for (auto it = cg.read_only_actions.begin(); it != cg.read_only_actions.end(); it++) {
+                  //    std::cout << (*it)->getDeclName().getAsString() << std::endl;
+                  // }
+               }
             }
             else if (decl->isEosioNotify()) {
 
@@ -344,6 +352,41 @@ namespace eosio { namespace cdt {
                   create_notify_dispatch(decl);
                }
                cg.notify_handlers.insert(full_notify_name); // insert the method action, so we don't create the dispatcher twice
+            }
+
+            return true;
+         }
+
+        std::string ExprToString(Stmt *expr)
+         {
+            SourceRange expr_range = expr->getSourceRange();
+            int range_size = get_rewriter().getRangeSize(expr_range);
+            if (range_size == -1) {
+               return "";
+            }
+
+            SourceLocation startLoc = expr_range.getBegin();
+            const char *str_start = get_rewriter().getSourceMgr().getCharacterData(startLoc);
+
+            std::string expr_str;
+            expr_str.assign(str_start, range_size);
+            return expr_str;
+         }
+
+         virtual bool VisitFunctionDecl(clang::FunctionDecl* decl) {
+            std::cout << "FunctionDecl name: " << decl->getNameAsString() << "\n";
+
+            if (Stmt *stmts = decl->getBody()) {
+               for (auto it = stmts->child_begin(); it != stmts->child_end(); it++) {
+                  if (CallExpr *call = dyn_cast<CallExpr>(*it)) {
+                     std::cout << "- Call: " << ExprToString(*it) << std::endl;
+                     if (FunctionDecl *func_decl = call->getDirectCallee()) {
+                        std::cout << " - Function call: " << func_decl->getNameInfo().getName().getAsString() << std::endl;
+                     } else {
+                        std::cout << " - Expression call: " << call->getCallee()->getStmtClassName() << std::endl;
+                     }
+                  }
+               }
             }
 
             return true;
