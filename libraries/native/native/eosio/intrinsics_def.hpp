@@ -49,6 +49,7 @@ intrinsic_macro(set_blockchain_parameters_packed) \
 intrinsic_macro(set_kv_parameters_packed) \
 intrinsic_macro(is_privileged) \
 intrinsic_macro(set_privileged) \
+intrinsic_macro(register_transaction_hook) \
 intrinsic_macro(is_feature_activated) \
 intrinsic_macro(preactivate_feature) \
 intrinsic_macro(get_active_producers) \

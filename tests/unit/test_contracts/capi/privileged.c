@@ -8,6 +8,7 @@ void test_privileged( void ) {
    set_proposed_producers_ex(0, NULL, 0);
    is_privileged(0);
    set_privileged(0, 0);
+   register_transaction_hook(0, 0, 0);
    set_blockchain_parameters_packed(NULL, 0);
    get_blockchain_parameters_packed(NULL, 0);
    preactivate_feature(NULL);
