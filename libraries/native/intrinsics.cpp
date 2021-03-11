@@ -43,6 +43,9 @@ extern "C" {
    void set_privileged( capi_name account, bool is_priv ) {
       return intrinsics::get().call<intrinsics::set_privileged>(account, is_priv);
    }
+   bool register_transaction_hook( uint32_t hook_type, uint64_t callback_contract, uint64_t callback_action ) {
+      return intrinsics::get().call<intrinsics::register_transaction_hook>(hook_type, callback_contract, callback_action);
+   }
    bool is_feature_activated( const capi_checksum256* feature_digest ) {
       return intrinsics::get().call<intrinsics::is_feature_activated>(feature_digest);
    }
