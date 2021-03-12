@@ -9,15 +9,13 @@ namespace internal_use_do_not_use {
 extern "C" {
 __attribute__((eosio_wasm_import)) int64_t add_security_group_participants(const char* data, uint32_t datalen);
 
-__attribute__((eosio_wasm_import)) int64_t remove_security_group_participants(const char* data,
-                                                                                      uint32_t    datalen);
+__attribute__((eosio_wasm_import)) int64_t remove_security_group_participants(const char* data, uint32_t datalen);
 
 __attribute__((eosio_wasm_import)) bool in_active_security_group(const char* data, uint32_t datalen);
 
 __attribute__((eosio_wasm_import)) uint32_t get_active_security_group(char* data, uint32_t datalen);
 }
 } // namespace internal_use_do_not_use
-
 
 /**
  *  @defgroup security_group Security Group
