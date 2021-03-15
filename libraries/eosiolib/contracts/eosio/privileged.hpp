@@ -40,6 +40,9 @@ namespace eosio {
          void preactivate_feature( const capi_checksum256* feature_digest );
 
          __attribute__((eosio_wasm_import))
+         bool set_transaction_resource_payer( const uint64_t payer, const uint64_t max_net, const uint64_t max_cpu );
+
+         __attribute__((eosio_wasm_import))
          int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
       }
    }
@@ -342,6 +345,18 @@ namespace eosio {
       internal_use_do_not_use::preactivate_feature(
          reinterpret_cast<const internal_use_do_not_use::capi_checksum256*>( feature_digest_data.data() )
       );
+   }
+
+   /**
+    * Set the resource payer for the transaction.
+    *
+    * @ingroup privileged
+    * @param payer - name of the account who is paying for the transaction.
+    * @param max_net - max amount of net resource to be paid for the transaction.
+    * @param max_cpu - max amount of cpu resource to be paid for the transaction.
+   */
+   inline bool set_transaction_resource_payer( const name payer, const uint64_t max_net, const uint64_t max_cpu ) {
+      internal_use_do_not_use::set_transaction_resource_payer( payer.value, max_net, max_cpu );
    }
 
 }
