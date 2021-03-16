@@ -1,32 +1,34 @@
-#include "transfer.hpp"
 #include <eosio/eosio.hpp>
 #include <eosio/privileged.hpp>
 
-extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
-
 using namespace eosio;
+//extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
 
 class [[eosio::contract]]  read_only_tests : public contract {
   public:
-      using contract::contract;
-      void foo1() { bar(); }
-      void bar() {}
-      void foo2( name user, int64_t limit ) { set_resource_limit(user.value, "disk"_n.value, limit); }
-      
+
       [[eosio::action, eosio::read_only]]
       void testreadonly( name user, int64_t limit ) {
-         print( "Hello, ", user);
-         int i;
-         foo1();
-         set_resource_limit(user.value, "disk"_n.value, limit);
-         foo2(user, limit);
+         internal_use_do_not_use::set_resource_limits(user.value, 0, 0, 0);
+         foo(user);
       }
 
       [[eosio::action, eosio::read_only]]
-      void hireadonly( name user ) {
-         print( "Hello, ", user);
-         int i;
-         foo1();
+      void test2( name user, int64_t limit ) {
+         internal_use_do_not_use::set_resource_limits(user.value, 0, 0, 0);
+      }
+
+      void foo(name user) {
+         internal_use_do_not_use::set_resource_limits(user.value, 0, 0, 0);
+      }
+
+      [[eosio::action, eosio::read_only]]
+      void test3( name user, int64_t limit ) {
+         foo1(user);
+      }
+
+      void foo1(name user) {
+         foo(user);
       }
 
       [[eosio::action]]

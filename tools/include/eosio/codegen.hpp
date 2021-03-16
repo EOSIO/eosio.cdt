@@ -61,7 +61,7 @@ namespace eosio { namespace cdt {
          llvm::ArrayRef<std::string>           sources;
          size_t                                source_index = 0;
          std::map<std::string, std::string>    tmp_files;
-         std::set<CXXMethodDecl*>              read_only_actions;
+
          using generation_utils::generation_utils;
 
          static codegen& get() {
@@ -88,8 +88,12 @@ namespace eosio { namespace cdt {
          bool apply_was_found = false;
 
       public:
+         using call_map_t = std::map<FunctionDecl*, std::vector<CallExpr*>>;
+
          std::vector<CXXMethodDecl*> action_decls;
          std::vector<CXXMethodDecl*> notify_decls;
+         std::set<CXXMethodDecl*>    read_only_actions;
+         call_map_t                  func_calls;
 
          explicit eosio_codegen_visitor(CompilerInstance *CI)
                : generation_utils(), ci(CI) {
@@ -236,10 +240,7 @@ namespace eosio { namespace cdt {
                cg.actions.insert(full_action_name); // insert the method action, so we don't create the dispatcher twice
 
                if (decl->isEosioReadOnly()) {
-                  cg.read_only_actions.insert(decl);
-                  // for (auto it = cg.read_only_actions.begin(); it != cg.read_only_actions.end(); it++) {
-                  //    std::cout << (*it)->getDeclName().getAsString() << std::endl;
-                  // }
+                  read_only_actions.insert(decl);
                }
             }
             else if (decl->isEosioNotify()) {
@@ -272,7 +273,7 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-        std::string ExprToString(Stmt *expr)
+        std::string expr_to_str(Stmt *expr)
          {
             SourceRange expr_range = expr->getSourceRange();
             int range_size = get_rewriter().getRangeSize(expr_range);
@@ -280,30 +281,60 @@ namespace eosio { namespace cdt {
                return "";
             }
 
-            SourceLocation startLoc = expr_range.getBegin();
-            const char *str_start = get_rewriter().getSourceMgr().getCharacterData(startLoc);
-
+            const char *str_start = get_rewriter().getSourceMgr().getCharacterData(expr_range.getBegin());
             std::string expr_str;
             expr_str.assign(str_start, range_size);
             return expr_str;
          }
 
-         virtual bool VisitFunctionDecl(clang::FunctionDecl* decl) {
-            std::cout << "FunctionDecl name: " << decl->getNameAsString() << "\n";
-
-            if (Stmt *stmts = decl->getBody()) {
+         void process_function(FunctionDecl *func_decl) {
+            if (is_write_host_func(func_decl->getQualifiedNameAsString())) {
+               func_calls[func_decl] = {(CallExpr*)func_decl};
+            } else if (func_decl->hasBody()) {
+               Stmt *stmts = func_decl->getBody();
+               std::cout << "- Body: " << expr_to_str(stmts) << std::endl;
                for (auto it = stmts->child_begin(); it != stmts->child_end(); it++) {
+                  // std::cout << "\n- iter: " << expr_to_str(*it) << std::endl
+                  //            << "- type: " << it->getStmtClassName() << std::endl;
                   if (CallExpr *call = dyn_cast<CallExpr>(*it)) {
-                     std::cout << "- Call: " << ExprToString(*it) << std::endl;
-                     if (FunctionDecl *func_decl = call->getDirectCallee()) {
-                        std::cout << " - Function call: " << func_decl->getNameInfo().getName().getAsString() << std::endl;
-                     } else {
-                        std::cout << " - Expression call: " << call->getCallee()->getStmtClassName() << std::endl;
+                     // std::cout << "- Call: " << expr_to_str(*it) << std::endl;
+                     if (FunctionDecl *fd = call->getDirectCallee()) {
+                        // std::cout << " - Function call: " << fd->getQualifiedNameAsString() 
+                        //            << "(" << fd->getID() << ")" << std::endl;
+                        if (func_calls.count(fd) == 0) {
+                           process_function(fd);
+                        }
+                        if (!func_calls[fd].empty()) {
+                           func_calls[func_decl].push_back(call);
+                           std::cout << "++key: " << func_decl->getQualifiedNameAsString()
+                                       << ", value: " << expr_to_str(*it) << std::endl;
+                           if (func_decl->getLocation().isValid())
+                              // CDT_WARN("codegen_warn", func_decl->getLocation(), "add value");
+                              std::cout << func_decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
+                           if (fd->getLocation().isValid())
+                              // CDT_WARN("codegen_warn", fd->getLocation(), "add value");
+                              std::cout << fd->getLocation().printToString(ci->getSourceManager()) << std::endl;
+                           break;
+                        }
                      }
                   }
                }
             }
+         }
 
+         virtual bool VisitFunctionDecl(FunctionDecl* func_decl) {
+            SourceManager &sm = get_rewriter().getSourceMgr();
+            if (sm.isInSystemHeader(func_decl->getLocation()) || sm.isInExternCSystemHeader(func_decl->getLocation())) {
+               return true;
+            }
+
+            if (is_write_host_func(func_decl->getQualifiedNameAsString())) {
+               std::cout << "Write host function: " << func_decl->getQualifiedNameAsString() << "(" << func_decl->getID() << ")" << std::endl;
+               func_calls[func_decl] = {(CallExpr*)func_decl};
+               std::cout << "++key: " << func_decl->getQualifiedNameAsString() << ", value: (itself)" << std::endl;
+            } else if (func_decl->isThisDeclarationADefinition()) {
+               process_function(func_decl);
+            }
             return true;
          }
 
@@ -316,7 +347,7 @@ namespace eosio { namespace cdt {
          }
       };
 
-      class eosio_codegen_consumer : public ASTConsumer {
+      class eosio_codegen_consumer : public ASTConsumer, public generation_utils {
       private:
          eosio_codegen_visitor *visitor;
          std::string main_file;
@@ -337,6 +368,34 @@ namespace eosio { namespace cdt {
                visitor->set_main_fid(fid);
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
+
+               for (auto const& fc : visitor->func_calls) {
+                  std::cout << "key: " << fc.first->getQualifiedNameAsString() << " value: { ";
+                  for (auto const& v : fc.second) {
+                     std::cout << visitor->expr_to_str(v) << ", ";
+                  }
+                  std::cout << "}" << std::endl;
+               }
+
+               for (auto const& ra : visitor->read_only_actions) {
+                  std::cout << ra->getQualifiedNameAsString() << std::endl;
+                  auto it = visitor->func_calls.find(ra);
+                  if (it != visitor->func_calls.end()) {
+                     std::cout << "codedgen_error: action should be read only" << std::endl;
+                     std::cout << it->first->getQualifiedNameAsString() << std::endl;
+                     if (ra->getLocation().isValid()) {
+                        // CDT_ERROR("codegen_error", ra->getLocation(), "read only");
+                        std::cout << "Caller location: " << ra->getLocation().printToString(src_mgr) << std::endl;
+                     }
+                     for (auto val : it->second) {
+                        if (val->getExprLoc().isValid()) {
+                           // CDT_WARN("codegen_warn", it->second[0]->getExprLoc(), "read only");
+                           std::cout << "Callee location: " << val->getExprLoc().printToString(src_mgr) << std::endl;
+                        }
+                     }
+                  }
+               }
+
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
 
