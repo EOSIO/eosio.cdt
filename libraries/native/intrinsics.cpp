@@ -52,8 +52,8 @@ extern "C" {
    void preactivate_feature( const capi_checksum256* feature_digest ) {
       return intrinsics::get().call<intrinsics::preactivate_feature>(feature_digest);
    }
-   bool set_transaction_resource_payer(const capi_name payer, const uint64_t max_net, const uint64_t max_cpu) {
-      return intrinsics::get().call<intrinsics::set_transaction_resource_payer>(payer, max_net, max_cpu);
+   bool set_transaction_resource_payer(const capi_name payer, const uint64_t max_net_bytes, const uint64_t max_cpu_us) {
+      return intrinsics::get().call<intrinsics::set_transaction_resource_payer>(payer, max_net_bytes, max_cpu_us);
    }
    uint32_t get_active_producers( capi_name* producers, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::get_active_producers>(producers, datalen);
