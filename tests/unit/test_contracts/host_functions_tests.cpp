@@ -1,16 +1,16 @@
 /*  host functions which are not allowed to use in read only query contract, so the functions should never return true. it should compile failed (compile time)  or throw exception(run time).
 set_resource_limits : yes
-set_wasm_parameters_packed
+set_wasm_parameters_packed : yes
 set_resource_limit : yes 
-set_proposed_producers
-set_proposed_producers_ex
+set_proposed_producers : yes
+set_proposed_producers_ex : yes
 set_blockchain_parameters_packed : yes
-set_parameters_packed
+set_parameters_packed : yes
 set_kv_parameters_packed : yes
 set_privileged  : yes
-kv_erase
-kv_set
-send_deferred
+kv_erase : yes
+kv_set  : yes
+send_deferred : yes
 */
 
 #include <eosio/eosio.hpp>
@@ -54,6 +54,14 @@ extern "C" __attribute__((eosio_wasm_import)) void db_idx_double_remove(int32_t 
 extern "C" __attribute__((eosio_wasm_import)) int32_t db_idx_long_double_store(uint64_t scope, capi_name table, capi_name payer, uint64_t id, const long double* secondary);
 extern "C" __attribute__((eosio_wasm_import)) void db_idx_long_double_update(int32_t iterator, capi_name payer, const long double* secondary);
 extern "C" __attribute__((eosio_wasm_import)) void db_idx_long_double_remove(int32_t iterator);
+
+extern "C" __attribute__((eosio_wasm_import)) int64_t kv_erase(uint64_t contract, const char* key, uint32_t key_size);
+extern "C" __attribute__((eosio_wasm_import)) int64_t kv_set(uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size, uint64_t payer);
+extern "C" __attribute__((eosio_wasm_import)) void send_deferred(const uint128_t&, uint64_t, const char*, size_t, uint32_t);
+extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers( char*, uint32_t );
+extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
+extern "C" __attribute__((eosio_wasm_import)) void set_wasm_parameters_packed(const void*, std::size_t);
+extern "C" __attribute__((eosio_wasm_import)) void set_parameters_packed( const char* params, uint32_t params_size );
 
 #define ACTION_TYPE  [[eosio::action]]
 
@@ -222,6 +230,41 @@ db_idx_long_double_remove
    ACTION_TYPE
    bool dbidxldbr(){
       db_idx_long_double_remove(0);
+      return true;
+   }
+   ACTION_TYPE
+   bool kverase(){
+      kv_erase(0, NULL, 0);
+      return true;
+   }
+   ACTION_TYPE
+   bool kvset(){
+      kv_set(0, NULL, 0, NULL, 0, 0);
+      return true;
+   }
+   ACTION_TYPE
+   bool senddefer(){
+      send_deferred(0, 0, NULL, 0, 0);
+      return true;
+   }
+   ACTION_TYPE
+   bool setpp(){
+      set_proposed_producers(NULL, 0);
+      return true;
+   }
+   ACTION_TYPE
+   bool setppex(){
+      set_proposed_producers_ex( 0, NULL, 0 );
+      return true;
+   }
+   ACTION_TYPE
+   bool swpp(){
+      set_wasm_parameters_packed(NULL, 0);
+      return true;
+   }
+   ACTION_TYPE
+   bool spp(){
+      set_parameters_packed( NULL, 0 );
       return true;
    }
 };
