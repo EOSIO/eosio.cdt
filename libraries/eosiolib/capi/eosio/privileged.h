@@ -133,6 +133,16 @@ void set_kv_parameters_packed( const char* data, uint32_t datalen );
 __attribute__((eosio_wasm_import))
 void preactivate_feature( const struct capi_checksum256* feature_digest );
 
+/**
+ * Set the resource payer for the transaction.
+ *
+ * @param payer - name of the account who is paying for the transaction.
+ * @param max_net_bytes - max amount of net resource (bytes) to be paid for the transaction.
+ * @param max_cpu_us - max amount of cpu resource (microseconds) to be paid for the transaction.
+*/
+__attribute__((eosio_wasm_import))
+bool set_transaction_resource_payer( const capi_name payer, const uint64_t max_net_bytes, const uint64_t max_cpu_us );
+
 #ifdef __cplusplus
 }
 #endif
