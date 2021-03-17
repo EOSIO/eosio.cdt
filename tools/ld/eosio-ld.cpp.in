@@ -89,6 +89,7 @@ int main(int argc, const char** argv) {
    std::set<wasm_action> wasm_actions;
    std::set<wasm_notify> wasm_notifies;
    std::string main_file;
+   std::vector<std::string> desc_files;
    bool apply_was_found = false;
 
    try {
@@ -126,7 +127,7 @@ int main(int argc, const char** argv) {
                   }
                }
             }
-            llvm::sys::fs::remove(input+".desc");
+            desc_files.push_back(input+".desc");
          }
       }
       if (opts.abigen && !abi.empty()) {
@@ -187,6 +188,9 @@ int main(int argc, const char** argv) {
          return -1;
       if (!llvm::sys::fs::exists(opts.output_fn))
          return -1;
+   }
+   for (const auto& desc_file : desc_files) {
+      llvm::sys::fs::remove(desc_file);
    }
    return 0;
 }
