@@ -22,6 +22,9 @@ namespace eosio {
          void set_privileged( uint64_t account, bool is_priv );
 
          __attribute__((eosio_wasm_import))
+         bool register_transaction_hook( uint32_t hook, uint64_t callback_contract, uint64_t callback_action );
+
+         __attribute__((eosio_wasm_import))
          void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 
          __attribute__((eosio_wasm_import))
@@ -308,6 +311,24 @@ namespace eosio {
     */
    inline void set_privileged( name account, bool is_priv ) {
       internal_use_do_not_use::set_privileged( account.value, is_priv );
+   }
+
+   enum transaction_hook {
+      preexecution
+   };
+
+   /**
+    *  Register a transaction hook (actions that execute at certain points on the lifetime of the execution of a transaction)
+    *
+    *  @ingroup privileged
+    *  @param hook_type - type of the hook to register
+    *  @param callback_contract - name of the contract associated with the hook
+    *  @param callback_action - name of the action associated with the hook
+    *  @return false if the account does not exist or does not contain any code
+    *  @return true otherwise
+    */
+   inline bool register_transaction_hook( transaction_hook hook_type, name callback_contract, name callback_action ) {
+      return internal_use_do_not_use::register_transaction_hook( hook_type, callback_contract.value, callback_action.value );
    }
 
    /**

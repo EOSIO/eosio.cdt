@@ -84,6 +84,16 @@ __attribute__((eosio_wasm_import))
 void set_privileged( capi_name account, bool is_priv );
 
 /**
+ * Register a transaction hook (actions that execute at certain points on the lifetime of the execution of a transaction)
+ *
+ * @param hook_type - type of the hook to register
+ * @param callback_contract - name of the contract associated with the hook
+ * @param callback_action - name of the action associated with the hook
+ */
+__attribute__((eosio_wasm_import))
+bool register_transaction_hook( uint32_t hook_type, capi_name callback_contract, capi_name callback_action );
+
+/**
  * Set the blockchain parameters
  *
  * @param data - pointer to blockchain parameters packed as bytes
