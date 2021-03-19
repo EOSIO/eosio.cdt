@@ -5,6 +5,7 @@
 #include "clang/Basic/Builtins.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
+#include "clang/AST/Decl.h"
 #include "llvm/Support/raw_ostream.h"
 #include <eosio/utils.hpp>
 #include <eosio/error_emitter.hpp>
@@ -688,12 +689,12 @@ struct generation_utils {
       static const std::set<std::string> write_host_funcs =
       {
          "eosio::internal_use_do_not_use::set_resource_limits",
-         "eosio::chain::webassembly::interface::set_wasm_parameters_packed",
-         "eosio::chain::webassembly::interface::set_resource_limit", // ?
+         // "eosio::chain::webassembly::interface::set_wasm_parameters_packed",
+         // "eosio::chain::webassembly::interface::set_resource_limit", // ?
          "eosio::chain::controller::set_proposed_producers", // ?
          "eosio::internal_use_do_not_use::set_proposed_producers_ex",
          "eosio::internal_use_do_not_use::set_blockchain_parameters_packed",
-         "eosio::chain::webassembly::interface::set_parameters_packed", // ?
+         // "eosio::chain::webassembly::interface::set_parameters_packed", // ?
          "eosio::internal_use_do_not_use::set_kv_parameters_packed",
          "eosio::internal_use_do_not_use::set_privileged",
          "eosio::internal_use_do_not_use::db_store_i64",
@@ -742,5 +743,29 @@ struct generation_utils {
       return inline_action_funcs.count(t) >= 1;
    }
 
+   inline bool is_eosio_wasm_import_write_func( const clang::FunctionDecl *func_decl ) {
+      static const std::set<std::string> eosio_wasm_import_write_funcs =
+      {
+         "set_resource_limit",
+         "set_wasm_parameters_packed",
+         "set_parameters_packed"
+      };
+
+      if (eosio_wasm_import_write_funcs.count(func_decl->getQualifiedNameAsString()) == 0) {
+         return false;
+      }
+
+      if (func_decl->isInExternCContext()) {
+         auto attrs = func_decl->getAttrs();
+         for (auto const &a : attrs) {
+            std::cout << "attr:" << a->getSpelling() << "," << a->getKind() << std::endl;
+            if (a->getSpelling() == "eosio_wasm_import") {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
 };
 }} // ns eosio::cdt
