@@ -716,7 +716,7 @@ struct generation_utils {
          "eosio::internal_use_do_not_use::db_idx_long_double_update",
          "eosio::internal_use_do_not_use::db_idx_long_double_remove",
          "eosio::kv::internal_use_do_not_use::kv_erase",
-         "eosio::kv::internal_use_do_not_use::kv_setkv_set",
+         "eosio::kv::internal_use_do_not_use::kv_set",
          // deferred transactions
          "eosio::internal_use_do_not_use::send_deferred",
          // inline actions
