@@ -41,7 +41,7 @@ using namespace eosio::cdt;
 
 void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt);
 
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt, bool warn_action_read_only) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -67,13 +67,14 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    abigen::get().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
    abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
    codegen::get().set_contract_name(contract_name);
+   codegen::get().set_warn_action_read_only(warn_action_read_only);
 
    int tool_run = -1;
    tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("abigen error");
    }
-
+   
    if (!abigen::get().is_empty()) {
       std::string abi_s;
       abigen::get().to_json().dump(abi_s);
@@ -136,7 +137,7 @@ int main(int argc, const char **argv) {
             tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
                                            [&](const auto& opt){ return non_tool_opts.count(opt); }),
                             tool_opts.end());
-            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning, opts.has_o_opt, opts.has_contract_opt);
+            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning, opts.has_o_opt, opts.has_contract_opt, opts.warn_action_read_only);
 
             auto src = SmallString<64>(input);
             llvm::sys::path::remove_filename(src);
