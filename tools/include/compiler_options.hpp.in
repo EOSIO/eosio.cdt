@@ -405,6 +405,7 @@ struct Options {
    bool debug;
    bool native;
    std::pair<int, int> abi_version;
+   bool warn_action_read_only;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -560,7 +561,7 @@ static Options CreateOptions(bool add_defaults=true) {
    std::string pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
-   bool is_warn_action_read_only;
+   bool warn_action_read_only;
 
 #ifdef ONLY_LD
    bool abigen = false;
@@ -963,6 +964,14 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fnative");
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
+   
+   /* TODO */
+   if(warn_action_read_only_opt) {
+      warn_action_read_only = true;
+   } else {
+      warn_action_read_only = false;
+   }
+
 #endif
 
    /* TODO add some way of defaulting these to the current highest version */
@@ -975,13 +984,9 @@ static Options CreateOptions(bool add_defaults=true) {
       abi_version_minor = ((tmp - (int)tmp)*10);
    }
 
-   /* TODO */
-   // if(warn_action_read_only_opt) {
-   // }
-
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, warn_action_read_only };
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, warn_action_read_only };
 #endif
 }
