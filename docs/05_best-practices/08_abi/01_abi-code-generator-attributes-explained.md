@@ -6,7 +6,7 @@ link_text: ABI/Code generator attributes
 The new ABI generator tool uses C++11 or GNU style attributes to mark `actions` and `tables`.
 
 ## [[eosio::action]]
-This attribute marks either a struct or a method as an action.
+This attribute marks a method as an action.
 Example (four ways to declare an action for ABI generation):
 ```cpp
 // this is the C++11 and greater style attribute
