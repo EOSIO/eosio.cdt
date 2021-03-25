@@ -53,7 +53,7 @@ using namespace eosio;
 +  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 ```
 
-6. Define the multi index table data member of type `test_tables` defined in the privious step
+6. Define the multi index table data member of type `test_tables` defined in the previous step
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
