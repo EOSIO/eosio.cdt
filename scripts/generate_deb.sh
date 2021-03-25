@@ -1,5 +1,7 @@
 #! /bin/bash
 
+OS=$1
+
 PREFIX="usr"
 SPREFIX=${PREFIX}
 SUBPREFIX="opt/${PROJECT}/${VERSION}"
@@ -29,7 +31,7 @@ export SUBPREFIX
 export SPREFIX
 export SSUBPREFIX
 
-. ./generate_tarball.sh ${NAME}
+. ./generate_tarball.sh ${NAME} ${OS}
 echo "Unpacking tarball: ${NAME}.tar.gz..."
 tar -xzvf ${NAME}.tar.gz -C ${PROJECT} || exit 1
 dpkg-deb --build ${PROJECT} || exit 1

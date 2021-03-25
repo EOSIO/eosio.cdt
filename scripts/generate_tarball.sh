@@ -1,6 +1,7 @@
 #! /bin/bash
 
 NAME=$1
+OS=$2
 CDT_PREFIX=${PREFIX}/${SUBPREFIX}
 mkdir -p ${PREFIX}/bin/
 mkdir -p ${PREFIX}/lib/cmake/${PROJECT}
@@ -33,6 +34,17 @@ cp -R ${BUILD_DIR}/include/* ${CDT_PREFIX}/include || exit 1
 
 # install wasm libs
 cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib || exit 1
+
+# install libc++.so
+if [[ "$OS" == "ubuntu-16.04" ]]; then
+    cp /usr/lib/libc++.so.1.0 ${CDT_PREFIX}/lib || exit 1
+    cp /usr/lib/libc++abi.so.1.0 ${CDT_PREFIX}/lib || exit 1
+    DIR=`pwd`
+    cd ${CDT_PREFIX}/lib || exit 1
+    ln -sf libc++.so.1.0 libc++.so.1 || exit 1
+    ln -sf libc++abi.so.1.0 libc++abi.so.1 || exit 1
+    cd ${DIR} || exit 1
+fi
 
 # make symlinks
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null
