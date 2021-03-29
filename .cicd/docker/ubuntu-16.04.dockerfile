@@ -5,7 +5,7 @@ RUN apt-get update && apt-get upgrade -y && \
     lldb-4.0 make automake libbz2-dev libssl-dev \
 	  libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
-    wget libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev xz-utils ccache
+    wget libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev xz-utils
 
 # install cmake
 RUN curl -LO https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \

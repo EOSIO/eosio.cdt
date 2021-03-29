@@ -7,7 +7,7 @@ RUN yum update -y && \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl \
-    libffi-devel.x86_64 ccache
+    libffi-devel.x86_64
 
 # build Python 3.7.4
 RUN curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
