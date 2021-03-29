@@ -171,6 +171,7 @@ namespace eosio { namespace cdt {
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
+            get_error_emitter().set_compiler_instance(CI);
          }
 
          void set_main_fid(FileID fid) {
@@ -322,15 +323,10 @@ namespace eosio { namespace cdt {
 
                name = generation_utils::get_action_name(decl);
 
-               // test_cdt_warn(name, [&](auto s) {
-               //    CDT_ERROR("codegen_error", decl->getLocation(), std::string("action name (")+s+") TEST_CDT_WARN");
-               // });
 
-               // validate_name(name, [&](auto s) {
-               //    CDT_ERROR("codegen_error", decl->getLocation(), std::string("action name (")+s+") is not a valid eosio name");
-               // });
-
-               validate_name( decl->getNameAsString(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
+               validate_name(name, [&](auto s) {
+                  CDT_ERROR("codegen_error", decl->getLocation(), std::string("action name (")+s+") is not a valid eosio name");
+               });
 
                if (!_action_set.count(name))
                   _action_set.insert(name);
@@ -348,8 +344,6 @@ namespace eosio { namespace cdt {
                if (decl->isEosioReadOnly()) {
                   read_only_actions.insert(decl);
                   std::cout << decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
-                  // CDT_WARN("codegen_warn", decl->getLocation(), "is read-only");
-
                }
             }
             else if (decl->isEosioNotify()) {
@@ -475,13 +469,13 @@ namespace eosio { namespace cdt {
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
 
-               for (auto const& fc : visitor->func_calls) {
-                  std::cout << "key: " << fc.first->getQualifiedNameAsString() << " value: { ";
-                  for (auto const& v : fc.second) {
-                     std::cout << visitor->expr_to_str(v) << ", ";
-                  }
-                  std::cout << "}" << std::endl;
-               }
+               // for (auto const& fc : visitor->func_calls) {
+               //    std::cout << "key: " << fc.first->getQualifiedNameAsString() << " value: { ";
+               //    for (auto const& v : fc.second) {
+               //       std::cout << visitor->expr_to_str(v) << ", ";
+               //    }
+               //    std::cout << "}" << std::endl;
+               // }
 
                for (auto const& ra : visitor->read_only_actions) {
                   std::cout << ra->getQualifiedNameAsString() << std::endl;
@@ -497,19 +491,18 @@ namespace eosio { namespace cdt {
                         // std::cout << it->first->getQualifiedNameAsString() << std::endl;
                      }
                      if (ra->getLocation().isValid()) {
-                        // CDT_ERROR("codegen_error", ra->getLocation(), "read only");
                         std::cout << " Caller: " << ra->getLocation().printToString(src_mgr) << std::endl;
-                     }
-                     for (auto val : it->second) {
-                        if (val->getExprLoc().isValid()) {
-                           // CDT_WARN("codegen_warn", it->second[0]->getExprLoc(), "read only");
-                           std::cout << " Callee: " << val->getExprLoc().printToString(src_mgr) << std::endl;
+                        if (cg.warn_action_read_only) {
+                           CDT_WARN("codegen_warning", ra->getLocation(), "read only");
+                        } else {
+                           CDT_ERROR("codegen_error", ra->getLocation(), "read only");
                         }
                      }
-
-                     // if (cg.warn_action_read_only == false) {
-                     //    // std::cout << "*** ERR***" << std::endl;
-                     //    return;
+                     // for (auto val : it->second) {
+                     //    if (val->getExprLoc().isValid()) {
+                     //       CDT_WARN("codegen_warn", it->second[0]->getExprLoc(), "read only");
+                     //       std::cout << " Callee: " << val->getExprLoc().printToString(src_mgr) << std::endl;
+                     //    }
                      // }
                   }
                }
