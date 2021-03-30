@@ -100,4 +100,24 @@ public:
       combine();
       return true;
    }
+   ACTION_TYPE
+   bool combinec(){
+      auto set_rsc = [](){
+         func _srl = set_resource_limit;
+         #define mysrl  _srl
+         mysrl(0, 0, 0);
+      };
+      set_rsc();
+      return true; 
+   }
+   ACTION_TYPE
+   bool combinecp(){
+      auto set_rsc = [](int64_t a, int64_t b, int64_t c){
+         func _srl = set_resource_limit;
+         #define mysrl  _srl
+         mysrl(a, b, c);
+      };
+      set_rsc(0,0,0);
+      return true; 
+   }
 };
