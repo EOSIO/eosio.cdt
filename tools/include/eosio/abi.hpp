@@ -39,6 +39,12 @@ struct abi_table {
    bool operator<(const abi_table& t) const { return name < t.name; }
 };
 
+struct abi_structure {
+   std::string name;
+   std::string type;
+   bool operator<(const abi_structure& s) const { return name < s.name; }
+};
+
 struct abi_kv_index {
    std::string name;
    std::string type;
@@ -82,6 +88,7 @@ struct abi {
    std::set<abi_typedef>                  typedefs;
    std::set<abi_action>                   actions;
    std::set<abi_table>                    tables;
+   std::set<abi_structure>                structures;
    std::set<abi_kv_table>                 kv_tables;
    std::set<abi_variant>                  variants;
    std::vector<abi_ricardian_clause_pair> ricardian_clauses;
