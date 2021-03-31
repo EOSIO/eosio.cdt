@@ -224,16 +224,11 @@ namespace eosio { namespace cdt {
          }
 
          virtual bool VisitCXXMethodDecl(CXXMethodDecl* decl) {
-            std::cout << "=VisitCXXMethodDecl=" << decl->getQualifiedNameAsString() << std::endl;
             std::string name = decl->getNameAsString();
             static std::set<std::string> _action_set; //used for validations
             static std::set<std::string> _notify_set; //used for validations
             if (decl->isEosioAction()) {
-               std::cout << "==is eosio action==" << std::endl;
-
                name = generation_utils::get_action_name(decl);
-
-
                validate_name(name, [&](auto s) {
                   CDT_ERROR("codegen_error", decl->getLocation(), std::string("action name (")+s+") is not a valid eosio name");
                });
@@ -252,13 +247,9 @@ namespace eosio { namespace cdt {
 
                if (decl->isEosioReadOnly()) {
                   read_only_actions.insert(decl);
-                  std::cout << decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
                }
             }
             else if (decl->isEosioNotify()) {
-
-               std::cout << "==is eosio notify==" << std::endl;
-
                name = generation_utils::get_notify_pair(decl);
                auto first = name.substr(0, name.find("::"));
                if (first != "*")
@@ -287,46 +278,26 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-        std::string expr_to_str(Stmt *expr)
-         {
-            SourceRange expr_range = expr->getSourceRange();
-            int range_size = get_rewriter().getRangeSize(expr_range);
-            if (range_size == -1) {
-               return "";
-            }
-
-            const char *str_start = get_rewriter().getSourceMgr().getCharacterData(expr_range.getBegin());
-            std::string expr_str;
-            expr_str.assign(str_start, range_size);
-            return expr_str;
-         }
-
          void process_function(FunctionDecl *func_decl) {
             if (func_decl->isThisDeclarationADefinition() && func_decl->hasBody()) {
                Stmt *stmts = func_decl->getBody();
-               std::cout << "- Body: " << expr_to_str(stmts) << std::endl;
                for (auto it = stmts->child_begin(); it != stmts->child_end(); it++) {
-                  std::cout << "\n- iter: " << expr_to_str(*it) << std::endl
-                           << "- type: " << it->getStmtClassName() << std::endl;
-                  if (CallExpr *call = dyn_cast<CallExpr>(*it)) {
-                     std::cout << "- Call: " << expr_to_str(*it) << std::endl;
-                     if (FunctionDecl *fd = call->getDirectCallee()) {
-                        std::cout << " - Function call: " << fd->getQualifiedNameAsString()
-                                 << "(" << fd->getID() << ")" << std::endl;
-                        if (func_calls.count(fd) == 0) {
-                           process_function(fd);
-                        }
-                        if (!func_calls[fd].empty()) {
-                           func_calls[func_decl].push_back(call);
-                           std::cout << "++key: " << func_decl->getQualifiedNameAsString()
-                                       << ", value: " << expr_to_str(*it) << std::endl;
-                           if (func_decl->getLocation().isValid())
-                              // CDT_WARN("codegen_warn", func_decl->getLocation(), "add value");
-                              std::cout << func_decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
-                           if (fd->getLocation().isValid())
-                              // CDT_WARN("codegen_warn", fd->getLocation(), "add value");
-                              std::cout << fd->getLocation().printToString(ci->getSourceManager()) << std::endl;
-                           break;
+                  if (Stmt *s = *it) {
+                     if (ExprWithCleanups *ec = dyn_cast<ExprWithCleanups>(s)) {
+                        s = ec->getSubExpr();
+                        while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(s))
+                           s = ice->getSubExpr();
+                     }
+
+                     if (CallExpr *call = dyn_cast<CallExpr>(s)) {
+                        if (FunctionDecl *fd = call->getDirectCallee()) {
+                           if (func_calls.count(fd) == 0) {
+                              process_function(fd);
+                           }
+                           if (!func_calls[fd].empty()) {
+                              func_calls[func_decl].push_back(call);
+                              break;
+                           }
                         }
                      }
                   }
@@ -340,10 +311,9 @@ namespace eosio { namespace cdt {
                return true;
             }
 
-            std::string func_name = func_decl->getQualifiedNameAsString();
-            if (func_calls.count(func_decl) == 0 && (is_write_host_func(func_name) || is_eosio_wasm_import_write_func(func_decl))) {
+            std::string fn = func_decl->getQualifiedNameAsString();
+            if (func_calls.count(func_decl) == 0 && (is_write_host_func(fn) || is_eosio_wasm_import_write_func(func_decl))) {
                func_calls[func_decl] = {(CallExpr*)func_decl};
-               std::cout << "++key: " << func_decl->getQualifiedNameAsString() << ", value: (itself)" << std::endl;
             } else {
                process_function(func_decl);
             }
@@ -381,41 +351,15 @@ namespace eosio { namespace cdt {
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
 
-               // for (auto const& fc : visitor->func_calls) {
-               //    std::cout << "key: " << fc.first->getQualifiedNameAsString() << " value: { ";
-               //    for (auto const& v : fc.second) {
-               //       std::cout << visitor->expr_to_str(v) << ", ";
-               //    }
-               //    std::cout << "}" << std::endl;
-               // }
-
                for (auto const& ra : visitor->read_only_actions) {
-                  std::cout << ra->getQualifiedNameAsString() << std::endl;
                   auto it = visitor->func_calls.find(ra);
-                  // CDT_CHECK_WARN(it == visitor->func_calls.end(), "codegen_warn", ra->getLocation(), "read only");
-
-
                   if (it != visitor->func_calls.end()) {
+                     std::string msg = "read-only action cannot call write host function";
                      if (cg.warn_action_read_only) {
-                        std::cout << "WARNING: read-only action cannot call write host function" << std::endl;
+                        CDT_WARN("codegen_warning", ra->getLocation(), msg);
                      } else {
-                        std::cout << "ERROR: read-only action cannot call write host function" << std::endl;
-                        // std::cout << it->first->getQualifiedNameAsString() << std::endl;
+                        CDT_ERROR("codegen_error", ra->getLocation(), msg);
                      }
-                     if (ra->getLocation().isValid()) {
-                        std::cout << " Caller: " << ra->getLocation().printToString(src_mgr) << std::endl;
-                        if (cg.warn_action_read_only) {
-                           CDT_WARN("codegen_warning", ra->getLocation(), "read only");
-                        } else {
-                           CDT_ERROR("codegen_error", ra->getLocation(), "read only");
-                        }
-                     }
-                     // for (auto val : it->second) {
-                     //    if (val->getExprLoc().isValid()) {
-                     //       CDT_WARN("codegen_warn", it->second[0]->getExprLoc(), "read only");
-                     //       std::cout << " Callee: " << val->getExprLoc().printToString(src_mgr) << std::endl;
-                     //    }
-                     // }
                   }
                }
 
