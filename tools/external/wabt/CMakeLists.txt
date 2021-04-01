@@ -285,6 +285,7 @@ if (NOT EMSCRIPTEN)
     target_link_libraries(${name} libwabt)
     set_property(TARGET ${name} PROPERTY CXX_STANDARD 11)
     set_property(TARGET ${name} PROPERTY CXX_STANDARD_REQUIRED ON)
+    set_target_properties(${name} PROPERTIES LINK_FLAGS "-Wl,-rpath,\"\\$ORIGIN/../lib\"")
     list(APPEND WABT_EXECUTABLES ${name})
     set(WABT_EXECUTABLES ${WABT_EXECUTABLES} PARENT_SCOPE)
 
