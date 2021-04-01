@@ -7,8 +7,6 @@ add_contract(minimal_tests minimal_tests minimal_tests.cpp)
 add_contract(kv_single_index_tests kv_single_index_tests kv_single_index_tests.cpp)
 add_contract(kv_multiple_indices_tests kv_multiple_indices_tests kv_multiple_indices_tests.cpp)
 add_contract(read_only_query_tests read_only_query_tests read_only_query_tests.cpp)
-add_contract(host_functions_tests host_functions_tests host_functions_tests.cpp)
-add_contract(hf_indirect_call_tests hf_indirect_call_tests hf_indirect_call_tests.cpp)
 add_contract(kv_make_key_tests kv_make_key_tests kv_make_key_tests.cpp)
 add_contract(kv_map_tests kv_map_tests kv_map_tests.cpp)
 add_contract(capi_tests capi_tests capi/capi.c capi/action.c capi/chain.c capi/crypto.c capi/db.c capi/permission.c
