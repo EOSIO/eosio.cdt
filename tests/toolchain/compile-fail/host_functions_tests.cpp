@@ -66,7 +66,7 @@ extern "C" __attribute__((eosio_wasm_import)) void set_parameters_packed( const 
 extern "C" __attribute__((eosio_wasm_import)) void send_inline(char *serialized_action, size_t size);
 extern "C" __attribute__((eosio_wasm_import)) void send_context_free_inline(char *serialized_action, size_t size);
 
-#define ACTION_TYPE  [[eosio::action]]
+#define ACTION_TYPE  [[eosio::action, eosio::read_only]]
 
 class [[eosio::contract]] host_functions_tests : public eosio::contract {
 public:

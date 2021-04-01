@@ -25,7 +25,7 @@
 extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
 
 
-#define ACTION_TYPE  [[eosio::action]]
+#define ACTION_TYPE  [[eosio::action, eosio::read_only]]
 
 class [[eosio::contract]] hf_indirect_call_tests : public eosio::contract {
 public:
