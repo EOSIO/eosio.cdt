@@ -14,7 +14,9 @@ To accomplish this task, define the user type which will be stored in the `kv ta
 
 ## Before you begin
 
-* The EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
+Complete the following prerequisites:
+
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
 * A user defined type named `person`, which defines the data stored in the table.
 
@@ -71,6 +73,10 @@ class [[eosio::contract]] smrtcontract : public contract {
      using contract::contract;
 };
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
 
 ## Next Steps
 

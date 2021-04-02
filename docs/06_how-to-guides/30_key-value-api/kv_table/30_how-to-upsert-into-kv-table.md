@@ -105,6 +105,10 @@ void smrtcontract::upsert(
 }
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to upsert into `Key-Value Table` (`kv table`).
+
 ## Next Steps
 
 The following options are available when you complete the procedure:

@@ -102,6 +102,10 @@ bool smrtcontract::verify(string personal_id, string country) {
 }
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to check if a specific object exists in a `Key-Value Table` (`kv table`).
+
 ## Next Steps
 
 The following options are available when you complete the procedure:

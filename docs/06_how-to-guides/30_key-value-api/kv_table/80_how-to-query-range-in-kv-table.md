@@ -119,6 +119,10 @@ std::vector<person> smrtcontract::getbylastname(string last_name) {
 }
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
+
 ## Next Steps
 
 The following options are available when you complete the procedure:

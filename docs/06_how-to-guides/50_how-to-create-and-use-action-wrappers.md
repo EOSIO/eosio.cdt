@@ -4,6 +4,7 @@ link_text: "How to create and use action wrappers"
 ---
 
 1. Start with a contract `multi_index_example` which has an action `mod` defined like below in file `multi_index_example.hpp`; the action modifies the integer value `n` stored for row with key `user`.
+
 ```cpp
 class [[eosio::contract]] multi_index_example : public contract {
   // ...
@@ -11,7 +12,9 @@ class [[eosio::contract]] multi_index_example : public contract {
   // ...
 }
 ```
+
 2. To define an action wrapper for the `mod` action, make use of the `eosio::action_wrapper` template, with  the first parameter the action name as a `eosio::name` and second parameter as the reference to the action method
+
 ```diff
 class [[eosio::contract]] multi_index_example : public contract {
   // ...

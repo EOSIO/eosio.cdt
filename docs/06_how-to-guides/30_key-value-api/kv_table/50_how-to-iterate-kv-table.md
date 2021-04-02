@@ -118,3 +118,7 @@ std::vector<person> smrtcontract::iterate(int iterations_count) {
   }
 }
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to iterate through a `Key-Value Table` (`kv table`) and read values from it.

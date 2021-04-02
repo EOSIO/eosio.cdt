@@ -96,6 +96,10 @@ void smrtcontract::delete(eosio::name account_name) {
 }
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to delete an object from a `Key-Value Table` (`kv table`).
+
 ## Next Steps
 
 The following options are available when you complete the procedure:

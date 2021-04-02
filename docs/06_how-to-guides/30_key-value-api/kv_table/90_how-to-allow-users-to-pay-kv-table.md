@@ -107,6 +107,10 @@ void smrtcontract::upsert(
 }
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
+
 ## Next Steps
 
 The following options are available when you complete the procedure:

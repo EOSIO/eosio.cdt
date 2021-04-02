@@ -177,6 +177,10 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
+## Summary
+
+In conclusion, the above instructions show how to create indexes on a `Key-Value Table` (`kv table`).
+
 ## Next Steps
 
 The following options are available when you complete the procedure:
