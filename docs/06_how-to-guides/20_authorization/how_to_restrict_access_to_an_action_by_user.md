@@ -76,3 +76,7 @@ void hi( name user ) {
 
 [[info | Error message is not custom]]
 | Note that this time, as well as previous method, you can not customize the yielded error message, it will be a generic authorization error message.
+
+## Summary
+
+In conclusion, the above instructions show how to how to perform authorization checks in a smart contract.
