@@ -3,9 +3,9 @@ content_title: How-To Create Indexes on a Key-Value Table
 link_text: "How-To Create Indexes on a Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to create the following indexes on a `Key-Value Table` (`kv table`):
+This how-to provides instructions to create the following indexes on a `Key-Value Table` (`kv table`):
 
 * A unique index using the macro `KV_NAMED_INDEX`
 * A unique index using the `eosio::kv::table::index` template class
@@ -17,11 +17,11 @@ The  `KV_NAMED_INDEX` macro and the `eosio::kv::table::index` template class are
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type which defines the data stored in the table, named `person`
 * A `kv table` type which stores objects of type `person`, named `address_table`
@@ -31,7 +31,7 @@ Before you begin, complete the following prerequisites:
   * `last_name`,
   * `personal_id`.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 
@@ -52,7 +52,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-## Procedures
+## Procedure
 
 ### Define a unique index on property account_name using the macro KV_NAMED_INDEX
 

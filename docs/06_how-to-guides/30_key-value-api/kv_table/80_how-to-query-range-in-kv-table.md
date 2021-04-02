@@ -3,20 +3,20 @@ content_title: How-To Query Range in Key-Value Table
 link_text: "How-To Query Range in Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
+This how-to provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
 Use the method `range` defined by the `eosio::kv::table::index` class to accomplish this task.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
 * A user defined type which defines the data stored in the table, named `person`.
 * A `kv table` type which stores objects of type `person`, named `address_table`.
@@ -28,7 +28,7 @@ Before you begin, complete the following prerequisites:
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 * A non-unique index defined on the `last_name` property, named `last_name_idx`.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 
@@ -60,7 +60,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-## Procedures
+## Procedure
 
 Complete the following steps to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
 

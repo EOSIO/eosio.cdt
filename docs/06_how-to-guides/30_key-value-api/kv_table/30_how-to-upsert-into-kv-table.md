@@ -3,25 +3,25 @@ content_title: How-To Upsert Into Key-Value Table
 link_text: "How-To Upsert Into Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to upsert into `Key-Value Table` (`kv table`).
+This how-to provides instructions to upsert into `Key-Value Table` (`kv table`).
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
 Use the method `put` defined by the `eosio::kv::table` type to accomplish this task.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the table
 * A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` property.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 

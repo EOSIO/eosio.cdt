@@ -3,20 +3,20 @@ content_title: How-To Check a Record in a Key-Value Table
 link_text: "How-To Check a Record in a Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to check if a specific object exists in a `Key-Value Table` (`kv table`).
+This how-to provides instructions to check if a specific object exists in a `Key-Value Table` (`kv table`).
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
 Use the  method `exists` defined by the `eosio::kv::table::index` class to accomplish this task.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
 * A user defined type which defines the data stored in the table, named `person`.
 * A `kv table` type which stores objects of type `person`, named `address_table`.
@@ -27,7 +27,7 @@ Before you begin, complete the following prerequisites:
   * `personal_id`.
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 
@@ -55,7 +55,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-## Procedures
+## Procedure
 
 Complete the following steps to implement an action that is verifying whether a particular `person` identified by its `account_name` exists in the `address_table`:
 

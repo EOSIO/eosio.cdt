@@ -10,7 +10,7 @@ In order to accomplish this, use the `return` statement and pass the desired ret
 
 ## Prerequisites
 
-* Set your EOSIO development environment. Refer to the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
+* Set your EOSIO development environment. Refer to the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * You have a smart contract, let’s call it `smrtcontract`, and it builds without error.
 * You have an action, let’s call it `checkwithrv`, from which you want to return a value of a user defined type `action_response`.
 

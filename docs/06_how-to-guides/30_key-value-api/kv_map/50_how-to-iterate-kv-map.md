@@ -3,20 +3,20 @@ content_title: How-To Iterate Through Key-Value Map
 link_text: "How-To Iterate Through Key-Value Map"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to iterate through a `Key-Value Map` (`kv map`) and read values from it.
+This how-to provides instructions to iterate through a `Key-Value Map` (`kv map`) and read values from it.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 
@@ -41,7 +41,7 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 };
 ```
 
-## Procedures
+## Procedure
 
 Complete the following steps to implement an action that is iterating through the first N `person` objects in `kv map` and prints their first and last names:
 
@@ -100,3 +100,7 @@ void kv_map::iterate(int iterations_count) {
       }
    }
 }```
+
+## Summary
+
+In conclusion, the above instructions show how to iterate through a `Key-Value Map` (`kv map`) and read values from it.

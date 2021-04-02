@@ -3,18 +3,18 @@ content_title: How-To Allow Users to Pay for Key-Value Map Resources
 link_text: "How-To Allow Users to Pay for Key-Value Map Resources"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to allow users to pay for the resources needed to store data in a `Key-Value Map` (`kv map`).
+This how-to provides instructions to allow users to pay for the resources needed to store data in a `Key-Value Map` (`kv map`).
 
-Before you begin, complete the following prerequisites:
+Complete the following prerequisites:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following possible implementation for your starting point.
 
 `smartcontract.hpp file`
 
@@ -101,6 +101,10 @@ void smartcontract::upsert(
    my_map[std::pair<int, eosio::name>(id, account_name)] = person_upsert;
 }
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to allow users to pay for the resources needed to store data in a `Key-Value Map` (`kv map`).
 
 ## Next Steps
 
