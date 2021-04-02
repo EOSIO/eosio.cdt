@@ -96,7 +96,7 @@ public:
       tf.put(s8, get_self());
   }
 
-   [[eosio::action]]
+   [[eosio::action, eosio::read_only]]
    std::vector<my_struct> get() {
       my_table_m tm{"eosio"_n};
       my_table_f tf{"eosio"_n};
