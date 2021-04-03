@@ -2,7 +2,7 @@ add_custom_command( TARGET EosioPlugins POST_BUILD COMMAND mkdir -p ${CMAKE_BINA
 macro( eosio_plugin_install target file )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/plugins/eosio)
    add_custom_command( TARGET EosioPlugins POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${target}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   install(FILES ${BINARY_DIR}/target/${file}
+   install(FILES ${BINARY_DIR}/${target}/${file}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endmacro( eosio_plugin_install )
@@ -19,9 +19,7 @@ macro(eosio_tool_pre_symlink files symlink)
       continue()
     endif()
     add_custom_command(TARGET EosioTools PRE_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${FILEPATH} ${symlink})
-    install(FILES ${BINARY_DIR}/${file}
-      DESTINATION ${CDT_INSTALL_PREFIX}/bin
-      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    install(FILES ${CMAKE_BINARY_DIR}/bin/${symlink} DESTINATION ${CDT_INSTALL_PREFIX}/bin)
     install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
     install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/bin/${file} ${CMAKE_INSTALL_PREFIX}/bin/${symlink})")
     break()
@@ -48,14 +46,15 @@ endmacro( eosio_tool_install_and_symlink )
 
 macro( eosio_cmake_install_and_symlink file symlink )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/modules)
+   install(FILES ${BINARY_DIR}/${file} DESTINATION ${CDT_INSTALL_PREFIX}/lib/cmake/${CMAKE_PROJECT_NAME})
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/lib/cmake/${CMAKE_PROJECT_NAME})")
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CDT_INSTALL_PREFIX}/lib/cmake/${CMAKE_PROJECT_NAME}/${file} ${CMAKE_INSTALL_PREFIX}/lib/cmake/${CMAKE_PROJECT_NAME}/${symlink})")
 endmacro( eosio_cmake_install_and_symlink )
 
-macro( eosio_libraries_install)
+macro( eosio_libraries_install )
    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lib)
    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/include)
-   install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${CDT_INSTALL_PREFIX}/lib)
+   install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${CDT_INSTALL_PREFIX}/lib PATTERN "${CMAKE_BINARY_DIR}/lib/cmake" EXCLUDE)
    install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${CDT_INSTALL_PREFIX}/include)
 endmacro( eosio_libraries_install )
 
