@@ -1,5 +1,4 @@
 include(ExternalProject)
-find_package(Git REQUIRED)
 include(GNUInstallDirs)
 
 ExternalProject_Add(
