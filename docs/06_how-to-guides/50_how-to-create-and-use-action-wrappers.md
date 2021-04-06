@@ -15,7 +15,7 @@ Complete the following prerequisites:
 * A smart contract named `multi_index_example`, defined in file `multi_index_example.hpp`.
 * An action `mod` which modifies the integer value `n` stored for row with key `user`.
 
-Refer to the following possible implementation for your starting point.
+Refer to the following possible implementation for your starting point:
 
 ```cpp
 class [[eosio::contract]] multi_index_example : public contract {

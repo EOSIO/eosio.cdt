@@ -17,7 +17,7 @@ Complete the following prerequisites:
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 
-Refer to the following possible implementation for your starting point.
+Refer to the following possible implementation for your starting point:
 
 `smartcontract.hpp file`
 

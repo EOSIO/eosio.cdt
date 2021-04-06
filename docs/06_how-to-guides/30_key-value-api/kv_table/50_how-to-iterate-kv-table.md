@@ -27,7 +27,7 @@ Complete the following prerequisites:
   * `personal_id`.
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
-Refer to the following possible implementation for your starting point.
+Refer to the following possible implementation for your starting point:
 
 `smartcontract.hpp file`
 

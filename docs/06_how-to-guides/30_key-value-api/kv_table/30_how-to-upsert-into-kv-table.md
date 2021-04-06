@@ -21,7 +21,7 @@ Complete the following prerequisites:
 * A user defined type named `person`, which defines the data stored in the table
 * A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` property.
 
-Refer to the following possible implementation for your starting point.
+Refer to the following possible implementation for your starting point:
 
 `smartcontract.hpp file`
 

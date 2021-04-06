@@ -16,7 +16,7 @@ Complete the following prerequisites:
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation for your starting point.
+Refer to the following possible implementation for your starting point:
 
 `smartcontract.hpp file`
 
