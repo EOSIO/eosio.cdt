@@ -79,4 +79,4 @@ void hi( name user ) {
 
 ## Summary
 
-In conclusion, the above instructions show how to how to perform authorization checks in a smart contract.
+In conclusion, the above instructions show how to perform authorization checks in a smart contract.
