@@ -3,7 +3,8 @@
     {        
       "compile_flags": [],
       "expected" : {
-        "stderr": "codegen error"
+        "exit-code": 255,
+        "stderr": "(codegen error.*){20}"
       }
     }
   ]

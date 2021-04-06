@@ -911,7 +911,6 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
    
-   /* TODO */
    if(warn_action_read_only_opt) {
       warn_action_read_only = true;
    } else {

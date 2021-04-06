@@ -796,7 +796,7 @@ struct generation_utils {
       if (func_decl->isInExternCContext()) {
          auto attrs = func_decl->getAttrs();
          for (auto const &a : attrs) {
-            if (a->getSpelling() == "eosio_wasm_import") {
+            if (strcmp(a->getSpelling(), "eosio_wasm_import") == 0) {
                return true;
             }
          }
