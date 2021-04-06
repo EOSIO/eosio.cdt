@@ -675,7 +675,7 @@ struct generation_utils {
          auto attrs = func_decl->getAttrs();
          for (auto const &a : attrs) {
             std::cout << "attr:" << a->getSpelling() << "," << a->getKind() << std::endl;
-            if (a->getSpelling() == "eosio_wasm_import") {
+            if (strcmp(a->getSpelling(), "eosio_wasm_import") == 0) {
                return true;
             }
          }
