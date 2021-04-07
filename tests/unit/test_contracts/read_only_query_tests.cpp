@@ -83,8 +83,8 @@ public:
 
    [[eosio::action]]
    void setup() {
-      my_table_m tm{"eosio"_n};
-      my_table_f tf{"eosio"_n};
+      my_table_m tm{get_self()};
+      my_table_f tf{get_self()};
 
       tm.put(s1, get_self());
       tf.put(s2, get_self());
@@ -98,8 +98,8 @@ public:
 
    [[eosio::action, eosio::read_only]]
    std::vector<my_struct> get() {
-      my_table_m tm{"eosio"_n};
-      my_table_f tf{"eosio"_n};
+      my_table_m tm{get_self()};
+      my_table_f tf{get_self()};
 
       std::vector<my_struct> ret;
       auto itm = tm.id.begin();
@@ -135,8 +135,8 @@ public:
    [[eosio::action]]
    // usage: cleos -v push action eosio put '{"id":10,"name":"GULU","gender":1,"age":128}' -p eosio@active
    void put(uint32_t id, std::string name, uint32_t gender, uint32_t age ) {
-      my_table_m tm{"eosio"_n};
-      my_table_f tf{"eosio"_n};
+      my_table_m tm{get_self()};
+      my_table_f tf{get_self()};
       if(gender == 0){
          tf.put({
          .id = id,
