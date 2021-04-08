@@ -1,7 +1,10 @@
 ---
-content_title: How to Write an ABI File
+content_title: Create an ABI File
 ---
 
+## Overview
+
+This tutorial provides instructions on how to create an ABI file.
 
 [[warning]]
 | As of v1.2.0, the eosio.wasmsdk was decoupled from the core repository. This change has introduced an eosio-cpp regression where the legacy eosio-abigen is no longer bundled with eosio-cpp. Until a new ABI generator is introduced, you will need to hand-write your ABI files.
