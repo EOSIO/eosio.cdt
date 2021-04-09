@@ -26,12 +26,27 @@
                     "type": "fee_payer"
                 }
             ]
+        },
+        {
+            "name": "setfeepyr",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pyr",
+                    "type": "fee_payer"
+                }
+            ]
         }
     ],
     "actions": [
         {
             "name": "printfeepyr",
             "type": "printfeepyr",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setfeepyr",
+            "type": "setfeepyr",
             "ricardian_contract": ""
         }
     ],
