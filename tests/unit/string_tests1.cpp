@@ -17,7 +17,7 @@ using eosio::string;
 
 //// template <size_t N>
 //// string(const char (&str)[N])
-EOSIO_TEST_BEGIN(string_test_ctr_literal)
+EOSIO_TEST_BEGIN(string_test_ctr_lit)
    const string eostr0{"a"};
    const string eostr1{"abcdef"};
 
@@ -31,7 +31,7 @@ EOSIO_TEST_BEGIN(string_test_ctr_literal)
 EOSIO_TEST_END
 
 //// string()
-EOSIO_TEST_BEGIN(string_test_ctr_default)
+EOSIO_TEST_BEGIN(string_test_ctr_def)
    const string eostr{};
 
    CHECK_EQUAL( eostr.size(), 0 )
@@ -153,7 +153,7 @@ EOSIO_TEST_BEGIN(string_test_ctr_cpy)
    CHECK_EQUAL( strcmp(eostr2_cpy.c_str(), "abcdef"), 0)
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_op_plus)
+EOSIO_TEST_BEGIN(string_test_op_pl)
    static string eostr0{""};
    eostr0 += "a";
    static string eostr1{"abc"};
@@ -171,7 +171,7 @@ EOSIO_TEST_BEGIN(string_test_op_plus)
 EOSIO_TEST_END
 
 //// const string(const string&& str)
-EOSIO_TEST_BEGIN(string_test_ctr_move)
+EOSIO_TEST_BEGIN(string_test_ctr_mv)
    const string eostr0{""};
    const string eostr1{"a"};
    const string eostr2{"abcdef"};
@@ -192,7 +192,7 @@ EOSIO_TEST_BEGIN(string_test_ctr_move)
    CHECK_EQUAL( strcmp(eostr2.c_str(), "abcdef"), 0)
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_op_plus_ctr_move)
+EOSIO_TEST_BEGIN(string_test_op_pl_ctr_mv)
    string eostr0{""};
    eostr0 += "a";
    string eostr1{"abc"};
@@ -210,7 +210,7 @@ EOSIO_TEST_BEGIN(string_test_op_plus_ctr_move)
 EOSIO_TEST_END
 
 //// string& operator=(const string& str);
-EOSIO_TEST_BEGIN(string_test_op_assign_1)
+EOSIO_TEST_BEGIN(string_test_op_asgn_1)
    const string eostr0{""};
    const string eostr1{"a"};
    const string eostr2{"abcdef"};
@@ -234,7 +234,7 @@ EOSIO_TEST_BEGIN(string_test_op_assign_1)
    CHECK_EQUAL( strcmp(eostr2_cpy_assig.c_str(), "abcdef"), 0)
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_op_plus_op_assign)
+EOSIO_TEST_BEGIN(string_test_op_pl_asgn)
    string eostr0{""};
    eostr0 += "a";
    string eostr1{"abc"};
@@ -254,7 +254,7 @@ EOSIO_TEST_BEGIN(string_test_op_plus_op_assign)
 EOSIO_TEST_END
 
 //// string& operator=(string&& str)
-EOSIO_TEST_BEGIN(string_test_move_assign)
+EOSIO_TEST_BEGIN(string_test_mv_asgn)
    string eostr0{""};
    string eostr1{"a"};
    string eostr2{"abcdef"};
@@ -278,7 +278,7 @@ EOSIO_TEST_BEGIN(string_test_move_assign)
    CHECK_EQUAL( strcmp(eostr2_mv_assig.c_str(), "abcdef"), 0)
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_op_plus_move_assign)
+EOSIO_TEST_BEGIN(string_test_op_pl_mv)
    string eostr0{""};
    eostr0 += "a";
    string eostr1{"abc"};
@@ -298,7 +298,7 @@ EOSIO_TEST_BEGIN(string_test_op_plus_move_assign)
 EOSIO_TEST_END
 
 //// string& operator=(const char* str)
-EOSIO_TEST_BEGIN(string_test_op_assign_2)
+EOSIO_TEST_BEGIN(string_test_op_asgn_2)
    string eostr{};
    eostr = "abcdef";
 
@@ -312,7 +312,7 @@ EOSIO_TEST_BEGIN(string_test_op_assign_2)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdef"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_op_assign_op_plus)
+EOSIO_TEST_BEGIN(string_test_op_asgn_pl)
    string eostr{};
    eostr = "";
    eostr += "abcdef";
@@ -328,13 +328,13 @@ EOSIO_TEST_BEGIN(string_test_op_assign_op_plus)
 EOSIO_TEST_END
 
 //// char& operator[](const size_t n)
-EOSIO_TEST_BEGIN(string_test_pos_char_eq)
+EOSIO_TEST_BEGIN(string_test_char_eq)
    string eostr{"abcdef"};
    CHECK_EQUAL( eostr[0], 'a' )
    CHECK_EQUAL( eostr[5], 'f' )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_pos_char_eq_op_plus)
+EOSIO_TEST_BEGIN(string_test_char_eq_pl)
    string eostr{"abc"};
    eostr += "def";
    CHECK_EQUAL( eostr[0], 'a' )
@@ -342,14 +342,14 @@ EOSIO_TEST_BEGIN(string_test_pos_char_eq_op_plus)
 EOSIO_TEST_END
 
 //// const char& operator[](const size_t n) const
-EOSIO_TEST_BEGIN(string_test_pos_char_eq_ctr_literal)
+EOSIO_TEST_BEGIN(string_test_char_eq_ctr)
    const string eostr{"abcdef"};
    CHECK_EQUAL( eostr[0], 'a' )
    CHECK_EQUAL( eostr[5], 'f' )
 EOSIO_TEST_END
 
 //// char& at(const size_t n)
-EOSIO_TEST_BEGIN(string_test_pos_char_eq_at_1)
+EOSIO_TEST_BEGIN(string_test_char_eq_at_1)
    string eostr{"abcdef"};
    CHECK_EQUAL( eostr.at(0), 'a' )
    CHECK_EQUAL( eostr.at(5), 'f' )
@@ -358,7 +358,7 @@ EOSIO_TEST_BEGIN(string_test_pos_char_eq_at_1)
 EOSIO_TEST_END
 
 //// const char& at(const size_t n) const
-EOSIO_TEST_BEGIN(string_test_pos_char_eq_at_2)
+EOSIO_TEST_BEGIN(string_test_char_eq_at_2)
    const string eostr{"abcdef"};
    CHECK_EQUAL( eostr.at(0), 'a' )
    CHECK_EQUAL( eostr.at(5), 'f' )
@@ -366,7 +366,7 @@ EOSIO_TEST_BEGIN(string_test_pos_char_eq_at_2)
    CHECK_ASSERT( "eosio::string::at const", [&]() {eostr.at(6);} )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_pos_char_eq_at_3)
+EOSIO_TEST_BEGIN(string_test_char_eq_at_3)
    string eostr{""};
    eostr += "abcdef";
    const char c0{eostr.at(0)};
@@ -798,35 +798,35 @@ EOSIO_TEST_BEGIN(string_test_copy_3)
 EOSIO_TEST_END
 
 //// string& insert(const size_t pos, const char* str)
-EOSIO_TEST_BEGIN(string_test_insert_1)
+EOSIO_TEST_BEGIN(string_test_ins_1)
    string eostr{"iii"};
    const char* str{"ooo"};
    eostr.insert(0, str);
    CHECK_EQUAL( strcmp(eostr.c_str(), "oooiii"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_2)
+EOSIO_TEST_BEGIN(string_test_ins_2)
    string eostr{"iii"};
    const char* str{"ooo"};
    eostr.insert(1, str);
    CHECK_EQUAL( strcmp(eostr.c_str(), "ioooii"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_3)
+EOSIO_TEST_BEGIN(string_test_ins_3)
    string eostr{"iii"};
    const char* str{"ooo"};
    eostr.insert(2, str);
    CHECK_EQUAL( strcmp(eostr.c_str(), "iioooi"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_4)
+EOSIO_TEST_BEGIN(string_test_ins_4)
    string eostr{"iii"};
    const char* str{"ooo"};
    eostr.insert(3, str);
    CHECK_EQUAL( strcmp(eostr.c_str(), "iiiooo"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_5)
+EOSIO_TEST_BEGIN(string_test_ins_5)
    string eostr{""};
    eostr += "iii";
    const char* str{"ooo"};
@@ -834,7 +834,7 @@ EOSIO_TEST_BEGIN(string_test_insert_5)
    CHECK_EQUAL( strcmp(eostr.c_str(), "oooiii"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_6)
+EOSIO_TEST_BEGIN(string_test_ins_6)
    string eostr{""};
    eostr += "iii";
    const char* str{"ooo"};
@@ -842,7 +842,7 @@ EOSIO_TEST_BEGIN(string_test_insert_6)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ioooii"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_7)
+EOSIO_TEST_BEGIN(string_test_ins_7)
    string eostr{""};
    eostr += "iii";
    const char* str{"ooo"};
@@ -850,7 +850,7 @@ EOSIO_TEST_BEGIN(string_test_insert_7)
    CHECK_EQUAL( strcmp(eostr.c_str(), "iioooi"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_8)
+EOSIO_TEST_BEGIN(string_test_ins_8)
    string eostr{""};
    eostr += "iii";
    const char* str{"ooo"};
@@ -865,27 +865,27 @@ int main(int argc, char* argv[]) {
    }
    silence_output(!verbose);
 
-   EOSIO_TEST(string_test_ctr_literal)
-   EOSIO_TEST(string_test_ctr_default)
+   EOSIO_TEST(string_test_ctr_lit)
+   EOSIO_TEST(string_test_ctr_def)
    EOSIO_TEST(string_test_ctr_char_ptr)
    EOSIO_TEST(string_test_ctr_char_rep)
    EOSIO_TEST(string_test_ctr_str_sub)
    EOSIO_TEST(string_test_ctr_cpy)
-   EOSIO_TEST(string_test_op_plus)
-   EOSIO_TEST(string_test_ctr_move)
-   EOSIO_TEST(string_test_op_plus_ctr_move)
-   EOSIO_TEST(string_test_op_assign_1)
-   EOSIO_TEST(string_test_op_plus_op_assign)
-   EOSIO_TEST(string_test_move_assign)
-   EOSIO_TEST(string_test_op_plus_move_assign)
-   EOSIO_TEST(string_test_op_assign_2)
-   EOSIO_TEST(string_test_op_assign_op_plus)
-   EOSIO_TEST(string_test_pos_char_eq)
-   EOSIO_TEST(string_test_pos_char_eq_op_plus)
-   EOSIO_TEST(string_test_pos_char_eq_ctr_literal)
-   EOSIO_TEST(string_test_pos_char_eq_at_1)
-   EOSIO_TEST(string_test_pos_char_eq_at_2)
-   EOSIO_TEST(string_test_pos_char_eq_at_3)
+   EOSIO_TEST(string_test_op_pl)
+   EOSIO_TEST(string_test_ctr_mv)
+   EOSIO_TEST(string_test_op_pl_ctr_mv)
+   EOSIO_TEST(string_test_op_asgn_1)
+   EOSIO_TEST(string_test_op_pl_asgn)
+   EOSIO_TEST(string_test_mv_asgn)
+   EOSIO_TEST(string_test_op_pl_mv)
+   EOSIO_TEST(string_test_op_asgn_2)
+   EOSIO_TEST(string_test_op_asgn_pl)
+   EOSIO_TEST(string_test_char_eq)
+   EOSIO_TEST(string_test_char_eq_pl)
+   EOSIO_TEST(string_test_char_eq_ctr)
+   EOSIO_TEST(string_test_char_eq_at_1)
+   EOSIO_TEST(string_test_char_eq_at_2)
+   EOSIO_TEST(string_test_char_eq_at_3)
    EOSIO_TEST(string_test_front_1)
    EOSIO_TEST(string_test_front_2)
    EOSIO_TEST(string_test_back_1)
@@ -921,14 +921,14 @@ int main(int argc, char* argv[]) {
    EOSIO_TEST(string_test_copy_1)
    EOSIO_TEST(string_test_copy_2)
    EOSIO_TEST(string_test_copy_3)
-   EOSIO_TEST(string_test_insert_1)
-   EOSIO_TEST(string_test_insert_2)
-   EOSIO_TEST(string_test_insert_3)
-   EOSIO_TEST(string_test_insert_4)
-   EOSIO_TEST(string_test_insert_5)
-   EOSIO_TEST(string_test_insert_6)
-   EOSIO_TEST(string_test_insert_7)
-   EOSIO_TEST(string_test_insert_8)
+   EOSIO_TEST(string_test_ins_1)
+   EOSIO_TEST(string_test_ins_2)
+   EOSIO_TEST(string_test_ins_3)
+   EOSIO_TEST(string_test_ins_4)
+   EOSIO_TEST(string_test_ins_5)
+   EOSIO_TEST(string_test_ins_6)
+   EOSIO_TEST(string_test_ins_7)
+   EOSIO_TEST(string_test_ins_8)
 
    return has_failed();
 }

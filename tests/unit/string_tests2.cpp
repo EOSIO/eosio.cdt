@@ -15,7 +15,7 @@ using eosio::string;
 
 // Definitions found in `eosio.cdt/libraries/eosiolib/core/eosio/string.hpp`
 
-EOSIO_TEST_BEGIN(string_test_insert_null)
+EOSIO_TEST_BEGIN(string_test_ins_null)
    string eostr{"abcdefg"};
    const char* null_man{nullptr};
    CHECK_ASSERT( "eosio::string::insert", [&]() {eostr.insert(0, null_man, 1);} )
@@ -23,7 +23,7 @@ EOSIO_TEST_BEGIN(string_test_insert_null)
 EOSIO_TEST_END
 
 //// string& insert(const size_t pos, const string& str)
-EOSIO_TEST_BEGIN(string_test_insert_to_blank)
+EOSIO_TEST_BEGIN(string_test_ins_to_blank)
    string eostr{};
    const string str{"ooo"};
    eostr.insert(0, str);
@@ -32,7 +32,7 @@ EOSIO_TEST_BEGIN(string_test_insert_to_blank)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ooo"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_at_beginning_single)
+EOSIO_TEST_BEGIN(string_test_ins_at_bgn_single)
    string eostr{"abc"};
    const string str{"d"};
    eostr.insert(0, str);
@@ -41,7 +41,7 @@ EOSIO_TEST_BEGIN(string_test_insert_at_beginning_single)
    CHECK_EQUAL( strcmp(eostr.c_str(), "dabc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_at_beginning_multiple_1)
+EOSIO_TEST_BEGIN(string_test_ins_at_bgn_mul_1)
    string eostr{"abc"};
    const string str{"def"};
    eostr.insert(0, str);
@@ -50,7 +50,7 @@ EOSIO_TEST_BEGIN(string_test_insert_at_beginning_multiple_1)
    CHECK_EQUAL( strcmp(eostr.c_str(), "defabc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_at_beginning_multiple_2)
+EOSIO_TEST_BEGIN(string_test_ins_at_bgn_mul_2)
    string eostr{"iii"};
    const string str{"ooo"};
    eostr.insert(0, str);
@@ -59,7 +59,7 @@ EOSIO_TEST_BEGIN(string_test_insert_at_beginning_multiple_2)
    CHECK_EQUAL( strcmp(eostr.c_str(), "oooiii") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_in_middle_1)
+EOSIO_TEST_BEGIN(string_test_ins_in_middle_1)
    string eostr{"iii"};
    const string str{"ooo"};
    eostr.insert(1, str);
@@ -68,7 +68,7 @@ EOSIO_TEST_BEGIN(string_test_insert_in_middle_1)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ioooii") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_in_middle_2)
+EOSIO_TEST_BEGIN(string_test_ins_in_middle_2)
    string eostr{"iii"};
    const string str{"ooo"};
    eostr.insert(2, str);
@@ -77,7 +77,7 @@ EOSIO_TEST_BEGIN(string_test_insert_in_middle_2)
    CHECK_EQUAL( strcmp(eostr.c_str(), "iioooi") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_at_end)
+EOSIO_TEST_BEGIN(string_test_ins_at_end)
    string eostr{"iii"};
    const string str{"ooo"};
    eostr.insert(3, str);
@@ -86,13 +86,13 @@ EOSIO_TEST_BEGIN(string_test_insert_at_end)
    CHECK_EQUAL( strcmp(eostr.c_str(), "iiiooo") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_neg_index_1)
+EOSIO_TEST_BEGIN(string_test_ins_neg_index_1)
    string eostr{"abcdefg"};
    const string str{"ooo"};
    CHECK_ASSERT( "eosio::string::insert", [&]() {eostr.insert(-1, str);} )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_1)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_1)
    string eostr{""};
    string str{""};
    str += "ooo";
@@ -102,7 +102,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_1)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ooo"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_2)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_2)
    string eostr{""};
    eostr += "abc";
    string str{""};
@@ -113,7 +113,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_2)
    CHECK_EQUAL( strcmp(eostr.c_str(), "dabc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_3)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_3)
    string eostr{""};
    eostr += "abc";
    string str{""};
@@ -124,7 +124,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_3)
    CHECK_EQUAL( strcmp(eostr.c_str(), "defabc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_4)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_4)
    string eostr{""};
    eostr += "iii";
    string str{""};
@@ -135,7 +135,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_4)
    CHECK_EQUAL( strcmp(eostr.c_str(), "oooiii") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_5)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_5)
    string eostr{""};
    eostr += "iii";
    string str{""};
@@ -146,7 +146,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_5)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ioooii") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_6)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_6)
    string eostr{""};
    eostr += "iii";
    string str{""};
@@ -157,7 +157,7 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_6)
    CHECK_EQUAL( strcmp(eostr.c_str(), "iioooi") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_op_plus_7)
+EOSIO_TEST_BEGIN(string_test_ins_op_pl_7)
    string eostr{""};
    eostr += "iii";
    string str{""};
@@ -168,13 +168,13 @@ EOSIO_TEST_BEGIN(string_test_insert_op_plus_7)
    CHECK_EQUAL( strcmp(eostr.c_str(), "iiiooo") , 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_neg_index_2)
+EOSIO_TEST_BEGIN(string_test_ins_neg_index_2)
    string eostr{"abcdefg"};
    string str{"ooo"};
    CHECK_ASSERT( "eosio::string::insert", [&]() {eostr.insert(-1, str);} )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_insert_capacity)
+EOSIO_TEST_BEGIN(string_test_ins_capacity)
    string eostr = "hello";
    eostr.insert(0, "0", 1); /// `_capacity` is now 12; `_begin` now holds `std::unique_ptr<char[]>`
    CHECK_EQUAL( eostr.size(), 6 )
@@ -209,63 +209,63 @@ EOSIO_TEST_BEGIN(string_test_erase_to_npos)
    CHECK_EQUAL( strcmp(eostr.c_str(), ""), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_1)
+EOSIO_TEST_BEGIN(string_test_erase_1)
    string eostr{"abcdefgh"};
    eostr.erase(1, string::npos);
    CHECK_EQUAL( eostr.size(), 1 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "a"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_2)
+EOSIO_TEST_BEGIN(string_test_erase_2)
    string eostr{"abcdefgh"};
    eostr.erase(2, string::npos);
    CHECK_EQUAL( eostr.size(), 2 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "ab"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_3)
+EOSIO_TEST_BEGIN(string_test_erase_3)
    string eostr{"abcdefgh"};
    eostr.erase(3, string::npos);
    CHECK_EQUAL( eostr.size(), 3 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_4)
+EOSIO_TEST_BEGIN(string_test_erase_4)
    string eostr{"abcdefgh"};
    eostr.erase(4, string::npos);
    CHECK_EQUAL( eostr.size(), 4 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcd"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_5)
+EOSIO_TEST_BEGIN(string_test_erase_5)
    string eostr{"abcdefgh"};
    eostr.erase(5, string::npos);
    CHECK_EQUAL( eostr.size(), 5 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcde"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_6)
+EOSIO_TEST_BEGIN(string_test_erase_6)
    string eostr{"abcdefgh"};
    eostr.erase(6, string::npos);
    CHECK_EQUAL( eostr.size(), 6 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdef"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_7)
+EOSIO_TEST_BEGIN(string_test_erase_7)
    string eostr{"abcdefgh"};
    eostr.erase(7, string::npos);
    CHECK_EQUAL( eostr.size(), 7 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdefg"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_8)
+EOSIO_TEST_BEGIN(string_test_erase_8)
    string eostr{"abcdefgh"};
    eostr.erase(8, string::npos);
    CHECK_EQUAL( eostr.size(), 8 )
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdefgh"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_8_len_0)
+EOSIO_TEST_BEGIN(string_test_erase_8_len_0)
    string eostr{"abcdefgh"};
    eostr.erase(8, 0);
    CHECK_EQUAL( eostr.size(), 8 )
@@ -277,7 +277,7 @@ EOSIO_TEST_BEGIN(string_test_erase_neg_index_1)
    CHECK_ASSERT( "eosio::string::erase", [&]() {eostr.erase(-1, 1);} )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -286,7 +286,7 @@ EOSIO_TEST_BEGIN(string_test_erase_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), ""), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_at_zero_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_at_0_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -295,7 +295,7 @@ EOSIO_TEST_BEGIN(string_test_erase_at_zero_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), ""), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_at_zero_op_plus_npos)
+EOSIO_TEST_BEGIN(string_test_erase_at_0_op_pl_npos)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -304,7 +304,7 @@ EOSIO_TEST_BEGIN(string_test_erase_at_zero_op_plus_npos)
    CHECK_EQUAL( strcmp(eostr.c_str(), ""), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_1_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_1_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -313,7 +313,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_1_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "a"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_2_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_2_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -322,7 +322,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_2_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "ab"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_3_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_3_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -331,7 +331,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_3_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abc"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_4_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_4_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -340,7 +340,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_4_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcd"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_5_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_5_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -349,7 +349,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_5_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcde"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_6_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_6_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -358,7 +358,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_6_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdef"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_7_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_7_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -367,7 +367,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_7_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdefg"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_from_8_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_8_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -376,7 +376,7 @@ EOSIO_TEST_BEGIN(string_test_erase_from_8_op_plus)
    CHECK_EQUAL( strcmp(eostr.c_str(), "abcdefgh"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_erase_at_8_op_plus)
+EOSIO_TEST_BEGIN(string_test_erase_at_8_op_pl)
    string eostr{""};
    eostr += "abcdefgh";
 
@@ -458,7 +458,7 @@ EOSIO_TEST_BEGIN(string_test_append_3)
 EOSIO_TEST_END
 
 //// string& operator+=(const char* rhs)
-EOSIO_TEST_BEGIN(string_test_append_op_plus_1)
+EOSIO_TEST_BEGIN(string_test_append_op_pl_1)
    string eostr0{};
    string eostr1{"a"};
    string eostr2{"abcdef"};
@@ -487,7 +487,7 @@ EOSIO_TEST_BEGIN(string_test_append_op_plus_1)
 EOSIO_TEST_END
 
 //// string& operator+=(const string& rhs)
-EOSIO_TEST_BEGIN(string_test_append_op_plus_2)
+EOSIO_TEST_BEGIN(string_test_append_op_pl_2)
    string eostr0{};
    string eostr1{"a"};
    string eostr2{"abcdef"};
@@ -516,7 +516,7 @@ EOSIO_TEST_BEGIN(string_test_append_op_plus_2)
 EOSIO_TEST_END
 
 //// string& operator+=(const string& s)
-EOSIO_TEST_BEGIN(string_test_append_op_plus_3)
+EOSIO_TEST_BEGIN(string_test_append_op_pl_3)
    string eostr0{"a"};
    string eostr1{"b"};
    CHECK_EQUAL( eostr0.size(), 1 )
@@ -525,7 +525,7 @@ EOSIO_TEST_BEGIN(string_test_append_op_plus_3)
    CHECK_EQUAL( strcmp(eostr0.c_str(), "ab"), 0 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(string_test_append_op_plus_4)
+EOSIO_TEST_BEGIN(string_test_append_op_pl_4)
    string eostr0{"abc"};
    string eostr1{"def"};
    CHECK_EQUAL( eostr0.size(), 3 )
@@ -555,7 +555,7 @@ EOSIO_TEST_BEGIN(string_test_less_than)
 EOSIO_TEST_END
 
 //// friend bool operator> (const string& lhs, const string& rhs)
-EOSIO_TEST_BEGIN(string_test_greater_than)
+EOSIO_TEST_BEGIN(string_test_gt)
    const string eostr0{"abc"};
    const string eostr1{"def"};
    CHECK_EQUAL( (eostr0 > eostr0), false )
@@ -564,7 +564,7 @@ EOSIO_TEST_BEGIN(string_test_greater_than)
 EOSIO_TEST_END
 
 //// friend bool operator<=(const string& lhs, const string& rhs)
-EOSIO_TEST_BEGIN(string_test_less_than_or_equal)
+EOSIO_TEST_BEGIN(string_test_lt_or_eq)
    const string eostr0{"abc"};
    const string eostr1{"def"};
    CHECK_EQUAL( (eostr0 <= eostr0), true )
@@ -573,7 +573,7 @@ EOSIO_TEST_BEGIN(string_test_less_than_or_equal)
 EOSIO_TEST_END
 
 //// friend bool operator>=(const string& lhs, const string& rhs)
-EOSIO_TEST_BEGIN(string_test_greater_than_or_equal)
+EOSIO_TEST_BEGIN(string_test_gt_or_eq)
    const string eostr0{"abc"};
    const string eostr1{"def"};
    CHECK_EQUAL( (eostr0 >= eostr0), true )
@@ -657,49 +657,49 @@ int main(int argc, char* argv[]) {
    }
    silence_output(!verbose);
 
-   EOSIO_TEST(string_test_insert_null)
-   EOSIO_TEST(string_test_insert_to_blank)
-   EOSIO_TEST(string_test_insert_at_beginning_single)
-   EOSIO_TEST(string_test_insert_at_beginning_multiple_1)
-   EOSIO_TEST(string_test_insert_at_beginning_multiple_2)
-   EOSIO_TEST(string_test_insert_in_middle_1)
-   EOSIO_TEST(string_test_insert_in_middle_2)
-   EOSIO_TEST(string_test_insert_at_end)
-   EOSIO_TEST(string_test_insert_neg_index_1)
-   EOSIO_TEST(string_test_insert_op_plus_1)
-   EOSIO_TEST(string_test_insert_op_plus_2)
-   EOSIO_TEST(string_test_insert_op_plus_3)
-   EOSIO_TEST(string_test_insert_op_plus_4)
-   EOSIO_TEST(string_test_insert_op_plus_5)
-   EOSIO_TEST(string_test_insert_op_plus_6)
-   EOSIO_TEST(string_test_insert_op_plus_7)
-   EOSIO_TEST(string_test_insert_neg_index_2)
-   EOSIO_TEST(string_test_insert_capacity)
+   EOSIO_TEST(string_test_ins_null)
+   EOSIO_TEST(string_test_ins_to_blank)
+   EOSIO_TEST(string_test_ins_at_bgn_single)
+   EOSIO_TEST(string_test_ins_at_bgn_mul_1)
+   EOSIO_TEST(string_test_ins_at_bgn_mul_2)
+   EOSIO_TEST(string_test_ins_in_middle_1)
+   EOSIO_TEST(string_test_ins_in_middle_2)
+   EOSIO_TEST(string_test_ins_at_end)
+   EOSIO_TEST(string_test_ins_neg_index_1)
+   EOSIO_TEST(string_test_ins_op_pl_1)
+   EOSIO_TEST(string_test_ins_op_pl_2)
+   EOSIO_TEST(string_test_ins_op_pl_3)
+   EOSIO_TEST(string_test_ins_op_pl_4)
+   EOSIO_TEST(string_test_ins_op_pl_5)
+   EOSIO_TEST(string_test_ins_op_pl_6)
+   EOSIO_TEST(string_test_ins_op_pl_7)
+   EOSIO_TEST(string_test_ins_neg_index_2)
+   EOSIO_TEST(string_test_ins_capacity)
    EOSIO_TEST(string_test_erase)
    EOSIO_TEST(string_test_erase_at_zero)
    EOSIO_TEST(string_test_erase_to_npos)
-   EOSIO_TEST(string_test_erase_from_1)
-   EOSIO_TEST(string_test_erase_from_2)
-   EOSIO_TEST(string_test_erase_from_3)
-   EOSIO_TEST(string_test_erase_from_4)
-   EOSIO_TEST(string_test_erase_from_5)
-   EOSIO_TEST(string_test_erase_from_6)
-   EOSIO_TEST(string_test_erase_from_7)
-   EOSIO_TEST(string_test_erase_from_8)
-   EOSIO_TEST(string_test_erase_from_8_len_0)
+   EOSIO_TEST(string_test_erase_1)
+   EOSIO_TEST(string_test_erase_2)
+   EOSIO_TEST(string_test_erase_3)
+   EOSIO_TEST(string_test_erase_4)
+   EOSIO_TEST(string_test_erase_5)
+   EOSIO_TEST(string_test_erase_6)
+   EOSIO_TEST(string_test_erase_7)
+   EOSIO_TEST(string_test_erase_8)
+   EOSIO_TEST(string_test_erase_8_len_0)
    EOSIO_TEST(string_test_erase_neg_index_1)
-   EOSIO_TEST(string_test_erase_op_plus)
-   EOSIO_TEST(string_test_erase_at_zero_op_plus)
-   EOSIO_TEST(string_test_erase_at_zero_op_plus_npos)
-   EOSIO_TEST(string_test_erase_from_1_op_plus)
-   EOSIO_TEST(string_test_erase_from_2_op_plus)
-   EOSIO_TEST(string_test_erase_from_3_op_plus)
-   EOSIO_TEST(string_test_erase_from_4_op_plus)
-   EOSIO_TEST(string_test_erase_from_5_op_plus)
-   EOSIO_TEST(string_test_erase_from_6_op_plus)
-   EOSIO_TEST(string_test_erase_from_7_op_plus)
-   EOSIO_TEST(string_test_erase_from_8_op_plus)
-   EOSIO_TEST(string_test_erase_at_8_op_plus)
+   EOSIO_TEST(string_test_erase_op_pl)
+   EOSIO_TEST(string_test_erase_at_0_op_pl)
+   EOSIO_TEST(string_test_erase_at_0_op_pl_npos)
+   EOSIO_TEST(string_test_erase_1_op_pl)
+   EOSIO_TEST(string_test_erase_2_op_pl)
+   EOSIO_TEST(string_test_erase_3_op_pl)
+   EOSIO_TEST(string_test_erase_4_op_pl)
+   EOSIO_TEST(string_test_erase_5_op_pl)
+   EOSIO_TEST(string_test_erase_6_op_pl)
+   EOSIO_TEST(string_test_erase_7_op_pl)
+   EOSIO_TEST(string_test_erase_8_op_pl)
+   EOSIO_TEST(string_test_erase_at_8_op_pl)
    EOSIO_TEST(string_test_erase_neg_index_2)
    EOSIO_TEST(string_test_append_to_blank_1)
    EOSIO_TEST(string_test_append_1)
@@ -707,15 +707,15 @@ int main(int argc, char* argv[]) {
    EOSIO_TEST(string_test_append_to_blank_2)
    EOSIO_TEST(string_test_append_2)
    EOSIO_TEST(string_test_append_3)
-   EOSIO_TEST(string_test_append_op_plus_1)
-   EOSIO_TEST(string_test_append_op_plus_2)
-   EOSIO_TEST(string_test_append_op_plus_3)
-   EOSIO_TEST(string_test_append_op_plus_4)
+   EOSIO_TEST(string_test_append_op_pl_1)
+   EOSIO_TEST(string_test_append_op_pl_2)
+   EOSIO_TEST(string_test_append_op_pl_3)
+   EOSIO_TEST(string_test_append_op_pl_4)
    EOSIO_TEST(string_test_print)
    EOSIO_TEST(string_test_less_than)
-   EOSIO_TEST(string_test_greater_than)
-   EOSIO_TEST(string_test_less_than_or_equal)
-   EOSIO_TEST(string_test_greater_than_or_equal)
+   EOSIO_TEST(string_test_gt)
+   EOSIO_TEST(string_test_lt_or_eq)
+   EOSIO_TEST(string_test_gt_or_eq)
    EOSIO_TEST(string_test_equal)
    EOSIO_TEST(string_test_not_equal)
    EOSIO_TEST(string_test_stream_io_1)
