@@ -17,7 +17,7 @@ using eosio::name;
 constexpr uint64_t u64max = numeric_limits<uint64_t>::max(); // 18446744073709551615ULL
 
 // Definitions in `eosio.cdt/libraries/eosio/name.hpp`
-EOSIO_TEST_BEGIN(name_type_test_constructor_num)
+EOSIO_TEST_BEGIN(name_type_test_ctr_num)
    //// constexpr name()
    CHECK_EQUAL( name{}.value, 0ULL )
 
@@ -31,7 +31,7 @@ EOSIO_TEST_BEGIN(name_type_test_constructor_num)
    CHECK_EQUAL( name{name::raw{u64max}}.value, u64max )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_constructor_str_1)
+EOSIO_TEST_BEGIN(name_type_test_ctr_str_lit)
    //// constexpr explicit name(string_view)
    // Note:
    // These are the exact `uint64_t` value representations of the given string
@@ -42,17 +42,12 @@ EOSIO_TEST_BEGIN(name_type_test_constructor_str_1)
 
    CHECK_EQUAL( name{"abc"}.value, 3589368903014285312ULL )
    CHECK_EQUAL( name{"123"}.value, 614178399182651392ULL )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_3)
    CHECK_EQUAL( name{".abc"}.value,          112167778219196416ULL )
    CHECK_EQUAL( name{".........abc"}.value,  102016ULL )
    CHECK_EQUAL( name{"123."}.value,          614178399182651392ULL )
    CHECK_EQUAL( name{"123........."}.value,  614178399182651392ULL )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}.value, 108209673814966320ULL )
-EOSIO_TEST_END
-
-EOSIO_TEST_BEGIN(name_type_test_constructor_str_2)
    CHECK_EQUAL( name{"abc.123"}.value, 3589369488740450304ULL )
    CHECK_EQUAL( name{"123.abc"}.value, 614181822271586304ULL )
 
@@ -175,7 +170,7 @@ EOSIO_TEST_BEGIN(name_type_test_prefix)
    CHECK_EQUAL( name{"a.my.account"}.prefix().prefix(), name{"a"} )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_raw_1)
+EOSIO_TEST_BEGIN(name_type_test_raw)
    // -----------------------------
    // constexpr operator raw()const
    CHECK_EQUAL( name{"1"}.operator name::raw(), static_cast<name::raw>(576460752303423488ULL) )
@@ -191,9 +186,7 @@ EOSIO_TEST_BEGIN(name_type_test_raw_1)
    CHECK_EQUAL( name{"123."}.operator name::raw(), static_cast<name::raw>(614178399182651392ULL) )
    CHECK_EQUAL( name{"123........."}.operator name::raw(), static_cast<name::raw>(614178399182651392ULL) )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}.operator name::raw(), static_cast<name::raw>(108209673814966320ULL) )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_raw_2)
    CHECK_EQUAL( name{"abc.123"}.operator name::raw(), static_cast<name::raw>(3589369488740450304ULL) )
    CHECK_EQUAL( name{"123.abc"}.operator name::raw(), static_cast<name::raw>(614181822271586304ULL) )
 
@@ -223,7 +216,7 @@ EOSIO_TEST_BEGIN(name_type_test_op_bool)
    CHECK_EQUAL( !name{"1"}.operator bool(), false )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_memcmp_1)
+EOSIO_TEST_BEGIN(name_type_test_memcmp)
    // ----------------------------------------
    // char* write_as_string(char*, char*)const
    constexpr uint8_t buffer_size{32};
@@ -243,13 +236,7 @@ EOSIO_TEST_BEGIN(name_type_test_memcmp_1)
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
    name{str = "123"}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-EOSIO_TEST_END
 
-
-EOSIO_TEST_BEGIN(name_type_test_memcmp_2)
-   static constexpr uint8_t buffer_size{32};
-   char buffer[buffer_size]{};
-   string str{};
 
    // Note:
    // Any '.' characters at the end of a name are ignored
@@ -268,12 +255,7 @@ EOSIO_TEST_BEGIN(name_type_test_memcmp_2)
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
    name{str = "123.abc"}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_memcmp_3)
-   static constexpr uint8_t buffer_size{32};
-   char buffer[buffer_size]{};
-   string str{};
 
    name{str = "12345abcdefgj"}.write_as_string( buffer, buffer + sizeof(buffer) );
    CHECK_EQUAL( memcmp(str.c_str(), buffer, strlen(str.c_str())), 0 )
@@ -323,7 +305,7 @@ EOSIO_TEST_BEGIN(name_type_test_to_str)
 EOSIO_TEST_END
 
 
-EOSIO_TEST_BEGIN(name_type_test_equal_1)
+EOSIO_TEST_BEGIN(name_type_test_equal)
    // ----------------------------------------------------------
    // friend constexpr bool operator==(const name&, const name&)
    CHECK_EQUAL( name{"1"} == name{"1"}, true )
@@ -339,9 +321,7 @@ EOSIO_TEST_BEGIN(name_type_test_equal_1)
    CHECK_EQUAL( name{"123."} == name{"123"}, true )
    CHECK_EQUAL( name{"123........."} == name{"123"}, true )
    CHECK_EQUAL( name{".a.b.c.1.2.3."} == name{".a.b.c.1.2.3"}, true )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_equal_2)
    CHECK_EQUAL( name{"abc.123"} == name{"abc.123"}, true )
    CHECK_EQUAL( name{"123.abc"} == name{"123.abc"}, true )
 
@@ -355,7 +335,7 @@ EOSIO_TEST_BEGIN(name_type_test_equal_2)
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"} == name{"zzzzzzzzzzzzj"}, true )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_not_equal_1)
+EOSIO_TEST_BEGIN(name_type_test_not_equal)
    // -----------------------------------------------------------
    // friend constexpr bool operator!=(const name&, const name&)
    CHECK_EQUAL( name{"1"} != name{}, true )
@@ -371,9 +351,7 @@ EOSIO_TEST_BEGIN(name_type_test_not_equal_1)
    CHECK_EQUAL( name{"123."} != name{}, true )
    CHECK_EQUAL( name{"123........."} != name{}, true )
    CHECK_EQUAL( name{".a.b.c.1.2.3."} != name{}, true )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_not_equal_2)
    CHECK_EQUAL( name{"abc.123"} != name{}, true )
    CHECK_EQUAL( name{"123.abc"} != name{}, true )
 
@@ -387,7 +365,7 @@ EOSIO_TEST_BEGIN(name_type_test_not_equal_2)
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"} != name{}, true )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_less_than_1)
+EOSIO_TEST_BEGIN(name_type_test_less_than)
    // ---------------------------------------------------------
    // friend constexpr bool operator<(const name&, const name&)
    CHECK_EQUAL( name{} < name{"1"}, true )
@@ -403,10 +381,7 @@ EOSIO_TEST_BEGIN(name_type_test_less_than_1)
    CHECK_EQUAL( name{} < name{"123."}, true )
    CHECK_EQUAL( name{} < name{"123........."}, true )
    CHECK_EQUAL( name{} < name{".a.b.c.1.2.3."}, true )
-EOSIO_TEST_END
 
-
-EOSIO_TEST_BEGIN(name_type_test_less_than_2)
    CHECK_EQUAL( name{} < name{"abc.123"}, true )
    CHECK_EQUAL( name{} < name{"123.abc"}, true )
 
@@ -421,7 +396,7 @@ EOSIO_TEST_BEGIN(name_type_test_less_than_2)
 EOSIO_TEST_END
 
 
-EOSIO_TEST_BEGIN(name_type_test_op_n_1)
+EOSIO_TEST_BEGIN(name_type_test_op_n)
    // ------------------------------------
    // inline constexpr name operator""_n()
    CHECK_EQUAL( name{}, ""_n )
@@ -439,9 +414,7 @@ EOSIO_TEST_BEGIN(name_type_test_op_n_1)
    CHECK_EQUAL( name{"123."}, "123."_n )
    CHECK_EQUAL( name{"123........."}, "123........."_n )
    CHECK_EQUAL( name{".a.b.c.1.2.3."}, ".a.b.c.1.2.3."_n )
-EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_op_n_2)
    CHECK_EQUAL( name{"abc.123"}, "abc.123"_n )
    CHECK_EQUAL( name{"123.abc"}, "123.abc"_n )
 
@@ -462,30 +435,22 @@ int main(int argc, char* argv[]) {
    }
    silence_output(!verbose);
 
-   EOSIO_TEST(name_type_test_constructor_num)
-   EOSIO_TEST(name_type_test_constructor_str_1)
-   EOSIO_TEST(name_type_test_constructor_str_2)
+   EOSIO_TEST(name_type_test_ctr_num)
+   EOSIO_TEST(name_type_test_ctr_str_lit)
    EOSIO_TEST(name_type_test_str_not_allowed)
    EOSIO_TEST(name_type_test_char_to_value)
    EOSIO_TEST(name_type_test_allowed_chars)
    EOSIO_TEST(name_type_test_str_len)
    EOSIO_TEST(name_type_test_suffix)
    EOSIO_TEST(name_type_test_prefix)
-   EOSIO_TEST(name_type_test_raw_1)
-   EOSIO_TEST(name_type_test_raw_2)
+   EOSIO_TEST(name_type_test_raw)
    EOSIO_TEST(name_type_test_op_bool)
-   EOSIO_TEST(name_type_test_memcmp_1)
-   EOSIO_TEST(name_type_test_memcmp_2)
-   EOSIO_TEST(name_type_test_memcmp_3)
+   EOSIO_TEST(name_type_test_memcmp)
    EOSIO_TEST(name_type_test_to_str)
-   EOSIO_TEST(name_type_test_equal_1)
-   EOSIO_TEST(name_type_test_equal_2)
-   EOSIO_TEST(name_type_test_not_equal_1)
-   EOSIO_TEST(name_type_test_not_equal_2)
-   EOSIO_TEST(name_type_test_less_than_1)
-   EOSIO_TEST(name_type_test_less_than_2)
-   EOSIO_TEST(name_type_test_op_n_1)
-   EOSIO_TEST(name_type_test_op_n_2)
+   EOSIO_TEST(name_type_test_equal)
+   EOSIO_TEST(name_type_test_not_equal)
+   EOSIO_TEST(name_type_test_less_than)
+   EOSIO_TEST(name_type_test_op_n)
 
    return has_failed();
 }
