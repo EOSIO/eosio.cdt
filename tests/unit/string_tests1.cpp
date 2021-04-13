@@ -386,7 +386,7 @@ EOSIO_TEST_END
 
 //// const char& front() const
 EOSIO_TEST_BEGIN(string_test_front_2)
-   static const string eostr{"abcdef"};
+   const string eostr{"abcdef"};
    CHECK_EQUAL( eostr.front(), 'a' )
 EOSIO_TEST_END
 
