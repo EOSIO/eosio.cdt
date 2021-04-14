@@ -1,11 +1,11 @@
 ---
-content_title: How-To Allow Users to Pay for Key-Value Table Resources
-link_text: "How-To Allow Users to Pay for Key-Value Table Resources"
+content_title: How-To Create An Action Which Requires The User To Pay
+link_text: "How-To Create An Action Which Requires The User To Pay"
 ---
 
 ## Overview
 
-This guide provides instructions which show you how to allow users to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
+This guide provides instructions which show you how to create an action which requires the user to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
@@ -51,7 +51,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 ## Procedure
 
-Complete the following steps to allow a specific account name to be the payer for the resources needed to store a person object in the `kv table`:
+Complete the following steps to allow the `payer` account, to be the payer for the resources needed to store a person object in the `kv table`:
 
 1. Create a new action `upsert` in your smart contact class, which takes as input parameters an `account name, a first name, a last name, a personal id` which define a person data, and an `account name` for the payer.
 2. In the `upsert` action access the instance of `address_table` belonging to this contract by declaring a local variable of `address_table` type and pass the contract name as paramter.
@@ -109,7 +109,7 @@ void smrtcontract::upsert(
 
 ## Summary
 
-In conclusion, the above instructions show how to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
+In conclusion, the above instructions show how to create an action which requires the user to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
 
 ## Next Steps
 
