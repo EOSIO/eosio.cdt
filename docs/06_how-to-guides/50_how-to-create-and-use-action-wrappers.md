@@ -5,17 +5,23 @@ link_text: "How to create and use action wrappers"
 
 ## Overview
 
-This how-to guide provides instructions on how to create and use an action wrapper in a smart contract.
+This guide provides instructions on how to create and use an action wrapper in a smart contract.
+
+## Code Reference
+
+See the following code reference guide for action wrapper:
+
+* [eosio::action_wrapper](../structeosio_1_1action__wrapper).
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `multi_index_example`, defined in file `multi_index_example.hpp`.
 * An action `mod` which modifies the integer value `n` stored for row with key `user`.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 ```cpp
 class [[eosio::contract]] multi_index_example : public contract {
@@ -25,15 +31,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 }
 ```
 
-## Code Reference
-
-See the following code reference guide for action wrapper:
-
-* [eosio::action_wrapper](../structeosio_1_1action__wrapper).
-
 ## Procedure
 
-Complete the following steps to create and use action wrapper in the smart contract:
+Complete the following steps to create and use `mod_action` action wrapper for the existing `mod` action in the smart contract:
 
 1. [Define the action wrapper](#1-define-the-action-wrapper)
 2. [Use the action wrapper](#2-use-the-action-wrapper)

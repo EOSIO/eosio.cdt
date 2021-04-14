@@ -4,7 +4,7 @@ content_title: How to compile a smart contract with CMake
 
 ## Overview
 
-This how-to guide provides instructions on how to compile a smart contract with CMake.
+This guide provides instructions on how to compile a smart contract with CMake.
 
 ## Before you begin
 

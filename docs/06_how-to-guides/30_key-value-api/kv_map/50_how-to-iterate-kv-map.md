@@ -9,14 +9,14 @@ This how-to provides instructions to iterate through a `Key-Value Map` (`kv map`
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -43,12 +43,10 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 
 ## Procedure
 
-Complete the following steps to implement an action that is iterating through the first N `person` objects in `kv map` and prints their first and last names:
+Complete the following steps to implement an action which iterates through the first N `person` objects in the `kv map` and prints their first and last names:
 
 1. Create a new action `iterate`, which takes as an input parameter the number of iterations to be executed.
-2. 
-
-Refer to the following possible implementation to implement an action that is iterating through the first `iterations_count` objects in `my_map` and prints their first and last names:
+2. Refer to the following reference implementation to implement an action which iterates through the first `iterations_count` objects in `my_map` and prints their first and last names:
 
 `smartcontract.hpp file`
 

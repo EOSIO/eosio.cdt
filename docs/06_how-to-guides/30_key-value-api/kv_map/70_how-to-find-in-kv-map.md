@@ -9,14 +9,14 @@ This how-to provides instructions to find an object in `Key-Value Map` (`kv map`
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -48,7 +48,7 @@ Complete the following steps to find a `person` object with a given ID:
 1. Create a new action in your contract, named `delete`, which takes as input parameters the person ID.
 2. Use the `find()` function defined for the `kv::map` type, with the give ID as parameter, to find the `person` with the given ID as unique key.
 
-Refer to the following possible implementation to find `person` object with a given ID as unique key:
+Refer to the following reference implementation to find `person` object with a given ID as unique key:
 
 `smartcontract.hpp file`
 

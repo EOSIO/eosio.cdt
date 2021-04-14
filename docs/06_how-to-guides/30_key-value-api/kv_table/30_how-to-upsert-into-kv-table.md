@@ -14,14 +14,14 @@ Use the method `put` defined by the `eosio::kv::table` type to accomplish this t
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the table
 * A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` property.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -57,7 +57,7 @@ Complete the following steps to insert a new `person` object, and then update it
 2. In the `upsert` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. And then call the `put` method of the `address_table` and pass to it a newly created `person` object based on the action’s input parameters.
 
-Refer to the following possible implementation to insert a new `person` object, and then update it, in the `kv table`:
+Refer to the following reference implementation to insert a new `person` object, and then update it, in the `kv table`:
 
 `smartcontract.hpp file`
 

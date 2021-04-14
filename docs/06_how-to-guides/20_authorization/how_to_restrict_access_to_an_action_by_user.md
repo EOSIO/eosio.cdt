@@ -5,7 +5,7 @@ link_text: How To Perform Authorization Checks
 
 ## Overview
 
-This how-to guide provides instructions how to perform authorization checks in a smart contract.
+This guide provides instructions how to perform authorization checks in a smart contract.
 
 ## Before you begin
 

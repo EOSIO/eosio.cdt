@@ -14,7 +14,7 @@ Use the method `range` defined by the `eosio::kv::table::index` class to accompl
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
@@ -28,7 +28,7 @@ Complete the following prerequisites:
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 * A non-unique index defined on the `last_name` property, named `last_name_idx`.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -70,7 +70,7 @@ Complete the following steps to implement an action to retrieve a list of person
     2. The second parameter is a person object with its account name equal to `the maximum possible value for an account name` and its last name the same value to filter by the persons in the `address_table`.
 3. Return back to the caller the list of persons the `range()` function returns.
 
-Refer to the following possible implementation to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
+Refer to the following reference implementation to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
 
 `smartcontract.hpp`
 

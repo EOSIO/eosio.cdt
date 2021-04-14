@@ -4,7 +4,7 @@ content_title: How to configure CMake
 
 ## Overview
 
-This how-to guide provides instructions how to configure CMake.
+This guide provides instructions how to configure CMake.
 
 ## Before you begin
 

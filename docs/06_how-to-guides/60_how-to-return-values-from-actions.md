@@ -10,13 +10,13 @@ In order to accomplish this, use the `return` statement and pass the desired ret
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract, let’s call it `smrtcontract`, which builds without error.
 * An action, let’s call it `checkwithrv`, from which you want to return a value of a user defined type `action_response`.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 ```cpp
 struct action_response
@@ -38,7 +38,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 Complete the following steps to return an instance of `action_response` from the `checkwithrv` action:
 
-1. Create an instance of `action_response` C++ defined structure.
+1. Create an instance of the `action_response` C++ user defined structure.
 2. Initialize its data members based on the action’s business logic.
 3. Use `return` statement and pass as a parameter the instance created and initialized in previous steps.
 
@@ -75,7 +75,7 @@ The following options are available when you complete the procedure:
 * Use other means (e.g. programmatically) to send the  `checkwithrv` action to the smart contract and observe the returned value in the action trace.
 
 [[info | Returned values from actions availability]]
-The returned values from actions are only available to the clients sending the action via the RPC API. Currently, there is no support for an inline action to be able to use the return value, because inline actions don't execute synchronously.
+The action return values are only available to clients sending the action via the RPC API. Currently, there is no support for an inline action to be able to use the return value, because inline actions don't execute synchronously.
 
 ## Summary
 

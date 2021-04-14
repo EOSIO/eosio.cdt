@@ -9,14 +9,14 @@ This how-to provides instructions to upsert into `Key-Value Map` (`kv map`). Ups
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
-* Install EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -49,7 +49,7 @@ Complete the following steps to insert a new `person` object with a given ID, if
 2. Create an instance of the `person` class, named `person_upsert`, based on the input parameters: `account_name`, `first_name` and `last_name`.
 3. Use the `[]` operator defined for the `kv::map` type, and set the newly created `person_upsert` object as the value for the `id` key.
 
-Refer to the following possible implementation to insert a new `person` object, and then update it, in the `kv map`:
+Refer to the following reference implementation to insert a new `person` object, and then update it, in the `kv map`:
 
 `smartcontract.hpp file`
 

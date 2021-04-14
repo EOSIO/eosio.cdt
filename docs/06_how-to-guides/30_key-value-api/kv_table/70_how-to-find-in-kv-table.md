@@ -14,7 +14,7 @@ Use the method  `find()` defined by the `eosio::kv::table::index` class to accom
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
@@ -27,7 +27,7 @@ Complete the following prerequisites:
   * `personal_id`.
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -64,7 +64,7 @@ Complete the following steps to implement an action to find a particular `person
 3. Call the `find` method of the `account_name` index defined in the table and pass the account name of the person to be verified.
 4. Check if the `person` was found and return it back to the caller; if person was not found return an empty `person` object.
 
-Refer to the following possible implementation to implement an action to find a particular `person` identified by the `account_name` in the `address_table` and returns the person back to the caller:
+Refer to the following reference implementation to implement an action to find a particular `person` identified by the `account_name` in the `address_table` and returns the person back to the caller:
 
 `smartcontract.hpp`
 

@@ -14,14 +14,14 @@ Use the method `erase` defined by the `eosio::kv::table` type to accomplish this
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the table
 * A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` property.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -57,7 +57,7 @@ Complete the following steps to delete a `person` object from `address_table`:
 2. In the `delete` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. Call the `erase` method of the `address_table` and pass to it the primary key for the object which is deleted. If you try to erase an object which is not present in the `kv table` no error will be raised.
 
-Refer to the following possible implementation to delete a `person` object from `address_table`:
+Refer to the following reference implementation to delete a `person` object from `address_table`:
 
 `smartcontract.hpp file`
 

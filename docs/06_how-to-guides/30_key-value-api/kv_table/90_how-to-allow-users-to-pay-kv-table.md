@@ -5,7 +5,7 @@ link_text: "How-To Allow Users to Pay for Key-Value Table Resources"
 
 ## Overview
 
-This how-to provides instructions to allow users to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
+This guide provides instructions which show you how to allow users to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
@@ -14,14 +14,14 @@ Use the method `put` defined by the `eosio::kv::table` type to accomplish this t
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the table
 * A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` property.
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -57,7 +57,7 @@ Complete the following steps to allow a specific account name to be the payer fo
 2. In the `upsert` action access the instance of `address_table` belonging to this contract by declaring a local variable of `address_table` type and pass the contract name as paramter.
 3. And then call the `put` method of the `address_table` and pass to it a newly created `person` object based on the action’s input parameters and the payer account name.
 
-Refer to the following possible implementation to allow a specific account name to be the payer for the resources needed to store a person object in the `kv table`:
+Refer to the following reference implementation to allow a specific account name to be the payer for the resources needed to store a person object in the `kv table`:
 
 `smartcontract.hpp file`
 

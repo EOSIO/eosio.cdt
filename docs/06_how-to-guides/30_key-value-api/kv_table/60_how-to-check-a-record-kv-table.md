@@ -14,7 +14,7 @@ Use the  method `exists` defined by the `eosio::kv::table::index` class to accom
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
@@ -27,7 +27,7 @@ Complete the following prerequisites:
   * `personal_id`.
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -63,7 +63,7 @@ Complete the following steps to implement an action that is verifying whether a 
 2. In the `verify` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. Call the `exists()` method of the `account_name` index defined in the `kv table` class and pass the account name of the person to be verified.
 
-Refer to the following possible implementation to implement an action that is verifying whether a particular `person` identified by its `account_name` exists in the `address_table`:
+Refer to the following reference implementation to implement an action that is verifying whether a particular `person` identified by its `account_name` exists in the `address_table`:
 
 `smartcontract.hpp`
 

@@ -4,7 +4,7 @@ content_title: How to compile a smart contract via CLI
 
 ## Overview
 
-This how-to guide provides instructions how to compile a smart contract using the command line interface (CLI).
+This guide provides instructions how to compile a smart contract using the command line interface (CLI).
 
 ## Before you begin
 

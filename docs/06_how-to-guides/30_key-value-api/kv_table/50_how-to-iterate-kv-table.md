@@ -14,7 +14,7 @@ Use the `iterator` defined by the `eosio::kv::table::index` class to accomplish 
 
 ## Before you begin
 
-Complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
@@ -27,7 +27,7 @@ Complete the following prerequisites:
   * `personal_id`.
 * A unique index, named `account_name_uidx`, defined on the `account_name` property..
 
-Refer to the following possible implementation for your starting point:
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -57,7 +57,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 ## Procedure
 
-Complete the following steps to implement an action that is iterating through the first N `person` objects in `address_table` and prints their first and last names:
+Complete the following steps to implement an action which iterates through the first N `person` objects in `address_table` and prints their first and last names:
 
 1. Create a new action `iterate`, which takes as an input parameter the number of iterations to be executed.
 2. In the `iterate` action access the instance of `address_table` by declaring a local variable of `address_table` type.
@@ -65,7 +65,7 @@ Complete the following steps to implement an action that is iterating through th
 4. Use the iterator `value` to access the current value of the iterator.
 5. And then increment the iterator until the first N `person` objects stored in `address_table` are visited.
 
-Refer to the following possible implementation to implement an action that is iterating through the first N `person` objects in `address_table` and prints their first and last names:
+Refer to the following reference implementation to implement an action which iterates through the first N `person` objects in `address_table` and prints their first and last names:
 
 `smartcontract.hpp`
 
