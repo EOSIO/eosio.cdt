@@ -19,7 +19,7 @@ To accomplish this task do the following:
 
 See the following code reference:
 
-* The [`kv::map`](https://developers.eos.io/manuals/eosio.cdt/latest/classeosio_1_1kv_1_1map) class.
+* The [`kv::map`](https://developers.eos.io/manuals/eosio.cdt/v1.8/classeosio_1_1kv_1_1map) class.
 
 ## Before you begin
 
