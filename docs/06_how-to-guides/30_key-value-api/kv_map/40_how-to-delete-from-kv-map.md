@@ -3,20 +3,20 @@ content_title: How-To Delete from Key-Value Map
 link_text: "How-To Delete from Key-Value Map"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to delete from `Key-Value Map` (`kv map`) based on the unique key.
+This how-to provides instructions to delete from `Key-Value Map` (`kv map`) based on the unique key.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the map
-* A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
+* A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`
 
-Refer to the following possible implementation of your starting point.
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -50,7 +50,7 @@ Complete the following steps to delete a `person` object with a given ID from th
 3. If the `person` with the give ID is found use the `erase()` function defined for the `kv::map`, with the given ID as parameter, to erase the person object from the map.
 4. If the `person` with the given ID is not found print an informative error message.
 
-Refer to the following possible implementation to delete a `person` object from the `kv map`:
+Refer to the following reference implementation to delete a `person` object from the `kv map`:
 
 `smartcontract.hpp file`
 
@@ -104,3 +104,7 @@ void kv_map::delete(int id) {
    }
 }
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to delete from `Key-Value Map` (`kv map`) based on the unique key.
