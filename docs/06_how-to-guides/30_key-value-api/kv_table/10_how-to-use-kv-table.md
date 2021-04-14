@@ -3,22 +3,24 @@ content_title: How-To Use Key-Value Table
 link_text: "How-To Use Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure demonstrates how to define and use a `Key-Value Table` (`kv table`) in your smart contract.
+This how-to demonstrates how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
 
 To accomplish this task, define the user type which will be stored in the `kv table`, and extend the `eosio::kv::table` template class with a specialized definition based on the user defined type.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
-## Prerequisites
+## Before you begin
 
-* The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
+Make sure you have the following prerequisites in place:
+
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
 * A smart contract named `smrtcontract`.
 * A user defined type named `person`, which defines the data stored in the table.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -71,6 +73,10 @@ class [[eosio::contract]] smrtcontract : public contract {
      using contract::contract;
 };
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
 
 ## Next Steps
 
