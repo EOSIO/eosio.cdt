@@ -18,6 +18,11 @@
             ]
         },
         {
+            "name": "getpayer",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "printfeepyr",
             "base": "",
             "fields": [
@@ -40,6 +45,11 @@
     ],
     "actions": [
         {
+            "name": "getpayer",
+            "type": "getpayer",
+            "ricardian_contract": ""
+        },
+        {
             "name": "printfeepyr",
             "type": "printfeepyr",
             "ricardian_contract": ""
@@ -54,5 +64,10 @@
     "kv_tables": {},
     "ricardian_clauses": [],
     "variants": [],
-    "action_results": []
+    "action_results": [
+        {
+            "name": "getpayer",
+            "result_type": "fee_payer"
+        }
+    ]
 }
