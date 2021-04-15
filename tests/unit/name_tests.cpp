@@ -29,6 +29,10 @@ EOSIO_TEST_BEGIN(name_type_test_ctr_num)
    CHECK_EQUAL( name{name::raw{0ULL}}.value, 0ULL )
    CHECK_EQUAL( name{name::raw{1ULL}}.value, 1ULL )
    CHECK_EQUAL( name{name::raw{u64max}}.value, u64max )
+
+   // test that constexpr constructor is evaluated at compile time
+   static_assert(name{0ULL}.value == 0ULL);   
+   static_assert( name{name::raw{1ULL}}.value == 1ULL );
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_ctr_str_lit)
@@ -59,6 +63,9 @@ EOSIO_TEST_BEGIN(name_type_test_ctr_str_lit)
    CHECK_EQUAL( name{"555555555555j"}.value, 2975281302211218015ULL )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"}.value, 3570337562653461615ULL )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"}.value, u64max )
+
+   // test that constexpr constructor is evaluated at compile time
+   static_assert(name{"1"}.value == 576460752303423488ULL);
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_str_not_allowed)
@@ -119,7 +126,7 @@ EOSIO_TEST_BEGIN(name_type_test_str_len)
    CHECK_EQUAL( name{"eosioaccountj"}.length(), 13 )
 EOSIO_TEST_END
 
-EOSIO_TEST_BEGIN(name_type_test_6)
+EOSIO_TEST_BEGIN(name_type_test_str_too_long)
    CHECK_ASSERT( "string is too long to be a valid name", ([]() {name{"12345abcdefghj"}.length();}) )
 EOSIO_TEST_END
 
@@ -168,6 +175,8 @@ EOSIO_TEST_BEGIN(name_type_test_prefix)
 
    CHECK_EQUAL( name{"a.my.account"}.prefix(), name{"a.my"} )
    CHECK_EQUAL( name{"a.my.account"}.prefix().prefix(), name{"a"} )
+
+   static_assert(name{"e.osioaccounj"}.prefix() == name{"e"});
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_raw)
@@ -214,6 +223,8 @@ EOSIO_TEST_BEGIN(name_type_test_op_bool)
    CHECK_EQUAL( name{"1"}.operator bool(), true )
    CHECK_EQUAL( !name{""}.operator bool(), true )
    CHECK_EQUAL( !name{"1"}.operator bool(), false )
+
+   static_assert(name{0}.operator bool() == false);
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_memcmp)
@@ -333,6 +344,9 @@ EOSIO_TEST_BEGIN(name_type_test_equal)
    CHECK_EQUAL( name{"555555555555j"} == name{"555555555555j"}, true )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"} == name{"aaaaaaaaaaaaj"}, true )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"} == name{"zzzzzzzzzzzzj"}, true )
+
+   // test constexpr
+   static_assert(name{"1"} == name{"1"}); 
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_not_equal)
@@ -363,6 +377,9 @@ EOSIO_TEST_BEGIN(name_type_test_not_equal)
    CHECK_EQUAL( name{"555555555555j"} != name{}, true )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"} != name{}, true )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"} != name{}, true )
+
+   // test constexpr
+   static_assert(name{"1"} != name{"2"}); 
 EOSIO_TEST_END
 
 EOSIO_TEST_BEGIN(name_type_test_less_than)
@@ -393,6 +410,9 @@ EOSIO_TEST_BEGIN(name_type_test_less_than)
    CHECK_EQUAL( name{} < name{"555555555555j"}, true )
    CHECK_EQUAL( name{} < name{"aaaaaaaaaaaaj"}, true )
    CHECK_EQUAL( name{} < name{"zzzzzzzzzzzzj"}, true )
+
+   // test constexpr
+   static_assert(name{} < name{"1"}); 
 EOSIO_TEST_END
 
 
@@ -426,6 +446,9 @@ EOSIO_TEST_BEGIN(name_type_test_op_n)
    CHECK_EQUAL( name{"555555555555j"}, "555555555555j"_n )
    CHECK_EQUAL( name{"aaaaaaaaaaaaj"}, "aaaaaaaaaaaaj"_n )
    CHECK_EQUAL( name{"zzzzzzzzzzzzj"}, "zzzzzzzzzzzzj"_n )
+
+   // test constexpr
+   static_assert(name{"1"} == "1"_n ); 
 EOSIO_TEST_END
 
 int main(int argc, char* argv[]) {
