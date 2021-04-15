@@ -3,19 +3,33 @@ content_title: How-To Use Key-Value Map
 link_text: "How-To Use Key-Value Map"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure demonstrates how to define and use a `Key-Value Map` (`kv map`) in your smart contract.
+This how-to demonstrates how to define and use a `Key-Value Map` (`kv map`) in a smart contract.
 
-To accomplish this task use `eosio::kv::map` template class, specify the name for the map object instantiated, the type of the key, and the type for the values stored for each key. The types used for the key and the values can be any standard type, or a user defined type.
+To accomplish this task do the following:
 
-## Prerequisites
+1. Instantiate an object of type `eosio::kv::map`.
+2. Specify the name for the instantiated `eosio::kv::map` object.
+3. Specify the type for the map's key.
+4. Specify the type for the values stored for each key.
+5. The key and the values types can be of any standard type or a user defined type.
 
-* The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract named `smrtcontract`.
-* A user defined type named `person`, which defines the data stored in the map.
+## Reference
 
-Refer to the following possible implementation of your starting point.
+See the following code reference:
+
+* The [`kv::map`](https://developers.eos.io/manuals/eosio.cdt/latest/classeosio_1_1kv_1_1map) class.
+
+## Before you begin
+
+Make sure you have the following prerequisites in place:
+
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
+* A smart contract named `smrtcontract`
+* A user defined type named `person`, which defines the data stored in the map
+
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -39,7 +53,7 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 Complete the following steps to define the `my_map_t` type, based on the `eosio::kv::map`, which stores objects of type `person` with unique keys of type `int` and instantiate a map object of type `my_map_t`:
 
 * Define the `my_map_t` type based on `eosio::kv::map`.
-* Specify `"kvmap"_n`, which is an `eosio::name`, as the first parameter, to name for the map object.
+* Specify `"kvmap"_n`, which is an `eosio::name`, as the first parameter, to name the map object.
 * Specify `int` as the second parameter to give the type of the unique keys.
 * Specify `person` as the third parameter to give the type of the values stored in the map with each key.
 * Declare and instantiate, as a private data member, an instance of the type `my_map_t`, and name it `my_map`.
@@ -62,6 +76,10 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
       my_map_t my_map{};
 };
 ```
+
+## Summary
+
+In conclusion, the above instructions show how to define and use a `Key-Value Map` (`kv map`) in a smart contract.
 
 ## Next Steps
 
