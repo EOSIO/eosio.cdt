@@ -161,11 +161,13 @@ namespace eosio { namespace cdt {
 
       public:
          using call_map_t = std::map<FunctionDecl*, std::vector<CallExpr*>>;
+         using indirect_func_map_t = std::map<NamedDecl*, FunctionDecl*>;
 
          std::vector<CXXMethodDecl*> action_decls;
          std::vector<CXXMethodDecl*> notify_decls;
          std::set<CXXMethodDecl*>    read_only_actions;
          call_map_t                  func_calls;
+         indirect_func_map_t         indi_func_map;
 
          explicit eosio_codegen_visitor(CompilerInstance *CI)
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
@@ -344,6 +346,7 @@ namespace eosio { namespace cdt {
                if (decl->isEosioReadOnly()) {
                   read_only_actions.insert(decl);
                   std::cout << decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
+                  func_calls[decl] = {(CallExpr*)decl};
                }
             }
             else if (decl->isEosioNotify()) {
@@ -415,6 +418,70 @@ namespace eosio { namespace cdt {
                               // CDT_WARN("codegen_warn", fd->getLocation(), "add value");
                               std::cout << fd->getLocation().printToString(ci->getSourceManager()) << std::endl;
                            break;
+                        }
+                     }
+                  }
+                  if (Stmt *s = *it) {
+                     if (ExprWithCleanups *ec = dyn_cast<ExprWithCleanups>(s)) {
+                        s = ec->getSubExpr();
+                        while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(s))
+                           s = ice->getSubExpr();
+                     }
+
+                     if (CallExpr *call = dyn_cast<CallExpr>(s)) {
+                        if (FunctionDecl *fd = call->getDirectCallee()) {
+                           if (func_calls.count(fd) == 0) {
+                              process_function(fd);
+                           }
+                           if (!func_calls[fd].empty()) {
+                              func_calls[func_decl].push_back(call);
+                              break;
+                           }
+                        } else {
+                           if (Expr *expr = call->getCallee()) {
+                              while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(expr)) {
+                                 expr = ice->getSubExpr();
+                              }
+                              if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(expr)) {
+                                 if (indi_func_map.count(dre->getFoundDecl()) != 0) {
+                                    func_calls[func_decl].push_back(call);
+                                 }
+                              }
+                           }
+                        }
+                     } else if (DeclStmt *ds = dyn_cast<DeclStmt>(s)) {
+                        if (ds->isSingleDecl()) {
+                           if (VarDecl *vd = dyn_cast<VarDecl>(ds->getSingleDecl())) {
+                              if (Expr *init = vd->getInit()) {
+                                 while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(init)) {
+                                    init = ice->getSubExpr();
+                                 }
+                                 if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(init)) {
+                                    if (FunctionDecl *fd = dyn_cast<FunctionDecl>(dre->getFoundDecl())) {
+                                       if (func_calls.count(fd) != 0) {
+                                          indi_func_map[vd] = fd;
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     } else if (BinaryOperator *bo = dyn_cast<BinaryOperator>(s)) {
+                        if (Expr *lhs = bo->getLHS()) {
+                           if (DeclRefExpr *lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
+                              if (Expr *rhs = bo->getRHS()) {
+                                 while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(rhs)) {
+                                    rhs = ice->getSubExpr();
+                                 }
+                                 if (DeclRefExpr *rhs_dre = dyn_cast<DeclRefExpr>(rhs)) {
+                                    if (FunctionDecl *fd = dyn_cast<FunctionDecl>(rhs_dre->getFoundDecl())) {
+                                       if (func_calls.count(fd) != 0) {
+                                          indi_func_map[lhs_dre->getFoundDecl()] = fd;
+                                       }
+                                    }
+                                 }
+                              }
+                           }
                         }
                      }
                   }
