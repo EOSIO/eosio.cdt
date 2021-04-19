@@ -82,7 +82,7 @@ void kv_map::upsert(
 }
 
 [[eosio::action]]
-void kv_map::upsert2(int id, const person pers) {
+void kv_map::upsert2(int id, const person& pers) {
 
    // retrieve the person by account name, if it doesn't exist we get an emtpy person
    const person& existing_person = get(id);
