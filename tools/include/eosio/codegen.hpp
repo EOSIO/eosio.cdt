@@ -346,7 +346,6 @@ namespace eosio { namespace cdt {
                if (decl->isEosioReadOnly()) {
                   read_only_actions.insert(decl);
                   std::cout << decl->getLocation().printToString(ci->getSourceManager()) << std::endl;
-                  func_calls[decl] = {(CallExpr*)decl};
                }
             }
             else if (decl->isEosioNotify()) {
@@ -437,15 +436,13 @@ namespace eosio { namespace cdt {
                               func_calls[func_decl].push_back(call);
                               break;
                            }
-                        } else {
-                           if (Expr *expr = call->getCallee()) {
-                              while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(expr)) {
-                                 expr = ice->getSubExpr();
-                              }
-                              if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(expr)) {
-                                 if (indi_func_map.count(dre->getFoundDecl()) != 0) {
-                                    func_calls[func_decl].push_back(call);
-                                 }
+                        } else if (Expr *expr = call->getCallee()) {
+                           while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(expr)) {
+                              expr = ice->getSubExpr();
+                           }
+                           if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(expr)) {
+                              if (indi_func_map.count(dre->getFoundDecl()) != 0) {
+                                 func_calls[func_decl].push_back(call);
                               }
                            }
                         }
