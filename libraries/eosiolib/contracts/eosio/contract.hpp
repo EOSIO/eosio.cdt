@@ -18,6 +18,7 @@
 #define CONTRACT class [[eosio::contract]]
 #define ACTION   [[eosio::action]] void
 #define TABLE struct [[eosio::table]]
+#define STRUCTURE struct [[eosio::structure]]
 
 namespace eosio {
 
