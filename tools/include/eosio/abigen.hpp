@@ -257,31 +257,6 @@ namespace eosio { namespace cdt {
          _abi.tables.insert(t);
       }
 
-      void add_structure( const clang::CXXRecordDecl* decl ) {
-         structures.insert(decl);
-         abi_structure t;
-         t.type = decl->getNameAsString();
-         auto structure_name = decl->getEosioStructureAttr()->getName();
-         if (!structure_name.empty()) {
-            validate_name( structure_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
-            t.name = structure_name.str();
-         }
-         else {
-            t.name = t.type;
-         }
-         cstructures.insert(t);
-      }
-
-      void add_structure( uint64_t name, const clang::CXXRecordDecl* decl ) {
-         if ( !decl->isEosioStructure() )
-            return;
-
-         abi_structure t;
-         t.type = decl->getNameAsString();
-         t.name = name_to_string(name);
-         _abi.structures.insert(t);
-      }
-
       void add_kv_map(const clang::ClassTemplateSpecializationDecl* decl) {
           abi_kv_table akt;
           const auto& first_arg  = decl->getTemplateArgs()[0];
@@ -495,13 +470,6 @@ namespace eosio { namespace cdt {
          return o;
       }
 
-      ojson structure_to_json( const abi_structure& s ) {
-         ojson o;
-         o["name"] = s.name;
-         o["type"] = s.type;
-         return o;
-      }
-
       std::pair<std::string, ojson> kv_table_to_json( const abi_kv_table& t ) {
          ojson o;
          o["type"] = t.type;
@@ -548,7 +516,7 @@ namespace eosio { namespace cdt {
             set_of_tables.insert(t);
          }
 
-         return _abi.structs.empty() && _abi.typedefs.empty() && _abi.actions.empty() && set_of_tables.empty() && _abi.structures.empty() && _abi.ricardian_clauses.empty() && _abi.variants.empty();
+         return _abi.structs.empty() && _abi.typedefs.empty() && _abi.actions.empty() && set_of_tables.empty() && _abi.ricardian_clauses.empty() && _abi.variants.empty();
       }
 
       ojson to_json() {
@@ -617,10 +585,6 @@ namespace eosio { namespace cdt {
                if (as.name == _translate_type(t.type))
                   return true;
             }
-            for ( auto s : _abi.structures ) {
-               if (as.name == _translate_type(s.type))
-                  return true;
-            }
             for ( const auto t : _abi.kv_tables ) {
                if (as.name == _translate_type(t.type))
                   return true;
@@ -655,9 +619,6 @@ namespace eosio { namespace cdt {
             for ( auto t : _abi.tables )
                if ( t.type == td.new_type_name )
                   return true;
-            for ( auto s : _abi.structures )
-               if ( s.type == td.new_type_name )
-                  return true;
             for ( auto a : _abi.actions )
                if ( a.type == td.new_type_name )
                   return true;
@@ -689,10 +650,6 @@ namespace eosio { namespace cdt {
          for ( auto t : set_of_tables ) {
             o["tables"].push_back(table_to_json( t ));
          }
-         o["structures"]     = ojson::array();
-         for ( auto s : _abi.structures ) {
-            o["structures"].push_back(structure_to_json( s ));
-         }
          o["kv_tables"]  = ojson::object();
          for ( const auto& t : _abi.kv_tables ) {
             auto kv_table = kv_table_to_json(t);
@@ -720,8 +677,6 @@ namespace eosio { namespace cdt {
          abi                                   _abi;
          std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;
-         std::set<const clang::CXXRecordDecl*> structures;
-         std::set<abi_structure>               cstructures;
          std::map<std::string, std::string>    rcs;
          std::set<const clang::Type*>          evaluated;
 
@@ -795,15 +750,12 @@ namespace eosio { namespace cdt {
                ag.add_contracts(parse_contracts());
                has_added_clauses = true;
             }
-            if ((decl->isEosioAction() || decl->isEosioTable() || decl->isEosioStructure()) 
-                    && ag.is_eosio_contract(decl, ag.get_contract_name())) {
+            if ((decl->isEosioAction() || decl->isEosioTable()) && ag.is_eosio_contract(decl, ag.get_contract_name())) {
                ag.add_struct(decl);
                if (decl->isEosioAction())
                   ag.add_action(decl);
                if (decl->isEosioTable())
                   ag.add_table(decl);
-               if (decl->isEosioStructure())
-                  ag.add_structure(decl);
                for (auto field : decl->fields()) {
                   ag.add_type( field->getType() );
                }
