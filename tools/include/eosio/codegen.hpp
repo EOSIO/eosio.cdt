@@ -486,6 +486,10 @@ namespace eosio { namespace cdt {
             }
          }
 
+         void process_class() {
+            // TODO(handel member variables)
+         }
+
          virtual bool VisitFunctionDecl(FunctionDecl* func_decl) {
             SourceManager &sm = get_rewriter().getSourceMgr();
             if (sm.isInSystemHeader(func_decl->getLocation()) || sm.isInExternCSystemHeader(func_decl->getLocation())) {
@@ -506,6 +510,21 @@ namespace eosio { namespace cdt {
             if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
                if (fd->getNameInfo().getAsString() == "apply")
                   apply_was_found = true;
+            } else if (auto* vd = dyn_cast<VarDecl>(decl)) {
+               if (vd->hasGlobalStorage()) {
+                  if (Expr *init = vd->getInit()) {
+                     while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(init)) {
+                        init = ice->getSubExpr();
+                     }
+                     if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(init)) {
+                        if (FunctionDecl *fd = dyn_cast<FunctionDecl>(dre->getFoundDecl())) {
+                           if (func_calls.count(fd) != 0) {
+                              indi_func_map[vd] = fd;
+                           }
+                        }
+                     }
+                  }
+               }
             }
             return true;
          }
