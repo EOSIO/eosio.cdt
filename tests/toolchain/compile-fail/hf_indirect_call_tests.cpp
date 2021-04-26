@@ -23,13 +23,24 @@
 */
 
 extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
-
+extern "C" __attribute__((eosio_wasm_import)) void foo_bar(int64_t, int64_t, int64_t);
 
 #define ACTION_TYPE  [[eosio::action, eosio::read_only]]
+
+using func = void (*)(int64_t, int64_t, int64_t);
+
+func srl_g1 = set_resource_limit;
+func srl_g2 = set_resource_limit;
+func srl_g3;
+func fb_g = foo_bar;
 
 class [[eosio::contract]] hf_indirect_call_tests : public eosio::contract {
 public:
    using contract::contract;
+   func srl_m1 = set_resource_limit;
+   func srl_m2 = set_resource_limit;
+   func srl_m3;
+   func fb_m = foo_bar;
 
    ACTION_TYPE
    bool tlambda() {
@@ -39,6 +50,7 @@ public:
       set_rsc();
       return true;
    }
+
    ACTION_TYPE
    bool tlambdap() {
       auto set_rsc = [](int64_t a, int64_t b, int64_t c){
@@ -47,6 +59,7 @@ public:
       set_rsc(0, 0, 0);
       return true;
    }
+
    ACTION_TYPE
    bool tlambdap2(int64_t a, int64_t b, int64_t c) {
       auto set_rsc = [=](int64_t x, int64_t y, int64_t z){
@@ -55,31 +68,137 @@ public:
       set_rsc(a, b, c);
       return true;
    }
-   using func = void (*)(int64_t, int64_t, int64_t);
+
    ACTION_TYPE
    bool talias () {
       func srl = set_resource_limit;
       srl(0,0,0);
       return true;
    }
-   #define setfun  set_resource_limit
+
+   ACTION_TYPE
+   bool taliasg1() {
+      srl_g1(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasg2 () {
+      srl_g2 = foo_bar;
+      srl_g2(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasg3 () {
+      srl_g3 = set_resource_limit;
+      srl_g3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasg3re1 () {
+      srl_g3 = foo_bar;
+      srl_g3(0,0,0);
+      srl_g3 = set_resource_limit;
+      srl_g3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasg3re2 () {
+      srl_g3 = set_resource_limit;
+      srl_g3 = foo_bar;
+      srl_g3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasg3re3 () {
+      srl_g3 = foo_bar;
+      srl_g3 = set_resource_limit;
+      srl_g3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasgr () {
+      fb_g(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm1 () {
+      srl_m1(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm2 () {
+      srl_m2 = foo_bar;
+      srl_m2(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm3 () {
+      srl_m3 = set_resource_limit;
+      srl_m3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm3re1 () {
+      srl_m3 = foo_bar;
+      srl_m3(0,0,0);
+      srl_m3 = set_resource_limit;
+      srl_m3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm3re2 () {
+      srl_m3 = set_resource_limit;
+      srl_m3 = foo_bar;
+      srl_m3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasm3re3 () {
+      srl_m3 = foo_bar;
+      srl_m3 = set_resource_limit;
+      srl_m3(0,0,0);
+      return true;
+   }
+
+   ACTION_TYPE
+   bool taliasmr () {
+      fb_m(0,0,0);
+      return true;
+   }
+
+   #define setfun set_resource_limit
    ACTION_TYPE
    bool tdefine(){
       setfun(0,0,0);
       return true;
    }
-   #define setfunp()  set_resource_limit(0,0,0)
+
+   #define setfunp() set_resource_limit(0,0,0)
    ACTION_TYPE
    bool tdefinep(){
       setfunp();
       return true;
    }
-   #define setfunpi(a, b, c)   set_resource_limit(a,b,c)
+
+   #define setfunpi(a, b, c) set_resource_limit(a,b,c)
    ACTION_TYPE
    bool tdefinepi(){
       setfunpi(0,0,0);
       return true;
    }
+
    ACTION_TYPE
    bool combine(){
       func srl = set_resource_limit;
@@ -89,6 +208,7 @@ public:
       setfunpi(0,0,0);
       return true;
    }
+
    ACTION_TYPE
    bool combinea(){
       tlambdap();
@@ -100,6 +220,7 @@ public:
       combine();
       return true;
    }
+
    ACTION_TYPE
    bool combinec(){
       auto set_rsc = [](){
@@ -110,6 +231,7 @@ public:
       set_rsc();
       return true; 
    }
+
    ACTION_TYPE
    bool combinecp(){
       auto set_rsc = [](int64_t a, int64_t b, int64_t c){

@@ -74,7 +74,7 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    if (tool_run != 0) {
       throw std::runtime_error("abigen error");
    }
-   
+
    if (!abigen::get().is_empty()) {
       std::string abi_s;
       abigen::get().to_json().dump(abi_s);
