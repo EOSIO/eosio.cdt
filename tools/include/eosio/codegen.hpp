@@ -403,6 +403,14 @@ namespace eosio { namespace cdt {
             return nullptr;
          }
 
+         void update_indi_func_map(NamedDecl *nd, FunctionDecl *fd) {
+            if (func_calls.count(fd) != 0) {
+               indi_func_map[nd] = fd;
+            } else if (indi_func_map.count(nd)){
+               indi_func_map.erase(nd);
+            }
+         }
+
          void process_function(FunctionDecl* func_decl) {
             if (func_decl->isThisDeclarationADefinition() && func_decl->hasBody()) {
                Stmt *stmts = func_decl->getBody();
@@ -475,16 +483,13 @@ namespace eosio { namespace cdt {
                            }
                         }
                      } else if (BinaryOperator *bo = dyn_cast<BinaryOperator>(s)) {
-                        if (Expr *lhs = bo->getLHS()) {
-                           if (Expr *rhs = bo->getRHS()) {
-                              if (FunctionDecl *fd = get_rhs_fd(rhs)) {
-                                 if (func_calls.count(fd) != 0) {
-                                    if (DeclRefExpr *lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
-                                       indi_func_map[lhs_dre->getFoundDecl()] = fd;
-                                    } else if (MemberExpr *lhs_me = dyn_cast<MemberExpr>(lhs)) {
-                                       indi_func_map[lhs_me->getMemberDecl()] = fd;
-                                    }
-                                 }
+                        Expr *lhs = nullptr, *rhs = nullptr;
+                        if ((lhs = bo->getLHS()) && (rhs = bo->getRHS())) {
+                           if (FunctionDecl *fd = get_rhs_fd(rhs)) {
+                              if (DeclRefExpr *lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
+                                 update_indi_func_map(lhs_dre->getFoundDecl(), fd);
+                              } else if (MemberExpr *lhs_me = dyn_cast<MemberExpr>(lhs)) {
+                                 update_indi_func_map(lhs_me->getMemberDecl(), fd);
                               }
                            }
                         }

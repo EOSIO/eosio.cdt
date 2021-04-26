@@ -635,6 +635,8 @@ struct generation_utils {
          "eosio::kv::internal_use_do_not_use::kv_set",
          // deferred transactions
          "eosio::internal_use_do_not_use::send_deferred",
+         "eosio::chain::webassembly::interface::send_deferred",
+         "eosio::send_deferred",
          // inline actions
          "eosio::internal_use_do_not_use::send_inline",
          "eosio::internal_use_do_not_use::send_context_free_inline"
