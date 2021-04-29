@@ -160,11 +160,12 @@ namespace eosio { namespace cdt {
          bool apply_was_found = false;
 
       public:
+         std::vector<CXXMethodDecl*> action_decls;
+         std::vector<CXXMethodDecl*> notify_decls;
+
          using call_map_t = std::map<FunctionDecl*, std::vector<CallExpr*>>;
          using indirect_func_map_t = std::map<NamedDecl*, FunctionDecl*>;
 
-         std::vector<CXXMethodDecl*> action_decls;
-         std::vector<CXXMethodDecl*> notify_decls;
          std::set<CXXMethodDecl*>    read_only_actions;
          call_map_t                  func_calls;
          indirect_func_map_t         indi_func_map;
@@ -390,6 +391,22 @@ namespace eosio { namespace cdt {
             expr_str.assign(str_start, range_size);
             return expr_str;
          }
+         void process_indi_callee(FunctionDecl* fd, CallExpr *call) {
+            if (Expr *expr = call->getCallee()) {
+               while (auto* ice = dyn_cast<ImplicitCastExpr>(expr)) {
+                  expr = ice->getSubExpr();
+               }
+               if (auto* dre = dyn_cast<DeclRefExpr>(expr)) {
+                  if (indi_func_map.count(dre->getFoundDecl()) != 0) {
+                     func_calls[fd].push_back(call);
+                  }
+               } else if (auto* me = dyn_cast<MemberExpr>(expr)) {
+                  if (indi_func_map.count(me->getMemberDecl()) != 0) {
+                     func_calls[fd].push_back(call);
+                  }
+               }
+            }
+         }
 
          FunctionDecl* get_rhs_fd(Expr *rhs) const {
             while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(rhs)) {
@@ -403,11 +420,38 @@ namespace eosio { namespace cdt {
             return nullptr;
          }
 
+         void process_func_decl(DeclStmt *ds) {
+            if (ds->isSingleDecl()) {
+               if (auto* vd = dyn_cast<VarDecl>(ds->getSingleDecl())) {
+                  if (Expr *init = vd->getInit()) {
+                     if (FunctionDecl *fd = get_rhs_fd(init)) {
+                        if (func_calls.count(fd) != 0) {
+                           indi_func_map[vd] = fd;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+
          void update_indi_func_map(NamedDecl *nd, FunctionDecl *fd) {
             if (func_calls.count(fd) != 0) {
                indi_func_map[nd] = fd;
-            } else if (indi_func_map.count(nd)){
+            } else if (indi_func_map.count(nd)) {
                indi_func_map.erase(nd);
+            }
+         }
+
+         void process_assignment(BinaryOperator *bo) {
+            Expr *lhs = nullptr, *rhs = nullptr;
+            if ((lhs = bo->getLHS()) && (rhs = bo->getRHS())) {
+               if (FunctionDecl *fd = get_rhs_fd(rhs)) {
+                  if (auto* lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
+                     update_indi_func_map(lhs_dre->getFoundDecl(), fd);
+                  } else if (auto* lhs_me = dyn_cast<MemberExpr>(lhs)) {
+                     update_indi_func_map(lhs_me->getMemberDecl(), fd);
+                  }
+               }
             }
          }
 
@@ -441,13 +485,13 @@ namespace eosio { namespace cdt {
                      }
                   }
                   if (Stmt *s = *it) {
-                     if (ExprWithCleanups *ec = dyn_cast<ExprWithCleanups>(s)) {
+                     if (auto* ec = dyn_cast<ExprWithCleanups>(s)) {
                         s = ec->getSubExpr();
-                        while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(s))
+                        while (auto* ice = dyn_cast<ImplicitCastExpr>(s))
                            s = ice->getSubExpr();
                      }
 
-                     if (CallExpr *call = dyn_cast<CallExpr>(s)) {
+                     if (auto* call = dyn_cast<CallExpr>(s)) {
                         if (FunctionDecl *fd = call->getDirectCallee()) {
                            if (func_calls.count(fd) == 0) {
                               process_function(fd);
@@ -456,43 +500,13 @@ namespace eosio { namespace cdt {
                               func_calls[func_decl].push_back(call);
                               break;
                            }
-                        } else if (Expr *expr = call->getCallee()) {
-                           while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(expr)) {
-                              expr = ice->getSubExpr();
-                           }
-                           if (DeclRefExpr *dre = dyn_cast<DeclRefExpr>(expr)) {
-                              if (indi_func_map.count(dre->getFoundDecl()) != 0) {
-                                 func_calls[func_decl].push_back(call);
-                              }
-                           } else if (MemberExpr *me = dyn_cast<MemberExpr>(expr)) {
-                              if (indi_func_map.count(me->getMemberDecl()) != 0) {
-                                 func_calls[func_decl].push_back(call);
-                              }
-                           }
+                        } else {
+                           process_indi_callee(func_decl, call);
                         }
-                     } else if (DeclStmt *ds = dyn_cast<DeclStmt>(s)) {
-                        if (ds->isSingleDecl()) {
-                           if (VarDecl *vd = dyn_cast<VarDecl>(ds->getSingleDecl())) {
-                              if (Expr *init = vd->getInit()) {
-                                 if (FunctionDecl *fd = get_rhs_fd(init)) {
-                                    if (func_calls.count(fd) != 0) {
-                                       indi_func_map[vd] = fd;
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     } else if (BinaryOperator *bo = dyn_cast<BinaryOperator>(s)) {
-                        Expr *lhs = nullptr, *rhs = nullptr;
-                        if ((lhs = bo->getLHS()) && (rhs = bo->getRHS())) {
-                           if (FunctionDecl *fd = get_rhs_fd(rhs)) {
-                              if (DeclRefExpr *lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
-                                 update_indi_func_map(lhs_dre->getFoundDecl(), fd);
-                              } else if (MemberExpr *lhs_me = dyn_cast<MemberExpr>(lhs)) {
-                                 update_indi_func_map(lhs_me->getMemberDecl(), fd);
-                              }
-                           }
-                        }
+                     } else if (auto* ds = dyn_cast<DeclStmt>(s)) {
+                        process_func_decl(ds);
+                     } else if (auto* bo = dyn_cast<BinaryOperator>(s)) {
+                        process_assignment(bo);
                      }
                   }
                }
@@ -501,7 +515,7 @@ namespace eosio { namespace cdt {
 
          void process_class(CXXRecordDecl* decl) {
             for(auto it = decl->decls_begin(); it != decl->decls_end(); ++it) {
-               if(FieldDecl *f = dyn_cast<FieldDecl>(*it) ) {
+               if(auto* f = dyn_cast<FieldDecl>(*it) ) {
                   if (Expr *init = f->getInClassInitializer()) {
                      if (FunctionDecl *fd = get_rhs_fd(init)) {
                         if (func_calls.count(fd) != 0) {
@@ -548,12 +562,27 @@ namespace eosio { namespace cdt {
          }
 
          virtual bool VisitCXXRecordDecl(CXXRecordDecl* decl) {
-            codegen& cg = codegen::get();
             if (decl->isEosioContract()) {
                process_class(decl);
             }
             return true;
          }
+
+         void process_read_only_actions() const {
+            codegen& cg = codegen::get();
+            for (auto const& ra : read_only_actions) {
+               auto it = func_calls.find(ra);
+               if (it != func_calls.end()) {
+                  std::string msg = "read-only action cannot call write host function";
+                  if (cg.warn_action_read_only) {
+                     CDT_WARN("codegen_warning", ra->getLocation(), msg);
+                  } else {
+                     CDT_ERROR("codegen_error", ra->getLocation(), msg);
+                  }
+               }
+            }
+         }
+
       };
 
       class eosio_codegen_consumer : public ASTConsumer, public generation_utils {
@@ -615,6 +644,7 @@ namespace eosio { namespace cdt {
                      // }
                   }
                }
+               visitor->process_read_only_actions();
 
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
