@@ -125,9 +125,6 @@ int main(int argc, const char **argv) {
    try {
       for (auto input : opts.inputs) {
          std::vector<std::string> new_opts = opts.comp_options;
-         SmallString<64> res;
-         llvm::sys::path::system_temp_directory(true, res);
-         std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
          std::string output;
 
          if (!opts.pp_only) {
@@ -143,28 +140,40 @@ int main(int argc, const char **argv) {
             std::string source_path = src.str().empty() ? "." : src.str();
             new_opts.insert(new_opts.begin(), "-I" + source_path);
 
-            if (llvm::sys::fs::exists(tmp_file)) {
-               input = tmp_file;
-            }
-            output = tmp_file+".o";
-
             if (!opts.link) {
                output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
+            } else {
+               SmallString<64> res;
+               llvm::sys::fs::createTemporaryFile("eosio", ".o", res);
+               output = res.c_str();
             }
 
             new_opts.insert(new_opts.begin(), {"-o", output});
             outputs.push_back(output);
          }
-         new_opts.insert(new_opts.begin(), input);
 
-         if (llvm::sys::path::extension(input).equals(".c"))
-            new_opts.insert(new_opts.begin(), "-xc++");
+         llvm::Optional<std::string> stdin_redirect;
+         llvm::SmallString<64> abs_input(input.c_str());
+         llvm::sys::fs::make_absolute(abs_input);
+         auto file_iter = codegen::get().tmp_files.find(abs_input.c_str());
+         if (file_iter != codegen::get().tmp_files.end()) {
+            stdin_redirect = file_iter->second;
+            new_opts.insert(new_opts.begin(), "-");
+         } else {
+            new_opts.insert(new_opts.begin(), input);
+         }
 
-         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
-            llvm::sys::fs::remove(tmp_file);
+         new_opts.insert(new_opts.begin(), "-xc++");
+
+         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts, false, stdin_redirect)) {
+            if(stdin_redirect) {
+               llvm::sys::fs::remove(*stdin_redirect);
+            }
             return -1;
          }
-         llvm::sys::fs::remove(tmp_file);
+         if(stdin_redirect) {
+            llvm::sys::fs::remove(*stdin_redirect);
+         }
       }
    } catch (std::runtime_error& err) {
       llvm::errs() << err.what() << '\n';
