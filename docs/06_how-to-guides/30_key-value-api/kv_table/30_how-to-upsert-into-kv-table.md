@@ -5,7 +5,7 @@ link_text: "How-To Upsert Into Key-Value Table"
 
 ## Overview
 
-This how-to provides instructions to upsert into `Key-Value Table` (`kv table`).
+This guide provides instructions to upsert into `Key-Value Table` (`kv table`).
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.

@@ -5,7 +5,7 @@ link_text: "How-To Iterate Through Key-Value Map"
 
 ## Overview
 
-This how-to provides instructions to iterate through a `Key-Value Map` (`kv map`) and read values from it.
+This guide provides instructions to iterate through a `Key-Value Map` (`kv map`) and read values from it.
 
 ## Before you begin
 

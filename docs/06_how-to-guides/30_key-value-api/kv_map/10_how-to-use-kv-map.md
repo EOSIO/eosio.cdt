@@ -5,7 +5,7 @@ link_text: "How-To Use Key-Value Map"
 
 ## Overview
 
-This how-to demonstrates how to define and use a `Key-Value Map` (`kv map`) in a smart contract.
+This guide demonstrates how to define and use a `Key-Value Map` (`kv map`) in a smart contract.
 
 To accomplish this task do the following:
 

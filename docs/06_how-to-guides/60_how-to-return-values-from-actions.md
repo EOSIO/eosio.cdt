@@ -4,7 +4,7 @@ content_title: How-To Return Values From Action
 
 ## Overview
 
-This how-to demonstrates how a smart contract developer implements return values from an action.
+This guide demonstrates how a smart contract developer implements return values from an action.
 
 In order to accomplish this, use the `return` statement and pass the desired returned value, which can be of any C++ primitive type, a standard library type, or a user defined type.
 

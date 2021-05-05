@@ -5,7 +5,7 @@ link_text: "How-To Use Key-Value Table"
 
 ## Overview
 
-This how-to demonstrates how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
+This guide demonstrates how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
 
 To accomplish this task, define the user type which will be stored in the `kv table`, and extend the `eosio::kv::table` template class with a specialized definition based on the user defined type.
 

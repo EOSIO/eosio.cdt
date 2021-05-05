@@ -5,7 +5,7 @@ link_text: "How-To Create Indexes on a Key-Value Table"
 
 ## Overview
 
-This how-to provides instructions to create the following indexes on a `Key-Value Table` (`kv table`):
+This guide provides instructions to create the following indexes on a `Key-Value Table` (`kv table`):
 
 * A unique index using the macro `KV_NAMED_INDEX`
 * A unique index using the `eosio::kv::table::index` template class

@@ -5,7 +5,7 @@ link_text: "How-To Iterate Through Key-Value Table"
 
 ## Overview
 
-This how-to provides instructions to iterate through a `Key-Value Table` (`kv table`) and read values from it.
+This guide provides instructions to iterate through a `Key-Value Table` (`kv table`) and read values from it.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.

@@ -5,7 +5,7 @@ link_text: "How-To Upsert Into Key-Value Map"
 
 ## Overview
 
-This how-to provides instructions to upsert into `Key-Value Map` (`kv map`). Upsert means insert when the item doesn't already exist, and update the item if it already exists in the map.
+This guide provides instructions to upsert into `Key-Value Map` (`kv map`). Upsert means insert when the item doesn't already exist, and update the item if it already exists in the map.
 
 ## Before you begin
 

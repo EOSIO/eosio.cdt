@@ -5,7 +5,7 @@ link_text: "How-To Find in Key-Value Map"
 
 ## Overview
 
-This how-to provides instructions to find an object in `Key-Value Map` (`kv map`) based on the unique key.
+This guide provides instructions to find an object in `Key-Value Map` (`kv map`) based on the unique key.
 
 ## Before you begin
 

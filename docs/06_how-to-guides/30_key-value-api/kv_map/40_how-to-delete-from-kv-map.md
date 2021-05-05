@@ -5,7 +5,7 @@ link_text: "How-To Delete from Key-Value Map"
 
 ## Overview
 
-This how-to provides instructions to delete from `Key-Value Map` (`kv map`) based on the unique key.
+This guide provides instructions to delete from `Key-Value Map` (`kv map`) based on the unique key.
 
 ## Before you begin
 

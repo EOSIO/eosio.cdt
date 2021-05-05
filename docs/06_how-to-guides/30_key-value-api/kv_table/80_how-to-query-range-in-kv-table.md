@@ -5,7 +5,7 @@ link_text: "How-To Query Range in Key-Value Table"
 
 ## Overview
 
-This how-to provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
+This guide provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
