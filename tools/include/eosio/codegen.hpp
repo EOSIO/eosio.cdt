@@ -409,29 +409,15 @@ namespace eosio { namespace cdt {
          }
 
          FunctionDecl* get_rhs_fd(Expr *rhs) const {
-            while (ImplicitCastExpr *ice = dyn_cast<ImplicitCastExpr>(rhs)) {
+            while (auto* ice = dyn_cast<ImplicitCastExpr>(rhs)) {
                rhs = ice->getSubExpr();
             }
-            if (DeclRefExpr *rhs_dre = dyn_cast<DeclRefExpr>(rhs)) {
-               if (FunctionDecl *fd = dyn_cast<FunctionDecl>(rhs_dre->getFoundDecl())) {
+            if (auto* rhs_dre = dyn_cast<DeclRefExpr>(rhs)) {
+               if (auto* fd = dyn_cast<FunctionDecl>(rhs_dre->getFoundDecl())) {
                   return fd;
                }
             }
             return nullptr;
-         }
-
-         void process_func_decl(DeclStmt *ds) {
-            if (ds->isSingleDecl()) {
-               if (auto* vd = dyn_cast<VarDecl>(ds->getSingleDecl())) {
-                  if (Expr *init = vd->getInit()) {
-                     if (FunctionDecl *fd = get_rhs_fd(init)) {
-                        if (func_calls.count(fd) != 0) {
-                           indi_func_map[vd] = fd;
-                        }
-                     }
-                  }
-               }
-            }
          }
 
          void update_indi_func_map(NamedDecl *nd, FunctionDecl *fd) {
@@ -442,15 +428,10 @@ namespace eosio { namespace cdt {
             }
          }
 
-         void process_assignment(BinaryOperator *bo) {
-            Expr *lhs = nullptr, *rhs = nullptr;
-            if ((lhs = bo->getLHS()) && (rhs = bo->getRHS())) {
-               if (FunctionDecl *fd = get_rhs_fd(rhs)) {
-                  if (auto* lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
-                     update_indi_func_map(lhs_dre->getFoundDecl(), fd);
-                  } else if (auto* lhs_me = dyn_cast<MemberExpr>(lhs)) {
-                     update_indi_func_map(lhs_me->getMemberDecl(), fd);
-                  }
+         void process_decl_init(NamedDecl *nd, Expr *init) {
+            if (FunctionDecl *fd = get_rhs_fd(init)) {
+               if (func_calls.count(fd) != 0) {
+                  indi_func_map[nd] = fd;
                }
             }
          }
@@ -459,7 +440,7 @@ namespace eosio { namespace cdt {
             if (func_decl->isThisDeclarationADefinition() && func_decl->hasBody()) {
                Stmt *stmts = func_decl->getBody();
                std::cout << "- Body: " << expr_to_str(stmts) << std::endl;
-               for (auto it = stmts->child_begin(); it != stmts->child_end(); it++) {
+               for (auto it = stmts->child_begin(); it != stmts->child_end(); ++it) {
                   std::cout << "\n- iter: " << expr_to_str(*it) << std::endl
                            << "- type: " << it->getStmtClassName() << std::endl;
                   if (CallExpr *call = dyn_cast<CallExpr>(*it)) {
@@ -504,23 +485,30 @@ namespace eosio { namespace cdt {
                            process_indi_callee(func_decl, call);
                         }
                      } else if (auto* ds = dyn_cast<DeclStmt>(s)) {
-                        process_func_decl(ds);
+                        auto process_decl = [this]( DeclStmt *s ) {
+                           for (auto it = s->decl_begin(); it != s->decl_end(); ++it) {
+                              if (auto* vd = dyn_cast<VarDecl>(*it)) {
+                                 if (Expr *init = vd->getInit()) {
+                                    process_decl_init(vd, init);
+                                 }
+                              }
+                           }
+                        };
+                        process_decl(ds);
                      } else if (auto* bo = dyn_cast<BinaryOperator>(s)) {
+                        auto process_assignment = [this]( BinaryOperator *b ) {
+                           Expr *lhs = nullptr, *rhs = nullptr;
+                           if ((lhs = b->getLHS()) && (rhs = b->getRHS())) {
+                              if (FunctionDecl *fd = get_rhs_fd(rhs)) {
+                                 if (auto* lhs_dre = dyn_cast<DeclRefExpr>(lhs)) {
+                                    update_indi_func_map(lhs_dre->getFoundDecl(), fd);
+                                 } else if (auto* lhs_me = dyn_cast<MemberExpr>(lhs)) {
+                                    update_indi_func_map(lhs_me->getMemberDecl(), fd);
+                                 }
+                              }
+                           }
+                        };
                         process_assignment(bo);
-                     }
-                  }
-               }
-            }
-         }
-
-         void process_class(CXXRecordDecl* decl) {
-            for(auto it = decl->decls_begin(); it != decl->decls_end(); ++it) {
-               if(auto* f = dyn_cast<FieldDecl>(*it) ) {
-                  if (Expr *init = f->getInClassInitializer()) {
-                     if (FunctionDecl *fd = get_rhs_fd(init)) {
-                        if (func_calls.count(fd) != 0) {
-                           indi_func_map[f] = fd;
-                        }
                      }
                   }
                }
@@ -547,23 +535,33 @@ namespace eosio { namespace cdt {
             if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
                if (fd->getNameInfo().getAsString() == "apply")
                   apply_was_found = true;
-            } else if (auto* vd = dyn_cast<VarDecl>(decl)) {
-               if (vd->hasGlobalStorage()) {
-                  if (Expr *init = vd->getInit()) {
-                     if (FunctionDecl *fd = get_rhs_fd(init)) {
-                        if (func_calls.count(fd) != 0) {
-                           indi_func_map[vd] = fd;
+            } else {
+               auto process_global_var = [this]( clang::Decl* d ) {
+                  if (auto* vd = dyn_cast<VarDecl>(d)) {
+                     if (vd->hasGlobalStorage()) {
+                        if (Expr *init = vd->getInit()) {
+                           process_decl_init(vd, init);
                         }
                      }
                   }
-               }
+               };
+               process_global_var(decl);
             }
             return true;
          }
 
          virtual bool VisitCXXRecordDecl(CXXRecordDecl* decl) {
             if (decl->isEosioContract()) {
-               process_class(decl);
+               auto process_data_member = [this]( CXXRecordDecl* rd ) {
+                  for (auto it = rd->decls_begin(); it != rd->decls_end(); ++it) {
+                     if (auto* f = dyn_cast<FieldDecl>(*it) ) {
+                        if (Expr *init = f->getInClassInitializer()) {
+                           process_decl_init(f, init);
+                        }
+                     }
+                  }
+               };
+               process_data_member(decl);
             }
             return true;
          }

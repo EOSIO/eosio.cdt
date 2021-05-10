@@ -178,6 +178,12 @@ public:
       return true;
    }
 
+   ACTION_TYPE
+   bool taliasma () {
+      func srl_a1, srl_a2 = set_resource_limit;
+      srl_a2(0,0,0);
+   }
+
    #define setfun set_resource_limit
    ACTION_TYPE
    bool tdefine(){
