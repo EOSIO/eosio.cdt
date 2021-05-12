@@ -87,7 +87,7 @@ sudo rm /usr/local/bin/eosio-*
 * eosio-objdump
 * eosio-readelf
 
-Below tools are not installed after brew install, you get them only by building the repository and installing from scracth, [see here](#guided_installation_or_building_from_scratch)
+Below tools are not installed after brew install, you get them only by building the repository and installing from scracth, [see here](#guided-installation-or-building-from-scratch)
 eosio-abidiff
 eosio-ranlib
 eosio-ar
@@ -96,13 +96,13 @@ eosio-readelf
 
 ## Contributing
 
-[Contributing Guide](../CONTRIBUTING.md)
+[Contributing Guide](./CONTRIBUTING.md)
 
-[Code of Conduct](../CONTRIBUTING.md#conduct)
+[Code of Conduct](./CONTRIBUTING.md#conduct)
 
 ## License
 
-[MIT](../LICENSE)
+[MIT](./LICENSE)
 
 ## Important
 
