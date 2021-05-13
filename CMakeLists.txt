@@ -40,9 +40,11 @@ set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.cdt)
 
 include(GNUInstallDirs)
 
-include(modules/EosioExecutableNames.txt)
-include(modules/EosioPluginsExternalProject.txt)
-include(modules/ToolsExternalProject.txt)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
+
+include(BlancExecutableNames)
+include(EosioPluginsExternalProject)
+include(ToolsExternalProject)
 
 if(APPLE)
    set(CMAKE_C_COMPILER "${BREW_LLVM_PATH}/bin/clang")
@@ -68,9 +70,9 @@ configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINAR
 configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/eosio.cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/eosio.cdt-config.cmake.package @ONLY)
 
-include(modules/LibrariesExternalProject.txt)
+include(LibrariesExternalProject)
 
-include(modules/InstallCDT.cmake)
+include(InstallBlanc)
 
 configure_file(${CMAKE_SOURCE_DIR}/imports/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CDT_INSTALL_PREFIX})
@@ -103,7 +105,7 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/rapidjson/license.t
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
 if(BUILD_TESTS)
-  include(modules/TestsExternalProject.txt)
+  include(TestsExternalProject)
 
   include(CTest)
   enable_testing()

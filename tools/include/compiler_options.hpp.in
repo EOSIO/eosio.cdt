@@ -379,7 +379,7 @@ struct Options {
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
-   const char* eosio_apply_suff = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
+   const char* shared_lib_suffix = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
    // add the define for whether this is compiling with CDT and version macros
    copts.emplace_back("-D__eosio_cdt__");
@@ -414,10 +414,10 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
    copts.emplace_back("-Xclang");
    copts.emplace_back("-load");
    copts.emplace_back("-Xclang");
-   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+eosio_apply_suff))
-      copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+eosio_apply_suff);
-   else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+eosio_apply_suff))
-      copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+eosio_apply_suff);
+   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+shared_lib_suffix))
+      copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+shared_lib_suffix);
+   else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+shared_lib_suffix))
+      copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+shared_lib_suffix);
 
    if (!fasm_opt) {
       copts.emplace_back("-fno-threadsafe-statics");
@@ -429,29 +429,20 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
 #endif
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
-      if (!fnative_opt) {
-         copts.emplace_back("-Xclang");
-         copts.emplace_back("-load");
-         copts.emplace_back("-Xclang");
-         if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff))
-            copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioApply"+eosio_apply_suff);
-         else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
-            copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
-      }
       if (false && fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
          copts.emplace_back("-Xclang");
-         if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+eosio_apply_suff))
-            copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+eosio_apply_suff);
-         else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff))
-            copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+eosio_apply_suff);
+         if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+shared_lib_suffix))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioSoftfloat"+shared_lib_suffix);
+         else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+shared_lib_suffix))
+            copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioSoftfloat"+shared_lib_suffix);
       }
       /*
-      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff))
-         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+eosio_apply_suff);
-      else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff))
-         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+eosio_apply_suff);
+      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/eosio_plugin"+shared_lib_suffix))
+         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/eosio_plugin"+shared_lib_suffix);
+      else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+shared_lib_suffix))
+         copts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_plugin"+shared_lib_suffix);
       */
    }
 }

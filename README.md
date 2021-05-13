@@ -1,91 +1,57 @@
-# EOSIO.CDT (Contract Development Toolkit)
-## Version : 1.8.1
+# Blanc
 
-EOSIO.CDT is a toolchain for WebAssembly (WASM) and a set of tools to facilitate smart contract development for the EOSIO platform. In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 9](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are incomplete or not available.
+**Toolchain for WebAssembly-based Blockchain Contracts**
 
-### New Introductions
-As of this release two new repositories are under the suite of tools provided by **EOSIO.CDT**.  These are the [Ricardian Template Toolkit](https://github.com/eosio/ricardian-template-toolkit) and the [Ricardian Specification](https://github.com/eosio/ricardian-spec).  The **Ricardian Template Toolkit** is a set of libraries to facilitate smart contract writers in crafting their Ricardian contracts.  The Ricardian specification is the working specification for the above mentioned toolkit.  Please note that both projects are **alpha** releases and are subject to change.
+## Overview
 
-### Attention
-- Please see the [Upgrading Guide 1.2 to 1.3](https://eosio.github.io/eosio.cdt/latest/upgrading/1.2-to-1.3) and [Upgrading Guide 1.5 to 1.6](https://eosio.github.io/eosio.cdt/latest/upgrading/1.5-to-1.6) to be aware of any breaking changes.
-- There is currently a known issue that a minimum of 2 CPU cores is required for using EOSIO.CDT
+Welcome to Blanc!  Blanc is the toolchain for WebAssembly-based blockchain contracts, and the name of "BLANC" comes from BLockchAiN Contract toolchain.  Currently, Blanc supports [EOSIO](https://github.com/EOSIO) only, but we have a plan to support other WebAssembly-based contracts like [Cosmwasm](https://github.com/CosmWasm) which is widely used in blockchains based on Cosmos SDK (It is well known for its consensus algorithm, Tendermint).  In EOSIO ecosystem, block.one already provides the official version of contract toolchain [eosio.cdt](https://github.com/EOSIO/eosio.cdt), but Blanc takes a different approach from it.  eosio.cdt uses the modified version of Clang/LLVM, so you have to wait for block.one's updates to utilize the latest version of Clang/LLVM.  Blanc was adapted from eosio.cdt, but uses the vanilla Clang/LLVM for easier maintenance and faster adoption of state-of-the-art technologies.  At this point in time (Jan, 2021), eosio.cdt uses Clang-7, and its upcoming release uses Clang-9, but Blanc uses Clang-11 (and Clang-12 in development can be used also).  The only thing you need to care about is that your Clang/LLVM installed in your system supports Clang plugins and WASM binary generation.  You should have Clang-11 or higher, and in MacOS, you need to install `llvm` by brew.  Clang/LLVM installed by Xcode were not built for supporting plugins.
+
+By using the latest Clang/LLVM, generated WASM binaries will have smaller size by about 10%. (eg. `eosio.token` 18KB &rightarrow; 16KB, `eosio.system` 276KB &rightarrow; 252KB)  All unit tests provided by eosio.cdt and [eosio.contracts](https://github.com/EOSIO/eosio.contracts) are passed and all generated ABIs are identical.
+
 
 ## Binary Releases
-EOSIO.CDT currently supports Mac OS X brew, Linux x86_64 Debian packages, and Linux x86_64 RPM packages.
 
-**If you have previously installed EOSIO.CDT, run the `uninstall` script (it is in the directory where you cloned EOSIO.CDT) before downloading and using the binary releases.**
+The prebuilt binares are provided for Ubuntu 20.04 and MacOS Big Sur.
 
-### Mac OS X Brew Install
+### Ubuntu 20.04
+
+Clang-12 is not in the default Ubuntu repository, so it needs to be installed from llvm.org.
+
+You may need root permission to run below scripts.
+
 ```sh
-brew tap eosio/eosio.cdt
-brew install eosio.cdt
+bash -c "$(wget -O - https://apt.llvm.org/llvm.sh 12)"
 ```
 
-### Mac OS X Brew Uninstall
+Download debian package and install with apt.
+
 ```sh
-brew remove eosio.cdt
+bash -c "$(wget -O - https://raw.githubusercontent.com/turnpike/blanc/develop/blanc.sh)"
 ```
 
-### Debian Package Install
+### MacOS Big Sur
+
+You can install Clang/LLVM compatible with Blanc by package manager [brew](https://brew.sh/).
+
 ```sh
-wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.1/eosio.cdt_1.8.1-1-ubuntu-18.04_amd64.deb
-sudo apt install ./eosio.cdt_1.8.1-1-ubuntu-18.04_amd64.deb
+brew install llvm@12
 ```
 
-### Debian Package Uninstall
-```sh
-sudo apt remove eosio.cdt
-```
-
-### RPM Package Install
-```sh
-wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.1/eosio.cdt-1.8.1-1.el7.x86_64.rpm
-sudo yum install ./eosio.cdt-1.8.1-1.el7.x86_64.rpm
-```
-
-### RPM Package Uninstall
-```sh
-sudo yum remove eosio.cdt
-```
-
-## Guided Installation or Building from Scratch
-```sh
-git clone --recursive https://github.com/eosio/eosio.cdt
-cd eosio.cdt
-mkdir build
-cd build
-cmake ..
-make -j8
-```
-
-From here onward you can build your contracts code by simply exporting the `build` directory to your path, so you don't have to install globally (makes things cleaner).
-Or you can install globally by running this command:
+Install Blanc by brew.
 
 ```sh
-sudo make install
-```
-
-### Uninstall after manual installation
-
-```sh
-sudo rm -fr /usr/local/eosio.cdt
-sudo rm -fr /usr/local/lib/cmake/eosio.cdt
-sudo rm /usr/local/bin/eosio-*
+brew tap turnpike/blanc
+brew install blanc
 ```
 
 ## Installed Tools
----
-* eosio-cpp
-* eosio-cc
-* eosio-ld
-* eosio-init
-* eosio-abidiff
-* eosio-wasm2wast
-* eosio-wast2wasm
-* eosio-ranlib
-* eosio-ar
-* eosio-objdump
-* eosio-readelf
+
+* blanc++
+* blanc
+* blanc-ld
+* blanc-pp
+* blanc-ar
+* blanc-ranlib
 
 ## Contributing
 

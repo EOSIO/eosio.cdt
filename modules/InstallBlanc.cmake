@@ -58,16 +58,15 @@ macro( eosio_libraries_install )
    install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${CDT_INSTALL_PREFIX}/include)
 endmacro( eosio_libraries_install )
 
-eosio_tool_pre_symlink("${EOSIO_RANLIB_BACKEND_PREFERRED};${EOSIO_RANLIB_BACKEND}" ${EOSIO_RANLIB})
-eosio_tool_pre_symlink("${EOSIO_AR_BACKEND_PREFERRED};${EOSIO_AR_BACKEND}" ${EOSIO_AR})
+eosio_tool_pre_symlink("${BLANC_RANLIB_BACKEND_PREFERRED};${BLANC_RANLIB_BACKEND}" ${BLANC_RANLIB})
+eosio_tool_pre_symlink("${BLANC_AR_BACKEND_PREFERRED};${BLANC_AR_BACKEND}" ${BLANC_AR})
 
-eosio_tool_install_and_symlink(${EOSIO_POSTPASS} ${EOSIO_POSTPASS})
-eosio_tool_install_and_symlink(${EOSIO_C_COMPILER} ${EOSIO_C_COMPILER})
-eosio_tool_install_and_symlink(${EOSIO_CXX_COMPILER} ${EOSIO_CXX_COMPILER})
-eosio_tool_install_and_symlink(${EOSIO_LINKER} ${EOSIO_LINKER})
+eosio_tool_install_and_symlink(${BLANC_POSTPASS} ${BLANC_POSTPASS})
+eosio_tool_install_and_symlink(${BLANC_C_COMPILER} ${BLANC_C_COMPILER})
+eosio_tool_install_and_symlink(${BLANC_CXX_COMPILER} ${BLANC_CXX_COMPILER})
+eosio_tool_install_and_symlink(${BLANC_LINKER} ${BLANC_LINKER})
 #eosio_tool_install_and_symlink(eosio-abidiff eosio-abidiff)
 
-eosio_plugin_install(EosioApply LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
 eosio_plugin_install(EosioAttrs LLVMEosioAttrs${CMAKE_SHARED_LIBRARY_SUFFIX})
 eosio_plugin_install(eosio_plugin eosio_plugin${CMAKE_SHARED_LIBRARY_SUFFIX})
 
