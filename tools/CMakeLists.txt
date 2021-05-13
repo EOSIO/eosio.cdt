@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-find_package(LLVM REQUIRED CONFIG)
-if(LLVM_VERSION_MAJOR VERSION_LESS 11)
-  message(FATAL_ERROR "Blanc requires LLVM 11 or higher")
-endif()
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
-
-find_package(Boost REQUIRED)
-
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
    message(STATUS "Using sccache")
@@ -21,7 +12,12 @@ else()
    endif()
 endif()
 
-include(../modules/EosioExecutableNames.txt)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../modules)
+
+find_package(LLVM 12... REQUIRED CONFIG)
+find_package(Boost REQUIRED)
+
+include(BlancExecutableNames)
 
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${LLVM_SRCDIR}/tools/clang/include)

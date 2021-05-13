@@ -7,10 +7,10 @@
 #include <eosio/EosioAttrs.hpp>
 
 #define CPP_COMP 1
-#define COMPILER_NAME "@EOSIO_CXX_COMPILER@"
-#define LINKER_NAME "@EOSIO_LINKER@"
-#define COMPILER_BACKEND "@EOSIO_CXX_COMPILER_BACKEND@"
-#define COMPILER_BACKEND_PREFERRED "@EOSIO_CXX_COMPILER_BACKEND_PREFERRED@"
+#define COMPILER_NAME "@BLANC_CXX_COMPILER@"
+#define LINKER_NAME "@BLANC_LINKER@"
+#define COMPILER_BACKEND "@BLANC_CXX_COMPILER_BACKEND@"
+#define COMPILER_BACKEND_PREFERRED "@BLANC_CXX_COMPILER_BACKEND_PREFERRED@"
 #include <compiler_options.hpp>
 
 void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
