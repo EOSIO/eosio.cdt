@@ -14,10 +14,10 @@
 using namespace clang::tooling;
 using namespace llvm;
 
-#define COMPILER_NAME "${EOSIO_C_COMPILER}"
-#define LINKER_NAME "${EOSIO_LINKER}"
-#define COMPILER_BACKEND "${EOSIO_C_COMPILER_BACKEND}"
-#define COMPILER_BACKEND_PREFERRED "${EOSIO_C_COMPILER_BACKEND_PREFERRED}"
+#define COMPILER_NAME "${BLANC_C_COMPILER}"
+#define LINKER_NAME "${BLANC_LINKER}"
+#define COMPILER_BACKEND "${BLANC_C_COMPILER_BACKEND}"
+#define COMPILER_BACKEND_PREFERRED "${BLANC_C_COMPILER_BACKEND_PREFERRED}"
 #include <compiler_options.hpp>
 
 int main(int argc, const char **argv) {

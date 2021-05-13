@@ -385,12 +385,12 @@ if (BUILD_TOOLS)
 
   # eospp
   wabt_executable(
-    NAME ${EOSIO_POSTPASS}
+    NAME ${BLANC_POSTPASS}
     SOURCES src/tools/postpass.cc
     INSTALL
   )
-  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
-  add_custom_command( TARGET ${EOSIO_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EOSIO_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
+  add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+  add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
 
   # wat2wasm
   wabt_executable(
