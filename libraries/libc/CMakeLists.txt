@@ -140,7 +140,7 @@ set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/stdio_impl.h
 )
 
-add_library(c 
+list(APPEND C_SOURCES
    ${CRYPT_SOURCES}
    ${CTYPE_SOURCES}
    ${ENV_SOURCES}
@@ -162,48 +162,41 @@ add_library(c
    "musl/src/unistd/lseek.c"
 )
 
-add_native_library(native_c 
-   ${CRYPT_SOURCES}
-   ${CTYPE_SOURCES}
-   ${ENV_SOURCES}
-   ${ERRNO_SOURCES}
-   ${EXIT_SOURCES}
-   ${INTERNAL_SOURCES}
-   ${LOCALE_SOURCES}
-   ${MATH_SOURCES}
-   ${MBYTE_SOURCES}
-   ${MISC_SOURCES}
-   ${SEARCH_SOURCES}
-   ${STDIO_SOURCES}
-   ${STDLIB_SOURCES}
-   ${STRING_SOURCES}
-   ${TIME_SOURCES}
-   ${THREAD_SOURCES}
-   "musl/src/malloc/posix_memalign.c"
-   "musl/src/malloc/memalign.c"
-   "musl/src/unistd/lseek.c"
+list(APPEND C_PRIVATE_INCLUDES
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/include
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
 )
 
+list(APPEND C_PUBLIC_INCLUDES
+   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+)
+
+add_library(c ${C_SOURCES})
 target_include_directories(c
-   PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
-   PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+   PRIVATE ${C_PRIVATE_INCLUDES}
+   PUBLIC ${C_PUBLIC_INCLUDES}
 )
 
+add_native_library(native_c ${C_SOURCES})
 target_include_directories(native_c
-   PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
-   PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
+   PRIVATE ${C_PRIVATE_INCLUDES}
+   PUBLIC ${C_PUBLIC_INCLUDES}
+)
+
+target_compile_definitions(c PUBLIC PRINTF_SUPPORT_FLOAT)
+target_compile_definitions(native_c PUBLIC PRINTF_SUPPORT_FLOAT)
+
+# libc with no floating point
+add_library(cnf ${C_SOURCES} "musl/src/internal/builtins/multi3.c")
+target_include_directories(cnf
+   PRIVATE ${C_PRIVATE_INCLUDES}
+   PUBLIC ${C_PUBLIC_INCLUDES}
 )
 
 add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib)
 add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
+add_custom_command( TARGET cnf POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cnf> ${BASE_BINARY_DIR}/lib)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
 file(COPY ${HEADERS} DESTINATION ${BASE_BINARY_DIR}/include/libc/)

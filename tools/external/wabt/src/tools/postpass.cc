@@ -43,6 +43,7 @@ static std::string s_outfile;
 static Features s_features;
 static WriteBinaryOptions s_write_binary_options;
 static std::unique_ptr<FileStream> s_log_stream;
+static std::string s_profile = "eosio";
 
 static const char s_description[] =
 R"(  Read a file in the WebAssembly binary format, strip bss or any data segment that is only initialized to zeros, and other post processing.
@@ -66,6 +67,11 @@ static void ParseOptions(int argc, char** argv) {
       [](const char* argument) {
         s_outfile = argument;
         ConvertBackslashToSlash(&s_outfile);
+      });
+  parser.AddOption(
+      'p', "profile", "PROFILE", "Target chain",
+      [](const char* argument) {
+        s_profile = argument;
       });
   parser.AddArgument("filename", OptionParser::ArgumentCount::One,
                      [](const char* argument) {
@@ -121,17 +127,16 @@ void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& 
 }
 
 void StripExports(Module& mod) {
-   std::vector<Export*> exports;
-   for (auto exp : mod.exports) {
-      if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
-         exports.push_back(exp);
-         break;
+   if (s_profile == "eosio") {
+      std::vector<Export*> exports;
+      for (auto exp : mod.exports) {
+         if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
+            exports.push_back(exp);
+            break;
+         }
       }
+      mod.exports = exports;
    }
-   mod.exports = exports;
-}
-
-void construct_apply( Module& mod ) {
 }
 
 void WriteBufferToFile(string_view filename,

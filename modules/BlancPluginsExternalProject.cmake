@@ -2,7 +2,7 @@ include(ExternalProject)
 include(GNUInstallDirs)
 
 ExternalProject_Add(
-  EosioPlugins
+  BlancPlugins
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/plugins"
   BINARY_DIR "${CMAKE_BINARY_DIR}/plugins"
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/bin -DCMAKE_BUILD_TYPE=Release -DBOOST_ROOT=$ENV{BOOST_ROOT}

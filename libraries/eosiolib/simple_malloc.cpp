@@ -49,7 +49,9 @@ namespace eosio {
             next_page++;
             pages_to_alloc++;
          }
-         eosio::check(GROW_MEMORY(pages_to_alloc) != -1, "failed to allocate pages");
+         if (GROW_MEMORY(pages_to_alloc) == -1) {
+            __builtin_trap();
+         }
          return ret;
       }
 
