@@ -12,6 +12,14 @@ set ( builtins_sources
    fixunsdfti.c
    floattidf.c
    floatuntidf.c
+   multi3.c
+   ashlti3.c
+   ashrti3.c
+   lshrti3.c
+   divti3.c
+   udivti3.c
+   modti3.c
+   umodti3.c
 )
 
 file ( GLOB builtins_headers "${CMAKE_CURRENT_SOURCE_DIR}*.h" )
