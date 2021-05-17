@@ -3,6 +3,17 @@
 #include <stdint.h>
 #include <limits.h>
 
+#define UNUSED __attribute__((unused))
+
+#ifdef si_int
+#undef si_int
+#endif
+typedef int32_t si_int;
+typedef uint32_t su_int;
+
+typedef long long di_int;
+typedef unsigned long long du_int;
+
 typedef union
 {
     __int128 all;
