@@ -1,5 +1,5 @@
 # EOSIO.CDT (Contract Development Toolkit)
-## Version : 1.8.0-rc2
+## Version : 1.8.0
 
 EOSIO.CDT is a toolchain for WebAssembly (WASM) and a set of tools to facilitate smart contract development for the EOSIO platform. In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 9](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are incomplete or not available.
 
@@ -28,8 +28,8 @@ brew remove eosio.cdt
 
 ### Debian Package Install
 ```sh
-wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
-sudo apt install ./eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.0/eosio.cdt_1.8.0-1-ubuntu-18.04_amd64.deb
+sudo apt install ./eosio.cdt_1.8.0-1-ubuntu-18.04_amd64.deb
 ```
 
 ### Debian Package Uninstall
@@ -39,8 +39,8 @@ sudo apt remove eosio.cdt
 
 ### RPM Package Install
 ```sh
-wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt-1.7.0-1.el7.x86_64.rpm
-sudo yum install ./eosio.cdt-1.7.0-1.el7.x86_64.rpm
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.0/eosio.cdt-1.8.0-1.el7.x86_64.rpm
+sudo yum install ./eosio.cdt-1.8.0-1.el7.x86_64.rpm
 ```
 
 ### RPM Package Uninstall
