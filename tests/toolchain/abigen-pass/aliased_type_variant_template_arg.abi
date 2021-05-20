@@ -1,0 +1,39 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "str",
+            "type": "string"
+        }
+    ],
+    "structs": [
+        {
+            "name": "hi",
+            "base": "",
+            "fields": [
+                {
+                    "name": "v",
+                    "type": "variant_uint64_str"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "hi",
+            "type": "hi",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [
+        {
+            "name": "variant_uint64_str",
+            "types": ["uint64","str"]
+        }
+    ],
+    "action_results": []
+}

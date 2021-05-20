@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -z "$CICD_PYTHON_PATH" ]; then
+    /usr/bin/env python3 "${CMAKE_CURRENT_SOURCE_DIR}/main.py" "$@"
+else
+    "$CICD_PYTHON_PATH" "${CMAKE_CURRENT_SOURCE_DIR}/main.py" "$@"
+fi

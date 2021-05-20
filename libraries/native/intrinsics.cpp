@@ -34,6 +34,9 @@ extern "C" {
    void set_blockchain_parameters_packed( char* data, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::set_blockchain_parameters_packed>(data, datalen);
    }
+   void set_kv_parameters_packed( const char* data, uint32_t datalen ) {
+      return intrinsics::get().call<intrinsics::set_kv_parameters_packed>(data, datalen);
+   }
    bool is_privileged( capi_name account ) {
       return intrinsics::get().call<intrinsics::is_privileged>(account);
    }
@@ -292,6 +295,9 @@ extern "C" {
    capi_name current_receiver() {
       return intrinsics::get().call<intrinsics::current_receiver>();
    }
+   void set_action_return_value( void* rv, size_t len ) {
+      intrinsics::get().call<intrinsics::set_action_return_value>(rv, len);
+   }
    void require_recipient( capi_name name ) {
       return intrinsics::get().call<intrinsics::require_recipient>(name);
    }
@@ -331,10 +337,10 @@ extern "C" {
    void send_context_free_inline(char *serialized_action, size_t size) {
       return intrinsics::get().call<intrinsics::send_context_free_inline>(serialized_action, size);
    }
-   void send_deferred(const uint128_t& sender_id, capi_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing) {
+   void send_deferred(const uint128_t* sender_id, capi_name payer, const char *serialized_transaction, size_t size, uint32_t replace_existing) {
       return intrinsics::get().call<intrinsics::send_deferred>(sender_id, payer, serialized_transaction, size, replace_existing);
    }
-   int cancel_deferred(const uint128_t& sender_id) {
+   int cancel_deferred(const uint128_t* sender_id) {
       return intrinsics::get().call<intrinsics::cancel_deferred>(sender_id);
    }
    int get_context_free_data( uint32_t index, char* buff, size_t size ) {

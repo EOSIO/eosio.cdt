@@ -46,6 +46,7 @@ intrinsic_macro(set_proposed_producers) \
 intrinsic_macro(set_proposed_producers_ex) \
 intrinsic_macro(get_blockchain_parameters_packed) \
 intrinsic_macro(set_blockchain_parameters_packed) \
+intrinsic_macro(set_kv_parameters_packed) \
 intrinsic_macro(is_privileged) \
 intrinsic_macro(set_privileged) \
 intrinsic_macro(is_feature_activated) \
@@ -157,7 +158,8 @@ intrinsic_macro(send_context_free_inline) \
 intrinsic_macro(send_deferred) \
 intrinsic_macro(cancel_deferred) \
 intrinsic_macro(get_context_free_data) \
-intrinsic_macro(get_sender) 
+intrinsic_macro(get_sender) \
+intrinsic_macro(set_action_return_value)
 
 #define CREATE_ENUM(name) \
    name,

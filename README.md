@@ -1,7 +1,7 @@
 # EOSIO.CDT (Contract Development Toolkit)
-## Version : 1.7.0
+## Version : 1.8.0
 
-EOSIO.CDT is a toolchain for WebAssembly (WASM) and set of tools to facilitate smart contract development for the EOSIO platform. In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 7](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are incomplete or not available.
+EOSIO.CDT is a toolchain for WebAssembly (WASM) and a set of tools to facilitate smart contract development for the EOSIO platform. In addition to being a general purpose WebAssembly toolchain, [EOSIO](https://github.com/eosio/eos) specific optimizations are available to support building EOSIO smart contracts.  This new toolchain is built around [Clang 9](https://github.com/eosio/llvm), which means that EOSIO.CDT has the most currently available optimizations and analyses from LLVM, but as the WASM target is still considered experimental, some optimizations are incomplete or not available.
 
 ### New Introductions
 As of this release two new repositories are under the suite of tools provided by **EOSIO.CDT**.  These are the [Ricardian Template Toolkit](https://github.com/eosio/ricardian-template-toolkit) and the [Ricardian Specification](https://github.com/eosio/ricardian-spec).  The **Ricardian Template Toolkit** is a set of libraries to facilitate smart contract writers in crafting their Ricardian contracts.  The Ricardian specification is the working specification for the above mentioned toolkit.  Please note that both projects are **alpha** releases and are subject to change.
@@ -28,8 +28,8 @@ brew remove eosio.cdt
 
 ### Debian Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
-$ sudo apt install ./eosio.cdt_1.7.0-1-ubuntu-18.04_amd64.deb
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.0/eosio.cdt_1.8.0-1-ubuntu-18.04_amd64.deb
+sudo apt install ./eosio.cdt_1.8.0-1-ubuntu-18.04_amd64.deb
 ```
 
 ### Debian Package Uninstall
@@ -39,8 +39,8 @@ sudo apt remove eosio.cdt
 
 ### RPM Package Install
 ```sh
-$ wget https://github.com/eosio/eosio.cdt/releases/download/v1.7.0/eosio.cdt-1.7.0-1.el7.x86_64.rpm
-$ sudo yum install ./eosio.cdt-1.7.0-1.el7.x86_64.rpm
+wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.0/eosio.cdt-1.8.0-1.el7.x86_64.rpm
+sudo yum install ./eosio.cdt-1.8.0-1.el7.x86_64.rpm
 ```
 
 ### RPM Package Uninstall
@@ -74,7 +74,7 @@ sudo rm /usr/local/bin/eosio-*
 ```
 
 ## Installed Tools
-
+---
 * eosio-cpp
 * eosio-cc
 * eosio-ld
@@ -87,22 +87,15 @@ sudo rm /usr/local/bin/eosio-*
 * eosio-objdump
 * eosio-readelf
 
-Below tools are not installed after brew install, you get them only by building the repository and installing from scracth, [see here](#guided_installation_or_building_from_scratch)
-eosio-abidiff
-eosio-ranlib
-eosio-ar
-eosio-objdump
-eosio-readelf
-
 ## Contributing
 
-[Contributing Guide](../CONTRIBUTING.md)
+[Contributing Guide](./CONTRIBUTING.md)
 
-[Code of Conduct](../CONTRIBUTING.md#conduct)
+[Code of Conduct](./CONTRIBUTING.md#conduct)
 
 ## License
 
-[MIT](../LICENSE)
+[MIT](./LICENSE)
 
 ## Important
 

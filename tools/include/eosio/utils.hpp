@@ -3,6 +3,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/Support/Program.h"
+
 #include <stdlib.h>
 #if defined(__APPLE__)
 # include <crt_externs.h>
@@ -47,9 +48,8 @@ uint64_t string_to_name( const char* str )
 template <typename Lambda>
 void validate_name( const std::string& str, Lambda&& error_handler ) {
    const auto len = str.length();
-   if ( len > 13 ) { 
-      std::cout << "Error, name {" << str << "} is more than 13 characters long\n";
-      return error_handler();
+   if ( len > 13 ) {
+      return error_handler(std::string("Name {")+str+"} is more than 13 characters long");
    }
    uint64_t value = string_to_name( str.c_str() );
 
@@ -62,7 +62,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
       str2[12-i] = c;
       tmp >>= (i == 0 ? 4 : 5);
    }
-   
+
    auto trim = [](std::string& s) {
       int i;
       for (i = s.length()-1; i >= 0; i--)
@@ -73,8 +73,7 @@ void validate_name( const std::string& str, Lambda&& error_handler ) {
    trim(str2);
 
    if ( str2 != str ) {
-      std::cout << "Error, name not properly normalized\n";
-      return error_handler();
+      return error_handler("name not properly normalized");
    }
 }
 
@@ -134,17 +133,18 @@ struct environment {
      return env_table;
    }
    static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
-      std::stringstream args;
-      for (auto s : options)
-         args << s << " ";
+      std::vector<llvm::StringRef> args;
+      args.push_back(prog);
+      args.insert(args.end(), options.begin(), options.end());
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
-      if ( auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) )
-         std::system((*path+" "+args.str()).c_str());
+      if ( const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
+         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
+      }
       else
          return false;
-      return true; 
+      return true;
    }
 
 };

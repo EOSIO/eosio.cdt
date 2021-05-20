@@ -22,7 +22,7 @@ int main(int argc, const char **argv) {
    // fix to show version info without having to have any other arguments
    for (int i=0; i < argc; i++) {
      if (argv[i] == std::string("-v")) {
-       eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
+       eosio::cdt::environment::exec_subprogram("clang-9", {"-v"});
        return 0;
      }
    }
@@ -58,9 +58,9 @@ int main(int argc, const char **argv) {
          output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
       }
 
-      new_opts.insert(new_opts.begin(), "-o "+output);
+      new_opts.insert(new_opts.begin(), "-o"+output);
       outputs.push_back(output);
-      if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
+      if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
          llvm::sys::fs::remove(tmp_file);
          return -1;
       }
@@ -71,7 +71,7 @@ int main(int argc, const char **argv) {
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+         new_opts.insert(new_opts.begin(), input);
       }
       if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {
          for (auto input : outputs) {

@@ -1,21 +1,39 @@
 #pragma once
 #include <eosio/testing/tester.hpp>
 
-namespace eosio { namespace testing {
+namespace eosio::testing {
+   struct contracts {
+      static std::vector<uint8_t> malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.wasm"); }
+      static std::vector<char>    malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.abi"); }
+      static std::vector<uint8_t> old_malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"); }
+      static std::vector<char>    old_malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.abi"); }
 
-struct contracts {
-   static std::vector<uint8_t> malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.wasm"); }
-   static std::vector<char>    malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/malloc_tests.abi"); }
-   static std::vector<uint8_t> old_malloc_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.wasm"); }
-   static std::vector<char>    old_malloc_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/old_malloc_tests.abi"); }
+      static std::vector<uint8_t> simple_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.wasm"); }
+      static std::vector<char>    simple_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.abi"); }
+      static std::vector<char>    simple_wrong_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_wrong.abi"); }
 
-   static std::vector<uint8_t> simple_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.wasm"); }
-   static std::vector<char>    simple_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_tests.abi"); }
-   static std::vector<char>    simple_wrong_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/simple_wrong.abi"); }
+      static std::vector<uint8_t> transfer_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"); }
+      static std::vector<char>    transfer_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.abi"); }
 
-   static std::vector<uint8_t> transfer_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.wasm"); }
-   static std::vector<char>    transfer_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/transfer_contract.abi"); }
+      static std::vector<uint8_t> capi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.wasm"); }
+      static std::vector<char>    capi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/capi_tests.abi"); }
 
-};
- 
-}} //ns eosio::testing
+      static std::vector<uint8_t> kv_map_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_map_tests.wasm"); }
+      static std::vector<char>    kv_map_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_map_tests.abi"); }
+
+      static std::vector<uint8_t> kv_single_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_single_index_tests.wasm"); }
+      static std::vector<char>    kv_single_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_single_index_tests.abi"); }
+
+      static std::vector<uint8_t> kv_multi_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_multiple_indices_tests.wasm"); }
+      static std::vector<char>    kv_multi_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_multiple_indices_tests.abi"); }
+
+      static std::vector<uint8_t> kv_make_key_tests_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_make_key_tests.wasm"); }
+      static std::vector<char>    kv_make_key_tests_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_make_key_tests.abi"); }
+
+      static std::vector<uint8_t> kv_bios_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.wasm"); }
+      static std::vector<char>    kv_bios_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/kv_bios.abi"); }
+
+      static std::vector<uint8_t> action_results_test_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.wasm"); }
+      static std::vector<char>    action_results_test_abi() { return read_abi("${CMAKE_BINARY_DIR}/../unit/test_contracts/action_results_test.abi"); }
+   };
+} //ns eosio::testing

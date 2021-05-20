@@ -1,13 +1,11 @@
 # Prevents an import at runtime so there's no cyclical dependency
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from typing import List, Optional, Tuple
+from errors import TestFailure
 
 if TYPE_CHECKING:
     from tests import Test
-
-from typing import List, Optional, Tuple
-
-from settings import TestFailure
 
 COLORS = {
     "black": 0,
@@ -25,7 +23,7 @@ STYLES = {"reset": 0, "bold": 1, "italic": 3, "underline": 4}
 
 def print_test_results(
     results: List[Tuple[Test, Optional[TestFailure]]], run_time: float
-) -> None:
+) -> List[TestFailure]:
     Printer.print("\n========= Results =========")
 
     failures = []
@@ -60,11 +58,14 @@ def print_test_results(
 
     Printer.print(f"\nTotal Test discovery and run time = {run_time:.2f} sec")
 
+    return failures
+
 
 def print_test_results_machine(
-    results: List[Tuple[Test, Optional[TestFailure]]], run_time: float
+    _results: List[Tuple[Test, Optional[TestFailure]]], _run_time: float
 ) -> None:
     Printer.red("TODO")
+    return []
 
 
 class Printer:

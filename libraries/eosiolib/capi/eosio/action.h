@@ -83,7 +83,7 @@ uint32_t read_action_data( void* msg, uint32_t len );
  * @return the length of the current action's data field
  */
 __attribute__((eosio_wasm_import))
-uint32_t action_data_size();
+uint32_t action_data_size( void );
 
 /**
  *  Add the specified account to set of accounts to be notified
@@ -158,7 +158,7 @@ void send_context_free_inline(char *serialized_action, size_t size);
  *  @return the time in microseconds from 1970 of the publication_time
  */
 __attribute__((eosio_wasm_import))
-uint64_t  publication_time();
+uint64_t  publication_time( void );
 
 /**
  *  Get the current receiver of the action
@@ -166,7 +166,17 @@ uint64_t  publication_time();
  *  @return the account which specifies the current receiver of the action
  */
 __attribute__((eosio_wasm_import))
-capi_name current_receiver();
+capi_name current_receiver( void );
+
+/**
+ * Set the action return value which will be included in the action_receipt
+ * @brief Set the action return value
+ * @param return_value - serialized return value
+ * @param size - size of serialized return value in bytes
+ * @pre `return_value` is a valid pointer to an array at least `size` bytes long
+ */
+__attribute__((eosio_wasm_import))
+void set_action_return_value(void *return_value, size_t size);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,6 @@
 ---
 content_title: ABI variants
+link_text: ABI variants
 ---
 
 ABI variants give the flexibility of using more than one type for a defined variable or data member. 
@@ -105,7 +106,7 @@ Now you can deploy the contract and it will be backwards compatible with the pre
 ## Use variant when changing an already deployed multi index table
 
 ### Preconditions
-- It is assumed you deployed the contract defined in [this section](../06_how-to-guides/02_multi-index/how-to-instantiate-a-multi-index-table.md) and now you are going to change its table structure. 
+- It is assumed you deployed the contract defined in [this section](../06_how-to-guides/40_multi-index/how-to-instantiate-a-multi-index-table.md) and now you are going to change its table structure. 
 
 To change the existing table structure, you will use the `std::variant` in conjunction with ABI extensions; you can read a tutorial on abi extensions [here](./01_binary-extension.md). You will add another field to the table called `variant_field` which can store either of the following data `int8_t`, `int16_t`, and `int32_t`. You can do it by adding below data member to the table structure:
 
@@ -153,7 +154,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 ```
 
 [[warning | Not recommended warning]]
-| Be aware, it is not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how to ABI gets generated!
+| Be aware, it is not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how the ABI gets generated!
 
-[[info | Implemenatation location]]
-| The implementation for ABI `variants' section can be found [here](https://github.com/EOSIO/eos/pull/5652).
+[[info | Implementation location]]
+| The implementation for ABI `variants` can be found [here](https://github.com/EOSIO/eos/pull/5652).

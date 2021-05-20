@@ -39,6 +39,13 @@
 #include <type_traits>
 #include <system_error>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#else
+#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+
 namespace unicons {
 
 /*

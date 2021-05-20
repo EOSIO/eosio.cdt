@@ -6,7 +6,7 @@ ExternalProject_Add(
   EosioWasmTests
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/unit"
   BINARY_DIR "${CMAKE_BINARY_DIR}/tests/unit"
-  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake -DCMAKE_BUILD_TYPE=Debug -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/ -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR} -D__APPLE=${APPLE}
+  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake -DCMAKE_BUILD_TYPE=Release -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/eosio.cdt/ -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR} -D__APPLE=${APPLE} -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -Deosio_DIR=${eosio_DIR}
   UPDATE_COMMAND ""
   PATCH_COMMAND  ""
   TEST_COMMAND   ""
@@ -16,30 +16,30 @@ ExternalProject_Add(
 )
 
 
-if (EOSIO_RUN_INTEGRATION_TESTS)
-   find_package(eosio)
+find_package(eosio QUIET)
 
-   if (eosio_FOUND)
-      if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-         set(TEST_BUILD_TYPE "Debug")
-         set(CMAKE_BUILD_TYPE "Release")
-      else()
-         set(TEST_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-      endif()
-
-      string(REPLACE ";" "|" TEST_FRAMEWORK_PATH "${CMAKE_FRAMEWORK_PATH}")
-      string(REPLACE ";" "|" TEST_MODULE_PATH "${CMAKE_MODULE_PATH}")
-
-      ExternalProject_Add(
-        EosioIntegrationTests
-        SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/integration"
-        BINARY_DIR "${CMAKE_BINARY_DIR}/tests/integration"
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${TEST_BUILD_TYPE} -DCMAKE_FRAMEWORK_PATH=${TEST_FRAMEWORK_PATH} -DCMAKE_MODULE_PATH=${TEST_MODULE_PATH} -DEOSIO_ROOT=${EOSIO_ROOT} -DLLVM_DIR=${LLVM_DIR} -DBOOST_ROOT=${BOOST_ROOT}
-        UPDATE_COMMAND ""
-        PATCH_COMMAND  ""
-        TEST_COMMAND   ""
-        INSTALL_COMMAND ""
-        BUILD_ALWAYS 1
-      )
+if (eosio_FOUND)
+   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(TEST_BUILD_TYPE "Debug")
+      set(CMAKE_BUILD_TYPE "Release")
+   else()
+      set(TEST_BUILD_TYPE ${CMAKE_BUILD_TYPE})
    endif()
+
+   string(REPLACE ";" "|" TEST_FRAMEWORK_PATH "${CMAKE_FRAMEWORK_PATH}")
+   string(REPLACE ";" "|" TEST_MODULE_PATH "${CMAKE_MODULE_PATH}")
+
+   ExternalProject_Add(
+     EosioIntegrationTests
+     SOURCE_DIR "${CMAKE_SOURCE_DIR}/tests/integration"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/tests/integration"
+     CMAKE_ARGS -DCMAKE_BUILD_TYPE=${TEST_BUILD_TYPE} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_FRAMEWORK_PATH=${TEST_FRAMEWORK_PATH} -DCMAKE_MODULE_PATH=${TEST_MODULE_PATH} -DEOSIO_ROOT=${EOSIO_ROOT} -DLLVM_DIR=${LLVM_DIR} -DBOOST_ROOT=${BOOST_ROOT}
+     UPDATE_COMMAND ""
+     PATCH_COMMAND  ""
+     TEST_COMMAND   ""
+     INSTALL_COMMAND ""
+     BUILD_ALWAYS 1
+   )
+else()
+   message(STATUS "eosio package not found, skipping building integration tests")
 endif()

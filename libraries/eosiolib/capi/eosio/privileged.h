@@ -106,12 +106,22 @@ __attribute__((eosio_wasm_import))
 uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
 /**
+ * Set the KV parameters
+ *
+ * @param data - pointer to KV parameters packed as bytes
+ * @param datalen - size of the packed KV parameters
+ * @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long that contains packed KV params data
+ */
+__attribute__((eosio_wasm_import))
+void set_kv_parameters_packed( const char* data, uint32_t datalen );
+
+/**
  * Pre-activate protocol feature
  *
  * @param feature_digest - digest of the protocol feature to pre-activate
  */
 __attribute__((eosio_wasm_import))
-void preactivate_feature( const capi_checksum256* feature_digest );
+void preactivate_feature( const struct capi_checksum256* feature_digest );
 
 #ifdef __cplusplus
 }

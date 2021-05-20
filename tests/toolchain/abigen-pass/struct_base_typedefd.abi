@@ -1,0 +1,49 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "bar",
+            "type": "foo"
+        }
+    ],
+    "structs": [
+        {
+            "name": "baz",
+            "base": "bar",
+            "fields": []
+        },
+        {
+            "name": "foo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "value",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "hi",
+            "base": "",
+            "fields": [
+                {
+                    "name": "b",
+                    "type": "baz"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "hi",
+            "type": "hi",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}

@@ -1,6 +1,6 @@
 /**
- *  @file
- *  @copyright defined in eos/LICENSE
+ * @file
+ * @copyright defined in eos/LICENSE
  */
 #pragma once
 
@@ -19,6 +19,11 @@
 #include <limits>
 #include <algorithm>
 #include <memory>
+
+/**
+ * @defgroup multiindex Multi Index Table
+ * @ingroup contracts
+ */
 
 namespace eosio {
   namespace internal_use_do_not_use {
@@ -333,36 +338,36 @@ namespace _multi_index_detail {
 }
 
 /**
- *  The indexed_by struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified.
+ * The indexed_by struct is used to instantiate the indices for the Multi-Index table. In EOSIO, up to 16 secondary indices can be specified.
  *
- *  @ingroup multiindex
- *  @tparam IndexName - is the name of the index. The name must be provided as an EOSIO base32 encoded 64-bit integer and must conform to the EOSIO naming requirements of a maximum of 13 characters, the first twelve from the lowercase characters a-z, digits 1-5, and ".", and if there is a 13th character, it is restricted to lowercase characters a-p and ".".
- *  @tparam Extractor - is a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type. It is recommended to use the `eosio::const_mem_fun` template, which is a type alias to the `boost::multi_index::const_mem_fun`. See the documentation for the Boost `const_mem_fun` key extractor for more details.
+ * @ingroup multiindex
+ * @tparam IndexName - is the name of the index. The name must be provided as an EOSIO base32 encoded 64-bit integer and must conform to the EOSIO naming requirements of a maximum of 13 characters, the first twelve from the lowercase characters a-z, digits 1-5, and ".", and if there is a 13th character, it is restricted to lowercase characters a-p and ".".
+ * @tparam Extractor - is a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type. It is recommended to use the `eosio::const_mem_fun` template, which is a type alias to the `boost::multi_index::const_mem_fun`. See the documentation for the Boost `const_mem_fun` key extractor for more details.
  *
- *  Example:
-       *
-*
- *  @code
- *  #include <eosiolib/eosio.hpp>
- *  using namespace eosio;
- *  class mycontract: eosio::contract {
- *    struct record {
- *       uint64_t    primary;
- *       uint128_t   secondary;
- *       uint64_t primary_key() const { return primary; }
- *       uint128_t get_secondary() const { return secondary; }
- *     };
- *    public:
- *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
- *      void myaction() {
- *        auto code = _self;
- *        auto scope = _self;
- *        multi_index<"mytable"_n, record,
- *                   indexed_by< "bysecondary"_n, const_mem_fun<record, uint128_t, &record::get_secondary> > > table( code, scope);
- *      }
- *  }
- *  EOSIO_DISPATCH( mycontract, (myaction) )
- *  @endcode
+ * Example:
+ *
+ *
+ * @code
+ * #include <eosiolib/eosio.hpp>
+ * using namespace eosio;
+ * class mycontract: eosio::contract {
+ *   struct record {
+ *      uint64_t    primary;
+ *      uint128_t   secondary;
+ *      uint64_t primary_key() const { return primary; }
+ *      uint128_t get_secondary() const { return secondary; }
+ *    };
+ *   public:
+ *     mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
+ *     void myaction() {
+ *       auto code = _self;
+ *       auto scope = _self;
+ *       multi_index<"mytable"_n, record,
+ *                  indexed_by< "bysecondary"_n, const_mem_fun<record, uint128_t, &record::get_secondary> > > table( code, scope);
+ *     }
+ * }
+ * EOSIO_DISPATCH( mycontract, (myaction) )
+ * @endcode
  */
 template<name::raw IndexName, typename Extractor>
 struct indexed_by {
@@ -371,60 +376,59 @@ struct indexed_by {
 };
 
 /**
- *  @defgroup multiindex Multi Index Table
- *  @ingroup contracts
+ * @ingroup multiindex
  *
- *  @brief Defines EOSIO Multi Index Table
- *  @details EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
- *  EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,
- *  the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t.
- *  EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
- *  - uint64_t
- *  - uint128_t
- *  - double
- *  - long double
- *  - eosio::checksum256
+ * @brief Defines EOSIO Multi Index Table
+ * @details EOSIO Multi-Index API provides a C++ interface to the EOSIO database. It is patterned after Boost Multi Index Container.
+ * EOSIO Multi-Index table requires exactly a uint64_t primary key. For the table to be able to retrieve the primary key,
+ * the object stored inside the table is required to have a const member function called primary_key() that returns uint64_t.
+ * EOSIO Multi-Index table also supports up to 16 secondary indices. The type of the secondary indices could be any of:
+ * - uint64_t
+ * - uint128_t
+ * - double
+ * - long double
+ * - eosio::checksum256
  *
- *  @tparam TableName - name of the table
- *  @tparam T - type of the data stored inside the table
- *  @tparam Indices - secondary indices for the table, up to 16 indices is supported here
+ * @tparam TableName - name of the table
+ * @tparam T - type of the data stored inside the table
+ * @tparam Indices - secondary indices for the table, up to 16 indices is supported here
  *
- *  Example:
-       *
- *  @code
- *  #include <eosiolib/eosio.hpp>
- *  using namespace eosio;
- *  class mycontract: contract {
- *    struct record {
- *      uint64_t    primary;
- *      uint64_t    secondary_1;
- *      uint128_t   secondary_2;
- *      checksum256 secondary_3;
- *      double      secondary_4;
- *      long double secondary_5;
- *      uint64_t primary_key() const { return primary; }
- *      uint64_t get_secondary_1() const { return secondary_1; }
- *      uint128_t get_secondary_2() const { return secondary_2; }
- *      checksum256 get_secondary_3() const { return secondary_3; }
- *      double get_secondary_4() const { return secondary_4; }
- *      long double get_secondary_5() const { return secondary_5; }
- *    };
- *    public:
- *      mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
- *      void myaction() {
- *        auto code = _self;
- *        auto scope = _self;
- *        multi_index<"mytable"_n, record,
- *          indexed_by< "bysecondary1"_n, const_mem_fun<record, uint64_t, &record::get_secondary_1> >,
- *          indexed_by< "bysecondary2"_n, const_mem_fun<record, uint128_t, &record::get_secondary_2> >,
- *          indexed_by< "bysecondary3"_n, const_mem_fun<record, checksum256, &record::get_secondary_3> >,
- *          indexed_by< "bysecondary4"_n, const_mem_fun<record, double, &record::get_secondary_4> >,
- *          indexed_by< "bysecondary5"_n, const_mem_fun<record, long double, &record::get_secondary_5> >
- *        > table( code, scope);
- *      }
- *  }
- *  EOSIO_DISPATCH( mycontract, (myaction) )
- *  @endcode
+ * Example:
+ *
+ * @code
+ * #include <eosiolib/eosio.hpp>
+ * using namespace eosio;
+ * class mycontract: contract {
+ *   struct record {
+ *     uint64_t    primary;
+ *     uint64_t    secondary_1;
+ *     uint128_t   secondary_2;
+ *     checksum256 secondary_3;
+ *     double      secondary_4;
+ *     long double secondary_5;
+ *     uint64_t primary_key() const { return primary; }
+ *     uint64_t get_secondary_1() const { return secondary_1; }
+ *     uint128_t get_secondary_2() const { return secondary_2; }
+ *     checksum256 get_secondary_3() const { return secondary_3; }
+ *     double get_secondary_4() const { return secondary_4; }
+ *     long double get_secondary_5() const { return secondary_5; }
+ *   };
+ *   public:
+ *     mycontract(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds){}
+ *     void myaction() {
+ *       auto code = _self;
+ *       auto scope = _self;
+ *       multi_index<"mytable"_n, record,
+ *         indexed_by< "bysecondary1"_n, const_mem_fun<record, uint64_t, &record::get_secondary_1> >,
+ *         indexed_by< "bysecondary2"_n, const_mem_fun<record, uint128_t, &record::get_secondary_2> >,
+ *         indexed_by< "bysecondary3"_n, const_mem_fun<record, checksum256, &record::get_secondary_3> >,
+ *         indexed_by< "bysecondary4"_n, const_mem_fun<record, double, &record::get_secondary_4> >,
+ *         indexed_by< "bysecondary5"_n, const_mem_fun<record, long double, &record::get_secondary_5> >
+ *       > table( code, scope);
+ *     }
+ * }
+ * EOSIO_DISPATCH( mycontract, (myaction) )
+ * @endcode
  */
 
 template<name::raw TableName, typename T, typename... Indices>
@@ -634,11 +638,26 @@ class multi_index
                return lb;
             }
 
+            /**
+             * Gets the object with the smallest primary key in the case where the secondary key is not unique.
+             * 
+             * Avoid the common pitfall of copy-assigning the T& reference returned 
+             * to a stack-allocated local variable and then passing that into modify of the multi-index.
+             * The most common mistake is when the local variable is defined as auto 
+             * typename, instead it should be of type auto& or decltype(auto).
+             */
             const T& get( secondary_key_type&& secondary, const char* error_msg = "unable to find secondary key" )const {
                return get( secondary, error_msg );
             }
 
-            // Gets the object with the smallest primary key in the case where the secondary key is not unique.
+            /**
+             * Gets the object with the smallest primary key in the case where the secondary key is not unique.
+             * 
+             * Avoid the common pitfall of copy-assigning the T& reference returned 
+             * to a stack-allocated local variable and then passing that into modify of the multi-index.
+             * The most common mistake is when the local variable is defined as auto 
+             * typename, instead it should be of type auto& or decltype(auto).
+             */
             const T& get( const secondary_key_type& secondary, const char* error_msg = "unable to find secondary key" )const {
                auto result = find( secondary );
                eosio::check( result != cend(), error_msg );
@@ -680,7 +699,11 @@ class multi_index
 
                return {this, &mi};
             }
-
+            /**
+             * Warning: the interator_to can have undefined behavior if the caller 
+             * passes in a reference to a stack-allocated object rather than the 
+             * reference returned by get or by dereferencing a const_iterator.
+             */
             const_iterator iterator_to( const T& obj ) {
                using namespace _multi_index_detail;
 
@@ -702,6 +725,11 @@ class multi_index
                eosio::check( itr != cend(), "cannot pass end iterator to modify" );
 
                _multidx->modify( *itr, payer, std::forward<Lambda&&>(updater) );
+            }
+
+            template<typename Lambda>
+            void modify( const T& obj, eosio::name payer, Lambda&& updater ) {
+               _multidx->modify( obj, payer, std::forward<Lambda&&>(updater) );
             }
 
             const_iterator erase( const_iterator itr ) {
@@ -804,95 +832,95 @@ class multi_index
 
    public:
       /**
-       *  Constructs an instance of a Multi-Index table.
-       *  @ingroup multiindex
+       * Constructs an instance of a Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @param code - Account that owns table
-       *  @param scope - Scope identifier within the code hierarchy
+       * @param code - Account that owns table
+       * @param scope - Scope identifier within the code hierarchy
        *
-       *  @pre code and scope member properties are initialized
-       *  @post each secondary index table initialized
-       *  @post Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created.
-       *  @post The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.
+       * @pre code and scope member properties are initialized
+       * @post each secondary index table initialized
+       * @post Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created.
+       * @post The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.
        *
-       *  Notes
-       *  The `eosio::multi_index` template has template parameters `<name::raw TableName, typename T, typename... Indices>`, where:
-       *  - `TableName` is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the "." (period) character and is converted to a eosio::raw - which wraps uint64_t;
-       *  - `T` is the object type (i.e., row definition);
-       *  - `Indices` is a list of up to 16 secondary indices.
-       *  - Each must be a default constructable class or struct
-       *  - Each must have a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type
-       *  - It is recommended to use the eosio::const_mem_fun template, which is a type alias to the boost::multi_index::const_mem_fun.  See the documentation for the Boost const_mem_fun key extractor for more details.
+       * Notes
+       * The `eosio::multi_index` template has template parameters `<name::raw TableName, typename T, typename... Indices>`, where:
+       * - `TableName` is the name of the table, maximum 12 characters long, characters in the name from the set of lowercase letters, digits 1 to 5, and the "." (period) character and is converted to a eosio::raw - which wraps uint64_t;
+       * - `T` is the object type (i.e., row definition);
+       * - `Indices` is a list of up to 16 secondary indices.
+       * - Each must be a default constructable class or struct
+       * - Each must have a function call operator that takes a const reference to the table object type and returns either a secondary key type or a reference to a secondary key type
+       * - It is recommended to use the eosio::const_mem_fun template, which is a type alias to the boost::multi_index::const_mem_fun.  See the documentation for the Boost const_mem_fun key extractor for more details.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint64_t primary_key() const { return account_name; }
-       *    };
-       *    public:
-       *      addressbook(name self):contract(self) {}
-       *      typedef eosio::multi_index< "address"_n, address > address_index;
-       *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       * @code
+       * #include <eosiolib/eosio.hpp>
+       * using namespace eosio;
+       * using namespace std;
+       * class addressbook: contract {
+       *   struct address {
+       *      uint64_t account_name;
+       *      string first_name;
+       *      string last_name;
+       *      string street;
+       *      string city;
+       *      string state;
+       *      uint64_t primary_key() const { return account_name; }
+       *   };
+       *   public:
+       *     addressbook(name self):contract(self) {}
+       *     typedef eosio::multi_index< "address"_n, address > address_index;
+       *     void myaction() {
+       *       address_index addresses(_self, _self.value); // code, scope
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       multi_index( name code, uint64_t scope )
       :_code(code),_scope(scope),_next_primary_key(unset_next_primary_key)
       {}
 
       /**
-       *  Returns the `code` member property.
-       *  @ingroup multiindex
+       * Returns the `code` member property.
+       * @ingroup multiindex
        *
-       *  @return Account name of the Code that owns the Primary Table.
+       * @return Account name of the Code that owns the Primary Table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio::check(addresses.get_code() == "dan"_n, "Codes don't match.");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *     void myaction() {
+       *       address_index addresses("dan"_n, "dan"_n.value); // code, scope
+       *       eosio::check(addresses.get_code() == "dan"_n, "Codes don't match.");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       name get_code()const      { return _code; }
 
       /**
-       *  Returns the `scope` member property.
-       *  @ingroup multiindex
+       * Returns the `scope` member property.
+       * @ingroup multiindex
        *
-       *  @return Scope id of the Scope within the Code of the Current Receiver under which the desired Primary Table instance can be found.
+       * @return Scope id of the Scope within the Code of the Current Receiver under which the desired Primary Table instance can be found.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        address_index addresses("dan"_n, "dan"_n); // code, scope
-       *        eosio::check(addresses.get_code() == "dan"_n, "Scopes don't match");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *     void myaction() {
+       *       address_index addresses("dan"_n, "dan"_n.value); // code, scope
+       *       eosio::check(addresses.get_scope() == "dan"_n.value, "Scopes don't match");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       uint64_t get_scope()const { return _scope; }
 
@@ -960,283 +988,283 @@ class multi_index
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
       /**
-       *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       * @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr == addresses.cbegin(), "Only address is not at front.");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr == addresses.cbegin(), "Only address is not at front.");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator cbegin()const {
          return lower_bound(std::numeric_limits<uint64_t>::lowest());
       }
 
       /**
-       *  Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
+       * @return An iterator pointing to the object_type with the lowest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr == addresses.begin(), "Only address is not at front.");
-       *      }
-       *  }
-       *  EOSIO_ABI( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr == addresses.begin(), "Only address is not at front.");
+       *     }
+       * }
+       * EOSIO_ABI( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator begin()const  { return cbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @return An iterator referring to the `past-the-end` element in the multi index container.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.cend(), "Address for account doesn't exist");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.cend(), "Address for account doesn't exist");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator cend()const   { return const_iterator( this ); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator referring to the `past-the-end` element in the multi index container. The `past-the-end` element is the theoretical element that would follow the last element in the vector. It does not point to any element, and thus shall not be dereferenced.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @return An iterator referring to the `past-the-end` element in the multi index container.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Address for account doesn't exist");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Address for account doesn't exist");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator end()const    { return cend(); }
 
       /**
-       *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *        });
-       *        auto itr = addresses.crbegin();
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
-       *        itr++;
-       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *       });
+       *       auto itr = addresses.crbegin();
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
+       *       itr++;
+       *       eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_reverse_iterator crbegin()const { return std::make_reverse_iterator(cend()); }
 
       /**
-       *  Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns a reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
+       * @return A reverse iterator pointing to the `object_type` with the highest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *        });
-       *        auto itr = addresses.rbegin();
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
-       *        itr++;
-       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *       });
+       *       auto itr = addresses.rbegin();
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Last Record ");
+       *       itr++;
+       *       eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect Second Last Record");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_reverse_iterator rbegin()const  { return crbegin(); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       * @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *        });
-       *        auto itr = addresses.crend();
-       *        itr--;
-       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
-       *        itr--;
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *       });
+       *       auto itr = addresses.crend();
+       *       itr--;
+       *       eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
+       *       itr--;
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_reverse_iterator crend()const   { return std::make_reverse_iterator(cbegin()); }
 
       /**
-       *  Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
+       * @return An iterator pointing to the `object_type` with the lowest primary key value in the Multi-Index table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *        });
-       *        auto itr = addresses.rend();
-       *        itr--;
-       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
-       *        itr--;
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *       });
+       *       auto itr = addresses.rend();
+       *       itr--;
+       *       eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Record ");
+       *       itr--;
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Record");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_reverse_iterator rend()const    { return crend(); }
 
       /**
-       *  Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
-       *  @ingroup multiindex
+       * Searches for the `object_type` with the lowest primary key that is greater than or equal to a given primary key.
+       * @ingroup multiindex
        *
-       *  @param primary - Primary key that establishes the target value for the lower bound search.
-       *  @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       * @param primary - Primary key that establishes the target value for the lower bound search.
+       * @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than or equal to `primary`. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the get_index() example below. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *          address.zip = 93445;
-       *        });
-       *        uint32_t zipnumb = 93445;
-       *        auto zip_index = addresses.get_index<name("zip")>();
-       *        auto itr = zip_index.lower_bound(zipnumb);
-       *        eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Lower Bound Record ");
-       *        itr++;
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Lower Bound Record");
-       *        itr++;
-       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *         address.zip = 93445;
+       *       });
+       *       uint32_t zipnumb = 93445;
+       *       auto zip_index = addresses.get_index<name("zip")>();
+       *       auto itr = zip_index.lower_bound(zipnumb);
+       *       eosio::check(itr->account_name == name("brendan"), "Lock arf, Incorrect First Lower Bound Record ");
+       *       itr++;
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Second Lower Bound Record");
+       *       itr++;
+       *       eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator lower_bound( uint64_t primary )const {
          auto itr = internal_use_do_not_use::db_lowerbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
@@ -1246,41 +1274,41 @@ class multi_index
       }
 
       /**
-       *  Searches for the `object_type` with the lowest primary key that is greater than a given primary key.
-       *  @ingroup multiindex
+       * Searches for the `object_type` with the lowest primary key that is greater than a given primary key.
+       * @ingroup multiindex
        *
-       *  @param primary - Primary key that establishes the target value for the upper bound search
-       *  @return An iterator pointing to the `object_type` that has the highest primary key that is less than or equal to `primary`. If an object could not be found, it will return the `end` iterator. If the table does not exist** it will return `-1`.
+       * @param primary - Primary key that establishes the target value for the upper bound search
+       * @return An iterator pointing to the `object_type` that has the lowest primary key that is greater than a given `primary` key. If an object could not be found, or if the table does not exist**, it will return the `end` iterator.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the get_index() example below. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the get_index() example below. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *          address.zip = 93445;
-       *        });
-       *        uint32_t zipnumb = 93445;
-       *        auto zip_index = addresses.get_index<name("zip")>();
-       *        auto itr = zip_index.upper_bound(zipnumb);
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
-       *        itr++;
-       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *         address.zip = 93445;
+       *       });
+       *       uint32_t zipnumb = 93445;
+       *       auto zip_index = addresses.get_index<name("zip")>();
+       *       auto itr = zip_index.upper_bound(zipnumb);
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
+       *       itr++;
+       *       eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator upper_bound( uint64_t primary )const {
          auto itr = internal_use_do_not_use::db_upperbound_i64( _code.value, _scope, static_cast<uint64_t>(TableName), primary );
@@ -1290,35 +1318,35 @@ class multi_index
       }
 
       /**
-       *  Returns an available primary key.
-       *  @ingroup multiindex
+       * Returns an available primary key.
+       * @ingroup multiindex
        *
-       *  @return An available (unused) primary key value.
+       * @return An available (unused) primary key value.
        *
-       *  Notes:
-       *  Intended to be used in tables in which the primary keys of the table are strictly intended to be auto-incrementing, and thus will never be set to custom values by the contract.  Violating this expectation could result in the table appearing to be full due to inability to allocate an available primary key.
-       *  Ideally this method would only be used to determine the appropriate primary key to use within new objects added to a table in which the primary keys of the table are strictly intended from the beginning to be autoincrementing and thus will not ever be set to custom arbitrary values by the contract. Violating this agreement could result in the table appearing full when in reality there is plenty of space left.
+       * Notes:
+       * Intended to be used in tables in which the primary keys of the table are strictly intended to be auto-incrementing, and thus will never be set to custom values by the contract.  Violating this expectation could result in the table appearing to be full due to inability to allocate an available primary key.
+       * Ideally this method would only be used to determine the appropriate primary key to use within new objects added to a table in which the primary keys of the table are strictly intended from the beginning to be autoincrementing and thus will not ever be set to custom arbitrary values by the contract. Violating this agreement could result in the table appearing full when in reality there is plenty of space left.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        address_index addresses(_self, _self.value);  // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.key = addresses.available_primary_key();
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *     void myaction() {
+       *       address_index addresses(_self, _self.value);  // code, scope
+       *       // add to table, first argument is account to bill for storage
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.key = addresses.available_primary_key();
+       *         address.first_name = "Daniel";
+       *         address.last_name = "Larimer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Blacksburg";
+       *         address.state = "VA";
+       *       });
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       uint64_t available_primary_key()const {
          if( _next_primary_key == unset_next_primary_key ) {
@@ -1340,45 +1368,45 @@ class multi_index
       }
 
       /**
-       *  Returns an appropriately typed Secondary Index.
-       *  @ingroup multiindex
+       * Returns an appropriately typed Secondary Index.
+       * @ingroup multiindex
        *
-       *  @tparam IndexName - the ID of the desired secondary index
+       * @tparam IndexName - the ID of the desired secondary index
        *
-       *  @return An index of the appropriate type: Primitive 64-bit unsigned integer key (idx64), Primitive 128-bit unsigned integer key (idx128), 128-bit fixed-size lexicographical key (idx128), 256-bit fixed-size lexicographical key (idx256), Floating point key, Double precision floating point key, Long Double (quadruple) precision floating point key
+       * @return An index of the appropriate type: Primitive 64-bit unsigned integer key (idx64), Primitive 128-bit unsigned integer key (idx128), 128-bit fixed-size lexicographical key (idx128), 256-bit fixed-size lexicographical key (idx256), Floating point key, Double precision floating point key, Long Double (quadruple) precision floating point key
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  #include <eosiolib/eosio.hpp>
-       *  using namespace eosio;
-       *  using namespace std;
-       *  class addressbook: contract {
-       *    struct address {
-       *       uint64_t account_name;
-       *       string first_name;
-       *       string last_name;
-       *       string street;
-       *       string city;
-       *       string state;
-       *       uint32_t zip = 0;
-       *       uint64_t primary_key() const { return account_name; }
-       *       uint64_t by_zip() const { return zip; }
-       *    };
-       *    public:
-       *      addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
-       *      typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        uint32_t zipnumb = 93446;
-       *        auto zip_index = addresses.get_index<name("zip")>();
-       *        auto itr = zip_index.find(zipnumb);
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Record ");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       * @code
+       * #include <eosiolib/eosio.hpp>
+       * using namespace eosio;
+       * using namespace std;
+       * class addressbook: contract {
+       *   struct address {
+       *      uint64_t account_name;
+       *      string first_name;
+       *      string last_name;
+       *      string street;
+       *      string city;
+       *      string state;
+       *      uint32_t zip = 0;
+       *      uint64_t primary_key() const { return account_name; }
+       *      uint64_t by_zip() const { return zip; }
+       *   };
+       *   public:
+       *     addressbook(name receiver, name code, datastream<const char*> ds):contract(receiver, code, ds) {}
+       *     typedef eosio::multi_index< name("address"), address, indexed_by< name("zip"), const_mem_fun<address, uint64_t, &address::by_zip> > address_index;
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       uint32_t zipnumb = 93446;
+       *       auto zip_index = addresses.get_index<name("zip")>();
+       *       auto itr = zip_index.find(zipnumb);
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect Record ");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       template<name::raw IndexName>
       auto get_index() {
@@ -1394,42 +1422,42 @@ class multi_index
       }
 
       /**
-       *  Returns an appropriately typed Secondary Index.
-       *  @ingroup multiindex
+       * Returns an appropriately typed Secondary Index.
+       * @ingroup multiindex
        *
-       *  @tparam IndexName - the ID of the desired secondary index
+       * @tparam IndexName - the ID of the desired secondary index
        *
-       *  @return An index of the appropriate type: Primitive 64-bit unsigned integer key (idx64), Primitive 128-bit unsigned integer key (idx128), 128-bit fixed-size lexicographical key (idx128), 256-bit fixed-size lexicographical key (idx256), Floating point key, Double precision floating point key, Long Double (quadruple) precision floating point key
+       * @return An index of the appropriate type: Primitive 64-bit unsigned integer key (idx64), Primitive 128-bit unsigned integer key (idx128), 128-bit fixed-size lexicographical key (idx128), 256-bit fixed-size lexicographical key (idx256), Floating point key, Double precision floating point key, Long Double (quadruple) precision floating point key
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the get_index() example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *          address.zip = 93445;
-       *        });
-       *        uint32_t zipnumb = 93445;
-       *        auto zip_index = addresses.get_index<name("zip")>();
-       *        auto itr = zip_index.upper_bound(zipnumb);
-       *        eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
-       *        itr++;
-       *        eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *         address.zip = 93445;
+       *       });
+       *       uint32_t zipnumb = 93445;
+       *       auto zip_index = addresses.get_index<name("zip")>();
+       *       auto itr = zip_index.upper_bound(zipnumb);
+       *       eosio::check(itr->account_name == name("dan"), "Lock arf, Incorrect First Upper Bound Record ");
+       *       itr++;
+       *       eosio::check(itr == zip_index.end(), "Lock arf, Incorrect End of Iterator");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       template<name::raw IndexName>
       auto get_index()const {
@@ -1445,39 +1473,43 @@ class multi_index
       }
 
       /**
-       *  Returns an iterator to the given object in a Multi-Index table.
-       *  @ingroup multiindex
+       * Returns an iterator to the given object in a Multi-Index table.
+       * @ingroup multiindex
        *
-       *  @param obj - A reference to the desired object
+       * @param obj - A reference to the desired object
        *
-       *  @return An iterator to the given object
+       * @return An iterator to the given object
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the get_index() example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the get_index() example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example below
-       *        // add dan account to table           - see emplace example below
-       *        // add additional account - brendan
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example below
+       *       // add dan account to table           - see emplace example below
+       *       // add additional account - brendan
        *
-       *        addresses.emplace(payer, [&](auto& address) {
-       *          address.account_name = "brendan"_n;
-       *          address.first_name = "Brendan";
-       *          address.last_name = "Blumer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Hong Kong";
-       *          address.state = "HK";
-       *          address.zip = 93445;
-       *        });
-       *        auto user = addresses.get("dan"_n);
-       *        auto itr = address.find("dan"_n);
-       *        eosio::check(iterator_to(user) == itr, "Invalid iterator");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       addresses.emplace(payer, [&](auto& address) {
+       *         address.account_name = "brendan"_n;
+       *         address.first_name = "Brendan";
+       *         address.last_name = "Blumer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Hong Kong";
+       *         address.state = "HK";
+       *         address.zip = 93445;
+       *       });
+       *       auto user = addresses.get("dan"_n);
+       *       auto itr = address.find("dan"_n);
+       *       eosio::check(iterator_to(user) == itr, "Invalid iterator");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
+       * 
+       * Warning: the interator_to can have undefined behavior if the caller 
+       * passes in a reference to a stack-allocated object rather than the 
+       * reference returned by get or by dereferencing a const_iterator.
        */
       const_iterator iterator_to( const T& obj )const {
          const auto& objitem = static_cast<const item&>(obj);
@@ -1485,41 +1517,41 @@ class multi_index
          return {this, &objitem};
       }
       /**
-       *  Adds a new object (i.e., row) to the table.
-       *  @ingroup multiindex
+       * Adds a new object (i.e., row) to the table.
+       * @ingroup multiindex
        *
-       *  @param payer - Account name of the payer for the Storage usage of the new object
-       *  @param constructor - Lambda function that does an in-place initialization of the object to be created in the table
+       * @param payer - Account name of the payer for the Storage usage of the new object
+       * @param constructor - Lambda function that does an in-place initialization of the object to be created in the table
        *
-       *  @pre A multi index table has been instantiated
-       *  @post A new object is created in the Multi-Index table, with a unique primary key (as specified in the object).  The object is serialized and written to the table. If the table does not exist, it is created.
-       *  @post Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created.
-       *  @post The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.
+       * @pre A multi index table has been instantiated
+       * @post A new object is created in the Multi-Index table, with a unique primary key (as specified in the object).  The object is serialized and written to the table. If the table does not exist, it is created.
+       * @post Secondary indices are updated to refer to the newly added object. If the secondary index tables do not exist, they are created.
+       * @post The payer is charged for the storage usage of the new object and, if the table (and secondary index tables) must be created, for the overhead of the table creation.
        *
-       *  @return A primary key iterator to the newly created object
+       * @return A primary key iterator to the newly created object
        *
-       *  Exception - The account is not authorized to write to the table.
+       * Exception - The account is not authorized to write to the table.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        address_index addresses(_self, _self.value); // code, scope
-       *        // add to table, first argument is account to bill for storage
-       *        addresses.emplace(_self, [&](auto& address) {
-       *          address.account_name = "dan"_n;
-       *          address.first_name = "Daniel";
-       *          address.last_name = "Larimer";
-       *          address.street = "1 EOS Way";
-       *          address.city = "Blacksburg";
-       *          address.state = "VA";
-       *        });
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *     void myaction() {
+       *       address_index addresses(_self, _self.value); // code, scope
+       *       // add to table, first argument is account to bill for storage
+       *       addresses.emplace(_self, [&](auto& address) {
+       *         address.account_name = "dan"_n;
+       *         address.first_name = "Daniel";
+       *         address.last_name = "Larimer";
+       *         address.street = "1 EOS Way";
+       *         address.city = "Blacksburg";
+       *         address.state = "VA";
+       *       });
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       template<typename Lambda>
       const_iterator emplace( name payer, Lambda&& constructor ) {
@@ -1567,44 +1599,44 @@ class multi_index
       }
 
       /**
-       *  Modifies an existing object in a table.
-       *  @ingroup multiindex
+       * Modifies an existing object in a table.
+       * @ingroup multiindex
        *
-       *  @param itr - an iterator pointing to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
-       *  @param updater - lambda function that updates the target object
+       * @param itr - an iterator pointing to the object to be updated
+       * @param payer - account name of the payer for the storage usage of the updated row
+       * @param updater - lambda function that updates the target object
        *
-       *  @pre itr points to an existing element
-       *  @pre payer is a valid account that is authorized to execute the action and be billed for storage usage.
+       * @pre itr points to an existing element
+       * @pre payer is a valid account that is authorized to execute the action and be billed for storage usage.
        *
-       *  @post The modified object is serialized, then replaces the existing object in the table.
-       *  @post Secondary indices are updated; the primary key of the updated object is not changed.
-       *  @post The payer is charged for the storage usage of the updated object.
-       *  @post If payer is the same as the existing payer, payer only pays for the usage difference between existing and updated object (and is refunded if this difference is negative).
-       *  @post If payer is different from the existing payer, the existing payer is refunded for the storage usage of the existing object.
+       * @post The modified object is serialized, then replaces the existing object in the table.
+       * @post Secondary indices are updated; the primary key of the updated object is not changed.
+       * @post The payer is charged for the storage usage of the updated object.
+       * @post If payer is the same as the existing payer, payer only pays for the usage difference between existing and updated object (and is refunded if this difference is negative).
+       * @post If payer is different from the existing payer, the existing payer is refunded for the storage usage of the existing object.
        *
-       *  Exceptions:
-       *  If called with an invalid precondition, execution is aborted.
+       * Exceptions:
+       * If called with an invalid precondition, execution is aborted.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example
-       *        // add dan account to table           - see emplace example
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example
+       *       // add dan account to table           - see emplace example
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Address for account not found");
-       *        addresses.modify( itr, account payer, [&]( auto& address ) {
-       *          address.city = "San Luis Obispo";
-       *          address.state = "CA";
-       *        });
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Address for account not found");
+       *       addresses.modify( itr, account payer, [&]( auto& address ) {
+       *         address.city = "San Luis Obispo";
+       *         address.state = "CA";
+       *       });
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       template<typename Lambda>
       void modify( const_iterator itr, name payer, Lambda&& updater ) {
@@ -1614,45 +1646,45 @@ class multi_index
       }
 
       /**
-       *  Modifies an existing object in a table.
-       *  @ingroup multiindex
+       * Modifies an existing object in a table.
+       * @ingroup multiindex
        *
-       *  @param obj - a reference to the object to be updated
-       *  @param payer - account name of the payer for the Storage usage of the updated row
-       *  @param updater - lambda function that updates the target object
+       * @param obj - a reference to the object to be updated
+       * @param payer - account name of the payer for the storage usage of the updated row
+       * @param updater - lambda function that updates the target object
        *
-       *  @pre obj is an existing object in the table
-       *  @pre payer is a valid account that is authorized to execute the action and be billed for storage usage.
+       * @pre obj is an existing object in the table
+       * @pre payer is a valid account that is authorized to execute the action and be billed for storage usage.
        *
-       *  @post The modified object is serialized, then replaces the existing object in the table.
-       *  @post Secondary indices are updated; the primary key of the updated object is not changed.
-       *  @post The payer is charged for the storage usage of the updated object.
-       *  @post If payer is the same as the existing payer, payer only pays for the usage difference between existing and updated object (and is refunded if this difference is negative).
-       *  @post If payer is different from the existing payer, the existing payer is refunded for the storage usage of the existing object.
+       * @post The modified object is serialized, then replaces the existing object in the table.
+       * @post Secondary indices are updated; the primary key of the updated object is not changed.
+       * @post The payer is charged for the storage usage of the updated object.
+       * @post If payer is the same as the existing payer, payer only pays for the usage difference between existing and updated object (and is refunded if this difference is negative).
+       * @post If payer is different from the existing payer, the existing payer is refunded for the storage usage of the existing object.
        *
-       *  Exceptions:
-       *  If called with an invalid precondition, execution is aborted.
+       * Exceptions:
+       * If called with an invalid precondition, execution is aborted.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example
-       *        // add dan account to table           - see emplace example
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example
+       *       // add dan account to table           - see emplace example
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Address for account not found");
-       *        addresses.modify( *itr, payer, [&]( auto& address ) {
-       *          address.city = "San Luis Obispo";
-       *          address.state = "CA";
-       *        });
-       *        eosio::check(itr->city == "San Luis Obispo", "Lock arf, Address not modified");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Address for account not found");
+       *       addresses.modify( *itr, payer, [&]( auto& address ) {
+       *         address.city = "San Luis Obispo";
+       *         address.state = "CA";
+       *       });
+       *       eosio::check(itr->city == "San Luis Obispo", "Lock arf, Address not modified");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       template<typename Lambda>
       void modify( const T& obj, name payer, Lambda&& updater ) {
@@ -1711,29 +1743,36 @@ class multi_index
       }
 
       /**
-       *  Retrieves an existing object from a table using its primary key.
-       *  @ingroup multiindex
+       * Retrieves an existing object from a table using its primary key.
+       * @ingroup multiindex
        *
-       *  @param primary - Primary key value of the object
-       *  @return A constant reference to the object containing the specified primary key.
+       * @param primary - Primary key value of the object.
+       * @return A constant reference to the object containing the specified primary key. 
        *
-       *  Exception - No object matches the given key
+       * Exception - No object matches the given key. 
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example
-       *        // add dan account to table           - see emplace example
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example
+       *       // add dan account to table           - see emplace example
        *
-       *        auto user = addresses.get("dan"_n);
-       *        eosio::check(user.first_name == "Daniel", "Couldn't get him.");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto& user = addresses.get("dan"_n);
+       *       eosio::check(user.first_name == "Daniel", "Couldn't get him.");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
+       * 
+       * Warning: 
+       * 
+       * Avoid the common pitfall of copy-assigning the T& reference returned 
+       * to a stack-allocated local variable and then passing that into modify of the multi-index.
+       * The most common mistake is when the local variable is defined as auto 
+       * typename, instead it should be of type auto& or decltype(auto).
        */
       const T& get( uint64_t primary, const char* error_msg = "unable to find key" )const {
          auto result = find( primary );
@@ -1742,27 +1781,27 @@ class multi_index
       }
 
       /**
-       *  Search for an existing object in a table using its primary key.
-       *  @ingroup multiindex
+       * Search for an existing object in a table using its primary key.
+       * @ingroup multiindex
        *
-       *  @param primary - Primary key value of the object
-       *  @return An iterator to the found object which has a primary key equal to `primary` OR the `end` iterator of the referenced table if an object with primary key `primary` is not found.
+       * @param primary - Primary key value of the object
+       * @return An iterator to the found object which has a primary key equal to `primary` OR the `end` iterator of the referenced table if an object with primary key `primary` is not found.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example
-       *        // add dan account to table           - see emplace example
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example
+       *       // add dan account to table           - see emplace example
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Couldn't get him.");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Couldn't get him.");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator find( uint64_t primary )const {
          auto itr2 = std::find_if(_items_vector.rbegin(), _items_vector.rend(), [&](const item_ptr& ptr) {
@@ -1779,12 +1818,12 @@ class multi_index
       }
 
       /**
-       *  Search for an existing object in a table using its primary key.
-       *  @ingroup multiindex
+       * Search for an existing object in a table using its primary key.
+       * @ingroup multiindex
        *
-       *  @param primary - Primary key value of the object
-       *  @param error_msg - error message if an object with primary key `primary` is not found.
-       *  @return An iterator to the found object which has a primary key equal to `primary` OR throws an exception if an object with primary key `primary` is not found.
+       * @param primary - Primary key value of the object
+       * @param error_msg - error message if an object with primary key `primary` is not found.
+       * @return An iterator to the found object which has a primary key equal to `primary` OR throws an exception if an object with primary key `primary` is not found.
        */
 
       const_iterator require_find( uint64_t primary, const char* error_msg = "unable to find key" )const {
@@ -1802,40 +1841,40 @@ class multi_index
       }
 
       /**
-       *  Remove an existing object from a table using its primary key.
-       *  @ingroup multiindex
+       * Remove an existing object from a table using its primary key.
+       * @ingroup multiindex
        *
-       *  @param itr - An iterator pointing to the object to be removed
+       * @param itr - An iterator pointing to the object to be removed
        *
-       *  @pre itr points to an existing element
-       *  @post The object is removed from the table and all associated storage is reclaimed.
-       *  @post Secondary indices associated with the table are updated.
-       *  @post The existing payer for storage usage of the object is refunded for the table and secondary indices usage of the removed object, and if the table and indices are removed, for the associated overhead.
+       * @pre itr points to an existing element
+       * @post The object is removed from the table and all associated storage is reclaimed.
+       * @post Secondary indices associated with the table are updated.
+       * @post The existing payer for storage usage of the object is refunded for the table and secondary indices usage of the removed object, and if the table and indices are removed, for the associated overhead.
        *
-       *  @return For the signature with `const_iterator`, returns a pointer to the object following the removed object.
+       * @return For the signature with `const_iterator`, returns a pointer to the object following the removed object.
        *
-       *  Exceptions:
-       *  The object to be removed is not in the table.
-       *  The action is not authorized to modify the table.
-       *  The given iterator is invalid.
+       * Exceptions:
+       * The object to be removed is not in the table.
+       * The action is not authorized to modify the table.
+       * The given iterator is invalid.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        // create reference to address_index  - see emplace example
-       *        // add dan account to table           - see emplace example
+       *     void myaction() {
+       *       // create reference to address_index  - see emplace example
+       *       // add dan account to table           - see emplace example
        *
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Address for account not found");
-       *        addresses.erase( itr );
-       *        eosio::check(itr != addresses.end(), "Everting lock arf, Address not erased properly");
-       *      }
-       *  }
-       *  EOSIO_ABI( addressbook, (myaction) )
-       *  @endcode
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Address for account not found");
+       *       addresses.erase( itr );
+       *       eosio::check(itr != addresses.end(), "Everting lock arf, Address not erased properly");
+       *     }
+       * }
+       * EOSIO_ABI( addressbook, (myaction) )
+       * @endcode
        */
       const_iterator erase( const_iterator itr ) {
          eosio::check( itr != end(), "cannot pass end iterator to erase" );
@@ -1849,36 +1888,36 @@ class multi_index
       }
 
       /**
-       *  Remove an existing object from a table using its primary key.
-       *  @ingroup multiindex
+       * Remove an existing object from a table using its primary key.
+       * @ingroup multiindex
        *
-       *  @param obj - Object to be removed
+       * @param obj - Object to be removed
        *
-       *  @pre obj is an existing object in the table
-       *  @post The object is removed from the table and all associated storage is reclaimed.
-       *  @post Secondary indices associated with the table are updated.
-       *  @post The existing payer for storage usage of the object is refunded for the table and secondary indices usage of the removed object, and if the table and indices are removed, for the associated overhead.
+       * @pre obj is an existing object in the table
+       * @post The object is removed from the table and all associated storage is reclaimed.
+       * @post Secondary indices associated with the table are updated.
+       * @post The existing payer for storage usage of the object is refunded for the table and secondary indices usage of the removed object, and if the table and indices are removed, for the associated overhead.
        *
-       *  Exceptions:
-       *  The object to be removed is not in the table.
-       *  The action is not authorized to modify the table.
-       *  The given iterator is invalid.
+       * Exceptions:
+       * The object to be removed is not in the table.
+       * The action is not authorized to modify the table.
+       * The given iterator is invalid.
        *
-       *  Example:
+       * Example:
        *
-       *  @code
-       *  // This assumes the code from the constructor example. Replace myaction() {...}
+       * @code
+       * // This assumes the code from the constructor example. Replace myaction() {...}
        *
-       *      void myaction() {
-       *        auto itr = addresses.find("dan"_n);
-       *        eosio::check(itr != addresses.end(), "Record is not found");
-       *        addresses.erase(*itr);
-       *        itr = addresses.find("dan"_n);
-       *        eosio::check(itr == addresses.end(), "Record is not deleted");
-       *      }
-       *  }
-       *  EOSIO_DISPATCH( addressbook, (myaction) )
-       *  @endcode
+       *     void myaction() {
+       *       auto itr = addresses.find("dan"_n);
+       *       eosio::check(itr != addresses.end(), "Record is not found");
+       *       addresses.erase(*itr);
+       *       itr = addresses.find("dan"_n);
+       *       eosio::check(itr == addresses.end(), "Record is not deleted");
+       *     }
+       * }
+       * EOSIO_DISPATCH( addressbook, (myaction) )
+       * @endcode
        */
       void erase( const T& obj ) {
          using namespace _multi_index_detail;
@@ -1894,8 +1933,6 @@ class multi_index
 
          eosio::check( itr2 != _items_vector.rend(), "attempt to remove object that was not in multi_index" );
 
-         _items_vector.erase(--(itr2.base()));
-
          internal_use_do_not_use::db_remove_i64( objitem.__primary_itr );
 
          hana::for_each( _indices, [&]( auto& idx ) {
@@ -1909,6 +1946,8 @@ class multi_index
             if( i >= 0 )
                secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_remove( i );
          });
+
+         _items_vector.erase(--(itr2.base()));
       }
 
 };

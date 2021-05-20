@@ -15,9 +15,9 @@ set(CMAKE_C_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
 set(CMAKE_CXX_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cpp")
 set(CMAKE_ASM_COMPILER "@CDT_ROOT_DIR@/bin/eosio-cc")
 
-set(CMAKE_C_FLAGS " -O3 ")
-set(CMAKE_CXX_FLAGS " -O3 ")
-set(CMAKE_ASM_FLAGS " -fnative -fasm ")
+set(CMAKE_C_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_ASM_FLAGS "-fnative -fasm")
 
 set(WASM_LINKER "@CDT_ROOT_DIR@/bin/eosio-ld")
 

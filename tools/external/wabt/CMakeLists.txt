@@ -101,7 +101,7 @@ else ()
   #   interfaces, etc.
   # disable -Wpointer-arith: this is a GCC extension, and doesn't work in MSVC.
   add_definitions(
-    -Wall -Wextra -Werror -Wno-unused-parameter -Wpointer-arith -g -std=c++11
+    -Wall -Wextra -Wno-unused-parameter -Wpointer-arith -g -std=c++11
     -Wold-style-cast -Wuninitialized
   )
 
@@ -285,6 +285,7 @@ if (NOT EMSCRIPTEN)
     target_link_libraries(${name} libwabt)
     set_property(TARGET ${name} PROPERTY CXX_STANDARD 11)
     set_property(TARGET ${name} PROPERTY CXX_STANDARD_REQUIRED ON)
+    set_target_properties(${name} PROPERTIES LINK_FLAGS "-Wl,-rpath,\"\\$ORIGIN/../lib\"")
     list(APPEND WABT_EXECUTABLES ${name})
     set(WABT_EXECUTABLES ${WABT_EXECUTABLES} PARENT_SCOPE)
 

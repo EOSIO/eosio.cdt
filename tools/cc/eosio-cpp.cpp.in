@@ -39,75 +39,9 @@ using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
 
-namespace eosio { namespace cdt {
-   DeclarationMatcher function_decl_matcher = cxxMethodDecl().bind("eosio_tool");
-   DeclarationMatcher record_decl_matcher   = cxxRecordDecl().bind("eosio_tool");
-   DeclarationMatcher typedef_decl_matcher  = typedefDecl().bind("eosio_tool");
-   auto               class_tmp_matcher     = classTemplateSpecializationDecl().bind("eosio_tool");
-   abigen_exception  abigen_ex;
-   codegen_exception codegen_ex;
-   Rewriter          codegen_rewriter;
-   CompilerInstance* codegen_ci;
-   std::set<FileID>  codegen_rewritten;
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt);
 
-   abigen& get_abigen_ref() {
-      static abigen ag;
-      return ag;
-   }
-
-   class EosioMethodMatcher : public MatchFinder::MatchCallback {
-      public:
-         virtual void run( const MatchFinder::MatchResult& res ) {
-            if (const clang::CXXMethodDecl* decl = res.Nodes.getNodeAs<clang::CXXMethodDecl>("eosio_tool")->getCanonicalDecl()) {
-               abi abi;
-               if (decl->isEosioAction() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_action(decl);
-                  auto params = decl->parameters();
-                  for (auto param : params) {
-                     get_abigen_ref().add_type(param->getType());
-                  }
-               }
-            }
-         }
-   };
-
-   class EosioRecordMatcher : public MatchFinder::MatchCallback {
-      public:
-         bool has_added_clauses = false;
-         virtual void run( const MatchFinder::MatchResult& res ) {
-            if (const clang::CXXRecordDecl* decl = res.Nodes.getNodeAs<clang::CXXRecordDecl>("eosio_tool")) {
-               if (!has_added_clauses) {
-                  get_abigen_ref().add_clauses(get_abigen_ref().parse_clauses());
-                  get_abigen_ref().add_contracts(get_abigen_ref().parse_contracts());
-                  has_added_clauses = true;
-               }
-               if (decl->isEosioAction() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_action(decl);
-                  for (auto field : decl->fields()) {
-                     get_abigen_ref().add_type( field->getType() );
-                  }
-               }
-               if (decl->isEosioTable() && abigen::is_eosio_contract(decl, get_abigen_ref().get_contract_name())) {
-                  get_abigen_ref().add_struct(decl);
-                  get_abigen_ref().add_table(decl);
-                  for (auto field : decl->fields())
-                     get_abigen_ref().add_type( field->getType() );
-               }
-            }
-
-            if (const clang::ClassTemplateSpecializationDecl* decl = res.Nodes.getNodeAs<clang::ClassTemplateSpecializationDecl>("eosio_tool")) {
-               if ( decl->getName() == "multi_index" ) {
-                  get_abigen_ref().add_table(decl->getTemplateArgs()[0].getAsIntegral().getExtValue(),
-                                          (clang::CXXRecordDecl*)((clang::RecordType*)decl->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
-               }
-            }
-         }
-   };
-}} // ns eosio::cdt
-
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt) {
    std::vector<std::string> options;
    options.push_back("eosio-cpp");
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -128,28 +62,24 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
    ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
 
-   get_abigen_ref().set_contract_name(contract_name);
-   get_abigen_ref().set_resource_dirs(resource_paths);
+   abigen::get().set_contract_name(contract_name);
+   abigen::get().set_resource_dirs(resource_paths);
+   abigen::get().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
+   abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
    codegen::get().set_contract_name(contract_name);
 
-   EosioMethodMatcher eosio_method_matcher;
-   EosioRecordMatcher eosio_record_matcher;
-   MatchFinder finder;
-
-   finder.addMatcher(function_decl_matcher, &eosio_method_matcher);
-   finder.addMatcher(record_decl_matcher, &eosio_record_matcher);
-   finder.addMatcher(class_tmp_matcher, &eosio_record_matcher);
-
    int tool_run = -1;
-   tool_run = ctool.run(newFrontendActionFactory(&finder).get());
+   tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
    if (tool_run != 0) {
       throw std::runtime_error("abigen error");
    }
 
-   if (!get_abigen_ref().is_empty()) {
+   if (!abigen::get().is_empty()) {
       std::string abi_s;
-      get_abigen_ref().to_json().dump(abi_s);
+      abigen::get().to_json().dump(abi_s);
       codegen::get().set_abi(abi_s);
+   } else if (abigen) {
+      handle_empty_abigen(contract_name, has_o_opt, has_contract_opt);
    }
 
    tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
@@ -158,12 +88,29 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    }
 }
 
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt) {
+   const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
+   if (parsed_contract_name.empty()) {
+      // if no contract name could be obtained by parsing methods/records, it means the contract is empty
+      std::cout << "Warning, contract is empty and ABI is not generated\n";
+   } else if (contract_name != parsed_contract_name) {
+      // if contract is empty but the contract file contains other contracts, the parsed contract name could be wrong
+      std::string err = "abigen error: contract is empty, or ";
+      // or, the contract is not empty but the specified or inferred contract name is wrong
+      err += has_contract_opt ? "'--contract' specified name" : (has_o_opt ? "'-o' specified name" : "contract filename");
+      err += " doesn't match the real contract name";
+      throw std::runtime_error(err);
+   } else {
+      throw std::runtime_error("abigen error"); // unknown error
+   }
+}
+
 int main(int argc, const char **argv) {
 
    // fix to show version info without having to have any other arguments
    for (int i=0; i < argc; i++) {
      if (argv[i] == std::string("-v")) {
-       eosio::cdt::environment::exec_subprogram("clang-7", {"-v"});
+       eosio::cdt::environment::exec_subprogram("clang-9", {"-v"});
        return 0;
      }
    }
@@ -183,31 +130,37 @@ int main(int argc, const char **argv) {
          std::string tmp_file = std::string(res.c_str())+"/"+llvm::sys::path::filename(input).str();
          std::string output;
 
-         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
+         if (!opts.pp_only) {
+            auto tool_opts = opts.comp_options;
+            std::set<std::string> non_tool_opts = { "-S", "-emit-llvm", "-emit-ast" };
+            tool_opts.erase(std::remove_if(tool_opts.begin(), tool_opts.end(),
+                                           [&](const auto& opt){ return non_tool_opts.count(opt); }),
+                            tool_opts.end());
+            generate(tool_opts, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.abigen, opts.suppress_ricardian_warning, opts.has_o_opt, opts.has_contract_opt);
 
-         auto src = SmallString<64>(input);
-         llvm::sys::path::remove_filename(src);
-         std::string source_path = src.str().empty() ? "." : src.str();
-         new_opts.insert(new_opts.begin(), "-I" + source_path);
+            auto src = SmallString<64>(input);
+            llvm::sys::path::remove_filename(src);
+            std::string source_path = src.str().empty() ? "." : src.str();
+            new_opts.insert(new_opts.begin(), "-I" + source_path);
 
-         if (llvm::sys::fs::exists(tmp_file)) {
-            input = tmp_file;
+            if (llvm::sys::fs::exists(tmp_file)) {
+               input = tmp_file;
+            }
+            output = tmp_file+".o";
+
+            if (!opts.link) {
+               output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
+            }
+
+            new_opts.insert(new_opts.begin(), {"-o", output});
+            outputs.push_back(output);
          }
-         output = tmp_file+".o";
-
          new_opts.insert(new_opts.begin(), input);
-         
-         if (!opts.link) {
-            output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
-         }
-
-         new_opts.insert(new_opts.begin(), "-o "+output);
-         outputs.push_back(output);
 
          if (llvm::sys::path::extension(input).equals(".c"))
             new_opts.insert(new_opts.begin(), "-xc++");
 
-         if (!eosio::cdt::environment::exec_subprogram("clang-7", new_opts)) {
+         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
             llvm::sys::fs::remove(tmp_file);
             return -1;
          }
@@ -221,7 +174,7 @@ int main(int argc, const char **argv) {
    if (opts.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+         new_opts.insert(new_opts.begin(), input);
       }
    
       if (!eosio::cdt::environment::exec_subprogram("eosio-ld", new_opts)) {

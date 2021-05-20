@@ -1,11 +1,12 @@
 ---
-content_title: ABI/Code generator attributes explained
+content_title: ABI/Code generator attributes
+link_text: ABI/Code generator attributes
 ---
 
 The new ABI generator tool uses C++11 or GNU style attributes to mark `actions` and `tables`.
 
 ## [[eosio::action]]
-This attribute marks either a struct or a method as an action.
+This attribute marks a method as an action.
 Example (four ways to declare an action for ABI generation):
 ```cpp
 // this is the C++11 and greater style attribute
@@ -31,7 +32,7 @@ struct __attribute__((eosio_action)) testa {
 };
 ```
 
-If your action name is not a valid [EOSIO name](https://developers.eos.io/eosio-cpp/docs/naming-conventions) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
+If your action name is not a valid [EOSIO name](../02_naming-conventions.md) you can explicitly specify the name in the attribute ```c++ [[eosio::action("<valid action name>")]]```
 
 ## [[eosio::table]]
 Example (two ways to declare a table for ABI generation):
