@@ -685,74 +685,8 @@ struct generation_utils {
       return in_kv_namespace && is_internal;
    }
 
-   inline bool is_write_host_func( const std::string& t ) {
+   inline bool is_write_host_func( const clang::FunctionDecl *func_decl ) {
       static const std::set<std::string> write_host_funcs =
-      {
-         "eosio::internal_use_do_not_use::set_resource_limits",
-         "eosio::chain::webassembly::interface::set_resource_limits",
-         "eosio::chain::webassembly::interface::set_wasm_parameters_packed", 
-         "eosio::chain::webassembly::interface::set_resource_limit",
-         "eosio::chain::controller::set_proposed_producers",
-         "eosio::chain::webassembly::interface::set_proposed_producers",
-         "eosio::internal_use_do_not_use::set_proposed_producers_ex",
-         "eosio::chain::webassembly::interface::set_proposed_producers_ex",
-         "eosio::internal_use_do_not_use::set_blockchain_parameters_packed",
-         "eosio::chain::webassembly::interface::set_blockchain_parameters_packed"
-         "eosio::chain::webassembly::interface::set_parameters_packed", 
-         "eosio::chain::webassembly::set_kv_parameters_packed",
-         "eosio::internal_use_do_not_use::set_kv_parameters_packed",
-         "eosio::chain::webassembly::interface::set_kv_parameters_packed",
-         "eosio::internal_use_do_not_use::set_privileged",
-         "eosio::chain::webassembly::interface::set_privileged",
-         "eosio::internal_use_do_not_use::db_store_i64",
-         "eosio::internal_use_do_not_use::db_update_i64",
-         "eosio::internal_use_do_not_use::db_remove_i64",
-         "eosio::internal_use_do_not_use::db_idx64_store",
-         "eosio::internal_use_do_not_use::db_idx64_update",
-         "eosio::internal_use_do_not_use::db_idx64_remove",
-         "eosio::internal_use_do_not_use::db_idx128_store",
-         "eosio::internal_use_do_not_use::db_idx128_update",
-         "eosio::internal_use_do_not_use::db_idx128_remove",
-         "eosio::internal_use_do_not_use::db_idx256_store",
-         "eosio::internal_use_do_not_use::db_idx256_update",
-         "eosio::internal_use_do_not_use::db_idx256_remove",
-         "eosio::internal_use_do_not_use::db_idx_double_store",
-         "eosio::internal_use_do_not_use::db_idx_double_update",
-         "eosio::internal_use_do_not_use::db_idx_double_remove",
-         "eosio::internal_use_do_not_use::db_idx_long_double_store",
-         "eosio::internal_use_do_not_use::db_idx_long_double_update",
-         "eosio::internal_use_do_not_use::db_idx_long_double_remove",
-         "eosio::kv::internal_use_do_not_use::kv_erase",
-         "eosio::kv::internal_use_do_not_use::kv_set",
-         // deferred transactions
-         "eosio::chain::webassembly::interface::send_deferred",
-         "eosio::send_deferred",
-         // inline actions
-         "eosio::internal_use_do_not_use::send_inline",
-         "eosio::internal_use_do_not_use::send_context_free_inline"
-      };
-      return write_host_funcs.count(t) >= 1;
-   }
-
-   inline bool is_deferred_transaction_func( const std::string& t ) {
-      static const std::set<std::string> deferred_transaction_funcs =
-      {
-         "send_deferred",
-      };
-      return deferred_transaction_funcs.count(t) >= 1;
-   }
-
-   inline bool is_inline_action_func( const std::string& t ) {
-      static const std::set<std::string> inline_action_funcs =
-      {
-         "send_inline",
-         "send_context_free_inline"
-      };
-      return inline_action_funcs.count(t) >= 1;
-   }
-
-   inline bool is_eosio_wasm_import_write_func( const clang::FunctionDecl *func_decl ) {
-      static const std::set<std::string> eosio_wasm_import_write_funcs =
       {
          "set_resource_limits",
          "set_wasm_parameters_packed",
@@ -788,20 +722,24 @@ struct generation_utils {
          "send_context_free_inline"
       };
 
-      if (eosio_wasm_import_write_funcs.count(func_decl->getQualifiedNameAsString()) == 0) {
-         return false;
-      }
+      return write_host_funcs.count(func_decl->getNameInfo().getAsString()) >= 1;
+   }
 
-      if (func_decl->isInExternCContext()) {
-         auto attrs = func_decl->getAttrs();
-         for (auto const &a : attrs) {
-            if (strcmp(a->getSpelling(), "eosio_wasm_import") == 0) {
-               return true;
-            }
-         }
-      }
+   inline bool is_deferred_transaction_func( const std::string& t ) {
+      static const std::set<std::string> deferred_transaction_funcs =
+      {
+         "send_deferred",
+      };
+      return deferred_transaction_funcs.count(t) >= 1;
+   }
 
-      return false;
+   inline bool is_inline_action_func( const std::string& t ) {
+      static const std::set<std::string> inline_action_funcs =
+      {
+         "send_inline",
+         "send_context_free_inline"
+      };
+      return inline_action_funcs.count(t) >= 1;
    }
 };
 }} // ns eosio::cdt
