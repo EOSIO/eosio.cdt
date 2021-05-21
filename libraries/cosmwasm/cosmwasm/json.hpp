@@ -1,6 +1,7 @@
 #pragma once
 #include "memory.hpp"
 #include "check.hpp"
+#include "uint128_t.hpp"
 #include <string_view>
 
 #define PICOJSON_USE_INT64
@@ -29,7 +30,7 @@ namespace cosmwasm { namespace json {
          abort();
       }
 
-      template <typename T>
+      template<typename T>
       T from_str_radix(const std::string& s, uint32_t radix) {
          T v = 0;
          int is_signed = -1;
@@ -80,6 +81,13 @@ namespace cosmwasm { namespace json {
    }
 
    template<>
+   uint64_t from_json(const value& v) {
+      uint64_t out = 0;
+      std::stoull(v.get<std::string>(), reinterpret_cast<size_t*>(&out));
+      return out;
+   }
+
+   template<>
    uint128_t from_json(const value& v) {
       return _detail::from_str_radix<uint128_t>(v.get<std::string>(), 10);
    }
@@ -104,8 +112,39 @@ namespace cosmwasm { namespace json {
       return out;
    }
 
-   template<typename T>
-   value to_json(const T& v);
+   template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
+   value to_json(T v) {
+      return value(v);
+   }
+
+   template<typename T, std::enable_if_t<std::is_class_v<T> && !_detail::is_vector<T>::value>* = nullptr>
+   value to_json(const T& v) {
+      return T::to_json(v);
+   }
+
+   template<typename T, std::enable_if_t<std::is_class_v<T> && _detail::is_vector<T>::value>* = nullptr>
+   value to_json(const T& v) {
+      value::array out;
+      for (auto& e: v) {
+         out.push_back(to_json(e));
+      }
+      return value(out);
+   }
+
+   template<>
+   value to_json(uint64_t v) {
+      return value(std::to_string(v));
+   }
+
+   template<>
+   value to_json(uint128_t v) {
+      return value(std::to_string(v));
+   }
+
+   template<>
+   value to_json(const std::string& v) {
+      return value(v);
+   }
 
    value parse_region(region* reg) {
       std::string_view s((const char*)reg->offset, reg->length);
@@ -117,13 +156,13 @@ namespace cosmwasm { namespace json {
 
    template<typename T>
    T from_region(region* reg) {
-      return from_json<T>(v);
+      return from_json<T>(parse_region(reg));
    }
 
    template<typename T>
    std::unique_ptr<region> to_region(const T& v) {
-      std::string s = to_json(v).to_str();
-      return build_region_dup(s.data(),  s.size());
+      std::string s = to_json(v).serialize();
+      return build_region_dup(s.data(), s.size());
    }
 
 } }

@@ -20,3 +20,17 @@ region* allocate(size_t size) {
 void deallocate(region* reg) {
    free(reinterpret_cast<void*>(reg->offset));
 }
+
+// Override eosio import by strong symbol
+void prints_l(const char* ptr, size_t len) {
+   region* reg = (region*)malloc(sizeof(region));
+   reg->offset = (uint32_t)ptr;
+   reg->capacity = (uint32_t)len;
+   reg->length = (uint32_t)len;
+   debug(reg);
+}
+
+// Override eosio import by strong symbol
+uint64_t current_time() {
+   return 0;
+}

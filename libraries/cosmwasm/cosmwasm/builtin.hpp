@@ -28,4 +28,7 @@ extern "C" {
    __attribute__((export_name("deallocate")))
    void deallocate(region* reg);
 
+   __attribute__((import_name("debug")))
+   void debug(region*);
+
 }

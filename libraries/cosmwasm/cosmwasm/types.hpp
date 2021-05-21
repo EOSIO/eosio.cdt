@@ -40,4 +40,23 @@ namespace cosmwasm {
 
       COSMWASM_SERIALIZE(env, (block)(contract))
    };
+
+   struct attribute {
+      std::string key;
+      std::string value;
+
+      COSMWASM_SERIALIZE(attribute, (key)(value))
+   };
+
+   struct response {
+      std::vector<attribute> attributes;
+
+      COSMWASM_SERIALIZE(response, (attributes))
+   };
+
+   struct contract_result {
+      response ok;
+
+      COSMWASM_SERIALIZE(contract_result, (ok))
+   };
 }
