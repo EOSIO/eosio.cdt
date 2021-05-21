@@ -516,13 +516,7 @@ namespace eosio { namespace cdt {
          }
 
          virtual bool VisitFunctionDecl(FunctionDecl* func_decl) {
-            SourceManager &sm = get_rewriter().getSourceMgr();
-            if (sm.isInSystemHeader(func_decl->getLocation()) || sm.isInExternCSystemHeader(func_decl->getLocation())) {
-               return true;
-            }
-
-            std::string func_name = func_decl->getQualifiedNameAsString();
-            if (func_calls.count(func_decl) == 0 && (is_write_host_func(func_name) || is_eosio_wasm_import_write_func(func_decl))) {
+            if (func_calls.count(func_decl) == 0 && is_write_host_func(func_decl)) {
                func_calls[func_decl] = {(CallExpr*)func_decl};
                std::cout << "++key: " << func_decl->getQualifiedNameAsString() << ", value: (itself)" << std::endl;
             } else {
