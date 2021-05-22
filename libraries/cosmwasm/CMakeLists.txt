@@ -2,6 +2,7 @@ file(GLOB HEADERS "*.hpp" "*.h")
 
 add_library(cosmwasm
    cosmwasm.cpp
+   base64.cpp
 )
 
 target_include_directories(cosmwasm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

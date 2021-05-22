@@ -1,4 +1,10 @@
 #pragma once
+#include <cstddef>
+#include <vector>
+
+namespace cosmwasm {
+   typedef std::vector<char> bytes;
+}
 
 namespace std {
 

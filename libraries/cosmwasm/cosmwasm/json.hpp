@@ -1,8 +1,10 @@
 #pragma once
 #include "memory.hpp"
 #include "check.hpp"
-#include "uint128_t.hpp"
+#include "primitives.hpp"
+#include "base64.hpp"
 #include <string_view>
+#include <optional>
 
 #define PICOJSON_USE_INT64
 #define PICOJSON_USE_LOCALE 0
@@ -18,6 +20,7 @@
 namespace cosmwasm { namespace json {
 
    using value = picojson::value;
+   using null = picojson::null;
 
    namespace _detail {
       uint32_t char_to_digit(char c) {
@@ -59,15 +62,17 @@ namespace cosmwasm { namespace json {
          return v;
       }
 
-      template<typename T>
-      struct is_vector {
-         static constexpr bool value = false;
-      };
+      template<typename T, typename Enable = void>
+      struct is_vector : std::false_type {};
 
-      template<template<typename...> class C, typename U>
-      struct is_vector<C<U>> {
-         static constexpr bool value = std::is_same<C<U>,std::vector<U>>::value;
-      };
+      template<typename T>
+      struct is_vector<std::vector<T>> : std::true_type {};
+
+      template<typename T, typename Enable = void>
+      struct is_optional : std::false_type {};
+
+      template<typename T>
+      struct is_optional<std::optional<T>> : std::true_type {};
    }
 
    template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
@@ -92,7 +97,9 @@ namespace cosmwasm { namespace json {
       return _detail::from_str_radix<uint128_t>(v.get<std::string>(), 10);
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> && !_detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<std::is_class_v<T> &&
+      !_detail::is_optional<T>::value &&
+      !_detail::is_vector<T>::value>* = nullptr>
    T from_json(const value& v) {
       return T::from_json(v);
    }
@@ -102,7 +109,9 @@ namespace cosmwasm { namespace json {
       return v.get<std::string>();
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> && _detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<std::is_class_v<T> &&
+      !_detail::is_optional<T>::value &&
+      _detail::is_vector<T>::value>* = nullptr>
    T from_json(const value& v) {
       value::array arr = v.get<value::array>();
       T out(arr.size());
@@ -112,17 +121,36 @@ namespace cosmwasm { namespace json {
       return out;
    }
 
+   template<>
+   bytes from_json<bytes>(const value& v) {
+      std::string s = v.get<std::string>();
+      return base64::decode(s);
+   }
+
+   template<typename T, std::enable_if_t<_detail::is_optional<T>::value>* = nullptr>
+   T from_json(const value& v) {
+      if (v.is<null>()) {
+         return std::nullopt;
+      } else {
+         return from_json<typename T::value_type>(v);
+      }
+   }
+
    template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
    value to_json(T v) {
       return value(v);
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> && !_detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<std::is_class_v<T> &&
+      !_detail::is_optional<T>::value &&
+      !_detail::is_vector<T>::value>* = nullptr>
    value to_json(const T& v) {
       return T::to_json(v);
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> && _detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<std::is_class_v<T> &&
+      !_detail::is_optional<T>::value &&
+      _detail::is_vector<T>::value>* = nullptr>
    value to_json(const T& v) {
       value::array out;
       for (auto& e: v) {
@@ -144,6 +172,20 @@ namespace cosmwasm { namespace json {
    template<>
    value to_json(const std::string& v) {
       return value(v);
+   }
+
+   template<>
+   value to_json<bytes>(const bytes& v) {
+      return value(base64::encode(v));
+   }
+
+   template<typename T, std::enable_if_t<_detail::is_optional<T>::value>* = nullptr>
+   value to_json(const T& v) {
+      if (!v) {
+         return value();
+      } else {
+         return json::to_json(*v);
+      }
    }
 
    value parse_region(region* reg) {

@@ -3,6 +3,7 @@
 #include "json.hpp"
 
 namespace cosmwasm {
+
    typedef std::string human_addr;
 
    struct block_info {
@@ -49,14 +50,18 @@ namespace cosmwasm {
    };
 
    struct response {
+      std::vector<std::string> sub_messages;
+      std::vector<std::string> messages;
       std::vector<attribute> attributes;
+      std::optional<bytes> data;
 
-      COSMWASM_SERIALIZE(response, (attributes))
+      COSMWASM_SERIALIZE(response, (sub_messages)(messages)(attributes)(data))
    };
 
    struct contract_result {
       response ok;
+      std::string error;
 
-      COSMWASM_SERIALIZE(contract_result, (ok))
+      COSMWASM_SERIALIZE(contract_result, (ok)(error))
    };
 }
