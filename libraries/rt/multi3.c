@@ -12,6 +12,10 @@
 
 #include "int_t.h"
 
+#ifdef CRT_HAS_128BIT
+
+// Returns: a * b
+
 static ti_int __mulddi3(du_int a, du_int b) {
   twords r;
   const int bits_in_dword_2 = (int)(sizeof(di_int) * CHAR_BIT) / 2;
@@ -31,7 +35,9 @@ static ti_int __mulddi3(du_int a, du_int b) {
   return r.all;
 }
 
-ti_int ___multi3(ti_int a, ti_int b) {
+// Returns: a * b
+
+COMPILER_RT_ABI ti_int ___multi3(ti_int a, ti_int b) {
   twords x;
   x.all = a;
   twords y;
@@ -41,3 +47,5 @@ ti_int ___multi3(ti_int a, ti_int b) {
   r.s.high += x.s.high * y.s.low + x.s.low * y.s.high;
   return r.all;
 }
+
+#endif // CRT_HAS_128BIT

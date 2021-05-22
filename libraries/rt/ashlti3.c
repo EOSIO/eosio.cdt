@@ -12,11 +12,13 @@
 
 #include "int_t.h"
 
+#ifdef CRT_HAS_128BIT
+
 // Returns: a << b
 
 // Precondition:  0 <= b < bits_in_tword
 
-ti_int ___ashlti3(ti_int a, si_int b) {
+COMPILER_RT_ABI ti_int ___ashlti3(ti_int a, si_int b) {
   const int bits_in_dword = (int)(sizeof(di_int) * CHAR_BIT);
   twords input;
   twords result;
@@ -32,3 +34,5 @@ ti_int ___ashlti3(ti_int a, si_int b) {
   }
   return result.all;
 }
+
+#endif // CRT_HAS_128BIT
