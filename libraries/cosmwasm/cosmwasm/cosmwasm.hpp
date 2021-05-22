@@ -5,3 +5,4 @@
 #include "check.hpp"
 #include "types.hpp"
 #include "storage.hpp"
+#include "contract.hpp"
