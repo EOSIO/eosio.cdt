@@ -12,6 +12,8 @@
 
 #include "int_t.h"
 
+#ifdef CRT_HAS_128BIT
+
 // Returns the 128 bit division result by 64 bit. Result must fit in 64 bits.
 // Remainder stored in r.
 // Taken and adjusted from libdivide libdivide_128_div_64_to_64 division
@@ -95,7 +97,7 @@ static inline du_int udiv128by64to64(du_int u1, du_int u0, du_int v,
 // Effects: if rem != 0, *rem = a % b
 // Returns: a / b
 
-static tu_int __udivmodti4(tu_int a, tu_int b, tu_int *rem) {
+COMPILER_RT_ABI static tu_int __udivmodti4(tu_int a, tu_int b, tu_int *rem) {
   const unsigned n_utword_bits = sizeof(tu_int) * CHAR_BIT;
   utwords dividend;
   dividend.all = a;
@@ -152,3 +154,5 @@ static tu_int __udivmodti4(tu_int a, tu_int b, tu_int *rem) {
     *rem = dividend.all;
   return quotient.all;
 }
+
+#endif // CRT_HAS_128BIT

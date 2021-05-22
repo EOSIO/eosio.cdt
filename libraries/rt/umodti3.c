@@ -13,10 +13,14 @@
 #include "int_t.h"
 #include "udivmodti4.c"
 
+#ifdef CRT_HAS_128BIT
+
 // Returns: a % b
 
-tu_int ___umodti3(tu_int a, tu_int b) {
+COMPILER_RT_ABI tu_int ___umodti3(tu_int a, tu_int b) {
   tu_int r;
   __udivmodti4(a, b, &r);
   return r;
 }
+
+#endif // CRT_HAS_128BIT
