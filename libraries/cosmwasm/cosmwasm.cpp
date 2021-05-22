@@ -8,7 +8,16 @@ void abort() {
 void cosmwasm_vm_version_4() {
 }
 
+void cosmwasm_init() {
+   static bool initialized = false;
+   if (!initialized) {
+      __wasm_call_ctors();
+      initialized = true;
+   }
+}
+
 region* allocate(size_t size) {
+   cosmwasm_init();
    void* data = malloc(size);
    region* reg = (region*)malloc(sizeof(region));
    reg->offset = (uint32_t)data;

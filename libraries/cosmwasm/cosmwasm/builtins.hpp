@@ -3,6 +3,8 @@
 
 extern "C" {
 
+   void __wasm_call_ctors();
+
    struct region {
       uint32_t offset;
       uint32_t capacity;
