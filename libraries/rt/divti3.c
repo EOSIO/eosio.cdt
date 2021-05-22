@@ -12,6 +12,8 @@
 #include "int_t.h"
 #include "udivmodti4.c"
 
+#ifdef CRT_HAS_128BIT
+
 // Returns: a / b
 
 #define fixint_t ti_int
@@ -19,4 +21,6 @@
 #define COMPUTE_UDIV(a, b) __udivmodti4((a), (b), (tu_int *)0)
 #include "int_div_impl.inc"
 
-ti_int ___divti3(ti_int a, ti_int b) { return __divXi3(a, b); }
+COMPILER_RT_ABI ti_int ___divti3(ti_int a, ti_int b) { return __divXi3(a, b); }
+
+#endif // CRT_HAS_128BIT
