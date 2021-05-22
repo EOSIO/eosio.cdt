@@ -1,4 +1,5 @@
 #pragma once
+#include "stringize.hpp"
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/stringize.hpp>
 
@@ -18,4 +19,10 @@
       cosmwasm::json::value::object out; \
       BOOST_PP_SEQ_FOR_EACH(COSMWASM_SERIALIZE_FIELD, _, FIELDS) \
       return cosmwasm::json::value(out); \
+   } \
+   std::string to_string() { \
+      return to_json(*this).serialize(); \
+   } \
+   explicit operator std::string() { \
+      return to_string(); \
    }
