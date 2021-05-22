@@ -87,9 +87,13 @@ namespace cosmwasm { namespace json {
 
    template<>
    uint64_t from_json(const value& v) {
-      uint64_t out = 0;
-      std::stoull(v.get<std::string>(), reinterpret_cast<size_t*>(&out));
-      return out;
+      if (v.is<int64_t>()) {
+         return v.get<int64_t>();
+      } else {
+         uint64_t out = 0;
+         std::stoull(v.get<std::string>(), reinterpret_cast<size_t*>(&out));
+         return out;
+      }
    }
 
    template<>

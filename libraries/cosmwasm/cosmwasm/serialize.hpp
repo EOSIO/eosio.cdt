@@ -25,4 +25,10 @@
    } \
    explicit operator std::string() { \
       return to_string(); \
+   } \
+   cosmwasm::bytes as_bytes() { \
+      std::string s = to_string(); \
+      cosmwasm::bytes out(s.size()); \
+      std::copy_n(s.data(), s.size(), out.data()); \
+      return out; \
    }

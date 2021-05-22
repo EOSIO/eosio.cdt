@@ -58,10 +58,11 @@ namespace cosmwasm {
       COSMWASM_SERIALIZE(response, (sub_messages)(messages)(attributes)(data))
    };
 
+   template<typename T>
    struct contract_result {
-      response ok;
+      T ok;
       std::string error;
 
-      COSMWASM_SERIALIZE(contract_result, (ok)(error))
+      COSMWASM_SERIALIZE(contract_result<T>, (ok)(error))
    };
 }
