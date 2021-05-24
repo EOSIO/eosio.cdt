@@ -75,6 +75,22 @@ namespace cosmwasm { namespace json {
       struct is_optional<std::optional<T>> : std::true_type {};
    }
 
+   inline value parse_unsafe(const std::string &s) {
+      value out;
+      std::string err = parse(out, s);
+      if (err.size())
+         abort();
+      return out;
+   }
+
+   inline value parse_unsafe(const std::string_view &s) {
+      value out;
+      std::string err = parse(out, s);
+      if (err.size())
+         abort();
+      return out;
+   }
+
    template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
    T from_json(const value& v) {
       return v.get<int64_t>();

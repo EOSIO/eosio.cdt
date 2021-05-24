@@ -23,10 +23,19 @@
    std::string to_string() { \
       return to_json(*this).serialize(); \
    } \
+   const std::string to_string() const { \
+      return to_json(*this).serialize(); \
+   } \
    explicit operator std::string() { \
       return to_string(); \
    } \
    cosmwasm::bytes as_bytes() { \
+      std::string s = to_string(); \
+      cosmwasm::bytes out(s.size()); \
+      std::copy_n(s.data(), s.size(), out.data()); \
+      return out; \
+   } \
+   const cosmwasm::bytes as_bytes() const { \
       std::string s = to_string(); \
       cosmwasm::bytes out(s.size()); \
       std::copy_n(s.data(), s.size(), out.data()); \
