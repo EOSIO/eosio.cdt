@@ -48,7 +48,7 @@ namespace cosmwasm {
          abort();
 
       std::vector<char> data(reg->length);
-      std::copy_n(data.begin(), reg->length, (char*)reg->offset);
+      std::copy_n((char*)reg->offset, reg->length, data.begin());
       data.reserve(reg->capacity);
 
       return data;
