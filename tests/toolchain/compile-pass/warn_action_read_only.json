@@ -1,0 +1,11 @@
+{
+  "tests" : [
+    {
+      "compile_flags": ["--warn-action-read-only"],
+      "expected" : {
+        "exit-code": 0,
+        "stderr": "codegen warning"
+      }
+    }
+  ]
+}
