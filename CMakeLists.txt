@@ -84,6 +84,7 @@ if(BUILD_TESTS)
   include(CTest)
   enable_testing()
   add_subdirectory(tests)
+  add_subdirectory(libraries/rt/test)
 endif()
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${BLANC_INSTALL_PREFIX}/include)
