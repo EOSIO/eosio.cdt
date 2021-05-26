@@ -14,7 +14,7 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../modules)
 
-find_package(LLVM 12... REQUIRED CONFIG)
+find_package(LLVM 12 REQUIRED CONFIG)
 find_package(Boost REQUIRED)
 
 include(BlancExecutableNames)
