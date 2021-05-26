@@ -1,5 +1,4 @@
 # Defines builtins library
-include( EosioCDTMacros )
 set(C_DEFINES, "-D__wasm__ -DQUAD_PRECISION")
 set( CMAKE_C_FLAGS " -Wall ${CMAKE_C_FLAGS} ${C_DEFINES} -allow-sse" )
 set( CMAKE_CXX_FLAGS " -Wall ${CMAKE_CXX_FLAGS} ${C_DEFINES} -allow-sse" )
@@ -37,3 +36,5 @@ target_include_directories( native_rt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
 
 add_custom_command( TARGET rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:rt> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET native_rt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_rt> ${BASE_BINARY_DIR}/lib )
+
+add_subdirectory( test )
