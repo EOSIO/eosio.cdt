@@ -4,7 +4,7 @@ content_title: How to define a primary index
 
 ## Overview
 
-This guide provides instructions on how to define a primary index in a multi-index table.
+This guide provides instructions on how to define a primary index for a multi-index table.
 
 ## Reference
 
@@ -17,12 +17,10 @@ See the following code reference:
 Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index),
-* A multi-index table named `test_table`,
-* A primary key is required when defining a multi-index table structure, therefore you need to know which is the property that is the primary key for your multi-index table structure. That property must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
 ## Procedure
 
-Complete the following steps to define a primary index for the multi-index table named `test_table` based on its `test_primary` data member.
+Complete the following steps to define a primary index for the multi-index table named `testtab`.
 
 ### 1. Preparation And Initialization
 
@@ -42,7 +40,7 @@ Define the data structure for the multi-index table
     };
   ```
 
-Add to the data structure the fields which define the multi-index table
+Add to the data structure the properties which define it. Each property corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the field that is the primary key for your multi-index table structure. The corresponding property for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
   ```diff
     // the data structure which defines each row of the table
@@ -56,7 +54,7 @@ Add to the data structure the fields which define the multi-index table
 
 ### 3. Define The Primary Index
 
-Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t and must be unique
+Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t and must be unique.
 
   ```diff
     // the data structure which defines each row of the table
@@ -75,7 +73,7 @@ Add the definition of the primary index for the multi-index table. The primary i
 
 ### 4. Define A Multi-Index Type Alias
 
-For ease of use, define a type alias `test_tables` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
 
   ```diff
     // the data structure which defines each row of the table
@@ -88,12 +86,12 @@ For ease of use, define a type alias `test_tables` based on the `eosio::multi_in
       uint64_t primary_key( ) const { return test_primary.value; }
     };
     
-  +  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
+  +  typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
   ```
 
 ### 5. Instantiate The Multi-Index Table
 
-Declare the multi-index table as a data member of type `test_tables`, as defined above.
+Declare the `testtab` multi-index table as a data member of type `test_table_t`.
 
   ```diff
     // the data structure which defines each row of the table
@@ -106,8 +104,8 @@ Declare the multi-index table as a data member of type `test_tables`, as defined
       uint64_t primary_key( ) const { return test_primary.value; }
     };
     
-    typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
-  +  test_tables testtab;
+    typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
+  +  test_table_t testtab;
   ```
 
 Now you have instantiated the `testtab` as a multi-index table which has a primary index defined for its `test_primary` data member.
