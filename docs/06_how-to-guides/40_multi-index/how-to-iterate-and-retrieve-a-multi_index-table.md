@@ -3,6 +3,7 @@ content_title: How to iterate and retrieve a multi index table
 ---
 
 ## Preconditions
+
 - It is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
 
 For exemplification define the multi index contract definition like below:
@@ -153,5 +154,5 @@ __multi_index_example.cpp__
 }
 ```
 
-[[Info | Full example location]]
+[[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

@@ -88,5 +88,5 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-[[Info | Full example location]]
+[[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
