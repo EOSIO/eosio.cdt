@@ -20,7 +20,7 @@ Make sure you have the following prerequisites in place:
 
 ## Procedure
 
-Complete the following steps to define a primary index for the multi-index table `testtab`.
+Complete the following steps to define a primary index for the multi-index table named `testtab`.
 
 ### 1. Preparation And Initialization
 
@@ -40,7 +40,7 @@ Define the data structure for the multi-index table.
     };
   ```
 
-Add to the data structure the properties which define it. Each property corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding property for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
+Add to the data structure the properties which define it. Each property corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the field that is the primary key for your multi-index table structure. The corresponding property for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
   ```diff
     // the data structure which defines each row of the table
@@ -54,7 +54,7 @@ Add to the data structure the properties which define it. Each property correspo
 
 ### 3. Define The Primary Index
 
-Add definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
+Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
 
   ```diff
     // the data structure which defines each row of the table
