@@ -20,7 +20,7 @@ Make sure you have the following prerequisites in place:
 
 ## Procedure
 
-A singleton uses a single multi-index table to store named objects of various types. To define a simple singleton, which is storing an account name as primary value and a uint64_t as secondary value in structure `testtable`, follow the steps below:
+A singleton uses a single multi-index table to store named objects of various types. To define a simple singleton, which is storing an account `name` as primary value and a `uint64_t` as secondary value in structure `testtable`, follow the steps below:
 
 ### 1. Preparation And Initialization
 
@@ -156,4 +156,4 @@ In conclusion, the above instructions show how to define a singleton.
 
 The following option is available when you complete the procedure:
 
-* You can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton.
+* Because a singleton is using a multi-index table, you can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton.
