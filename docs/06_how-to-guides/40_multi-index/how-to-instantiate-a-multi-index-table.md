@@ -16,7 +16,7 @@ using namespace eosio;
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
-+    // this field stores a name for each row of the multi-index table
++    // this property stores a name for each row of the multi-index table
 +    name test_primary;
 +    // additional data stored in table row, e.g. an uint64_t type data
 +    uint64_t datum;
@@ -26,7 +26,7 @@ using namespace eosio;
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
-    // this field stores a name for each row of the multi-index table
+    // this property stores a name for each row of the multi-index table
     name test_primary;
     // additional data stored in table row
     uint64_t datum;
@@ -38,11 +38,11 @@ using namespace eosio;
 [[info | Additional indexes information]]
 | Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
 
-5. For ease of use, define a type alias `test_tables` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+5. For ease of use, define a type alias `test_table_t` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
-    // this field stores a name for each row of the multi-index table
+    // this property stores a name for each row of the multi-index table
     name test_primary;
     // additional data stored in table row
     uint64_t datum;
@@ -50,14 +50,14 @@ using namespace eosio;
     uint64_t primary_key( ) const { return test_primary.value; }
   };
   
-+  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
++  typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
 ```
 
-6. Define the multi-index table data member of type `test_tables` defined in the privious step
+6. Define the multi-index table data member of type `test_table_t` defined in the privious step
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
-    // this field stores a name for each row of the multi-index table
+    // this property stores a name for each row of the multi-index table
     name test_primary;
     // additional data stored in table row
     uint64_t datum;
@@ -65,8 +65,8 @@ using namespace eosio;
     uint64_t primary_key( ) const { return test_primary.value; }
   };
   
-  typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
-+  test_tables testtab;
+  typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
++  test_table_t testtab;
 ```
 
 7. Instantiate the data member `testtab` by passing to its constructor the `scope` (in this case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor
@@ -105,7 +105,7 @@ class [[eosio::contract]] multi_index_example : public contract {
       // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi-index table
+        // this property stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -113,13 +113,13 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_table_t`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
-      typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
 
-      // the multi-index table instance declared as a data member of type test_tables
-      test_tables testtab;
+      // the multi-index table instance declared as a data member of type test_table_t
+      test_table_t testtab;
 
       [[eosio::action]] void set( name user );
       [[eosio::action]] void print( name user );

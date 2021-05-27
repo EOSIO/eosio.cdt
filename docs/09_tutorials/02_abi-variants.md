@@ -45,9 +45,9 @@ class [[eosio::contract]] multi_index_example : public contract {
          }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );
@@ -89,9 +89,9 @@ class [[eosio::contract]] multi_index_example : public contract {
          }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );
@@ -141,9 +141,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 +         }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );

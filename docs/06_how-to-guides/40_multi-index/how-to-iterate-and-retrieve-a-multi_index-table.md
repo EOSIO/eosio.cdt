@@ -29,7 +29,7 @@ class [[eosio::contract]] multi_index_example : public contract {
       // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi-index table
+        // this property stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -37,13 +37,13 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_table_t`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
-      typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
 
-      // the multi-index table instance declared as a data member of type test_tables
-      test_tables testtab;
+      // the multi-index table instance declared as a data member of type test_table_t
+      test_table_t testtab;
 
       [[eosio::action]] void set( name user );
 
@@ -100,7 +100,7 @@ class [[eosio::contract]] multi_index_example : public contract {
       // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi-index table
+        // this property stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -108,13 +108,13 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_table_t`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
-      typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
 
-      // the multi-index table instance declared as a data member of type test_tables
-      test_tables testtab;
+      // the multi-index table instance declared as a data member of type test_table_t
+      test_table_t testtab;
 
       [[eosio::action]] void set( name user );
       [[eosio::action]] void print( name user );
