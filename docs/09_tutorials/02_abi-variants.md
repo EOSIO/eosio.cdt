@@ -4,9 +4,9 @@ link_text: ABI variants
 ---
 
 ABI variants give the flexibility of using more than one type for a defined variable or data member. 
-In EOSIO, the variants make use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an exiting multi index table, a.k.a. table.
+In EOSIO, the variants make use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi-index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an exiting multi-index table, a.k.a. table.
 
-## Use variant when building the multi index table the first time
+## Use variant when building the multi-index table the first time
 
 To define a `variant` for your table structure one example is shown below
 
@@ -101,9 +101,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-Now you can deploy the contract and it will be backwards compatible with the previous existing multi index table.
+Now you can deploy the contract and it will be backwards compatible with the previous existing multi-index table.
 
-## Use variant when changing an already deployed multi index table
+## Use variant when changing an already deployed multi-index table
 
 ### Preconditions
 - It is assumed you deployed the contract defined in [this section](../06_how-to-guides/40_multi-index/how-to-instantiate-a-multi-index-table.md) and now you are going to change its table structure. 

@@ -1,19 +1,19 @@
 ---
-content_title: How to iterate and retrieve a multi index table
+content_title: How to iterate and retrieve a multi-index table
 ---
 
 ## Preconditions
 
-- It is assumed you already have a multi index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi index table](./how-to-instantiate-a-multi-index-table.md).
+- It is assumed you already have a multi-index table instance defined along with its mandatory primary index, otherwise take a look at the section [How to instantiate a multi-index table](./how-to-instantiate-a-multi-index-table.md).
 
-For exemplification define the multi index contract definition like below:
+For exemplification define the multi-index contract definition like below:
 
 __multi_index_example.hpp__
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-// multi index example contract class
+// multi-index example contract class
 class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
@@ -22,14 +22,14 @@ class [[eosio::contract]] multi_index_example : public contract {
       multi_index_example( name receiver, name code, datastream<const char*> ds ) :
          // contract base class contructor
          contract(receiver, code, ds),
-         // instantiate multi index instance as data member (find it defined below)
+         // instantiate multi-index instance as data member (find it defined below)
          testtab(receiver, receiver.value)
          { }
 
-      // the row structure of the multi index table, that is, each row of the table
+      // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi index table
+        // this field stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -37,12 +37,12 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 
-      // the multi index table instance declared as a data member of type test_tables
+      // the multi-index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       [[eosio::action]] void set( name user );
@@ -51,9 +51,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-The steps below show how to iterate and retrieve a multi index table.
+The steps below show how to iterate and retrieve a multi-index table.
 
-1. Add to the above multi index example contract an action `print` which gets as parameter an acount name
+1. Add to the above multi-index example contract an action `print` which gets as parameter an acount name
 
 ```cpp
 [[eosio::action]] void print( name user );
@@ -64,7 +64,7 @@ The steps below show how to iterate and retrieve a multi index table.
 
 +using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
 ```
-3. Implement the action code, by searching for the `user` name in the multi index table using the primary index. If found, print out the value stored in that row for field `datum`. Otherwise asserts with a custom message. In the contract definition add the following implementation for `print` action:
+3. Implement the action code, by searching for the `user` name in the multi-index table using the primary index. If found, print out the value stored in that row for field `datum`. Otherwise asserts with a custom message. In the contract definition add the following implementation for `print` action:
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {
     // searches for the row that corresponds to the user parameter
@@ -84,7 +84,7 @@ __multi_index_example.hpp__
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-// multi index example contract class
+// multi-index example contract class
 class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
@@ -93,14 +93,14 @@ class [[eosio::contract]] multi_index_example : public contract {
       multi_index_example( name receiver, name code, datastream<const char*> ds ) :
          // contract base class contructor
          contract(receiver, code, ds),
-         // instantiate multi index instance as data member (find it defined below)
+         // instantiate multi-index instance as data member (find it defined below)
          testtab(receiver, receiver.value)
          { }
 
-      // the row structure of the multi index table, that is, each row of the table
+      // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi index table
+        // this field stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;
@@ -108,12 +108,12 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t primary_key( ) const { return test_primary.value; }
       };
 
-      // the multi index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name and 
       // the test_table data structure
       typedef eosio::multi_index<"testtaba"_n, test_table> test_tables;
 
-      // the multi index table instance declared as a data member of type test_tables
+      // the multi-index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       [[eosio::action]] void set( name user );
@@ -155,4 +155,4 @@ __multi_index_example.cpp__
 ```
 
 [[info | Full example location]]
-| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+| A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

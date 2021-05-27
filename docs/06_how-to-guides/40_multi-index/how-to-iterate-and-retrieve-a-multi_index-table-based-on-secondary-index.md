@@ -1,17 +1,17 @@
 ---
-content_title: How to iterate and retrieve a multi index table based on secondary index
+content_title: How to iterate and retrieve a multi-index table based on secondary index
 ---
 
 ## Preconditions
-- It is assumed you already have a multi index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
+- It is assumed you already have a multi-index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
 
-You'll start with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi index table with two indexes, a mandatory primary one and a secondary one:
+You'll start with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi-index table with two indexes, a mandatory primary one and a secondary one:
 
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-// multi index example contract class
+// multi-index example contract class
 class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
@@ -20,14 +20,14 @@ class [[eosio::contract]] multi_index_example : public contract {
       multi_index_example( name receiver, name code, datastream<const char*> ds ) :
          // contract base class contructor
          contract(receiver, code, ds),
-         // instantiate multi index instance as data member (find it defined below)
+         // instantiate multi-index instance as data member (find it defined below)
          testtab(receiver, receiver.value)
          { }
 
-      // the row structure of the multi index table, that is, each row of the table
+      // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi index table
+        // this field stores a name for each row of the multi-index table
         name test_primary;
         name secondary;
         // additional data stored in table row
@@ -37,12 +37,12 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // the multi index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name, the 
       // test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
-      // the multi index table instance declared as a data member of type test_tables
+      // the multi-index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       [[eosio::action]] void set( name user );
@@ -53,7 +53,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-To iterate and retreive the multi index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary`, define a third action `bysec` which will do exactly that.
+To iterate and retreive the multi-index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary`, define a third action `bysec` which will do exactly that.
 
 1. In the contract definition, add the new action definition, using the `[[eosio::action]] void` and the `eosio::action_wrapper` template like this:
 
@@ -66,7 +66,7 @@ To iterate and retreive the multi index table `testtab` defined in `multi_index_
 2. In the contract implementation add the new action implementation like this:
 
 ```cpp
-// iterates the multi index table rows using the secondary index and prints the row's values
+// iterates the multi-index table rows using the secondary index and prints the row's values
 [[eosio::action]] void multi_index_example::bysec( name secid ) {
   // access the secondary index
   auto idx = testtab.get_index<"secid"_n>();
@@ -85,7 +85,7 @@ __multi_index_example.hpp__
 #include <eosio/eosio.hpp>
 using namespace eosio;
 
-// multi index example contract class
+// multi-index example contract class
 class [[eosio::contract]] multi_index_example : public contract {
    public:
       using contract::contract;
@@ -94,14 +94,14 @@ class [[eosio::contract]] multi_index_example : public contract {
       multi_index_example( name receiver, name code, datastream<const char*> ds ) :
          // contract base class contructor
          contract(receiver, code, ds),
-         // instantiate multi index instance as data member (find it defined below)
+         // instantiate multi-index instance as data member (find it defined below)
          testtab(receiver, receiver.value)
          { }
 
-      // the row structure of the multi index table, that is, each row of the table
+      // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this field stores a name for each row of the multi index table
+        // this field stores a name for each row of the multi-index table
         name test_primary;
         name secondary;
         // additional data stored in table row
@@ -111,12 +111,12 @@ class [[eosio::contract]] multi_index_example : public contract {
         uint64_t by_secondary( ) const { return secondary.value; }
       };
 
-      // the multi index type definition, for ease of use define a type alias `test_tables`, 
+      // the multi-index type definition, for ease of use define a type alias `test_tables`, 
       // based on the multi_index template type, parametarized with a random name, the 
       // test_table data structure, and the secondary index
       typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
 
-      // the multi index table instance declared as a data member of type test_tables
+      // the multi-index table instance declared as a data member of type test_tables
       test_tables testtab;
 
       [[eosio::action]] void set( name user );
@@ -158,7 +158,7 @@ __multi_index_example.cpp__
   eosio::print_f("Test Table : {%, %}\n", itr->test_primary, itr->datum);
 }
 
-// iterates the multi index table rows using the secondary index and prints the row's values
+// iterates the multi-index table rows using the secondary index and prints the row's values
 [[eosio::action]] void multi_index_example::bysec( name secid ) {
   // access the secondary index
   auto idx = testtab.get_index<"secid"_n>();
@@ -172,4 +172,4 @@ __multi_index_example.cpp__
 ```
 
 [[info | Full example location]]
-| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+| A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

@@ -11,7 +11,7 @@ To define a simple singleton, which is storing an account name as primary value 
 using namespace eosio;
 ```
 
-2. Define the data structure for the multi index table
+2. Define the data structure for the multi-index table
 ```cpp
 struct [[eosio::table]] testtable {
    name primary_value;

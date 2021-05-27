@@ -35,19 +35,19 @@ Include the `eosio.hpp` header and declare the `eosio` namespace usage
 
 ### 2. Defines The Table Data Structure
 
-Define the data structure for the multi index table
+Define the data structure for the multi-index table
 
   ```cpp
     struct [[eosio::table]] test_table {
     };
   ```
 
-Add to the data structure the fields which define the multi index table
+Add to the data structure the fields which define the multi-index table
 
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-  +    // this field stores a name for each row of the multi index table
+  +    // this field stores a name for each row of the multi-index table
   +    name test_primary;
   +    // additional data stored in table row, e.g. an uint64_t type data
   +    uint64_t datum;
@@ -56,12 +56,12 @@ Add to the data structure the fields which define the multi index table
 
 ### 3. Define The Primary Index
 
-Add the definition of the primary index for the multi index table. The primary index type must be uint64_t and must be unique
+Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t and must be unique
 
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this field stores a name for each row of the multi index table
+      // this field stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
@@ -80,7 +80,7 @@ For ease of use, define a type alias `test_tables` based on the `eosio::multi_in
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this field stores a name for each row of the multi index table
+      // this field stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
@@ -93,12 +93,12 @@ For ease of use, define a type alias `test_tables` based on the `eosio::multi_in
 
 ### 5. Instantiate The Multi-Index Table
 
-Declare the multi index table as a data member of type `test_tables`, as defined above.
+Declare the multi-index table as a data member of type `test_tables`, as defined above.
 
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this field stores a name for each row of the multi index table
+      // this field stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
@@ -110,10 +110,10 @@ Declare the multi index table as a data member of type `test_tables`, as defined
   +  test_tables testtab;
   ```
 
-Now you have instantiated the `testtab` as a multi index table which has a primary index defined for its `test_primary` data member.
+Now you have instantiated the `testtab` as a multi-index table which has a primary index defined for its `test_primary` data member.
 
 [[info | Full example location]]
-| A full example project demonstrating the instantiation and usage of multi index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+| A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
 
 ## Summary
 
