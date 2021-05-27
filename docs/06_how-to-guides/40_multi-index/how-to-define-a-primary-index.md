@@ -24,7 +24,7 @@ Complete the following steps to define a primary index for the multi-index table
 
 ### 1. Preparation And Initialization
 
-Include the `eosio.hpp` header and declare the `eosio` namespace usage
+Include the `eosio.hpp` header and declare the `eosio` namespace usage.
 
   ```cpp
   #include <eosio/eosio.hpp>
@@ -33,7 +33,7 @@ Include the `eosio.hpp` header and declare the `eosio` namespace usage
 
 ### 2. Defines The Table Data Structure
 
-Define the data structure for the multi-index table
+Define the data structure for the multi-index table.
 
   ```cpp
     struct [[eosio::table]] test_table {
@@ -73,7 +73,7 @@ Add the definition of the primary index for the multi-index table. The primary i
 
 ### 4. Define A Multi-Index Type Alias
 
-For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above.
 
   ```diff
     // the data structure which defines each row of the table
