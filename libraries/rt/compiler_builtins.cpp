@@ -20,7 +20,10 @@ void __ashrti3(__int128& ret, uint64_t low, uint64_t high, uint32_t shift) {
 }
 
 void __lshlti3(__int128& ret, uint64_t low, uint64_t high, uint32_t shift) {
-   __ashrti3(ret, low, high, shift);
+   __int128 i = high;
+   i <<= 64;
+   i |= low;
+   ret = ___ashlti3(i, shift);
 }
 
 void __lshrti3(__int128& ret, uint64_t low, uint64_t high, uint32_t shift) {
