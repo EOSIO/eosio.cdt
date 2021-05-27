@@ -65,7 +65,7 @@ In the `test_table_t` type definition, add the definition of the secondary index
   +  typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
   ```
 
-For reference see below the full contract definition code with all the changes described above.
+For reference see below the full contract definition code with all the changes described above:
 
 __multi_index_example.hpp__
 
