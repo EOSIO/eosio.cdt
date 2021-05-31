@@ -2,27 +2,60 @@
 content_title: How to instantiate a multi-index table
 ---
 
-1. Include the `eosio.hpp` header and declare the `eosio` namespace usage
-```
+## Overview
+
+This guide provides instructions on how to instantiate a multi-index table.
+
+## Reference
+
+See the following code reference:
+
+* The [`multi-index`](../../classeosio_1_1multi__index) class.
+
+## Before you begin
+
+Make sure you have the following prerequisites in place:
+
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index),
+
+## Procedure
+
+Complete the following steps to instantiate a multi-index table `testtab`.
+
+### 1. Preparation And Initialization
+
+Include the `eosio.hpp` header and declare the `eosio` namespace usage.
+
+```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
 ```
-2. Define the data structure for the multi-index table
+
+### 2. Define The Table Data Structure
+
+Define the data structure for the multi-index table.
+
 ```cpp
   struct [[eosio::table]] test_table {
   };
 ```
-3. Add to the data structure the fields which define the multi-index table
-```diff
-  // the data structure which defines each row of the table
-  struct [[eosio::table]] test_table {
-+    // this property stores a name for each row of the multi-index table
-+    name test_primary;
-+    // additional data stored in table row, e.g. an uint64_t type data
-+    uint64_t datum;
-  };
-```
-4. Add definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, if you don't have this the compiler (eosio-cpp) will generate an error saying it can't find the field to use as the primary key:
+
+Add to the data structure the properties which define it. Each property corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding property for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
+
+  ```diff
+    // the data structure which defines each row of the table
+    struct [[eosio::table]] test_table {
+  +    // this property stores a name for each row of the multi-index table
+  +    name test_primary;
+  +    // additional data stored in table row, e.g. an uint64_t type data
+  +    uint64_t datum;
+    };
+  ```
+
+### 3. Define The Primary Index
+
+Add definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
+
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
@@ -38,7 +71,10 @@ using namespace eosio;
 [[info | Additional indexes information]]
 | Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the field types can be uint64_t, uint128_t, uint256_t, double or long double.
 
-5. For ease of use, define a type alias `test_table_t` based on the multi_index template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above
+### 4. Define A Multi-Index Type Alias
+
+For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above.
+
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
@@ -53,7 +89,10 @@ using namespace eosio;
 +  typedef eosio::multi_index<"testtaba"_n, test_table> test_table_t;
 ```
 
-6. Define the multi-index table data member of type `test_table_t` defined in the privious step
+### 5. Instantiate The Multi-Index Table
+
+Declare the `testtab` multi-index table as a data member of type `test_table_t`.
+
 ```diff
   // the data structure which defines each row of the table
   struct [[eosio::table]] test_table {
@@ -69,7 +108,9 @@ using namespace eosio;
 +  test_table_t testtab;
 ```
 
-7. Instantiate the data member `testtab` by passing to its constructor the `scope` (in this case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor
+# 6. Initialize The Multi-Index Table Instance
+
+Initialize the data member `testtab` by passing to its constructor the `scope` (in this case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor
 
 ```diff
 // contract class constructor
@@ -80,11 +121,13 @@ multi_index_example( name receiver, name code, datastream<const char*> ds ) :
 +   testtab(receiver, receiver.value)
    { }
 ```
+
 Now you have instantiated the `testtab` variable as a multi-index table which has a primary index defined for its `test_primary` data member.
 
 Here is how the definition of a `multi_index_example` contract containing a multi-index table could look like after following all the steps above.
 
 __multi_index_example.hpp__
+
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
@@ -131,3 +174,14 @@ class [[eosio::contract]] multi_index_example : public contract {
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+
+## Summary
+
+In conclusion, the above instructions show how to define and instantiate a multi-index table instance.
+
+## Next Steps
+
+The following option is available when you complete the procedure:
+
+* You can [insert data in the multi-index table](./how-to-insert-data-into-a-multi-index-table).
+* You can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the multi-index table.

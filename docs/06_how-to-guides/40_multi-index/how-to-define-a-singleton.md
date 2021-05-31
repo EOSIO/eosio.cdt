@@ -156,4 +156,4 @@ In conclusion, the above instructions show how to define a singleton.
 
 The following option is available when you complete the procedure:
 
-* Because a singleton is using a multi-index table, you can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton.
+* Because a singleton is using as underlying structure a multi-index table, you can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton same as you would with a multi-index table.
