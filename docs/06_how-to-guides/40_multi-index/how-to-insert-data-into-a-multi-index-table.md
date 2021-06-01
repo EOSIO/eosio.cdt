@@ -11,8 +11,8 @@ This guide provides instructions on how to insert data into a multi-index table.
 See the following code reference:
 
 * The [`multi-index`](../../classeosio_1_1multi__index) class.
-* The [`find(...)`](../../group__multiindex#function-find) function.
-* The [`emplace`](../../group__multiindex/#function-emplace) method.
+* The [`multi-index::find(...)`](../../group__multiindex#function-find) function.
+* The [`multi-index::emplace(...)`](../../group__multiindex/#function-emplace) method.
 
 ## Before you begin
 

@@ -11,8 +11,8 @@ This guide provides instructions on how to to delete data from a multi-index tab
 See the following code reference:
 
 * The [`multi-index`](../../classeosio_1_1multi__index) class.
-* The [`find(...)`](../../group__multiindex#function-find) function.
-* The [`erase(...)`](../../group__multiindex/#function-erase) method.
+* The [`multi-index::find(...)`](../../group__multiindex#function-find) function.
+* The [`multi-index::erase(...)`](../../group__multiindex/#function-erase) method.
 
 ## Before you begin
 

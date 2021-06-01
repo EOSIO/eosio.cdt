@@ -1,69 +1,48 @@
 ---
-content_title: How to iterate and retrieve a multi-index table based on secondary index
+content_title: How to iterate and retrieve from multi-index table based on secondary index
 ---
 
-## Preconditions
-- It is assumed you already have a multi-index table defined with a primary index and a secondary index, if not you can find an example [here](./how-to-define-a-secondary-index.md).
+## Overview
 
-You'll start with this example below which shows the definition of a `multi_index_example` contract class which has defined a multi-index table with two indexes, a mandatory primary one and a secondary one:
+This guide provides instructions on how iterate and retrieve data from a multi-index table based on a secondary index defined in the multi-index table.
 
-```cpp
-#include <eosio/eosio.hpp>
-using namespace eosio;
+## Reference
 
-// multi-index example contract class
-class [[eosio::contract]] multi_index_example : public contract {
-   public:
-      using contract::contract;
+See the following code reference:
 
-      // contract class constructor
-      multi_index_example( name receiver, name code, datastream<const char*> ds ) :
-         // contract base class contructor
-         contract(receiver, code, ds),
-         // instantiate multi-index instance as data member (find it defined below)
-         testtab(receiver, receiver.value)
-         { }
+* The [`multi-index`](../../classeosio_1_1multi__index) class.
+* The [`multi-index::find(...)`](../../group__multiindex#function-find) function.
 
-      // the row structure of the multi-index table, that is, each row of the table
-      // will contain an instance of this type of structure
-      struct [[eosio::table]] test_table {
-        // this property stores a name for each row of the multi-index table
-        name test_primary;
-        name secondary;
-        // additional data stored in table row
-        uint64_t datum;
-        // mandatory definition for primary key getter
-        uint64_t primary_key( ) const { return test_primary.value; }
-        uint64_t by_secondary( ) const { return secondary.value; }
-      };
+## Before you begin
 
-      // the multi-index type definition, for ease of use define a type alias `test_table_t`, 
-      // based on the multi_index template type, parametarized with a random name, the 
-      // test_table data structure, and the secondary index
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
+Make sure you have the following prerequisites in place:
 
-      // the multi-index table instance declared as a data member of type test_table_t
-      test_table_t testtab;
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index),
+* A multi-index `testab` table instance which stores `user` objects indexed by the primary key which is of type `eosio::name` and a secondary index for property `secondary` of type `eosio::name` accessible through `by_secondary()` method. Consult the section [How to define a secondary index](./how-to-define-a-secondary-index) to learn how to set it up.
 
-      [[eosio::action]] void set( name user );
-      [[eosio::action]] void print( name user );
+## Procedure
 
-      using set_action = action_wrapper<"set"_n, &multi_index_example::set>;
-      using print_action = action_wrapper<"print"_n, &multi_index_example::print>;
-};
-```
+Complete the following steps to iterate, retrieve and print data from the `testtab` multi-index table using the secondary index.
 
-To iterate and retreive the multi-index table `testtab` defined in `multi_index_example` contract based on secondary index `by_secondary`, define a third action `bysec` which will do exactly that.
+### 1. Define The `bysec(...)` Action
 
-1. In the contract definition, add the new action definition, using the `[[eosio::action]] void` and the `eosio::action_wrapper` template like this:
+Add to the definition of the multi-index table the `bysec` action which gets as parameter an account name. This will be the action which will retrieve the user object stored in the multi-index based on the name input parameter using the secondary index.
 
 ```cpp
   [[eosio::action]] void bysec( name secid );
-
-  using bysec_action = action_wrapper<"bysec"_n, &multi_index_example::bysec>;
 ```
 
-2. In the contract implementation add the new action implementation like this:
+For ease of use add the action wrapper definition as well
+
+```diff
+  [[eosio::action]] void bysec( name secid );
+
+  +using bysec_action = action_wrapper<"bysec"_n, &multi_index_example::bysec>;
+```
+
+### 2. Implement The `bysec(...)` Action
+
+Search the `user` name in the multi-index table using the secondary index. If found, print out the value of field `datum`. Otherwise assert with a custom message. In the contract definition add the following implementation for `print` action:
 
 ```cpp
 // iterates the multi-index table rows using the secondary index and prints the row's values
@@ -78,9 +57,12 @@ To iterate and retreive the multi-index table `testtab` defined in `multi_index_
 }
 ```
 
-3. The full code for both the contract definition and contract implementation follow:
+### 3. Put It All Together
+
+The full definition and implementation files for the contract should look like this:
 
 __multi_index_example.hpp__
+
 ```cpp
 #include <eosio/eosio.hpp>
 using namespace eosio;
@@ -130,6 +112,7 @@ class [[eosio::contract]] multi_index_example : public contract {
 ```
 
 __multi_index_example.cpp__
+
 ```cpp
 #include <multi_index_example.hpp>
 
@@ -173,3 +156,14 @@ __multi_index_example.cpp__
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
+
+## Summary
+
+In conclusion, the above instructions show how to iterate and retrieve a multi-index table based on secondary index.
+
+## Next Steps
+
+The following option is available when you complete the procedure:
+
+* You can [insert data](./how-to-insert-data-into-a-multi-index-table) into the multi-index table.
+* You can [delete data](./how-to-delete-data-from-a-multi-index-table) from the multi-index table.
