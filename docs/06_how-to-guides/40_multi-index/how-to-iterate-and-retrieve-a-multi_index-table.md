@@ -32,7 +32,7 @@ Add to the definition of the `testtab` multi-index table the `print` action whic
 [[eosio::action]] void print( name user );
 ```
 
-For ease of use add the action wrapper definition as well
+Optionally, for ease of use add the action wrapper definition as well.
 
 ```diff
 [[eosio::action]] void print( name user );

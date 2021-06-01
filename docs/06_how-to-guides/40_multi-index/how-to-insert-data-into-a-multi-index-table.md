@@ -27,7 +27,7 @@ Complete the following steps to insert an user object in the `testtab` multi-ind
 
 ### 1. Verify If The User Already Exists
 
-Make use of the multi-index table iterator to find out if the user object already exists. 
+Make use of the multi-index table iterator to find out if the user object already exists. The targeted user is searched based on its account name.
 
 ```cpp
 [[eosio::action]] void multi_index_example::set( name user ) {

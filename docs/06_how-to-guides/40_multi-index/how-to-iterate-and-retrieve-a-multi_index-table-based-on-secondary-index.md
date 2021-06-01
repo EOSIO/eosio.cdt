@@ -32,7 +32,7 @@ Add to the definition of the multi-index table the `bysec` action which gets as 
   [[eosio::action]] void bysec( name secid );
 ```
 
-For ease of use add the action wrapper definition as well
+Optionally, for ease of use add the action wrapper definition as well.
 
 ```diff
   [[eosio::action]] void bysec( name secid );

@@ -27,7 +27,7 @@ Complete the following steps to implement a `del` action which deletes an user o
 
 ### 1. Find The User You Want To Delete
 
-Make use of the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to delete based on its account name:
+Make use of the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to delete. The targeted user is searched based on its account name.
 
 ```cpp
 [[eosio::action]] void multi_index_example::del( name user ) {

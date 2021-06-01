@@ -32,7 +32,7 @@ Add to the definition of the `testtab` multi-index table the `mod` action which 
 [[eosio::action]] void mod( name user, uint32_t value );
 ```
 
-For ease of use add the action wrapper definition as well
+Optionally, for ease of use add the action wrapper definition as well.
 
 ```diff
 [[eosio::action]] void mod( name user, uint32_t value );
@@ -42,7 +42,7 @@ For ease of use add the action wrapper definition as well
 
 ### 2. Find The User You Want To Modify
 
-Make use of the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to modify based on its account name.
+Make use of the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to modify. The targeted user is searched based on its account name.
 
 ```cpp
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
@@ -50,7 +50,7 @@ Make use of the multi-index [`find(...)`](../../group__multiindex#function-find)
 }
 ```
 
-### 3. Yield Error Is User Not Found
+### 3. Yield Error If User Not Found
 
 If the `user` object you want to update is not found, then assert by using the `check` method and yield an error message.
 
@@ -63,7 +63,7 @@ If the `user` object you want to update is not found, then assert by using the `
 
 ### 4. Update The User If Found
 
-If the `user` object you want to update is found, the `check` method will do nothing and the iterator `itr` will be pointing at the object which you want to update, so then use the multi-index `modify` method to make the update like below
+If the `user` object you want to update is found, the `check` method will do nothing and the iterator `itr` will be pointing at the object which you want to update. Use the `modify` method to update the user object `datum` property with the `value` parameter.
 
 ```diff
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
@@ -76,6 +76,8 @@ If the `user` object you want to update is found, the `check` method will do not
 +  });
 }
 ```
+
+Now you have implemented a new action `mod`, which when sent to the blockchain will update the `datum` propety for user object identified by `user` name with the `value` sent as parameter.
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
