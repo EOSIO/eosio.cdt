@@ -4,19 +4,18 @@
 
 namespace cosmwasm {
 
-   typedef std::string human_addr;
+   typedef std::string addr;
 
    struct block_info {
       uint64_t height;
       uint64_t time;
-      uint64_t time_nanos;
       std::string chain_id;
 
-      COSMWASM_SERIALIZE(block_info, (height)(time)(time_nanos)(chain_id))
+      COSMWASM_SERIALIZE(block_info, (height)(time)(chain_id))
    };
 
    struct contract_info {
-      human_addr address;
+      addr address;
 
       COSMWASM_SERIALIZE(contract_info, (address))
    };
@@ -29,10 +28,10 @@ namespace cosmwasm {
    };
 
    struct message_info {
-      human_addr sender;
-      std::vector<coin> sent_funds;
+      addr sender;
+      std::vector<coin> funds;
 
-      COSMWASM_SERIALIZE(message_info, (sender)(sent_funds))
+      COSMWASM_SERIALIZE(message_info, (sender)(funds))
    };
 
    struct env {
