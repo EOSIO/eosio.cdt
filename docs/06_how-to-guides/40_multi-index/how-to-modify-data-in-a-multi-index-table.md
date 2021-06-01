@@ -11,7 +11,7 @@ This guide provides instructions on how to modify data in a multi-index table.
 See the following code reference:
 
 * The [`multi-index`](../../classeosio_1_1multi__index) class.
-* The [`multi-index::modify(...)`](../../group__multiindex/#function-modify) function.
+* The [`multi-index::modify(...)`](../../group__multiindex/#function-modify) method.
 
 ## Before you begin
 
@@ -24,7 +24,7 @@ Make sure you have the following prerequisites in place:
 
 Complete the following steps to modify data in the `testtab` multi-index table.
 
-### 1. Define The `mod(...)` Action
+### 1. Define The mod(...) Action
 
 Add to the definition of the `testtab` multi-index table the `mod` action which gets as input parameters a `user` of type `eosio::name` and a `value` of type `uint32_t`. The `mod` action will update the `user` object `datum` property with the `uint32_t` value.
 
@@ -52,7 +52,7 @@ Make use of the multi-index [`find(...)`](../../group__multiindex#function-find)
 
 ### 3. Yield Error If User Not Found
 
-If the `user` object you want to update is not found, then assert by using the `check` method and yield an error message.
+If the `user` object you want to update is not found then raise an error message by using the [`eosio::check`](../../namespaceeosio/#function-check-17) method.
 
 ```diff
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
@@ -63,7 +63,7 @@ If the `user` object you want to update is not found, then assert by using the `
 
 ### 4. Update The User If Found
 
-If the `user` object you want to update is found, the `check` method will do nothing and the iterator `itr` will be pointing at the object which you want to update. Use the `modify` method to update the user object `datum` property with the `value` parameter.
+If the `user` object you want to update is found, the [`eosio::check`](../../namespaceeosio/#function-check-17) method will do nothing and the iterator `itr` will be pointing at the object which you want to update. Use the [`multi-index::modify(...)`](../../group__multiindex/#function-modify) method to update the user object `datum` property with the `value` parameter.
 
 ```diff
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
@@ -77,7 +77,7 @@ If the `user` object you want to update is found, the `check` method will do not
 }
 ```
 
-Now you have implemented a new action `mod`, which when sent to the blockchain will update the `datum` propety for user object identified by `user` name with the `value` sent as parameter.
+Now you have implemented a new action `mod`, which when sent to the blockchain will update the `datum` property for user object identified by `user` name with the `value` sent as parameter.
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

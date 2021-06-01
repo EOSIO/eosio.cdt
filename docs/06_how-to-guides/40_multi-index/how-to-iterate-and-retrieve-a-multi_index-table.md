@@ -11,7 +11,7 @@ This guide provides instructions on how to iterate and retrieve data from a mult
 See the following code reference:
 
 * The [`multi-index`](../../classeosio_1_1multi__index) class.
-* The [`multi-index::find(...)`](../../group__multiindex#function-find) function.
+* The [`multi-index::find(...)`](../../group__multiindex#function-find) method.
 
 ## Before you begin
 
@@ -24,9 +24,9 @@ Make sure you have the following prerequisites in place:
 
 Complete the following steps to iterate, retrieve and print data from the `testtab` multi-index table.
 
-### 1. Define The `print(...)` Action
+### 1. Define The print(...) Action
 
-Add to the definition of the `testtab` multi-index table the `print` action which gets as parameter an account name:
+Add to the definition of the `testtab` multi-index table the `print` action which gets as parameter an account name.
 
 ```cpp
 [[eosio::action]] void print( name user );
@@ -42,7 +42,7 @@ Optionally, for ease of use add the action wrapper definition as well.
 
 ### 2. Implement The `print(...)` Action
 
-Search the `user` name in the multi-index table using the primary index. If found, print out the value of field `datum`. Otherwise assert with a custom message. In the contract definition add the following implementation for `print` action:
+Search the `user` name in the multi-index table using the primary index. If found, print out the value of field `datum`. Otherwise raise an error with a custom message. In the contract definition add the following implementation for `print` action:
 
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {

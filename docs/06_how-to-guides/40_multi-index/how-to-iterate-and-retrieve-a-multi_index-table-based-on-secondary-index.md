@@ -11,7 +11,7 @@ This guide provides instructions on how iterate and retrieve data from a multi-i
 See the following code reference:
 
 * The [`multi-index`](../../classeosio_1_1multi__index) class.
-* The [`multi-index::find(...)`](../../group__multiindex#function-find) function.
+* The [`multi-index::find(...)`](../../group__multiindex#function-find) method.
 
 ## Before you begin
 
@@ -24,7 +24,7 @@ Make sure you have the following prerequisites in place:
 
 Complete the following steps to iterate, retrieve and print data from the `testtab` multi-index table using the secondary index.
 
-### 1. Define The `bysec(...)` Action
+### 1. Define The bysec(...) Action
 
 Add to the definition of the multi-index table the `bysec` action which gets as parameter an account name. This will be the action which will retrieve the user object stored in the multi-index based on the name input parameter using the secondary index.
 
@@ -42,7 +42,7 @@ Optionally, for ease of use add the action wrapper definition as well.
 
 ### 2. Implement The `bysec(...)` Action
 
-Search the `user` name in the multi-index table using the secondary index. If found, print out the value of field `datum`. Otherwise assert with a custom message. In the contract definition add the following implementation for `print` action:
+Search the `user` name in the multi-index table using the secondary index. If found, print out the value of field `datum`. Otherwise raise and error with a custom message. In the contract definition add the following implementation for `print` action:
 
 ```cpp
 // iterates the multi-index table rows using the secondary index and prints the row's values

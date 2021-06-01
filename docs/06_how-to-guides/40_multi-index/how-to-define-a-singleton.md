@@ -32,7 +32,7 @@ Include the `eosio.hpp` and `singleton.hpp` headers and declare the `eosio` name
    using namespace eosio;
    ```
 
-### 2. Defines The Table Data Structure
+### 2. Define The Table Data Structure
 
 Define the data structure for the multi-index table the singleton will use:
 
