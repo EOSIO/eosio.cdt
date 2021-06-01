@@ -10,6 +10,7 @@
       out.insert_or_assign(BOOST_PP_STRINGIZE(elem), cosmwasm::json::to_json(v.elem));
 
 #define COSMWASM_SERIALIZE(TYPE, FIELDS) \
+   static constexpr const char* __typename = #TYPE; \
    static TYPE from_json(const cosmwasm::json::value& v) { \
       TYPE out; \
       BOOST_PP_SEQ_FOR_EACH(COSMWASM_DESERIALIZE_FIELD, _, FIELDS) \
