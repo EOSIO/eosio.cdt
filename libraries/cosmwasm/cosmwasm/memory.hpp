@@ -19,6 +19,10 @@ namespace cosmwasm {
       return build_region_from_components((uint32_t)data, length, length);
    }
 
+   std::unique_ptr<region> build_region(const char* data, uint32_t length) {
+      return build_region_from_components((uint32_t)data, length, length);
+   }
+
    std::unique_ptr<region> build_region_dup(char* data, uint32_t length) {
       void* dup = malloc(length);
       std::copy_n(data, length, (char*)dup);

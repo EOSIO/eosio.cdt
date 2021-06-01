@@ -1,7 +1,7 @@
 #pragma once
+#include <string>
 
 namespace cosmwasm {
-
    template<typename T>
    std::string to_string(T&& v) {
       constexpr bool has_to_string = requires(const T& t) {
@@ -13,5 +13,4 @@ namespace cosmwasm {
          return std::to_string(v);
       }
    }
-
 }
