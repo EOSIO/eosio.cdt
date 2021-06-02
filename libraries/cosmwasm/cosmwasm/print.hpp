@@ -3,6 +3,7 @@
 #include "stringize.hpp"
 #include <string_view>
 
+#ifndef BLANC_NATIVE
 namespace cosmwasm {
    template<typename T>
    inline void print(T&& t) {
@@ -15,3 +16,12 @@ namespace cosmwasm {
          print(to_string(t));
    }
 }
+#else
+#include <iostream>
+namespace cosmwasm {
+   template<typename T>
+   inline void print(T&& t) {
+      std::cout << t << std::endl;
+   }
+}
+#endif

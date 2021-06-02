@@ -2,6 +2,10 @@
 #include <cstddef>
 #include <vector>
 
+#ifdef BLANC_NATIVE
+using uint128_t = __uint128_t;
+#endif
+
 namespace cosmwasm {
    typedef std::vector<char> bytes;
 }

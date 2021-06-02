@@ -5,13 +5,13 @@
 namespace cosmwasm {
    namespace internal_use_do_not_use {
       extern "C" {
-         __attribute__((import_name("db_read")))
+         WASM_IMPORT("db_read")
          region* db_read(region*);
 
-         __attribute__((import_name("db_write")))
+         WASM_IMPORT("db_write")
          void db_write(region*, region*);
 
-         __attribute__((import_name("db_remove")))
+         WASM_IMPORT("db_remove")
          void db_remove(region*);
       }
    }

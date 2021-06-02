@@ -1,12 +1,25 @@
 #pragma once
 #include <cstdint>
 
-extern "C" {
+#ifndef BLANC_NATIVE
+# define WASM_EXPORT(x) __attribute__((export_name(x)))
+# define WASM_IMPORT(x) __attribute__((import_name(x)))
+# define POINTER_WIDTH_TYPE uint32_t
+#else
+# define WASM_EXPORT(x)
+# define WASM_IMPORT(x)
+# define POINTER_WIDTH_TYPE uint64_t
+#endif
 
+namespace cosmwasm {
+   using ptr_t = POINTER_WIDTH_TYPE;
+}
+
+extern "C" {
    void __wasm_call_ctors();
 
    struct region {
-      uint32_t offset;
+      cosmwasm::ptr_t offset;
       uint32_t capacity;
       uint32_t length;
 
@@ -19,18 +32,19 @@ extern "C" {
       : offset(offset), capacity(capacity), length(length) {}
    };
 
+#ifndef BLANC_NATIVE
    void abort();
+#endif
 
-   __attribute__((export_name("cosmwasm_vm_version_4")))
+   WASM_EXPORT("cosmwasm_vm_version_4")
    void cosmwasm_vm_version_4();
 
-   __attribute__((export_name("allocate")))
-   region* allocate(size_t size);
+   WASM_EXPORT("allocate")
+   region* allocate(std::size_t size);
 
-   __attribute__((export_name("deallocate")))
+   WASM_EXPORT("deallocate")
    void deallocate(region* reg);
 
-   __attribute__((import_name("debug")))
+   WASM_IMPORT("debug")
    void debug(region*);
-
 }
