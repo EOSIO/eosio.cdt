@@ -71,4 +71,9 @@ compiler options:
   -sysroot=<string>        - Set the system root directory
   -v                       - Show commands to run and use verbose output
   -w                       - Suppress all warnings
+  -no-missing-ricardian-clause - Default false, disables warnings for missing Ricardian clauses
 ```
+
+## Notes
+
+* -no-missing-ricardian-clause: Defaulting to false, if enabled, it suppresses warnings concerning missing Ricardian clauses on contracts and contract actions, including warnings generated when there is also no independent Ricardian clause file.
