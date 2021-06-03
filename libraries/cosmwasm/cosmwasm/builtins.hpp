@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <cstdint>
 
 #ifndef BLANC_NATIVE
@@ -40,7 +41,7 @@ extern "C" {
    void cosmwasm_vm_version_4();
 
    WASM_EXPORT("allocate")
-   region* allocate(std::size_t size);
+   region* allocate(size_t size);
 
    WASM_EXPORT("deallocate")
    void deallocate(region* reg);
