@@ -1,6 +1,8 @@
 #pragma once
 #include "stringize.hpp"
 #include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/to_tuple.hpp>
+#include <boost/preprocessor/tuple/rem.hpp>
 #include <boost/preprocessor/stringize.hpp>
 
 #define COSMWASM_DESERIALIZE_FIELD(r, data, elem) \
@@ -41,4 +43,7 @@
       cosmwasm::bytes out(s.size()); \
       std::copy_n(s.data(), s.size(), out.data()); \
       return out; \
+   } \
+   auto to_tuple() { \
+      return std::make_tuple BOOST_PP_SEQ_TO_TUPLE(FIELDS); \
    }
