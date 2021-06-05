@@ -113,9 +113,7 @@ namespace cosmwasm { namespace json {
       if (v.is<int64_t>()) {
          return v.get<int64_t>();
       } else {
-         uint64_t out = 0;
-         std::stoull(v.get<std::string>(), reinterpret_cast<size_t*>(&out));
-         return out;
+         return std::stoull(v.get<std::string>(), nullptr);
       }
    }
 
@@ -216,7 +214,7 @@ namespace cosmwasm { namespace json {
 
    template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
    value to_json(T v) {
-      return value(v);
+      return value((int64_t)v);
    }
 
    template<typename T, std::enable_if_t<std::is_class_v<T> &&
