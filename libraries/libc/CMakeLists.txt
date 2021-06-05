@@ -188,7 +188,7 @@ target_compile_definitions(c PUBLIC PRINTF_SUPPORT_FLOAT)
 target_compile_definitions(native_c PUBLIC PRINTF_SUPPORT_FLOAT)
 
 # libc with no floating point
-add_library(cnf ${C_SOURCES} "musl/src/internal/builtins/multi3.c")
+add_library(cnf ${C_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/compiler_builtins.c")
 target_include_directories(cnf
    PRIVATE ${C_PRIVATE_INCLUDES}
    PUBLIC ${C_PUBLIC_INCLUDES}
