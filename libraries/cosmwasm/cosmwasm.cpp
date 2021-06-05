@@ -5,7 +5,7 @@ void abort() {
    __builtin_trap();
 }
 
-void cosmwasm_vm_version_4() {
+void interface_version_5() {
 }
 
 void cosmwasm_init() {

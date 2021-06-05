@@ -37,8 +37,8 @@ extern "C" {
    void abort();
 #endif
 
-   WASM_EXPORT("cosmwasm_vm_version_4")
-   void cosmwasm_vm_version_4();
+   WASM_EXPORT("interface_version_5")
+   void interface_version_5();
 
    WASM_EXPORT("allocate")
    region* allocate(size_t size);
