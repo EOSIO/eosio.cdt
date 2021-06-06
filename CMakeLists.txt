@@ -87,6 +87,7 @@ configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DI
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/cosmwasm/cosmwasm/picojson/LICENSE ${CMAKE_BINARY_DIR}/licenses/picojson.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/cosmwasm/cosmwasm/uint128_t/LICENSE ${CMAKE_BINARY_DIR}/licenses/uint128_t.license COPYONLY)
 
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 

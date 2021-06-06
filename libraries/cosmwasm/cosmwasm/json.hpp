@@ -24,45 +24,6 @@ namespace cosmwasm { namespace json {
    using null = picojson::null;
 
    namespace _detail {
-      uint32_t char_to_digit(char c) {
-         if (c >= '0' && c <= '9')
-            return c - '0';
-         if (c >= 'a' && c <= 'f')
-            return c - 'a' + 10;
-         if (c >= 'A' && c <= 'F')
-            return c - 'A' + 10;
-         abort();
-      }
-
-      template<typename T>
-      T from_str_radix(const std::string& s, uint32_t radix) {
-         T v = 0;
-         int is_signed = -1;
-
-         check(s.size() && (radix >= 2 && radix <= 16));
-
-         if (s[0] == '+') {
-            is_signed = 0;
-         } else if (s[0] == '-') {
-            check(std::is_signed_v<T>);
-            is_signed = 1;
-         }
-
-         for (auto i = (is_signed >= 0 ? 1 : 0); i < s.size(); ++i) {
-            T tmp = v;
-            v *= radix;
-            check(v >= tmp);
-
-            tmp = v;
-            v += char_to_digit(s[i]);
-            check(v >= tmp);
-         }
-         if (is_signed == 1) {
-            v *= -1;
-         }
-         return v;
-      }
-
       template<typename T, typename Enable = void>
       struct is_vector : std::false_type {};
 
@@ -119,7 +80,7 @@ namespace cosmwasm { namespace json {
 
    template<>
    uint128_t from_json(const value& v) {
-      return _detail::from_str_radix<uint128_t>(v.get<std::string>(), 10);
+      return uint128_t(v.get<std::string>());
    }
 
    template<typename T, std::enable_if_t<std::is_class_v<T> &&

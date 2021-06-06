@@ -412,6 +412,9 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-ffreestanding");
       copts.emplace_back("-nostdlib");
       copts.emplace_back("-fno-builtin");
+      if (profile == Profile::CosmWasm) {
+         copts.emplace_back("-DNO_BUILTIN_UINT128");
+      }
    } else {
       copts.emplace_back("-Wunused-command-line-argument");
 #ifdef __APPLE__
