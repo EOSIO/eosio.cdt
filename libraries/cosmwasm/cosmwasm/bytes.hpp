@@ -15,6 +15,13 @@ namespace cosmwasm {
       return v.as_bytes();
    }
 
+   template<>
+   bytes to_bytes(const std::string& v) {
+      bytes out(v.size());
+      std::copy(v.begin(), v.end(), out.begin());
+      return out;
+   }
+
    template<typename T, std::enable_if_t<std::is_integral_v<std::decay_t<T>>, int> = 0>
    bytes to_bytes(T v) {
       union {
