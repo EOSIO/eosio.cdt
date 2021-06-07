@@ -6,7 +6,8 @@ namespace cosmwasm {
 
    class contract {
    public:
-      contract(env _env, message_info _info, storage _storage = {}): _env(_env), _info(_info) {}
+      contract(env _env, message_info _info, storage _storage = storage{})
+         : _env(_env), _info(_info), _storage(_storage) {}
 
    protected:
       env _env;

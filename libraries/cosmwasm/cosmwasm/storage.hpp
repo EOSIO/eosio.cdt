@@ -55,4 +55,21 @@ namespace cosmwasm {
          remove(key.data(), key.size());
       }
    };
+
+   bytes namespaces_with_key(const std::vector<bytes>& namespaces, bytes key) {
+      int size = key.size();
+      for (const auto& nm : namespaces) {
+         size += nm.size() + 2;
+      }
+
+      bytes out(size);
+      auto it = out.begin();
+      for (const auto& nm : namespaces) {
+         *it++ = nm.size() & 0xFF;
+         *it++ = (nm.size() >> 8) & 0xFF;
+         it = std::copy(nm.begin(), nm.end(), it);
+      }
+      std::copy(key.begin(), key.end(), it);
+      return out;
+   }
 }
