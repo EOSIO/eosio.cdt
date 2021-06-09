@@ -34,7 +34,7 @@ Include the `eosio.hpp` and `singleton.hpp` headers and declare the `eosio` name
 
 ### 2. Define The Table Data Structure
 
-Define the data structure for the multi-index table the singleton will use:
+Define the data structure for the multi-index table:
 
    ```cpp
    struct [[eosio::table]] testtable {
@@ -45,7 +45,7 @@ Define the data structure for the multi-index table the singleton will use:
 
 ### 3. Define A Singleton Type Alias
 
-For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testtable"`, which has to respect the EOSIO account name restrictions, and the `testtable` data structure defined above
+For ease of use, define a type alias `singleton_type` based on the `eosio::singleton` template type, parametarized with a random name `"testtable"` and the `testtable` data structure. The names must adhere to `EOSIO` account name restrictions.
 
    ```diff
    struct [[eosio::table]] testtable {
@@ -118,7 +118,7 @@ class [[eosio::contract]] singleton_example : public contract {
 };
 ```
 
-Find below a possible implementation for the two `get` and `set` actions defined above. It also demonstrates the usage of the `get` and `set` singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which the second parameter is the payer account for the RAM needed to store the new value.
+Find below a possible implementation for the two `get` and `set` actions. It also demonstrates the usage of the `get` and `set` singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which the second parameter is the payer account for the RAM needed to store the new value.
 
 __singleton_example.cpp__
 

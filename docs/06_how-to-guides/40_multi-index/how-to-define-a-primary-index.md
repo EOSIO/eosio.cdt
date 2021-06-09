@@ -69,11 +69,16 @@ Add definition of the primary index for the multi-index table. The primary index
   ```
 
 [[info | Secondary indexes information]]
-| Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the corresponding data member types can be uint64_t, uint128_t, uint256_t, double or long double.
+| Secondary indexes may be defined which are not unique. There can be up to 16 secondary indexes. Secondary indices support the following types:
+* uint64_t 
+* uint128_t
+* uint256_t
+* double
+* long double
 
 ### 4. Define A Multi-Index Type Alias
 
-For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above.
+For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure. The names must adhere to `EOSIO` account name restrictions.
 
   ```diff
     // the data structure which defines each row of the table

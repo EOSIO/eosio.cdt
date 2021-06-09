@@ -73,7 +73,7 @@ Add definition of the primary index for the multi-index table. The primary index
 
 ### 4. Define A Multi-Index Type Alias
 
-For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure defined above.
+For ease of use, define a type alias `test_table_t` based on the `eosio::multi_index` template type, parametarized with a random name `"testtaba"` and the `test_table` data structure. The names must adhere to `EOSIO` account name restrictions.
 
 ```diff
   // the data structure which defines each row of the table

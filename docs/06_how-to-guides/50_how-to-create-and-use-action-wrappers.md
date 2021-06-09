@@ -67,7 +67,7 @@ To use the action wrapper, you have to include the header file where the action 
 
 #### 2.2. Instantiate The Action Wrapper
 
-Instantiate the `mod_action` defined above, specifying the contract to send the action to as the first argument. In this case, it is assumed the contract is deployed to `multiindexex` account, and a structure which is defined by two parameters: the self account, obtained by `get_self()` call, and the `active` permission (you can modify these two parameters based on your requirements).
+Instantiate the `mod_action`, specifying the contract to send the action to as the first argument. In this case, it is assumed the contract is deployed to `multiindexex` account, and a structure which is defined by two parameters: the self account, obtained by `get_self()` call, and the `active` permission (you can modify these two parameters based on your requirements).
 
 ```diff
 #include <multi_index_example.hpp>
