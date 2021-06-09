@@ -74,11 +74,11 @@ assertion failure with message: singleton does not exist
 pending console output: 
 ```
 
-__Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## You successfully re-deployed the contract code, but when you query the table you get the fields of the row values swapped, that is, it appears the values stored in table rows are the same only that they are swapped between fields/columns
 
-__Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## You successfully re-deployed the contract code, but when you query the table you get a parse error, like the one below, or the returned data seems to be garbage
 
@@ -87,7 +87,7 @@ error 2019-09-26T07:05:54.825 thread-0  main.cpp:3449                 main      
 Couldn't parse type_name
 ```
 
-__Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## eosio-cpp process never completes
 
