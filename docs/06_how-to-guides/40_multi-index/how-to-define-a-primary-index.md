@@ -4,7 +4,7 @@ content_title: How to define a primary index
 
 ## Overview
 
-This guide provides instructions on how to define a primary index for a multi-index table.
+This guide provides instructions to define a primary index for a multi-index table.
 
 ## Reference
 
@@ -24,7 +24,7 @@ Complete the following steps to define a primary index for the multi-index table
 
 ### 1. Preparation And Initialization
 
-Include the `eosio.hpp` header and declare the `eosio` namespace usage.
+Include the `eosio.hpp` header and use the `using` directive to access the `eosio` namespace.
 
   ```cpp
   #include <eosio/eosio.hpp>
@@ -118,8 +118,6 @@ Now you have instantiated the `testtab` as a multi-index table which has a prima
 In conclusion, the above instructions show how to define a primary index for a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [insert data in the multi-index table](./how-to-insert-data-into-a-multi-index-table).
 * You can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the multi-index table.

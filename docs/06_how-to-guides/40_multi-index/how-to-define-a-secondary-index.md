@@ -4,7 +4,7 @@ content_title: How to define a secondary index
 
 ## Overview
 
-This guide provides instructions on how to define a secondary index for a multi-index table.
+This guide provides instructions to define a secondary index for a multi-index table.
 
 ## Reference
 
@@ -123,7 +123,5 @@ Now you have instantiated the `testtab` as a multi-index table which has a prima
 In conclusion, the above instructions show how to define a secondary index for a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [iterate and retrieve data using the secondary index](./how-to-iterate-and-retrieve-a-multi_index-table-based-on-secondary-index) from the multi-index table.

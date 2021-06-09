@@ -4,7 +4,7 @@ content_title: How to delete data from a multi-index table
 
 ## Overview
 
-This guide provides instructions on how to to delete data from a multi-index table.
+This guide provides instructions to to delete data from a multi-index table.
 
 ## Reference
 
@@ -61,8 +61,6 @@ If the user exists use the [`erase`(...)](../../group__multiindex/#function-eras
 In conclusion, the above instructions show how to delete data from a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can verify if the user object was deleted from the multi-index table. .
 

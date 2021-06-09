@@ -55,7 +55,7 @@ Complete the following steps to allow the `payer` account, to be the payer for t
 
 1. Create a new action `upsert` in your smart contact class, which takes as input parameters an `account name, a first name, a last name, a personal id` which define a person data, and an `account name` for the payer.
 2. In the `upsert` action access the instance of `address_table` belonging to this contract by declaring a local variable of `address_table` type and pass the contract name as paramter.
-3. And then call the `put` method of the `address_table` and pass to it a newly created `person` object based on the action’s input parameters and the payer account name.
+3. Call the `put` method of the `address_table` and pass to it a newly created `person` object based on the action’s input parameters and the payer account name.
 
 Refer to the following reference implementation to allow a specific account name to be the payer for the resources needed to store a person object in the `kv table`:
 
@@ -112,8 +112,6 @@ void smrtcontract::upsert(
 In conclusion, the above instructions show how to create an action which requires the user to pay for the resources needed to store data in a `Key-Value Table` (`kv table`).
 
 ## Next Steps
-
-The following options are available when you complete the procedure:
 
 * [Check](60_how-to-check-a-record-kv-table.md) if the newly inserted `person` actually exists in the table. To accomplish this task, use the `exists()` function of any index defined for the table.
 * [Retrieve](70_how-to-find-in-kv-table.md) the newly inserted or updated `person` from the table. To accomplish this task, use the `find()` function of any index defined for the table.

@@ -4,7 +4,7 @@ content_title: How to instantiate a multi-index table
 
 ## Overview
 
-This guide provides instructions on how to instantiate a multi-index table.
+This guide provides instructions to instantiate a multi-index table.
 
 ## Reference
 
@@ -24,7 +24,7 @@ Complete the following steps to instantiate a multi-index table `testtab`.
 
 ### 1. Preparation And Initialization
 
-Include the `eosio.hpp` header and declare the `eosio` namespace usage.
+Include the `eosio.hpp` header and use the `using` directive to access the `eosio` namespace.
 
 ```cpp
 #include <eosio/eosio.hpp>
@@ -180,8 +180,6 @@ class [[eosio::contract]] multi_index_example : public contract {
 In conclusion, the above instructions show how to define and instantiate a multi-index table instance.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [insert data in the multi-index table](./how-to-insert-data-into-a-multi-index-table).
 * You can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the multi-index table.

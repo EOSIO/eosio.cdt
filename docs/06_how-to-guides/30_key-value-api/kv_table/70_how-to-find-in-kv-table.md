@@ -125,7 +125,5 @@ In conclusion, the above instructions show how to find a specific object in a `K
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * [Update](30_how-to-upsert-into-kv-table.md) the `person` found and returned.
 * [Delete](40_how-to-delete-from-kv-table.md) the `person` found and returned.

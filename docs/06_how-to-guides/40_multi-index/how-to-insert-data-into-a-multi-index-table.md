@@ -4,7 +4,7 @@ content_title: How to insert data into a multi-index table
 
 ## Overview
 
-This guide provides instructions on how to insert data into a multi-index table.
+This guide provides instructions to insert data into a multi-index table.
 
 ## Reference
 
@@ -66,7 +66,5 @@ Use the [`emplace`](../../group__multiindex/#function-emplace) method to make th
 In conclusion, the above instructions show how to insert data in a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [iterate and retrieve newly inserted data](./how-to-iterate-and-retrieve-a-multi_index-table) from the multi-index table.

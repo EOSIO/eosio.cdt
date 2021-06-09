@@ -125,6 +125,4 @@ In conclusion, the above instructions show how to retrieve a list of values, fro
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * Access the list of objects returned by the `getbylastname` action.

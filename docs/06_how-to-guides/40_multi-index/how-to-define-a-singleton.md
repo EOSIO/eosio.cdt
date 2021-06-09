@@ -4,7 +4,7 @@ content_title: How to define a singleton
 
 ## Overview
 
-This guide provides instructions on how to define a singleton.
+This guide provides instructions to define a singleton.
 
 ## Reference
 
@@ -57,7 +57,7 @@ For ease of use, define a type alias `singleton_type` based on the `eosio::singl
 
 ### 4. Define The Singleton Instance
 
-Define the singleton table instance as a data member of type `singleton_type` defined in the previous step.
+Define the singleton table instance as a data member of type `singleton_type`.
 
    ```diff
    struct [[eosio::table]] testtable {
@@ -71,7 +71,7 @@ Define the singleton table instance as a data member of type `singleton_type` de
 
 ### 5. Initialize And Use The Singleton Instance
 
-Initialize `singleton_instance` defined previously by passing to its constructor the `receiver` and the `code` (in this case `receiver.value`) parameters; these two combined with "testtable" provide access to the partition of the RAM cache used by this singleton. In this example you will initialize the `singleton_instance` data member in the smart contract constructor, see below:
+Initialize the `singleton_instance` using the constructor with the parameters `receiver` and `code` (the last one in in this case is `receiver.value`). These parameters, combined with `testtable`, provide access to the partition of the RAM cache used by this singleton. In our example you initialize the `singleton_instance` data member in the smart contract constructor, see below:
 
    ```diff
    // singleton contract constructor
@@ -118,7 +118,7 @@ class [[eosio::contract]] singleton_example : public contract {
 };
 ```
 
-And below is a possible implementation for the two `get` and `set` actions defined above. It also demonstrates the usage of a couple of singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which parameter is the account to pay for the new value stored. In this case, the same account name that is stored in the primary value is the payer. However, it can be a different account if so required.
+Find below a possible implementation for the two `get` and `set` actions defined above. It also demonstrates the usage of the `get` and `set` singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which the second parameter is the payer account for the RAM needed to store the new value.
 
 __singleton_example.cpp__
 
@@ -154,6 +154,4 @@ In conclusion, the above instructions show how to define a singleton.
 
 ## Next Steps
 
-The following option is available when you complete the procedure:
-
-* Because a singleton is using as underlying structure a multi-index table, you can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton same as you would with a multi-index table.
+* Singleton uses as underlying structure a multi-index table therefore you can [iterate and retrieve data](./how-to-iterate-and-retrieve-a-multi_index-table) from the singleton the same way you would with a multi-index table.

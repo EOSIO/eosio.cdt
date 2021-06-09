@@ -63,7 +63,7 @@ Complete the following steps to implement an action which iterates through the f
 2. In the `iterate` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. Capture the `begin` and the `end` of the `account_name_uidx` index defined.
 4. Use the iterator `value` to access the current value of the iterator.
-5. And then increment the iterator until the first N `person` objects stored in `address_table` are visited.
+5. Increment the iterator until the first N `person` objects stored in `address_table` are visited.
 
 Refer to the following reference implementation to implement an action which iterates through the first N `person` objects in `address_table` and prints their first and last names:
 

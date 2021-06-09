@@ -4,7 +4,7 @@ content_title: How to iterate and retrieve from multi-index table
 
 ## Overview
 
-This guide provides instructions on how to iterate and retrieve data from a multi-index table.
+This guide provides instructions to iterate and retrieve data from a multi-index table.
 
 ## Reference
 
@@ -146,8 +146,6 @@ __multi_index_example.cpp__
 In conclusion, the above instructions show how to iterate and retrieve a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [insert data](./how-to-insert-data-into-a-multi-index-table) into the multi-index table.
 * You can [delete data](./how-to-delete-data-from-a-multi-index-table) from the multi-index table.

@@ -83,6 +83,4 @@ In conclusion, the above instructions show how to define and use a `Key-Value Ma
 
 ## Next Steps
 
-The following option is available when you complete the procedure:
-
 * You [can add values](30_how-to-upsert-into-kv-map.md) in the map object created.

@@ -5,7 +5,7 @@ link_text: "How to create and use action wrappers"
 
 ## Overview
 
-This guide provides instructions on how to create and use an action wrapper in a smart contract.
+This guide provides instructions to create and use an action wrapper in a smart contract.
 
 ## Code Reference
 

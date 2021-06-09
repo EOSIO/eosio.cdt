@@ -2,9 +2,9 @@
 content_title: Data design and migration
 ---
 
-EOSIO based blockchains allow developers to easily update their smart contract code. However, a few things need to be considered when it comes to data update and/or migration. The main structure for storing data in EOSIO based blockchains is the multi-index table. Once a multi-index table has been created with a first version of a smart contract, it has some limitations when it comes to changing its structure. Below you will find a few possible approaches which you can consider when you design your smart contract data and its migration. 
+EOSIO based blockchains allow developers to easily update their smart contract code. However, a few things need to be considered when it comes to data updates and/or migration. The multi-index table API is one of the mechanisms (Key-Value API being the other) for storing and updating blockchain state. The multi-index table API creates and uses data structures in RAM. Once created and deployed on the blockchian, changing these structures, i.e. adding new fields, it has some limitations. Below you will find a few possible approaches which you can consider when you design your smart contract data and its migration. 
 
-# How to modify the structure of a multi-index table
+# How to modify a data structure defined using multi-index table API
 
 Modifying a multi-index table structure that has already been deployed to an EOSIO-based blockchain may be done by selecting one of the different strategies outlined below, depending on your requirements:
 

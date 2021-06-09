@@ -108,6 +108,4 @@ In conclusion, the above instructions show how to check if a specific object exi
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * Implement business logic and rely on the information that the `person` object exists in the table.

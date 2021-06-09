@@ -106,7 +106,5 @@ In conclusion, the above instructions show how to find an object in `Key-Value M
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * [Update](30_how-to-upsert-into-kv-map.md) the `person` found.
 * [Delete](40_how-to-delete-from-kv-map.md) the `person` found.

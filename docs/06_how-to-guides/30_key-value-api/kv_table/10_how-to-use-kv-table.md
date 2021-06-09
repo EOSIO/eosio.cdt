@@ -80,8 +80,6 @@ In conclusion, the above instructions show how to define and use a `Key-Value Ta
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * You can [create one or more unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
 * You can [create one or more non-unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
 * You can access the defined `kv table` and perform operations on it and its defined indexes:

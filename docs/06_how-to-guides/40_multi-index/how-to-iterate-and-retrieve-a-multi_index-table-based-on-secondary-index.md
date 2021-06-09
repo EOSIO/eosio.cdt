@@ -163,7 +163,5 @@ In conclusion, the above instructions show how to iterate and retrieve a multi-i
 
 ## Next Steps
 
-The following option is available when you complete the procedure:
-
 * You can [insert data](./how-to-insert-data-into-a-multi-index-table) into the multi-index table.
 * You can [delete data](./how-to-delete-data-from-a-multi-index-table) from the multi-index table.

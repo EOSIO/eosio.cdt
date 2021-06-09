@@ -4,7 +4,7 @@ content_title: How to modify data in a multi-index table
 
 ## Overview
 
-This guide provides instructions on how to modify data in a multi-index table.
+This guide provides instructions to modify data in a multi-index table.
 
 ## Reference
 
@@ -87,8 +87,6 @@ Now you have implemented a new action `mod`, which when sent to the blockchain w
 In conclusion, the above instructions show how to modify data in a multi-index table.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You can [insert data](./how-to-insert-data-into-a-multi-index-table) into the multi-index table.
 * You can [delete data](./how-to-delete-data-from-a-multi-index-table) from the multi-index table.
