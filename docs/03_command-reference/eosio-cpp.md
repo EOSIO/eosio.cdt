@@ -76,4 +76,4 @@ compiler options:
 
 ## Notes
 
-* -no-missing-ricardian-clause: Defaults to false, if enabled, it suppresses warnings for missing Ricardian clauses on contracts and contract actions. That includes the warnings generated when there is also no independent Ricardian clause file.
+* `-no-missing-ricardian-clause`: Defaults to false, if enabled, it suppresses warnings for missing Ricardian clauses on contracts and contract actions. That includes the warnings generated when there is no independent Ricardian clause file.
