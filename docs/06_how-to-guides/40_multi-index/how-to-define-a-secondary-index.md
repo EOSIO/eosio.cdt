@@ -118,6 +118,10 @@ Now you have instantiated the `testtab` as a multi-index table which has a prima
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).
 
+[[warning | Do not add a secondary index to an existing table]]
+| Adding a secondary index to an existing multi-index table it will have unpredictable outcome. Consult the [Data design and migration](../best-practices/data-design-and-migration) documentation for more details.
+
+
 ## Summary
 
 In conclusion, the above instructions show how to define a secondary index for a multi-index table.
