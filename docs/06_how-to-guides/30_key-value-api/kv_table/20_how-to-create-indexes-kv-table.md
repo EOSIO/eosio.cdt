@@ -54,14 +54,14 @@ class [[eosio::contract]] smrtcontract : public contract {
 
 ## Procedure
 
-### Define a unique index on property account_name using the macro KV_NAMED_INDEX
+### Define a unique index on data member account_name using the macro KV_NAMED_INDEX
 
 1. Use the `KV_NAMED_INDEX` macro with two parameters.
 2. The first parameter is the name of the index and it must be a qualified `eosio::name`. See documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
-3. The second parameter is the name of the property the index is defined for.
+3. The second parameter is the name of the data member the index is defined for.
 4. Call the base class method `init()` in the constructor of `address_table` type and pass the contract name as the first parameter and `account_name` index, by the KV_NAMED_INDEX macro, as the second parameter.
 
-Refer to the following reference implementation of a unique index on property `account_name` using macro `KV_NAMED_INDEX`:
+Refer to the following reference implementation of a unique index on data member `account_name` using macro `KV_NAMED_INDEX`:
 
 `smartcontract.hpp file`
 
@@ -80,14 +80,14 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-### Define a unique index on property personal_id using the eosio::kv::table::index template class
+### Define a unique index on data member personal_id using the eosio::kv::table::index template class
 
 1. Use the `eosio::kv::table::index` template class with two parameters.
 2. The first parameter is the name of the index and it must be a qualified `eosio:name`. See documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
-3. The second parameter is the reference to the property for which the index is defined, `&person::personal_id`.
+3. The second parameter is the reference to the data member for which the index is defined, `&person::personal_id`.
 4. Call the base class method `init()` in the constructor of `address_table` type and pass the contract name as the first parameter and the `personal_id_idx` index as the second parameter.
 
-Refer to the following reference implementation of a unique index on property `personal_id` using `eosio::kv::table::index` template class:
+Refer to the following reference implementation of a unique index on data member `personal_id` using `eosio::kv::table::index` template class:
 
 `smartcontract.hpp file`
 
@@ -108,16 +108,16 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-### Define a non-unique index on property first_name using the macro KV_NAMED_INDEX
+### Define a non-unique index on data member first_name using the macro KV_NAMED_INDEX
 
 1. Use the `KV_NAMED_INDEX` with two parameters.
 2. The first parameter is the name of the index and it must be a qualified `eosio::name`. See documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
-3. The second parameter is the name of the property the index is defined for.
+3. The second parameter is the name of the data member the index is defined for.
 4. Call the base class method `init()` in the constructor of `address_table` type and pass the contract name as the first parameter and `first_name` index, by the KV_NAMED_INDEX macro, as the second parameter.
 
-The second parameter is the name of the property the index is defined for and the type of this property must be `std::tuple<>`. The first parameter of the tuple must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the property indexed non-uniquely. The last parameter of the tuple type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameter types correspond to the properties being indexed. As previously already mentioned, the last parameter correspond to the type of a property name which is unique.
+The second parameter is the name of the data member the index is defined for and the type of this data member must be `std::tuple<>`. The first parameter of the tuple must be the type of the data member indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the data member indexed non-uniquely. The last parameter of the tuple type must be the type of a data member name which is unique. In our case the type `eosio::name` is used because data member `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameter types correspond to the properties being indexed. As previously already mentioned, the last parameter correspond to the type of a data member name which is unique.
 
-Refer to the following reference implementation of a non-unique index on property `account_name` using macro `KV_NAMED_INDEX`:
+Refer to the following reference implementation of a non-unique index on data member `account_name` using macro `KV_NAMED_INDEX`:
 
 `smartcontract.hpp file`
 
@@ -143,16 +143,16 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-### Define a non-unique index on property last_name using the eosio::kv::table::index template class
+### Define a non-unique index on data member last_name using the eosio::kv::table::index template class
 
 1. Use the `eosio::kv::table::index` template class.
 2. The first parameter is the name of the index and it must be a qualified `eosio:name`, see documentation for the [eosio name restrictions](https://developers.eos.io/welcome/latest/glossary/index#account-name).
-3. The second parameter is the name of the property the index is defined for, `&person::last_name`.
+3. The second parameter is the name of the data member the index is defined for, `&person::last_name`.
 4. Call the base class method `init()` in the constructor of `address_table` type and pass the contract name as the first parameter and the `last_name_idx` index as the second parameter.
 
-The property used for the second parameter must be of template type `std::tuple`. The first parameter must be the type of the property indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the property indexed non-uniquely. The last parameter of the tuple type must be the type of a property name which is unique. In our case the type `eosio::name` is used because property `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameter types correspond to the properties being indexed. As previously already mentioned, the last parameter correspond to the type of a property name which is unique.
+The data member used for the second parameter must be of template type `std::tuple`. The first parameter must be the type of the data member indexed non-uniquely, in our case the type `std::string` is used because `first_name` is the data member indexed non-uniquely. The last parameter of the tuple type must be the type of a data member name which is unique. In our case the type `eosio::name` is used because data member `account_name` is unique. Multiple properties can be indexed non-uniquely as well. In this case the first parameter types correspond to the properties being indexed. As previously already mentioned, the last parameter correspond to the type of a data member name which is unique.
 
-Refer to the following reference implementation of a non-unique index on property `last_name` using `eosio::kv::table::index` template class:
+Refer to the following reference implementation of a non-unique index on data member `last_name` using `eosio::kv::table::index` template class:
 
 `smartcontract.hpp file`
 

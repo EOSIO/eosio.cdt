@@ -83,7 +83,7 @@ class [[eosio::contract]] multi_index_example : public contract {
       // the row structure of the multi-index table, that is, each row of the table
       // will contain an instance of this type of structure
       struct [[eosio::table]] test_table {
-        // this property stores a name for each row of the multi-index table
+        // this data member stores a name for each row of the multi-index table
         name test_primary;
         // additional data stored in table row
         uint64_t datum;

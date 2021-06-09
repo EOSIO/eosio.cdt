@@ -25,11 +25,11 @@ Complete the following steps to define a secondary index for the multi-index tab
 
 ### 1. Extend The Multi-Index Data Structure
 
-Add a second property `secondary`, of type `eosio::name`, to the `test_table` data structure that defines the `testtab` data.
+Add a second data member `secondary`, of type `eosio::name`, to the `test_table` data structure that defines the `testtab` data.
 
   ```diff
     struct [[eosio::table]] test_table {
-      // this property stores a name for each row of the multi-index table
+      // this data member stores a name for each row of the multi-index table
       name test_primary;
   +    name secondary;
       // additional data stored in table row
@@ -41,11 +41,11 @@ Add a second property `secondary`, of type `eosio::name`, to the `test_table` da
 
 ### 2. Add The Secondary Index Accessor Method
 
-Add `by_secondary()` method, which is the index accessor method to the new property added. The secondary index, that will be added in the next step, will index this new data structure property.
+Add `by_secondary()` method, which is the index accessor method to the new data member added. The secondary index, that will be added in the next step, will index this new data structure darta member.
 
   ```diff
     struct [[eosio::table]] test_table {
-      // this property stores a name for each row of the multi-index table
+      // this data member stores a name for each row of the multi-index table
       name test_primary;
       name secondary;
       // additional data stored in table row
@@ -87,7 +87,7 @@ __multi_index_example.hpp__
           { }
 
         struct [[eosio::table]] test_table {
-          // this property stores a name for each row of the multi-index table
+          // this data member stores a name for each row of the multi-index table
           name test_primary;
           name secondary;
           // additional data stored in table row

@@ -48,7 +48,7 @@ Complete the following steps to define the `address_table` type, based on the `e
 1. Define the structure or class `address_table` in the scope of your smart contract class, for the abi generation to find it and place it into the abi file.
 2. Derive `address_table` from `eosio::`kv::table` class template. Pass the `person` user defined type as the type parameter for `eosio::`kv::table` base class and the name of the `kv table`, let’s say `kvaddrbook`.
 3. Annotate `address_table` type with `[[eosio::table]]`, and make sure it is placed after the `struct` keyword but before the name of the type.
-4. Define a primary index `first_name_idx` based on the property `person::first_name`. Every `kv table` requires a primary index to be defined based on a property that stores unique values.
+4. Define a primary index `first_name_idx` based on the data member `person::first_name`. Every `kv table` requires a primary index to be defined based on a data member that stores unique values.
 5. In the `address_table` constructor, call the `init(...)` base class method with the two parameters:
     1. The first parameter, of type `eosio::name`, is the contract that owns the table.
     2. The second parameter is the `account_name_uidx` primary index.

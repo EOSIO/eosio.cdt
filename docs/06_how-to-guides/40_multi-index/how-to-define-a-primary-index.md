@@ -40,12 +40,12 @@ Define the data structure for the multi-index table.
     };
   ```
 
-Add to the data structure the properties which define it. Each property corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding property for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
+Add to the data structure the properties which define it. Each data member corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding data member for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-  +    // this property stores a name for each row of the multi-index table
+  +    // this data member stores a name for each row of the multi-index table
   +    name test_primary;
   +    // additional data stored in table row, e.g. an uint64_t type data
   +    uint64_t datum;
@@ -59,7 +59,7 @@ Add definition of the primary index for the multi-index table. The primary index
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this property stores a name for each row of the multi-index table
+      // this data member stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
@@ -69,7 +69,7 @@ Add definition of the primary index for the multi-index table. The primary index
   ```
 
 [[info | Secondary indexes information]]
-| Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the corresponding property types can be uint64_t, uint128_t, uint256_t, double or long double.
+| Other, secondary, indexes if they will be defined can have duplicates. You can have up to 16 additional indexes and the corresponding data member types can be uint64_t, uint128_t, uint256_t, double or long double.
 
 ### 4. Define A Multi-Index Type Alias
 
@@ -78,7 +78,7 @@ For ease of use, define a type alias `test_table_t` based on the `eosio::multi_i
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this property stores a name for each row of the multi-index table
+      // this data member stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;
@@ -96,7 +96,7 @@ Declare the `testtab` multi-index table as a data member of type `test_table_t`.
   ```diff
     // the data structure which defines each row of the table
     struct [[eosio::table]] test_table {
-      // this property stores a name for each row of the multi-index table
+      // this data member stores a name for each row of the multi-index table
       name test_primary;
       // additional data stored in table row
       uint64_t datum;

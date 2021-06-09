@@ -10,7 +10,7 @@ A `datastore key value table on-chain`, or a `KV Table`, serves as a storage loc
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
-The `object definition` consists of a list of `properties` and each property is stored on the corresponding row in the table. The properties of the objects are also referred to as `fields`.
+The `object definition` consists of a list of `properties` and each data member is stored on the corresponding row in the table. The properties of the objects are also referred to as `fields`.
 
 A `KV Table` requires one unique index, of any type, that can be serialized to a binary representation.
 
@@ -18,12 +18,12 @@ A `KV Table` supports zero or more secondary indexes, of any type, that can be s
 
 Two types of indexes can be defined, unique or non-unique.
 
-A unique index can be defined just for one property, and it will sort the objects stored in the `KV Table` based on the `specified property`. The unique index also ensures only one instance of an object is stored with a particular value for the `specified property`, and thus ensures the uniqueness of the property for which it is defined.
+A unique index can be defined just for one darta member, and it will sort the objects stored in the `KV Table` based on the `specified darta member`. The unique index also ensures only one instance of an object is stored with a particular value for the `specified darta member`, and thus ensures the uniqueness of the data member for which it is defined.
 
-A non-unique index can be defined for one or multiple properties, and it will sort the objects stored in the `KV Table` based on the `specified property` or the combination of the `specified properties`. Very important though, a non-unique index requires as the last property of its definition a property which has unique values. Therefore although the non-unique index is intended for just one property, its definition will have two properties specified:
+A non-unique index can be defined for one or multiple properties, and it will sort the objects stored in the `KV Table` based on the `specified darta member` or the combination of the `specified properties`. Very important though, a non-unique index requires as the last data member of its definition a data member which has unique values. Therefore although the non-unique index is intended for just one darta member, its definition will have two properties specified:
 
-1. the first property, the one for which the non-unique index is built,
-2. and the last property which must have unique values.
+1. the first darta member, the one for which the non-unique index is built,
+2. and the last data member which must have unique values.
 
 The main operations provided by the KV API are the following:
 

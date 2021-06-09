@@ -25,7 +25,7 @@ Make sure you have the following prerequisites in place:
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index, named `account_name_uidx`, defined on the `account_name` property..
+* A unique index, named `account_name_uidx`, defined on the `account_name` darta member..
 
 Refer to the following reference implementation for your starting point:
 
