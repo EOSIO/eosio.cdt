@@ -16,6 +16,11 @@ namespace cosmwasm {
    }
 
    template<>
+   bytes to_bytes(const bytes& v) {
+      return v;
+   }
+
+   template<>
    bytes to_bytes(const std::string& v) {
       bytes out(v.size());
       std::copy(v.begin(), v.end(), out.begin());
