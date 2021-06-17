@@ -3,8 +3,10 @@
 #include <eosio/whereami/whereami.hpp>
 #include <vector>
 #include <string>
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
+#include <llvm/Target/CGPassBuilderOption.h>
+#include "blanc/compiler_options.hpp"
 
 #ifdef ONLY_LD
 #define LD_CAT EosioLdToolCategory
@@ -17,6 +19,8 @@ static llvm::cl::OptionCategory EosioCompilerToolCategory("compiler options");
 #else
 static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
+
+using profile = blanc::profile;
 
 /// begin ld options
 static cl::opt<bool> no_abigen_opt(
@@ -59,17 +63,15 @@ static cl::opt<bool> fno_lto_opt(
     "fno-lto",
     cl::desc("Disable LTO"),
     cl::cat(LD_CAT));
-// Experimental option to use CFL-AA in codegen
-enum class CFLAAType { None, Steensgaard, Andersen, Both };
-static cl::opt<CFLAAType> use_cfl_aa_opt(
-    "use-cfl-aa-in-codegen", cl::init(CFLAAType::None), cl::Hidden,
+static cl::opt<llvm::CFLAAType> use_cfl_aa_opt(
+    "use-cfl-aa-in-codegen", cl::init(llvm::CFLAAType::None), cl::Hidden,
     cl::desc("Enable the new, experimental CFL alias analysis in CodeGen"),
-    cl::values(clEnumValN(CFLAAType::None, "none", "Disable CFL-AA"),
-               clEnumValN(CFLAAType::Steensgaard, "steens",
+    cl::values(clEnumValN(llvm::CFLAAType::None, "none", "Disable CFL-AA"),
+               clEnumValN(llvm::CFLAAType::Steensgaard, "steens",
                           "Enable unification-based CFL-AA"),
-               clEnumValN(CFLAAType::Andersen, "anders",
+               clEnumValN(llvm::CFLAAType::Andersen, "anders",
                           "Enable inclusion-based CFL-AA"),
-               clEnumValN(CFLAAType::Both, "both",
+               clEnumValN(llvm::CFLAAType::Both, "both",
                           "Enable both variants of CFL-AA")),
     cl::cat(LD_CAT));
 static cl::opt<bool> fno_stack_first_opt(
@@ -78,7 +80,7 @@ static cl::opt<bool> fno_stack_first_opt(
       cl::cat(LD_CAT));
 static cl::opt<int> stack_size_opt(
       "stack-size",
-      cl::desc("Specifies the maximum stack size for the contract. Defaults to ${EOSIO_STACK_SIZE} bytes."),
+      cl::desc("Specifies the maximum stack size for the contract. Default value varies depending on the profile."),
       cl::init(-1),
       cl::cat(LD_CAT));
 static cl::opt<bool> fno_post_pass_opt(
@@ -129,23 +131,11 @@ static cl::opt<bool> allow_sse_opt(
     cl::desc("Should not be used, except for build libc"),
     cl::Hidden,
     cl::cat(LD_CAT));
-enum class Profile { Eosio, CosmWasm };
-namespace std {
-   string to_string(Profile p) {
-      switch (p) {
-      case Profile::Eosio:
-         return "eosio";
-      case Profile::CosmWasm:
-         return "cosmwasm";
-      }
-      __builtin_unreachable();
-   }
-}
-static cl::opt<Profile> profile(
-    "profile", cl::init(Profile::Eosio),
+static cl::opt<blanc::profile> profile_opt(
+    "profile", cl::init(blanc::profile::eosio),
     cl::desc("Target chain"),
-    cl::values(clEnumValN(Profile::Eosio, "eosio", "EOSIO (default)"),
-               clEnumValN(Profile::CosmWasm, "cosmwasm", "CosmWasm")),
+    cl::values(clEnumValN(profile::eosio, "eosio", "EOSIO (default)"),
+               clEnumValN(profile::cosmwasm, "cosmwasm", "CosmWasm")),
     cl::cat(LD_CAT));
 /// End of ld options
 
@@ -382,8 +372,6 @@ static cl::opt<bool> fcoroutine_ts_opt(
 struct Options {
    std::string output_fn;
    std::vector<std::string> inputs;
-   bool link;
-   bool abigen;
    std::string eosio_pp_dir;
    std::string abigen_output;
    std::string abigen_contract;
@@ -391,16 +379,23 @@ struct Options {
    std::vector<std::string> ld_options;
    std::vector<std::string> abigen_options;
    std::vector<std::string> abigen_resources;
-   bool debug;
-   bool native;
-   bool implicit_output;
+   blanc::profile profile;
+
+   // debug, native, implicit_output, link, abigen
+   struct {
+      bool link;
+      bool abigen;
+      bool debug;
+      bool native;
+      bool implicit_output;
+   } flags;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
    const char* shared_lib_suffix = "${CMAKE_SHARED_LIBRARY_SUFFIX}";
    std::string apply_lib;
    // add the define for whether this is compiling with CDT and version macros
-   if (profile == Profile::Eosio) {
+   if (profile_opt == profile::eosio) {
       copts.emplace_back("-D__eosio_cdt__");
       copts.emplace_back(std::string("-D__eosio_cdt_major__=")+"${VERSION_MAJOR}");
       copts.emplace_back(std::string("-D__eosio_cdt_minor__=")+"${VERSION_MINOR}");
@@ -412,7 +407,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-ffreestanding");
       copts.emplace_back("-nostdlib");
       copts.emplace_back("-fno-builtin");
-      if (profile == Profile::CosmWasm) {
+      if (profile_opt == profile::cosmwasm) {
          copts.emplace_back("-DNO_BUILTIN_UINT128");
       }
    } else {
@@ -437,14 +432,14 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
    copts.emplace_back("-Xclang");
    copts.emplace_back("-load");
    copts.emplace_back("-Xclang");
-   switch (profile) {
-   case Profile::Eosio:
+   switch (profile_opt) {
+   case profile::eosio:
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+shared_lib_suffix))
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMEosioAttrs"+shared_lib_suffix);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+shared_lib_suffix))
          copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioAttrs"+shared_lib_suffix);
       break;
-   case Profile::CosmWasm:
+   case profile::cosmwasm:
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/LLVMCosmWasmAttrs"+shared_lib_suffix))
          copts.emplace_back(eosio::cdt::whereami::where()+"/LLVMCosmWasmAttrs"+shared_lib_suffix);
       else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMCosmWasmAttrs"+shared_lib_suffix))
@@ -519,11 +514,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          if (fuse_main_opt)
             ldopts.emplace_back("-e main");
          else {
-            switch (profile) {
-            case Profile::Eosio:
+            switch (profile_opt) {
+            case profile::eosio:
                ldopts.emplace_back("-e apply");
                break;
-            case Profile::CosmWasm:
+            case profile::cosmwasm:
                ldopts.emplace_back("--no-entry");
                break;
             }
@@ -533,11 +528,11 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          //ldopts.emplace_back("--only-export \"apply:function\"");
       }
       ldopts.emplace_back("-lc++");
-      switch (profile) {
-      case Profile::Eosio:
+      switch (profile_opt) {
+      case profile::eosio:
          ldopts.emplace_back("-lc -leosio");
          break;
-      case Profile::CosmWasm:
+      case profile::cosmwasm:
          ldopts.emplace_back("-lcnf -lcosmwasm");
          break;
       }
@@ -548,7 +543,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
 
       if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt)
          ldopts.emplace_back("-lrt -lsf");
-      if (fquery_opt || fquery_server_opt || fquery_client_opt || profile == Profile::CosmWasm)
+      if (fquery_opt || fquery_server_opt || fquery_client_opt || profile_opt == profile::cosmwasm)
          ldopts.emplace_back("-leosio_cmem");
 
    } else {
@@ -621,6 +616,8 @@ static Options CreateOptions(bool add_defaults=true) {
       case CFLAAType::Both:
          optarg += "both";
          break;
+      default:
+         __builtin_unreachable();
       }
       copts.emplace_back("-mllvm");
       copts.emplace_back(optarg);
@@ -740,8 +737,8 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-I"+sysroot_opt+"/include/libcxxabi");
       copts.emplace_back("-I"+sysroot_opt+"/include/libc");
 
-      switch (profile) {
-      case Profile::Eosio:
+      switch (profile_opt) {
+      case profile::eosio:
          // only allow capi for native builds and for eosio-cc
          if (fnative_opt) {
            copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/capi");
@@ -753,7 +750,7 @@ static Options CreateOptions(bool add_defaults=true) {
          copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/core");
          copts.emplace_back("-I"+sysroot_opt+"/include/eosiolib/contracts");
          break;
-      case Profile::CosmWasm:
+      case profile::cosmwasm:
          copts.emplace_back("-I"+sysroot_opt+"/include/cosmwasm");
          break;
       }
@@ -776,8 +773,8 @@ static Options CreateOptions(bool add_defaults=true) {
       agopts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/../");
       ldopts.emplace_back("-L"+eosio::cdt::whereami::where()+"/../lib");
 
-      switch (profile) {
-      case Profile::Eosio:
+      switch (profile_opt) {
+      case profile::eosio:
          if (fnative_opt) {
            copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/capi");
            copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/native");
@@ -788,7 +785,7 @@ static Options CreateOptions(bool add_defaults=true) {
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/core");
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/eosiolib/contracts");
          break;
-      case Profile::CosmWasm:
+      case profile::cosmwasm:
          copts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include/cosmwasm");
          break;
       }
@@ -842,14 +839,7 @@ static Options CreateOptions(bool add_defaults=true) {
       if (stack_size_opt >= 0) {
          ldopts.emplace_back("-zstack-size=" + std::to_string(stack_size_opt));
       } else {
-         switch (profile) {
-         case Profile::Eosio:
-            ldopts.emplace_back("-zstack-size=" + std::to_string(${EOSIO_STACK_SIZE}));
-            break;
-         case Profile::CosmWasm:
-            ldopts.emplace_back("-zstack-size=" + std::to_string(1048576));
-            break;
-         }
+         ldopts.emplace_back("-zstack-size=" + blanc::default_stack_size(profile_opt));
       }
 #else
       if (fno_stack_first_opt) {
@@ -858,14 +848,7 @@ static Options CreateOptions(bool add_defaults=true) {
       if (stack_size_opt >= 0) {
          ldopts.emplace_back("-stack-size=" + std::to_string(stack_size_opt));
       } else {
-         switch (profile) {
-         case Profile::Eosio:
-            ldopts.emplace_back("-stack-size=" + std::to_string(${EOSIO_STACK_SIZE}));
-            break;
-         case Profile::CosmWasm:
-            ldopts.emplace_back("-stack-size=" + std::to_string(1048576));
-            break;
-         }
+         ldopts.emplace_back("-stack-size=" + blanc::default_stack_size(profile_opt));
       }
       if (fno_lto_opt) {
          ldopts.emplace_back("-fno-lto");
@@ -968,13 +951,17 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
    if (!fnative_opt) {
-      ldopts.emplace_back("--profile="+std::to_string(profile));
+      ldopts.emplace_back("--profile="+std::to_string(profile_opt));
    }
 #endif
 
-#ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, implicit_output};
-#else
-   return {output_fn, inputs, link, abigen, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, implicit_output};
-#endif
+   Options opts = {output_fn, inputs, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, profile_opt, {}};
+   opts.flags = {
+      .link = link,
+      .abigen = abigen,
+      .debug = debug,
+      .native = fnative_opt,
+      .implicit_output = implicit_output,
+   };
+   return opts;
 }

@@ -67,7 +67,7 @@ int main(int argc, const char** argv) {
 
    std::vector<std::string> outputs;
 
-   if (opts.inputs.size() > 1 && !opts.link && !opts.output_fn.empty()) {
+   if (opts.inputs.size() > 1 && !opts.flags.link && !opts.output_fn.empty()) {
       llvm::errs() << COMPILER_NAME << ": error: cannot specify -o when generating multiple output files" << '\n';
       return -1;
    }
@@ -79,7 +79,7 @@ int main(int argc, const char** argv) {
 
          auto input_fullpath = string_to_fullpath(input);
 
-         if (!opts.link) {
+         if (!opts.flags.link) {
             if (!opts.output_fn.empty()) {
                output = opts.output_fn;
             } else {
@@ -95,7 +95,7 @@ int main(int argc, const char** argv) {
          output = string_to_fullpath(output).str().str();
 
          codegen::get().output = output;
-         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abigen);
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.flags.abigen);
 
          auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".cpp");
          if (llvm::sys::fs::exists(tmp_file)) {
@@ -122,9 +122,9 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (opts.link) {
+   if (opts.flags.link) {
       std::vector<std::string> new_opts = opts.ld_options;
-      if (opts.implicit_output && !opts.output_fn.empty()) {
+      if (opts.flags.implicit_output && !opts.output_fn.empty()) {
          new_opts.insert(new_opts.begin(), "-o "+opts.output_fn);
       }
       for (auto input : outputs) {

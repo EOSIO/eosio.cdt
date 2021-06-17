@@ -127,7 +127,7 @@ int main(int argc, const char** argv) {
                noti.handler = wn["handler"].as_string();
                wasm_notifies.insert(noti);
             }
-            if (profile == Profile::Eosio && !dispatcher_was_found) {
+            if (opts.profile == profile::eosio && !dispatcher_was_found) {
                for (auto we : desc["wasm_entries"].array_range()) {
                   auto name = we.as_string();
                   if (name == "apply") {
@@ -139,7 +139,7 @@ int main(int argc, const char** argv) {
             desc_files.push_back(input+".desc");
          }
       }
-      if (opts.abigen && !abi.empty()) {
+      if (opts.flags.abigen && !abi.empty()) {
          llvm::SmallString<PATH_MAX> output_fullpath = llvm::StringRef(opts.output_fn);
          llvm::sys::path::replace_extension(output_fullpath, ".abi");
 
@@ -149,7 +149,7 @@ int main(int argc, const char** argv) {
          ofs << pretty_print(abi);
          ofs.close();
       }
-      if (profile == Profile::Eosio && !dispatcher_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
+      if (opts.profile == profile::eosio && !dispatcher_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
          main_file = generate_eosio_dispatch(wasm_actions, wasm_notifies);
          if (!main_file.empty()) {
             std::vector<std::string> new_opts;
@@ -167,7 +167,7 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (!opts.native) {
+   if (!opts.flags.native) {
       if (!eosio::cdt::environment::exec_subprogram(backends, opts.ld_options)) {
          llvm::sys::fs::remove(main_file);
          llvm::sys::fs::remove(main_file+".o");
@@ -190,10 +190,10 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (!fno_post_pass_opt && !opts.native) {
+   if (!fno_post_pass_opt && !opts.flags.native) {
       if (!llvm::sys::fs::exists(opts.eosio_pp_dir+"/"+POSTPASS_NAME))
          return -1;
-      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {"--profile "+std::to_string(profile), opts.output_fn}))
+      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {"--profile "+std::to_string(opts.profile), opts.output_fn}))
          return -1;
       if (!llvm::sys::fs::exists(opts.output_fn))
          return -1;

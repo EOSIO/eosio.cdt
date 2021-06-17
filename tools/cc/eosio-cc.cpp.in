@@ -36,7 +36,7 @@ int main(int argc, const char **argv) {
    cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C -> WebAssembly compiler)");
    Options opts = CreateOptions();
 
-   if (opts.abigen) {
+   if (opts.flags.abigen) {
        llvm::outs() << "Warning, ABI generation is only available with eosio-abigen or eosio-cpp\n";
    }
    
@@ -57,7 +57,7 @@ int main(int argc, const char **argv) {
 
       new_opts.insert(new_opts.begin(), input);
 
-      if (!opts.link) {
+      if (!opts.flags.link) {
          output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
       }
 
@@ -72,7 +72,7 @@ int main(int argc, const char **argv) {
    } 
    // then link
    //
-   if (opts.link) {
+   if (opts.flags.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
          new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
