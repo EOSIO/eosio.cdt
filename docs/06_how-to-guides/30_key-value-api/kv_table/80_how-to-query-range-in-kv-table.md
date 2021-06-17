@@ -25,8 +25,8 @@ Make sure you have the following prerequisites in place:
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index, named `account_name_uidx`, defined on the `account_name` darta member..
-* A non-unique index defined on the `last_name` darta member, named `last_name_idx`.
+* A unique index, named `account_name_uidx`, defined on the `account_name` data member..
+* A non-unique index defined on the `last_name` data member, named `last_name_idx`.
 
 Refer to the following reference implementation for your starting point:
 

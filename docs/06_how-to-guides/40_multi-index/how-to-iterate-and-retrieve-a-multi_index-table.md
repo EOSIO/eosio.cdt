@@ -26,7 +26,7 @@ Complete the following steps to iterate, retrieve and print data from the `testt
 
 ### 1. Define The print(...) Action
 
-Add to the definition of the `testtab` multi-index table the `print` action which gets as parameter an account name.
+Add a `print` action to the `testtab` multi-index table. The `print` action takes an account name as a parameter.
 
 ```cpp
 [[eosio::action]] void print( name user );
@@ -42,7 +42,7 @@ Optionally, for ease of use add the action wrapper definition as well.
 
 ### 2. Implement The `print(...)` Action
 
-Search the `user` name in the multi-index table using the primary index. If found, print out the value of field `datum`. Otherwise raise an error with a custom message. In the contract definition add the following implementation for `print` action:
+Search for the `user` name in the multi-index table using the primary index. If found, print out the value of field `datum`. Otherwise raise an error with a custom message. In the contract definition add the following implementation for `print` action:
 
 ```cpp
   [[eosio::action]] void multi_index_example::print( name user ) {

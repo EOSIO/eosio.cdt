@@ -36,7 +36,7 @@ Follow the following steps to compile your contract.
     - `-abigen` = It instructs the `eosio-cpp` tool to generate ABI file.
     - `../src/hello.cpp` = Is the input cpp source file to be compiled.
     - `-o hello.wasm` = It instructs the `eosio-cpp` tool who to name the output wasm file.
-    - `-I ../include/` = It tells `eosio-cpp` tool what the include folder path is, in this particular case it is relative path.
+    - `-I ../include/` = It tells `eosio-cpp` tool what the include folder path is, in this particular case it is a relative path.
 
 3. Verify the following two files were generated:
 

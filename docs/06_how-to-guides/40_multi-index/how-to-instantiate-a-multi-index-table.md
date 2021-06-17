@@ -40,7 +40,7 @@ Define the data structure for the multi-index table.
   };
 ```
 
-Add to the data structure the properties which define it. Each data member corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding data member for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
+Add the data structure data members. Each data member corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding data member for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
   ```diff
     // the data structure which defines each row of the table
@@ -54,7 +54,7 @@ Add to the data structure the properties which define it. Each data member corre
 
 ### 3. Define The Primary Index
 
-Add definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
+Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
 
 ```diff
   // the data structure which defines each row of the table
@@ -122,7 +122,7 @@ multi_index_example( name receiver, name code, datastream<const char*> ds ) :
    { }
 ```
 
-Now you have instantiated the `testtab` variable as a multi-index table which has a primary index defined for its `test_primary` data member.
+Now you have instantiated a multi-index table, and assigned to `testtab` variable, which has a primary index defined for its `test_primary` data member.
 
 Here is how the definition of a `multi_index_example` contract containing a multi-index table could look like after following all the steps above.
 

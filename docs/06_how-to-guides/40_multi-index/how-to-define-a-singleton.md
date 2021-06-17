@@ -118,7 +118,7 @@ class [[eosio::contract]] singleton_example : public contract {
 };
 ```
 
-Find below a possible implementation for the two `get` and `set` actions. It also demonstrates the usage of the `get` and `set` singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which the second parameter is the payer account for the RAM needed to store the new value.
+Below is an example for the `get` and `set` actions. It also demonstrates the usage of the `get` and `set` singleton methods. Note that the `set` action makes use of the singleton's `set` method, for which the second parameter is the payer account for the RAM needed to store the new value.
 
 __singleton_example.cpp__
 

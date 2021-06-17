@@ -40,7 +40,7 @@ Define the data structure for the multi-index table.
     };
   ```
 
-Add to the data structure the properties which define it. Each data member corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding data member for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
+Add the data structure data members. Each data member corresponds to a field of the multi-index table. A primary key is required when defining a multi-index table structure, therefore you need to know which is the multi-index table field that is the primary key for your multi-index table. The corresponding data member for the primary key field must store unique values. In this case it is the `test_primary` data member of type `eosio::name`.
 
   ```diff
     // the data structure which defines each row of the table
@@ -54,7 +54,7 @@ Add to the data structure the properties which define it. Each data member corre
 
 ### 3. Define The Primary Index
 
-Add definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and it must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
+Add the definition of the primary index for the multi-index table. The primary index type must be uint64_t, it must be unique and must be named `primary_key()`, otherwise the compiler (eosio-cpp) will generate an error saying it can not find the field to use as the primary key:
 
   ```diff
     // the data structure which defines each row of the table
@@ -113,7 +113,7 @@ Declare the `testtab` multi-index table as a data member of type `test_table_t`.
   +  test_table_t testtab;
   ```
 
-Now you have instantiated the `testtab` as a multi-index table which has a primary index defined for its `test_primary` data member.
+Now you have instantiated a multi-index table, and assigned to `testtab` variable, which has a primary index defined for its `test_primary` data member.
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

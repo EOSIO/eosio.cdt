@@ -41,7 +41,7 @@ Add a second data member `secondary`, of type `eosio::name`, to the `test_table`
 
 ### 2. Add The Secondary Index Accessor Method
 
-Add `by_secondary()` method, which is the index accessor method to the new data member added. The secondary index, that will be added in the next step, will index this new data structure darta member.
+Add `by_secondary()` method, which is the index accessor method to the new data member added. The secondary index, that will be added in the next step, will index this new data structure data member.
 
   ```diff
     struct [[eosio::table]] test_table {

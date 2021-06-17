@@ -26,7 +26,7 @@ Complete the following steps to modify data in the `testtab` multi-index table.
 
 ### 1. Define The mod(...) Action
 
-Add to the definition of the `testtab` multi-index table the `mod` action which gets as input parameters a `user` of type `eosio::name` and a `value` of type `uint32_t`. The `mod` action will update the `user` object `datum` data member with the `uint32_t` value.
+Add a `mod` action to the `testtab` multi-index table. The `mod` action takes as input parameters a `user` of type `eosio::name` and a `value` of type `uint32_t`. The `mod` action updates the `user` object `datum` data member with the `uint32_t` value.
 
 ```cpp
 [[eosio::action]] void mod( name user, uint32_t value );
@@ -42,7 +42,7 @@ Optionally, for ease of use add the action wrapper definition as well.
 
 ### 2. Find The User You Want To Modify
 
-Make use of the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to modify. The targeted user is searched based on its account name.
+Use the multi-index [`find(...)`](../../group__multiindex#function-find) method to locate the user object you want to modify. The targeted user is searched based on its account name.
 
 ```cpp
 [[eosio::action]] void multi_index_example::mod( name user, uint32_t value ) {
@@ -77,7 +77,7 @@ If the `user` object you want to update is found, the [`eosio::check`](../../nam
 }
 ```
 
-Now you have implemented a new action `mod`, which when sent to the blockchain will update the `datum` data member for user object identified by `user` name with the `value` sent as parameter.
+Now you have implemented a new action `mod`. Call `mod` to update the `datum` data member for the user object identified by the `user` name parameter.
 
 [[info | Full example location]]
 | A full example project demonstrating the instantiation and usage of multi-index table can be found [here](https://github.com/EOSIO/eosio.cdt/tree/master/examples/multi_index_example).

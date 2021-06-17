@@ -3,8 +3,9 @@ content_title: ABI variants
 link_text: ABI variants
 ---
 
-ABI variants give the flexibility of using more than one type for a defined variable or data member. 
-In EOSIO, the variants make use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi-index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an exiting multi-index table, a.k.a. table.
+ABI variants give the flexibility of using more than one type for a defined variable or data member.
+
+In EOSIO, the variants use the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi-index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an existing multi-index table, a.k.a. table.
 
 ## Use variant when building the multi-index table the first time
 

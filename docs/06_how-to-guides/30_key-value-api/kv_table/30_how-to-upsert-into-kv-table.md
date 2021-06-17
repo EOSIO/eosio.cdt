@@ -19,7 +19,7 @@ Make sure you have the following prerequisites in place:
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
 * A user defined type named `person`, which defines the data stored in the table
-* A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` darta member.
+* A `kv table` type which stores objects of type `person`, named `address_table`. The primary index of the `kv table` is defined based on the `person::account_name` data member.
 
 Refer to the following reference implementation for your starting point:
 

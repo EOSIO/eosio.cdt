@@ -12,7 +12,7 @@ The Key-Value API provides a set of C++ classes and structures which facilitates
 
 ## Concept
 
-The Key-Value API, or KV API, is a new option for developers to create datastore key value tables on-chain. KV API is more flexible than multi-index and allows developers to search the table in a more human-readable way, unlike multi-index tables where search is over 64-bit values.
+The Key-Value API, or KV API, is a new option for developers to create datastore key value tables on-chain. KV API is more flexible than multi-index and allows developers to search for the table in a more human-readable way, unlike multi-index tables where search is over 64-bit values.
 
 On top of flexibility, this new API has a simpler interface and it helps the developer to avoid complex C++ templates constructs.
 
