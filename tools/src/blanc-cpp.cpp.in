@@ -1,0 +1,149 @@
+#include <clang/Tooling/Tooling.h>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
+
+#include <eosio/codegen.hpp>
+#include <blanc/custom_attrs.hpp>
+
+#define CPP_COMP 1
+#define COMPILER_NAME "@BLANC_CXX_COMPILER@"
+#define LINKER_NAME "@BLANC_LINKER@"
+#define COMPILER_BACKEND "@BLANC_CXX_COMPILER_BACKEND@"
+#define COMPILER_BACKEND_PREFERRED "@BLANC_CXX_COMPILER_BACKEND_PREFERRED@"
+#include <compiler_options.hpp>
+
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
+   std::vector<std::string> options;
+   options.push_back(COMPILER_NAME);
+   options.push_back(input); // don't remove oddity of CommonOptionsParser?
+   options.push_back(input);
+   options.push_back("--");
+   if (llvm::sys::path::extension(input).equals(".c"))
+      options.push_back("-xc++");
+   for (size_t i=0; i < base_options.size(); i++) {
+      options.push_back(base_options[i]);
+   }
+   options.push_back("-Wno-everything");
+
+   int size = options.size();
+   const char** new_argv = new const char*[size];
+   for (size_t i=0; i < size; i++)
+      new_argv[i] = options[i].c_str();
+
+   CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
+   ClangTool ctool(opts.getCompilations(), input);
+
+   auto& cg = codegen::get();
+   cg.set_contract_name(contract_name);
+   cg.ag.set_contract_name(contract_name);
+   cg.ag.set_resource_dirs(resource_paths);
+
+   if (ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get())) {
+      throw std::runtime_error("codegen error");
+   }
+
+   if (!cg.ag.is_empty()) {
+      std::ofstream ofs (cg.output+".desc");
+      if (!ofs) throw;
+      ofs << cg.ag.to_json_debug().serialize();
+      ofs.close();
+   }
+}
+
+int main(int argc, const char** argv) {
+   std::vector<std::string> backends = { COMPILER_BACKEND_PREFERRED, COMPILER_BACKEND };
+
+   if (std::find(argv, argv+argc, std::string("-v")) != argv+argc) {
+      eosio::cdt::environment::exec_subprogram(backends, {"-v"});
+      return 0;
+   }
+
+   llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
+      os << COMPILER_NAME << " version " << "@VERSION_FULL@" << "\n";
+   });
+   llvm::cl::ParseCommandLineOptions(argc, argv, std::string(COMPILER_NAME)+" (Eosio C++ -> WebAssembly compiler)");
+   Options opts = CreateOptions();
+
+   std::vector<std::string> outputs;
+
+   if (opts.inputs.size() > 1 && !opts.flags.link && !opts.output_fn.empty()) {
+      llvm::errs() << COMPILER_NAME << ": error: cannot specify -o when generating multiple output files" << '\n';
+      return -1;
+   }
+
+   try {
+      for (auto input : opts.inputs) {
+         std::vector<std::string> new_opts = opts.comp_options;
+         std::string output;
+
+         auto input_fullpath = string_to_fullpath(input);
+
+         if (!opts.flags.link) {
+            if (!opts.output_fn.empty()) {
+               output = opts.output_fn;
+            } else {
+               llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
+               llvm::sys::path::replace_extension(fn, ".o");
+               output = fn.str().str();
+            }
+         } else {
+            auto ifs = input_fullpath.str().str();
+            output = get_temporary_path(std::to_string(std::hash<std::string>{}(ifs))+".o");
+         }
+
+         output = string_to_fullpath(output).str().str();
+
+         codegen::get().output = output;
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.flags.abigen);
+
+         auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".cpp");
+         if (llvm::sys::fs::exists(tmp_file)) {
+            input = tmp_file;
+         }
+
+         auto input_fulldir = input_fullpath;
+         llvm::sys::path::remove_filename(input_fulldir);
+         new_opts.insert(new_opts.end(), "-I" + input_fulldir.str().str());
+
+         new_opts.insert(new_opts.begin(), input);
+
+         new_opts.insert(new_opts.begin(), "-o "+output);
+         outputs.push_back(output);
+
+         if (!eosio::cdt::environment::exec_subprogram(backends, new_opts)) {
+            llvm::sys::fs::remove(tmp_file);
+            return -1;
+         }
+         llvm::sys::fs::remove(tmp_file);
+      }
+   } catch (std::runtime_error& err) {
+      llvm::errs() << err.what() << '\n';
+      return -1;
+   }
+
+   if (opts.flags.link) {
+      std::vector<std::string> new_opts = opts.ld_options;
+      if (opts.flags.implicit_output && !opts.output_fn.empty()) {
+         new_opts.insert(new_opts.begin(), "-o "+opts.output_fn);
+      }
+      for (auto input : outputs) {
+         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+      }
+   
+      if (!eosio::cdt::environment::exec_subprogram(LINKER_NAME, new_opts)) {
+         for (auto input : outputs) {
+            llvm::sys::fs::remove(input);
+         }
+         return -1;
+      }
+      for (auto input : outputs) {
+         llvm::sys::fs::remove(input);
+      }
+      if (!llvm::sys::fs::exists(opts.output_fn)) {
+         return -1;
+      }
+   }
+
+   return 0;
+}

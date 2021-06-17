@@ -38,7 +38,7 @@ endif ()
 
 option(BUILD_TESTS "Build GTest-based tests" OFF)
 option(USE_SYSTEM_GTEST "Use system GTest, instead of building" OFF)
-option(BUILD_TOOLS "Build wabt commandline tools" ON)
+option(BUILD_TOOLS "Build wabt commandline tools" OFF)
 option(BUILD_LIBWASM "Build libwasm" OFF)
 option(USE_ASAN "Use address sanitizer" OFF)
 option(USE_MSAN "Use memory sanitizer" OFF)
@@ -250,7 +250,7 @@ set(WABT_LIBRARY_SRC
   src/color.cc
   src/common.h
   src/common.cc
-  src/config.h
+  ${WABT_BINARY_DIR}/config.h
   src/config.cc
   src/decompiler.h
   src/decompiler-ast.h
@@ -381,16 +381,16 @@ function(wabt_executable)
   endif ()
 endfunction()
 
-if (BUILD_TOOLS)
+# eospp
+wabt_executable(
+  NAME ${BLANC_POSTPASS}
+  SOURCES src/tools/postpass.cc
+  INSTALL
+)
+add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
 
-  # eospp
-  wabt_executable(
-    NAME ${BLANC_POSTPASS}
-    SOURCES src/tools/postpass.cc
-    INSTALL
-  )
-  add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
-  add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
+if (BUILD_TOOLS)
 
   # wat2wasm
   wabt_executable(
@@ -501,7 +501,7 @@ if(BUILD_TESTS AND (NOT PYTHONINTERP_FOUND))
 endif()
 
 find_package(Threads)
-if (BUILD_TESTS)
+if (FALSE AND BUILD_TESTS)
   if (NOT USE_SYSTEM_GTEST)
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gtest/googletest)
       message(FATAL_ERROR "Can't find third_party/gtest. Run git submodule update --init, or disable with CMake -DBUILD_TESTS=OFF.")
@@ -619,7 +619,7 @@ if (BUILD_TESTS)
 endif ()
 
 # install
-if (BUILD_TOOLS OR BUILD_TESTS)
+if (FALSE AND (BUILD_TOOLS OR BUILD_TESTS))
   install(TARGETS ${WABT_EXECUTABLES} DESTINATION bin)
   if (UNIX)
     if (NOT CMAKE_INSTALL_MANDIR)
@@ -632,6 +632,8 @@ if (BUILD_TOOLS OR BUILD_TESTS)
     endforeach()
   endif ()
 endif ()
+
+install(TARGETS ${BLANC_POSTPASS} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 
 if (EMSCRIPTEN)
   # flags for all emscripten builds
