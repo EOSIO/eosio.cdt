@@ -62,6 +62,8 @@ namespace eosio { namespace cdt {
          size_t                                source_index = 0;
          std::map<std::string, std::string>    tmp_files;
          bool                                  warn_action_read_only;
+         bool                                  query_eosio_include_dirs;
+         bool                                  query_eosio_link_dirs;
 
          using generation_utils::generation_utils;
 
@@ -80,6 +82,14 @@ namespace eosio { namespace cdt {
 
          void set_warn_action_read_only(bool w) {
             warn_action_read_only = w;
+         }
+
+         void set_query_eosio_include_dirs(bool q) {
+            query_eosio_include_dirs = q;
+         }
+
+         void set_query_eosio_link_dirs(bool q) {
+            query_eosio_link_dirs = q;
          }
    };
 
