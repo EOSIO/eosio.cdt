@@ -351,6 +351,14 @@ static cl::opt<bool> warn_action_read_only_opt(
     "warn-action-read-only",
     cl::desc("Issue a warning if a read-only action uses a write API and continue compilation"),
     cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> eosio_include_dirs_opt(
+    "eosio-include-dirs",
+    cl::desc("Print the set of include paths that the compiler will be looking at"),
+    cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> eosio_link_dirs_opt(
+    "eosio-link-dirs",
+    cl::desc("Print the set of linking paths that the linker will be looking at"),
+    cl::cat(EosioCompilerToolCategory));
 /// end c/c++ options
 
 /// begin c++ options
@@ -391,6 +399,8 @@ struct Options {
    bool has_o_opt;
    bool has_contract_opt;
    bool warn_action_read_only;
+   bool query_eosio_include_dirs;
+   bool query_eosio_link_dirs;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -553,6 +563,8 @@ static Options CreateOptions(bool add_defaults=true) {
    bool has_o_opt;
    bool has_contract_opt;
    bool warn_action_read_only;
+   bool query_eosio_include_dirs;
+   bool query_eosio_link_dirs;
 
 #ifdef ONLY_LD
    bool abigen = false;
@@ -911,11 +923,14 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
    
-   if(warn_action_read_only_opt) {
+   if (warn_action_read_only_opt) {
       warn_action_read_only = true;
    } else {
       warn_action_read_only = false;
    }
+
+   query_eosio_include_dirs = eosio_include_dirs_opt ? true : false;
+   query_eosio_link_dirs = eosio_link_dirs_opt ? true : false;
 
 #endif
 
