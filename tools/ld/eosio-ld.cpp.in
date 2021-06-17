@@ -15,7 +15,7 @@ using namespace jsoncons;
 #define ONLY_LD
 #include <compiler_options.hpp>
 
-std::string generate_apply(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
+std::string generate_eosio_dispatch(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
    std::string output;
    try {
       output = get_temporary_path(std::to_string(getpid())+".cpp");
@@ -72,7 +72,16 @@ std::string generate_apply(const std::set<wasm_action>& wasm_actions, const std:
       ofs << "}\n";
       ofs.close();
    } catch (...) {
-      llvm::outs() << "Failed to create an entry point \"apply\"\n";
+      llvm::outs() << "Failed to generate eosio dispatcher\n";
+   }
+   return output;
+}
+
+std::string generate_cosmwasm_dispatch(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
+   std::string output;
+   try {
+   } catch (...) {
+      llvm::outs() << "Failed to generate cosmwasm dispatcher\n";
    }
    return output;
 }
@@ -90,7 +99,7 @@ int main(int argc, const char** argv) {
    std::set<wasm_notify> wasm_notifies;
    std::string main_file;
    std::vector<std::string> desc_files;
-   bool apply_was_found = false;
+   bool dispatcher_was_found = false;
 
    try {
       ojson abi;
@@ -118,11 +127,11 @@ int main(int argc, const char** argv) {
                noti.handler = wn["handler"].as_string();
                wasm_notifies.insert(noti);
             }
-            if (!apply_was_found) {
+            if (opts.profile == profile::eosio && !dispatcher_was_found) {
                for (auto we : desc["wasm_entries"].array_range()) {
                   auto name = we.as_string();
                   if (name == "apply") {
-                     apply_was_found = true;
+                     dispatcher_was_found = true;
                      break;
                   }
                }
@@ -130,7 +139,7 @@ int main(int argc, const char** argv) {
             desc_files.push_back(input+".desc");
          }
       }
-      if (opts.abigen && !abi.empty()) {
+      if (opts.flags.abigen && !abi.empty()) {
          llvm::SmallString<PATH_MAX> output_fullpath = llvm::StringRef(opts.output_fn);
          llvm::sys::path::replace_extension(output_fullpath, ".abi");
 
@@ -140,8 +149,8 @@ int main(int argc, const char** argv) {
          ofs << pretty_print(abi);
          ofs.close();
       }
-      if (!apply_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
-         main_file = generate_apply(wasm_actions, wasm_notifies);
+      if (opts.profile == profile::eosio && !dispatcher_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
+         main_file = generate_eosio_dispatch(wasm_actions, wasm_notifies);
          if (!main_file.empty()) {
             std::vector<std::string> new_opts;
             new_opts.insert(new_opts.begin(), main_file);
@@ -158,7 +167,7 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (!opts.native) {
+   if (!opts.flags.native) {
       if (!eosio::cdt::environment::exec_subprogram(backends, opts.ld_options)) {
          llvm::sys::fs::remove(main_file);
          llvm::sys::fs::remove(main_file+".o");
@@ -181,10 +190,10 @@ int main(int argc, const char** argv) {
       return -1;
    }
 
-   if (!fno_post_pass_opt && !opts.native) {
+   if (!fno_post_pass_opt && !opts.flags.native) {
       if (!llvm::sys::fs::exists(opts.eosio_pp_dir+"/"+POSTPASS_NAME))
          return -1;
-      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {opts.output_fn}))
+      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {"--profile "+std::to_string(opts.profile), opts.output_fn}))
          return -1;
       if (!llvm::sys::fs::exists(opts.output_fn))
          return -1;
