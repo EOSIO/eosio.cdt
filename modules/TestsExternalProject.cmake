@@ -11,7 +11,7 @@ ExternalProject_Add(
   TEST_COMMAND   ""
   INSTALL_COMMAND ""
   BUILD_ALWAYS 1
-  DEPENDS EosioWasmLibraries EosioTools
+  DEPENDS BlancWasmLibraries BlancTools
 )
 
 
