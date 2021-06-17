@@ -90,6 +90,8 @@ namespace std {
 }
 
 /// From eosio libraries/chain/include/eosio/chain/abi_def.hpp
+namespace eosio {
+
 struct abi {
    std::string version = "eosio::abi/1.1";
    std::set<abi_struct>  structs;
@@ -119,4 +121,6 @@ inline void dump( const abi& abi ) {
          std::cout << "\n\t\t\t\t\ttype : " << f.type << '\n';
       }
    }
+}
+
 }

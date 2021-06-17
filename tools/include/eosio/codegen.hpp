@@ -129,6 +129,26 @@ namespace eosio { namespace cdt {
          return true;
       }
 
+      bool is_ignorable( const clang::QualType& type ) {
+         auto check = [&](const clang::Type* pt) {
+            if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt)) {
+               if (auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
+                  auto decl = rt->getDecl();
+                  return clang_wrapper::Decl<decltype(decl)>(decl).isEosioIgnore();
+               }
+            }
+
+            return false;
+         };
+
+         bool is_ignore = false;
+         if ( auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr()) )
+            is_ignore = check(pt->desugar().getTypePtr());
+         else
+            is_ignore = check(type.getTypePtr());
+         return is_ignore;
+      }
+
       template <size_t N>
       void emitError(CompilerInstance& inst, SourceLocation loc, const char (&err)[N]) {
          FullSourceLoc full(loc, inst.getSourceManager());
@@ -224,7 +244,15 @@ namespace eosio { namespace cdt {
       }
 
       virtual bool VisitCXXMethodDecl(CXXMethodDecl* _decl) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         bool invalid_params = false;
+         for (auto param : _decl->parameters()) {
+            bool ignore = is_ignorable(param->getType().getNonReferenceType().getUnqualifiedType());
+            if (invalid_params && !ignore)
+               emitError(*ci, param->getLocation(), "ignorable types cannot be preceded by non-ignorable types, this restriction will be relaxed in future versions");
+            invalid_params |= ignore;
+         }
+
+         auto decl = clang_wrapper::wrap_decl(_decl);
          std::string name = decl->getNameAsString();
          static std::set<std::string> _action_set; //used for validations
          static std::set<std::string> _notify_set; //used for validations
@@ -282,7 +310,7 @@ namespace eosio { namespace cdt {
       }
 
       virtual bool VisitDecl(clang::Decl* decl) {
-         auto _decl = clang_wrapper::make_decl(decl);
+         auto _decl = clang_wrapper::wrap_decl(decl);
          if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
             if (fd->getNameInfo().getAsString() == "apply" && _decl.isEosioWasmEntry()) {
                cg.ag.add_wasm_entries(_decl);
@@ -298,7 +326,7 @@ namespace eosio { namespace cdt {
       }
 
       virtual bool VisitCXXRecordDecl(CXXRecordDecl* _decl) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         auto decl = clang_wrapper::wrap_decl(_decl);
          auto& cg = codegen::get();
 
          if (!cg.has_added_clauses) {

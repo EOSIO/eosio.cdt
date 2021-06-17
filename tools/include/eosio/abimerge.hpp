@@ -3,14 +3,15 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #pragma GCC diagnostic ignored "-Wcovered-switch-default"
-#include <jsoncons/json.hpp>
 #include "abi.hpp"
 
 #include <string>
 #include <vector>
 
-using jsoncons::json;
-using jsoncons::ojson;
+#define PICOJSON_OBJECT_ORDERED
+#include <picojson/picojson.h>
+
+using ojson = picojson::value;
 
 class ABIMerger {
    public:
@@ -20,7 +21,7 @@ class ABIMerger {
       }
       std::string get_abi_string()const {
          std::stringstream ss;
-         ss << pretty_print(abi);
+         ss << abi.serialize();
          return ss.str();
       }
       ojson merge(ojson other) {

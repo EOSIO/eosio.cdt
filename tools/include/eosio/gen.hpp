@@ -9,12 +9,15 @@
 #include <llvm/Support/raw_ostream.h>
 #include <functional>
 #include <vector>
+#include <set>
 #include <string>
 #include <map>
 #include <utility>
 #include <regex>
 #include <eosio/utils.hpp>
-#include <eosio/clang_wrapper.hpp>
+#include <blanc/clang_wrapper.hpp>
+
+using namespace blanc;
 
 namespace eosio { namespace cdt {
 
@@ -115,7 +118,7 @@ struct generation_utils {
         if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
          if (auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
             auto decl = rt->getDecl();
-            return clang_wrapper::make_decl(decl).isEosioIgnore();
+            return clang_wrapper::wrap_decl(decl).isEosioIgnore();
          }
          return false;
       };
@@ -135,7 +138,7 @@ struct generation_utils {
          if (auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt))
             if (auto decl = llvm::dyn_cast<clang::RecordType>(tst->desugar())) {
                auto _decl = decl->getDecl();
-               return clang_wrapper::make_decl(_decl).isEosioIgnore() ? tst->getArg(0).getAsType() : type;
+               return clang_wrapper::wrap_decl(_decl).isEosioIgnore() ? tst->getArg(0).getAsType() : type;
             }
          return type;
       };
@@ -191,7 +194,7 @@ struct generation_utils {
 
    template<typename T>
    static inline std::string get_action_name( T decl ) {
-      auto _decl = clang_wrapper::make_decl(decl);
+      auto _decl = clang_wrapper::wrap_decl(decl);
       return get_action_name(_decl);
    }
 
@@ -204,7 +207,7 @@ struct generation_utils {
 
    template<typename T>
    static inline std::string get_notify_pair( T decl ) {
-      auto _decl = clang_wrapper::make_decl(decl);
+      auto _decl = clang_wrapper::wrap_decl(decl);
       return get_notify_pair(_decl);
    }
 
@@ -299,7 +302,7 @@ struct generation_utils {
 
    template<typename T>
    static inline bool is_eosio_contract( T decl, const std::string& cn ) {
-      auto _decl = clang_wrapper::make_decl(decl);
+      auto _decl = clang_wrapper::wrap_decl(decl);
       return is_eosio_contract(_decl, cn);
    }
 

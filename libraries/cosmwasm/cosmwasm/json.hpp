@@ -7,6 +7,7 @@
 #include <optional>
 #include <variant>
 
+#define PICOJSON_NO_FLOAT
 #define PICOJSON_USE_INT64
 #define PICOJSON_USE_LOCALE 0
 #define PICOJSON_ASSERT(e) \
@@ -16,7 +17,7 @@
       } \
    } while (0)
 
-#include "picojson/picojson.h"
+#include <picojson/picojson.h>
 
 namespace cosmwasm { namespace json {
 

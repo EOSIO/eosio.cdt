@@ -1,5 +1,4 @@
 include(ExternalProject)
-include(GNUInstallDirs)
 
 ExternalProject_Add(
   BlancWasmLibraries
@@ -11,5 +10,6 @@ ExternalProject_Add(
   TEST_COMMAND   ""
   INSTALL_COMMAND ""
   BUILD_ALWAYS 1
-  DEPENDS BlancTools BlancPlugins
+  DEPENDS BlancTools
 )
+

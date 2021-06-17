@@ -4,7 +4,7 @@
 #include <eosio/utils.hpp>
 #include <eosio/whereami/whereami.hpp>
 #include <eosio/abi.hpp>
-#include <eosio/clang_wrapper.hpp>
+#include <blanc/clang_wrapper.hpp>
 
 #include <exception>
 #include <iostream>
@@ -14,13 +14,14 @@
 #include <set>
 #include <map>
 
-#include <jsoncons/json.hpp>
-
 using namespace llvm;
 using namespace eosio;
 using namespace eosio::cdt;
-using jsoncons::json;
-using jsoncons::ojson;
+
+#define PICOJSON_OBJECT_ORDERED
+#include <picojson/picojson.h>
+
+using ojson = picojson::value;
 
 namespace eosio { namespace cdt {
    struct abigen_exception : public std::exception {
@@ -28,7 +29,8 @@ namespace eosio { namespace cdt {
          return "eosio.abigen fatal error";
       }
    };
-   extern abigen_exception abigen_ex;
+   //extern abigen_exception abigen_ex;
+   abigen_exception abigen_ex;
 
    class abigen : public generation_utils {
       public:
@@ -80,7 +82,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_action( const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         auto decl = clang_wrapper::wrap_decl(_decl);
          abi_action ret;
          auto action_name = decl.getEosioActionAttr()->getName();
 
@@ -112,7 +114,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_action( const clang::CXXMethodDecl* _decl ) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         auto decl = clang_wrapper::wrap_decl(_decl);
          abi_action ret;
 
          auto action_name = decl.getEosioActionAttr()->getName();
@@ -232,7 +234,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         auto decl = clang_wrapper::wrap_decl(_decl);
          tables.insert(_decl);
          abi_table t;
          t.type = decl->getNameAsString();
@@ -251,7 +253,7 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( uint64_t name, const clang::CXXRecordDecl* _decl ) {
-         auto decl = clang_wrapper::make_decl(_decl);
+         auto decl = clang_wrapper::wrap_decl(_decl);
          if (!(decl.isEosioTable() && abigen::is_eosio_contract(decl, get_contract_name())))
             return;
          abi_table t;

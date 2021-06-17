@@ -1,17 +1,17 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(blanc)
 
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
-   message(STATUS "Using sccache")
-   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE sccache)
+  message(STATUS "Using sccache")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE sccache)
 else()
-   find_program(CCACHE_FOUND ccache)
-   if (CCACHE_FOUND)
-      message(STATUS "Using ccache")
-      set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-   endif()
+  find_program(CCACHE_FOUND ccache)
+  if (CCACHE_FOUND)
+    message(STATUS "Using ccache")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+  endif()
 endif()
 
 
@@ -20,54 +20,40 @@ set(VERSION_MINOR 8)
 set(VERSION_PATCH 1)
 
 if (VERSION_SUFFIX)
-   set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
+  set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
 else()
-   set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+  set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 endif()
 
-set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_PROJECT_NAME})
+set(BLANC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/opt/${CMAKE_PROJECT_NAME}/${VERSION_FULL})
 
 include(GNUInstallDirs)
 
+set(CMAKE_CXX_STANDARD 20)
+
+find_package(LLVM 12 REQUIRED CONFIG)
+find_package(Clang REQUIRED)
+
+list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
+include(AddLLVM)
+
+include_directories(${LLVM_INCLUDE_DIRS})
+add_definitions(${LLVM_DEFINITIONS})
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
-
 include(BlancExecutableNames)
-include(BlancPluginsExternalProject)
-include(ToolsExternalProject)
 
-if(APPLE)
-   set(CMAKE_C_COMPILER "${BREW_LLVM_PATH}/bin/clang")
-   set(CMAKE_CXX_COMPILER "${BREW_LLVM_PATH}/bin/clang++")
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_DARWIN_C_SOURCE")
-endif()
-
-### Configure the EosioWasmToolchain.cmakes
-set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
-
-configure_file(${CMAKE_SOURCE_DIR}/modules/blanc-config.cmake ${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}-config.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/EosioCDTMacros.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/EosioWasmToolchain.cmake @ONLY)
-
-set(CDT_ROOT_DIR ${CDT_INSTALL_PREFIX})
-
-configure_file(${CMAKE_SOURCE_DIR}/modules/blanc-config.cmake ${CMAKE_BINARY_DIR}/modules/${CMAKE_PROJECT_NAME}-config.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioCDTMacros.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchain.cmake @ONLY)
-
-set(CDT_ROOT_DIR "_PREFIX_")
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioCDTMacros.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioCDTMacrosPackage.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/EosioWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/EosioWasmToolchainPackage.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/modules/blanc-config.cmake ${CMAKE_BINARY_DIR}/modules/${CMAKE_PROJECT_NAME}-config.cmake.package @ONLY)
+add_subdirectory(plugins)
+add_subdirectory(tools)
+add_subdirectory(modules)
 
 include(LibrariesExternalProject)
 
-include(InstallBlanc)
-
 configure_file(${CMAKE_SOURCE_DIR}/imports/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
-install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CDT_INSTALL_PREFIX})
+install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${BLANC_INSTALL_PREFIX})
 
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
-install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CDT_INSTALL_PREFIX}/scripts)
+install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${BLANC_INSTALL_PREFIX}/scripts)
 
 # section for package construction
 set(VENDOR "Jeeyong Um")
@@ -84,10 +70,11 @@ configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh.in ${CMAKE_BINARY
 # add licenses
 configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_DIR}/licenses/boost.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/libraries/cosmwasm/cosmwasm/picojson/LICENSE ${CMAKE_BINARY_DIR}/licenses/picojson.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/picojson/LICENSE ${CMAKE_BINARY_DIR}/licenses/picojson.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/tsl/LICENSE ${CMAKE_BINARY_DIR}/licenses/tsl-ordered-map.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/cosmwasm/cosmwasm/uint128_t/LICENSE ${CMAKE_BINARY_DIR}/licenses/uint128_t.license COPYONLY)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${BLANC_INSTALL_PREFIX})
 
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
@@ -98,3 +85,6 @@ if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${BLANC_INSTALL_PREFIX}/include)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${BLANC_INSTALL_PREFIX}/lib)

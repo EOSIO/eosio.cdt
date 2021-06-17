@@ -4,7 +4,6 @@ file(GLOB HEADERS "*.hpp"
 add_library(eosio
             eosiolib.cpp
             crypto.cpp
-            stringify.cpp
             ${HEADERS})
 
 add_library(eosio_malloc
@@ -23,7 +22,6 @@ add_native_library(native_eosio
                    eosiolib.cpp
                    crypto.cpp
                    malloc.cpp
-                   stringify.cpp
                    ${HEADERS})
 
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
