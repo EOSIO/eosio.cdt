@@ -36,6 +36,11 @@ The sponsorship information must be defined as a transaction extension and place
 
 Below are two examples that illustrate how to send a sponsored transaction to the blockchain.
 
-* To send a transaction to the blockchain using `cleos` tool, follow the [How To Send A Sponsored Transaction](https://developers.eos.io/manuals/eosjs/latest/how-to-guides/how-to-submit-a-sponsored-transaction) steps and note in the json example the transaction sponsorship information set in the ``transaction_extensions`` field. \
+### EOSJS
 
-* To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Send A Transaction](https://developers.eos.io/manuals/eos/latest/cleos/how-to-guides/how-to-submit-a-transaction) steps and note in the json example the transaction sponsorship information set in the ``transaction_extensions`` field.
+To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Send A Transaction](https://developers.eos.io/manuals/eos/latest/cleos/how-to-guides/how-to-submit-a-transaction) steps and note in the json example the transaction sponsorship information set in the ``transaction_extensions`` field.
+
+### Cleos
+
+[[warning | Cleos Support Will Be Available Starting With v2.2 RC2 Onwards]]
+| The ability to send transaction sponsorship information using `cleos` will be added in the next v2.2 RC2 release.
