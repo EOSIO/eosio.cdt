@@ -71,4 +71,5 @@ compiler options:
   -sysroot=<string>        - Set the system root directory
   -v                       - Show commands to run and use verbose output
   -w                       - Suppress all warnings
+  --warn-action-read-only  - Issue a warning if a read-only action uses a write API and continue compilation
 ```

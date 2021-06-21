@@ -93,3 +93,24 @@ extern "C" {
 
 The code above will mark a function declaration as being a WebAssembly import.  This allows for other compilation modes to specify which functions are import only (i.e. do not link) without having to maintain a secondary file with duplicate declarations.
 
+## [[eosio::action, eosio::read-only]]
+The `read-only` attribute marks a method which has been defined as an action as a read-only action.
+
+Example:
+
+```cpp
+[[eosio::action, eosio::read-only]]
+std::vector<my_struct> get() {
+   std::vector<my_struct> ret;
+   // retrieve blockchain state and populate the ret vector
+   return ret; 
+}
+```
+
+Contract actions tagged read-only:
+* Cannot call insert/update (write) functions on the `Multi-Index API`, nor the `Key Value API`.
+* Cannot call `deferred transactions`.
+* Cannot call `inline actions`.
+* The returned data size is limited by the action return value sizes. By default these are set to 256 bytes by `default_max_action_return_value_size`.
+
+The `eosio-cpp` and `eosio-cc` tools will generate an error and terminate compilation if an action tagged read-only attempts to use a write API. However, if the command-line override option `--warn-action-read-only` is used, the `eosio-cpp` and `eosio-cc` tools will issue a warning and continue compilation.
