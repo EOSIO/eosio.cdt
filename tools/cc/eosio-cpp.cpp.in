@@ -11,6 +11,8 @@
 #include "clang/Rewrite/Core/Rewriter.h"
 #include "clang/Rewrite/Frontend/Rewriters.h"
 #include "llvm/Support/FileSystem.h"
+#include "clang/Lex/Preprocessor.h"
+#include "clang/Lex/HeaderSearch.h"
 
 #include <eosio/abigen.hpp>
 #include <eosio/codegen.hpp>
@@ -164,7 +166,15 @@ int main(int argc, const char **argv) {
             new_opts.insert(new_opts.begin(), "-xc++");
 
          if (opts.query_eosio_include_dirs) {
-            // TODO(bogniq)
+            std::cout << "Include paths: \n";
+            CompilerInstance* ci = codegen::get().codegen_ci;
+            HeaderSearch &hs = ci->getPreprocessor().getHeaderSearchInfo();
+            clang::HeaderSearch::search_dir_iterator sdi ;
+            for (clang::HeaderSearch::search_dir_iterator it = hs.search_dir_begin(); it != hs.search_dir_end(); ++it) {
+               if (const clang::DirectoryEntry* entry = it->getDir()) {
+                  std::cout << entry->getName().str() << std::endl;
+               }
+            }
          }
 
          if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
