@@ -185,7 +185,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MOJAVE}${SKIP_UNIT_TESTS}
 
   - wait:
