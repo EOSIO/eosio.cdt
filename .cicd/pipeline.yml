@@ -326,7 +326,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
@@ -352,7 +352,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
