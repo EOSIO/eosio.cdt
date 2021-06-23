@@ -308,7 +308,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: 10
+    timeout: ${TIMEOUT:-10}
     skip: ${SKIP_MOJAVE}${SKIP_PACKAGE_BUILDER}
 
   - wait
