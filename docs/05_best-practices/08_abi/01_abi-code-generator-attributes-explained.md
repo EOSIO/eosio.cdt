@@ -111,6 +111,6 @@ Contract actions tagged read-only:
 * Cannot call insert/update (write) functions on the `Multi-Index API`, nor the `Key Value API`.
 * Cannot call `deferred transactions`.
 * Cannot call `inline actions`.
-* The returned data size is limited by the action return value sizes. By default these are set to 256 bytes by `default_max_action_return_value_size`.
+* The amount of data returned by read-only queries is limited by the action return value size. By default these are set to 256 bytes by `default_max_action_return_value_size`.
 
-The `eosio-cpp` and `eosio-cc` tools will generate an error and terminate compilation if an action tagged read-only attempts to use a write API. However, if the command-line override option `--warn-action-read-only` is used, the `eosio-cpp` and `eosio-cc` tools will issue a warning and continue compilation.
+The `eosio-cpp` and `eosio-cc` tools will generate an error and terminate compilation if an action tagged read-only attempts to call insert/update (write) functions. However, if the command-line override option `--warn-action-read-only` is used, the `eosio-cpp` and `eosio-cc` tools will issue a warning and continue compilation when write functions are used.
