@@ -17,8 +17,8 @@ To accomplish this task, define the user type which will be stored in the `kv ta
 Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
-* A smart contract named `smrtcontract`.
-* A user defined type named `person`, which defines the data stored in the table.
+* A smart contract named `smrtcontract`
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
 
 Refer to the following reference implementation for your starting point:
 
