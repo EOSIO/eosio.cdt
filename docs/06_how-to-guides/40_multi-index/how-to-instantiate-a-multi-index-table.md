@@ -110,7 +110,7 @@ Declare the `testtab` multi-index table as a data member of type `test_table_t`.
 
 # 6. Initialize The Multi-Index Table Instance
 
-Initialize the data member `testtab` by passing to its constructor the `code` (in this case `receiver`) and the `code` parameters (`receiver.value`), these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor
+Initialize the data member `testtab` by passing to its constructor for the `code` parameter the `receiver` value and for the `scope` parameter the `receiver.value` value. These two parameters combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor
 
 ```diff
 // contract class constructor
