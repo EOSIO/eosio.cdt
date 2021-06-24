@@ -210,7 +210,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
@@ -234,7 +234,7 @@ steps:
           debug: true
           wait-network: true
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_15}${SKIP_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
@@ -326,7 +326,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
@@ -352,7 +352,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
-      - "queue=mac-anka-large-node-fleet"
+      - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_14}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
@@ -486,7 +486,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: 10
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_PACKAGE_BUILDER}
 
   - label: ":darwin: Catalina - Package Builder"
@@ -507,7 +507,7 @@ steps:
           wait-network: true
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: 20
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}
 
   - wait
@@ -517,6 +517,19 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: 10
+
+  - label: ":beer: Brew Updater"
+    command: |
+      buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: Mojave - Package Builder'
+      mv eosio.cdt.rb eosio_cdt_mojave.rb
+      buildkite-agent artifact upload eosio_cdt_mojave.rb
+      buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: Catalina - Package Builder'
+      mv eosio.cdt.rb eosio_cdt_catalina.rb
+      buildkite-agent artifact upload eosio_cdt_catalina.rb
+    agents:
+      queue: "automation-basic-builder-fleet"
+    timeout: "${TIMEOUT:-5}"
+    skip: ${SKIP_MACOS_10_14}${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
