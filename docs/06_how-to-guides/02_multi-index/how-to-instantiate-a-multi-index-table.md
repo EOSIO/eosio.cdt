@@ -69,7 +69,7 @@ using namespace eosio;
 +  test_tables testtab;
 ```
 
-7. Instantiate the data member `testtab` by passing to its constructor the `scope` (in this case `receiver`) and the `code` parameters, these two combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi index table, in this example you will initialize the `testtab` data member in the smart contract constructor
+7. Initialize the data member `testtab` by passing to its constructor for the `code` parameter the `receiver` value and for the `scope` parameter the `receiver.value` value. These two parameters combined with table name `"testtaba"` provide access to the partition of the RAM cache used by this multi-index table, in this example you will initialize the `testtab` data member in the smart contract constructor.
 
 ```diff
 // contract class constructor
