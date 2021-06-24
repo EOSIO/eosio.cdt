@@ -30,17 +30,17 @@ When you send the transaction to the blockchain, if you want to designate the re
 * The maximum CPU limit amount the payer supports expressed in microseconds,
 * The maximum NET limit amount the payer supports expressed in bytes.
 
-The sponsorship information must be defined as a transaction extension and placed in the transaction’s extension list. For more details please see the examples provided in the following section.
+The resource payer information must be defined as a transaction extension and placed in the transaction’s extension list. For more details please see the examples provided in the following section.
 
 ## Examples
 
-Find below one example that illustrate how to send a sponsored transaction to the blockchain.
+Find below one example that illustrate how to send transaction to the blockchain which contain resource payer information.
 
 ### EOSJS
 
-To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Send A Transaction](https://developers.eos.io/manuals/eos/latest/cleos/how-to-guides/how-to-submit-a-transaction) steps and note in the json example the transaction sponsorship information set in the ``transaction_extensions`` field.
+To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Send A Transaction](https://developers.eos.io/manuals/eos/latest/cleos/how-to-guides/how-to-submit-a-transaction) steps and note in the json example the resource payer information set in the ``transaction_extensions`` field.
 
 ### Cleos
 
 [[info | Cleos Support Will Be Available Starting With v2.2 RC2 Onwards]]
-| The ability to send transaction sponsorship information using `cleos` will be added in the v2.2 RC2 release version.
+| The ability to send transaction with resource payer information using `cleos` will be added in the v2.2 RC2 release version.
