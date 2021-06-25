@@ -41,6 +41,10 @@ set_property(TEST time_tests PROPERTY LABELS unit_tests)
 add_test( varint_tests ${CMAKE_BINARY_DIR}/tests/unit/varint_tests )
 set_property(TEST varint_tests PROPERTY LABELS unit_tests)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/unit/version_tests.sh ${CMAKE_BINARY_DIR}/tests/unit/version_tests.sh COPYONLY)
+add_test(NAME version_tests COMMAND ${CMAKE_BINARY_DIR}/tests/unit/version_tests.sh "eosio-cpp version ${VERSION_FULL}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+set_property(TEST version_tests PROPERTY LABELS unit_tests)
+
 if (eosio_FOUND AND EOSIO_RUN_INTEGRATION_TESTS)
    add_test(integration_tests ${CMAKE_BINARY_DIR}/tests/integration/integration_tests)
    set_property(TEST integration_tests PROPERTY LABELS integration_tests)
