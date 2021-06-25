@@ -56,7 +56,7 @@ echo "class Blanc < Formula
   
    bottle do
       root_url \"https://github.com/turnpike/blanc/releases/download/${VERSION}\"
-      sha256 \"${hash}\" => :${MAC_VERSION}
+      sha256 ${MAC_VERSION}: \"${hash}\"
    end
    def install
       raise \"Error, only supporting binary packages at this time\"
