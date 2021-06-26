@@ -35,10 +35,7 @@
 .DS_Store
 
 # Build
-build/*
-examples/multi_index_example/build
-examples/hello/build
-
+build
 # Python
 __pycache__/
 .mypy_cache/
