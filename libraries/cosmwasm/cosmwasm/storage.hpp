@@ -33,6 +33,10 @@ namespace cosmwasm {
          return get(key.data(), key.size());
       }
 
+      std::optional<value_type> get(key_type&& key) {
+         return get(key.data(), key.size());
+      }
+
       void set(char* key, uint32_t key_len, char* value, uint32_t value_len) {
          if (!value_len)
             abort();
@@ -46,12 +50,28 @@ namespace cosmwasm {
          set(key.data(), key.size(), value.data(), value.size());
       }
 
+      void set(key_type&& key, value_type& value) {
+         set(key.data(), key.size(), value.data(), value.size());
+      }
+
+      void set(key_type& key, value_type&& value) {
+         set(key.data(), key.size(), value.data(), value.size());
+      }
+
+      void set(key_type&& key, value_type&& value) {
+         set(key.data(), key.size(), value.data(), value.size());
+      }
+
       void remove(char* key, uint32_t length) {
          std::unique_ptr<region> key_reg = build_region(key, length);
          internal_use_do_not_use::db_remove(key_reg.get());
       }
 
       void remove(key_type& key) {
+         remove(key.data(), key.size());
+      }
+
+      void remove(key_type&& key) {
          remove(key.data(), key.size());
       }
    };
