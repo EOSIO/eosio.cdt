@@ -97,12 +97,10 @@ namespace cosmwasm { namespace json {
       return v.get<std::string>();
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> &&
-      !_detail::is_optional<T>::value &&
-      _detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<_detail::is_vector<T>::value>* = nullptr>
    T from_json(const value& v) {
       value::array arr = v.get<value::array>();
-      T out(arr.size());
+      T out;
       for (auto& e: arr) {
          out.push_back(from_json<typename T::value_type>(e));
       }
@@ -156,8 +154,7 @@ namespace cosmwasm { namespace json {
       }
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> &&
-      _detail::is_variant<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<_detail::is_variant<T>::value>* = nullptr>
    std::optional<T> try_from_json(const value& v) {
       auto indexes = _detail::indexing_tuple<std::variant_size_v<T>>;
       std::optional<T> retval;
@@ -187,9 +184,7 @@ namespace cosmwasm { namespace json {
       return T::to_json(v);
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> &&
-      !_detail::is_optional<T>::value &&
-      _detail::is_vector<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<_detail::is_vector<T>::value>* = nullptr>
    value to_json(const T& v) {
       value::array out;
       for (auto& e: v) {
@@ -198,9 +193,7 @@ namespace cosmwasm { namespace json {
       return value(out);
    }
 
-   template<typename T, std::enable_if_t<std::is_class_v<T> &&
-      !_detail::is_optional<T>::value &&
-      _detail::is_variant<T>::value>* = nullptr>
+   template<typename T, std::enable_if_t<_detail::is_variant<T>::value>* = nullptr>
    value to_json(const T& v) {
       auto indexes = _detail::indexing_tuple<std::variant_size_v<T>>;
       std::optional<json::value> retval;
