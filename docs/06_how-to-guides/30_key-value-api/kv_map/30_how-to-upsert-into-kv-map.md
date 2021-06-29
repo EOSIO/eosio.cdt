@@ -13,7 +13,7 @@ Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
-* A user defined type named `person`, which defines the data stored in the map
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`
 
 Refer to the following reference implementation for your starting point:
@@ -110,8 +110,6 @@ void smartcontract::upsert(
 In conclusion, the above instructions show how to upsert into `Key-Value Map` (`kv map`).
 
 ## Next Steps
-
-The following options are available when you complete the procedure:
 
 * [Verify](70_how-to-find-in-kv-map.md) if the newly inserted `person` actually exists in the map. To accomplish this task use the `find()` function of the `kv_map`.
 * [Delete](40_how-to-delete-from-kv-map.md) the newly created or updated `person` from the map. To accomplish this task, use the `erase()` function of the `kv map`.

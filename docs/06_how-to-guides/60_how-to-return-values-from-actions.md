@@ -68,8 +68,6 @@ For a complete example of a smart contract that implements an action which retur
 
 ## Next Steps
 
-The following options are available when you complete the procedure:
-
 * Compile the smart contract and deploy it to the EOSIO testnet or any EOSIO based blockchain.
 * Use the `cleos` command to send the `checkwithrv` action to the smart contract and observe the returned value in the `cleos` output.
 * Use other means (e.g. programmatically) to send the  `checkwithrv` action to the smart contract and observe the returned value in the action trace.
