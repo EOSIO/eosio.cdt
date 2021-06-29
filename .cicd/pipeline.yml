@@ -79,7 +79,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_FILE_HASH}"
           modify-cpu: 12
           modify-ram: 24
           always-pull: true
@@ -95,7 +95,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     env:
-      PROJECT_TAG: ${MAC_SCRIPT_HASH_GOES_HERE}
+      PROJECT_TAG: ${MACOS_10_14_FILE_HASH}
       REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
       REPO_COMMIT: $BUILDKITE_COMMIT
       TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.14.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
@@ -118,7 +118,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.5_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_15_FILE_HASH}"
           modify-cpu: 12
           modify-ram: 24
           always-pull: true
@@ -134,7 +134,7 @@ steps:
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     env:
-      PROJECT_TAG: ${MAC_SCRIPT_HASH_GOES_HERE}
+      PROJECT_TAG: ${MACOS_10_15_FILE_HASH}
       REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
       REPO_COMMIT: $BUILDKITE_COMMIT
       TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.15.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
@@ -225,7 +225,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_FILE_HASH}"
           always-pull: true
           debug: true
           wait-network: true
@@ -252,7 +252,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.5_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_15_FILE_HASH}"
           always-pull: true
           debug: true
           wait-network: true
@@ -345,7 +345,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_FILE_HASH}"
           always-pull: true
           debug: true
           wait-network: true
@@ -372,7 +372,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.5_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MAC_SCRIPT_HASH_GOES_HERE}"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_15_FILE_HASH}"
           always-pull: true
           debug: true
           wait-network: true
