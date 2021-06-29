@@ -98,7 +98,7 @@ steps:
       PROJECT_TAG: ${MACOS_10_14_FILE_HASH}
       REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
       REPO_COMMIT: $BUILDKITE_COMMIT
-      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.14.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
+      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.14.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
       TEMPLATE: 10.14.6_6C_14G_80G
       TEMPLATE_TAG: clean::cicd::git-ssh::nas::brew::buildkite-agent
     timeout: ${TIMEOUT:-120}
@@ -137,7 +137,7 @@ steps:
       PROJECT_TAG: ${MACOS_10_15_FILE_HASH}
       REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
       REPO_COMMIT: $BUILDKITE_COMMIT
-      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f \$BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.15.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
+      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/docker/macos-10.15.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
       TEMPLATE: 10.14.6_6C_14G_80G
       TEMPLATE_TAG: clean::cicd::git-ssh::nas::brew::buildkite-agent
     timeout: ${TIMEOUT:-120}
