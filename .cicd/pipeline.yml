@@ -359,7 +359,7 @@ steps:
     env:
       IMAGE: "centos:7"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "cento7pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -387,7 +387,7 @@ steps:
     env:
       IMAGE: "ubuntu:18.04"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "ubuntu1804pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
