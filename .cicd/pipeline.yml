@@ -436,7 +436,7 @@ steps:
     env:
       IMAGE: "amazonlinux:2"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "amazonlinux2pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -464,7 +464,7 @@ steps:
     env:
       IMAGE: "centos:7"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "cento7pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -492,7 +492,7 @@ steps:
     env:
       IMAGE: "centos:8"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "cento8pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -519,7 +519,7 @@ steps:
     env:
       IMAGE: "ubuntu:16.04"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "ubuntu1604pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -547,7 +547,7 @@ steps:
     env:
       IMAGE: "ubuntu:18.04"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "ubuntu1804pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
@@ -575,7 +575,7 @@ steps:
     env:
       IMAGE: "ubuntu:20.04"
     agents:
-      queue: "$BUILDKITE_TEST_AGENT_QUEUE"
+      queue: "automation-eks-eos-tester-fleet"
     depends_on: "ubuntu2004pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
