@@ -10,7 +10,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_AMAZON_LINUX_2
+    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}
 
   - label: ":centos: CentOS 7.7 - Build"
     command:
@@ -21,7 +21,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_CENTOS_7
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}
 
   - label: ":centos: CentOS 8 - Build"
     command:
@@ -32,7 +32,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_CENTOS_8
+    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}
 
   - label: ":ubuntu: Ubuntu 16.04 - Build"
     command:
@@ -43,7 +43,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_UBUNTU_16
+    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}
 
   - label: ":ubuntu: Ubuntu 18.04 - Build"
     command:
@@ -54,7 +54,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_UBUNTU_18
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}
 
   - label: ":ubuntu: Ubuntu 20.04 - Build"
     command:
@@ -65,7 +65,7 @@ steps:
     agents:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
-    skip: $SKIP_UBUNTU_20
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}
 
   - label: ":darwin: macOS 10.14 - Build"
     command:
@@ -156,7 +156,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":centos: CentOS 7.7 - Unit Tests"
     command:
@@ -167,7 +167,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_7}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":centos: CentOS 8 - Unit Tests"
     command:
@@ -178,7 +178,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":ubuntu: Ubuntu 16.04 - Unit Tests"
     command:
@@ -189,7 +189,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Unit Tests"
     command:
@@ -200,7 +200,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":ubuntu: Ubuntu 20.04 - Unit Tests"
     command:
@@ -211,7 +211,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_20}${SKIP_UNIT_TESTS}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.14 - Unit Tests"
     command:
@@ -276,7 +276,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":centos: CentOS 7.7 - Toolchain Tests"
     command:
@@ -287,7 +287,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_7}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":centos: CentOS 8 - Toolchain Tests"
     command:
@@ -298,7 +298,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 16.04 - Toolchain Tests"
     command:
@@ -309,7 +309,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Toolchain Tests"
     command:
@@ -320,7 +320,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 20.04 - Toolchain Tests"
     command:
@@ -331,7 +331,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_20}${SKIP_TOOLCHAIN_TESTS}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.14 - Toolchain Tests"
     command:
@@ -396,7 +396,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_INTEGRATION_TESTS}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_INTEGRATION_TESTS}
 
   - wait:
     continue_on_failure: true
@@ -425,8 +425,22 @@ steps:
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "amazonlinux2pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":aws: Amazon_Linux 2 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.rpm' . --step ':aws: Amazon_Linux 2 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "amazonlinux:2"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "amazonlinux2pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":centos: Centos 7.7 - Package Builder"
     command:
@@ -439,8 +453,22 @@ steps:
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "centos7pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_7}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":centos: Centos 7.7 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.rpm' . --step ':centos: Centos 7.7 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "centos:7"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "centos7pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":centos: Centos 8 - Package Builder"
     command:
@@ -453,8 +481,22 @@ steps:
       PKGTYPE: "rpm"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "centos8pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":centos: Centos 8 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.rpm' . --step ':centos: Centos 8 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "centos:8"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "centos8pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":ubuntu: Ubuntu 16.04 - Package Builder"
     command:
@@ -467,8 +509,22 @@ steps:
       PKGTYPE: "deb"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "ubuntu1604pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":ubuntu: Ubuntu 16.04 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 16.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "ubuntu:16.04"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "ubuntu1604pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
@@ -481,8 +537,22 @@ steps:
       PKGTYPE: "deb"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "ubuntu1804pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":ubuntu: Ubuntu 18.04 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 18.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "ubuntu:18.04"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "ubuntu1804pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":ubuntu: Ubuntu 20.04 - Package Builder"
     command:
@@ -495,8 +565,22 @@ steps:
       PKGTYPE: "deb"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "ubuntu2004pb"
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_20}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":ubuntu: Ubuntu 20.04 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 20.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "ubuntu:20.04"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "ubuntu2004pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":darwin: Mojave - Package Builder"
     command:
