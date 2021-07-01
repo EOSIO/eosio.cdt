@@ -1,5 +1,4 @@
 steps:
-
   - wait
 
   - label: ":aws: Amazon_Linux 2 - Build"
@@ -70,26 +69,39 @@ steps:
 
   - label: ":darwin: macOS 10.14 - Build"
     command:
-      - "brew update && brew upgrade"
-      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && ./.cicd/build.sh"
       - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
     plugins:
-      - EOSIO/anka#v0.5.7:
+      - EOSIO/anka#v0.6.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_40G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          vm-name: 10.14.6_6C_14G_80G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
           modify-cpu: 12
           modify-ram: 24
           always-pull: true
           debug: true
           wait-network: true
+          pre-execute-sleep: 5
+          pre-execute-ping-sleep: github.com
+          failover-registries:
+            - 'registry-1'
+            - 'registry-2'
+          pre-commands:
+            - "rm -rf mac-anka-fleet; git clone git@github.com:EOSIO/mac-anka-fleet.git && cd mac-anka-fleet && . ./ensure-tag.bash -u 12 -r 25G -a '-n'"
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
+    env:
+      PROJECT_TAG: ${MACOS_10_14_TAG}
+      REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
+      REPO_COMMIT: $BUILDKITE_COMMIT
+      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/platforms/macos-10.14.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
+      TEMPLATE: 10.14.6_6C_14G_80G
+      TEMPLATE_TAG: clean::cicd::git-ssh::nas::brew::buildkite-agent
+    timeout: ${TIMEOUT:-120}
     agents:
       - "queue=mac-anka-large-node-fleet"
     skip: $SKIP_MOJAVE
@@ -164,24 +176,25 @@ steps:
 
   - label: ":darwin: macOS 10.14 - Unit Tests"
     command:
-      - "brew update && brew upgrade"
-      - "brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3"
       - "git clone $BUILDKITE_REPO eosio.cdt"
       - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
       - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/tests.sh"
     plugins:
-      - EOSIO/anka#v0.5.7:
+      - EOSIO/anka#v0.6.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_40G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
-          modify-cpu: 12
-          modify-ram: 24
+          vm-name: 10.14.6_6C_14G_80G
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
           always-pull: true
           debug: true
           wait-network: true
+          pre-execute-sleep: 5
+          pre-execute-ping-sleep: github.com
+          failover-registries:
+            - 'registry-1'
+            - 'registry-2'
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
@@ -296,14 +309,19 @@ steps:
       - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
       - "cd eosio.cdt && ./.cicd/package.sh"
     plugins:
-      - EOSIO/anka#v0.5.7:
+      - EOSIO/anka#v0.6.1:
           no-volume: true
           inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_40G
+          vm-name: 10.14.6_6C_14G_80G
           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
           always-pull: true
           debug: true
           wait-network: true
+          pre-execute-sleep: 5
+          pre-execute-ping-sleep: github.com
+          failover-registries:
+            - 'registry-1'
+            - 'registry-2'
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
