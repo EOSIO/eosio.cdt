@@ -72,6 +72,7 @@ compiler options:
   -v                       - Show commands to run and use verbose output
   -w                       - Suppress all warnings
   -no-missing-ricardian-clause - Defaults to false, disables warnings for missing Ricardian clauses
+  --warn-action-read-only  - Issue a warning if a read-only action uses a write API and continue compilation
 ```
 
 ## Notes

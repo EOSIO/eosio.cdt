@@ -16,16 +16,16 @@ Use the `iterator` defined by the `eosio::kv::table::index` class to accomplish 
 
 Make sure you have the following prerequisites in place:
 
-* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
-* A smart contract named `smrtcontract`.
-* A user defined type which defines the data stored in the table, named `person`.
-* A `kv table` type which stores objects of type `person`, named `address_table`.
-* Each `person` object has the following properties:
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
+* A smart contract named `smrtcontract`
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
+* A `kv table` data type, `struct` or `class`, which inherits `eosio::kv::table`, and stores objects of type `person`, named `address_table`
+* Each `person` object has the following data members:
   * `account_name`,
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index, named `account_name_uidx`, defined on the `account_name` property..
+* A unique index, named `account_name_uidx`, defined on the `account_name` data member
 
 Refer to the following reference implementation for your starting point:
 
@@ -63,7 +63,7 @@ Complete the following steps to implement an action which iterates through the f
 2. In the `iterate` action access the instance of `address_table` by declaring a local variable of `address_table` type.
 3. Capture the `begin` and the `end` of the `account_name_uidx` index defined.
 4. Use the iterator `value` to access the current value of the iterator.
-5. And then increment the iterator until the first N `person` objects stored in `address_table` are visited.
+5. Increment the iterator until the first N `person` objects stored in `address_table` are visited.
 
 Refer to the following reference implementation to implement an action which iterates through the first N `person` objects in `address_table` and prints their first and last names:
 
