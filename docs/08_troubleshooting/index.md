@@ -61,9 +61,9 @@ Error 3160009: No wasm file found
 
 __Possible solution__: Verify that `abi` and `wasm` files exist in the directory specified in the `cleos set contract` command, and that their names match the directory name.
 
-## Action triggers ram charge which cannot be initiated from a notification.
+## Action triggers a ram charge which cannot be initiated from a notification
 
-__Possible solution__: The reason for this error is because the notification action doesn't have authorization to buy the needed RAM. In the context of multi index tables, there’s a table payer and a row payer. Only the contract can modify rows. The contract can create rows with a payer that didn’t authorize the action if the total amount of ram charged that payer doesn’t increase (e.g. delete a row and add another with the same payer). The table payer can’t change until the last row is deleted. For the purposes of billing, a table is identified by the tuple `contract, scope, table`. When you create a row for a `contract, scope, table` tuple that doesn’t exist, you create a table with the same payer. This can outlive the original row which created it, if other rows were created with that combination and this prevents the original payer from getting their ram back. Secondary indexes throw in more complexity since they use the lower 4 bits of the table name, producing additional `contract, scope, table` tuples combinations. Key takeaway: payer is about billing, not access control
+__Possible solution__: This error happens because the notification action has no authorization to buy the needed RAM. In the context of multi-index tables, there is a table payer and a row payer. Only the contract can modify rows. The contract can create rows with a payer that did not authorize the action if the total amount of ram charged does not increase (e.g. delete a row and add another with the same payer). The table payer can not change until the last row is deleted. For the purposes of billing, a table is identified by the tuple `contract, scope, table`. When you create a row for a `contract, scope, table` tuple that doesn’t exist, you create a table with the same payer. This can outlive the original row which created it, if other rows were created with that combination and this prevents the original payer from getting their ram back. Secondary indexes throw in more complexity since they use the lower 4 bits of the table name, producing additional `contract, scope, table` tuples combinations. Key takeaway: payer is about billing, not access control
 
 ## You successfully re-deployed the contract code, but when you query the table you get the custom message that you coded when the table is not initialized (doesn't exist), or the system error message below in case you do not have code that checks first if table exist
 
@@ -74,11 +74,11 @@ assertion failure with message: singleton does not exist
 pending console output: 
 ```
 
-__Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the table name? That is the first, of `eosio::name` type, parameter which you passed to the `eosio::template` type alias definition. Or did you change the table structure definition at all? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## You successfully re-deployed the contract code, but when you query the table you get the fields of the row values swapped, that is, it appears the values stored in table rows are the same only that they are swapped between fields/columns
 
-__Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the order of the fields the table struct definition? If you change the order of the table struct definition, if the swapped fields have the same type you will see the data in the fields correctly, however if the types of the fields are different the results could be of something undefined. If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## You successfully re-deployed the contract code, but when you query the table you get a parse error, like the one below, or the returned data seems to be garbage
 
@@ -87,7 +87,7 @@ error 2019-09-26T07:05:54.825 thread-0  main.cpp:3449                 main      
 Couldn't parse type_name
 ```
 
-__Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./05_best-practices/04_data-design-and-migration.md) section.
+__Possible solution__: It is possible that you changed the type of the fields for the table struct definition? If you need to change the table structure definition there are some limitations and a couple of ways to do it which are explained in the [Data Design and Migration](./07_best-practices/04_data-design-and-migration.md) section.
 
 ## eosio-cpp process never completes
 

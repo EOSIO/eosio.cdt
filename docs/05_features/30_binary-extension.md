@@ -1,5 +1,5 @@
 ---
-content_title: The eosio::binary_extension type
+content_title: The eosio::binary_extension Type
 ---
 
 Let's fully explain what the `eosio::binary_extension` type is, what it does, and why we need it for contract upgrades in certain situations.
@@ -327,7 +327,7 @@ struct [[eosio::table]] structure {
 }
 ```
 
-And their corresponding sections in the `.abi` files:
+Find below their corresponding sections in the `.abi` files:
 
 **binary_extension_contract.abi**
 

@@ -10,7 +10,7 @@ This guide provides instructions how to compile a smart contract using the comma
 
 See the following code reference:
 
-* The [`eosio-cpp`](https://developers.eos.io/manuals/eosio.cdt/latest/command-reference/eosio-cpp) tool.
+* The [`eosio-cpp`](https://developers.eos.io/manuals/eosio.cdt/v1.8/command-reference/eosio-cpp) tool.
 
 ## Before you begin
 
@@ -32,11 +32,11 @@ Follow the following steps to compile your contract.
     ```
 
     Where:
-    - `eosio-cpp` = Is the [`eosio-cpp`](https://developers.eos.io/manuals/eosio.cdt/latest/command-reference/eosio-cpp) tool.
+    - `eosio-cpp` = Is the [`eosio-cpp`](https://developers.eos.io/manuals/eosio.cdt/v1.8/command-reference/eosio-cpp) tool.
     - `-abigen` = It instructs the `eosio-cpp` tool to generate ABI file.
     - `../src/hello.cpp` = Is the input cpp source file to be compiled.
     - `-o hello.wasm` = It instructs the `eosio-cpp` tool who to name the output wasm file.
-    - `-I ../include/` = It tells `eosio-cpp` tool what the include folder path is, in this particular case it is relative path.
+    - `-I ../include/` = It tells `eosio-cpp` tool what the include folder path is, in this particular case it is a relative path.
 
 3. Verify the following two files were generated:
 

@@ -5,7 +5,7 @@ link_text: "How to create and use action wrappers"
 
 ## Overview
 
-This guide provides instructions on how to create and use an action wrapper in a smart contract.
+This guide provides instructions to create and use an action wrapper in a smart contract.
 
 ## Code Reference
 
@@ -43,7 +43,7 @@ Complete the following steps to create and use `mod_action` action wrapper for t
 
 ### 1. Define The Action Wrapper
 
-To define an action wrapper for the `mod` action, make use of the `eosio::action_wrapper` template, with  the first parameter the action name as a `eosio::name` and second parameter as the reference to the action method:
+To define an action wrapper for the `mod` action, use the `eosio::action_wrapper` template, with  the first parameter the action name as a `eosio::name` and second parameter as the reference to the action method:
 
 ```diff
 class [[eosio::contract]] multi_index_example : public contract {
@@ -67,7 +67,7 @@ To use the action wrapper, you have to include the header file where the action 
 
 #### 2.2. Instantiate The Action Wrapper
 
-Instantiate the `mod_action` defined above, specifying the contract to send the action to as the first argument. In this case, it is assumed the contract is deployed to `multiindexex` account, and a structure which is defined by two parameters: the self account, obtained by `get_self()` call, and the `active` permission (you can modify these two parameters based on your requirements).
+Instantiate the `mod_action`. Specify the contract to send the action to as the first argument. In this case, it is assumed the contract is deployed to `multiindexex` account. Specify a structure with two parameters: the self account, obtained by `get_self()` call, and the `active` permission (you can modify these two parameters based on your requirements).
 
 ```diff
 #include <multi_index_example.hpp>
