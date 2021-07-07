@@ -19,7 +19,7 @@ To accomplish this task do the following:
 
 See the following code reference:
 
-* The [`kv::map`](https://developers.eos.io/manuals/eosio.cdt/v1.8/classeosio_1_1kv_1_1map) class.
+* The [`kv::map`](https://developers.eos.io/manuals/eosio.cdt/latest/classeosio_1_1kv_1_1map) class.
 
 ## Before you begin
 
@@ -27,7 +27,7 @@ Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
-* A user defined type named `person`, which defines the data stored in the map
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
 
 Refer to the following reference implementation for your starting point:
 
@@ -82,7 +82,5 @@ class [[eosio::contract]] smartcontract : public eosio::contract {
 In conclusion, the above instructions show how to define and use a `Key-Value Map` (`kv map`) in a smart contract.
 
 ## Next Steps
-
-The following option is available when you complete the procedure:
 
 * You [can add values](30_how-to-upsert-into-kv-map.md) in the map object created.

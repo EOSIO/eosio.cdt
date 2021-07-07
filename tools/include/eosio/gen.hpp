@@ -5,6 +5,7 @@
 #include "clang/Basic/Builtins.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
+#include "clang/AST/Decl.h"
 #include "llvm/Support/raw_ostream.h"
 #include <eosio/utils.hpp>
 #include <eosio/error_emitter.hpp>
@@ -682,6 +683,63 @@ struct generation_utils {
       const bool is_internal = internal_types.count(decl->getNameAsString());
 
       return in_kv_namespace && is_internal;
+   }
+
+   inline bool is_write_host_func( const clang::FunctionDecl *func_decl ) {
+      static const std::set<std::string> write_host_funcs =
+      {
+         "set_resource_limits",
+         "set_wasm_parameters_packed",
+         "set_resource_limit",
+         "set_proposed_producers",
+         "set_proposed_producers_ex",
+         "set_blockchain_parameters_packed",
+         "set_parameters_packed",
+         "set_kv_parameters_packed",
+         "set_privileged",
+         "db_store_i64",
+         "db_update_i64",
+         "db_remove_i64",
+         "db_idx64_store",
+         "db_idx64_update",
+         "db_idx64_remove",
+         "db_idx128_store",
+         "db_idx128_update",
+         "db_idx128_remove",
+         "db_idx256_store",
+         "db_idx256_update",
+         "db_idx256_remove",
+         "db_idx_double_store",
+         "db_idx_double_update",
+         "db_idx_double_remove",
+         "db_idx_long_double_store",
+         "db_idx_long_double_update",
+         "db_idx_long_double_remove",
+         "kv_erase",
+         "kv_set",
+         "send_deferred",
+         "send_inline",
+         "send_context_free_inline"
+      };
+
+      return write_host_funcs.count(func_decl->getNameInfo().getAsString()) >= 1;
+   }
+
+   inline bool is_deferred_transaction_func( const std::string& t ) {
+      static const std::set<std::string> deferred_transaction_funcs =
+      {
+         "send_deferred",
+      };
+      return deferred_transaction_funcs.count(t) >= 1;
+   }
+
+   inline bool is_inline_action_func( const std::string& t ) {
+      static const std::set<std::string> inline_action_funcs =
+      {
+         "send_inline",
+         "send_context_free_inline"
+      };
+      return inline_action_funcs.count(t) >= 1;
    }
 };
 }} // ns eosio::cdt

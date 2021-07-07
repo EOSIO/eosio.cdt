@@ -347,7 +347,10 @@ static cl::opt<std::string> contract_name(
     "contract",
     cl::desc("Contract name"),
     cl::cat(EosioCompilerToolCategory));
-
+static cl::opt<bool> warn_action_read_only_opt(
+    "warn-action-read-only",
+    cl::desc("Issue a warning if a read-only action uses a write API and continue compilation"),
+    cl::cat(EosioCompilerToolCategory));
 /// end c/c++ options
 
 /// begin c++ options
@@ -387,6 +390,7 @@ struct Options {
    std::pair<int, int> abi_version;
    bool has_o_opt;
    bool has_contract_opt;
+   bool warn_action_read_only;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -548,6 +552,7 @@ static Options CreateOptions(bool add_defaults=true) {
    std::string abigen_contract;
    bool has_o_opt;
    bool has_contract_opt;
+   bool warn_action_read_only;
 
 #ifdef ONLY_LD
    bool abigen = false;
@@ -905,6 +910,13 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fnative");
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
+   
+   if(warn_action_read_only_opt) {
+      warn_action_read_only = true;
+   } else {
+      warn_action_read_only = false;
+   }
+
 #endif
 
    /* TODO add some way of defaulting these to the current highest version */
@@ -918,8 +930,8 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, warn_action_read_only};
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, warn_action_read_only};
 #endif
 }
