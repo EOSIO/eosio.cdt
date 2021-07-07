@@ -7,8 +7,12 @@ echo '##### Eosio-cpp Version Label Test #####'
 echo "Using BUILD_ROOT=\"$BUILD_ROOT\"."
 # test expectations
 if [[ -z "$EXPECTED" ]]; then
-    [[ -z "$BUILDKITE_TAG" ]] && export BUILDKITE_TAG="${GIT_TAG:-$1}"
-    export EXPECTED="$BUILDKITE_TAG"
+    if [[ -z "$1" ]]; then
+        export VERSION="$(echo ${BUILDKITE_TAG:-$GIT_TAG} | sed "s/^v//")"
+    else
+        export VERSION="$1"
+    fi
+    export EXPECTED="eosio-cpp version $VERSION"
 fi
 if [[ -z "$EXPECTED" ]]; then
     echo "Missing version input."
