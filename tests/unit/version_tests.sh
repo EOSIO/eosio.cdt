@@ -8,7 +8,7 @@ echo "Using BUILD_ROOT=\"$BUILD_ROOT\"."
 # test expectations
 if [[ -z "$EXPECTED" ]]; then
     [[ -z "$BUILDKITE_TAG" ]] && export BUILDKITE_TAG="${GIT_TAG:-$1}"
-    export EXPECTED="$BUILDKITE_TAG"
+    export EXPECTED="eosio-cpp version $BUILDKITE_TAG"
 fi
 if [[ -z "$EXPECTED" ]]; then
     echo "Missing version input."
