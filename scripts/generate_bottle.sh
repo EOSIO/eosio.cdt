@@ -31,6 +31,8 @@ export SSUBPREFIX
 hash=`openssl dgst -sha256 ${NAME}.tar.gz | awk 'NF>1{print $NF}'`
 
 echo "class EosioCdt < Formula
+   # typed: false
+   # frozen_string_literal: true
 
    homepage \"${URL}\"
    revision 0
@@ -48,13 +50,13 @@ echo "class EosioCdt < Formula
    depends_on \"doxygen\" => :build
    depends_on \"graphviz\" => :build
    depends_on \"lcov\" => :build
-   depends_on :xcode => :build
-   depends_on :macos => :high_sierra
-   depends_on :arch =>  :intel
+   depends_on xcode: build
+   depends_on macos: high_sierra
+   depends_on arch: intel
   
    bottle do
       root_url \"https://github.com/eosio/eosio.cdt/releases/download/v${VERSION}\"
-      sha256 \"${hash}\" => :${MAC_VERSION}
+      sha256 ${MAC_VERSION}: \"${hash}\"
    end
    def install
       raise \"Error, only supporting binary packages at this time\"
