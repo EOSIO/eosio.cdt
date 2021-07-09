@@ -51,7 +51,7 @@ echo "class EosioCdt < Formula
    depends_on \"graphviz\" => :build
    depends_on \"lcov\" => :build
    depends_on xcode: build
-   depends_on macos: high_sierra
+   depends_on macos: mojave
    depends_on arch: intel
   
    bottle do
