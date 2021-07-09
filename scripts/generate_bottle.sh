@@ -50,9 +50,9 @@ echo "class EosioCdt < Formula
    depends_on \"doxygen\" => :build
    depends_on \"graphviz\" => :build
    depends_on \"lcov\" => :build
-   depends_on xcode: build
-   depends_on macos: mojave
-   depends_on arch: intel
+   depends_on xcode: :build
+   depends_on macos: :mojave
+   depends_on arch: :intel
   
    bottle do
       root_url \"https://github.com/eosio/eosio.cdt/releases/download/v${VERSION}\"
