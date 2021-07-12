@@ -7,6 +7,7 @@ import difflib
 import json
 import os
 import subprocess
+import re
 
 from printer import Printer as P
 from errors import TestFailure
@@ -89,7 +90,7 @@ class Test(ABC):
             expected_stderr = expected["stderr"]
             actual_stderr = res.stderr.decode("utf-8")
 
-            if expected_stderr not in actual_stderr:
+            if expected_stderr not in actual_stderr and not re.search(expected_stderr, actual_stderr, flags=re.S):
                 self.success = False
                 raise TestFailure(
                     f"expected {expected_stderr} stderr but got {actual_stderr}",

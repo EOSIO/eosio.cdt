@@ -13,7 +13,7 @@ Make sure you have the following prerequisites in place:
 
 * An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
-* A user defined type named `person`, which defines the data stored in the map
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
 Refer to the following reference implementation for your starting point:
@@ -105,8 +105,6 @@ void kv_map::find(int id) {
 In conclusion, the above instructions show how to find an object in `Key-Value Map` (`kv map`) based on the unique key.
 
 ## Next Steps
-
-The following options are available when you complete the procedure:
 
 * [Update](30_how-to-upsert-into-kv-map.md) the `person` found.
 * [Delete](40_how-to-delete-from-kv-map.md) the `person` found.

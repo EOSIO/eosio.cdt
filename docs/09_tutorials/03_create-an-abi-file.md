@@ -4,14 +4,14 @@ content_title: Create an ABI File
 
 ## Overview
 
-This tutorial provides instructions on how to create an ABI file.
+This tutorial provides instructions to create an ABI file.
 
 [[warning]]
 | As of v1.2.0, the eosio.wasmsdk was decoupled from the core repository. This change has introduced an eosio-cpp regression where the legacy eosio-abigen is no longer bundled with eosio-cpp. Until a new ABI generator is introduced, you will need to hand-write your ABI files.
 
 ## Introduction
 
-The Application Binary Interface (ABI) is a JSON-based description on how to convert user actions between their JSON and Binary representations. The ABI also describes how to convert the database state to/from JSON. Once you have described your contract via an ABI then developers and users will be able to interact with your contract seamlessly via JSON.
+The Application Binary Interface (ABI) is a JSON-based description to convert user actions between their JSON and Binary representations. The ABI also describes how to convert the database state to/from JSON. Once you have described your contract via an ABI then developers and users will be able to interact with your contract seamlessly via JSON.
 
 This tutorial will use the [eosio.token](https://github.com/EOSIO/eosio.contracts/tree/master/eosio.token) contract as an example. *eosio.token contract does not cover every possible permutation of an ABI definition.  
 
