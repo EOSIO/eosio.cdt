@@ -73,6 +73,8 @@ class TestSuite:
                     self.tests.append(tests.CompileFailTest(*args))
                 elif self.test_type == TestType.ABIGEN_PASS:
                     self.tests.append(tests.AbigenPassTest(*args))
+                elif self.test_type == TestType.ABIGEN_FAIL:
+                    self.tests.append(tests.AbigenFailTest(*args))
 
     def _get_test_type(self) -> TestType:
         return TestType.from_str(self.directory.split("/")[-1])

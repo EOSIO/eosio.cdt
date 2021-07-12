@@ -3,22 +3,24 @@ content_title: How-To Use Key-Value Table
 link_text: "How-To Use Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure demonstrates how to define and use a `Key-Value Table` (`kv table`) in your smart contract.
+This how-to demonstrates how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
 
 To accomplish this task, define the user type which will be stored in the `kv table`, and extend the `eosio::kv::table` template class with a specialized definition based on the user defined type.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
-## Prerequisites
+## Before you begin
 
-* The EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract named `smrtcontract`.
-* A user defined type named `person`, which defines the data stored in the table.
+Make sure you have the following prerequisites in place:
 
-Refer to the following possible implementation of your starting point.
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
+* A smart contract named `smrtcontract`
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
+
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -46,7 +48,7 @@ Complete the following steps to define the `address_table` type, based on the `e
 1. Define the structure or class `address_table` in the scope of your smart contract class, for the abi generation to find it and place it into the abi file.
 2. Derive `address_table` from `eosio::`kv::table` class template. Pass the `person` user defined type as the type parameter for `eosio::`kv::table` base class and the name of the `kv table`, let’s say `kvaddrbook`.
 3. Annotate `address_table` type with `[[eosio::table]]`, and make sure it is placed after the `struct` keyword but before the name of the type.
-4. Define a primary index `first_name_idx` based on the property `person::first_name`. Every `kv table` requires a primary index to be defined based on a property that stores unique values.
+4. Define a primary index `first_name_idx` based on the data member `person::first_name`. Every `kv table` requires a primary index to be defined on a data member that stores unique values.
 5. In the `address_table` constructor, call the `init(...)` base class method with the two parameters:
     1. The first parameter, of type `eosio::name`, is the contract that owns the table.
     2. The second parameter is the `account_name_uidx` primary index.
@@ -72,9 +74,11 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-## Next Steps
+## Summary
 
-The following options are available when you complete the procedure:
+In conclusion, the above instructions show how to define and use a `Key-Value Table` (`kv table`) in a smart contract.
+
+## Next Steps
 
 * You can [create one or more unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.
 * You can [create one or more non-unique indexes](20_how-to-create-indexes-kv-table.md) using the `KV_NAMED_INDEX` macro or the `eosio::kv::table::index` template class.

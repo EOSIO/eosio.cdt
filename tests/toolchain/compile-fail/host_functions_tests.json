@@ -1,0 +1,11 @@
+{
+  "tests" : [
+    {        
+      "compile_flags": [],
+      "expected" : {
+        "exit-code": 255,
+        "stderr": "(codegen error.*){20}"
+      }
+    }
+  ]
+}

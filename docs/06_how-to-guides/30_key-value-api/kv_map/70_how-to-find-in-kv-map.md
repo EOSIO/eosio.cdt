@@ -3,20 +3,20 @@ content_title: How-To Find in Key-Value Map
 link_text: "How-To Find in Key-Value Map"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to find an object in `Key-Value Map` (`kv map`) based on the unique key.
+This how-to provides instructions to find an object in `Key-Value Map` (`kv map`) based on the unique key.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
 * A smart contract named `smrtcontract`
-* A user defined type named `person`, which defines the data stored in the map
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
 * A `kv map` object, name `my_map`, which stores objects of type `person`, with unique keys of type `int`.
 
-Refer to the following possible implementation of your starting point.
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -48,7 +48,7 @@ Complete the following steps to find a `person` object with a given ID:
 1. Create a new action in your contract, named `delete`, which takes as input parameters the person ID.
 2. Use the `find()` function defined for the `kv::map` type, with the give ID as parameter, to find the `person` with the given ID as unique key.
 
-Refer to the following possible implementation to find `person` object with a given ID as unique key:
+Refer to the following reference implementation to find `person` object with a given ID as unique key:
 
 `smartcontract.hpp file`
 
@@ -100,7 +100,11 @@ void kv_map::find(int id) {
 }
 ```
 
-The following options are available when you complete the procedure:
+## Summary
+
+In conclusion, the above instructions show how to find an object in `Key-Value Map` (`kv map`) based on the unique key.
+
+## Next Steps
 
 * [Update](30_how-to-upsert-into-kv-map.md) the `person` found.
 * [Delete](40_how-to-delete-from-kv-map.md) the `person` found.

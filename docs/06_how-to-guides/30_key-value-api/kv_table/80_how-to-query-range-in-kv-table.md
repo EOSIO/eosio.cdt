@@ -3,32 +3,32 @@ content_title: How-To Query Range in Key-Value Table
 link_text: "How-To Query Range in Key-Value Table"
 ---
 
-## Summary
+## Overview
 
-This how-to procedure provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
+This how-to provides instructions to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
 
 [[caution | Alpha version]]
 | `Key-Value Table` is designated as `alpha` and should not be used in production code.
 
 Use the method `range` defined by the `eosio::kv::table::index` class to accomplish this task.
 
-## Prerequisites
+## Before you begin
 
-Before you begin, complete the following prerequisites:
+Make sure you have the following prerequisites in place:
 
-* An EOSIO development environment, for details consult the [Get Started](https://developers.eos.io/welcome/latest/getting-started/development-environment/introduction) Guide.
-* A smart contract named `smrtcontract`.
-* A user defined type which defines the data stored in the table, named `person`.
-* A `kv table` type which stores objects of type `person`, named `address_table`.
-* Each `person` object has the following properties:
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
+* A smart contract named `smrtcontract`
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
+* A `kv table` data type, `struct` or `class`, which inherits `eosio::kv::table`, and stores objects of type `person`, named `address_table`
+* Each `person` object has the following data members:
   * `account_name`,
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index, named `account_name_uidx`, defined on the `account_name` property..
-* A non-unique index defined on the `last_name` property, named `last_name_idx`.
+* A unique index, named `account_name_uidx`, defined on the `account_name` data member
+* A non-unique index defined on the `last_name` data member, named `last_name_idx`
 
-Refer to the following possible implementation of your starting point.
+Refer to the following reference implementation for your starting point:
 
 `smartcontract.hpp file`
 
@@ -60,7 +60,7 @@ class [[eosio::contract]] smrtcontract : public contract {
 };
 ```
 
-## Procedures
+## Procedure
 
 Complete the following steps to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
 
@@ -70,7 +70,7 @@ Complete the following steps to implement an action to retrieve a list of person
     2. The second parameter is a person object with its account name equal to `the maximum possible value for an account name` and its last name the same value to filter by the persons in the `address_table`.
 3. Return back to the caller the list of persons the `range()` function returns.
 
-Refer to the following possible implementation to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
+Refer to the following reference implementation to implement an action to retrieve a list of persons with the same name from `address_table` and return it back to the caller:
 
 `smartcontract.hpp`
 
@@ -119,8 +119,10 @@ std::vector<person> smrtcontract::getbylastname(string last_name) {
 }
 ```
 
-## Next Steps
+## Summary
 
-The following options are available when you complete the procedure:
+In conclusion, the above instructions show how to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
+
+## Next Steps
 
 * Access the list of objects returned by the `getbylastname` action.

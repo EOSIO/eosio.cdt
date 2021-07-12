@@ -3,10 +3,11 @@ content_title: ABI variants
 link_text: ABI variants
 ---
 
-ABI variants give the flexibility of using more than one type for a defined variable or data member. 
-In EOSIO, the variants make use of the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an exiting multi index table, a.k.a. table.
+ABI variants give the flexibility of using more than one type for a defined variable or data member.
 
-## Use variant when building the multi index table the first time
+In EOSIO, the variants use the standard template library `variant` which was introduced in C++ 17. An instance of `std::variant` at any given time either holds a value of one of its alternative types, or in the case of error - no value. Because of this trait, variants can be used to build the multi-index table structure with flexibility. Used in conjunction with ABI extensions, it allows for modification of the structure of an existing multi-index table, a.k.a. table.
+
+## Use variant when building the multi-index table the first time
 
 To define a `variant` for your table structure one example is shown below
 
@@ -45,9 +46,9 @@ class [[eosio::contract]] multi_index_example : public contract {
          }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );
@@ -89,9 +90,9 @@ class [[eosio::contract]] multi_index_example : public contract {
          }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );
@@ -101,9 +102,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 };
 ```
 
-Now you can deploy the contract and it will be backwards compatible with the previous existing multi index table.
+Now you can deploy the contract and it will be backwards compatible with the previous existing multi-index table.
 
-## Use variant when changing an already deployed multi index table
+## Use variant when changing an already deployed multi-index table
 
 ### Preconditions
 - It is assumed you deployed the contract defined in [this section](../06_how-to-guides/40_multi-index/how-to-instantiate-a-multi-index-table.md) and now you are going to change its table structure. 
@@ -141,9 +142,9 @@ class [[eosio::contract]] multi_index_example : public contract {
 +         }
       };
 
-      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_tables;
+      typedef eosio::multi_index<"testtaba"_n, test_table, eosio::indexed_by<"secid"_n, eosio::const_mem_fun<test_table, uint64_t, &test_table::by_secondary>>> test_table_t;
 
-      test_tables testtab;
+      test_table_t testtab;
 
       [[eosio::action]] void set(name user);
       [[eosio::action]] void print( name user );
@@ -156,5 +157,5 @@ class [[eosio::contract]] multi_index_example : public contract {
 [[warning | Not recommended warning]]
 | Be aware, it is not recommend to use `eosio::binary_extension` inside variant definition, this can lead to data corruption unless one is very careful in understanding how these two templates work and how the ABI gets generated!
 
-[[Info | Implementation location]]
+[[info | Implementation location]]
 | The implementation for ABI `variants` can be found [here](https://github.com/EOSIO/eos/pull/5652).
