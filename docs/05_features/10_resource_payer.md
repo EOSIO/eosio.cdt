@@ -38,7 +38,7 @@ Find below one example that illustrate how to send transaction to the blockchain
 
 ### EOSJS
 
-To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Send A Transaction](https://developers.eos.io/manuals/eos/latest/cleos/how-to-guides/how-to-submit-a-transaction) steps and note in the json example the resource payer information set in the ``transaction_extensions`` field.
+To send a transaction to the blockchain using javascript via the `eosjs` library, follow the [How To Set A Payer](https://developers.eos.io/manuals/eosjs/latest/how-to-guides/how-to-set-a-payer) steps and note in the json example the resource payer information set in the ``resource_payer`` object.
 
 ### Cleos
 
