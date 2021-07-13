@@ -4,13 +4,13 @@ content_title: Resource Payer
 
 ## Overview
 
-The *Resource Payer* feature, also known as *Transaction Sponsorship*, allows to specify the resource payer for a transaction. As a direct consequence the application developers have a simple and secure way to sponsor, or decline to sponsor, transactions on behalf of their users.
+The *Resource Payer* feature, also known as *Transaction Sponsorship*, allows to specify the resource payer for a transaction. As a direct consequence the application developers have a simple way to sponsor, or decline to sponsor, transactions on behalf of their users.
 
 ## Concept
 
 Before the `EOSIO 2.2` version, the CPU and NET resource costs for transactions on EOSIO-based blockchains were paid by the end users of the application. This fact made attracting and onboarding new users difficult.
 
-The *Resource Payer* feature makes it easier for both smart contract and full stack developers on EOSIO-based blockchains to allow their users to transact without having to pay for CPU and NET resource costs in a simple and secure manner. This new feature makes the process of onboarding new users straightforward.
+The *Resource Payer* feature makes it easier for both smart contract and full stack developers on EOSIO-based blockchains to allow their users to transact without having to pay for CPU and NET resource costs in a simple manner. This new feature makes the process of onboarding new users straightforward.
 
 Blockchain application developers can use the *Resource Payer* on any EOSIO-based blockchain that enables it via the newly introduced `RESOURCE_PAYER` upgrade protocol feature.
 
