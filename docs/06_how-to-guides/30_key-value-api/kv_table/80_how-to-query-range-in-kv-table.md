@@ -16,17 +16,17 @@ Use the method `range` defined by the `eosio::kv::table::index` class to accompl
 
 Make sure you have the following prerequisites in place:
 
-* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index).
-* A smart contract named `smrtcontract`.
-* A user defined type which defines the data stored in the table, named `person`.
-* A `kv table` type which stores objects of type `person`, named `address_table`.
-* Each `person` object has the following properties:
+* An EOSIO development environment, for details consult the [Get Started Guide](https://developers.eos.io/welcome/latest/getting-started-guide/index)
+* A smart contract named `smrtcontract`
+* A user defined type, `struct` or `class`, which defines the data stored in the map, named `person`
+* A `kv table` data type, `struct` or `class`, which inherits `eosio::kv::table`, and stores objects of type `person`, named `address_table`
+* Each `person` object has the following data members:
   * `account_name`,
   * `first_name`,
   * `last_name`,
   * `personal_id`.
-* A unique index, named `account_name_uidx`, defined on the `account_name` property..
-* A non-unique index defined on the `last_name` property, named `last_name_idx`.
+* A unique index, named `account_name_uidx`, defined on the `account_name` data member
+* A non-unique index defined on the `last_name` data member, named `last_name_idx`
 
 Refer to the following reference implementation for your starting point:
 
@@ -124,7 +124,5 @@ std::vector<person> smrtcontract::getbylastname(string last_name) {
 In conclusion, the above instructions show how to retrieve a list of values, from a `Key-Value Table` (`kv table`) index, which share a particular commonality.
 
 ## Next Steps
-
-The following options are available when you complete the procedure:
 
 * Access the list of objects returned by the `getbylastname` action.

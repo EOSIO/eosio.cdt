@@ -323,7 +323,7 @@ struct [[eosio::table]] structure {
 }
 ```
 
-And their corresponding sections in the `.abi` files:
+Find below their corresponding sections in the `.abi` files:
 
 **binary_extension_contract.abi**
 

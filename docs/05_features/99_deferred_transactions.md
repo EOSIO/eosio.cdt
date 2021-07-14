@@ -1,5 +1,5 @@
 ---
-content_title: Deferred transactions
+content_title: Deferred Transactions
 ---
 
 Deferred communication conceptually takes the form of action notifications sent to a peer transaction. Deferred actions get scheduled to run, at best, at a later time, at the producer's discretion. There is no guarantee that a deferred action will be executed.
