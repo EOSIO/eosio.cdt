@@ -18,3 +18,5 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/capi/capi_tests.abi ${CMAKE_CURRENT_
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/kv_bios/kv_bios.abi ${CMAKE_CURRENT_BINARY_DIR}/kv_bios.abi COPYONLY )
 
 target_link_libraries(old_malloc_tests PUBLIC --use-freeing-malloc)
+
+add_subdirectory(eosio.contracts)
