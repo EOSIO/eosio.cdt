@@ -48,17 +48,18 @@ else # Linux
 
 fi
 
-if [[ $BUILDKITE == true ]]; then
+if [[ $BUILDKITE == true && $(uname) != 'Darwin' ]]; then
     cd $BUILD_DIR
-    touch wasm_log.txt
+    touch wasm_size.log
     PATH_WASM=$(pwd)
     cd tests/unit/test_contracts
-    echo '--- :arrow_up: Generating wasm_log.txt file'
+    echo '--- :arrow_up: Generating wasm_size.log file'
     for FILENAME in ./*.wasm; do
         FILESIZE=$(wc -c "$FILENAME")
-        echo $FILESIZE >> $PATH_WASM/wasm_log.txt
+        echo $FILESIZE >> $PATH_WASM/wasm_size.log
     done
-    echo '--- :arrow_up: Uploading wasm_log.txt'
-    buildkite-agent artifact upload $PATH_WASM/wasm_log.txt
-    echo 'Done uploading wasm_log.txt.'
+    echo '--- :arrow_up: Uploading wasm_size.log'
+    cd $PATH_WASM
+    buildkite-agent artifact upload wasm_size.log
+    echo 'Done uploading wasm_size.log'
 fi
