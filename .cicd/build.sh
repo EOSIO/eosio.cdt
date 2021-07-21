@@ -51,13 +51,14 @@ fi
 if [[ $BUILDKITE == true ]]; then
     cd $BUILD_DIR
     touch wasm_log.txt
+    PATH_WASM=$(pwd)
     cd tests/unit/test_contracts
-    echo '--- :arrow_up: Generating wasm size log'
+    echo '--- :arrow_up: Generating wasm_log.txt file'
     for FILENAME in ./*.wasm; do
         FILESIZE=$(wc -c "$FILENAME")
-        echo $FILESIZE >> $BUILD_DIR/wasm_log.txt
+        echo $FILESIZE >> $PATH_WASM/wasm_log.txt
     done
-    echo '--- :arrow_up: Uploading Artifacts'
-    buildkite-agent artifact upload 'wasm_log.txt'
-    echo 'Done uploading artifacts.'
+    echo '--- :arrow_up: Uploading wasm_log.txt'
+    buildkite-agent artifact upload $PATH_WASM/wasm_log.txt
+    echo 'Done uploading wasm_log.txt.'
 fi
