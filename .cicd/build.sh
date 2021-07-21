@@ -48,7 +48,7 @@ else # Linux
 
 fi
 
-if [[$BUILDKITE == true]];then
+if [[ $BUILDKITE == true ]]; then
     cd $BUILD_DIR
     touch wasm_log.txt
     cd tests/unit/test_contracts
