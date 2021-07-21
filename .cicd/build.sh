@@ -47,3 +47,17 @@ else # Linux
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 
 fi
+
+if [[$BUILDKITE == true]];then
+    cd $BUILD_DIR
+    touch wasm_log.txt
+    cd tests/unit/test_contracts
+    echo '--- :arrow_up: Generating wasm size log'
+    for FILENAME in ./*.wasm; do
+        FILESIZE=$(wc -c "$FILENAME")
+        echo $FILESIZE >> $BUILD_DIR/wasm_log.txt
+    done
+    echo '--- :arrow_up: Uploading Artifacts'
+    buildkite-agent artifact upload 'wasm_log.txt'
+    echo 'Done uploading artifacts.'
+fi
