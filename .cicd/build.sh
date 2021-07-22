@@ -61,7 +61,7 @@ if [[ $BUILDKITE == true ]]; then
         echo $FILESIZE >> $PATH_WASM/wasm_size.log
     done
 
-    if [[ -d "eosio.contracts"]]; then
+    if [[ -d "eosio.contracts" ]]; then
         cd eosio.contracts
         echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
         for dir in */; do
