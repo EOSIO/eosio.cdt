@@ -3,6 +3,7 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
+BUILD_DIR_PATH=$(pwd)/$BUILD_DIR
 
 if [[ $(uname) == 'Darwin' ]]; then
 
@@ -47,3 +48,35 @@ else # Linux
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
 
 fi
+
+if [[ $BUILDKITE == true ]]; then
+    cd $BUILD_DIR_PATH
+    touch wasm_size.log
+    PATH_WASM=$(pwd)
+    cd tests/unit/test_contracts
+    echo '--- :arrow_up: Generating wasm_size.log file'
+    for FILENAME in ./*.wasm; do
+        FILESIZE=$(wc -c "$FILENAME")
+        echo $FILESIZE >> $PATH_WASM/wasm_size.log
+    done
+
+    cd eosio.contracts
+    echo '####eosio.contracts########' >> $PATH_WASM/wasm_size.log
+    for dir in */; do
+        cd $dir
+        for FILENAME in ./*.wasm; do
+            if [[ -f $FILENAME ]]; then
+                FILESIZE=$(wc -c "$FILENAME")
+                echo $FILESIZE >> $PATH_WASM/wasm_size.log
+            fi
+        done
+        cd ..
+    done
+
+    echo '--- :arrow_up: Uploading wasm_size.log'
+    cd $PATH_WASM
+    buildkite-agent artifact upload wasm_size.log
+    echo 'Done uploading wasm_size.log'
+fi
+
+
