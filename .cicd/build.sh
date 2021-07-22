@@ -3,6 +3,7 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
+BUILD_DIR_PATH=$(pwd)/$BUILD_DIR
 
 if [[ $(uname) == 'Darwin' ]]; then
 
@@ -48,8 +49,8 @@ else # Linux
 
 fi
 
-if [[ $BUILDKITE == true && $(uname) != 'Darwin' ]]; then
-    cd $BUILD_DIR
+if [[ $BUILDKITE == true ]]; then
+    cd $BUILD_DIR_PATH
     touch wasm_size.log
     PATH_WASM=$(pwd)
     cd tests/unit/test_contracts
