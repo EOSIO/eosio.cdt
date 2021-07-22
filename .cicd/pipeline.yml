@@ -607,6 +607,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    key: "macos1014pb"
     timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
 
@@ -663,6 +664,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    key: "macos1015pb"
     timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
 
