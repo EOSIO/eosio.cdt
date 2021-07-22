@@ -55,23 +55,26 @@ if [[ $BUILDKITE == true ]]; then
     PATH_WASM=$(pwd)
     cd tests/unit/test_contracts
     echo '--- :arrow_up: Generating wasm_size.log file'
+    echo '####### EOSIO test contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
     for FILENAME in ./*.wasm; do
         FILESIZE=$(wc -c "$FILENAME")
         echo $FILESIZE >> $PATH_WASM/wasm_size.log
     done
 
-    cd eosio.contracts
-    echo '####eosio.contracts########' >> $PATH_WASM/wasm_size.log
-    for dir in */; do
-        cd $dir
-        for FILENAME in ./*.wasm; do
-            if [[ -f $FILENAME ]]; then
-                FILESIZE=$(wc -c "$FILENAME")
-                echo $FILESIZE >> $PATH_WASM/wasm_size.log
-            fi
+    if [[ -d "eosio.contracts"]]; then
+        cd eosio.contracts
+        echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
+        for dir in */; do
+            cd $dir
+            for FILENAME in ./*.wasm; do
+                if [[ -f $FILENAME ]]; then
+                    FILESIZE=$(wc -c "$FILENAME")
+                    echo $FILESIZE >> $PATH_WASM/wasm_size.log
+                fi
+            done
+            cd ..
         done
-        cd ..
-    done
+    fi
 
     echo '--- :arrow_up: Uploading wasm_size.log'
     cd $PATH_WASM
