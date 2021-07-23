@@ -72,8 +72,13 @@ if [[ $BUILDKITE == true ]]; then
     cd $CONTRACTS_DIR_PATH
     mkdir -p build
     cd build
-    cmake ..
-    make -j$JOBS
+
+    if [[ $(uname) == 'Darwin' ]]; then
+        cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS
+    else
+        cmake .. && make -j$JOBS
+    fi
+
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
     cd contracts
     for dir in */; do
