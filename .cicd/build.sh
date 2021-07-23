@@ -4,10 +4,8 @@ set -eo pipefail
 
 mkdir -p $BUILD_DIR
 CDT_DIR_PATH=$(pwd)
-echo $(pwd)
 BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
 BIN_DIR_PATH=$BUILD_DIR_PATH/bin
-cd ..
 git clone https://github.com/EOSIO/eosio.contracts.git
 CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
 cd $CDT_DIR_PATH
@@ -16,6 +14,12 @@ if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    make -j$JOBS
+    export PATH=$BIN_DIR_PATH:$PATH
+    cd $CONTRACTS_DIR_PATH
+    mkdir -p build
+    cd build
     cmake .. -DCMAKE_BUILD_TYPE=Release
     make -j$JOBS
 
@@ -42,7 +46,10 @@ else # Linux
         fi
     fi
 
-    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
+    PRE_CONTRACTS_COMMAND="export PATH=$BIN_DIR_PATH:$PATH && cd $CONTRACTS_DIR_PATH && mkdir -p build && cd build"
+    BUILD_CONTRACTS_COMMAND="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS"
+
+    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
 
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
@@ -57,7 +64,6 @@ else # Linux
 fi
 
 if [[ $BUILDKITE == true ]]; then
-    export PATH=$BIN_DIR_PATH:$PATH
     cd $BUILD_DIR_PATH
     touch wasm_size.log
     PATH_WASM=$(pwd)
@@ -69,18 +75,8 @@ if [[ $BUILDKITE == true ]]; then
         echo $FILESIZE >> $PATH_WASM/wasm_size.log
     done
 
-    cd $CONTRACTS_DIR_PATH
-    mkdir -p build
-    cd build
-
-    if [[ $(uname) == 'Darwin' ]]; then
-        cmake .. && make -j$JOBS
-    else
-        cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS
-    fi
-
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
-    cd contracts
+    cd $CONTRACTS_DIR_PATH/build/contracts
     for dir in */; do
         cd $dir
         for FILENAME in ./*.wasm; do
