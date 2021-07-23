@@ -74,9 +74,9 @@ if [[ $BUILDKITE == true ]]; then
     cd build
 
     if [[ $(uname) == 'Darwin' ]]; then
-        cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS
-    else
         cmake .. && make -j$JOBS
+    else
+        cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS
     fi
 
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
