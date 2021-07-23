@@ -3,7 +3,14 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
-BUILD_DIR_PATH=$(pwd)/$BUILD_DIR
+CDT_DIR_PATH=$(pwd)
+echo $(pwd)
+BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
+BIN_DIR_PATH=$BUILD_DIR_PATH/bin
+cd ..
+git clone https://github.com/EOSIO/eosio.contracts.git
+CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
+cd $CDT_DIR_PATH
 
 if [[ $(uname) == 'Darwin' ]]; then
 
@@ -50,15 +57,36 @@ else # Linux
 fi
 
 if [[ $BUILDKITE == true ]]; then
+    export PATH=$BIN_DIR_PATH:$PATH
     cd $BUILD_DIR_PATH
     touch wasm_size.log
     PATH_WASM=$(pwd)
     cd tests/unit/test_contracts
     echo '--- :arrow_up: Generating wasm_size.log file'
+    echo '####### EOSIO test contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
     for FILENAME in ./*.wasm; do
         FILESIZE=$(wc -c "$FILENAME")
         echo $FILESIZE >> $PATH_WASM/wasm_size.log
     done
+
+    cd $CONTRACTS_DIR_PATH
+    mkdir -p build
+    cd build
+    cmake ..
+    make -j$JOBS
+    echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_size.log
+    cd contracts
+    for dir in */; do
+        cd $dir
+        for FILENAME in ./*.wasm; do
+            if [[ -f $FILENAME ]]; then
+                FILESIZE=$(wc -c "$FILENAME")
+                echo $FILESIZE >> $PATH_WASM/wasm_size.log
+            fi
+        done
+        cd ..
+    done
+
     echo '--- :arrow_up: Uploading wasm_size.log'
     cd $PATH_WASM
     buildkite-agent artifact upload wasm_size.log
