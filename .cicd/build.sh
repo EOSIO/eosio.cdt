@@ -6,14 +6,14 @@ mkdir -p $BUILD_DIR
 CDT_DIR_PATH=$(pwd)
 BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
 BIN_DIR_PATH=$BUILD_DIR_PATH/bin
+cd ..
 git clone https://github.com/EOSIO/eosio.contracts.git
 CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
-cd $CDT_DIR_PATH
 
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
-    cd $BUILD_DIR
+    cd $BUILD_DIR_PATH
     cmake .. -DCMAKE_BUILD_TYPE=Release
     make -j$JOBS
     export PATH=$BIN_DIR_PATH:$PATH
@@ -30,7 +30,7 @@ else # Linux
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="cd $MOUNTED_DIR/build"
+    PRE_COMMANDS="cd $MOUNTED_DIR/eosio.cdt/build && echo mounted_dir=$MOUNTED_DIR"
     BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
@@ -46,7 +46,7 @@ else # Linux
         fi
     fi
 
-    PRE_CONTRACTS_COMMAND="export PATH=$BIN_DIR_PATH:$PATH && cd $CONTRACTS_DIR_PATH && mkdir -p build && cd build"
+    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/eosio.cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
     BUILD_CONTRACTS_COMMAND="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
