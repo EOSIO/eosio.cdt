@@ -30,7 +30,7 @@ else # Linux
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="echo items=$(ls) && cd $MOUNTED_DIR/eosio-dot-cdt/build && echo mounted_dir=$MOUNTED_DIR"
+    PRE_COMMANDS="cd $MOUNTED_DIR && echo items=$(ls) && echo $(which clang) && echo OS=$(uname -v) && cd $MOUNTED_DIR/eosio-dot-cdt/build"
     BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
@@ -46,7 +46,7 @@ else # Linux
         fi
     fi
 
-    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/eosio-dot-cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
+    PRE_CONTRACTS_COMMAND="echo OS=$(uname -v) && echo $(which clang) && export PATH=$MOUNTED_DIR/eosio-dot-cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
     BUILD_CONTRACTS_COMMAND="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
