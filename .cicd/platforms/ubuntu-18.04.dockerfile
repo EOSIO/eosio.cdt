@@ -6,7 +6,8 @@ RUN apt-get update && apt-get upgrade -y && \
     lldb-4.0 libclang-4.0-dev cmake make automake libbz2-dev libssl-dev \
 	libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
-    libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
+    libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
+    apt install clang
 
 # install Python 3.7.4
 RUN curl -LO https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
