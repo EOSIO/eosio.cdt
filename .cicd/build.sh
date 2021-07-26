@@ -3,16 +3,16 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 
 mkdir -p $BUILD_DIR
-CDT_DIR_PATH=$(pwd)
-BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
-BIN_DIR_PATH=$BUILD_DIR_PATH/bin
-cd ..
-git clone https://github.com/EOSIO/eosio.contracts.git
-CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
 
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
+    CDT_DIR_PATH=$(pwd)
+    BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
+    BIN_DIR_PATH=$BUILD_DIR_PATH/bin
+    cd ..
+    git clone https://github.com/EOSIO/eosio.contracts.git
+    CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
     cd $BUILD_DIR_PATH
     cmake .. -DCMAKE_BUILD_TYPE=Release
     make -j$JOBS
@@ -26,11 +26,10 @@ if [[ $(uname) == 'Darwin' ]]; then
 else # Linux
 
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
-    cd $CDT_DIR_PATH
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="cd $MOUNTED_DIR && echo items=$(ls) && echo OS=$(uname -v) && cd $MOUNTED_DIR/eosio-dot-cdt/build"
+    PRE_COMMANDS="cd $MOUNTED_DIR/build"
     BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
@@ -46,7 +45,7 @@ else # Linux
         fi
     fi
 
-    PRE_CONTRACTS_COMMAND="cd $MOUNTED_DIR && echo items=$(ls) && echo OS=$(uname -v) && export PATH=$MOUNTED_DIR/eosio-dot-cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
+    PRE_CONTRACTS_COMMAND="cd $MOUNTED_DIR && git clone https://github.com/EOSIO/eosio.contracts.git && echo items=$(ls) && export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
     BUILD_CONTRACTS_COMMAND="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
