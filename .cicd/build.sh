@@ -26,7 +26,7 @@ if [[ $(uname) == 'Darwin' ]]; then
 else # Linux
 
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
-
+    cd $CDT_DIR_PATH
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
