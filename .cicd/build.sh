@@ -46,7 +46,7 @@ else # Linux
     fi
 
     PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/eosio-dot-cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
-    BUILD_CONTRACTS_COMMAND="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
+    BUILD_CONTRACTS_COMMAND="cmake .. && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
 
