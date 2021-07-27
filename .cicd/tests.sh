@@ -4,7 +4,7 @@ set -eo pipefail
 
 mkdir -p $BUILD_DIR
 
-PRE_COMMANDS="cd $MOUNTED_DIR/eosio-dot-cdt/build"
+PRE_COMMANDS="cd $MOUNTED_DIR/build"
 TEST="ctest -j$JOBS -L unit_tests -V -T Test"
 COMMANDS="$PRE_COMMANDS && $TEST"
 
