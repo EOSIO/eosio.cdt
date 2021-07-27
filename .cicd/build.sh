@@ -19,7 +19,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     cd $BUILD_DIR_PATH/tests/unit/test_contracts
     mkdir -p eosio.contracts
     cd eosio.contracts
-    cmake $CONTRACTS_DIR_PATH -DCMAKE_BUILD_TYPE=Release
+    cmake -DBUILD_TESTS=true $CONTRACTS_DIR_PATH 
     make -j$JOBS
 
 else # Linux
@@ -45,7 +45,7 @@ else # Linux
     fi
 
     PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build/tests/unit/test_contracts && mkdir -p eosio.contracts && cd eosio.contracts"
-    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+    BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
 
