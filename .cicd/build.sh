@@ -6,7 +6,6 @@ mkdir -p $BUILD_DIR
 CDT_DIR_PATH=$(pwd)
 BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
 BIN_DIR_PATH=$BUILD_DIR_PATH/bin
-cd ..
 git clone https://github.com/EOSIO/eosio.contracts.git
 CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
 
@@ -29,7 +28,7 @@ else # Linux
     . $HELPERS_DIR/docker-hash.sh
 
     # PRE_COMMANDS: Executed pre-cmake
-    PRE_COMMANDS="echo items=$(ls) && cd $MOUNTED_DIR/eosio-dot-cdt/build && echo mounted_dir=$MOUNTED_DIR"
+    PRE_COMMANDS="cd $MOUNTED_DIR/build"
     BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
@@ -45,7 +44,7 @@ else # Linux
         fi
     fi
 
-    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/eosio-dot-cdt/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
+    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build && cd build"
     BUILD_CONTRACTS_COMMAND="cmake .. && make -j$JOBS"
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
