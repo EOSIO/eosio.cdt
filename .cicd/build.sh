@@ -35,6 +35,10 @@ else # Linux
     [[ $IMAGE_TAG == 'ubuntu-16.04' ]] && BUILD_COMMANDS="$BUILD_COMMANDS_1604"
 
     [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
+
+    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build/tests/unit/test_contracts && mkdir -p eosio.contracts && cd eosio.contracts"
+    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
         # Generate Base Images
@@ -42,10 +46,11 @@ else # Linux
         if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
           FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
         fi
-    fi
+        export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
+        export CMAKE_FRAMEWORK_PATH="/root/eosio/build:${CMAKE_FRAMEWORK_PATH}"
+        BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
 
-    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build/tests/unit/test_contracts && mkdir -p eosio.contracts && cd eosio.contracts"
-    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+    fi
 
     COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
     COMMANDS_EOSIO_CONTRACTS="$PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
