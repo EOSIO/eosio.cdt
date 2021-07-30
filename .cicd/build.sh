@@ -47,8 +47,8 @@ else # Linux
             FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
             export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
             export CMAKE_FRAMEWORK_PATH="/root/eosio/build:${CMAKE_FRAMEWORK_PATH}"
-            ./build.sh -e /root/eosio/build -c $BUILD_DIR_PATH -t
-            #BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+            export CMAKE_FRAMEWORK_PATH="/root/eosio/build/bin:${CMAKE_FRAMEWORK_PATH}"
+            BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
         fi
 
     fi
