@@ -37,7 +37,7 @@ else # Linux
     [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
 
     PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build/tests/unit/test_contracts && mkdir -p eosio.contracts && cd eosio.contracts"
-    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+    BUILD_CONTRACTS_COMMAND="CONTRACT_BUILD_DIR_PATH=$(pwd) && cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
 
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
@@ -46,10 +46,8 @@ else # Linux
         if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
             FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
             export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
-            export CMAKE_FRAMEWORK_PATH="/root/eosio/build:${CMAKE_FRAMEWORK_PATH}"
-            export CMAKE_FRAMEWORK_PATH="/root/eosio/build/bin:${CMAKE_FRAMEWORK_PATH}"
             BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
-            TEST_CONTRACTS_COMMAND="cd tests && ctest -j $JOBS --output-on-failure -T Test"
+            TEST_CONTRACTS_COMMAND="cd $CONTRACT_BUILD_DIR_PATH/tests && ctest -j $JOBS --output-on-failure -T Test"
         fi
 
     fi
