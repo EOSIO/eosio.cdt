@@ -6,11 +6,7 @@ mkdir -p $BUILD_DIR
 CDT_DIR_PATH=$(pwd)
 BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
 BIN_DIR_PATH=$BUILD_DIR_PATH/bin
-git clone https://github.com/EOSIO/eosio.contracts.git
-cd eosio.contracts
-git switch develop
-git pull
-cd ..
+git clone -b develop https://github.com/EOSIO/eosio.contracts.git
 CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
 
 if [[ $(uname) == 'Darwin' ]]; then
@@ -53,6 +49,7 @@ else # Linux
             export CMAKE_FRAMEWORK_PATH="/root/eosio/build:${CMAKE_FRAMEWORK_PATH}"
             export CMAKE_FRAMEWORK_PATH="/root/eosio/build/bin:${CMAKE_FRAMEWORK_PATH}"
             BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+            TEST_CONTRACTS_COMMAND="cd tests && ctest -j $JOBS --output-on-failure -T Test"
         fi
 
     fi
@@ -69,9 +66,18 @@ else # Linux
     fi
 
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
-    START_TIME=$SECONDS
+    START_TIME=$(date +%s)
     eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS_EOSIO_CONTRACTS\"
-    ELAPSED_TIME=$(($SECONDS - $START_TIME))
+    if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
+        echo '--- :arrow_up: Sanity tests for eosio.contract wasm and abi files'
+        eval docker run $ARGS $evars $FULL_TAG bash -c \"$TEST_CONTRACTS_COMMAND\"
+        EXIT_STATUS=$?
+        if [[ "$EXIT_STATUS" != 0 ]]; then
+            echo "Failing due to non-zero exit status from ctest: $EXIT_STATUS"
+            exit $EXIT_STATUS
+        fi
+    fi
+    ELAPSED_TIME=$(($(date +%s) - $START_TIME))
 
 fi
 
@@ -120,7 +126,7 @@ if [[ $BUILDKITE == true ]]; then
         cd ..
     done
 
-    echo "Elapsed time to build eosio.contracts: $ELAPSED_TIME" >> $PATH_WASM/wasm_abi_size.log
+    echo "Elapsed time to build eosio.contracts: $ELAPSED_TIME seconds" >> $PATH_WASM/wasm_abi_size.log
 
     echo '--- :arrow_up: Uploading wasm_abi_size.log'
     cd $PATH_WASM
