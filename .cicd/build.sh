@@ -7,6 +7,7 @@ CDT_DIR_PATH=$(pwd)
 BUILD_DIR_PATH=$CDT_DIR_PATH/$BUILD_DIR
 BIN_DIR_PATH=$BUILD_DIR_PATH/bin
 git clone https://github.com/EOSIO/eosio.contracts.git
+git switch develop
 CONTRACTS_DIR_PATH=$(pwd)/eosio.contracts
 
 if [[ $(uname) == 'Darwin' ]]; then
