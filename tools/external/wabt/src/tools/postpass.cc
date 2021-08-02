@@ -132,6 +132,11 @@ void StripExports(Module& mod) {
       for (auto exp : mod.exports) {
          if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
             exports.push_back(exp);
+         }
+         if (exp->name == "memory" && exp->kind == ExternalKind::Memory) {
+            exports.push_back(exp);
+         }
+         if (exports.size() >= 2) {
             break;
          }
       }
