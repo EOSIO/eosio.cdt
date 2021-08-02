@@ -19,6 +19,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     cd $BUILD_DIR_PATH/tests/unit/test_contracts
     mkdir -p eosio.contracts
     cd eosio.contracts
+    START_TIME=$(date +%s)
     cmake $CONTRACTS_DIR_PATH 
     make -j$JOBS
 
@@ -75,9 +76,10 @@ else # Linux
             exit $EXIT_STATUS
         fi
     fi
-    ELAPSED_TIME=$(($(date +%s)-$START_TIME))
 
 fi
+
+ELAPSED_TIME=$(($(date +%s)-$START_TIME))
 
 if [[ $BUILDKITE == true ]]; then
     cd $BUILD_DIR_PATH/tests/unit/test_contracts
