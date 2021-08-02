@@ -43,6 +43,7 @@ static std::string s_outfile;
 static Features s_features;
 static WriteBinaryOptions s_write_binary_options;
 static std::unique_ptr<FileStream> s_log_stream;
+static std::string s_profile = "eosio";
 
 static const char s_description[] =
 R"(  Read a file in the WebAssembly binary format, strip bss or any data segment that is only initialized to zeros, and other post processing.
@@ -50,7 +51,7 @@ R"(  Read a file in the WebAssembly binary format, strip bss or any data segment
   $ eosio-pp test.wasm -o test.stripped.wasm
 
   # or original replacement
-  $ wasm2wat test.wasm
+  $ wasm2wat test.wasm 
 )";
 
 static void ParseOptions(int argc, char** argv) {
@@ -68,10 +69,9 @@ static void ParseOptions(int argc, char** argv) {
         ConvertBackslashToSlash(&s_outfile);
       });
   parser.AddOption(
-      'n', "allow-names",
-      "Preserve the name section",
-      []() {
-         s_write_binary_options.write_debug_names = true;
+      'p', "profile", "PROFILE", "Target chain",
+      [](const char* argument) {
+        s_profile = argument;
       });
   parser.AddArgument("filename", OptionParser::ArgumentCount::One,
                      [](const char* argument) {
@@ -120,24 +120,28 @@ void AddHeapPointerData( Module& mod, size_t fixup, const std::vector<uint8_t>& 
    ds.offset = ExprList{std::move(ce)};
    uint8_t* dat = reinterpret_cast<uint8_t*>(&heap_ptr);
    ds.data = std::vector<uint8_t>{dat[0],
-                                   dat[1],
-                                   dat[2],
+                                   dat[1], 
+                                   dat[2], 
                                    dat[3]};
    mod.data_segments.push_back(&ds);
 }
 
 void StripExports(Module& mod) {
-   std::vector<Export*> exports;
-   for (auto exp : mod.exports) {
-      if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
-         exports.push_back(exp);
-         break;
+   if (s_profile == "eosio") {
+      std::vector<Export*> exports;
+      for (auto exp : mod.exports) {
+         if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
+            exports.push_back(exp);
+         }
+         if (exp->name == "memory" && exp->kind == ExternalKind::Memory) {
+            exports.push_back(exp);
+         }
+         if (exports.size() >= 2) {
+            break;
+         }
       }
+      mod.exports = exports;
    }
-   mod.exports = exports;
-}
-
-void construct_apply( Module& mod ) {
 }
 
 void WriteBufferToFile(string_view filename,
@@ -147,10 +151,10 @@ void WriteBufferToFile(string_view filename,
 
 int ProgramMain(int argc, char** argv) {
   Result result;
-
+  
   InitStdio();
   ParseOptions(argc, argv);
-
+  
   std::vector<uint8_t> file_data;
   bool stub = false;
   std::unique_ptr<FileStream> s_log_stream_s;
@@ -161,7 +165,7 @@ int ProgramMain(int argc, char** argv) {
     Module module;
     const bool kStopOnFirstError = true;
     ReadBinaryOptions options(s_features, s_log_stream_s.get(),
-                              s_write_binary_options.write_debug_names, kStopOnFirstError,
+                              stub, kStopOnFirstError,
                               stub);
     result = ReadBinaryIr(s_infile.c_str(), file_data.data(),
                           file_data.size(), options, &errors, &module);
