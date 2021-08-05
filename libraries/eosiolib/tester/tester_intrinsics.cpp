@@ -33,10 +33,9 @@ extern "C" {
    struct __attribute__((aligned (16))) capi_checksum256 { uint8_t hash[32]; };
    struct __attribute__((aligned (16))) capi_checksum512 { uint8_t hash[64]; };
 
-   int recover_key( capi_checksum256* digest, const char* sig, uint32_t sig_len, char* pub, uint32_t pub_len) {
-      eosio::check(false, "recover_key is not available");
-      __builtin_unreachable();
-   }
+   __attribute__((eosio_wasm_import))
+   int recover_key( capi_checksum256* digest, const char* sig, uint32_t sig_len, char* pub, uint32_t pub_len);
+
    void assert_recover_key( capi_checksum256* digest, const char* sig, uint32_t sig_len, const char* pub, uint32_t pub_len) {
       eosio::check(false, "assert_recover_key is not available");
       __builtin_unreachable();
