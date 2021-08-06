@@ -64,6 +64,7 @@ namespace eosio { namespace cdt {
          bool                                  warn_action_read_only;
          bool                                  query_eosio_include_dirs;
          bool                                  query_eosio_link_dirs;
+         std::set<std::string>                 include_dirs;
 
          using generation_utils::generation_utils;
 
@@ -473,6 +474,13 @@ namespace eosio { namespace cdt {
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
                visitor->process_read_only_actions();
+
+               auto hs = cg.codegen_ci->getPreprocessor().getHeaderSearchInfo();
+               for (auto it = hs.search_dir_begin(); it != hs.search_dir_end(); ++it) {
+                  if (const auto* entry = it->getDir()) {
+                     cg.include_dirs.insert(entry->getName().str());
+                  }
+               }
 
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
