@@ -15,10 +15,8 @@ The prebuilt binares are provided for Ubuntu 20.04 and MacOS Big Sur.
 
 Clang-12 is not in the default Ubuntu repository, so it needs to be installed from llvm.org.
 
-You may need root permission to run below scripts.
-
 ```sh
-bash -c "$(wget -O - https://apt.llvm.org/llvm.sh 12)"
+wget -qO - https://apt.llvm.org/llvm.sh | sudo bash -s 12
 ```
 
 Download debian package and install with apt.
