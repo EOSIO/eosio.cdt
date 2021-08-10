@@ -1,10 +1,10 @@
 {
-    "eosio-dot-cdt":
-    {
-        "pipeline-branch": "master",
-        "dependencies": // dependencies to pull for cdt integration tests, by branch, tag, or commit hash
-        {
-            "eosio": "develop"
-        }
+  "eosio-dot-cdt": {
+    "pipeline-branch": "master",
+    // dependencies to pull for cdt integration tests, by branch, tag, or commit hash
+    "dependencies": {
+      "eosio": "develop",
+      "eosio.contracts": "develop"
     }
+  }
 }
