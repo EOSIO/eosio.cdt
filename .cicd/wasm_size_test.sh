@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
-export PATH=$BIN_DIR:$PATH
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git
 
 if [[ $(uname) == 'Darwin' ]]; then
+    export PATH=$BIN_DIR:$PATH
     cd $ROOT_DIR/eosio.contracts
     mkdir -p build_eosio_contracts
     cd build_eosio_contracts
@@ -16,7 +16,7 @@ else #Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
     . $HELPERS_DIR/docker-hash.sh
 
-    PRE_CONTRACTS_COMMAND="cd $MOUNTED_DIR/eosio.contracts && mkdir -p build_eosio_contracts && cd build_eosio_contracts"
+    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build_eosio_contracts && cd build_eosio_contracts"
     BUILD_CONTRACTS_COMMAND="cmake .. && make -j$JOBS"
 
     # Docker Commands
@@ -89,8 +89,6 @@ if [[ $BUILDKITE == true ]]; then
         done
         cd ..
     done
-
-    echo "Elapsed time to build eosio.contracts: $ELAPSED_TIME seconds" >> $PATH_WASM/wasm_abi_size.log
 
     echo '--- :arrow_up: Uploading wasm_abi_size.log'
     cd $PATH_WASM
