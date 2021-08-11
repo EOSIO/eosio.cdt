@@ -137,7 +137,6 @@ steps:
 
   - label: ":ubuntu: Ubuntu 18.04 - Wasm sanity test"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
       - "./.cicd/wasm_sanity_test.sh"
     env:
