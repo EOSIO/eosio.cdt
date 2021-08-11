@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
+export PATH=$BIN_DIR:$PATH
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git
