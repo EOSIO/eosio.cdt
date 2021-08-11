@@ -68,7 +68,9 @@ if [[ $BUILDKITE == true ]]; then
 
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_abi_size.log
     echo '####### wasm files path: eosio.contracts/contracts #######' >> $PATH_WASM/wasm_abi_size.log
-    cd $CONTRACTS_DIR/build_eosio_contracts/contracts
+    cd $CONTRACTS_DIR
+    echo fls=$(ls)
+    echo fpwd=$(pwd)
     for dir in */; do
         cd $dir
         for FILENAME in ./*.wasm; do
