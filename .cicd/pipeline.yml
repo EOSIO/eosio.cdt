@@ -69,7 +69,7 @@ steps:
 
   - wait
 
-  - label: ":aws: Amazon_Linux 2 - Wasm Size Test"
+  - label: ":aws: Amazon_Linux 2 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':aws: Amazon_Linux 2 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -80,7 +80,7 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":centos: CentOS 7.7 - Wasm Size Test"
+  - label: ":centos: CentOS 7.7 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 7.7 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -91,7 +91,7 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":centos: CentOS 8 - Wasm Size Test"
+  - label: ":centos: CentOS 8 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -102,7 +102,7 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":ubuntu: Ubuntu 16.04 - Wasm Size Test"
+  - label: ":ubuntu: Ubuntu 16.04 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -113,7 +113,7 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":ubuntu: Ubuntu 18.04 - Wasm Size Test"
+  - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -121,10 +121,11 @@ steps:
       IMAGE_TAG: "ubuntu-18.04"
     agents:
       queue: "automation-eks-eos-tester-fleet"
+    key: "ubuntu18.4contracts"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":ubuntu: Ubuntu 20.04 - Wasm size test"
+  - label: ":ubuntu: Ubuntu 20.04 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 20.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/wasm_size_test.sh"
@@ -137,15 +138,16 @@ steps:
 
   - wait
 
-  - label: ":ubuntu: Ubuntu 18.04 - Wasm Sanity Test"
+  - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Unit Test"
     command:
-      - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Wasm Size Test' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
+      - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
       - "./.cicd/wasm_sanity_test.sh"
     env:
       IMAGE_TAG: "ubuntu-18.04"
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
+    depends_on: "ubuntu18.4contracts"
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Unit Tests"
