@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
+CDT_home_DIR=$(pwd)
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
@@ -68,7 +69,7 @@ if [[ $BUILDKITE == true ]]; then
 
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_abi_size.log
     echo '####### wasm files path: eosio.contracts/contracts #######' >> $PATH_WASM/wasm_abi_size.log
-    cd $CONTRACTS_DIR
+    cd $CDT_home_DIR/eosio.contracts/contracts
     echo fls=$(ls)
     echo fpwd=$(pwd)
     for dir in */; do
