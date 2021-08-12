@@ -2,6 +2,9 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
+[[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
+git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
+
 # Docker Commands
 ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 . $HELPERS_DIR/docker-hash.sh
