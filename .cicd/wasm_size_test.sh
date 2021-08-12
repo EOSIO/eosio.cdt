@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
-CDT_home_DIR=$(pwd)
+CDT_DIR_HOST=$(pwd)
+mkdir -p build_eosio_contracts 
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
@@ -20,8 +21,8 @@ else #Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
     . $HELPERS_DIR/docker-hash.sh
 
-    PRE_CONTRACTS_COMMAND="echo fls=$(ls) && echo fpwd=$(pwd) && export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/eosio.contracts && mkdir -p build_eosio_contracts && cd build_eosio_contracts"
-    BUILD_CONTRACTS_COMMAND="cmake .. && make -j$JOBS"
+    PRE_CONTRACTS_COMMAND="echo fls=$(ls) && echo fpwd=$(pwd) && export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build_eosio_contracts"
+    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
 
     # Docker Commands
     if [[ $BUILDKITE == true ]]; then
@@ -30,7 +31,7 @@ else #Linux
         if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
             FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
             export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
-            BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true .. && make -j$JOBS"
+            BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
         fi
 
     fi
@@ -69,7 +70,7 @@ if [[ $BUILDKITE == true ]]; then
 
     echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_abi_size.log
     echo '####### wasm files path: eosio.contracts/contracts #######' >> $PATH_WASM/wasm_abi_size.log
-    cd $CDT_home_DIR/eosio.contracts/contracts
+    cd $CDT_DIR_HOST/build_eosio_contracts/contracts
     echo fls=$(ls)
     echo fpwd=$(pwd)
     for dir in */; do
@@ -102,7 +103,7 @@ if [[ $BUILDKITE == true ]]; then
     echo 'Done uploading wasm_abi_size.log'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    cd $CDT_home_DIR/eosio.contracts
+    cd $CDT_DIR_HOST
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
     buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
