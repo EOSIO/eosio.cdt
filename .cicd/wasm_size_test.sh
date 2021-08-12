@@ -102,7 +102,7 @@ if [[ $BUILDKITE == true ]]; then
     echo 'Done uploading wasm_abi_size.log'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    cd $ROOT_DIR/eosio.contracts
+    cd $CDT_home_DIR/eosio.contracts
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
     buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
