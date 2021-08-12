@@ -135,6 +135,8 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
+  - wait
+
   - label: ":ubuntu: Ubuntu 18.04 - Wasm Sanity Test"
     command:
       - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Wasm Size Test' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
