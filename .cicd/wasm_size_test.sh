@@ -52,24 +52,20 @@ fi
 
 if [[ $BUILDKITE == true ]]; then
     cd $BUILD_DIR/tests/unit/test_contracts
-    touch wasm_abi_size.log
+    touch wasm_abi_size.json
     PATH_WASM=$(pwd)
+    json_args = ()
     echo '--- :arrow_up: Generating wasm_abi_size.log file'
-    echo '####### EOSIO test contracts wasm files sizes #######'>> $PATH_WASM/wasm_abi_size.log
-    echo '####### wasm files path: tests/unit/test_contracts #######' >> $PATH_WASM/wasm_abi_size.log
     for FILENAME in ./*.wasm; do
-        FILESIZE=$(wc -c "$FILENAME")
-        echo $FILESIZE >> $PATH_WASM/wasm_abi_size.log
-    done
-    echo '####### EOSIO test contracts abi files sizes #######' >> $PATH_WASM/wasm_abi_size.log
-    echo '####### abi files path: tests/unit/test_contracts #######' >> $PATH_WASM/wasm_abi_size.log
-    for FILENAME in ./*.abi; do
-        FILESIZE=$(wc -c "$FILENAME")
-        echo $FILESIZE >> $PATH_WASM/wasm_abi_size.log
+        FILESIZE=$(wc -c <"$FILENAME")
+        json_args+= ($FILENAME=$FILESIZE )
     done
 
-    echo '####### EOSIO system contracts wasm files sizes #######' >> $PATH_WASM/wasm_abi_size.log
-    echo '####### wasm files path: eosio.contracts/contracts #######' >> $PATH_WASM/wasm_abi_size.log
+    for FILENAME in ./*.abi; do
+        FILESIZE=$(wc -c <"$FILENAME")
+        json_args+= ($FILENAME=$FILESIZE )
+    done
+
     cd $CDT_DIR_HOST/build_eosio_contracts/contracts
     echo fls=$(ls)
     echo fpwd=$(pwd)
@@ -77,30 +73,29 @@ if [[ $BUILDKITE == true ]]; then
         cd $dir
         for FILENAME in ./*.wasm; do
             if [[ -f $FILENAME ]]; then
-                FILESIZE=$(wc -c "$FILENAME")
-                echo $FILESIZE >> $PATH_WASM/wasm_abi_size.log
+                FILESIZE=$(wc -c <"$FILENAME")
+                json_args+= ($FILENAME=$FILESIZE )
             fi
         done
         cd ..
     done
 
-    echo '####### EOSIO system contracts abi files sizes #######' >> $PATH_WASM/wasm_abi_size.log
-    echo '####### abi files path: eosio.contracts/contracts #######' >> $PATH_WASM/wasm_abi_size.log
     for dir in */; do
         cd $dir
         for FILENAME in ./*.abi; do
             if [[ -f $FILENAME ]]; then
-                FILESIZE=$(wc -c "$FILENAME")
-                echo $FILESIZE >> $PATH_WASM/wasm_abi_size.log
+                FILESIZE=$(wc -c <"$FILENAME")
+                json_args+= ($FILENAME=$FILESIZE )
             fi
         done
         cd ..
     done
 
-    echo '--- :arrow_up: Uploading wasm_abi_size.log'
+    echo '--- :arrow_up: Uploading wasm_abi_size.json'
     cd $PATH_WASM
-    buildkite-agent artifact upload wasm_abi_size.log
-    echo 'Done uploading wasm_abi_size.log'
+    jo $json_args > wasm_abi_size.json
+    buildkite-agent artifact upload wasm_abi_size.json
+    echo 'Done uploading wasm_abi_size.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
     cd $CDT_DIR_HOST
