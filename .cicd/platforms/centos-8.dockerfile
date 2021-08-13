@@ -7,10 +7,3 @@ RUN yum update -y && \
     libtool make \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 python38 python3-devel gettext-devel.x86_64 gcc-c++.x86_64 perl
-# install Jo for creating Json
-RUN git clone git://github.com/jpmens/jo.git \
-    cd jo \
-    autoreconf -i \
-    ./configure \
-    make check \
-    make install
