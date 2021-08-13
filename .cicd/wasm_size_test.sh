@@ -4,9 +4,9 @@ set -eo pipefail
 CDT_DIR_HOST=$(pwd)
 mkdir -p build_eosio_contracts 
 
-[[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
-git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
-
+#[[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
+#git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
+git clone -b develop https://github.com/EOSIO/eosio.contracts.git
 echo fls=$(ls)
 echo fpwd=$(pwd)
 
