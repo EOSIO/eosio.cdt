@@ -1,9 +1,9 @@
 FROM ubuntu:16.04
 # install dependencies
 RUN apt-get update && apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y git \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y git jo \
     lldb-4.0 make automake libbz2-dev libssl-dev \
-	  libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev jo \
+	  libgmp3-dev autotools-dev build-essential libicu-dev python2.7-dev \
     autoconf libtool curl zlib1g-dev doxygen graphviz \
     wget libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev xz-utils
 
