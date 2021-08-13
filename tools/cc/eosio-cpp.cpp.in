@@ -24,6 +24,7 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/FileUtilities.h"
 
 using namespace clang::tooling;
 using namespace llvm;
@@ -70,8 +71,6 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
    abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
    codegen::get().set_contract_name(contract_name);
    codegen::get().set_warn_action_read_only(warn_action_read_only);
-   codegen::get().set_query_eosio_include_dirs(query_eosio_include_dirs);
-   codegen::get().set_query_eosio_link_dirs(query_eosio_link_dirs);
 
    int tool_run = -1;
    tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
@@ -167,10 +166,7 @@ int main(int argc, const char **argv) {
 
          if (opts.query_eosio_include_dirs) {
             std::cout << "Include paths: \n";
-            std::set<std::string> include_dirs = codegen::get().include_dirs;
-            for (auto it = include_dirs.begin(); it != include_dirs.end(); ++it) {
-               std::cout << *it << std::endl;
-            }
+            printOptions("-I", new_opts, std::cout, std::cerr);
          }
 
          if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
@@ -185,9 +181,6 @@ int main(int argc, const char **argv) {
    }
 
    if (opts.link) {
-      if (opts.query_eosio_link_dirs) {
-         // TODO(bogniq)
-      }
 
       std::vector<std::string> new_opts = opts.ld_options;
       for (auto input : outputs) {
