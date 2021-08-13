@@ -3,7 +3,7 @@ FROM centos:7.7.1908
 RUN yum update -y && \
     yum --enablerepo=extras install -y centos-release-scl && \
     yum install -y devtoolset-7 && \
-    yum install -y git autoconf automake bzip2 jo \
+    yum install -y git autoconf automake bzip2 \
     libtool ocaml.x86_64 doxygen graphviz-devel.x86_64 \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 gettext-devel.x86_64 gcc-c++.x86_64 perl \
