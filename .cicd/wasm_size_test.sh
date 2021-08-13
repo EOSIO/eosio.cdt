@@ -54,38 +54,24 @@ if [[ $BUILDKITE == true ]]; then
     cd $BUILD_DIR/tests/unit/test_contracts
     touch wasm_abi_size.json
     PATH_WASM=$(pwd)
-    json_args = ()
+    JSON=$(echo '{}' | jq -r '.')
     echo '--- :arrow_up: Generating wasm_abi_size.log file'
-    for FILENAME in ./*.wasm; do
+    for FILENAME in *.{abi,wasm}; do
         FILESIZE=$(wc -c <"$FILENAME")
-        json_args+= ($FILENAME=$FILESIZE )
-    done
-
-    for FILENAME in ./*.abi; do
-        FILESIZE=$(wc -c <"$FILENAME")
-        json_args+= ($FILENAME=$FILESIZE )
+        export value=$FILESIZE
+        export key="$FILENAME"
+        JSON=$(echo "$JSON" | jq -r "(.\"$key\") += (env.value | tonumber)")
     done
 
     cd $CDT_DIR_HOST/build_eosio_contracts/contracts
-    echo fls=$(ls)
-    echo fpwd=$(pwd)
     for dir in */; do
         cd $dir
-        for FILENAME in ./*.wasm; do
+        for FILENAME in *.{abi,wasm}; do
             if [[ -f $FILENAME ]]; then
                 FILESIZE=$(wc -c <"$FILENAME")
-                json_args+= ($FILENAME=$FILESIZE )
-            fi
-        done
-        cd ..
-    done
-
-    for dir in */; do
-        cd $dir
-        for FILENAME in ./*.abi; do
-            if [[ -f $FILENAME ]]; then
-                FILESIZE=$(wc -c <"$FILENAME")
-                json_args+= ($FILENAME=$FILESIZE )
+                export value=$FILESIZE
+                export key="$FILENAME"
+                JSON=$(echo "$JSON" | jq -r "(.\"$key\") += (env.value | tonumber)")
             fi
         done
         cd ..
@@ -93,7 +79,7 @@ if [[ $BUILDKITE == true ]]; then
 
     echo '--- :arrow_up: Uploading wasm_abi_size.json'
     cd $PATH_WASM
-    jo $json_args > wasm_abi_size.json
+    echo $JSON >> wasm_abi_size.json
     buildkite-agent artifact upload wasm_abi_size.json
     echo 'Done uploading wasm_abi_size.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
