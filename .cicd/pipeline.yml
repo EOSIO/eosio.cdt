@@ -136,7 +136,6 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - wait
 
   - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Unit Test"
     command:
