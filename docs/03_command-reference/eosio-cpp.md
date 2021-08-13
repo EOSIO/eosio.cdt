@@ -73,6 +73,8 @@ compiler options:
   -w                       - Suppress all warnings
   -no-missing-ricardian-clause - Defaults to false, disables warnings for missing Ricardian clauses
   --warn-action-read-only  - Issue a warning if a read-only action uses a write API and continue compilation
+  --eosio-include-dirs     - Print the set of include paths that the compiler will be looking at
+  --eosio-link-dirs        - Print the set of linking paths that the linker will be looking at
 ```
 
 ## Notes
