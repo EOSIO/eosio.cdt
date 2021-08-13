@@ -145,6 +145,11 @@ static cl::opt<std::string> mllvm_opt(
     cl::desc("Pass arguments to llvm"),
     cl::ZeroOrMore,
     cl::cat(LD_CAT));
+static cl::opt<bool> eosio_link_dirs_opt(
+    "eosio-link-dirs",
+    cl::desc("Print the set of linking paths that the linker will be looking at"),
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -355,10 +360,6 @@ static cl::opt<bool> eosio_include_dirs_opt(
     "eosio-include-dirs",
     cl::desc("Print the set of include paths that the compiler will be looking at"),
     cl::cat(EosioCompilerToolCategory));
-static cl::opt<bool> eosio_link_dirs_opt(
-    "eosio-link-dirs",
-    cl::desc("Print the set of linking paths that the linker will be looking at"),
-    cl::cat(EosioCompilerToolCategory));
 /// end c/c++ options
 
 /// begin c++ options
@@ -538,6 +539,9 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back(mllvm_opt);
       }
 
+      if (eosio_link_dirs_opt) {
+         ldopts.emplace_back("-eosio-link-dirs");
+      }
    } else {
 #ifdef __APPLE__
       ldopts.insert(ldopts.end(), {"-arch", "x86_64", "-macosx_version_min", "10.13", "-framework", "Foundation", "-framework", "System"});
@@ -930,9 +934,13 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
    query_eosio_include_dirs = eosio_include_dirs_opt ? true : false;
-   query_eosio_link_dirs = eosio_link_dirs_opt ? true : false;
 
 #endif
+
+   query_eosio_link_dirs = eosio_link_dirs_opt ? true : false;
+   if (query_eosio_link_dirs){
+      ldopts.emplace_back("-eosio-link-dirs");
+   }
 
    /* TODO add some way of defaulting these to the current highest version */
    int abi_version_major = 1;

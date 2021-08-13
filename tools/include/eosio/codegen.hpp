@@ -62,9 +62,6 @@ namespace eosio { namespace cdt {
          size_t                                source_index = 0;
          std::map<std::string, std::string>    tmp_files;
          bool                                  warn_action_read_only;
-         bool                                  query_eosio_include_dirs;
-         bool                                  query_eosio_link_dirs;
-         std::set<std::string>                 include_dirs;
 
          using generation_utils::generation_utils;
 
@@ -83,14 +80,6 @@ namespace eosio { namespace cdt {
 
          void set_warn_action_read_only(bool w) {
             warn_action_read_only = w;
-         }
-
-         void set_query_eosio_include_dirs(bool q) {
-            query_eosio_include_dirs = q;
-         }
-
-         void set_query_eosio_link_dirs(bool q) {
-            query_eosio_link_dirs = q;
          }
    };
 
@@ -474,13 +463,6 @@ namespace eosio { namespace cdt {
                visitor->set_main_name(main_fe->getName());
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
                visitor->process_read_only_actions();
-
-               auto hs = cg.codegen_ci->getPreprocessor().getHeaderSearchInfo();
-               for (auto it = hs.search_dir_begin(); it != hs.search_dir_end(); ++it) {
-                  if (const auto* entry = it->getDir()) {
-                     cg.include_dirs.insert(entry->getName().str());
-                  }
-               }
 
                for (auto ad : visitor->action_decls)
                   visitor->create_action_dispatch(ad);
