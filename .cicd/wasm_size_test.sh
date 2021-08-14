@@ -3,6 +3,8 @@ set -eo pipefail
 . ./.cicd/helpers/general.sh
 CDT_DIR_HOST=$(pwd)
 mkdir -p build_eosio_contracts 
+echo fpwd=$(pwd)
+echo fls=$(ls)
 
 #[[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 #git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
@@ -11,7 +13,7 @@ git clone -b develop https://github.com/EOSIO/eosio.contracts.git
 if [[ $(uname) == 'Darwin' ]]; then
     export PATH=$ROOT_DIR/build/bin:$PATH
     cd build_eosio_contracts
-    cmake $ROOT_DIR/eosio.contracts
+    cmake $CDT_DIR_HOST/eosio.contracts
     make -j$JOBS
 else #Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
