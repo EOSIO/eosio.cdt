@@ -50,7 +50,7 @@ else #Linux
 fi
 
 if [[ $BUILDKITE == true ]]; then
-    cd $BUILD_DIR/tests/unit/test_contracts
+    cd $CDT_DIR_HOST/tests/unit/test_contracts
     touch wasm_abi_size.json
     PATH_WASM=$(pwd)
     JSON=$(echo '{}' | jq -r '.')
