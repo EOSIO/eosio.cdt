@@ -7,21 +7,17 @@ mkdir -p build_eosio_contracts
 #[[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 #git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
 git clone -b develop https://github.com/EOSIO/eosio.contracts.git
-echo fls=$(ls)
-echo fpwd=$(pwd)
 
 if [[ $(uname) == 'Darwin' ]]; then
-    export PATH=$BIN_DIR:$PATH
-    cd $ROOT_DIR/eosio.contracts
-    mkdir -p build_eosio_contracts
+    export PATH=$ROOT_DIR/build/bin:$PATH
     cd build_eosio_contracts
-    cmake ..
+    cmake $ROOT_DIR/eosio.contracts
     make -j$JOBS
 else #Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
     . $HELPERS_DIR/docker-hash.sh
 
-    PRE_CONTRACTS_COMMAND="echo fls=$(ls) && echo fpwd=$(pwd) && export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build_eosio_contracts"
+    PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build_eosio_contracts"
     BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
 
     # Docker Commands
