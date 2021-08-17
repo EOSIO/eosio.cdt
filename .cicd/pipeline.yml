@@ -738,7 +738,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
           always-pull: true
           debug: true
           wait-network: true
@@ -766,7 +766,7 @@ steps:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.5_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
+          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_15_TAG}"
           always-pull: true
           debug: true
           wait-network: true
