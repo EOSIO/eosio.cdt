@@ -9,8 +9,6 @@ mkdir -p build_eosio_contracts
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
 
 if [[ $(uname) == 'Darwin' ]]; then
-    echo fpwd=$(pwd)
-    echo fls=$(ls)
     export PATH=$CDT_DIR_HOST/build/bin:$PATH
     cd build_eosio_contracts
     cmake $CDT_DIR_HOST/eosio.contracts
