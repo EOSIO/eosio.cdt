@@ -12,7 +12,7 @@ ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 if [[ $BUILDKITE == true ]]; then
     # Generate Base Images
     $CICD_DIR/generate-base-images.sh
-    FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-release_2.1.x'
+    FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-release_2.1.x'
     TEST_CONTRACTS_COMMAND="cd $MOUNTED_DIR/build_eosio_contracts/tests && ctest -j $JOBS --output-on-failure -T Test"
     
     # Load BUILDKITE Environment Variables for use in docker run
