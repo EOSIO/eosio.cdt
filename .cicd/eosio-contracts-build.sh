@@ -25,7 +25,7 @@ else #Linux
         # Generate Base Images
         $CICD_DIR/generate-base-images.sh
         if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
-            FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
+            FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-release_2.1.x'
             export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
             BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
         fi
