@@ -1,0 +1,11 @@
+{
+   "tests" : [
+     {
+       "compile_flags": ["--eosio-include-dirs"],
+       "expected" : {
+         "exit-code": 0,
+         "stdout": "Include paths:\\s*\n/.+"
+       }
+     }
+   ]
+}

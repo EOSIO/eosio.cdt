@@ -96,6 +96,17 @@ class Test(ABC):
                     f"expected {expected_stderr} stderr but got {actual_stderr}",
                     failing_test=self,
                 )
+        
+        if expected.get("stdout"):
+            actual_stdout = res.stdout.decode("utf-8")
+            expected_stdout = expected["stdout"]
+
+            if expected_stdout not in actual_stdout and not re.search(expected_stdout, actual_stdout, flags=re.S):
+                self.success = False
+                raise TestFailure(
+                    f"expected {expected_stdout} stdout but got {actual_stdout}",
+                    failing_test=self,
+                )
 
         if expected.get("abi") or expected.get("abi-file"):
             if expected.get("abi"):
