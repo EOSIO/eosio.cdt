@@ -4,8 +4,8 @@
 #include <set>
 #include <stack>
 #include <string_view>
-#include "check.hpp"
-#include "print.hpp"
+#include <eosio/check.hpp>
+#include <eosio/print.hpp>
 
 namespace eosio {
    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

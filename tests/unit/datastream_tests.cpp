@@ -76,10 +76,10 @@ EOSIO_TEST_BEGIN(datastream_test)
    CHECK_EQUAL( ds.pos(), datastream_buffer )
 
    // inline bool read(char*, size_t)
-   CHECK_EQUAL( ds.read(buffer, 256), true )
+   CHECK_EQUAL( !!ds.read(buffer, 256), true )
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0)
 
-   CHECK_ASSERT( "datastream attempted to read past the end", ([&]() {ds.read(buffer, 1);}) )
+   CHECK_ASSERT( "read", ([&]() {ds.read(buffer, 1);}) )
 
    // T pos()const
    CHECK_EQUAL( ds.pos(), datastream_buffer+256 )
@@ -91,14 +91,14 @@ EOSIO_TEST_BEGIN(datastream_test)
    // inline bool write(const char*, size_t)
    fill(begin(buffer), end(buffer), 1); // Fill `buffer` with a new set of values
 
-   CHECK_EQUAL( ds.write(buffer, 256), true )
+   CHECK_EQUAL( !!ds.write(buffer, 256), true )
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
 
-   CHECK_ASSERT( "datastream attempted to write past the end", ([&]() {ds.write(buffer, 1);}) )
+   CHECK_ASSERT( "write", ([&]() {ds.write(buffer, 1);}) )
 
    // inline bool put(char)
    ds.seekp(0);
-   CHECK_EQUAL( ds.put('c'), true )
+   CHECK_EQUAL( !!ds.put('c'), true )
    *buffer = 'c';
    CHECK_EQUAL( memcmp(buffer, datastream_buffer, 256), 0 )
 
@@ -109,14 +109,14 @@ EOSIO_TEST_BEGIN(datastream_test)
    unsigned char uch{};
 
    ds.seekp(0);
-   CHECK_EQUAL( ds.get(uch), true )
+   CHECK_EQUAL( !!ds.get(uch), true )
    CHECK_EQUAL( uch, 'c' )
 
    // inline bool get(char&)
    char ch{};
 
    ds.seekp(0);
-   CHECK_EQUAL( ds.get(ch), true )
+   CHECK_EQUAL( !!ds.get(ch), true )
    CHECK_EQUAL( ch, 'c' )
 
    // inline bool valid()const
@@ -158,16 +158,16 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
 
    // inline void skip(size_t)
    // inline size_t tellp()const
-   CHECK_EQUAL( ds.skip(0), true)
+   CHECK_EQUAL( !!ds.skip(0), true)
    CHECK_EQUAL( ds.tellp(), 256)
 
-   CHECK_EQUAL( ds.skip(1), true)
+   CHECK_EQUAL( !!ds.skip(1), true)
    CHECK_EQUAL( ds.tellp(), 257)
 
-   CHECK_EQUAL( ds.skip(255), true)
+   CHECK_EQUAL( !!ds.skip(255), true)
    CHECK_EQUAL( ds.tellp(), 512)
 
-   CHECK_EQUAL( ds.skip(1028), true)
+   CHECK_EQUAL( !!ds.skip(1028), true)
    CHECK_EQUAL( ds.tellp(), 1540)
 
    // inline bool seekp(size_t)
@@ -175,17 +175,17 @@ EOSIO_TEST_BEGIN(datastream_specialization_test)
    CHECK_EQUAL( ds.tellp(), 0)
 
    // inline bool write(const char*,size_t)
-   CHECK_EQUAL( ds.write(buffer, 256), true )
+   CHECK_EQUAL( !!ds.write(buffer, 256), true )
    CHECK_EQUAL( ds.tellp(), 256 )
 
-   CHECK_EQUAL( ds.write(buffer, 1), true )
+   CHECK_EQUAL( !!ds.write(buffer, 1), true )
    CHECK_EQUAL( ds.tellp(), 257 )
 
    // inline bool put(char)
    char ch{'c'};
 
    ds.seekp(0);
-   CHECK_EQUAL( ds.put(ch), true )
+   CHECK_EQUAL( !!ds.put(ch), true )
    CHECK_EQUAL( ds.tellp(), 1 )
 
    // inline bool valid()
@@ -220,7 +220,7 @@ EOSIO_TEST_BEGIN(datastream_stream_test)
    static constexpr uint16_t buffer_size{256};
    char datastream_buffer[buffer_size]; // Buffer for the datastream to point to
 
-   datastream<const char*> ds{datastream_buffer, buffer_size};
+   datastream<char*> ds{datastream_buffer, buffer_size};
 
    // -------------
    // T (primitive)

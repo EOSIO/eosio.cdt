@@ -1,10 +1,9 @@
 #pragma once
-#include "../../core/eosio/context.hpp"
-#include "../../core/eosio/datastream.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/varint.hpp"
-
-#include "../../core/eosio/key_utils.hpp"
+#include <eosio/context.hpp>
+#include <eosio/datastream.hpp>
+#include <eosio/name.hpp>
+#include <eosio/varint.hpp>
+#include <eosio/key_utils.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -531,7 +530,7 @@ namespace eosio::kv {
 
          inline bool empty() const {
             iterator_t it = {owner};
-            it.lower_bound(key_type{""});
+            it.lower_bound(key_type{});
             return it == end();
          }
 

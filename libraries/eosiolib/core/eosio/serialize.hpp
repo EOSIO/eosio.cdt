@@ -1,11 +1,10 @@
-#include <boost/preprocessor/seq/for_each.hpp>
-#include <boost/preprocessor/seq/enum.hpp>
-#include <boost/preprocessor/seq/size.hpp>
-#include <boost/preprocessor/seq/seq.hpp>
-#include <boost/preprocessor/stringize.hpp>
+#pragma once
 
-#define EOSLIB_REFLECT_MEMBER_OP( r, OP, elem ) \
-  OP t.elem
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <eosio/reflection.hpp>
+
+#define EOSLIB_REFLECT_MEMBER_OP( r, STRUCT, elem ) \
+  EOSIO_REFLECT_MEMBER(STRUCT, elem);
 
 /**
  *  @defgroup serialize Serialize
@@ -20,15 +19,12 @@
  *  @param TYPE - the class to have its serialization and deserialization defined
  *  @param MEMBERS - a sequence of member names.  (field1)(field2)(field3)
  */
-#define EOSLIB_SERIALIZE( TYPE,  MEMBERS ) \
- template<typename DataStream> \
- friend DataStream& operator << ( DataStream& ds, const TYPE& t ){ \
-    return ds BOOST_PP_SEQ_FOR_EACH( EOSLIB_REFLECT_MEMBER_OP, <<, MEMBERS );\
- }\
- template<typename DataStream> \
- friend DataStream& operator >> ( DataStream& ds, TYPE& t ){ \
-    return ds BOOST_PP_SEQ_FOR_EACH( EOSLIB_REFLECT_MEMBER_OP, >>, MEMBERS );\
- }
+#define EOSLIB_SERIALIZE( STRUCT, MEMBERS )                             \
+  friend constexpr const char* get_type_name(STRUCT*) { return #STRUCT; } \
+  template <typename F>                                                 \
+  friend constexpr void eosio_for_each_field(STRUCT*, F f) {            \
+    BOOST_PP_SEQ_FOR_EACH(EOSLIB_REFLECT_MEMBER_OP, ~, MEMBERS);        \
+  }
 
 /**
  *  Defines serialization and deserialization for a class which inherits from other classes that
@@ -39,14 +35,11 @@
  *  @param BASE - a sequence of base class names (basea)(baseb)(basec)
  *  @param MEMBERS - a sequence of member names.  (field1)(field2)(field3)
  */
-#define EOSLIB_SERIALIZE_DERIVED( TYPE, BASE, MEMBERS ) \
- template<typename DataStream> \
- friend DataStream& operator << ( DataStream& ds, const TYPE& t ){ \
-    ds << static_cast<const BASE&>(t); \
-    return ds BOOST_PP_SEQ_FOR_EACH( EOSLIB_REFLECT_MEMBER_OP, <<, MEMBERS );\
- }\
- template<typename DataStream> \
- friend DataStream& operator >> ( DataStream& ds, TYPE& t ){ \
-    ds >> static_cast<BASE&>(t); \
-    return ds BOOST_PP_SEQ_FOR_EACH( EOSLIB_REFLECT_MEMBER_OP, >>, MEMBERS );\
- }
+
+#define EOSLIB_SERIALIZE_DERIVED( STRUCT, BASE, MEMBERS )                \
+  friend constexpr const char* get_type_name(STRUCT*) { return #STRUCT; } \
+  template <typename F>                                                 \
+  friend constexpr void eosio_for_each_field(STRUCT*, F f) {            \
+    eosio_for_each_field((BASE*)nullptr, f);                            \
+    BOOST_PP_SEQ_FOR_EACH(EOSLIB_REFLECT_MEMBER_OP, ~, MEMBERS);        \
+  }

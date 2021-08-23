@@ -1,5 +1,4 @@
 #include <eosio/eosio.hpp>
-#include <eosio/table.hpp>
 
 struct my_struct {
    eosio::name primary_key;
@@ -9,11 +8,11 @@ struct my_struct {
    }
 };
 
-struct my_table : eosio::kv::table<my_struct, "testtable"_n> {
+struct my_table : eosio::kv_table<my_struct> {
    KV_NAMED_INDEX("primary"_n, primary_key);
 
    my_table(eosio::name contract_name) {
-      init(contract_name, primary_key);
+      init(contract_name, "testtable"_n, eosio::kv_ram, primary_key);
    }
 };
 
@@ -41,11 +40,11 @@ public:
    void setup() {
       my_table t{"kvtest"_n};
 
-      t.put(s3, get_self());
-      t.put(s, get_self());
-      t.put(s4, get_self());
-      t.put(s2, get_self());
-      t.put(s5, get_self());
+      t.put(s3);
+      t.put(s);
+      t.put(s4);
+      t.put(s2);
+      t.put(s5);
    }
 
    [[eosio::action]]
@@ -225,19 +224,6 @@ public:
       eosio::check(itr != begin_itr, "Should not be the beginning: 4");
       --itr;
       eosio::check(itr == begin_itr, "Should be the beginning");
-
-      eosio::check(end_itr > begin_itr, "end should be greater than beginning");
-      eosio::check(end_itr >= begin_itr, "end should be greater than or equal to beginning");
-      eosio::check(begin_itr < end_itr, "beginning should be less than end");
-      eosio::check(begin_itr <= end_itr, "beginning should be less than or equal to end");
-
-      auto b = t.primary_key.rbegin();
-      auto c = t.primary_key.rbegin();
-      ++c;
-      eosio::check(c > b, "c should be greater than b");
-      eosio::check(c >= b, "c should be greater than or equal to b");
-      eosio::check(b <= c, "b should be less than or equal to c");
-      eosio::check(b < c, "b should be less than c");
    }
 
    [[eosio::action]]

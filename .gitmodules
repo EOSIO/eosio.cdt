@@ -13,3 +13,12 @@
 [submodule "libraries/native/softfloat"]
 	path = libraries/native/softfloat
 	url = https://github.com/EOSIO/berkeley-softfloat-3.git
+[submodule "libraries/abieos"]
+	path = libraries/abieos
+	url = https://github.com/EOSIO/abieos.git
+[submodule "libraries/fmt"]
+	path = libraries/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "libraries/Catch2"]
+	path = libraries/Catch2
+	url = https://github.com/catchorg/Catch2.git

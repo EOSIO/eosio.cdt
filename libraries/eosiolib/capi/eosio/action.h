@@ -178,7 +178,8 @@ capi_name current_receiver( void );
 __attribute__((eosio_wasm_import))
 void set_action_return_value(void *return_value, size_t size);
 
+/// @} action
+
 #ifdef __cplusplus
 }
 #endif
-/// @} action

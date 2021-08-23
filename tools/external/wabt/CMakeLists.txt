@@ -123,7 +123,7 @@ else ()
   if (COMPILER_IS_GNU)
     # disable -Wclobbered: it seems to be guessing incorrectly about a local
     # variable being clobbered by longjmp.
-    add_definitions(-Wno-clobbered)
+    #add_definitions(-Wno-clobbered)
   endif ()
 
   if (NOT EMSCRIPTEN)

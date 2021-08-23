@@ -76,20 +76,6 @@ EOSIO_TEST_BEGIN(symbol_code_type_test)
    CHECK_EQUAL( !symbol_code{""}.operator bool(), true )
    CHECK_EQUAL( !symbol_code{"SYMBOL"}.operator bool(), false )
 
-   // ----------------------------------------
-   // char* write_as_string(char*, char*)const
-   char buffer[7]{};
-
-   string test_str{"A"};
-   symbol_code{test_str}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   symbol_code{test_str = "Z"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   symbol_code{test_str = "AAAAAAA"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-   symbol_code{test_str = "ZZZZZZZ"}.write_as_string( buffer, buffer + sizeof(buffer) );
-   CHECK_EQUAL( memcmp(test_str.c_str(), buffer, strlen(test_str.c_str())), 0 )
-
    // -----------------------
    // string to_string()const
    CHECK_EQUAL( symbol_code{"A"}.to_string(), "A" )
@@ -191,11 +177,11 @@ EOSIO_TEST_BEGIN(symbol_type_test)
    CHECK_EQUAL( (!symbol{"SYMBOLL", 0}.operator bool()), false )
 
    // ---------------------
-   // void print(bool)const
-   CHECK_PRINT( "0,A", [&](){symbol{"A", 0}.print(true);} );
-   CHECK_PRINT( "0,Z", [&](){symbol{"Z", 0}.print(true);} );
-   CHECK_PRINT( "255,AAAAAAA", [&](){symbol{"AAAAAAA", 255}.print(true);} );
-   CHECK_PRINT( "255,ZZZZZZZ", [&](){symbol{"ZZZZZZZ", 255}.print(true);} );
+   // void print(symbol)const
+   CHECK_PRINT( "0,A", [&](){print(symbol{"A", 0});} );
+   CHECK_PRINT( "0,Z", [&](){print(symbol{"Z", 0});} );
+   CHECK_PRINT( "255,AAAAAAA", [&](){print(symbol{"AAAAAAA", 255});} );
+   CHECK_PRINT( "255,ZZZZZZZ", [&](){print(symbol{"ZZZZZZZ", 255});} );
 
    // --------------------------------------------------------------
    // friend constexpr bool operator==(const symbol&, const symbol&)

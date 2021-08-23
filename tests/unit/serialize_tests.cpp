@@ -24,7 +24,7 @@ using std::vector;
 using eosio::datastream;
 
 struct B {
-   const char c{};
+   char c{};
    EOSLIB_SERIALIZE( B, (c) )
 
    friend bool operator==(const B& lhs, const B& rhs) {
@@ -33,7 +33,7 @@ struct B {
 };
 
 struct D1 : public B {
-   const int i{};
+   int i{};
    EOSLIB_SERIALIZE_DERIVED( D1, B, (i) )
 
    friend bool operator==(const D1& lhs, const D1& rhs) {
@@ -42,7 +42,7 @@ struct D1 : public B {
 };
 
 struct D2 : public D1 {
-   const vector<double> v{};
+   vector<double> v{};
    EOSLIB_SERIALIZE_DERIVED( D2, D1, (v) )
 
    friend bool operator==(const D2& lhs, const D2& rhs) {
@@ -55,8 +55,8 @@ EOSIO_TEST_BEGIN(serialize_test)
    static constexpr uint16_t buffer_size{256};
    char ds_buffer[buffer_size]{}; // Buffer for the datastream to point to
    char ds_expected_buffer[buffer_size]{}; // Buffer to compare `ds_buffer` with
-   datastream<const char*> ds{ds_buffer, buffer_size};
-   datastream<const char*> ds_expected{ds_expected_buffer, buffer_size};
+   datastream<char*> ds{ds_buffer, buffer_size};
+   datastream<char*> ds_expected{ds_expected_buffer, buffer_size};
 
    // Testing base structures
    static constexpr B b{'c'};
