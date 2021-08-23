@@ -4,7 +4,7 @@
        "compile_flags": ["--eosio-include-dirs", "-I/tmpdir"],
        "expected" : {
          "exit-code": 0,
-         "stdout": "Include paths:\\s*\n.+/tmpdir"
+         "stdout": "Include paths:.*/tmpdir"
        }
      }
    ]
