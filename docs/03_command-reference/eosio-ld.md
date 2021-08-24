@@ -30,4 +30,5 @@ ld options:
   -l=<string>       - Root name of library to link
   -lto-opt=<string> - LTO Optimization level (O0-O3)
   -o=<string>       - Write output to <file>
+  --eosio-link-dirs        - Print the set of linking paths that the linker will be looking at
 ```

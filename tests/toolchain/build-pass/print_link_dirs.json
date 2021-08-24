@@ -1,0 +1,11 @@
+{
+   "tests" : [
+     {
+       "compile_flags": ["--eosio-link-dirs", "-L/templib"],
+       "expected" : {
+         "exit-code": 0,
+         "stdout": "Library paths:.*/templib"
+       }
+     }
+   ]
+}
