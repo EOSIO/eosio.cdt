@@ -416,7 +416,7 @@ jobs:
           git submodule update --init --force --recursive
       - name: Build
         run: |
-          brew install git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3
+          brew install coreutils gnu-sed grep git automake libtool wget cmake gmp gettext doxygen graphviz lcov python@3
           ./.cicd/build.sh
           tar -pczf build.tar.gz build
       - name: Upload Build Artifact
