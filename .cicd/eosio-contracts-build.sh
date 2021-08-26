@@ -7,9 +7,10 @@ mkdir -p build_eosio_contracts
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
-
+echo ls=$(ls)
+echo root=$($ROOT_DIR)
 if [[ $(uname) == 'Darwin' ]]; then
-    export PATH=$CDT_DIR_HOST/build/bin:$PATH
+    export PATH=$ROOT_DIR/build/bin:$PATH
     cd build_eosio_contracts
     CMAKE="cmake ../eosio.contracts"
     echo "$ $CMAKE"
@@ -50,7 +51,7 @@ else #Linux
 
 fi
 
-cd $CDT_DIR_HOST/build/tests/unit/test_contracts
+cd build/tests/unit/test_contracts
 touch wasm_abi_size.json
 PATH_WASM=$(pwd)
 JSON=$(echo '{}' | jq -r '.')
@@ -62,7 +63,7 @@ for FILENAME in *.{abi,wasm}; do
     JSON="$(echo "$JSON" | jq -r '.[env.key] += (env.value | tonumber)')"
 done
 
-cd $CDT_DIR_HOST/build_eosio_contracts/contracts
+cd $ROOT_DIR/build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
     for FILENAME in *.{abi,wasm}; do
@@ -85,7 +86,7 @@ if [[ $BUILDKITE == true ]]; then
     echo 'Done uploading wasm_abi_size.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    cd $CDT_DIR_HOST
+    cd $ROOT_DIR
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
     buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
