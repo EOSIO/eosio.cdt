@@ -1,4 +1,4 @@
-#!/usr/bin/env bash/
+#!/usr/bin/env bash
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 CDT_DIR_HOST=$(pwd)
