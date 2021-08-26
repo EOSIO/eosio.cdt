@@ -26,18 +26,6 @@ static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
     cl::cat(LD_CAT));
-static cl::opt<bool> fquery_opt(
-    "fquery",
-    cl::desc("Produce binaries for wasmql"),
-    cl::cat(LD_CAT));
-static cl::opt<bool> fquery_server_opt(
-    "fquery-server",
-    cl::desc("Produce binaries for wasmql"),
-    cl::cat(LD_CAT));
-static cl::opt<bool> fquery_client_opt(
-    "fquery-client",
-    cl::desc("Produce binaries for wasmql"),
-    cl::cat(LD_CAT));
 static cl::opt<bool> use_old_malloc_opt(
     "use-freeing-malloc",
     cl::desc("Set the malloc implementation to the old freeing malloc"),
@@ -446,59 +434,28 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("--no-merge-data-segments");
-      if (fquery_opt || fquery_server_opt || fquery_client_opt) {
-         ldopts.emplace_back("--export-table");
-         ldopts.emplace_back("-other-model");
-         ldopts.emplace_back("--only-export \"*:table\"");
-         ldopts.emplace_back("--only-export \"*:memory\"");
-         if (fuse_main_opt) {
-            ldopts.emplace_back("-e main");
-            ldopts.emplace_back("--only-export \"main:function\"");
+      if (fuse_main_opt)
+         ldopts.emplace_back("-e main");
+      else {
+         switch (profile_opt) {
+         case profile::eosio:
+            ldopts.emplace_back("-e apply");
+            break;
+         case profile::cosmwasm:
+            ldopts.emplace_back("--no-entry");
+            break;
          }
-         else {
-            ldopts.emplace_back("-e initialize ");
-            ldopts.emplace_back("--only-export \"initialize:function\"");
-         }
-         if (fquery_server_opt)
-            ldopts.emplace_back("-export run_query ");
-         else {
-            ldopts.emplace_back("-export create_query_request ");
-            ldopts.emplace_back("-export decode_query_response ");
-            ldopts.emplace_back("-export describe_query_request ");
-            ldopts.emplace_back("-export describe_query_response ");
-         }
-         if (fquery_server_opt)
-            ldopts.emplace_back("--only-export \"run_query:function\"");
-         else {
-            ldopts.emplace_back("--only-export \"create_query_request:function\"");
-            ldopts.emplace_back("--only-export \"decode_query_response:function\"");
-            ldopts.emplace_back("--only-export \"describe_query_request:function\"");
-            ldopts.emplace_back("--only-export \"describe_query_response:function\"");
-         }
-      } else {
-         if (fuse_main_opt)
-            ldopts.emplace_back("-e main");
-         else {
-            switch (profile_opt) {
-            case profile::eosio:
-               ldopts.emplace_back("-e apply");
-               break;
-            case profile::cosmwasm:
-               ldopts.emplace_back("--no-entry");
-               break;
-            }
-            ldopts.emplace_back("-export=__heap_base");
-            ldopts.emplace_back("-export=__data_end");
-         }
-         //ldopts.emplace_back("--only-export \"apply:function\"");
+         ldopts.emplace_back("-export=__heap_base");
+         ldopts.emplace_back("-export=__data_end");
       }
-      ldopts.emplace_back("-lc++");
+      //ldopts.emplace_back("--only-export \"apply:function\"");
+      ldopts.emplace_back("-lc++ -lc");
       switch (profile_opt) {
       case profile::eosio:
-         ldopts.emplace_back("-lc -leosio");
+         ldopts.emplace_back("-lcstdio -leosio");
          break;
       case profile::cosmwasm:
-         ldopts.emplace_back("-lcnf -lcosmwasm");
+         ldopts.emplace_back("-lcstdio-no-float -lcosmwasm");
          break;
       }
       if (use_old_malloc_opt)
@@ -506,9 +463,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       else
          ldopts.emplace_back("-leosio_dsm");
 
-      if (use_rt_opt || fquery_opt || fquery_server_opt || fquery_client_opt)
-         ldopts.emplace_back("-lrt -lsf");
-      if (fquery_opt || fquery_server_opt || fquery_client_opt || profile_opt == profile::cosmwasm)
+      if (profile_opt == profile::cosmwasm)
          ldopts.emplace_back("-leosio_cmem");
 
    } else {
@@ -555,15 +510,6 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
    }
   
-#ifndef ONLY_LD 
-   if (fquery_opt)
-      ldopts.emplace_back("-fquery");
-   if (fquery_server_opt)
-      ldopts.emplace_back("-fquery-server");
-   if (fquery_client_opt)
-      ldopts.emplace_back("-fquery-client");
-#endif
-
    if (!pp_path_opt.empty())
       pp_dir = pp_path_opt;
    else
