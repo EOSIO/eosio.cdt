@@ -8,7 +8,7 @@ macro(add_tool name source)
     PUBLIC
       ${CMAKE_CURRENT_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/internal
+      ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/internal/include
   )
   target_link_libraries(${name} PUBLIC clangTooling)
 

@@ -3,14 +3,15 @@ file(GLOB HEADERS "*.hpp" "*.h")
 add_library(cosmwasm
    cosmwasm.cpp
    base64.cpp
-   uint128_t.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../internal/uint128_t/uint128_t.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../internal/rt/compiler_builtins.cpp
 )
 
 target_compile_definitions(cosmwasm PUBLIC NO_BUILTIN_UINT128)
 target_include_directories(cosmwasm
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../internal/include
 )
 target_link_libraries(cosmwasm c++ cnf)
 

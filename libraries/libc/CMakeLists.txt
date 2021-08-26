@@ -152,7 +152,6 @@ list(APPEND C_SOURCES
    ${MBYTE_SOURCES}
    ${MISC_SOURCES}
    ${SEARCH_SOURCES}
-   ${STDIO_SOURCES}
    ${STDLIB_SOURCES}
    ${STRING_SOURCES}
    ${TIME_SOURCES}
@@ -172,30 +171,21 @@ list(APPEND C_PUBLIC_INCLUDES
    ${CMAKE_CURRENT_SOURCE_DIR}/musl/include
 )
 
+add_library(cstdio STATIC ${STDIO_SOURCES})
+target_include_directories(cstdio PRIVATE ${C_PRIVATE_INCLUDES})
+target_compile_definitions(cstdio PUBLIC PRINTF_SUPPORT_FLOAT)
+
+add_library(cstdio-no-float STATIC ${STDIO_SOURCES})
+target_include_directories(cstdio-no-float PRIVATE ${C_PRIVATE_INCLUDES})
+
 add_library(c ${C_SOURCES})
 target_include_directories(c
    PRIVATE ${C_PRIVATE_INCLUDES}
    PUBLIC ${C_PUBLIC_INCLUDES}
 )
 
-add_native_library(native_c ${C_SOURCES})
-target_include_directories(native_c
-   PRIVATE ${C_PRIVATE_INCLUDES}
-   PUBLIC ${C_PUBLIC_INCLUDES}
-)
-
-target_compile_definitions(c PUBLIC PRINTF_SUPPORT_FLOAT)
-target_compile_definitions(native_c PUBLIC PRINTF_SUPPORT_FLOAT)
-
-# libc with no floating point
-add_library(cnf ${C_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/compiler_builtins.c")
-target_include_directories(cnf
-   PRIVATE ${C_PRIVATE_INCLUDES}
-   PUBLIC ${C_PUBLIC_INCLUDES}
-)
-
-add_custom_command( TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib)
-add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
-add_custom_command( TARGET cnf POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cnf> ${BASE_BINARY_DIR}/lib)
+add_custom_command(TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib)
+add_custom_command(TARGET cstdio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio> ${BASE_BINARY_DIR}/lib)
+add_custom_command(TARGET cstdio-no-float POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio-no-float> ${BASE_BINARY_DIR}/lib)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)

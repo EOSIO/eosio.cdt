@@ -5,9 +5,6 @@
 	path = libraries/libc++/libcxx
 	url = https://github.com/turnpike/libcxx
 	branch = eosio
-[submodule "libraries/native/softfloat"]
-	path = libraries/native/softfloat
-	url = https://github.com/EOSIO/berkeley-softfloat-3.git
 [submodule "libraries/libc++/libcxxabi"]
 	path = libraries/libc++/libcxxabi
 	url = https://github.com/turnpike/libcxxabi
