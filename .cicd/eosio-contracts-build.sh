@@ -55,7 +55,7 @@ cd build/tests/unit/test_contracts
 touch wasm_abi_size.json
 PATH_WASM=$(pwd)
 JSON=$(echo '{}' | jq -r '.')
-echo '--- :arrow_up: Generating wasm_abi_size.log file'
+echo '--- :arrow_up: Generating wasm_abi_size.json file'
 for FILENAME in *.{abi,wasm}; do
     FILESIZE=$(wc -c <"$FILENAME")
     export value=$FILESIZE
@@ -63,7 +63,7 @@ for FILENAME in *.{abi,wasm}; do
     JSON="$(echo "$JSON" | jq -r '.[env.key] += (env.value | tonumber)')"
 done
 
-cd $ROOT_DIR/build_eosio_contracts/contracts
+cd $MOUNTED_DIR/build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
     for FILENAME in *.{abi,wasm}; do
@@ -86,7 +86,7 @@ if [[ $BUILDKITE == true ]]; then
     echo 'Done uploading wasm_abi_size.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    cd $ROOT_DIR
+    cd $MOUNTED_DIR
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
     buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
