@@ -11,7 +11,7 @@ echo ls=$(ls)
 echo root=$ROOT_DIR
 echo pwd=$(pwd)
 if [[ $(uname) == 'Darwin' ]]; then
-    export PATH=$ROOT_DIR/build/bin:$PATH
+    export PATH=$CDT_DIR_HOST/build/bin:$PATH
     cd build_eosio_contracts
     CMAKE="cmake ../eosio.contracts"
     echo "$ $CMAKE"
@@ -19,6 +19,7 @@ if [[ $(uname) == 'Darwin' ]]; then
     MAKE="make -j $JOBS"
     echo "$ $MAKE"
     eval $MAKE
+    cd ..
 else #Linux
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
     . $HELPERS_DIR/docker-hash.sh
@@ -52,9 +53,8 @@ else #Linux
 
 fi
 
-cd build/tests/unit/test_contracts
 touch wasm_abi_size.json
-PATH_WASM=$(pwd)
+cd build/tests/unit/test_contracts
 JSON=$(echo '{}' | jq -r '.')
 echo '--- :arrow_up: Generating wasm_abi_size.json file'
 for FILENAME in *.{abi,wasm}; do
@@ -79,7 +79,7 @@ for dir in */; do
 done
 
 echo '--- :arrow_up: Uploading wasm_abi_size.json'
-cd $PATH_WASM
+cd ../../
 echo $JSON >> wasm_abi_size.json
 if [[ $BUILDKITE == true ]]; then
 
@@ -87,7 +87,6 @@ if [[ $BUILDKITE == true ]]; then
     echo 'Done uploading wasm_abi_size.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    cd $MOUNTED_DIR
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
     buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
