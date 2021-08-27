@@ -7,9 +7,7 @@ mkdir -p build_eosio_contracts
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
-echo ls=$(ls)
-echo root=$ROOT_DIR
-echo pwd=$(pwd)
+
 if [[ $(uname) == 'Darwin' ]]; then
     export PATH=$CDT_DIR_HOST/build/bin:$PATH
     cd build_eosio_contracts
@@ -36,7 +34,6 @@ else #Linux
         BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
     fi
 
-
     COMMANDS_EOSIO_CONTRACTS="$PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
 
     # Load BUILDKITE Environment Variables for use in docker run
@@ -57,7 +54,7 @@ touch wasm_abi_size.json
 cd build/tests/unit/test_contracts
 JSON=$(echo '{}' | jq -r '.')
 echo '--- :arrow_up: Generating wasm_abi_size.json file'
-for FILENAME in *.{abi,wasm}; do
+for FILENAME in *.{wasm,abi}; do
     FILESIZE=$(wc -c <"$FILENAME")
     export value=$FILESIZE
     export key="$FILENAME"
@@ -67,7 +64,7 @@ done
 cd ../../../../build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
-    for FILENAME in *.{abi,wasm}; do
+    for FILENAME in *.{wasm,abi}; do
         if [[ -f $FILENAME ]]; then
             FILESIZE=$(wc -c <"$FILENAME")
             export value=$FILESIZE
