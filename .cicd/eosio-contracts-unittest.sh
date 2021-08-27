@@ -9,7 +9,6 @@ git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git
 ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 . $HELPERS_DIR/docker-hash.sh
 
-
 FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
 TEST_CONTRACTS_COMMAND="cd $MOUNTED_DIR/build_eosio_contracts/tests && ctest -j $JOBS --output-on-failure -T Test"
 
