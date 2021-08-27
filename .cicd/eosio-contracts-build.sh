@@ -8,7 +8,8 @@ mkdir -p build_eosio_contracts
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
 echo ls=$(ls)
-echo root=$($ROOT_DIR)
+echo root=$ROOT_DIR
+echo pwd=$(pwd)
 if [[ $(uname) == 'Darwin' ]]; then
     export PATH=$ROOT_DIR/build/bin:$PATH
     cd build_eosio_contracts
@@ -63,7 +64,7 @@ for FILENAME in *.{abi,wasm}; do
     JSON="$(echo "$JSON" | jq -r '.[env.key] += (env.value | tonumber)')"
 done
 
-cd $MOUNTED_DIR/build_eosio_contracts/contracts
+cd ../../../../build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
     for FILENAME in *.{abi,wasm}; do
