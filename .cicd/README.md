@@ -1,5 +1,5 @@
-# eosio.cdt
-The [eosio.cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) pipeline is the primary pipeline for the [eosio.cdt](https://github.com/EOSIO/eosio.cdt) repository.
+# eosio-dot-cdt
+The [eosio-dot-cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) pipeline is the primary pipeline for the [eosio.cdt](https://github.com/EOSIO/eosio.cdt) repository.
 
 <x>
 
@@ -11,7 +11,7 @@ The [eosio.cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) pipeline is the prima
 1. [See Also](README.md#see-also)
 
 ## Configuration
-Most EOSIO.CDT pipelines are run any time you push a commit or tag to an open pull request in [eosio.cdt](https://github.com/EOSIO/eosio.cdt), any time you merge a pull request, and nightly.
+The EOSIO.CDT pipeline runs any time you push a commit/tag to an open pull request, push to a base branch, or merge a pull request in [eosio.cdt](https://github.com/EOSIO/eosio.cdt). In addition, nightly schedules run for all actively maintained release branches.
 
 Platform configuration used pinned configuration and versions.
 
@@ -27,12 +27,10 @@ These will override more specific operating system declarations, and primarily e
 
 Configure which operating systems are built, tested, and packaged:
 ```bash
-RUN_ALL_TESTS='true'                 # run all tests in the current build (including LRTs, overridden by SKIP* variables)
 SKIP_AMAZON_LINUX_2='true|false'     # skip all steps for Amazon Linux 2
 SKIP_CENTOS_7='true|false'           # skip all steps for Centos 7
 SKIP_CENTOS_8='true|false'           # skip all steps for Centos 8
 SKIP_MACOS_10_14='true|false'        # skip all steps for MacOS 10.14
-SKIP_MACOS_10_15='true|false'        # skip all steps for MacOS 10.15
 SKIP_UBUNTU_16_04='true|false'       # skip all steps for Ubuntu 16.04
 SKIP_UBUNTU_18_04='true|false'       # skip all steps for Ubuntu 18.04
 SKIP_UBUNTU_20_04='true|false'       # skip all steps for Ubuntu 20.04
@@ -41,9 +39,9 @@ SKIP_UBUNTU_20_04='true|false'       # skip all steps for Ubuntu 20.04
 Configure which steps are executed for each operating system:
 ```bash
 SKIP_BUILD='true|false'              # skip all build steps
-SKIP_TOOLCHAIN_TEST='true|false'     # skip all toolchain test steps
-SKIP_UNIT_TESTS='true|false'         # skip all unit tests
+SKIP_DOCKER='true|false'             # skip all docker build steps
 SKIP_PACKAGE_BUILDER='true|false'    # skip all packaging steps
+SKIP_UNIT_TESTS='true|false'         # skip all unit tests
 ```
 
 Configure how the steps are executed:
@@ -64,7 +62,6 @@ SKIP_LINUX='true'
 
 Skip all tests:
 ```bash
-SKIP_TOOLCHAIN_TEST='true|false'     # skip all toolchain test steps
 SKIP_UNIT_TESTS='true|false'         # skip all unit tests
 ```
 

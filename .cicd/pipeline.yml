@@ -450,6 +450,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: 10
+    skip: ${SKIP_DOCKER}${SKIP_UBUNTU_18}${SKIP_LINUX}
 
   - label: ":beer: Brew Updater"
     command: |
