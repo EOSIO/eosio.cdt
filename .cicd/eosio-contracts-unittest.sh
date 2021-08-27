@@ -20,7 +20,7 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
     done < "$BUILDKITE_ENV_FILE"
 fi
 
-echo '--- :arrow_up: Sanity tests for eosio.contract wasm and abi files'
+echo '--- :arrow_up: Unit-tests for eosio.contract wasm and abi files'
 DOCKER_RUN="docker run $ARGS $evars $FULL_TAG bash -c \"$TEST_CONTRACTS_COMMAND\""
 echo "$ $DOCKER_RUN"
 eval $DOCKER_RUN
