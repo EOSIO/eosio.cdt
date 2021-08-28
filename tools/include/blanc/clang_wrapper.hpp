@@ -86,6 +86,10 @@ namespace blanc { namespace clang_wrapper {
             return !!wasm_entry;
          }
 
+         bool isEosioReadOnly() const {
+            return attrs.find("eosio_read_only") != attrs.end();
+         }
+
          const Attr* getEosioActionAttr() const {
             return isEosioAction() ? &attrs.at("eosio_action") : nullptr;
          }

@@ -156,7 +156,6 @@ list(APPEND C_SOURCES
    ${STRING_SOURCES}
    ${TIME_SOURCES}
    ${THREAD_SOURCES}
-   "musl/src/malloc/posix_memalign.c"
    "musl/src/malloc/memalign.c"
    "musl/src/unistd/lseek.c"
 )
