@@ -22,9 +22,18 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 using profile = blanc::profile;
 
 /// begin ld options
+static cl::opt<std::string> abi_version_opt(
+    "abi-version",
+    cl::desc("Which ABI version to generate"),
+    cl::cat(LD_CAT));
 static cl::opt<bool> no_abigen_opt(
     "no-abigen",
     cl::desc("Disable ABI file generation"),
+    cl::cat(LD_CAT));
+static cl::opt<bool> no_missing_ricardian_clause_opt(
+    "no-missing-ricardian-clause",
+    cl::desc("Disable warnings for missing Ricardian clauses"),
+    cl::init(false),
     cl::cat(LD_CAT));
 static cl::opt<bool> use_old_malloc_opt(
     "use-freeing-malloc",
@@ -324,7 +333,10 @@ static cl::opt<std::string> contract_name(
     "contract",
     cl::desc("Contract name"),
     cl::cat(EosioCompilerToolCategory));
-
+static cl::opt<bool> warn_action_read_only_opt(
+    "warn-action-read-only",
+    cl::desc("Issue a warning if a read-only action uses a write API and continue compilation"),
+    cl::cat(EosioCompilerToolCategory));
 /// end c/c++ options
 
 /// begin c++ options
@@ -356,6 +368,7 @@ struct Options {
    std::vector<std::string> abigen_options;
    std::vector<std::string> abigen_resources;
    blanc::profile profile;
+   std::pair<int, int> abi_version;
 
    // debug, native, implicit_output, link, abigen
    struct {
@@ -364,6 +377,10 @@ struct Options {
       bool debug;
       bool native;
       bool implicit_output;
+      bool suppress_ricardian_warning;
+      bool has_o_opt;
+      bool has_contract_opt;
+      bool warn_action_read_only;
    } flags;
 };
 
@@ -434,12 +451,14 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
       ldopts.emplace_back("--no-merge-data-segments");
-      if (fuse_main_opt)
-         ldopts.emplace_back("-e main");
-      else {
+      if (fuse_main_opt) {
+         ldopts.emplace_back("-e");
+         ldopts.emplace_back("main");
+      } else {
          switch (profile_opt) {
          case profile::eosio:
-            ldopts.emplace_back("-e apply");
+            ldopts.emplace_back("-e");
+            ldopts.emplace_back("apply");
             break;
          case profile::cosmwasm:
             ldopts.emplace_back("--no-entry");
@@ -449,13 +468,16 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back("-export=__data_end");
       }
       //ldopts.emplace_back("--only-export \"apply:function\"");
-      ldopts.emplace_back("-lc++ -lc");
+      ldopts.emplace_back("-lc++");
+      ldopts.emplace_back("-lc");
       switch (profile_opt) {
       case profile::eosio:
-         ldopts.emplace_back("-lcstdio -leosio");
+         ldopts.emplace_back("-lcstdio");
+         ldopts.emplace_back("-leosio");
          break;
       case profile::cosmwasm:
-         ldopts.emplace_back("-lcstdio-no-float -lcosmwasm");
+         ldopts.emplace_back("-lcstdio-no-float");
+         ldopts.emplace_back("-lcosmwasm");
          break;
       }
       if (use_old_malloc_opt)
@@ -489,6 +511,9 @@ static Options CreateOptions(bool add_defaults=true) {
    std::string abigen_output;
    std::string abigen_contract;
    bool implicit_output = false;
+   bool has_o_opt;
+   bool has_contract_opt;
+   bool warn_action_read_only;
 
 #ifdef ONLY_LD
    bool abigen = !no_abigen_opt;
@@ -577,7 +602,8 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-fcolor-diagnostics");
    }
    if (!MF_opt.empty()) {
-      copts.emplace_back("-MF "+MF_opt);
+      copts.emplace_back("-MF");
+      copts.emplace_back(MF_opt);
    }
    if (MD_opt) {
       copts.emplace_back("-MD");
@@ -586,7 +612,8 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-MMD");
    }
    if (!MT_opt.empty()) {
-      copts.emplace_back("-MT "+MT_opt);
+      copts.emplace_back("-MT");
+      copts.emplace_back(MT_opt);
    }
    if (finline_functions_opt) {
       copts.emplace_back("-finline-functions");
@@ -772,16 +799,21 @@ static Options CreateOptions(bool add_defaults=true) {
          llvm::sys::path::replace_extension(fn, "");
          llvm::sys::path::replace_extension(fn, fnative_opt ? "" : ".wasm");
          output_fn = fn.str().str();
-         ldopts.emplace_back("-o "+output_fn);
+         ldopts.emplace_back("-o");
+         ldopts.emplace_back(output_fn);
       } else {
          output_fn = "a.out";
-         ldopts.emplace_back("-o "+output_fn);
+         ldopts.emplace_back("-o");
+         ldopts.emplace_back(output_fn);
       }
 #endif
+      has_o_opt = false;
    }
    else {
-      ldopts.emplace_back("-o "+o_opt);
+      ldopts.emplace_back("-o");
+      ldopts.emplace_back(o_opt);
       output_fn = o_opt;
+      has_o_opt = true;
    }
 
    if (!fnative_opt) {
@@ -805,8 +837,8 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-std="+std_opt);
       agopts.emplace_back("-std="+std_opt);
    } else {
-      copts.emplace_back("-std=c++2a");
-      agopts.emplace_back("-std=c++2a");
+      copts.emplace_back("-std=c++20");
+      agopts.emplace_back("-std=c++20");
    }
 
    if (faligned_allocation_opt) {
@@ -825,13 +857,18 @@ static Options CreateOptions(bool add_defaults=true) {
       copts.emplace_back("-fstrict-vtable-pointers");
       agopts.emplace_back("-fstrict-vtable-pointers");
    }
+   if (no_missing_ricardian_clause_opt) {
+      ldopts.emplace_back("--no-missing-ricardian-clause");
+   }
 #endif
-   if (!contract_name.empty())
+   if (!contract_name.empty()) {
       abigen_contract = contract_name;
-   else {
-      llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
+      has_contract_opt = true;
+   } else {
+      llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(output_fn);
       llvm::sys::path::replace_extension(fn, "");
       abigen_contract = fn.str().str();
+      has_contract_opt = false;
    }
 
    for ( auto resource : resources ) {
@@ -844,15 +881,35 @@ static Options CreateOptions(bool add_defaults=true) {
    if (!fnative_opt) {
       ldopts.emplace_back("--profile="+std::to_string(profile_opt));
    }
-#endif
 
-   Options opts = {output_fn, inputs, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, profile_opt, {}};
+   if(warn_action_read_only_opt) {
+      warn_action_read_only = true;
+   } else {
+      warn_action_read_only = false;
+   }
+
+#endif
+   /* TODO add some way of defaulting these to the current highest version */
+   int abi_version_major = 1;
+   int abi_version_minor = 2;
+
+   if (!abi_version_opt.empty()) {
+      abi_version_major = std::stoi(abi_version_opt);
+      float tmp         = std::stof(abi_version_opt);
+      abi_version_minor = ((tmp - (int)tmp)*10);
+   }
+
+   Options opts = {output_fn, inputs, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, profile_opt, {abi_version_major, abi_version_minor}, {}};
    opts.flags = {
       .link = link,
       .abigen = abigen,
       .debug = debug,
       .native = fnative_opt,
       .implicit_output = implicit_output,
+      .suppress_ricardian_warning = no_missing_ricardian_clause_opt,
+      .has_o_opt = has_o_opt,
+      .has_contract_opt = has_contract_opt,
+      .warn_action_read_only = warn_action_read_only,
    };
    return opts;
 }

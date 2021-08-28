@@ -93,6 +93,7 @@ BLANC_ATTR(EosioTable, eosio_table, eosio::table, 0, 1, (!isa<CXXRecordDecl>(D))
 BLANC_ATTR(EosioWasmAction, eosio_wasm_action, eosio::wasm_action, 0, 1, (!isa<FunctionDecl>(D)))
 BLANC_ATTR(EosioWasmNotify, eosio_wasm_notify, eosio::wasm_notify, 0, 1, (!isa<FunctionDecl>(D)))
 BLANC_ATTR(EosioWasmAbi, eosio_wasm_abi, eosio::wasm_abi, 0, 1, (!isa<FunctionDecl>(D)))
+BLANC_ATTR(EosioReadOnly, eosio_read_only, eosio::read_only, 0, 0, (!isa<FunctionDecl>(D)))
 
 namespace blanc {
    struct EosioWasmEntryAttrInfo : public ParsedAttrInfo {

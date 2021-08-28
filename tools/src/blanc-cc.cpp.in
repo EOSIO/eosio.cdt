@@ -61,7 +61,8 @@ int main(int argc, const char **argv) {
          output = opts.output_fn.empty() ? "a.out" : opts.output_fn;
       }
 
-      new_opts.insert(new_opts.begin(), "-o "+output);
+      new_opts.insert(new_opts.begin(), output);
+      new_opts.insert(new_opts.begin(), "-o");
       outputs.push_back(output);
 
       if (!eosio::cdt::environment::exec_subprogram(backends, new_opts)) {

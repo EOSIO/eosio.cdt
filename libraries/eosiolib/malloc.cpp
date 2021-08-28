@@ -1,4 +1,4 @@
-#include <cstdlib> 
+#include <cstdlib>
 #include <alloca.h>
 #include "core/eosio/check.hpp"
 #include "core/eosio/print.hpp"
@@ -11,7 +11,7 @@
 #define CURRENT_MEMORY _current_memory()
 #define GROW_MEMORY(X) _grow_memory(X)
 #else
-#define CURRENT_MEMORY __builtin_wasm_memory_size(0) 
+#define CURRENT_MEMORY __builtin_wasm_memory_size(0)
 #define GROW_MEMORY(X) __builtin_wasm_memory_grow(0, X)
 #endif
 
@@ -520,7 +520,7 @@ namespace eosio {
       size_t _active_free_heap;
       static const size_t _alloc_memory_mask = size_t(1) << 31;
    };
-   
+
    memory_manager memory_heap;
 } /// namespace eosio
 

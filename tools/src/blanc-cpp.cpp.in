@@ -3,6 +3,7 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
 
+#include <eosio/abigen.hpp>
 #include <eosio/codegen.hpp>
 #include <blanc/custom_attrs.hpp>
 
@@ -13,7 +14,9 @@
 #define COMPILER_BACKEND_PREFERRED "@BLANC_CXX_COMPILER_BACKEND_PREFERRED@"
 #include <compiler_options.hpp>
 
-void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, bool abigen) {
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt);
+
+void generate(const std::vector<std::string>& base_options, std::string input, std::string contract_name, const std::vector<std::string>& resource_paths, const std::pair<int, int>& abi_version, bool abigen, bool suppress_ricardian_warning, bool has_o_opt, bool has_contract_opt, bool warn_action_read_only) {
    std::vector<std::string> options;
    options.push_back(COMPILER_NAME);
    options.push_back(input); // don't remove oddity of CommonOptionsParser?
@@ -32,22 +35,50 @@ void generate(const std::vector<std::string>& base_options, std::string input, s
       new_argv[i] = options[i].c_str();
 
    CommonOptionsParser opts( size, new_argv, EosioCompilerToolCategory, 0 );
-   ClangTool ctool(opts.getCompilations(), input);
+   ClangTool ctool(opts.getCompilations(), opts.getSourcePathList());
 
-   auto& cg = codegen::get();
-   cg.set_contract_name(contract_name);
-   cg.ag.set_contract_name(contract_name);
-   cg.ag.set_resource_dirs(resource_paths);
+   abigen::get().set_contract_name(contract_name);
+   abigen::get().set_resource_dirs(resource_paths);
+   abigen::get().set_abi_version(std::get<0>(abi_version), std::get<1>(abi_version));
+   abigen::get().set_suppress_ricardian_warning(suppress_ricardian_warning);
+   codegen::get().set_contract_name(contract_name);
+   codegen::get().set_warn_action_read_only(warn_action_read_only);
 
-   if (ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get())) {
+   int tool_run = -1;
+   tool_run = ctool.run(newFrontendActionFactory<eosio_codegen_frontend_action>().get());
+   if (tool_run != 0) {
       throw std::runtime_error("codegen error");
    }
 
-   if (!cg.ag.is_empty()) {
-      std::ofstream ofs (cg.output+".desc");
+   tool_run = ctool.run(newFrontendActionFactory<eosio_abigen_frontend_action>().get());
+   if (tool_run != 0) {
+      throw std::runtime_error("abigen error");
+   }
+
+   if (!abigen::get().is_empty()) {
+      std::ofstream ofs (codegen::get().output+".desc");
       if (!ofs) throw;
-      ofs << cg.ag.to_json_debug().serialize();
+      ofs << abigen::get().to_json_debug().serialize();
       ofs.close();
+   } else if (abigen) {
+      handle_empty_abigen(contract_name, has_o_opt, has_contract_opt);
+   }
+}
+
+void handle_empty_abigen(const std::string& contract_name, bool has_o_opt, bool has_contract_opt) {
+   const std::string& parsed_contract_name = abigen::get().get_parsed_contract_name();
+   if (parsed_contract_name.empty()) {
+      // if no contract name could be obtained by parsing methods/records, it means the contract is empty
+      std::cout << "Warning, contract is empty and ABI is not generated\n";
+   } else if (contract_name != parsed_contract_name) {
+      // if contract is empty but the contract file contains other contracts, the parsed contract name could be wrong
+      std::string err = "abigen error: contract is empty, or ";
+      // or, the contract is not empty but the specified or inferred contract name is wrong
+      err += has_contract_opt ? "'--contract' specified name" : (has_o_opt ? "'-o' specified name" : "contract filename");
+      err += " doesn't match the real contract name";
+      throw std::runtime_error(err);
+   } else {
+      throw std::runtime_error("abigen error"); // unknown error
    }
 }
 
@@ -77,6 +108,7 @@ int main(int argc, const char** argv) {
          std::vector<std::string> new_opts = opts.comp_options;
          std::string output;
 
+         // TODO: Handle pp_only
          auto input_fullpath = string_to_fullpath(input);
 
          if (!opts.flags.link) {
@@ -95,7 +127,7 @@ int main(int argc, const char** argv) {
          output = string_to_fullpath(output).str().str();
 
          codegen::get().output = output;
-         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.flags.abigen);
+         generate(opts.comp_options, input, opts.abigen_contract, opts.abigen_resources, opts.abi_version, opts.flags.abigen, opts.flags.suppress_ricardian_warning, opts.flags.has_o_opt, opts.flags.has_contract_opt, opts.flags.warn_action_read_only);
 
          auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".cpp");
          if (llvm::sys::fs::exists(tmp_file)) {
@@ -108,7 +140,8 @@ int main(int argc, const char** argv) {
 
          new_opts.insert(new_opts.begin(), input);
 
-         new_opts.insert(new_opts.begin(), "-o "+output);
+         new_opts.insert(new_opts.begin(), output);
+         new_opts.insert(new_opts.begin(), "-o");
          outputs.push_back(output);
 
          if (!eosio::cdt::environment::exec_subprogram(backends, new_opts)) {
@@ -125,10 +158,11 @@ int main(int argc, const char** argv) {
    if (opts.flags.link) {
       std::vector<std::string> new_opts = opts.ld_options;
       if (opts.flags.implicit_output && !opts.output_fn.empty()) {
-         new_opts.insert(new_opts.begin(), "-o "+opts.output_fn);
+         new_opts.insert(new_opts.begin(), opts.output_fn);
+         new_opts.insert(new_opts.begin(), "-o");
       }
       for (auto input : outputs) {
-         new_opts.insert(new_opts.begin(), std::string(" ")+input+" ");
+         new_opts.insert(new_opts.begin(), input);
       }
    
       if (!eosio::cdt::environment::exec_subprogram(LINKER_NAME, new_opts)) {

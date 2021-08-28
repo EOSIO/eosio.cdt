@@ -121,8 +121,10 @@ namespace eosio {
  */
 #define EOSIO_DISPATCH( TYPE, MEMBERS ) \
 extern "C" { \
+   extern void eosio_set_contract_name(uint64_t n); \
    [[eosio::wasm_entry]] \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
+      eosio_set_contract_name(receiver); \
       if( code == receiver ) { \
          switch( action ) { \
             EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \

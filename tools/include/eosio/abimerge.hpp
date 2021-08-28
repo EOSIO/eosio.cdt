@@ -26,14 +26,19 @@ class ABIMerger {
       }
       ojson merge(ojson other) {
          ojson ret;
-         ret["____comment"] = abi["____comment"]; 
+         ret["____comment"] = abi["____comment"];
          ret["version"]  = merge_version(other);
          ret["types"]    = merge_types(other);
          ret["structs"]  = merge_structs(other);
          ret["actions"]  = merge_actions(other);
          ret["tables"]   = merge_tables(other);
+         ret["kv_tables"] = merge_kv_tables(other);
          ret["ricardian_clauses"]  = merge_clauses(other);
          ret["variants"] = merge_variants(other);
+         std::string vers = abi["version"].as<std::string>();
+         if (std::stod(vers.substr(vers.size()-3))*10 >= 12) {
+            ret["action_results"] = merge_action_results(other);
+         }
          return ret;
       }
    private:
@@ -100,14 +105,19 @@ class ABIMerger {
                 a["key_names"] == b["key_names"] &&
                 a["key_types"] == b["key_types"];
       }
-      
+
       static bool clause_is_same(ojson a, ojson b) {
          return a["id"] == b["id"] &&
                 a["body"] == b["body"];
-      } 
-         
-      template <typename F> 
-      void add_object(ojson& ret, ojson a, ojson b, std::string type, std::string id, F&& is_same_func) {
+      }
+
+      static bool action_result_is_same(ojson a, ojson b) {
+         return a["name"] == b["name"] &&
+                a["result_type"] == b["result_type"];
+      }
+
+      template <typename F>
+      void add_object_to_array(ojson& ret, ojson a, ojson b, std::string type, std::string id, F&& is_same_func) {
          for (auto obj_a : a[type].array_range()) {
             ret.push_back(obj_a);
          }
@@ -126,41 +136,75 @@ class ABIMerger {
                ret.push_back(obj_b);
          }
       }
-      
+
+      void add_object_to_object(ojson& ret, ojson a, ojson b, std::string type, std::string id) {
+         for (auto obj_a : a[type].object_range()) {
+            ret.insert_or_assign(obj_a.first, obj_a.second);
+         }
+         for (auto obj_b : b[type].object_range()) {
+            bool should_skip = false;
+            for (auto obj_a : a[type].object_range()) {
+               if (obj_a.first == obj_b.first) {
+                  if (obj_a.second != obj_b.second) {
+                     throw std::runtime_error(std::string("Error, ABI structs malformed : ")+std::string(obj_a.first.data(), obj_a.first.size())+" already defined");
+                  }
+                  else {
+                     should_skip = true;
+                  }
+               }
+            }
+            if (!should_skip) {
+               ret.insert_or_assign(obj_b.first, obj_b.second);
+            }
+         }
+      }
+
       ojson merge_structs(ojson b) {
          ojson structs = ojson::array();
-         add_object(structs, abi, b, "structs", "name", struct_is_same);
+         add_object_to_array(structs, abi, b, "structs", "name", struct_is_same);
          return structs;
       }
 
       ojson merge_types(ojson b) {
          ojson types = ojson::array();
-         add_object(types, abi, b, "types", "new_type_name", type_is_same);
+         add_object_to_array(types, abi, b, "types", "new_type_name", type_is_same);
          return types;
       }
 
       ojson merge_variants(ojson b) {
          ojson vars = ojson::array();
-         add_object(vars, abi, b, "variants", "name", variant_is_same);
+         add_object_to_array(vars, abi, b, "variants", "name", variant_is_same);
          return vars;
       }
 
       ojson merge_actions(ojson b) {
          ojson acts = ojson::array();
-         add_object(acts, abi, b, "actions", "name", action_is_same);
+         add_object_to_array(acts, abi, b, "actions", "name", action_is_same);
          return acts;
       }
 
       ojson merge_tables(ojson b) {
          ojson tabs = ojson::array();
-         add_object(tabs, abi, b, "tables", "name", table_is_same);
+         add_object_to_array(tabs, abi, b, "tables", "name", table_is_same);
          return tabs;
+      }
+
+      ojson merge_kv_tables(ojson b) {
+         ojson kv_tabs = ojson::object();
+         add_object_to_object(kv_tabs, abi, b, "kv_tables", "name");
+         return kv_tabs;
       }
 
       ojson merge_clauses(ojson b) {
          ojson cls = ojson::array();
-         add_object(cls, abi, b, "ricardian_clauses", "id", clause_is_same);
+         add_object_to_array(cls, abi, b, "ricardian_clauses", "id", clause_is_same);
          return cls;
+      }
+
+      ojson merge_action_results(ojson b) {
+         ojson res = ojson::array();
+         add_object_to_array(res, abi, b, "action_results", "name", action_result_is_same);
+         return res;
       }
 
       ojson abi;

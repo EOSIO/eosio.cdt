@@ -237,6 +237,13 @@ public:
   void push_back(T&& v);
 #endif
 
+  template<typename T>
+  void insert_or_assign(const std::string& k, const T& v);
+#if PICOJSON_USE_RVALUE_REFERENCE
+  template<typename T>
+  void insert_or_assign(std::string&& k, T&& v);
+#endif
+
   size_t size();
   bool empty();
 
@@ -244,6 +251,7 @@ public:
   static value parse(T&& v);
 
   const array& array_range();
+  const object& object_range();
 
 private:
   template <typename T> value(const T *); // intentionally defined to block implicit conversion of pointer to bool
@@ -770,6 +778,20 @@ inline void value::push_back(T&& v) {
 }
 #endif
 
+template<typename T>
+inline void value::insert_or_assign(const std::string& k, const T& v) {
+   PICOJSON_ASSERT(is<object>());
+   get<object>().insert_or_assign(k, v);
+}
+
+#if PICOJSON_USE_RVALUE_REFERENCE
+template<typename T>
+inline void value::insert_or_assign(std::string&& k, T&& v) {
+   PICOJSON_ASSERT(is<object>());
+   get<object>().insert_or_assign(k, v);
+}
+#endif
+
 inline size_t value::size() {
    switch (type_) {
    case null_type:
@@ -798,6 +820,10 @@ inline bool value::empty() {
 
 inline const array& value::array_range() {
    return get<array>();
+}
+
+inline const object& value::object_range() {
+   return get<object>();
 }
 
 inline std::string value::as_string() {

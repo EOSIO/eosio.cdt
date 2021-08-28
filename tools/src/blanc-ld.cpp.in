@@ -25,6 +25,7 @@ std::string generate_eosio_dispatch(const std::set<wasm_action>& wasm_actions, c
       if (!ofs) throw;
       ofs << "#include <cstdint>\n";
       ofs << "extern \"C\" {\n";
+      ofs << "  void eosio_set_contract_name(uint64_t n);\n";
       for (auto& wa : wasm_actions) {
          ofs << "  void " << wa.handler << "(uint64_t r, uint64_t c);\n";
       }
@@ -33,6 +34,7 @@ std::string generate_eosio_dispatch(const std::set<wasm_action>& wasm_actions, c
       }
       ofs << "  __attribute__((weak, eosio_wasm_entry))\n";
       ofs << "  void apply(uint64_t r, uint64_t c, uint64_t a) {\n";
+      ofs << "    eosio_set_contract_name(r);\n";
       ofs << "    if (c == r) {\n";
       if (wasm_actions.size()) {
          ofs << "      switch (a) {\n";
@@ -155,8 +157,12 @@ int main(int argc, const char** argv) {
          if (!main_file.empty()) {
             std::vector<std::string> new_opts;
             new_opts.insert(new_opts.begin(), main_file);
-            new_opts.insert(new_opts.begin(), "-o "+main_file+".o");
+            new_opts.insert(new_opts.begin(), main_file+".o");
+            new_opts.insert(new_opts.begin(), "-o");
             new_opts.insert(new_opts.begin(), "-c");
+            if (opts.flags.suppress_ricardian_warning) {
+               new_opts.push_back("--no-missing-ricardian-clause");
+            }
             if (!eosio::cdt::environment::exec_subprogram(COMPILER_NAME, new_opts)) {
                return -1;
             }
@@ -194,7 +200,7 @@ int main(int argc, const char** argv) {
    if (!fno_post_pass_opt && !opts.flags.native) {
       if (!llvm::sys::fs::exists(opts.eosio_pp_dir+"/"+POSTPASS_NAME))
          return -1;
-      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {"--profile "+std::to_string(opts.profile), opts.output_fn}))
+      if (!eosio::cdt::environment::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(opts.profile), opts.output_fn}))
          return -1;
       if (!llvm::sys::fs::exists(opts.output_fn))
          return -1;
