@@ -1,10 +1,8 @@
 #include "compiler_builtins.hpp"
 #include <stdint.h>
 
-static constexpr uint32_t SHIFT_WIDTH = (sizeof(uint64_t)*8)-1;
-
 extern "C" {
-void eosio_assert(int32_t, const char*);
+//void eosio_assert(int32_t, const char*);
 void __ashlti3(__int128& ret, uint64_t low, uint64_t high, uint32_t shift) {
    __int128 i = high;
    i <<= 64;
@@ -98,6 +96,7 @@ void __umodti3(unsigned __int128& ret, uint64_t la, uint64_t ha, uint64_t lb, ui
    ret = ___umodti3(lhs, rhs);
 }
 
+#if 0
 // arithmetic long double
 void __addtf3( float128_t& ret, uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ) {
    float128_t a = {{ la, ha }};
@@ -240,5 +239,6 @@ int __lttf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ) {
 int __cmptf2( uint64_t la, uint64_t ha, uint64_t lb, uint64_t hb ) {
    return ___cmptf2(la, ha, lb, hb, 1);
 }
+#endif
 }
 
