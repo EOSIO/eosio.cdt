@@ -435,7 +435,7 @@ namespace eosio::kv {
             return prfx;
          }
 
-         static key_type full_key(const key_t& k) { return prefix() + convert_to_key(k); }
+         static key_type full_key(const key_t& k) { return prefix() + key_type {convert_to_key(k)}; }
 
          using elem_t = detail::elem<self_t>;
          using iterator_t = detail::iterator<false, self_t>;
