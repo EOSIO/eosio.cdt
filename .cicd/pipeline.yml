@@ -238,6 +238,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
@@ -265,6 +266,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
