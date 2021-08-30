@@ -129,6 +129,7 @@ struct key_type : protected std::vector<char> {
    using std::vector<char>::data;
    using std::vector<char>::size;
    using std::vector<char>::resize;
+   using std::vector<char>::operator[];
 };
 
 struct partial_key : public key_type {
@@ -170,7 +171,7 @@ inline partial_key make_key(T&& t) {
    return partial_key(convert_to_key(std::forward<T>(t)));
 }
 inline partial_key make_key(partial_key&& t) {
-   return t;
+   return std::move(t);
 }
 inline partial_key make_key(partial_key& t) {
    return t;

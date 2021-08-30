@@ -61,35 +61,6 @@ namespace detail {
    }
 }
 
-/* @cond PRIVATE */
-template <typename T>
-inline key_type make_key(T&& t) {
-   auto bytes = convert_to_key(std::forward<T>(t));
-   return key_type(std::move(bytes));
-}
-
-inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
-   return make_key(std::make_tuple(status, table_name, index_name));
-}
-
-inline key_type table_key(const key_type& prefix, const key_type& key) {
-   return prefix + key;
-}
-/* @endcond */
-
-// This is the "best" way to document a function that does not technically exist using Doxygen.
-#if EOSIO_CDT_DOXYGEN
-/**
- * @brief A function for converting types to the appropriate binary representation for the EOSIO Key Value database.
- * @details The CDT provides implementations of this function for many of the common primitives and for structs/tuples.
- * If sticking with standard types, contract developers should not need to interact with this function.
- * If doing something more advanced, contract developers may need to provide their own implementation for a special type.
- */
-template <typename T>
-inline key_type make_key(T val) {
-   return {};
-}
-#endif
 
 /**
  * non_unique provides a clear way for developers to mark an index as non-unique

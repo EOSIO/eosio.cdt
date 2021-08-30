@@ -76,7 +76,6 @@ extern "C" {
 }
 
 namespace eosio {
-void print(std::string_view sv) { prints_l(sv.data(), sv.size()); }
 
 namespace internal_use_do_not_use {
    extern "C" {
