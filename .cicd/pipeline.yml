@@ -358,6 +358,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
@@ -385,7 +386,8 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
+    timeout: ${TIMEOUT:-20}
+    skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
     command:
@@ -703,6 +705,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: 10
+    skip: ${SKIP_DOCKER}${SKIP_UBUNTU_18}${SKIP_LINUX}
 
   - label: ":beer: Brew Updater"
     command: |
