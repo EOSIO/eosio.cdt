@@ -478,6 +478,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       case profile::cosmwasm:
          ldopts.emplace_back("-lcstdio-no-float");
          ldopts.emplace_back("-lcosmwasm");
+         ldopts.emplace_back("-lrt");
          break;
       }
       if (use_old_malloc_opt)
