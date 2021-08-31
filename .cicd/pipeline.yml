@@ -104,7 +104,7 @@ steps:
     timeout: ${TIMEOUT:-120}
     agents:
       - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_MACOS_10_14}
+    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}
 
   - wait
 
@@ -199,7 +199,8 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    skip: ${SKIP_MACOS_10_14}${SKIP_UNIT_TESTS}
+    timeout: ${TIMEOUT:-20}
+    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - wait:
     continue_on_failure: true
@@ -449,6 +450,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: 10
+    skip: ${SKIP_DOCKER}${SKIP_UBUNTU_18}${SKIP_LINUX}
 
   - label: ":beer: Brew Updater"
     command: |
