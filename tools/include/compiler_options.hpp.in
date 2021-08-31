@@ -507,7 +507,6 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       ldopts.emplace_back("-lc++");
       ldopts.emplace_back("-lc");
       ldopts.emplace_back("-leosio");
-      ldopts.emplace_back("-leosio_contract_name");
       if (use_old_malloc_opt)
          ldopts.emplace_back("-leosio_malloc");
       else
