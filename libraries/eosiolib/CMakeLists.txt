@@ -18,6 +18,7 @@ add_library(eosio_cmem
             memory.cpp
             ${HEADERS})
 
+
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(eosio PUBLIC
