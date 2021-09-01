@@ -10,6 +10,7 @@
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/Program.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/FileUtilities.h"
 
 using namespace clang::tooling;
 using namespace llvm;
@@ -60,6 +61,12 @@ int main(int argc, const char **argv) {
 
       new_opts.insert(new_opts.begin(), "-o"+output);
       outputs.push_back(output);
+
+      if (opts.query_eosio_include_dirs){
+         std::cout << "Include paths: \n";
+         llvm::printOptions("-I", new_opts, std::cout, std::cerr);
+      }
+
       if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
          llvm::sys::fs::remove(tmp_file);
          return -1;

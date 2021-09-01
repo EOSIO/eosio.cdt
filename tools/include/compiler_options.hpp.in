@@ -145,6 +145,11 @@ static cl::opt<std::string> mllvm_opt(
     cl::desc("Pass arguments to llvm"),
     cl::ZeroOrMore,
     cl::cat(LD_CAT));
+static cl::opt<bool> eosio_link_dirs_opt(
+    "eosio-link-dirs",
+    cl::desc("Print the set of linking paths that the linker will be looking at"),
+    cl::ZeroOrMore,
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -351,6 +356,10 @@ static cl::opt<bool> warn_action_read_only_opt(
     "warn-action-read-only",
     cl::desc("Issue a warning if a read-only action uses a write API and continue compilation"),
     cl::cat(EosioCompilerToolCategory));
+static cl::opt<bool> eosio_include_dirs_opt(
+    "eosio-include-dirs",
+    cl::desc("Print the set of include paths that the compiler will be looking at"),
+    cl::cat(EosioCompilerToolCategory));
 /// end c/c++ options
 
 /// begin c++ options
@@ -391,6 +400,8 @@ struct Options {
    bool has_o_opt;
    bool has_contract_opt;
    bool warn_action_read_only;
+   bool query_eosio_include_dirs;
+   bool query_eosio_link_dirs;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -528,6 +539,9 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
          ldopts.emplace_back(mllvm_opt);
       }
 
+      if (eosio_link_dirs_opt) {
+         ldopts.emplace_back("-eosio-link-dirs");
+      }
    } else {
 #ifdef __APPLE__
       ldopts.insert(ldopts.end(), {"-arch", "x86_64", "-macosx_version_min", "10.13", "-framework", "Foundation", "-framework", "System"});
@@ -553,6 +567,8 @@ static Options CreateOptions(bool add_defaults=true) {
    bool has_o_opt;
    bool has_contract_opt;
    bool warn_action_read_only;
+   bool query_eosio_include_dirs;
+   bool query_eosio_link_dirs;
 
 #ifdef ONLY_LD
    bool abigen = false;
@@ -911,13 +927,20 @@ static Options CreateOptions(bool add_defaults=true) {
    if (fuse_main_opt)
       ldopts.emplace_back("-fuse-main");
    
-   if(warn_action_read_only_opt) {
+   if (warn_action_read_only_opt) {
       warn_action_read_only = true;
    } else {
       warn_action_read_only = false;
    }
 
+   query_eosio_include_dirs = eosio_include_dirs_opt ? true : false;
+
 #endif
+
+   query_eosio_link_dirs = eosio_link_dirs_opt ? true : false;
+   if (query_eosio_link_dirs){
+      ldopts.emplace_back("-eosio-link-dirs");
+   }
 
    /* TODO add some way of defaulting these to the current highest version */
    int abi_version_major = 1;
@@ -930,8 +953,12 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, warn_action_read_only};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, \
+            copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, \
+            warn_action_read_only, query_eosio_include_dirs, query_eosio_link_dirs};
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, warn_action_read_only};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, \
+            copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, has_o_opt, has_contract_opt, \
+            warn_action_read_only, query_eosio_include_dirs, query_eosio_link_dirs};
 #endif
 }

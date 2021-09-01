@@ -44,12 +44,31 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "name": "settuple2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "tp2",
+                    "type": "tuple_int32_float64_string_int32[]"
+                }
+            ]
         }
     ],
     "actions": [
         {
             "name": "map2map",
             "type": "map2map",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settuple2",
+            "type": "settuple2",
             "ricardian_contract": ""
         }
     ],

@@ -268,17 +268,6 @@ steps:
       - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_WASM_METRICS}
 
-  - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':aws: Amazon_Linux 2 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/toolchain-tests.sh"
-    env:
-      IMAGE_TAG: "amazonlinux-2"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_AMAZON_LINUX_2}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
-
   - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Unit Test"
     command:
       - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
@@ -382,6 +371,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
@@ -409,6 +399,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Toolchain Tests"
@@ -502,6 +493,7 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
+    timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
@@ -529,7 +521,8 @@ steps:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
+    timeout: ${TIMEOUT:-20}
+    skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
     command:
@@ -847,6 +840,7 @@ steps:
     agents:
       queue: "automation-eks-eos-tester-fleet"
     timeout: 10
+    skip: ${SKIP_DOCKER}${SKIP_UBUNTU_18}${SKIP_LINUX}
 
   - label: ":beer: Brew Updater"
     command: |
