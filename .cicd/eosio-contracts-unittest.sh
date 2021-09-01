@@ -10,7 +10,9 @@ ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 . $HELPERS_DIR/docker-hash.sh
 
 FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-v2.1.0'
-TEST_CONTRACTS_COMMAND="cd $MOUNTED_DIR/build_eosio_contracts/tests && ctest -j $JOBS --output-on-failure -T Test"
+TEST_CONTRACTS_COMMAND="cd $MOUNTED_DIR/build_eosio_contracts/tests && CTEST='ctest -j $JOBS --output-on-failure -T Test' \
+&& echo \\\"$ \\\$CTEST\\\" && eval \\\$CTEST"
+
 
 # Load BUILDKITE Environment Variables for use in docker run
 if [[ -f $BUILDKITE_ENV_FILE ]]; then
