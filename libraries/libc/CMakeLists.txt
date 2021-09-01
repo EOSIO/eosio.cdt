@@ -85,7 +85,7 @@ set(THREAD_SOURCES musl/src/thread/__lock.c) #only for __lock __unlock
 
 set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c musl/src/internal/shgetc.c musl/src/internal/libc.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse -D_XOPEN_SOURCE=700")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -D_XOPEN_SOURCE=700")
 set(CMAKE_BUILD_TYPE "Release")
 
 list(APPEND C_SOURCES
@@ -135,4 +135,4 @@ add_custom_command(TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET
 add_custom_command(TARGET cstdio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio> ${BASE_BINARY_DIR}/lib)
 add_custom_command(TARGET cstdio-no-float POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio-no-float> ${BASE_BINARY_DIR}/lib)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/libc/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ DESTINATION ${BASE_BINARY_DIR}/include/)

@@ -10,6 +10,6 @@ ExternalProject_Add(
   TEST_COMMAND   ""
   INSTALL_COMMAND ""
   BUILD_ALWAYS 1
-  DEPENDS BlancTools
+  DEPENDS BlancTools EosioPlugins
 )
 

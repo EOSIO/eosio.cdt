@@ -16,6 +16,7 @@
 #include <regex>
 #include <utility>
 #include <variant>
+#include <iostream>
 #include <blanc/clang_wrapper.hpp>
 
 using namespace blanc;

@@ -56,7 +56,10 @@ add_definitions(${LLVM_DEFINITIONS})
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
 include(BlancExecutableNames)
 
-include(LibrariesExternalProject)
+if(UNIX AND NOT APPLE)
+  add_compile_options(-Wno-deprecated-enum-enum-conversion)
+endif()
+
 add_subdirectory(plugins)
 add_subdirectory(tools)
 add_subdirectory(modules)

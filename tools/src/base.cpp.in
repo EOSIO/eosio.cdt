@@ -1,0 +1,10 @@
+#include <blanc/utils.hpp>
+
+#define TOOL_BACKEND "@BLANC_TOOL_BACKEND@"
+#define TOOL_BACKEND_FALLBACK "@BLANC_TOOL_BACKEND_FALLBACK@"
+
+int main(int argc, char** argv) {
+   std::vector<std::string> backends = { TOOL_BACKEND, TOOL_BACKEND_FALLBACK };
+
+   return blanc::exec_subprogram(backends, {argv+1,argv+argc});
+}

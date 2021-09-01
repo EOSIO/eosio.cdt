@@ -1,20 +1,22 @@
 #! /bin/bash
 
-VERS=`sw_vers -productVersion | awk '/10\.14\..*/{print $0}'`
-if [[ -z "$VERS" ]]; then
-   VERS=`sw_vers -productVersion | awk '/10\.15.*/{print $0}'`
-   if [[ -z $VERS ]]; then
-      echo "Error, unsupported OS X version"
+VERS=`sw_vers -productVersion | awk '/^10\.15\..*/{print $0}'`
+if [[ -z "$VERS" ]];
+then
+   VERS=`sw_vers -productVersion | awk '/^11\..*/{print $0}'`
+   if [[ -z "$VERS" ]];
+   then
+      echo "Error, unsupported MacOS version"
       exit -1
    fi
-   MAC_VERSION="catalina"
+   MAC_VERSION="big_sur"
 else
-   MAC_VERSION="mojave"
+   MAC_VERSION="catalina"
 fi
 
-NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle"
+NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
 
-mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
+#mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
 PREFIX="${PROJECT}/${VERSION}"
 SPREFIX="\/usr\/local"
@@ -26,42 +28,33 @@ export SPREFIX
 export SUBPREFIX
 export SSUBPREFIX
 
-. ./generate_tarball.sh ${NAME}
+bash generate_tarball.sh ${NAME}
 
-hash=`openssl dgst -sha256 ${NAME}.tar.gz | awk 'NF>1{print $NF}'`
+hash=`openssl dgst -sha256 ${NAME} | awk 'NF>1{print $NF}'`
 
-echo "class EosioCdt < Formula
-   # typed: false
-   # frozen_string_literal: true
+echo "class Blanc < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/eosio/eosio.cdt/archive/v${VERSION}.tar.gz\"
+   url \"https://github.com/turnpike/blanc/archive/${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
 
    depends_on \"cmake\" => :build
-   depends_on \"automake\" => :build
-   depends_on \"libtool\" => :build
-   depends_on \"wget\" => :build
-   depends_on \"gmp\" => :build
-   depends_on \"gettext\" => :build
-   depends_on \"doxygen\" => :build
-   depends_on \"graphviz\" => :build
-   depends_on \"lcov\" => :build
-   depends_on xcode: :build
-   depends_on macos: :mojave
-   depends_on arch: :intel
+   depends_on \"llvm\" => :build
+   depends_on :xcode => :build
+   depends_on :macos => :catalina
+   depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/eosio/eosio.cdt/releases/download/v${VERSION}\"
+      root_url \"https://github.com/turnpike/blanc/releases/download/${VERSION}\"
       sha256 ${MAC_VERSION}: \"${hash}\"
    end
    def install
       raise \"Error, only supporting binary packages at this time\"
    end
 end
-__END__" &> eosio.cdt.rb
+__END__" &> ${PROJECT}.rb
 
-rm -r ${PROJECT} || exit 1
+rm -r ${PROJECT}

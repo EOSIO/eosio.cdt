@@ -1,36 +1,17 @@
 #pragma once
+#include <clang/AST/ASTConsumer.h>
+#include <clang/AST/RecursiveASTVisitor.h>
+#include <clang/Frontend/CompilerInstance.h>
+#include <clang/Frontend/FrontendAction.h>
+#include <clang/Frontend/FrontendPluginRegistry.h>
+
+#include <eosio/abi.hpp>
 #include <eosio/gen.hpp>
 #include <eosio/ppcallbacks.hpp>
 
-#include <clang/Driver/Options.h>
-#include <clang/AST/AST.h>
-#include <clang/AST/ASTContext.h>
-#include <clang/AST/ASTConsumer.h>
-#include <clang/AST/RecursiveASTVisitor.h>
-#include <clang/AST/QualTypeNames.h>
-#include <clang/Frontend/ASTConsumers.h>
-#include <clang/Frontend/FrontendActions.h>
-#include <clang/Frontend/CompilerInstance.h>
-#include <clang/Tooling/CommonOptionsParser.h>
-#include <clang/Tooling/Tooling.h>
-#include <clang/Rewrite/Core/Rewriter.h>
-#include <clang/Rewrite/Frontend/Rewriters.h>
-
-#include <eosio/utils.hpp>
-#include <eosio/whereami/whereami.hpp>
-#include <eosio/abi.hpp>
-#include <blanc/clang_wrapper.hpp>
-
-#include <exception>
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <memory>
-#include <set>
-#include <map>
 
-using namespace llvm;
-using namespace eosio;
+using namespace clang;
 using namespace eosio::cdt;
 
 #define PICOJSON_OBJECT_ORDERED
@@ -38,11 +19,15 @@ using namespace eosio::cdt;
 
 using ojson = picojson::value;
 
+extern std::string output;
+
 namespace eosio { namespace cdt {
    class abigen : public generation_utils {
       std::set<std::string> checked_actions;
-      public:
+   public:
       using generation_utils::generation_utils;
+
+      bool no_abigen = false;
 
       static abigen& get() {
          static abigen ag;
@@ -260,7 +245,7 @@ namespace eosio { namespace cdt {
             return;
          }
 
-         tables.insert(_decl);
+         //tables.insert(_decl);
          abi_table t;
          t.type = decl->getNameAsString();
          auto table_name = decl.getEosioTableAttr()->getName();
@@ -693,10 +678,12 @@ namespace eosio { namespace cdt {
          for ( auto t : set_of_tables ) {
             o["tables"].push_back(table_to_json( t ));
          }
-         o["kv_tables"]  = ojson::object();
-         for ( const auto& t : _abi.kv_tables ) {
-            auto kv_table = kv_table_to_json(t);
-            o["kv_tables"].insert_or_assign(kv_table.first, kv_table.second);
+         if (_abi.version_major == 1 && _abi.version_minor >= 2) {
+            o["kv_tables"]  = ojson::object();
+            for ( const auto& t : _abi.kv_tables ) {
+               auto kv_table = kv_table_to_json(t);
+               o["kv_tables"].insert_or_assign(kv_table.first, kv_table.second);
+            }
          }
          o["ricardian_clauses"]  = ojson::array();
          for ( auto rc : _abi.ricardian_clauses ) {
@@ -735,7 +722,7 @@ namespace eosio { namespace cdt {
 
       private:
          abi                                   _abi;
-         std::set<const clang::CXXRecordDecl*> tables;
+         //std::set<const clang::CXXRecordDecl*> tables;
          std::set<abi_table>                   ctables;
          std::map<std::string, std::string>    rcs;
          std::set<const clang::Type*>          evaluated;
@@ -782,7 +769,6 @@ namespace eosio { namespace cdt {
       public:
          explicit eosio_abigen_visitor(CompilerInstance *CI) {
             get_error_emitter().set_compiler_instance(CI);
-            set_suppress_ricardian_warning(ag.suppress_ricardian_warnings);
          }
 
          bool shouldVisitTemplateInstantiations() const {
@@ -792,8 +778,8 @@ namespace eosio { namespace cdt {
          virtual bool VisitCXXMethodDecl(clang::CXXMethodDecl* _decl) {
             auto decl = clang_wrapper::wrap_decl(_decl);
             if (!has_added_clauses) {
-               ag.add_clauses(parse_clauses());
-               ag.add_contracts(parse_contracts());
+               ag.add_clauses(ag.parse_clauses());
+               ag.add_contracts(ag.parse_contracts());
                has_added_clauses = true;
             }
 
@@ -809,8 +795,8 @@ namespace eosio { namespace cdt {
          virtual bool VisitCXXRecordDecl(clang::CXXRecordDecl* _decl) {
             auto decl = clang_wrapper::wrap_decl(_decl);
             if (!has_added_clauses) {
-               ag.add_clauses(parse_clauses());
-               ag.add_contracts(parse_contracts());
+               ag.add_clauses(ag.parse_clauses());
+               ag.add_contracts(ag.parse_contracts());
                has_added_clauses = true;
             }
             if ((decl.isEosioAction() || decl.isEosioTable()) && ag.is_eosio_contract(decl, ag.get_contract_name())) {
@@ -851,21 +837,63 @@ namespace eosio { namespace cdt {
             : visitor(new eosio_abigen_visitor(CI)), main_file(file), ci(CI) { }
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
+            if (abigen::get().no_abigen) {
+               return;
+            }
             auto& src_mgr = Context.getSourceManager();
             auto& f_mgr = src_mgr.getFileManager();
             auto main_fe = f_mgr.getFile(main_file);
             if (main_fe) {
                auto fid = src_mgr.getOrCreateFileID(*f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
+
+               if (!abigen::get().is_empty()) {
+                  auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".desc");
+                  std::ofstream ofs (tmp_file);
+                  if (!ofs) throw;
+                  ofs << abigen::get().to_json_debug().serialize();
+                  ofs.close();
+               }
             }
          }
    };
 
-   class eosio_abigen_frontend_action : public ASTFrontendAction {
+   class eosio_abigen_frontend_action : public PluginASTAction {
       public:
-         virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+         std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) override {
             CI.getPreprocessor().addPPCallbacks(std::make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
             return std::make_unique<eosio_abigen_consumer>(&CI, file.str());
+         }
+
+         bool ParseArgs(const CompilerInstance& CI, const std::vector<std::string>& args) override {
+            std::vector<std::string> resource_dirs;
+            for (const auto& arg : tokenize(args[0])) {
+               if (arg.starts_with("contract=")) {
+                  abigen::get().set_contract_name(arg.substr(arg.find("=")+1));
+               } else if (arg == "abi_version=") {
+                  auto str = arg.substr(arg.find("=")+1);
+                  int abi_version_major = std::stoi(str);
+                  int abi_version_minor = (int)(std::modf(std::stof(str), nullptr) * 10);
+                  abigen::get().set_abi_version(abi_version_major, abi_version_minor);
+               } else if (arg == "no_abigen") {
+                  abigen::get().no_abigen = true;
+               } else if (arg == "suppress_ricardian_warnings") {
+                  abigen::get().set_suppress_ricardian_warning(true);
+               } else if (arg.starts_with("R=")) {
+                  resource_dirs.emplace_back(arg.substr(arg.find("=")+1));
+               } else {
+                  return false;
+               }
+
+               if (resource_dirs.size()) {
+                  abigen::get().set_resource_dirs(resource_dirs);
+               }
+            }
+            return true;
+         }
+
+         ActionType getActionType() override {
+            return ReplaceAction;
          }
    };
 }} // ns eosio::cdt

@@ -1,9 +1,7 @@
 #pragma once
-
-#include <algorithm>
-#include <regex>
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclBase.h>
+#include "tokenize.hpp"
 
 namespace blanc { namespace clang_wrapper {
    class Attr {
@@ -25,13 +23,7 @@ namespace blanc { namespace clang_wrapper {
             if (!decl || !decl->hasAttrs())
                return;
             if (auto* annotate = decl->template getAttr<clang::AnnotateAttr>()) {
-               auto a_ = annotate->getAnnotation().str();
-               a_.erase(std::remove(a_.begin(), a_.end(), '\"'), a_.end()); 
-               auto re = std::regex(R"([\s,]+)");
-               auto tokens = std::vector<std::string>(
-                  std::sregex_token_iterator(a_.begin(), a_.end(), re, -1),
-                  std::sregex_token_iterator()
-               );
+               auto tokens = blanc::tokenize(remove_quotes(annotate->getAnnotation().str()));
                for (const auto& token: tokens) {
                   std::string str = token;
                   std::string arg;
