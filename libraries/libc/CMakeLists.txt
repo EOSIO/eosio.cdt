@@ -88,58 +88,6 @@ set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c m
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse -D_XOPEN_SOURCE=700")
 set(CMAKE_BUILD_TYPE "Release")
 
-set(HEADERS
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/alloca.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/assert.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/byteswap.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/crypt.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/ctype.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/endian.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/errno.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/features.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/float.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/inttypes.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/iso646.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/langinfo.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/libintl.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/limits.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/locale.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/malloc.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/math.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/memory.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/monetary.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/nl_types.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/search.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/setjmp.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdalign.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdarg.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdbool.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdc-predef.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stddef.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdint.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdio_ext.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdio.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdlib.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/stdnoreturn.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/string.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/strings.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/time.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/uchar.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/unistd.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/values.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/wchar.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/include/wctype.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/atomic.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/floatscan.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/intscan.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/libc.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/libm.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/locale_impl.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/pthread_impl.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/shgetc.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/stdio_impl.h
-)
-
 list(APPEND C_SOURCES
    ${CRYPT_SOURCES}
    ${CTYPE_SOURCES}
