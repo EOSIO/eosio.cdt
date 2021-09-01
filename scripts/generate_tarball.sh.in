@@ -33,6 +33,8 @@ cp -R ${BUILD_DIR}/include/* ${CDT_PREFIX}/include
 
 # install wasm libs
 cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib
+rsync -a --ignore-missing-args ${BUILD_DIR}/lib/*.so ${CDT_PREFIX}/lib
+rsync -a --ignore-missing-args ${BUILD_DIR}/lib/*.dylib ${CDT_PREFIX}/lib
 
 # make symlinks
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null

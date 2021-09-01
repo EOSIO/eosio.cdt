@@ -3,10 +3,10 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "../../core/eosio/time.hpp"
-#include "../../core/eosio/check.hpp"
-#include "../../core/eosio/fixed_bytes.hpp"
-#include "../../core/eosio/name.hpp"
+#include "time.hpp"
+#include "check.hpp"
+#include "fixed_bytes.hpp"
+#include "name.hpp"
 
 namespace eosio {
   namespace internal_use_do_not_use {

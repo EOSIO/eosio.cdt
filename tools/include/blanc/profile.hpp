@@ -7,6 +7,16 @@ namespace blanc {
       cosmwasm,
    };
 
+   blanc::profile to_profile(const std::string& p) {
+      if (p == "eosio") {
+         return blanc::profile::eosio;
+      } else if (p == "cosmwasm") {
+         return blanc::profile::cosmwasm;
+      } else {
+         throw std::runtime_error("unsupported profile: "+p);
+      }
+   }
+
    std::string default_stack_size(profile p) {
       switch (p) {
       case profile::eosio:

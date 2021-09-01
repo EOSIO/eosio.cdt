@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/crypto.hpp"
+#include "name.hpp"
+#include "crypto.hpp"
 
 namespace eosio {
 

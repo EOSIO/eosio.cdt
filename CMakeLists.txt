@@ -16,8 +16,8 @@ endif()
 
 
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 9)
-set(VERSION_PATCH 2)
+set(VERSION_MINOR 10)
+set(VERSION_PATCH 0)
 
 if (VERSION_SUFFIX)
   set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${VERSION_SUFFIX}")
@@ -42,6 +42,10 @@ add_definitions(${LLVM_DEFINITIONS})
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
 include(BlancExecutableNames)
+
+if(UNIX AND NOT APPLE)
+  add_compile_options(-Wno-deprecated-enum-enum-conversion)
+endif()
 
 add_subdirectory(plugins)
 add_subdirectory(tools)

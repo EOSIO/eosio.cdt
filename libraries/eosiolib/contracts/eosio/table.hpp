@@ -1,9 +1,9 @@
 #pragma once
-#include "../../core/eosio/datastream.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/varint.hpp"
+#include "datastream.hpp"
+#include "name.hpp"
+#include "varint.hpp"
 
-#include "../../core/eosio/key_utils.hpp"
+#include "key_utils.hpp"
 
 #include <algorithm>
 #include <cctype>

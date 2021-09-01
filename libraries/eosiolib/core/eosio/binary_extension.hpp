@@ -179,7 +179,7 @@ namespace eosio {
          /// @endcond
 
        private:
-         bool _has_value = false;
+         mutable bool _has_value = false;
          typename std::aligned_storage<sizeof(T), alignof(T)>::type _data;
 
          constexpr T& _get() {

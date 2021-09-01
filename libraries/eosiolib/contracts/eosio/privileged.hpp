@@ -1,9 +1,9 @@
 #pragma once
 #include "producer_schedule.hpp"
 #include "system.hpp"
-#include "../../core/eosio/crypto.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/serialize.hpp"
+#include "crypto.hpp"
+#include "name.hpp"
+#include "serialize.hpp"
 
 namespace eosio {
 

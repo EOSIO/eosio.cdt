@@ -42,14 +42,7 @@ echo "class Blanc < Formula
    option :universal
 
    depends_on \"cmake\" => :build
-   depends_on \"automake\" => :build
-   depends_on \"libtool\" => :build
-   depends_on \"wget\" => :build
-   depends_on \"gmp\" => :build
-   depends_on \"gettext\" => :build
-   depends_on \"doxygen\" => :build
-   depends_on \"graphviz\" => :build
-   depends_on \"lcov\" => :build
+   depends_on \"llvm\" => :build
    depends_on :xcode => :build
    depends_on :macos => :catalina
    depends_on :arch =>  :intel

@@ -1,10 +1,7 @@
 #pragma once
 
 #include <llvm/ADT/ArrayRef.h>
-#include <llvm/ADT/SmallString.h>
 #include <llvm/ADT/StringRef.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Support/Path.h>
 #include <llvm/Support/Program.h>
 
 #include <stdlib.h>
@@ -12,12 +9,11 @@
 # include <crt_externs.h>
 #elif !defined(_MSC_VER)
 // Forward declare environ in case it's not provided by stdlib.h.
-extern char **environ;
+extern "C" char **environ;
 #endif
 
 #include "whereami/whereami.hpp"
 #include <vector>
-#include <iostream>
 #include <sstream>
 
 namespace eosio { namespace cdt {
@@ -136,7 +132,6 @@ struct environment {
        }
      return env_table;
    }
-
    static bool exec_subprogram(const std::string prog, std::vector<std::string> options, bool root=false) {
       std::vector<llvm::StringRef> args;
       args.push_back(prog);
@@ -144,58 +139,13 @@ struct environment {
       std::string find_path = eosio::cdt::whereami::where();
       if (root)
          find_path = "/usr/bin";
-      int ret = 0;
-      if (const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}))
-         ret = llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr);
-#ifdef __APPLE__
-      else if (const auto& path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/local/opt/llvm/bin"}))
-         ret = llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr);
-#endif
-      else if (const auto& path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"}))
-         ret = llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr);
+      if ( const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
+         return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
+      }
       else
          return false;
-      return !ret; 
-   }
-
-   static bool exec_subprogram(const std::vector<std::string> progs, std::vector<std::string> options, bool root=false) {
-      for (const auto& prog : progs) {
-         if (exec_subprogram(prog, options, root)) {
-            return true;
-         }
-      }
-      return false;
+      return true;
    }
 
 };
-
-template<typename T>
-llvm::SmallString<PATH_MAX> string_to_fullpath(T&& path) {
-   llvm::SmallString<PATH_MAX> fullpath = llvm::StringRef(path);
-   llvm::sys::fs::make_absolute(fullpath);
-   return fullpath;
-}
-
-template<typename T>
-std::string get_temporary_path(T&& path) {
-   static llvm::SmallString<PATH_MAX> system_temp_dir;
-   if (system_temp_dir.empty()) {
-      llvm::sys::path::system_temp_directory(true, system_temp_dir);
-   }
-   auto tmp_dir = system_temp_dir;
-   llvm::sys::path::append(tmp_dir, path);
-   return tmp_dir.str().str();
-}
-
-template<typename T>
-void print_traverse(T&& container) {
-   std::for_each(container.begin(), container.end(), [](const auto& e){ std::cout << e << " "; });
-   std::cout << std::endl;
-}
-
-void print_traverse(const char** begin, size_t length) {
-   std::for_each(begin, begin+length, [](auto e){ std::cout << e << " "; });
-   std::cout << std::endl;
-}
-
 }} // ns eosio::cdt

@@ -1,7 +1,7 @@
 #pragma once
 #include <set>
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/serialize.hpp"
+#include "name.hpp"
+#include "serialize.hpp"
 
 namespace eosio {
 

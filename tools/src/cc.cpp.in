@@ -1,0 +1,309 @@
+#include <blanc/custom_attrs.hpp>
+#include <blanc/profile.hpp>
+#include <blanc/tokenize.hpp>
+#include <blanc/utils.hpp>
+#include <eosio/whereami/whereami.hpp>
+#include <llvm/Option/ArgList.h>
+#include <llvm/Option/OptTable.h>
+#include <llvm/Support/FileSystem.h>
+
+#include "cc.hpp"
+
+#ifdef CPP_COMP
+# define COMPILER_NAME "@BLANC_CXX_COMPILER@"
+#else
+# define COMPILER_NAME "@BLANC_C_COMPILER@"
+#endif
+#define LINKER_NAME "@BLANC_LINKER@"
+#define COMPILER_BACKEND "@BLANC_TOOL_BACKEND@"
+#define COMPILER_BACKEND_FALLBACK "@BLANC_TOOL_BACKEND_FALLBACK@"
+
+using namespace clang;
+using namespace clang::driver;
+using namespace llvm;
+using namespace llvm::opt;
+using namespace blanc;
+
+#define PREFIX(NAME, VALUE) static const char* const NAME[] = VALUE;
+#include <clang/Driver/Options.inc>
+#undef PREFIX
+
+static const OptTable::Info InfoTable[] = {
+#define OPTION(PREFIX, NAME, ID, KIND, GROUP, ALIAS, ALIASARGS, FLAGS, PARAM,  \
+               HELPTEXT, METAVAR, VALUES)                                      \
+  {PREFIX, NAME,  HELPTEXT,    METAVAR,     OPT_##ID,  Option::KIND##Class,    \
+   PARAM,  FLAGS, OPT_##GROUP, OPT_##ALIAS, ALIASARGS, VALUES},
+#include <clang/Driver/Options.inc>
+#include <eosio/Options.inc>
+#undef OPTION
+};
+
+class BlancCcOptTable : public OptTable {
+public:
+   BlancCcOptTable(): OptTable(InfoTable) {}
+};
+
+constexpr const char* shared_lib_suffix = "@CMAKE_SHARED_LIBRARY_SUFFIX@";
+bool is_wasm_target = true;
+bool early_exit;
+profile _profile = profile::eosio;
+std::vector<std::string> inputs;
+std::vector<std::string> new_inputs;
+std::string output;
+std::vector<std::string> resource_dirs;
+std::set<std::string> include_dirs;
+
+std::string contract_name;
+std::string abi_version;
+bool no_abigen;
+bool suppress_ricardian_warnings;
+
+std::vector<std::string> override_compile_options(InputArgList& Args) {
+   std::vector<std::string> new_opts;
+
+   auto target = Args.getLastArgNoClaim(OPT_target);
+   if (target && std::strncmp(target->getValue(), "wasm32", 6)) {
+      is_wasm_target = false;
+   } else {
+      new_opts.emplace_back("--target=wasm32");
+   }
+
+   if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
+      _profile = to_profile(p->getValue());
+      new_opts.emplace_back("-Wl,-profile="+std::to_string(_profile));
+      Args.eraseArg(OPT_profile);
+   }
+
+   if (is_wasm_target) {
+      if (!Args.hasArgNoClaim(OPT_mthread_model)) {
+         new_opts.emplace_back("-mthread-model");
+         new_opts.emplace_back("single");
+      }
+
+      if (Args.size() == 1 && Args.hasArgNoClaim(OPT_v)) {
+         early_exit = true;
+         goto exit;
+      }
+
+      if (!Args.hasArgNoClaim(OPT_O_Group)) {
+         new_opts.emplace_back("-O3");
+      }
+      if (!Args.hasArgNoClaim(OPT_ffreestanding)) {
+         new_opts.emplace_back("-ffreestanding");
+      }
+      if (!Args.hasArgNoClaim(OPT_nostdlib)) {
+         new_opts.emplace_back("-nostdlib");
+      }
+      if (!Args.hasArgNoClaim(OPT_nobuiltininc)) {
+         new_opts.emplace_back("-nobuiltininc");
+      }
+      if (!Args.hasArgNoClaim(OPT_fno_builtin)) {
+         new_opts.emplace_back("-fno-builtin");
+      }
+      if (!Args.hasArgNoClaim(OPT_fno_threadsafe_statics)) {
+         new_opts.emplace_back("-fno-threadsafe-statics");
+      }
+      if (!Args.hasArgNoClaim(OPT_fno_exceptions)) {
+         new_opts.emplace_back("-fno-exceptions");
+      }
+      if (!Args.hasArgNoClaim(OPT_fno_rtti, OPT_frtti)) {
+         new_opts.emplace_back("-fno-rtti");
+      }
+      new_opts.emplace_back("-DBOOST_DISABLE_ASSERTS");
+      new_opts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
+
+      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_attrs"+shared_lib_suffix)) {
+         new_opts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_attrs"+shared_lib_suffix);
+      }
+      if (!Args.hasArgNoClaim(OPT__sysroot, OPT__sysroot_EQ)) {
+         new_opts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/..");
+      }
+
+#ifdef CPP_COMP
+      auto input_args = Args.filtered(OPT_INPUT);
+      for (const auto& arg : input_args) {
+         inputs.emplace_back(arg->getValue());
+      }
+      Args.eraseArg(OPT_INPUT);
+#endif
+
+      if (auto arg = Args.getLastArgNoClaim(OPT_o)) {
+         output = arg->getValue();
+      } else if (inputs.size() == 1) {
+         llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(inputs[0]);
+         llvm::sys::path::replace_extension(fn, Args.hasArgNoClaim(OPT_c) ? ".o" : ".wasm");
+         output = fn.str().str();
+      }
+
+      if (auto arg = Args.getLastArgNoClaim(OPT_contract)) {
+         contract_name = arg->getValue();
+         Args.eraseArg(OPT_contract);
+      } else if (output.size()) {
+         llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(output);
+         llvm::sys::path::replace_extension(fn, "");
+         contract_name = fn.str().str();
+      }
+      if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
+         abi_version = arg->getValue();
+         new_opts.emplace_back("-Wl,--abi_version="+abi_version);
+         Args.eraseArg(OPT_abi_version);
+      }
+      if (Args.hasArgNoClaim(OPT_no_abigen)) {
+         no_abigen = true;
+         new_opts.emplace_back("-Wl,--no-abigen");
+         Args.eraseArg(OPT_no_abigen);
+      }
+      if (Args.hasArgNoClaim(OPT_no_missing_ricardian_clause)) {
+         suppress_ricardian_warnings = true;
+         Args.eraseArg(OPT_no_missing_ricardian_clause);
+      }
+      auto resource_args = Args.filtered(OPT_R_Joined);
+      for (const auto& arg : resource_args) {
+         resource_dirs.emplace_back(arg->getValue());
+      }
+      Args.eraseArg(OPT_R_Joined);
+   }
+
+#ifdef CPP_COMP
+   if (!Args.hasArgNoClaim(OPT_std_EQ)) {
+      new_opts.emplace_back("-std=c++20");
+   }
+#endif
+
+exit:
+   for (const auto arg : Args) {
+      new_opts.emplace_back(arg->getAsString(Args));
+   }
+   return new_opts;
+}
+
+int main(int argc, const char** argv) {
+   std::vector<std::string> backends = { COMPILER_BACKEND, COMPILER_BACKEND_FALLBACK };
+
+#ifdef CPP_COMP
+   const char* user_backend = std::getenv("BLANC_CXX_COMPILER_BACKEND");
+#else
+   const char* user_backend = std::getenv("BLANC_C_COMPILER_BACKEND");
+#endif
+   if (user_backend) {
+      backends = {user_backend};
+   }
+
+   ArrayRef<const char*> Argv{argv+1, argv+argc};
+   unsigned missingIndex;
+   unsigned missingCount;
+
+   BlancCcOptTable opts;
+   auto Args = opts.ParseArgs(Argv, missingIndex, missingCount, CC1Option | NoXarchOption, CLOption);
+   auto args = override_compile_options(Args);
+
+   if (early_exit) {
+      return blanc::exec_subprogram(backends, args);
+   }
+
+#ifdef CPP_COMP
+   if (is_wasm_target) {
+      for (auto input : inputs) {
+         std::vector<std::string> args_ = args;
+         std::string _output;
+
+         auto input_absolute = to_absolute_path(input);
+
+         if (Args.hasArgNoClaim(OPT_c)) {
+            if (output.size()) {
+               _output = output;
+            } else {
+               llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
+               llvm::sys::path::replace_extension(fn, ".o");
+               _output = fn.str().str();
+            }
+         } else {
+            auto ifs = input_absolute.str().str();
+            _output = get_temporary_path(std::to_string(std::hash<std::string>{}(ifs))+".o");
+         }
+         _output = to_absolute_path(_output).str().str();
+
+         auto input_absolute_path = input_absolute;
+         llvm::sys::path::remove_filename(input_absolute_path);
+         include_dirs.insert(input_absolute_path.str().str());
+
+         args_.emplace_back("-fsyntax-only");
+         args_.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_codegen"+shared_lib_suffix);
+
+         std::string codegen_opts;
+         codegen_opts += "output="+_output;
+         if (contract_name.size()) {
+            codegen_opts += ",contract="+contract_name;
+         }
+         args_.emplace_back("-Xclang");
+         args_.emplace_back("-plugin-arg-eosio_codegen");
+         args_.emplace_back("-Xclang");
+         args_.emplace_back(codegen_opts);
+
+         std::string abigen_opts;
+         if (contract_name.size()) {
+            abigen_opts += "contract="+contract_name;
+         }
+         if (abi_version.size()) {
+            if (abigen_opts.size())
+               abigen_opts += ",";
+            abigen_opts += "abi_version="+abi_version;
+         }
+         if (no_abigen) {
+            if (abigen_opts.size())
+               abigen_opts += ",";
+            abigen_opts += "no_abigen";
+         }
+         if (suppress_ricardian_warnings) {
+            if (abigen_opts.size())
+               abigen_opts += ",";
+            abigen_opts += "suppress_ricardian_warnings";
+         }
+         if (resource_dirs.size()) {
+            for (const auto& r : resource_dirs) {
+               if (abigen_opts.size())
+                  abigen_opts += ",";
+               abigen_opts += "R="+r;
+            }
+         }
+         if (abigen_opts.size()) {
+            args_.emplace_back("-Xclang");
+            args_.emplace_back("-plugin-arg-eosio_abigen");
+            args_.emplace_back("-Xclang");
+            args_.emplace_back(abigen_opts);
+         }
+
+         args_.emplace_back(input);
+
+         if (auto ret = blanc::exec_subprogram(backends, args_)) {
+            return ret;
+         }
+
+         auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(_output))+".cpp");
+         if (llvm::sys::fs::exists(tmp_file)) {
+            new_inputs.emplace_back(tmp_file);
+         }
+      }
+   }
+#endif
+
+   if (!Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only)) {
+      args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
+      if (output.size()) {
+         args.emplace_back("-o "+output);
+      }
+   }
+   for (const auto& input : new_inputs) {
+      args.push_back(input);
+   }
+   for (const auto& inc : include_dirs) {
+      args.push_back("-I"+inc);
+   }
+   if (auto ret = blanc::exec_subprogram(backends, args)) {
+      return ret;
+   }
+   for (const auto& tmp_file : new_inputs) {
+      llvm::sys::fs::remove(tmp_file);
+   }
+   return 0;
+}

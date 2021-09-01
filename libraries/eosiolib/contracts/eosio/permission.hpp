@@ -5,9 +5,9 @@
 #pragma once
 
 #include "transaction.hpp"
-#include "../../core/eosio/crypto.hpp"
-#include "../../core/eosio/name.hpp"
-#include "../../core/eosio/time.hpp"
+#include "crypto.hpp"
+#include "name.hpp"
+#include "time.hpp"
 
 #include <set>
 #include <limits>
