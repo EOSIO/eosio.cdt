@@ -23,7 +23,8 @@ else #Linux
     . $HELPERS_DIR/docker-hash.sh
 
     PRE_CONTRACTS_COMMAND="export PATH=$MOUNTED_DIR/build/bin:$PATH && cd $MOUNTED_DIR/build_eosio_contracts"
-    BUILD_CONTRACTS_COMMAND="cmake $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+    BUILD_CONTRACTS_COMMAND="CMAKE='cmake ../eosio.contracts' && echo \\\"$ \\\$CMAKE\\\" \
+    && eval \\\$CMAKE && MAKE='make -j $JOBS' && echo \\\"$ \\\$MAKE\\\" && eval \\\$MAKE"
 
     # Docker Commands
     # Generate Base Images
@@ -31,7 +32,8 @@ else #Linux
     if [[ "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
         FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-v2.1.0'
         export CMAKE_FRAMEWORK_PATH="$MOUNTED_DIR/build:${CMAKE_FRAMEWORK_PATH}"
-        BUILD_CONTRACTS_COMMAND="cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts && make -j$JOBS"
+        BUILD_CONTRACTS_COMMAND="CMAKE='cmake -DBUILD_TESTS=true $MOUNTED_DIR/eosio.contracts' \
+        && echo \\\"$ \\\$CMAKE\\\" && eval \\\$CMAKE && MAKE='make -j $JOBS' && echo \\\"$ \\\$MAKE\\\" && eval \\\$MAKE"
     fi
 
     COMMANDS_EOSIO_CONTRACTS="$PRE_CONTRACTS_COMMAND && $BUILD_CONTRACTS_COMMAND"
@@ -50,18 +52,19 @@ else #Linux
 
 fi
 
-touch wasm_abi_size.json
-cd build/tests/unit/test_contracts
-JSON=$(echo '{}' | jq -r '.')
-echo '--- :arrow_up: Generating wasm_abi_size.json file'
+touch wasm-abi-size-metrics.json
+pushd build/tests/unit/test_contracts
+JSON=$(echo '{}' | jq -c '.')
+echo '--- :arrow_up: Generating wasm-abi-size-metrics.json file'
 for FILENAME in *.{wasm,abi}; do
     FILESIZE=$(wc -c <"$FILENAME")
     export value=$FILESIZE
     export key="$FILENAME"
-    JSON="$(echo "$JSON" | jq -r '.[env.key] += (env.value | tonumber)')"
+    JSON="$(echo "$JSON" | jq -c '.[env.key] += (env.value | tonumber)')"
 done
 
-cd ../../../../build_eosio_contracts/contracts
+popd
+pushd build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
     for FILENAME in *.{wasm,abi}; do
@@ -69,19 +72,19 @@ for dir in */; do
             FILESIZE=$(wc -c <"$FILENAME")
             export value=$FILESIZE
             export key="$FILENAME"
-            JSON="$(echo "$JSON" | jq -r '.[env.key] += (env.value | tonumber)')"
+            JSON="$(echo "$JSON" | jq -c '.[env.key] += (env.value | tonumber)')"
         fi
     done
     cd ..
 done
 
-echo '--- :arrow_up: Uploading wasm_abi_size.json'
-cd ../../
-echo $JSON >> wasm_abi_size.json
+echo '--- :arrow_up: Uploading wasm-abi-size-metrics.json'
+popd
+echo "$JSON" | jq '.' >> wasm-abi-size-metrics.json
 if [[ $BUILDKITE == true ]]; then
 
-    buildkite-agent artifact upload wasm_abi_size.json
-    echo 'Done uploading wasm_abi_size.json'
+    buildkite-agent artifact upload wasm-abi-size-metrics.json
+    echo 'Done uploading wasm-abi-size-metrics.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
