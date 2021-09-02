@@ -7,7 +7,7 @@
 
 eosio::checksum256 make_checksum256(std::string_view src) {
    std::array<uint8_t, 32> buf;
-   eosio::unhex(buf.begin(), src.begin(), src.end());
+   CHECK(eosio::unhex(buf.begin(), src.begin(), src.end()));
    return eosio::checksum256(buf);
 }
 
