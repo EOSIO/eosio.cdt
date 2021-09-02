@@ -44,6 +44,7 @@ class Test(ABC):
     def run(self):
         cf = self.test_json.get("compile_flags")
         args = cf if cf else []
+        args = [arg.replace("{cwd}", self.test_suite.directory) for arg in args]
 
         eosio_cpp = os.path.join(self.test_suite.cdt_path, "eosio-cpp")
         self._run(eosio_cpp, args)
