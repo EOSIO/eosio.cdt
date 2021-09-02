@@ -96,7 +96,12 @@ add_custom_command( TARGET eosio_embed POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
 add_custom_command( TARGET native_eosio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_eosio> ${BASE_BINARY_DIR}/lib )
 add_custom_command( TARGET eosio_tester POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/crt0.o ${BASE_BINARY_DIR}/lib )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib DESTINATION ${BASE_BINARY_DIR}/include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+file(GLOB_RECURSE eosio_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib ${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib "*.h" "*.hpp")
+foreach (f ${eosio_headers})
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../eosiolib/${f} ${BASE_BINARY_DIR}/include/eosiolib/${f})
+endforeach()
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/include/eosio DESTINATION ${BASE_BINARY_DIR}/include/abieos FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.h DESTINATION ${BASE_BINARY_DIR}/include/abieos)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../abieos/src/abieos.hpp DESTINATION ${BASE_BINARY_DIR}/include/abieos)
