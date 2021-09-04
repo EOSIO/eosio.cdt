@@ -550,11 +550,8 @@ struct generation_utils {
          auto pos1 = orig.find_last_of(',');
          auto pos2 = orig.find_last_of('>');
          std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
-         for(auto & c : digits) {
-            if(c >= '0'  && c <= '9' ){
-               ret += c;
-            }
-         }
+         digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
+         ret += digits;
          ret += ']';
          return ret;
       }
