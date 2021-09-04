@@ -11,7 +11,7 @@
 using std::array;
 using namespace eosio;
 
-class[[eosio::contract("hello")]] hello : public contract
+class[[eosio::contract("using_std_array")]] using_std_array : public contract
 {
 public:
    using contract::contract;
