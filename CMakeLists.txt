@@ -44,7 +44,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
 include(BlancExecutableNames)
 
 if(UNIX AND NOT APPLE)
-  add_compile_options(-Wno-deprecated-enum-enum-conversion)
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_compile_options(-Wno-deprecated-enum-enum-conversion)
+  endif()
 endif()
 
 add_subdirectory(plugins)
