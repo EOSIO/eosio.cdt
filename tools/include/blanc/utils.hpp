@@ -13,14 +13,15 @@
 #include <llvm/Support/Program.h>
 
 namespace blanc {
-   int exec_subprogram(const std::string& prog, std::vector<std::string> options) {
+   int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool cwd = false) {
       int ret = 0;
       std::string find_path = eosio::cdt::whereami::where();
       std::stringstream args;
       for (const auto& s : options) {
          args << s << " ";
       }
-      if (auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path})) {
+      auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path});
+      if (cwd && path) {
          ret = std::system((*path+" "+args.str()).c_str());
 #ifdef __APPLE__
       } else if (auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/local/opt/llvm/bin"})) {
@@ -34,10 +35,10 @@ namespace blanc {
       return ret;
    }
 
-   int exec_subprogram(const std::vector<std::string>& progs, std::vector<std::string> options) {
+   int exec_subprogram(const std::vector<std::string>& progs, std::vector<std::string> options, bool cwd = false) {
       int ret = 0;
       for (const auto& prog : progs) {
-         if (!(ret = exec_subprogram(prog, options))) {
+         if ((ret = exec_subprogram(prog, options, cwd)) != ENOENT) {
             break;
          }
       }

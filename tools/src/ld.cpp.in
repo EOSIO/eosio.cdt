@@ -56,7 +56,7 @@ public:
    BlancLdOptTable(): OptTable(InfoTable) {}
 };
 
-bool is_wasm_target = true;
+bool is_wasm_target;
 profile _profile = profile::eosio;
 std::vector<std::string> inputs;
 std::string output;
@@ -141,13 +141,19 @@ std::string generate_cosmwasm_dispatch(const std::set<wasm_action>& wasm_actions
 std::vector<std::string> override_link_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
 
-   auto p = Args.getLastArgNoClaim(OPT_profile);
-   if (p) {
-      _profile = to_profile(p->getValue());
-      Args.eraseArg(OPT_profile);
+   if (auto target = Args.getLastArgNoClaim(OPT_m)) {
+      if (std::string(target->getValue()).starts_with("wasm32")) {
+         is_wasm_target = true;
+      }
+   } else {
+      is_wasm_target = true;
    }
 
    if (is_wasm_target) {
+      if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
+         _profile = to_profile(p->getValue());
+      }
+
       if (!Args.hasArgNoClaim(OPT_gc_sections, OPT_no_gc_sections)) {
          new_opts.emplace_back("--gc-sections");
       }
@@ -168,13 +174,11 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
       }
       if (Args.hasArgNoClaim(OPT_no_abigen)) {
          no_abigen = true;
-         Args.eraseArg(OPT_no_abigen);
       }
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
          std::string abi_version = arg->getValue();
          abi_version_major = std::stoi(abi_version);
          abi_version_minor = (int)(std::modf(std::stof(abi_version), nullptr) * 10);
-         Args.eraseArg(OPT_abi_version);
       }
       new_opts.emplace_back("-export=__heap_base");
       new_opts.emplace_back("-export=__data_end");
@@ -216,6 +220,10 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
       }
    }
 
+   Args.eraseArg(OPT_profile);
+   Args.eraseArg(OPT_abi_version);
+   Args.eraseArg(OPT_no_abigen);
+
    for (const auto arg : Args) {
       new_opts.emplace_back(arg->getAsString(Args));
    }
@@ -239,21 +247,15 @@ int main(int argc, const char** argv) {
    std::vector<std::string> desc_files;
    bool dispatcher_was_found = false;
 
-   std::vector<std::string> args{argv+1,argv+argc};
-   auto target = get_option_value(args, "-m", "", "");
-   if (target && !(*target).starts_with("wasm32")) {
-      is_wasm_target = false;
-   }
+   ArrayRef<const char*> Argv{argv+1, argv+argc};
+   unsigned missingIndex;
+   unsigned missingCount;
+
+   BlancLdOptTable opts;
+   auto Args = opts.ParseArgs(Argv, missingIndex, missingCount);
+   auto args = override_link_options(Args);
 
    if (is_wasm_target) {
-      ArrayRef<const char*> Argv{argv+1, argv+argc};
-      unsigned missingIndex;
-      unsigned missingCount;
-
-      BlancLdOptTable opts;
-      auto Args = opts.ParseArgs(Argv, missingIndex, missingCount);
-      auto args = override_link_options(Args);
-
       try {
          ojson abi;
          for (const auto& input : inputs) {
@@ -338,7 +340,7 @@ int main(int argc, const char** argv) {
 #ifdef __APPLE__
       if (auto ret = blanc::exec_subprogram("ld", args)) {
 #else
-      if (auto ret = blanc::exec_subprogram("ld.lld", args)) {
+      if (auto ret = blanc::exec_subprogram(std::vector<std::string>{"ld.lld-12", "ld.lld"}, args)) {
 #endif
          return ret;
       }

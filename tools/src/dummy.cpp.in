@@ -1,0 +1,13 @@
+#include <blanc/utils.hpp>
+
+#define TOOL_BACKEND "@BLANC_TOOL_BACKEND@"
+
+int main(int argc, char** argv) {
+   std::vector<std::string> backends = { TOOL_BACKEND };
+   std::vector<std::string> args{argv+1, argv+argc};
+
+   if (!blanc::has_option(args, "target")) {
+      args.insert(args.begin(), "--target=wasm32");
+   }
+   return blanc::exec_subprogram(backends, args, true);
+}
