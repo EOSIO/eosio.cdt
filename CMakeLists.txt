@@ -25,6 +25,9 @@ else()
   set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 endif()
 
+# compatible eosio.cdt version
+set(EOSIO_CDT_VERSION "1.8.1")
+
 set(BLANC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/opt/${CMAKE_PROJECT_NAME}/${VERSION_FULL})
 
 include(GNUInstallDirs)
