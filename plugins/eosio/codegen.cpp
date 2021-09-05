@@ -399,6 +399,9 @@ public:
    }
 
    bool ParseArgs(const CompilerInstance& CI, const std::vector<std::string>& args) override {
+      if (args.empty())
+         return true;
+
       for (const auto& arg : tokenize(args[0])) {
          if (arg.starts_with("output=")) {
             output = arg.substr(arg.find("=")+1);
