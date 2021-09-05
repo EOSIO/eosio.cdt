@@ -117,12 +117,12 @@ namespace blanc {
 
    template<typename T>
    void print_traverse(T&& container) {
-      std::for_each(container.begin(), container.end(), [](const auto& e){ std::cout << e << " "; });
-      std::cout << std::endl;
+      std::for_each(container.begin(), container.end(), [](const auto& e){ llvm::outs() << e << " "; });
+      llvm::outs() << "\n";
    }
 
    void print_traverse(const char** begin, size_t length) {
-      std::for_each(begin, begin+length, [](auto e){ std::cout << e << " "; });
-      std::cout << std::endl;
+      std::for_each(begin, begin+length, [](auto e){ llvm::outs() << e << " "; });
+      llvm::outs() << "\n";
    }
 }
