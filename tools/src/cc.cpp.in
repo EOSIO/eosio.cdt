@@ -147,6 +147,15 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          llvm::sys::path::replace_extension(fn, "");
          contract_name = fn.str().str();
       }
+      // XXX: workaround fix for ide
+      auto defs = Args.filtered(OPT_D);
+      for (const auto& arg : defs) {
+         std::string def(arg->getValue());
+         if (def.starts_with("BLANC_CONTRACT=")) {
+            contract_name = def.substr(def.find("=")+1);
+            break;
+         }
+      }
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
          abi_version = arg->getValue();
          new_opts.emplace_back("-Wl,--abi_version="+abi_version);
