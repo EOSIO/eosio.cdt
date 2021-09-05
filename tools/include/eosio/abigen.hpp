@@ -866,6 +866,9 @@ namespace eosio { namespace cdt {
          }
 
          bool ParseArgs(const CompilerInstance& CI, const std::vector<std::string>& args) override {
+            if (args.empty())
+               return true;
+
             std::vector<std::string> resource_dirs;
             for (const auto& arg : tokenize(args[0])) {
                if (arg.starts_with("contract=")) {
