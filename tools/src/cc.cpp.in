@@ -44,7 +44,7 @@ public:
 };
 
 constexpr const char* shared_lib_suffix = "@CMAKE_SHARED_LIBRARY_SUFFIX@";
-bool is_wasm_target = true;
+bool is_wasm_target;
 bool early_exit;
 profile _profile = profile::eosio;
 std::vector<std::string> inputs;
@@ -61,28 +61,41 @@ bool suppress_ricardian_warnings;
 std::vector<std::string> override_compile_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
 
-   auto target = Args.getLastArgNoClaim(OPT_target);
-   if (target && std::strncmp(target->getValue(), "wasm32", 6)) {
-      is_wasm_target = false;
-   } else {
-      new_opts.emplace_back("--target=wasm32");
+   if (auto target = Args.getLastArgNoClaim(OPT_target)) {
+      if (std::string(target->getValue()).starts_with("wasm32")) {
+         is_wasm_target = true;
+      }
+   }
+
+   if (is_wasm_target) {
+      if (!Args.hasArgNoClaim(OPT_mthread_model)) {
+         new_opts.emplace_back("-mthread-model");
+         new_opts.emplace_back("single");
+      }
+   }
+
+   if (Args.hasArgNoClaim(OPT_v)) {
+      new_opts.emplace_back("-Wno-unused-command-line-argument");
+      if (Args.size() == 1 || (Args.size() == 2 && Args.hasArgNoClaim(OPT_target))) {
+         early_exit = true;
+         goto exit;
+      }
    }
 
    if (is_wasm_target) {
       if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
          _profile = to_profile(p->getValue());
          new_opts.emplace_back("-Wl,-profile="+std::to_string(_profile));
-         Args.eraseArg(OPT_profile);
       }
 
-      if (!Args.hasArgNoClaim(OPT_mthread_model)) {
-         new_opts.emplace_back("-mthread-model");
-         new_opts.emplace_back("single");
+      if (!Args.hasArgNoClaim(OPT__sysroot, OPT__sysroot_EQ)) {
+         new_opts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/..");
       }
-
-      if (Args.size() == 1 && Args.hasArgNoClaim(OPT_v)) {
-         early_exit = true;
-         goto exit;
+      if (!Args.hasArgNoClaim(OPT_nostdlib)) {
+         new_opts.emplace_back("-nostdlib");
+      }
+      if (!Args.hasArgNoClaim(OPT_fno_rtti, OPT_frtti)) {
+         new_opts.emplace_back("-fno-rtti");
       }
 
       if (!Args.hasArgNoClaim(OPT_O_Group)) {
@@ -90,9 +103,6 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       }
       if (!Args.hasArgNoClaim(OPT_ffreestanding)) {
          new_opts.emplace_back("-ffreestanding");
-      }
-      if (!Args.hasArgNoClaim(OPT_nostdlib)) {
-         new_opts.emplace_back("-nostdlib");
       }
       if (!Args.hasArgNoClaim(OPT_nobuiltininc)) {
          new_opts.emplace_back("-nobuiltininc");
@@ -106,17 +116,11 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       if (!Args.hasArgNoClaim(OPT_fno_exceptions)) {
          new_opts.emplace_back("-fno-exceptions");
       }
-      if (!Args.hasArgNoClaim(OPT_fno_rtti, OPT_frtti)) {
-         new_opts.emplace_back("-fno-rtti");
-      }
       new_opts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       new_opts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
 
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/eosio_attrs"+shared_lib_suffix)) {
          new_opts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/eosio_attrs"+shared_lib_suffix);
-      }
-      if (!Args.hasArgNoClaim(OPT__sysroot, OPT__sysroot_EQ)) {
-         new_opts.emplace_back("--sysroot="+eosio::cdt::whereami::where()+"/..");
       }
 
 #ifdef CPP_COMP
@@ -146,29 +150,19 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
          abi_version = arg->getValue();
          new_opts.emplace_back("-Wl,--abi_version="+abi_version);
-         Args.eraseArg(OPT_abi_version);
       }
       if (Args.hasArgNoClaim(OPT_no_abigen)) {
          no_abigen = true;
          new_opts.emplace_back("-Wl,--no-abigen");
-         Args.eraseArg(OPT_no_abigen);
       }
       if (Args.hasArgNoClaim(OPT_no_missing_ricardian_clause)) {
          suppress_ricardian_warnings = true;
-         Args.eraseArg(OPT_no_missing_ricardian_clause);
       }
       auto resource_args = Args.filtered(OPT_R_Joined);
       for (const auto& arg : resource_args) {
          resource_dirs.emplace_back(arg->getValue());
       }
-      Args.eraseArg(OPT_R_Joined);
    } else {
-      Args.eraseArg(OPT_profile);
-      Args.eraseArg(OPT_contract);
-      Args.eraseArg(OPT_abi_version);
-      Args.eraseArg(OPT_no_abigen);
-      Args.eraseArg(OPT_no_missing_ricardian_clause);
-
       new_opts.emplace_back("-DBLANC_NATIVE");
    }
 
@@ -179,11 +173,24 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
 #endif
 
 exit:
+   Args.eraseArg(OPT_profile);
+   Args.eraseArg(OPT_contract);
+   Args.eraseArg(OPT_abi_version);
+   Args.eraseArg(OPT_no_abigen);
+   Args.eraseArg(OPT_no_missing_ricardian_clause);
+
    for (const auto arg : Args) {
       new_opts.emplace_back(arg->getAsString(Args));
    }
-   new_opts.emplace_back("-isystem="+eosio::cdt::whereami::where()+"../include");
+   if (!early_exit) {
+      new_opts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
+   }
    return new_opts;
+}
+
+bool is_object_type(const std::string& fn) {
+   auto ext = llvm::sys::path::extension(fn);
+   return ext == ".o" || ext == ".obj";
 }
 
 int main(int argc, const char** argv) {
@@ -212,7 +219,16 @@ int main(int argc, const char** argv) {
 
 #ifdef CPP_COMP
    if (is_wasm_target) {
+      bool link_only = true;
+
       for (auto input : inputs) {
+         if (is_object_type(input)) {
+            new_inputs.emplace_back(input);
+            continue;
+         } else {
+            link_only = false;
+         }
+
          std::vector<std::string> args_ = args;
          std::string _output;
 
@@ -291,6 +307,13 @@ int main(int argc, const char** argv) {
          auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(_output))+".cpp");
          if (llvm::sys::fs::exists(tmp_file)) {
             new_inputs.emplace_back(tmp_file);
+         }
+      }
+
+      if (link_only) {
+         auto it = std::find(args.begin(), args.end(), "-nobuiltininc");
+         if (it != args.end()) {
+            args.erase(it);
          }
       }
    }

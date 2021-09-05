@@ -24,13 +24,19 @@ macro(add_tool name source)
   install(TARGETS ${name} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 endmacro()
 
-add_tool(${BLANC_C_COMPILER} src/cc.cpp.in blanc-cc.cpp ${BLANC_C_COMPILER_BACKEND} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
-add_tool(${BLANC_CXX_COMPILER} src/cc.cpp.in blanc-cpp.cpp ${BLANC_CXX_COMPILER_BACKEND} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
+add_tool(blanc-cc src/cc.cpp.in clang.cpp ${BLANC_C_COMPILER_BACKEND} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
+set_target_properties(blanc-cc PROPERTIES OUTPUT_NAME ${BLANC_C_COMPILER_BACKEND_FALLBACK})
+
+add_tool(blanc-cpp src/cc.cpp.in clang++.cpp ${BLANC_CXX_COMPILER_BACKEND} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
+set_target_properties(blanc-cpp PROPERTIES OUTPUT_NAME ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
+target_compile_definitions(blanc-cpp PUBLIC CPP_COMP=1)
+
 add_tool(${BLANC_LINKER} src/ld.cpp.in blanc-ld.cpp)
 add_tool(${BLANC_AR} src/base.cpp.in blanc-ar.cpp ${BLANC_AR_BACKEND} ${BLANC_AR_BACKEND_FALLBACK})
 add_tool(${BLANC_RANLIB} src/base.cpp.in blanc-ranlib.cpp ${BLANC_RANLIB_BACKEND} ${BLANC_RANLIB_BACKEND_FALLBACK})
 
-target_compile_definitions(${BLANC_CXX_COMPILER} PUBLIC CPP_COMP=1)
+add_tool(${BLANC_C_COMPILER} src/dummy.cpp.in blanc.cpp ${BLANC_C_COMPILER_BACKEND_FALLBACK} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
+add_tool(${BLANC_CXX_COMPILER} src/dummy.cpp.in blanc++.cpp ${BLANC_CXX_COMPILER_BACKEND_FALLBACK} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
 
 # blanc-pp (for post-processing)
 add_subdirectory(external)
@@ -41,6 +47,6 @@ endif()
 
 if(NOT TARGET BlancTools)
   add_custom_target(BlancTools)
-  add_dependencies(BlancTools ${BLANC_C_COMPILER} ${BLANC_CXX_COMPILER} ${BLANC_LINKER} ${BLANC_AR} ${BLANC_RANLIB} ${BLANC_POSTPASS})
+  add_dependencies(BlancTools blanc-cc blanc-cpp ${BLANC_LINKER} ${BLANC_AR} ${BLANC_RANLIB} ${BLANC_POSTPASS})
 endif()
 
