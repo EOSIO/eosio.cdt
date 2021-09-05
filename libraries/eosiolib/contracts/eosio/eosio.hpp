@@ -10,7 +10,7 @@
 #include "dispatcher.hpp"
 #include "contract.hpp"
 
-#ifndef EOSIO_NATIVE
+#ifndef BLANC_NATIVE
 static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 #endif
 

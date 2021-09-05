@@ -68,13 +68,13 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       new_opts.emplace_back("--target=wasm32");
    }
 
-   if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
-      _profile = to_profile(p->getValue());
-      new_opts.emplace_back("-Wl,-profile="+std::to_string(_profile));
-      Args.eraseArg(OPT_profile);
-   }
-
    if (is_wasm_target) {
+      if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
+         _profile = to_profile(p->getValue());
+         new_opts.emplace_back("-Wl,-profile="+std::to_string(_profile));
+         Args.eraseArg(OPT_profile);
+      }
+
       if (!Args.hasArgNoClaim(OPT_mthread_model)) {
          new_opts.emplace_back("-mthread-model");
          new_opts.emplace_back("single");
@@ -162,6 +162,14 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          resource_dirs.emplace_back(arg->getValue());
       }
       Args.eraseArg(OPT_R_Joined);
+   } else {
+      Args.eraseArg(OPT_profile);
+      Args.eraseArg(OPT_contract);
+      Args.eraseArg(OPT_abi_version);
+      Args.eraseArg(OPT_no_abigen);
+      Args.eraseArg(OPT_no_missing_ricardian_clause);
+
+      new_opts.emplace_back("-DBLANC_NATIVE");
    }
 
 #ifdef CPP_COMP
@@ -174,6 +182,7 @@ exit:
    for (const auto arg : Args) {
       new_opts.emplace_back(arg->getAsString(Args));
    }
+   new_opts.emplace_back("-isystem="+eosio::cdt::whereami::where()+"../include");
    return new_opts;
 }
 
@@ -287,7 +296,7 @@ int main(int argc, const char** argv) {
    }
 #endif
 
-   if (!Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only)) {
+   if (is_wasm_target && !Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
       args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
       if (output.size()) {
          args.emplace_back("-o "+output);

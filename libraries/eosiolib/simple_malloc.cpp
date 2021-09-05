@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <memory>
 
-#ifdef EOSIO_NATIVE
+#ifdef BLANC_NATIVE
 extern "C" {
    size_t _current_memory();
    size_t _grow_memory(size_t);
