@@ -187,6 +187,7 @@ exit:
    Args.eraseArg(OPT_abi_version);
    Args.eraseArg(OPT_no_abigen);
    Args.eraseArg(OPT_no_missing_ricardian_clause);
+   Args.eraseArg(OPT_R_Joined);
 
    for (const auto arg : Args) {
       new_opts.emplace_back(arg->getAsString(Args));
