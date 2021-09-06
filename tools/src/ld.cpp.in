@@ -318,7 +318,7 @@ int main(int argc, const char** argv) {
                new_opts.insert(new_opts.begin(), "-o");
                new_opts.insert(new_opts.begin(), "-c");
                new_opts.push_back("--no-missing-ricardian-clause");
-               if (auto ret = blanc::exec_subprogram(COMPILER_NAME, new_opts)) {
+               if (auto ret = blanc::exec_subprogram(COMPILER_NAME, new_opts, true)) {
                   return ret;
                }
                args.push_back(main_file+".o");
@@ -347,7 +347,7 @@ int main(int argc, const char** argv) {
    }
 
    if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
-      if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output})) {
+      if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, true)) {
          return ret;
       }
    }
