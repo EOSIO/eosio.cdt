@@ -33,8 +33,8 @@ cp -R ${BUILD_DIR}/include/* ${CDT_PREFIX}/include
 
 # install wasm libs
 cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib
-rsync -a --ignore-missing-args ${BUILD_DIR}/lib/*.so ${CDT_PREFIX}/lib
-rsync -a --ignore-missing-args ${BUILD_DIR}/lib/*.dylib ${CDT_PREFIX}/lib
+cp ${BUILD_DIR}/lib/*.so ${CDT_PREFIX}/lib 2>/dev/null
+cp ${BUILD_DIR}/lib/*.dylib ${CDT_PREFIX}/lib 2>/dev/null
 
 # make symlinks
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null
@@ -53,10 +53,6 @@ create_symlink "@BLANC_C_COMPILER@ @BLANC_C_COMPILER@"
 create_symlink "@BLANC_CXX_COMPILER@ @BLANC_CXX_COMPILER@"
 create_symlink "@BLANC_LINKER@ @BLANC_LINKER@"
 create_symlink "@BLANC_POSTPASS@ @BLANC_POSTPASS@"
-#create_symlink "eosio-init eosio-init"
-#create_symlink "eosio-abigen eosio-abigen"
-#create_symlink "eosio-wasm2wast eosio-wasm2wast"
-#create_symlink "eosio-wast2wasm eosio-wast2wasm"
 create_symlink "@BLANC_AR@ @BLANC_AR@"
 create_symlink "@BLANC_RANLIB@ @BLANC_RANLIB@"
 
