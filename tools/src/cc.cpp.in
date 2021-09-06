@@ -204,6 +204,7 @@ exit:
    }
    if (!early_exit) {
       new_opts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
+      new_opts.emplace_back("-isystem "+eosio::cdt::whereami::where()+"/../include/c++/v1");
    }
    return new_opts;
 }
