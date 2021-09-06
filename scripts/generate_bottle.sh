@@ -19,9 +19,9 @@ NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
 #mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
 PREFIX="${PROJECT}/${VERSION}"
-SPREFIX="\/usr\/local"
+SPREFIX="usr\/local"
 SUBPREFIX="opt/${PROJECT}"
-SSUBPREFIX="opt\/${PROJECT}"
+SSUBPREFIX="opt\/${PROJECT}\/opt\/${PROJECT}"
 
 export PREFIX
 export SPREFIX
