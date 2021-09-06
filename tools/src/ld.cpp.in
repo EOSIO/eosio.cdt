@@ -28,6 +28,7 @@ enum {
    OPT_INVALID = 0,
 #define OPTION(_1, _2, ID, _4, _5, _6, _7, _8, _9, _10, _11, _12) OPT_##ID,
 #include <lld/wasm/Options.inc>
+#include <lld/MachO/Options.inc>
 #include <eosio/Options.inc>
 #undef OPTION
 };
@@ -42,6 +43,7 @@ static const OptTable::Info InfoTable[] = {
   {PREFIX, NAME,  HELPTEXT,    METAVAR,     OPT_##ID,  Option::KIND##Class, \
    PARAM,  FLAGS, OPT_##GROUP, OPT_##ALIAS, ALIASARGS, VALUES},
 #include <lld/wasm/Options.inc>
+#include <lld/MachO/Options.inc>
 #undef OPTION
 #define OPTION(PREFIX, NAME, ID, KIND, GROUP, ALIAS, ALIASARGS, FLAGS, PARAM,    \
                HELPTEXT, METAVAR, VALUES)                                        \
@@ -218,6 +220,10 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
       for (const auto& arg : input_args) {
          inputs.emplace_back(arg->getValue());
       }
+
+      // fix for macos
+      Args.eraseArg(OPT_headerpad_max_install_names);
+      Args.eraseArg(OPT_search_paths_first);
    }
 
    Args.eraseArg(OPT_profile);
