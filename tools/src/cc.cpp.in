@@ -85,7 +85,6 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
    if (is_wasm_target) {
       if (auto p = Args.getLastArgNoClaim(OPT_profile)) {
          _profile = to_profile(p->getValue());
-         new_opts.emplace_back("-Wl,-profile="+std::to_string(_profile));
       }
 
       if (!Args.hasArgNoClaim(OPT__sysroot, OPT__sysroot_EQ)) {
@@ -151,8 +150,14 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       auto defs = Args.filtered(OPT_D);
       for (const auto& arg : defs) {
          std::string def(arg->getValue());
+         auto found = 0;
          if (def.starts_with("BLANC_CONTRACT=")) {
             contract_name = def.substr(def.find("=")+1);
+            found++;
+         } else if (def.starts_with("BLANC_PROFILE=")) {
+            _profile = to_profile(def.substr(def.find("=")+1));
+         }
+         if (found >= 2) {
             break;
          }
       }
@@ -170,6 +175,10 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       auto resource_args = Args.filtered(OPT_R_Joined);
       for (const auto& arg : resource_args) {
          resource_dirs.emplace_back(arg->getValue());
+      }
+
+      if (_profile == profile::cosmwasm) {
+         new_opts.emplace_back("-DNO_BUILTIN_UINT128");
       }
    } else {
       new_opts.emplace_back("-DBLANC_NATIVE");
@@ -331,6 +340,7 @@ int main(int argc, const char** argv) {
 
    if (is_wasm_target && !Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
       args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
+      args.emplace_back("-Wl,--profile="+std::to_string(_profile));
       if (output.size()) {
          args.emplace_back("-o "+output);
       }

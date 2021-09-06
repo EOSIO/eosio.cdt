@@ -13,7 +13,7 @@ target_include_directories(cosmwasm
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../internal/include
 )
-target_link_libraries(cosmwasm c++ cnf)
+target_link_libraries(cosmwasm c++ c cstdio-no-float)
 
 add_custom_command(TARGET cosmwasm POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cosmwasm> ${BASE_BINARY_DIR}/lib)
 
