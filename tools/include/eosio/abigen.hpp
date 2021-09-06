@@ -873,10 +873,11 @@ namespace eosio { namespace cdt {
             for (const auto& arg : tokenize(args[0])) {
                if (arg.starts_with("contract=")) {
                   abigen::get().set_contract_name(arg.substr(arg.find("=")+1));
-               } else if (arg == "abi_version=") {
+               } else if (arg.starts_with("abi_version=")) {
                   auto str = arg.substr(arg.find("=")+1);
+                  float tmp;
                   int abi_version_major = std::stoi(str);
-                  int abi_version_minor = (int)(std::modf(std::stof(str), nullptr) * 10);
+                  int abi_version_minor = (int)(std::modf(std::stof(str), &tmp) * 10);
                   abigen::get().set_abi_version(abi_version_major, abi_version_minor);
                } else if (arg == "no_abigen") {
                   abigen::get().no_abigen = true;
@@ -887,10 +888,9 @@ namespace eosio { namespace cdt {
                } else {
                   return false;
                }
-
-               if (resource_dirs.size()) {
-                  abigen::get().set_resource_dirs(resource_dirs);
-               }
+            }
+            if (resource_dirs.size()) {
+               abigen::get().set_resource_dirs(resource_dirs);
             }
             return true;
          }

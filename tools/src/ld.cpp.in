@@ -179,8 +179,9 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
       }
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
          std::string abi_version = arg->getValue();
+         float tmp;
          abi_version_major = std::stoi(abi_version);
-         abi_version_minor = (int)(std::modf(std::stof(abi_version), nullptr) * 10);
+         abi_version_minor = (int)(std::modf(std::stof(abi_version), &tmp) * 10);
       }
       new_opts.emplace_back("-export=__heap_base");
       new_opts.emplace_back("-export=__data_end");

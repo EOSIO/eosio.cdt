@@ -52,6 +52,7 @@ std::vector<std::string> new_inputs;
 std::string output;
 std::vector<std::string> resource_dirs;
 std::set<std::string> include_dirs;
+bool link = true;
 
 std::string contract_name;
 std::string abi_version;
@@ -138,6 +139,10 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          output = fn.str().str();
       }
 
+      if (Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
+         link = false;
+      }
+
       if (auto arg = Args.getLastArgNoClaim(OPT_contract)) {
          contract_name = arg->getValue();
          Args.eraseArg(OPT_contract);
@@ -146,33 +151,45 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          llvm::sys::path::replace_extension(fn, "");
          contract_name = fn.str().str();
       }
-      // XXX: workaround fix for ide
-      auto defs = Args.filtered(OPT_D);
-      for (const auto& arg : defs) {
-         std::string def(arg->getValue());
-         auto found = 0;
-         if (def.starts_with("BLANC_CONTRACT=")) {
-            contract_name = def.substr(def.find("=")+1);
-            found++;
-         } else if (def.starts_with("BLANC_PROFILE=")) {
-            _profile = to_profile(def.substr(def.find("=")+1));
-            found++;
-         }
-         if (found >= 2) {
-            break;
-         }
-      }
+
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
          abi_version = arg->getValue();
-         new_opts.emplace_back("-Wl,--abi_version="+abi_version);
+         if (link) {
+            new_opts.emplace_back("-Wl,--abi-version="+abi_version);
+         }
       }
       if (Args.hasArgNoClaim(OPT_no_abigen)) {
          no_abigen = true;
-         new_opts.emplace_back("-Wl,--no-abigen");
+         if (link) {
+            new_opts.emplace_back("-Wl,--no-abigen");
+         }
       }
       if (Args.hasArgNoClaim(OPT_no_missing_ricardian_clause)) {
          suppress_ricardian_warnings = true;
       }
+      // XXX: workaround fix for ide
+      auto defs = Args.filtered(OPT_D);
+      for (const auto& arg : defs) {
+         std::string def(arg->getValue());
+         if (def.starts_with("BLANC_PROFILE=")) {
+            _profile = to_profile(def.substr(def.find("=")+1));
+         } else if (def.starts_with("EOSIO_CONTRACT=")) {
+            contract_name = def.substr(def.find("=")+1);
+         } else if (def.starts_with("EOSIO_ABI_VERSION=")) {
+            abi_version = def.substr(def.find("=")+1);
+            if (link) {
+               new_opts.emplace_back("-Wl,--abi-version="+abi_version);
+            }
+         } else if (def.starts_with("EOSIO_NO_ABIGEN")) {
+            no_abigen = true;
+            if (link) {
+               new_opts.emplace_back("-Wl,--no-abigen");
+            }
+         } else if (def.starts_with("EOSIO_NO_RICARDIAN")) {
+            suppress_ricardian_warnings = true;
+         }
+      }
+
       auto resource_args = Args.filtered(OPT_R_Joined);
       for (const auto& arg : resource_args) {
          resource_dirs.emplace_back(arg->getValue());
@@ -340,7 +357,7 @@ int main(int argc, const char** argv) {
    }
 #endif
 
-   if (is_wasm_target && !Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
+   if (is_wasm_target && link) {
       args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
       args.emplace_back("-Wl,--profile="+std::to_string(_profile));
       if (output.size()) {
