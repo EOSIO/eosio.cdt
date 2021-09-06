@@ -156,6 +156,7 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
             found++;
          } else if (def.starts_with("BLANC_PROFILE=")) {
             _profile = to_profile(def.substr(def.find("=")+1));
+            found++;
          }
          if (found >= 2) {
             break;
