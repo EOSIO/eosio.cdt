@@ -62,10 +62,13 @@ public:
          ss << "\n\n#include <eosio/datastream.hpp>\n";
          ss << "#include <eosio/name.hpp>\n";
          ss << "extern \"C\" {\n";
+         ss << "  [[clang::import_name(\"action_data_size\")]]\n";
          ss << "  uint32_t action_data_size();\n";
+         ss << "  [[clang::import_name(\"read_action_data\")]]\n";
          ss << "  uint32_t read_action_data(void*, uint32_t);\n";
          const auto& return_ty = decl->getReturnType().getAsString();
          if (return_ty != "void")
+            ss << "  [[clang::import_name(\"set_action_return_value\")]]\n";
             ss << "  void set_action_return_value(void*, size_t);\n";
          ss << "  __attribute__((weak))\n";
          ss << "  void " << func_name << nm << "(unsigned long long r, unsigned long long c) {\n";
