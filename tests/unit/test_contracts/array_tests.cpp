@@ -20,10 +20,10 @@ class [[eosio::contract]] array_tests : public contract {
    };
 
    typedef multi_index<name("tests"), tests> tests_table;
-   
+   typedef std::array<std::string,4> array_string_4;
    struct my_struct {
       uint32_t id;
-      std::array<std::array<std::string,4>,2> aastr;
+      std::array<array_string_4,2> aastr;
 
       bool operator==(const my_struct& b) const {
          return id == b.id &&
