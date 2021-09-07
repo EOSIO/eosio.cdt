@@ -21,7 +21,7 @@ Clang-12 is backported to Ubuntu 20.04, so launchpad PPA support is restored.
 
 ```sh
 sudo add-apt-repository ppa:conr2d/blanc
-sudo apt install blanc
+sudo apt install blanc clang-12 lld-12
 ```
 
 ### MacOS Big Sur
