@@ -385,10 +385,11 @@ endfunction()
 wabt_executable(
   NAME ${BLANC_POSTPASS}
   SOURCES src/tools/postpass.cc
-  INSTALL
+  #INSTALL
 )
 add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
 add_custom_command( TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/ )
+install(TARGETS ${BLANC_POSTPASS} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 
 if (BUILD_TOOLS)
 
