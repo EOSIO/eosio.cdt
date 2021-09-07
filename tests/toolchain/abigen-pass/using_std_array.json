@@ -1,0 +1,9 @@
+{
+   "tests" : [
+      {
+         "expected" : {
+            "abi-file" : "using_std_array.abi"
+         }
+      }
+   ]
+}
