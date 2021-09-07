@@ -7,22 +7,21 @@ Welcome to Blanc!  Blanc is a toolchain for WebAssembly-based blockchain contrac
 By using the latest Clang/LLVM, generated WASM binaries will have smaller size by about 10%. (eg. `eosio.token` 18KB &rightarrow; 16KB, `eosio.system` 276KB &rightarrow; 252KB)  All unit tests provided by eosio.cdt and [eosio.contracts](https://github.com/EOSIO/eosio.contracts) are passed and all generated ABIs are identical.
 
 
+## Nota Bene
+
+We changed branch strategy. The branch for daily development is `master` now, so if you want to build from the source, please use `release` branch for stable version.
+
 ## Binary Releases
 
 The prebuilt binares are provided for Ubuntu 20.04 and MacOS Big Sur.
 
 ### Ubuntu 20.04
 
-Clang-12 is not in the default Ubuntu repository, so it needs to be installed from llvm.org.
+Clang-12 is backported to Ubuntu 20.04, so launchpad PPA support is restored.
 
 ```sh
-wget -qO - https://apt.llvm.org/llvm.sh | sudo bash -s 12
-```
-
-Download debian package and install with apt.
-
-```sh
-bash -c "$(wget -O - https://raw.githubusercontent.com/turnpike/blanc/develop/blanc.sh)"
+sudo add-apt-repository ppa:conr2d/blanc
+sudo apt install blanc
 ```
 
 ### MacOS Big Sur
