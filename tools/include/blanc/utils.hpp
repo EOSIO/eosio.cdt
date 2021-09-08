@@ -13,6 +13,29 @@
 #include <llvm/Support/Program.h>
 
 namespace blanc {
+
+   template<typename T>
+   void print(T&& container) {
+      std::for_each(container.begin(), container.end(), [](const auto& e){ llvm::outs() << e << " "; });
+      llvm::outs() << "\n";
+   }
+
+   template<>
+   void print(std::string& s) {
+      llvm::outs() << "\"" << s << "\" ";
+   }
+
+   template<typename T, typename... Ts>
+   void print(T&& a, Ts&&... b) {
+      print(std::forward<T>(a));
+      print(std::forward<Ts>(b)...);
+   }
+
+   void print(const char** begin, size_t length) {
+      std::for_each(begin, begin+length, [](auto e){ llvm::outs() << e << " "; });
+      llvm::outs() << "\n";
+   }
+
    int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool cwd = false) {
       int ret = 0;
       std::string find_path = eosio::cdt::whereami::where();
@@ -114,16 +137,5 @@ namespace blanc {
       auto tmp_dir = system_temp_dir;
       llvm::sys::path::append(tmp_dir, path);
       return tmp_dir.str().str();
-   }
-
-   template<typename T>
-   void print_traverse(T&& container) {
-      std::for_each(container.begin(), container.end(), [](const auto& e){ llvm::outs() << e << " "; });
-      llvm::outs() << "\n";
-   }
-
-   void print_traverse(const char** begin, size_t length) {
-      std::for_each(begin, begin+length, [](auto e){ llvm::outs() << e << " "; });
-      llvm::outs() << "\n";
    }
 }
