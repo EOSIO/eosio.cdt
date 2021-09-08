@@ -357,7 +357,7 @@ int main(int argc, const char** argv) {
    }
 #endif
 
-   if (is_wasm_target && link) {
+   if (is_wasm_target && link && inputs.size()) {
       args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
       args.emplace_back("-Wl,--profile="+std::to_string(_profile));
       if (output.size()) {
