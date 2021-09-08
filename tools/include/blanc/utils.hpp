@@ -13,6 +13,11 @@
 #include <llvm/Support/Program.h>
 
 namespace blanc {
+#ifndef _BLANC_DEBUG
+   constexpr static bool debug = false;
+#else
+   constexpr static bool debug = true;
+#endif
 
    template<typename T>
    void print(T&& container) {
@@ -45,12 +50,18 @@ namespace blanc {
       }
       auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path});
       if (cwd && path) {
+         if constexpr (debug)
+            print(*path, options);
          ret = std::system((*path+" "+args.str()).c_str());
 #ifdef __APPLE__
       } else if (auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/local/opt/llvm/bin"})) {
+         if constexpr (debug)
+            print(*path, options);
          ret = std::system((*path+" "+args.str()).c_str());
 #endif
       } else if (auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"})) {
+          if constexpr (debug)
+            print(*path, options);
          ret = std::system((*path+" "+args.str()).c_str());
       } else {
          return ENOENT;
