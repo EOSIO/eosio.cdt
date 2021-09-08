@@ -58,6 +58,11 @@ namespace blanc {
          if constexpr (debug)
             print(*path, options);
          ret = std::system((*path+" "+args.str()).c_str());
+#else
+      } else if (auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/lib/llvm-12/bin"})) {
+         if constexpr (debug)
+            print(*path, options);
+         ret = std::system((*path+" "+args.str()).c_str());
 #endif
       } else if (auto path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"})) {
           if constexpr (debug)
