@@ -11,6 +11,7 @@ endif()
 target_include_directories(eosio_codegen
   PRIVATE 
     ${CMAKE_SOURCE_DIR}/tools/include
+    ${CMAKE_BINARY_DIR}/tools/include
     ${CMAKE_SOURCE_DIR}/libraries/internal/include)
 
 add_custom_command(TARGET eosio_attrs POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/lib)
