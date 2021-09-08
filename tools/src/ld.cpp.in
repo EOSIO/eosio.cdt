@@ -347,7 +347,7 @@ int main(int argc, const char** argv) {
 #ifdef __APPLE__
       if (auto ret = blanc::exec_subprogram("ld", args)) {
 #else
-      if (auto ret = blanc::exec_subprogram(std::vector<std::string>{"ld.lld-12", "ld.lld"}, args)) {
+      if (auto ret = blanc::exec_subprogram(std::vector<std::string>{"ld.lld-@LLVM_VERSION_MAJOR@", "ld.lld"}, args)) {
 #endif
          return ret;
       }

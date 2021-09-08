@@ -15,6 +15,7 @@ macro(add_tool name source)
       ${CMAKE_CURRENT_SOURCE_DIR}/src
       ${CMAKE_CURRENT_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_BINARY_DIR}/include
       ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/internal/include
   )
   target_link_libraries(${name} PUBLIC clangTooling clangDriver)
@@ -23,6 +24,8 @@ macro(add_tool name source)
   add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/bin/)
   install(TARGETS ${name} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 endmacro()
+
+configure_file(include/blanc/utils.hpp.in include/blanc/utils.hpp @ONLY)
 
 add_tool(blanc-cc src/cc.cpp.in clang.cpp ${BLANC_C_COMPILER_BACKEND} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
 set_target_properties(blanc-cc PROPERTIES OUTPUT_NAME ${BLANC_C_COMPILER_BACKEND_FALLBACK})
