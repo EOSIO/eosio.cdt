@@ -56,6 +56,11 @@ int main(int argc, const char **argv) {
         std::cerr << "Exit due to failure to write file" << std::endl;
         return -1;
      }
+
+     if (!eosio::cdt::environment::exec_subprogram("wasm-opt", {"-O", opts.output_fn, "-o", opts.output_fn}, true)) {
+        std::cerr << "wasm-opt failed" << std::endl;
+     }
+
    }
   return 0;
 }
