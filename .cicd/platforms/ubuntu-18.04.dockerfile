@@ -22,7 +22,6 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/local/bin/python3
 # build binaryen with wasm-opt
 RUN git clone https://github.com/WebAssembly/binaryen && \
     cd binaryen && \
-    cmake . && \
+    cmake . -DCMAKE_INSTALL_PREFIX:PATH=/usr && \
     make -j$(nproc) && \
-    make install DESTDIR=/usr/bin && \
-    cp /usr/local/lib/libbinaryen.so /usr/lib
+    make install
