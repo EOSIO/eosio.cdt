@@ -15,6 +15,7 @@ extern char **environ;
 #include "whereami/whereami.hpp"
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 namespace eosio { namespace cdt {
 
@@ -142,8 +143,10 @@ struct environment {
       if ( const auto& path = llvm::sys::findProgramByName(prog.c_str(), {find_path}) ) {
          return llvm::sys::ExecuteAndWait(*path, args, {}, {}, 0, 0, nullptr, nullptr) == 0;
       }
-      else
+      else {
+         std::cerr<<"path not found"<<std::endl;
          return false;
+      }
       return true;
    }
 
