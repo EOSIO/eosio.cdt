@@ -1,0 +1,11 @@
+{
+  "tests" : [
+    {
+      "compile_flags": ["--no-missing-ricardian-clause"],
+      "expected" : {
+        "exit-code": 0,
+        "stdout": ""
+      }
+    }
+  ]
+}
