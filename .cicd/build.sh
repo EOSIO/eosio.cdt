@@ -19,7 +19,6 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    WASM_OPT_COMMANDS="echo wasm location=$(which wasm-opt)"
     BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
 
     BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
@@ -35,7 +34,7 @@ else # Linux
         fi
     fi
 
-    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS && $WASM_OPT_COMMANDS"
+    COMMANDS="$PRE_COMMANDS && $BUILD_COMMANDS"
 
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
