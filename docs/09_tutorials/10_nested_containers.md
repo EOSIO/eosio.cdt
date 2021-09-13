@@ -12,23 +12,25 @@ This tutorial demonstrates the usage of various C++ nested-containers in smart c
 
 ### The Nested-Containers Covered Are
 
-* Standard STL containers defined in `std` namespace including:
+This tutorial covers the following netsted-containers combinations.
+
+* Single standard template library (STL) containers defined in the `std` namespace
     * std::vector
     * std::set
     * std::optional
     * std::map
     * std::tuple
-    * std::pair which needs special handling for cleos input format
-* Standard C++ structureds
+    * std::pair which needs special attention for cleos input format
+* Standard C++ structures
     * Simple struct
     * Complex struct
-* Two-layers nested containers consisting of combinations of the following:
-    * vector
-    * set
-    * map
-    * optional
-    * pair
-    * tuple
+* Two-layers nested containers made of combinations of the following
+    * std::vector
+    * std::set
+    * std::optional
+    * std::map
+    * std::tuple
+    * std::pair
 * One three-layers nested container for farther extentions demonstration
 
 ### Cleos commands
@@ -52,29 +54,29 @@ The code source files and script files which accompany this tutorial are located
 
 ### How To Run The *.sh* Scripts
 
-There are over 100 cleos commands related to the use of various nested-containers in total and they are listed in the comments of all the *.cpp* files before each corresponding eosio action. Two *.sh* scripts are provided to facilitate the test and the verification of these cleos commands.
+There are over 100 cleos commands related to the use of various nested-containers in total and they are listed in the comments of the *.cpp* files before each corresponding eosio action. Two *.sh* scripts are provided to facilitate the test and the verification of these cleos commands.
 
 Before you run each of the two *.sh* scripts, you need to make sure your default wallet is unlocked, and replace EOS6...r2C with your own development key. In a development environment, you may need to restart nodeos.
 
 Before you can use the *./nestcontn2kv/doNestContainerKV.sh*, you must run the *enable-kv.sh* script to enable the [KV_DATABASE protocol feature](https://developers.eos.io/manuals/eos/v2.1/release-notes/index/#key-value-tables-8223-9298) for the nodeos you intend to connect to. The *enable-kv.sh* script is located in the *eos/contracts/enable-kv/* subdirectory in the latest release of the eos repository.
 
-Also it is important to read the comments placed at the beginning of the two *.sh* script files for more detailsj and follow those instructions as well. After you got through those preparation steps, execute the following two scripts in the root directory of your local repository on your bash console: 
+Also it is important to read the comments placed at the beginning of the two *.sh* script files and follow those instructions as well. After you got through those preparation steps, execute the following two scripts in the root directory of your local repository on your bash console: 
 
 ```sh
 ./nestcontn2a/doNestContainer.sh
 ./nestcontn2kv/doNestContainerKV.sh
 ```
 
-### Get Suitable *.abi* Types
+### Construct Suitable *.abi* Types
 
-The *.abi* type of a primitive type such as `uint16_t` is simple, it is just `uint16`, however the *.abi* types of containers and especially nested-containers must be carefully considered to make sure the corresponding user data can be pushed into the EOSIO block chain correctly using cleos commands and/or web APIs.
+The *.abi* type of a C++ primitive type such as `uint16_t` it is defined by EOSIO as `uint16`, however the *.abi* types of containers and especially nested-containers must be carefully considered to make sure the corresponding user data can be pushed into the EOSIO block chain correctly via cleos commands and/or web APIs.
 
 You can inspect the *.abi* types a C++ EOSIO contract defines and/or uses in its corresponding *.abi* file.
 
 For example:
 
-* The *.abi* type of `std::vector<uint16_t>` or `std::set<uint16_t>` is `uint16[]` ending with `[]`
-* The *.abi* type of `std::optional<uint16_t>` is `uint16?` ending with `?` which means the allowed value is either `null` or `uint16_t`
+* The *.abi* type of `std::vector<uint16_t>` or `std::set<uint16_t>` is `uint16[]` and ends with `[]`
+* The *.abi* type of `std::optional<uint16_t>` is `uint16?` and ends with `?` which means the allowed value is either `null` or `uint16_t`
 
 Logically it follows that the *.abi* type of `optional<vector<uint16_t>>` is `uint16[]?`. However, if you define an action, in your C++ EOSIO contract code, which uses `optional<vector<uint16_t>>` directly as below: 
 
@@ -106,18 +108,17 @@ and then the corresponding eosio action should be written as:
 [[eosio::action]] void setov(int id, const optional<vec_uint16>& ov)
 ```
 
-Then the same cleos command will work properly, and if you check the generated *.abi* file, you can notice the *.abi* type of `ov` parameter will be `vec_uint16?` instead of previous `uint16[]?`. Consult the *.cpp* files accompanying this tutorial for **more examples** on how to use `typedef` to successfuly create *.abi* types of nested-containers that work for cleos commands. 
+Now the same cleos command will work properly, and if you check the generated *.abi* file, you can notice the *.abi* type of `ov` parameter will be `vec_uint16?` instead of previous `uint16[]?`. Consult the *.cpp* files accompanying this tutorial for **more examples** on how to use `typedef` to successfuly create *.abi* types of nested-containers that work for cleos commands. 
 
 [[info]]
 | You can not create and use an *.abi* type of a variable which has two or more of each `[]` and `?` because it will cause a related cleos command error. If your nested-container types have more than one of each `[]` and `?` then you must use `typedef` to make sure the *.abi* type of the related container variable has at most one of each `[]` and `?`.
 
 ### About *std::pair* And *std::map* In Cleos Commands
 
-In eos code base, `std::pair` is a struct of fields *first* and *second*, `std::map` is regarded as an array/vector of structs with fields *key* and *value*, as observed in *.abi* files where `std::pair<uint16_t, uint16_t>` has *.abi* type
+In EOSIO code base, `std::pair` is a struct of fields *first* and *second*, `std::map` is regarded as an array/vector of structs with fields *key* and *value*, as observed in *.abi* files where `std::pair<uint16_t, uint16_t>` has *.abi* type
 `pair_uint16_uint16`, and `std::map<uint16_t, uint16_t>` has *.abi* type `pair_uint16_uint16[]`.
 
-However a container involving both `std::pair` and `std::map` may have a complex mixture of *key* and *value*, *first* and *second* which are documented in the *.sh* scripts, and the comments of the *.cpp* files. Please pay special attention on the cleos commands of *setmm* for map of maps, *setmp* for map of pairs, *setpm* for pair of maps, and *setpp* for pair of pairs, **the cleos commands of all these 4 actions
-use *"key"* and *"value"* with the *"value"* part embracing *"first"* and *"second"***. 
+However a container which is a combination of both `std::pair` and `std::map` may have a complex mixture of *key* and *value*, *first* and *second* which are documented in the *.sh* scripts, and in the comments of the *.cpp* files. Please pay special attention on the cleos commands of *setmm* for map of maps, *setmp* for map of pairs, *setpm* for pair of maps, and *setpp* for pair of pairs, because **the cleos commands of all these 4 actions use *"key"* and *"value"* with the *"value"* part embracing *"first"* and *"second"***. 
 
 For example, *setm* only uses *key* and *value*, and *setp* only uses *first* and *second*, but *setmm* and *setpp* use *"key"* and *"value"* with the *"value"* part embracing *"first"* and *"second"* as below:
 
@@ -131,7 +132,7 @@ The cleos commands of *setmp* and *setpm* follow the same pattern as shown in th
 
 ## Supported Nested-Containers
 
-The following table describes which nested-containers involving STL set, vector, optional, map, pair and tuple in the std namespace are supported by current eos implementation:
+The following table describes which nested-containers combinations of STL set, vector, optional, map, pair and tuple in the std namespace are supported by current EOSIO implementation:
 
 |     | set | vector | optional | map | pair | tuple |
 | --- | --- | ---    | ---      | --- | ---  | ---   |
@@ -155,14 +156,14 @@ defines an `eosio::kv::map` type, which has `int` as its key, and struct `person
 
 ### Additional Rules
 
-* The **key part** of `eosio::kv::map` can be primitive types, e.g. `std::string`, `eosio::name`, which are all supported by current eos implementation
+* The **key part** of `eosio::kv::map` can be primitive types, e.g. `std::string`, `eosio::name`, which are all supported by current ESOIO implementation
 * If the *key part* of `eosio::kv::map` is a self-defined struct, then the self-defined struct has to be wrapped by **CDT_REFLECT**, as shown in below, which can be found in *./nestcontn2kv/nestcontn2kv.cpp*:
 
     ```cpp
     using my_map_t4 = eosio::kv::map<"people2kv4"_n, mystructrefl, person2kv>
     ```
 
-* The current eos implementation does NOT yet support `set<optional<T>>` and `vector<optional<T> >`, because they cause issues in `cleos get table` and `cleos get kv_table` commands
+* The current EOSIO implementation does NOT yet support `set<optional<T>>` and `vector<optional<T> >`, because they cause issues in `cleos get table` and `cleos get kv_table` commands
 * Strictly speaking, `std::pair` is just a struct of fields *first* and *second*, it is not an STL container. But `std::pair` is listed in the support table because of its complex cleos data input formats, especially when it is combined with `std::map` 
 
 ### How To Publishing A WASM File Bigger Than 512KB
