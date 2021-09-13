@@ -21,7 +21,7 @@ Clang-12 is backported to Ubuntu 20.04, so launchpad PPA support is restored.
 
 ```sh
 sudo add-apt-repository ppa:conr2d/blanc
-sudo apt install blanc clang-12 lld-12
+sudo apt install blanc clang-12 lld-12 binaryen
 ```
 
 ### MacOS Big Sur
@@ -29,14 +29,8 @@ sudo apt install blanc clang-12 lld-12
 You can install Clang/LLVM compatible with Blanc by package manager [brew](https://brew.sh/).
 
 ```sh
-brew install llvm@12
-```
-
-Install Blanc by brew.
-
-```sh
 brew tap turnpike/blanc
-brew install blanc
+brew install blanc llvm@12 binaryen
 ```
 
 ## Installed Tools
