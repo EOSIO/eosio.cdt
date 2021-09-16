@@ -3,7 +3,7 @@
      {
        "compile_flags": ["--no-abigen"],
        "expected" : {
-         "exit-code": 0,
+         "exit-code": 0
        }
      }
    ]
