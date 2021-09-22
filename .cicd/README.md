@@ -44,6 +44,7 @@ SKIP_BUILD='true|false'              # skip all build steps
 SKIP_TOOLCHAIN_TEST='true|false'     # skip all toolchain test steps
 SKIP_UNIT_TESTS='true|false'         # skip all unit tests
 SKIP_PACKAGE_BUILDER='true|false'    # skip all packaging steps
+SKIP_INTEGRATION_TESTS='true|false'  # skip all integration tests
 ```
 
 Configure how the steps are executed:
