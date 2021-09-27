@@ -381,6 +381,7 @@ namespace eosio {
             printl( buffer, (end-buffer) );
       }
 
+      CDT_REFLECT(amount,symbol);
       EOSLIB_SERIALIZE( asset, (amount)(symbol) )
    };
 
@@ -492,6 +493,18 @@ namespace eosio {
       }
 
       /// @endcond
+
+      /* eosio::extended_asset is a built-in type in eos/ and eosio.cdt, examples of its json input format are
+       * given in eos/libraries/abieos/src/test.cpp, here its json input format is the same as that
+       * of a self-defined struct since eosio::extended_asset has no from_json(), to_json() implementations in  eos/
+       * Examples of valid JSON input format of eosio::extended_asset:
+       *    {"quantity":"236.0000 SYS", "contract":"ctname1"}
+       *    {"quantity":"321 DOLLAR", "contract":"ctname2"}
+       * Examples of valid JSON input format of eosio::asset:
+       *    "236.0000 SYS"
+       *    "321 DOLLAR"
+       */
+      CDT_REFLECT(quantity, contract);
 
       EOSLIB_SERIALIZE( extended_asset, (quantity)(contract) )
    };
