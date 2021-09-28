@@ -19,7 +19,7 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    BUILD_COMMANDS="cmake .. -DEOSIO_RUN_INTEGRATION_TESTS=True -DEOSIO_ROOT=/usr/local && make -j$JOBS"
+    BUILD_COMMANDS="cmake .. -DEOSIO_RUN_INTEGRATION_TESTS=ON -DEOSIO_ROOT=/usr/local && make -j$JOBS"
 
     [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
     # Docker Commands
