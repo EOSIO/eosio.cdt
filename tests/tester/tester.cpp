@@ -146,3 +146,19 @@ TEST_CASE_METHOD(eosio::test_chain, "Creating signatures", "[sign]") {
    auto r1_sig = eosio::sign(r1_pvt, hash);
    as("test"_n).act<tester_tests::assertsig_action>(hash, r1_sig, r1_pub);
 }
+
+TEST_CASE("Runtime library 128-bit integer operations") {
+   volatile int128_t a = -100, b = 2;
+   CHECK((a * b) == -200);
+   CHECK((a / b) == -50);
+   CHECK((a % b) == 0);
+   CHECK((a << b) == -400);
+   CHECK((a >> b) == -25);
+
+   volatile uint128_t au = 100, bu = 2;
+   CHECK((au * bu) == 200);
+   CHECK((au / bu) == 50);
+   CHECK((au % bu) == 0);
+   CHECK((au << bu) == 400);
+   CHECK((au >> bu) == 25);
+}
