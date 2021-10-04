@@ -445,8 +445,6 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         /*Example:
          *  cleos --verbose push action nestcontn2kv setsto '[1, [101, null, 201, 301]]' -p alice@active
-         *      *****user data can NOT be pushed into the chain, cleos get kv_table will not work if using setsto
-         *  set<optional<T> > is  NOT supported currently!
          */
         [[eosio::action]]
         void setsto(int id, const set<op_uint16>& sto)
@@ -598,8 +596,6 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         /*Example:
          *  cleos --verbose push action nestcontn2kv setvo '[1, [100, null, 200, null, 300]]' -p alice@active
-         *      *****user data can NOT be pushed into the chain, cleos get kv_table will not work if using setvo
-         *  vector<optional<T> > is  NOT supported currently!
          */
         [[eosio::action]]
         void setvo(int id, const vector<op_uint16>& vo)
