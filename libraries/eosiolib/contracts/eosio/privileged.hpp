@@ -31,6 +31,9 @@ namespace eosio {
          void set_kv_parameters_packed( const char* data, uint32_t datalen );
 
          __attribute__((eosio_wasm_import))
+         uint32_t get_kv_parameters_packed( void* data, uint32_t datalen, uint32_t max_version );
+
+         __attribute__((eosio_wasm_import))
          uint32_t get_wasm_parameters_packed( char* data, uint32_t datalen, uint32_t max_version );
 
          __attribute__((eosio_wasm_import))
@@ -330,6 +333,24 @@ namespace eosio {
                         (max_value_size)(max_iterators)
       )
    };
+
+   /**
+    *  Get the kv parameters
+    *
+    *  @ingroup privileged
+    *  @param[out] params - kv parameters to get
+    *
+    *  @return the size of the parameters read onto the local buffer.
+    */
+   inline int get_kv_parameters(eosio::kv_parameters& params) {
+      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
+      int sz = internal_use_do_not_use::get_kv_parameters_packed(buf, sizeof(buf), 0);
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      uint32_t version;
+      ds >> version;
+      ds >> params;
+      return sz;
+   }
 
    /**
     *  Set the kv parameters
