@@ -30,6 +30,12 @@ namespace eosio {
          __attribute__((eosio_wasm_import))
          void set_kv_parameters_packed( const char* data, uint32_t datalen );
 
+         __attribute__((eosio_wasm_import))
+         uint32_t get_wasm_parameters_packed( char* data, uint32_t datalen, uint32_t max_version );
+
+         __attribute__((eosio_wasm_import))
+         void set_wasm_parameters_packed( const char* data, uint32_t datalen );
+
          __attribute((eosio_wasm_import))
          int64_t set_proposed_producers( char*, uint32_t );
 
@@ -185,6 +191,117 @@ namespace eosio {
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
 
+   /**
+    *  Tunable wasm limits configuration parameters.
+    *  @ingroup privileged
+    */
+
+   struct wasm_parameters {
+      /**
+      * The maximum total size (in bytes) used for mutable globals.
+      * i32 and f32 consume 4 bytes and i64 and f64 consume 8 bytes.
+      * Const globals are not included in this count.
+      * @brief The maximum total size (in bytes) used for mutable globals.
+      */
+      std::uint32_t max_mutable_global_bytes;
+
+      /**
+      * The maximum number of elements of a table.
+      * @brief The maximum number of elements of a table.
+      */
+      std::uint32_t max_table_elements;
+
+      /**
+      * The maximum number of elements in each section.
+      * @brief The maximum number of elements in each section.
+      */
+      std::uint32_t max_section_elements;
+
+      /**
+      * The size (in bytes) of the range of memory that may be initialized.
+      * Data segments may use the range [0, max_linear_memory_init).
+      * @brief The size (in bytes) of the range of memory that may be initialized.
+      */
+      std::uint32_t max_linear_memory_init;
+
+      /**
+      * The maximum total size (in bytes) used by parameters and local variables in a function.
+      * @brief The maximum total size (in bytes) used by parameters and local variables in a function.
+      */
+      std::uint32_t max_func_local_bytes;
+
+      /**
+       * The maximum nesting depth of structured control instructions.
+       * The function itself is included in this count.
+       * @brief The maximum nesting depth of structured control instructions.
+      */
+      std::uint32_t max_nested_structures;
+
+      /**
+      * The maximum size (in bytes) of names used for import and export.
+      * @brief The maximum size (in bytes) of names used for import and export.
+      */
+      std::uint32_t max_symbol_bytes;
+
+      /**
+      * The maximum total size (in bytes) of a wasm module.
+      * @brief The maximum total size (in bytes) of a wasm module.
+      */
+      std::uint32_t max_module_bytes;
+
+      /**
+      * The maximum size (in bytes) of each function body.
+      * @brief The maximum size (in bytes) of each function body.
+      */
+      std::uint32_t max_code_bytes;
+
+      /**
+       * The maximum number of 64 KiB pages of linear memory that a contract can use.
+       * Enforced when an action is executed. The initial size of linear memory is also checked at setcode.
+      * @brief The maximum number of 64 KiB pages of linear memory that a contract can use.
+      */
+      std::uint32_t max_pages;
+
+      /**
+      * The maximum number of functions that may be on the stack. Enforced when an action is executed.
+      * @brief The maximum number of functions that may be on the stack. Enforced when an action is executed.
+      */
+      std::uint32_t max_call_depth;
+   };
+
+   /**
+    * Set the configuration for wasm limits.
+    *
+    * @ingroup privileged
+    *
+    * @param params - the configuration to set.
+   */
+   inline void set_wasm_parameters(const eosio::wasm_parameters& params) {
+      char buf[sizeof(uint32_t) + sizeof(eosio::wasm_parameters)];
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      ds << uint32_t(0);  // fill in version
+      ds << params;
+      internal_use_do_not_use::set_wasm_parameters_packed( buf, ds.tellp() );
+   }
+
+   /**
+    * Get the current wasm limits configuration.
+    *
+    * @ingroup privileged
+    *
+    * @param[out] params the ouput for the parameters.
+    *
+    * @return the size of the parameters read onto the local buffer.
+   */
+   inline int get_wasm_parameters(eosio::wasm_parameters& params) {
+      char buf[sizeof(uint32_t) + sizeof(eosio::wasm_parameters)];
+      int sz = internal_use_do_not_use::get_wasm_parameters_packed(buf, sizeof(buf), 0);
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      uint32_t version;
+      ds >> version;
+      ds >> params;
+      return sz;
+   }
    /**
     *  Tunable KV configuration that can be changed via consensus
     *  @ingroup privileged
