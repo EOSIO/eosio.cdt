@@ -500,8 +500,162 @@ struct generation_utils {
       return _translate_type(replace_in_name(ret));
    }
 
+   // return combined typename, only be used only explicit nested type which has  <<>> or more
+   std::string translate_explicit_nested_type(const clang::QualType& type, int depth = 0){
+      std::string ret =  depth > 0 ? "B_" : "";
+      // one layer cdt string can be made from this layer container name and low layer type names, no need low layer ctd type string
+      bool gottype = false;
+      auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
+      if(auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr())){
+         if(auto rt = llvm::dyn_cast<clang::RecordType>(tst->desugar())){
+            if(auto * decl = rt->getDecl()){
+               std::string tname = decl->getName().str();
+               if(tname == "vector" || tname == "set" || tname == "deque" || tname == "list" || tname == "optional") {
+                  ret += depth > 0 ? tname + "_" : "";
+                  auto inside_type = std::get<clang::QualType>(get_template_argument(type));
+                  std::string inside_type_name;
+                  if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
+                     inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
+                  } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
+                     inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
+                  }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
+                     inside_type_name = translate_type(inside_type);
+                  } else if (is_aliasing(inside_type)) { // inside type is a alias
+                     inside_type_name = get_base_type_name( inside_type );
+                  }
+
+                  if(inside_type_name != ""){
+                     ret += inside_type_name;
+                     ret += depth > 0 ? "_E" : ( (tname == "optional") ? "?" : "[]" );
+                     gottype = true;
+                  }
+               } else if (tname == "map" || tname == "pair") {
+                  ret += depth > 0 ? tname + "_" : "pair_";
+                  clang::QualType inside_type[2];
+                  std::string inside_type_name[2];
+                  for(int i = 0; i < 2; ++i){
+                     inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+                     if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if( is_explicit_container(inside_type[i]) ) {
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+                        inside_type_name[i] = translate_type(inside_type[i]);
+                     } else if (is_aliasing(inside_type[i])) { // inside type is a alias
+                        inside_type_name[i] = get_base_type_name( inside_type[i] );
+                     }
+                  }
+
+                  if(inside_type_name[0] != "" && inside_type_name[1] != ""){
+                     ret += inside_type_name[0] + "_" + inside_type_name[1];
+                     ret += depth > 0 ? "_E" : ( tname == "map" ? "[]" : "");
+                     gottype = true;
+                  }
+               } else if (tname == "tuple")  {
+                  ret += tname + "_";
+                  int argcnt = tst->getNumArgs();
+                  std::vector<clang::QualType> inside_type(argcnt);
+                  std::vector<std::string> inside_type_name(argcnt);
+                  for(int i = 0; i < argcnt; ++i){
+                     inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+                     if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if( is_explicit_container(inside_type[i]) ) {
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+                        inside_type_name[i] = translate_type(inside_type[i]);
+                     } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+                        inside_type_name[i] = get_base_type_name( inside_type[i] );
+                     }
+                  }
+                  bool allgot = true;
+                  for(auto & inside_tn : inside_type_name) {
+                     if(inside_tn == "") allgot = false;
+                  }
+                  if(allgot){
+                     for (int i = 0; i < argcnt; ++i) {
+                        ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+                     }
+                     ret += depth > 0 ? "_E" : "";
+                     gottype = true;
+                  }
+               } else if (tname == "array")  {
+                  ret += depth > 0 ? tname + "_" : "";
+                  auto inside_type = std::get<clang::QualType>(get_template_argument(type, 0));
+                  std::string inside_type_name;
+                  if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
+                     inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
+                  } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
+                     inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
+                  }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
+                     inside_type_name = translate_type(inside_type);
+                  } else if (is_aliasing(inside_type)) { // inside type is an alias
+                     inside_type_name = get_base_type_name( inside_type );
+                  }
+
+                  if(inside_type_name != ""){
+                     ret += inside_type_name;
+                     std::string orig = type.getAsString();
+                     auto pos1 = orig.find_last_of(',');
+                     auto pos2 = orig.find_last_of('>');
+                     std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
+                     digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
+                     if(depth == 0){
+                        ret += "[" + digits + "]";
+                     } else {
+                        ret += "_" + digits + "_E";
+                     }
+
+                     gottype = true;
+                  }
+
+               } else if (tname == "variant") {
+                  ret += tname + "_";
+                  int argcnt = tst->getNumArgs();
+                  std::vector<clang::QualType> inside_type(argcnt);
+                  std::vector<std::string> inside_type_name(argcnt);
+                  for(int i = 0; i < argcnt; ++i){
+                     inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+                     if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if( is_explicit_container(inside_type[i]) ) {
+                        inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
+                     } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+                        inside_type_name[i] = translate_type(inside_type[i]);
+                     } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+                        inside_type_name[i] = get_base_type_name( inside_type[i] );
+                     }
+                  }
+                  bool allgot = true;
+                  for(auto & inside_tn : inside_type_name) {
+                     if(inside_tn == "") allgot = false;
+                  }
+
+                  if(allgot){
+                     for (int i = 0; i < argcnt; ++i) {
+                        ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+                     }
+                     ret += depth > 0 ? "_E" : "";
+                     gottype = true;
+                  }
+               }
+            }
+         }
+      }
+      if(!gottype) {
+         std::string errstring = "add_explicit_nested_type failed to fetch type from ";
+         errstring += type.getAsString();
+         CDT_INTERNAL_ERROR(errstring);
+         return "";
+      }
+      return ret;
+   }
+
    inline std::string translate_type( const clang::QualType& type ) {
-      if ( is_template_specialization( type, {"ignore"} ) )
+      if(is_explicit_nested(type)){
+         return translate_explicit_nested_type(type.getNonReferenceType());
+      }
+      else if ( is_template_specialization( type, {"ignore"} ) )
          return get_template_argument_as_string( type );
       else if ( is_template_specialization( type, {"binary_extension"} ) ) {
          auto t = get_template_argument_as_string( type );
@@ -634,6 +788,18 @@ struct generation_utils {
          return false;
       if (get_base_type_name(t).find("<") != std::string::npos) return false;
       return get_base_type_name(t).compare(get_type_alias_string(t)) != 0;
+   }
+
+   inline bool is_explicit_nested(const clang::QualType& t ){
+      std::string tstr = t.getAsString();
+      if(tstr.find("decay_t") != std::string::npos || tstr.find("decltype") != std::string::npos ||
+         tstr.find("invoke") != std::string::npos ||  tstr.find("declval") != std::string::npos ) return false;
+      return std::count (tstr.begin(), tstr.end(), '<') >= 2;
+   }
+
+   inline bool is_explicit_container(const clang::QualType& t ){
+      std::string tstr = t.getAsString();
+      return std::count (tstr.begin(), tstr.end(), '<') == 1;
    }
 
    inline bool is_tuple(const clang::QualType& t) {

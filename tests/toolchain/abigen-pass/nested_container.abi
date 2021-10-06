@@ -1,0 +1,111 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "B_map_string_string_E",
+            "type": "pair_string_string[]"
+        },
+        {
+            "new_type_name": "B_vector_int32_E",
+            "type": "int32[]"
+        }
+    ],
+    "structs": [
+        {
+            "name": "map2map",
+            "base": "",
+            "fields": [
+                {
+                    "name": "m",
+                    "type": "pair_string_string[]"
+                },
+                {
+                    "name": "m2m",
+                    "type": "pair_string_B_map_string_string_E[]"
+                }
+            ]
+        },
+        {
+            "name": "pair_string_B_map_string_string_E",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "type": "B_map_string_string_E"
+                }
+            ]
+        },
+        {
+            "name": "pair_string_string",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "settuple2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "tp2",
+                    "type": "tuple_int32_float64_string_B_vector_int32_E"
+                }
+            ]
+        },
+        {
+            "name": "tuple_int32_float64_string_B_vector_int32_E",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "int32"
+                },
+                {
+                    "name": "field_1",
+                    "type": "float64"
+                },
+                {
+                    "name": "field_2",
+                    "type": "string"
+                },
+                {
+                    "name": "field_3",
+                    "type": "B_vector_int32_E"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "map2map",
+            "type": "map2map",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settuple2",
+            "type": "settuple2",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}
