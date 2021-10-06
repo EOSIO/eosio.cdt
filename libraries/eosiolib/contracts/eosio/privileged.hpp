@@ -19,6 +19,12 @@ namespace eosio {
          void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
          __attribute__((eosio_wasm_import))
+         int64_t get_resource_limit( uint64_t account, uint64_t resource );
+
+         __attribute__((eosio_wasm_import))
+         void set_resource_limit( uint64_t account, uint64_t resource, int64_t limit );
+
+         __attribute__((eosio_wasm_import))
          void set_privileged( uint64_t account, bool is_priv );
 
          __attribute__((eosio_wasm_import))
@@ -395,6 +401,35 @@ namespace eosio {
     */
    inline void set_resource_limits( name account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight ) {
       internal_use_do_not_use::set_resource_limits( account.value, ram_bytes, net_weight, cpu_weight );
+   }
+
+   /**
+   * Get a single resource limit associated with an account.
+   *
+   * @ingroup privileged
+   *
+   * @param account - the account whose limits are being modified
+   * @param resource - the name of the resource limit which should be either ram, cpu, or net.
+   *
+   * @return the limit on the resource requested.
+   */
+   inline int64_t get_resource_limit( name account, name resource ) {
+      return internal_use_do_not_use::get_resource_limit( account.value, resource.value );
+   }
+
+   /**
+   * Update a single resource limit associated with an account.
+   *
+   * @ingroup privileged
+   *
+   * @param account - the account whose limits are being modified.
+   * @param resource - the resource to update, which should be either ram, cpu, or net.
+   * @param limit - the new limit.  A value of -1 means unlimited.
+   *
+   * @pre limit >= -1
+   */
+   inline void set_resource_limit( name account, name resource, int64_t limit ) {
+      internal_use_do_not_use::set_resource_limit( account.value, resource.value, limit );
    }
 
    /**
