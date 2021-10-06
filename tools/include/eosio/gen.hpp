@@ -810,7 +810,7 @@ struct generation_utils {
 
    inline bool is_explicit_nested(const clang::QualType& t ){
       std::string tstr = t.getAsString();
-      if(tstr.find("decay_t") != std::string::npos || tstr.find("decltype") != std::string::npos ||
+      if(tstr.find("decay_t") != std::string::npos || tstr.find("decltype") != std::string::npos || tstr.find("ignore") != std::string::npos ||
          tstr.find("invoke") != std::string::npos ||  tstr.find("declval") != std::string::npos ) return false;
       return std::count (tstr.begin(), tstr.end(), '<') >= 2;
    }
