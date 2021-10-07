@@ -1,0 +1,9 @@
+{
+    "tests" : [
+       {
+          "expected" : {
+             "abi-file" : "nested_container.abi"
+          }
+       }
+    ]
+}
