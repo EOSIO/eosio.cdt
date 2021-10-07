@@ -5,6 +5,12 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/serialize.hpp"
 
+#define STR_I(x) #x
+#define STR(x) STR_I(x)
+#define ASSERT_EQ(e1,e2) check((e1) == (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" != "#e2)
+#define ASSERT_LESS(e1,e2) check((e1) < (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" < "#e2)
+#define ASSERT_LE(e1,e2) check((e1) <= (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" <= "#e2)
+
 namespace eosio {
 
    namespace internal_use_do_not_use {
@@ -32,6 +38,12 @@ namespace eosio {
 
          __attribute__((eosio_wasm_import))
          uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+
+         __attribute__((eosio_wasm_import))
+         void set_parameters_packed( const char* params, uint32_t params_size );
+
+         __attribute__((eosio_wasm_import))
+         uint32_t get_parameters_packed( const char* ids, uint32_t ids_size, char* params, uint32_t params_size);
 
          __attribute__((eosio_wasm_import))
          void set_kv_parameters_packed( const char* data, uint32_t datalen );
@@ -199,6 +211,92 @@ namespace eosio {
     *  @param params - It will be replaced with the retrieved blockchain params
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
+
+   /**
+    *  Helper structure for host functions set_parameters_packed and get_parameters_packed
+    *  @ingroup privileged
+    */
+   struct params_object{
+      std::string packed;
+
+      template<typename T>
+      params_object(T v){
+         (*this)(v);
+      }
+
+      params_object(const std::string& params) : packed(params) {}
+
+      bool operator == (const params_object& pp) const{
+         return packed == pp.packed;
+      }
+
+      params_object& operator () (unsigned_int val){
+         char buffer[4];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+         ds << val;
+         ASSERT_LE(ds.tellp(), sizeof(buffer));
+
+         packed += {buffer, ds.tellp()};
+         return *this;
+      }
+
+      params_object& operator () (uint16_t val){
+         char buffer[2];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+         ds << val;
+         ASSERT_EQ(ds.tellp(), sizeof(buffer));
+
+         packed += {buffer, ds.tellp()};
+         return *this;
+      }
+
+      params_object& operator () (uint32_t val){
+         char buffer[4];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+         ds << val;
+         ASSERT_EQ(ds.tellp(), sizeof(buffer));
+
+         packed += {buffer, ds.tellp()};
+         return *this;
+      }
+
+      params_object& operator () (uint64_t val){
+         char buffer[8];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+         ds << val;
+         ASSERT_EQ(ds.tellp(), sizeof(buffer));
+
+         packed += {buffer, ds.tellp()};
+         return *this;
+      }
+
+      params_object& operator () (std::vector<unsigned_int>&& val){
+         char buffer[512];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+         ds << val;
+         ASSERT_LESS(ds.tellp(), sizeof(buffer));
+
+         packed += {buffer, ds.tellp()};
+         return *this;
+      }
+
+      void set() const{
+         internal_use_do_not_use::set_parameters_packed(packed.c_str(), packed.size());
+      }
+
+      params_object get() const{
+         char buffer[512];
+         datastream<char*> ds((char*)&buffer, sizeof(buffer));
+
+         auto size = internal_use_do_not_use::get_parameters_packed(packed.c_str(), packed.size(), buffer, sizeof(buffer));
+         ASSERT_LESS(size, sizeof(buffer));
+         return params_object{{buffer, size}};
+      }
+
+      size_t get_size() const{
+         return internal_use_do_not_use::get_parameters_packed(packed.c_str(), packed.size(), 0, 0);
+      }
+   };
 
    /**
     *  Tunable wasm limits configuration parameters.

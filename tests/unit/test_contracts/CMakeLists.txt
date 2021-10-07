@@ -13,9 +13,7 @@ add_contract(kv_map_tests kv_map_tests kv_map_tests.cpp)
 add_contract(capi_tests capi_tests capi/capi.c capi/action.c capi/chain.c capi/crypto.c capi/db.c capi/permission.c
                                    capi/print.c capi/privileged.c capi/system.c capi/transaction.c)
 add_contract(kv_bios kv_bios kv_bios/kv_bios.cpp)
-add_contract(wasm_params_test_contract wasm_params_test_contract host_functions/privileged/wasm_params_test_contract.cpp)
-add_contract(kv_params_test_contract kv_params_test_contract host_functions/privileged/kv_params_test_contract.cpp)
-add_contract(resource_limits_test_contract resource_limits_test_contract host_functions/privileged/resource_limits_test_contract.cpp)
+add_subdirectory(host_functions)
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/simple_wrong.abi ${CMAKE_CURRENT_BINARY_DIR}/simple_wrong.abi COPYONLY )
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/capi/capi_tests.abi ${CMAKE_CURRENT_BINARY_DIR}/capi_tests.abi COPYONLY )

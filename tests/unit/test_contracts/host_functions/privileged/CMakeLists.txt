@@ -1,0 +1,4 @@
+add_contract(params_test params_test params_test.cpp)
+add_contract(wasm_params_test_contract wasm_params_test_contract wasm_params_test_contract.cpp)
+add_contract(kv_params_test_contract kv_params_test_contract kv_params_test_contract.cpp)
+add_contract(resource_limits_test_contract resource_limits_test_contract resource_limits_test_contract.cpp)
