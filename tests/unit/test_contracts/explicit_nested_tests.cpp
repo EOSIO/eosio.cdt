@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+
     
 using namespace std;
 using namespace eosio;
@@ -16,6 +17,8 @@ CONTRACT explicit_nested_tests : public contract {
    }; 
    typedef std::optional<float> opt_float;
    typedef std::vector<opt_float> vec_opt_float; 
+
+
 
    TABLE testdata {
       uint64_t  id;
@@ -99,6 +102,57 @@ CONTRACT explicit_nested_tests : public contract {
     // usage : cleos -v push action eosio var '[["B_vector_int32_E", [2,3,4]]]'  -p eosio@active
    std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>>  var(std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>>  input){
       std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>> output = input;
+      return output;
+   }
+
+   [[eosio::action]]  // sdl means set deque list , as we support them should test them as well.
+   // usage : cleos -v push action eosio sdlstr '[[[["abc", "cde"],["def","fgh"]]]]' -p eosio@active
+   std::set<std::deque<std::list<std::string>>> sdlstr(std::set<std::deque<std::list<std::string>>> input) {
+      std::set<std::deque<std::list<std::string>>> output = input;
+      for(auto & deqlist : output){
+         for(auto & row : deqlist) {
+            for(auto & word : row) {
+               eosio::cout << " " << word;
+            }
+            eosio::cout << "\n";
+         }
+      }
+      return output;
+   }
+
+   typedef std::vector<std::vector<std::string>>  vecvecstr;
+   [[eosio::action]]   // this test is for the whole type is not explicit nested by the inside type is a alias of explicit nested.
+   // usage : cleos -v push action eosio vivvstr '[[[["abc", "cde"],["def","fgh"]]]]' -p eosio@active
+   std::vector<vecvecstr> vivvstr(std::vector<vecvecstr> input) {
+      std::vector<vecvecstr> output = input;
+      for(auto & vecvec : output){
+         for(auto & row : vecvec) {
+            for(auto & word : row) {
+               eosio::cout << " " << word;
+            }
+            eosio::cout << "\n";
+         }
+      }
+      return output;
+   }
+
+   typedef vector<vector<vector<int> > > myvec3;
+   typedef set<myvec3> myset;
+
+   [[eosio::action]]   // this test is for the whole type is not explicit nested by the inside type is a alias of explicit nested.
+   // usage : cleos -v push action eosio sivvvi '[[[[[1, 2],[3,4]]]]]' -p eosio@active
+   myset sivvvi(myset input) {
+      myset output = input;
+      for(auto & vvvi : output){
+         for(auto & vecvec : vvvi){
+            for(auto & row : vecvec) {
+               for(auto & num : row) {
+                  eosio::cout << " " << num;
+               }
+               eosio::cout << "\n";
+            }
+         }
+      }
       return output;
    }
 
