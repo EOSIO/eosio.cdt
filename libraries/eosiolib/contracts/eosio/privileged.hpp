@@ -1,5 +1,6 @@
 #pragma once
 #include "producer_schedule.hpp"
+#include "system.hpp"
 #include "../../core/eosio/crypto.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/serialize.hpp"
@@ -11,23 +12,32 @@ namespace eosio {
          __attribute__((eosio_wasm_import))
          bool is_privileged( uint64_t account );
 
-        __attribute__((eosio_wasm_import))
-        void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
+         __attribute__((eosio_wasm_import))
+         void get_resource_limits( uint64_t account, int64_t* ram_bytes, int64_t* net_weight, int64_t* cpu_weight );
 
-        __attribute__((eosio_wasm_import))
-        void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
+         __attribute__((eosio_wasm_import))
+         void set_resource_limits( uint64_t account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
-        __attribute__((eosio_wasm_import))
-        void set_privileged( uint64_t account, bool is_priv );
+         __attribute__((eosio_wasm_import))
+         void set_privileged( uint64_t account, bool is_priv );
 
-        __attribute__((eosio_wasm_import))
-        void set_blockchain_parameters_packed( char* data, uint32_t datalen );
+         __attribute__((eosio_wasm_import))
+         void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-        __attribute__((eosio_wasm_import))
-        uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
+         __attribute__((eosio_wasm_import))
+         uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-        __attribute((eosio_wasm_import))
-        int64_t set_proposed_producers( char*, uint32_t );
+         __attribute__((eosio_wasm_import))
+         void set_kv_parameters_packed( const char* data, uint32_t datalen );
+
+         __attribute((eosio_wasm_import))
+         int64_t set_proposed_producers( char*, uint32_t );
+
+         __attribute__((eosio_wasm_import))
+         void preactivate_feature( const capi_checksum256* feature_digest );
+
+         __attribute__((eosio_wasm_import))
+         int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
       }
    }
 
@@ -44,8 +54,8 @@ namespace eosio {
    struct blockchain_parameters {
 
       /**
-      * The maxiumum net usage in instructions for a block
-      * @brief the maxiumum net usage in instructions for a block
+      * The maximum net usage in instructions for a block
+      * @brief the maximum net usage in instructions for a block
       */
       uint64_t max_block_net_usage;
 
@@ -85,8 +95,8 @@ namespace eosio {
       uint32_t context_free_discount_net_usage_den;
 
       /**
-      * The maxiumum billable cpu usage (in microseconds) for a block
-      * @brief The maxiumum billable cpu usage (in microseconds) for a block
+      * The maximum billable cpu usage (in microseconds) for a block
+      * @brief The maximum billable cpu usage (in microseconds) for a block
       */
       uint32_t max_block_cpu_usage;
 
@@ -175,6 +185,54 @@ namespace eosio {
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
 
+   /**
+    *  Tunable KV configuration that can be changed via consensus
+    *  @ingroup privileged
+    */
+   struct kv_parameters {
+      /**
+      * The maximum key size
+      * @brief The maximum key size
+      */
+      uint32_t max_key_size;
+
+      /**
+      * The maximum value size
+      * @brief The maximum value size
+      */
+      uint32_t max_value_size;
+
+      /**
+       * The maximum number of iterators
+      * @brief The maximum number of iterators
+       */
+      uint32_t max_iterators;
+
+      EOSLIB_SERIALIZE( kv_parameters,
+                        (max_key_size)
+                        (max_value_size)(max_iterators)
+      )
+   };
+
+   /**
+    *  Set the kv parameters
+    *
+    *  @ingroup privileged
+    *  @param params - New kv parameters to set
+    */
+   inline void set_kv_parameters(const eosio::kv_parameters& params) {
+      // set_kv_parameters_packed expects version, max_key_size,
+      // max_value_size, and max_iterators,
+      // while kv_parameters only contains max_key_size, max_value_size,
+      // and max_iterators. That's why we place uint32_t in front
+      // of kv_parameters in buf
+      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
+      eosio::datastream<char *> ds( buf, sizeof(buf) );
+      ds << uint32_t(0);  // fill in version
+      ds << params;
+      internal_use_do_not_use::set_kv_parameters_packed( buf, ds.tellp() );
+   }
+
     /**
     *  Get the resource limits of an account
     *
@@ -202,7 +260,7 @@ namespace eosio {
    }
 
    /**
-    *  Proposes a schedule change
+    *  Proposes a schedule change using the legacy producer key format
     *
     *  @ingroup privileged
     *  @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
@@ -211,6 +269,23 @@ namespace eosio {
     *  @return an optional value of the version of the new proposed schedule if successful
     */
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods );
+
+   /**
+    *  Proposes a schedule change using the more flexible key format
+    *
+    *  @ingroup privileged
+    *  @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to "pending" automatically. Once the block that promotes the schedule is irreversible, the schedule will become "active"
+    *  @param producers - vector of producer authorities
+    *
+    *  @return an optional value of the version of the new proposed schedule if successful
+    */
+   inline std::optional<uint64_t> set_proposed_producers( const std::vector<producer_authority>& prods ) {
+      auto packed_prods = eosio::pack( prods );
+      int64_t ret = internal_use_do_not_use::set_proposed_producers_ex(1, (char*)packed_prods.data(), packed_prods.size());
+      if (ret >= 0)
+        return static_cast<uint64_t>(ret);
+      return {};
+   }
 
    /**
     *  Check if an account is privileged
@@ -233,6 +308,19 @@ namespace eosio {
     */
    inline void set_privileged( name account, bool is_priv ) {
       internal_use_do_not_use::set_privileged( account.value, is_priv );
+   }
+
+   /**
+    * Pre-activate protocol feature
+    *
+    * @ingroup privileged
+    * @param feature_digest - digest of the protocol feature to pre-activate
+    */
+   inline void preactivate_feature( const checksum256& feature_digest ) {
+      auto feature_digest_data = feature_digest.extract_as_byte_array();
+      internal_use_do_not_use::preactivate_feature(
+         reinterpret_cast<const internal_use_do_not_use::capi_checksum256*>( feature_digest_data.data() )
+      );
    }
 
 }
