@@ -41,6 +41,10 @@ set_property(TEST version_tests PROPERTY LABELS unit_tests)
 
 if (eosio_FOUND)
 
+   if (NOT eosio_FOUND)
+      message(WARNING "Could not find eosio")
+   endif()
+
    add_test(integration_tests ${EOSIO_ROOT}/bin/eosio-tester ${CMAKE_BINARY_DIR}/tests/integration/integration_tests.wasm)
    set_property(TEST integration_tests PROPERTY LABELS integration_tests)
 

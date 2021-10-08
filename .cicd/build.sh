@@ -19,10 +19,7 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    BUILD_COMMANDS="cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$JOBS"
-
-    BUILD_COMMANDS_1604="cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_FLAGS=\"-stdlib=libc++\" && make -j$JOBS"
-    [[ $IMAGE_TAG == 'ubuntu-16.04' ]] && BUILD_COMMANDS="$BUILD_COMMANDS_1604"
+    BUILD_COMMANDS="cmake .. -DEOSIO_RUN_INTEGRATION_TESTS=ON -DEOSIO_ROOT=/usr/local && make -j$JOBS"
 
     [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
     # Docker Commands

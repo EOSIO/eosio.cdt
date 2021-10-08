@@ -5,7 +5,7 @@ set -eo pipefail
 mkdir -p $BUILD_DIR
 
 PRE_COMMANDS="cd $MOUNTED_DIR/build"
-TEST="ctest -j$JOBS -L integration_tests -V -T Test"
+TEST="ctest -j$JOBS -L integration_tests -V -T Test && ctest -j$JOBS -L tester_tests -V -T Test"
 COMMANDS="$PRE_COMMANDS && $TEST"
 
 ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
@@ -21,7 +21,11 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
 fi
 
 if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
+<<<<<<< HEAD
   FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop'
+=======
+  FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop-boxed'
+>>>>>>> develop-boxed
 fi
 
 set +e
@@ -43,4 +47,8 @@ fi
 if [[ "$EXIT_STATUS" != 0 ]]; then
     echo "Failing due to non-zero exit status from ctest: $EXIT_STATUS"
     exit $EXIT_STATUS
+<<<<<<< HEAD
 fi
+=======
+fi
+>>>>>>> develop-boxed
