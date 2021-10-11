@@ -457,6 +457,7 @@ struct generation_utils {
          {"signed_int",   "varint32"},
 
          {"basic_string<char>", "string"},
+         {"string_view",   "string"},
 
          {"block_timestamp", "block_timestamp_type"},
          {"capi_name",    "name"},

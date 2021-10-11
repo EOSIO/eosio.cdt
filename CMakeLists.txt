@@ -103,6 +103,9 @@ configure_file(${CMAKE_SOURCE_DIR}/libraries/meta_refl/LICENSE ${CMAKE_BINARY_DI
 configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/eosio.cdt.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/eosiolib/tester/fpconv.license ${CMAKE_BINARY_DIR}/licenses/fpconv.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/fmt/LICENSE.rst ${CMAKE_BINARY_DIR}/licenses/fmt.license COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/libraries/abieos/external/rapidjson/license.txt ${CMAKE_BINARY_DIR}/licenses/rapidjson.license COPYONLY)
 
 include(modules/TestsExternalProject.txt)
 

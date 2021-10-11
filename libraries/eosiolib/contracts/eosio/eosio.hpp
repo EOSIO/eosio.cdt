@@ -3,12 +3,12 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include "action.hpp"
-#include "../../core/eosio/print.hpp"
-#include "map.hpp"
-#include "multi_index.hpp"
-#include "dispatcher.hpp"
-#include "contract.hpp"
+#include <eosio/action.hpp>
+#include <eosio/print.hpp>
+#include <eosio/key_value.hpp>
+#include <eosio/multi_index.hpp>
+#include <eosio/dispatcher.hpp>
+#include <eosio/contract.hpp>
 
 #ifndef EOSIO_NATIVE
 static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );

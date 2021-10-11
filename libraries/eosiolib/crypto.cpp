@@ -2,8 +2,8 @@
  *  @file
  *  @copyright defined in eos/LICENSE
  */
-#include "core/eosio/crypto.hpp"
-#include "core/eosio/datastream.hpp"
+#include <eosio/crypto.hpp>
+#include <eosio/datastream.hpp>
 
 extern "C" {
    struct __attribute__((aligned (16))) capi_checksum160 { uint8_t hash[20]; };

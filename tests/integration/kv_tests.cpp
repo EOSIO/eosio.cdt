@@ -1,193 +1,137 @@
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
-
-#include <eosio/chain/abi_serializer.hpp>
-#include <eosio/testing/tester.hpp>
-
-#include <fc/variant_object.hpp>
+#include <catch2/catch.hpp>
+#include <eosio/tester.hpp>
 
 #include <contracts.hpp>
 
 using namespace eosio;
-using namespace eosio::testing;
+using eosio::testing::contracts;
 
-using mvo = fc::mutable_variant_object;
-
-#ifdef NON_VALIDATING_TEST
-#define TESTER tester
-#else
-#define TESTER validating_tester
-#endif
-
-struct kv_tester {
-   kv_tester(std::vector<uint8_t> wasm, std::vector<char> abi) {
-      /*
-      chain.close();
-      auto cfg = chain.get_config();
-      cfg.backing_store = eosio::chain::backing_store_type::ROCKSDB;
-      chain.init(cfg);
-      */
-
-      chain.create_accounts({"kvtest"_n});
-      chain.produce_block();
-      chain.set_code("kvtest"_n, wasm);
-      chain.set_abi("kvtest"_n, abi.data());
-      chain.produce_blocks();
-
-      chain.set_code(config::system_account_name, contracts::kv_bios_wasm());
-      chain.set_abi(config::system_account_name, contracts::kv_bios_abi().data());
-
-      chain.push_action(config::system_account_name, "ramkvlimits"_n, config::system_account_name,
-            mvo()("k", 1024)("v", 1024*1024)("i", 256));
-      chain.produce_blocks();
-   }
-
-   void push_action(name act, std::string exception_msg="") {
-      if (exception_msg.empty()) {
-         chain.push_action("kvtest"_n, act, "kvtest"_n, {});
-      } else {
-         BOOST_CHECK_EXCEPTION(chain.push_action("kvtest"_n, act, "kvtest"_n, {}),
-                               eosio_assert_message_exception,
-                               eosio_assert_message_is(exception_msg));
-      }
-   }
-
-   tester chain;
+// FIXME: Put this in a header
+// Manages resources used by the kv-store
+class [[eosio::contract]] kv_bios : eosio::contract {
+ public:
+   using contract::contract;
+   [[eosio::action]] void setdisklimit(name account, int64_t limit);
+   [[eosio::action]] void setramlimit(name account, int64_t limit);
+   [[eosio::action]] void ramkvlimits(uint32_t k, uint32_t v, uint32_t i);
+   [[eosio::action]] void diskkvlimits(uint32_t k, uint32_t v, uint32_t i);
+   void kvlimits_impl(name db, uint32_t k, uint32_t v, uint32_t i);
+   using ramkvlimits_action = action_wrapper<"ramkvlimits"_n, &kv_bios::ramkvlimits, "eosio"_n>;
 };
 
-// TODO rework after release for these to use new table type
-void setup(TESTER& tester, std::vector<uint8_t> wasm, std::vector<char> abi) {
-   tester.create_accounts( { "kvtest"_n } );
-   tester.produce_block();
-   tester.set_code( "kvtest"_n, wasm );
-   tester.set_abi( "kvtest"_n, abi.data() );
-   tester.produce_blocks();
-
-   tester.set_code(config::system_account_name, contracts::kv_bios_wasm());
-   tester.set_abi(config::system_account_name, contracts::kv_bios_abi().data());
-
-   auto data = mvo()("k", 1024)("v", 1024*1024)("i", 256);
-   tester.push_action(config::system_account_name, "ramkvlimits"_n, config::system_account_name, data);
-   tester.push_action("kvtest"_n, "setup"_n, "kvtest"_n, {});
-
-   tester.produce_blocks();
+eosio::checksum256 make_checksum256(std::string_view src) {
+   std::array<uint8_t, 32> buf;
+   eosio::unhex(buf.begin(), src.begin(), src.end());
+   return eosio::checksum256(buf);
 }
 
-BOOST_AUTO_TEST_SUITE(key_value_tests)
+void setup(test_chain& tester, const char* wasm_file) {
+   tester.set_code( "eosio"_n, contracts::boot_wasm() );
+   tester.transact({action({"eosio"_n, "active"_n}, "eosio"_n, "activate"_n,
+                           make_checksum256("825ee6288fb1373eab1b5187ec2f04f6eacb39cb3a97f356a07c91622dd61d16"))});
+   tester.finish_block();
 
-BOOST_AUTO_TEST_CASE(map_tests) try {
-   kv_tester t = {contracts::kv_map_tests_wasm(), contracts::kv_map_tests_abi()};
-   t.push_action("test"_n);
-   t.push_action("iter"_n);
-   t.push_action("erase"_n);
-   t.push_action("eraseexcp"_n, "key not found");
-   t.push_action("bounds"_n);
-   t.push_action("ranges"_n);
-   t.push_action("empty"_n);
-   t.push_action("gettmpbuf"_n);
-   t.push_action("constrct"_n);
-   t.push_action("keys"_n);
-} FC_LOG_AND_RETHROW()
+   tester.create_code_account( "kvtest"_n );
+   tester.finish_block();
+   tester.set_code( "kvtest"_n, wasm_file );
+   tester.finish_block();
 
-// TODO replace these tests with new table tests after this release
-BOOST_AUTO_TEST_CASE(single_tests_find) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "find"_n, "kvtest"_n, {});
+   tester.set_code("eosio"_n, contracts::kv_bios_wasm());
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "finderror"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("Cannot read end iterator"));
-} FC_LOG_AND_RETHROW()
+   tester.as("kvtest"_n).act<kv_bios::ramkvlimits_action>(1024, 1024*1024, 256);
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "setup"_n, std::tuple())});
 
-BOOST_AUTO_TEST_CASE(single_tests_get) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "get"_n, "kvtest"_n, {});
+   tester.finish_block();
+}
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "geterror"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("Key not found in `[]`"));
-} FC_LOG_AND_RETHROW()
+TEST_CASE("single_tests_find", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "find"_n, std::tuple())});
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "finderror"_n, std::tuple())}, "Cannot read end iterator");
+}
 
-BOOST_FIXTURE_TEST_CASE(single_tests_bounds, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "bounds"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
+TEST_CASE("single_tests_get", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "get"_n, std::tuple())});
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "geterror"_n, std::tuple())}, "Key not found in `[]`");
+}
 
-BOOST_FIXTURE_TEST_CASE(single_tests_iteration, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "iteration"_n, "kvtest"_n, {});
+TEST_CASE("single_tests_bounds", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "bounds"_n, std::tuple())});
+}
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "itrerror1"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("cannot increment end iterator"));
+TEST_CASE("single_tests_iteration", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "iteration"_n, std::tuple())});
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "itrerror1"_n, std::tuple())}, "cannot increment end iterator");
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "itrerror2"_n, std::tuple())}, "decremented past the beginning");
+}
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "itrerror2"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("decremented past the beginning"));
-} FC_LOG_AND_RETHROW()
+TEST_CASE("single_tests_reverse_iteration", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "riteration"_n, std::tuple())});
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "ritrerror1"_n, std::tuple())}, "incremented past the end");
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "ritrerror2"_n, std::tuple())}, "decremented past the beginning");
+}
 
-BOOST_FIXTURE_TEST_CASE(single_tests_reverse_iteration, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "riteration"_n, "kvtest"_n, {});
+TEST_CASE("single_tests_range", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "range"_n, std::tuple())});
+}
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "ritrerror1"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("incremented past the end"));
-
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "ritrerror2"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("decremented past the beginning"));
-} FC_LOG_AND_RETHROW()
-
-BOOST_FIXTURE_TEST_CASE(single_tests_range, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "range"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
-
-BOOST_FIXTURE_TEST_CASE(single_tests_erase, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_single_tests_wasm(), contracts::kv_single_tests_abi());
-   tester.push_action("kvtest"_n, "erase"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
+TEST_CASE("single_tests_erase", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_single_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "erase"_n, std::tuple())});
+}
 
 // Multi
 // -----
-BOOST_FIXTURE_TEST_CASE(multi_tests_get, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
-   tester.push_action("kvtest"_n, "get"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
+TEST_CASE("multi_tests_get", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_multi_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "get"_n, std::tuple())});
+}
 
-BOOST_FIXTURE_TEST_CASE(multi_tests_iteration, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
-   tester.push_action("kvtest"_n, "iteration"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
+TEST_CASE("multi_tests_iteration", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_multi_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "iteration"_n, std::tuple())});
+}
 
-BOOST_FIXTURE_TEST_CASE(multi_tests_non_unique, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
-   tester.push_action("kvtest"_n, "nonunique"_n, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW()
+TEST_CASE("multi_tests_non_unique", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_multi_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "nonunique"_n, std::tuple())});
+}
 
-BOOST_FIXTURE_TEST_CASE(multi_tests_update, tester) try {
-   TESTER tester;
-   setup(tester, contracts::kv_multi_tests_wasm(), contracts::kv_multi_tests_abi());
-   tester.push_action("kvtest"_n, "update"_n, "kvtest"_n, {});
+TEST_CASE("multi_tests_non_update", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_multi_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "update"_n, std::tuple())});
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "updateerr1"_n, std::tuple())}, "Attempted to update an existing secondary index.");
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "updateerr2"_n, std::tuple())}, "Attempted to store an existing secondary index.");
+}
 
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "updateerr1"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("Attempted to update an existing secondary index."));
-   BOOST_CHECK_EXCEPTION(tester.push_action("kvtest"_n, "updateerr2"_n, "kvtest"_n, {}),
-                         eosio_assert_message_exception,
-                         eosio_assert_message_is("Attempted to store an existing secondary index."));
-} FC_LOG_AND_RETHROW()
+// Variant
+// -------
+TEST_CASE("variant_tests", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_variant_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "vriant"_n, std::tuple())});
+}
+TEST_CASE("variant_upgrade_tests", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_variant_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "vriantupgrd"_n, std::tuple())});
+}
 
 // Make Key
 // --------
@@ -196,10 +140,22 @@ std::vector<name> data_set{
    "makekeyflt"_n, "makekeydbl"_n, "makekeystct"_n, "makekeytup"_n
 };
 
-BOOST_DATA_TEST_CASE(makekeytests, data_set) { try {
-   TESTER tester;
-   setup(tester, contracts::kv_make_key_tests_wasm(), contracts::kv_make_key_tests_abi());
-   tester.push_action("kvtest"_n, sample, "kvtest"_n, {});
-} FC_LOG_AND_RETHROW() }
+TEST_CASE("makekeytests", "[kv_tests]") {
+   for(auto sample: data_set) {
+      test_chain tester;
+      setup(tester, contracts::kv_make_key_tests_wasm());
+      tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, sample, std::tuple())});
+   }
+}
 
-BOOST_AUTO_TEST_SUITE_END()
+TEST_CASE("singleton_tests", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_singleton_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "test"_n, std::tuple())});
+}
+
+TEST_CASE("singleton_tests_error", "[kv_tests]") {
+   test_chain tester;
+   setup(tester, contracts::kv_singleton_tests_wasm());
+   tester.transact({action({"kvtest"_n, "active"_n}, "kvtest"_n, "erase"_n, std::tuple())}, "tried to get the singleton 'kvtest'/'count' that does not exist");
+}

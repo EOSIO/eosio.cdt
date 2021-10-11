@@ -1,97 +1,62 @@
-#include <boost/test/unit_test.hpp>
-#include <eosio/testing/tester.hpp>
-#include <eosio/chain/abi_serializer.hpp>
-
-#include <Runtime/Runtime.h>
-
-#include <fc/variant_object.hpp>
+#include <catch2/catch.hpp>
+#include <eosio/tester.hpp>
+#include <tuple>
+#include <string>
 
 #include <contracts.hpp>
 
 using namespace eosio;
-using namespace eosio::testing;
-using namespace eosio::chain;
-using namespace eosio::testing;
-using namespace fc;
+using eosio::testing::contracts;
+using namespace std::literals;
+using std::tuple;
 
-using mvo = fc::mutable_variant_object;
+TEST_CASE_METHOD( test_chain, "Simple tests", "[simple]" ) {
+   create_code_account( "test"_n );
+   create_code_account( "eosio.token"_n );
+   create_code_account( "someone"_n );
+   create_code_account( "other"_n );
+   finish_block();
 
-BOOST_AUTO_TEST_SUITE(codegen_tests)
-
-BOOST_FIXTURE_TEST_CASE( simple_tests, tester ) try {
-   create_accounts( { "test"_n, "eosio.token"_n, "someone"_n, "other"_n } );
-   produce_block();
-
-   set_code( "eosio.token"_n,  contracts::transfer_wasm() );
-   set_abi(  "eosio.token"_n,  contracts::transfer_abi().data() );
-
+   set_code( "eosio.token"_n, contracts::transfer_wasm() );
    set_code( "someone"_n, contracts::transfer_wasm() );
-   set_abi(  "someone"_n,  contracts::transfer_abi().data() );
-
    set_code( "test"_n, contracts::simple_wasm() );
-   set_abi( "test"_n,  contracts::simple_abi().data() );
-
    set_code( "other"_n, contracts::simple_wasm() );
-   set_abi( "other"_n,  contracts::simple_abi().data() );
 
-   produce_blocks();
-   push_action("test"_n, "test1"_n, "test"_n,
-         mvo()
-         ("nm", "bucky"));
+   finish_block();
+   transact({action({"test"_n, "active"_n}, "test"_n, "test1"_n, tuple("bucky"_n))});
 
-   BOOST_CHECK_THROW(push_action("test"_n, "test1"_n, "test"_n, mvo()("nm", "notbucky")),
-         fc::exception);
+   transact({action({"test"_n, "active"_n}, "test"_n, "test1"_n, tuple("notbucky"_n))}, "not bucky");
 
-   push_action("test"_n, "test2"_n, "test"_n,
-         mvo()
-         ("arg0", 33)
-         ("arg1", "some string"));
-   BOOST_CHECK_THROW(push_action("test"_n, "test2"_n, "test"_n, mvo() ("arg0", 30)("arg1", "some string")), fc::exception);
-   BOOST_CHECK_THROW(push_action("test"_n, "test2"_n, "test"_n, mvo() ("arg0", 33)("arg1", "not some string")), fc::exception);
+   transact({action({"test"_n, "active"_n}, "test"_n, "test2"_n, tuple(33, "some string"s))});
+   transact({action({"test"_n, "active"_n}, "test"_n, "test2"_n, tuple(30, "some string"s))}, "33 does not match");
+   transact({action({"test"_n, "active"_n}, "test"_n, "test2"_n, tuple(33, "not some string"s))}, "some string does not match");
 
-   set_abi( "test"_n,  contracts::simple_wrong_abi().data() );
-   produce_blocks();
+   transact({action({"test"_n, "active"_n}, "test"_n, "test3"_n, tuple(33, "some string"s))}, "8000000000000000000");
 
-   BOOST_CHECK_THROW(push_action("test"_n, "test3"_n, "test"_n, mvo() ("arg0", 33) ("arg1", "some string")), fc::exception);
+   finish_block();
 
-   set_abi( "test"_n,  contracts::simple_abi().data() );
-   produce_blocks();
-
-   push_action("test"_n, "test4"_n, "test"_n, mvo() ("to", "someone"));
-   push_action("test"_n, "test5"_n, "test"_n, mvo() ("to", "someone"));
-   push_action("test"_n, "testa"_n, "test"_n, mvo() ("to", "someone"));
-   BOOST_CHECK_THROW(push_action("test"_n, "testb"_n, "test"_n, mvo() ("to", "someone")), fc::exception);
+   transact({{{"test"_n, "active"_n}, "test"_n, "test4"_n, tuple("someone"_n)}});
+   transact({{{"test"_n, "active"_n}, "test"_n, "test5"_n, tuple("someone"_n)}});
+   transact({{{"test"_n, "active"_n}, "test"_n, "testa"_n, tuple("someone"_n)}});
+   transact({{{"test"_n, "active"_n}, "test"_n, "testb"_n, tuple("someone"_n)}}, "should only be eosio for action failure");
 
    // test that the pre_dispatch will short circuit dispatching if false
-   push_action("test"_n, "testc"_n, "test"_n, mvo() ("nm", "bucky"));
-   BOOST_CHECK_THROW(push_action("test"_n, "testc"_n, "test"_n, mvo() ("nm", "someone")), fc::exception);
-   push_action("test"_n, "testc"_n, "test"_n, mvo() ("nm", "quit"));
+   transact({{{"test"_n, "active"_n}, "test"_n, "testc"_n, tuple("bucky"_n)}});
+   transact({{{"test"_n, "active"_n}, "test"_n, "testc"_n, tuple("someone"_n)}}, "should be bucky");
+   transact({{{"test"_n, "active"_n}, "test"_n, "testc"_n, tuple("quit"_n)}});
 
-} FC_LOG_AND_RETHROW()
+}
 
-BOOST_FIXTURE_TEST_CASE( simple_eosio_tests, tester ) try {
+TEST_CASE_METHOD( test_chain, "Simple tests on eosio account", "[simple]" ) {
    set_code( "eosio"_n, contracts::simple_wasm() );
-   set_abi( "eosio"_n,  contracts::simple_wrong_abi().data() );
-   produce_blocks();
-   push_action("eosio"_n, "test1"_n, "eosio"_n,
-         mvo()
-         ("nm", "bucky"));
+   finish_block();
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test1"_n, tuple("bucky"_n)}});
 
-   BOOST_CHECK_THROW(push_action("eosio"_n, "test1"_n, "eosio"_n, mvo()("nm", "notbucky")),
-         fc::exception);
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test1"_n, tuple("notbucky"_n)}}, "not bucky");
 
-   push_action("eosio"_n, "test2"_n, "eosio"_n,
-         mvo()
-         ("arg0", 33)
-         ("arg1", "some string"));
-   BOOST_CHECK_THROW(push_action("eosio"_n, "test2"_n, "eosio"_n, mvo() ("arg0", 30)("arg1", "some string")), fc::exception);
-   BOOST_CHECK_THROW(push_action("eosio"_n, "test2"_n, "eosio"_n, mvo() ("arg0", 33)("arg1", "not some string")), fc::exception);
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test2"_n, tuple(33, "some string"s)}});
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test2"_n, tuple(30, "some string"s)}}, "33 does not match");
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test2"_n, tuple(33, "not some string"s)}}, "some string does not match");
 
-   push_action("eosio"_n, "test3"_n, "eosio"_n,
-         mvo()
-         ("arg0", 33)
-         ("arg1", "some string"));
-
-} FC_LOG_AND_RETHROW()
-
-BOOST_AUTO_TEST_SUITE_END()
+   transact({{{"eosio"_n, "active"_n}, "eosio"_n, "test3"_n, tuple(33, "some string"s)}});
+}

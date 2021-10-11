@@ -36,7 +36,7 @@
 
 # Build
 build/*
-cmake-build-debug/
+build-*/*
 examples/multi_index_example/build
 examples/hello/build
 

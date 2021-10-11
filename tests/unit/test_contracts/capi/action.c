@@ -13,5 +13,7 @@ void test_action( void ) {
    send_context_free_inline(NULL, 0);
    publication_time();
    current_receiver();
+#if 0
    set_action_return_value(NULL, 0);
+#endif
 }
