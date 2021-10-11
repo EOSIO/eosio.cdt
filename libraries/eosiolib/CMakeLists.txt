@@ -53,13 +53,13 @@ target_compile_options(eosio_tester PRIVATE -fno-default-paths)
 target_link_libraries(eosio_tester c++)
 
 add_custom_command(
-   OUTPUT ${BASE_BINARY_DIR}/crt0.o
-   COMMAND ${CMAKE_CXX_COMPILER} -fno-default-paths -c -o ${BASE_BINARY_DIR}/crt0.o "-I$<JOIN:$<TARGET_PROPERTY:eosio_tester,INCLUDE_DIRECTORIES>,;-I>" ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
+   OUTPUT ${BASE_BINARY_DIR}/lib/crt0.o
+   COMMAND ${CMAKE_CXX_COMPILER} -fno-default-paths -c -o ${BASE_BINARY_DIR}/lib/crt0.o "-I$<JOIN:$<TARGET_PROPERTY:eosio_tester,INCLUDE_DIRECTORIES>,;-I>" ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    DEPENDS ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    COMMENT "Building C++ object crt0.o"
    COMMAND_EXPAND_LISTS
 )
-add_custom_target(crt0.o.target DEPENDS ${BASE_BINARY_DIR}/crt0.o)
+add_custom_target(crt0.o.target DEPENDS ${BASE_BINARY_DIR}/lib/crt0.o)
 add_dependencies(eosio_tester crt0.o.target)
 
 add_native_library(native_eosio
