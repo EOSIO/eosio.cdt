@@ -79,11 +79,11 @@ namespace eosio { namespace cdt {
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
-            validate_name(decl->getName().str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
+            // validate_name(decl->getName().str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
             ret.name = decl->getName().str();
          }
          else {
-            validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
+            // validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); });
             ret.name = action_name.str();
          }
          ret.type = decl->getName().str();
@@ -106,11 +106,11 @@ namespace eosio { namespace cdt {
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
          if (action_name.empty()) {
-            validate_name( decl->getNameAsString(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
+            // validate_name( decl->getNameAsString(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             ret.name = decl->getNameAsString();
          }
          else {
-            validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
+            // validate_name( action_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             ret.name = action_name.str();
          }
          ret.type = decl->getNameAsString();
@@ -245,7 +245,7 @@ namespace eosio { namespace cdt {
          t.type = decl->getNameAsString();
          auto table_name = decl->getEosioTableAttr()->getName();
          if (!table_name.empty()) {
-            validate_name( table_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
+            // validate_name( table_name.str(), [&](auto s) { CDT_ERROR("abigen_error", decl->getLocation(), s); } );
             t.name = table_name.str();
          }
          else {
