@@ -1,0 +1,29 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "test",
+            "base": "",
+            "fields": []
+        }
+    ],
+    "actions": [
+        {
+            "name": "test",
+            "type": "test",
+            "ricardian_contract": "---\nspec-version: 0.0.2\ntitle: test\nsummary: This method does nothing on purpose.\nicon:\n---\n\nThis test checks ricardian contract was generated succesfully."
+        }
+    ],
+    "tables": [],
+    "kv_tables": {},
+    "ricardian_clauses": [
+        {
+            "id": "Disclaimer",
+            "body": "This test checks ricardian contract was generated succesfully."
+        }
+    ],
+    "variants": [],
+    "action_results": []
+}

@@ -516,9 +516,13 @@ struct generation_utils {
             return t+"[]";
          }
       }
-      else if (is_tuple(type)) {
-         return translate_type(get_nested_type(type));
-      }
+      //The following else if (is_tuple(type)) block is removed, because it causes eosio-cpp compilation
+      //failure on any action that has std::tuple<Ts...> parameter, also the type eosio::non_unique this block
+      //was supposed to handle is obsolete now.
+      //
+      //else if (is_tuple(type)) {
+      //   return translate_type(get_nested_type(type));
+      //}
       else if ( is_template_specialization( type, {"optional"} ) )
          return get_template_argument_as_string( type )+"?";
       else if ( is_template_specialization( type, {"map"} )) {
@@ -541,6 +545,20 @@ struct generation_utils {
                ret += "_";
          }
          return replace_in_name(ret);
+      }
+      else if ( is_template_specialization( type, {"array"} )) {
+         std::string orig = type.getAsString();
+         std:: string ret = "";
+         ret += get_template_argument_as_string( type, 0 );
+         ret = replace_in_name(ret);
+         ret += '[';
+         auto pos1 = orig.find_last_of(',');
+         auto pos2 = orig.find_last_of('>');
+         std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
+         digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
+         ret += digits;
+         ret += ']';
+         return ret;
       }
       else if ( is_template_specialization( type, {} )) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());

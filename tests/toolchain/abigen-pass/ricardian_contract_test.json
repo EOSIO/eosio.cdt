@@ -1,0 +1,10 @@
+{
+   "tests" : [
+      {
+         "compile_flags" : ["-R={cwd}"],
+         "expected" : {
+            "abi-file" : "ricardian_contract_test.abi"
+         }
+      }
+   ]
+}

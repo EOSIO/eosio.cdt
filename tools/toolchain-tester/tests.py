@@ -44,6 +44,7 @@ class Test(ABC):
     def run(self):
         cf = self.test_json.get("compile_flags")
         args = cf if cf else []
+        args = [arg.replace("{cwd}", self.test_suite.directory) for arg in args]
 
         eosio_cpp = os.path.join(self.test_suite.cdt_path, "eosio-cpp")
         self._run(eosio_cpp, args)
@@ -94,6 +95,17 @@ class Test(ABC):
                 self.success = False
                 raise TestFailure(
                     f"expected {expected_stderr} stderr but got {actual_stderr}",
+                    failing_test=self,
+                )
+        
+        if expected.get("stdout"):
+            actual_stdout = res.stdout.decode("utf-8")
+            expected_stdout = expected["stdout"]
+
+            if expected_stdout not in actual_stdout and not re.search(expected_stdout, actual_stdout, flags=re.S):
+                self.success = False
+                raise TestFailure(
+                    f"expected {expected_stdout} stdout but got {actual_stdout}",
                     failing_test=self,
                 )
 

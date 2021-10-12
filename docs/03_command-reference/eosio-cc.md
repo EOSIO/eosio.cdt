@@ -72,4 +72,6 @@ compiler options:
   -v                       - Show commands to run and use verbose output
   -w                       - Suppress all warnings
   --warn-action-read-only  - Issue a warning if a read-only action uses a write API and continue compilation
+  --eosio-include-dirs     - Print the set of include paths that the compiler will be looking at
+  --eosio-link-dirs        - Print the set of linking paths that the linker will be looking at
 ```

@@ -27,7 +27,7 @@
 #include <memory>
 #include <set>
 #include <map>
-
+#include <array>
 #include <jsoncons/json.hpp>
 
 using namespace llvm;
@@ -169,7 +169,14 @@ namespace eosio { namespace cdt {
          }
          abi_struct kv;
          std::string name = get_type(type);
-         kv.name = name.substr(0, name.length() - 2);
+         auto remove_ending_brackets = [&]( std::string name ) {
+            int i = name.length()-1;
+            for (; i >= 0; i--)
+               if ( name[i] != '[' && name[i] != ']' )
+                  break;
+            return name.substr(0,i+1);
+         };
+         kv.name = remove_ending_brackets(name);
          kv.fields.push_back( {"key", get_template_argument_as_string(type)} );
          kv.fields.push_back( {"value", get_template_argument_as_string(type, 1)} );
          add_type(std::get<clang::QualType>(get_template_argument(type)));
@@ -397,6 +404,8 @@ namespace eosio { namespace cdt {
                add_pair(type);
             else if (is_template_specialization(type, {"tuple"}))
                add_tuple(type);
+            else if (is_template_specialization(type, {"array"}) )
+               add_type(std::get<clang::QualType>(get_template_argument(type, 0)));
             else if (is_template_specialization(type, {"variant"}))
                add_variant(type);
             else if (is_template_specialization(type, {})) {
@@ -730,8 +739,8 @@ namespace eosio { namespace cdt {
 
          virtual bool VisitCXXMethodDecl(clang::CXXMethodDecl* decl) {
             if (!has_added_clauses) {
-               ag.add_clauses(parse_clauses());
-               ag.add_contracts(parse_contracts());
+               ag.add_clauses(ag.parse_clauses());
+               ag.add_contracts(ag.parse_contracts());
                has_added_clauses = true;
             }
 
@@ -746,8 +755,8 @@ namespace eosio { namespace cdt {
          }
          virtual bool VisitCXXRecordDecl(clang::CXXRecordDecl* decl) {
             if (!has_added_clauses) {
-               ag.add_clauses(parse_clauses());
-               ag.add_contracts(parse_contracts());
+               ag.add_clauses(ag.parse_clauses());
+               ag.add_contracts(ag.parse_contracts());
                has_added_clauses = true;
             }
             if ((decl->isEosioAction() || decl->isEosioTable()) && ag.is_eosio_contract(decl, ag.get_contract_name())) {

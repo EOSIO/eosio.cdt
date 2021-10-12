@@ -39,7 +39,8 @@ add_test(NAME version_tests COMMAND ${CMAKE_BINARY_DIR}/tests/unit/version_tests
 set_property(TEST version_tests PROPERTY LABELS unit_tests)
 
 
-if (eosio_FOUND)
+if (EOSIO_RUN_INTEGRATION_TESTS)
+   find_package(eosio)
 
    if (NOT eosio_FOUND)
       message(WARNING "Could not find eosio")
