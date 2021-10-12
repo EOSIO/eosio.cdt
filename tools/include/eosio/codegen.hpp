@@ -479,6 +479,15 @@ namespace eosio { namespace cdt {
                      llvm::sys::fs::make_absolute(abs_file_path);
                      out << "#include \"" << abs_file_path.c_str() << "\"\n";
                   }
+                  const auto& quoted = [](const std::string& s) {
+                     std::stringstream ss;
+                     for (char c : s) {
+                        if (c == '"' || c == '\\')
+                           ss << '\\';
+                        ss << c;
+                     }
+                     return ss.str();
+                  };
 
                   // generate apply stub with abi
                   std::stringstream& ss = visitor->get_ss();

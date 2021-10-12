@@ -530,7 +530,7 @@ namespace eosio::kv {
 
          inline bool empty() const {
             iterator_t it = {owner};
-            it.lower_bound(key_type{""});
+            it.lower_bound(key_type{});
             return it == end();
          }
 

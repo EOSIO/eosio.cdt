@@ -9,6 +9,8 @@
 #include <eosio/multi_index.hpp>
 #include <eosio/dispatcher.hpp>
 #include <eosio/contract.hpp>
+#include <eosio/map.hpp>
+#include <eosio/table.hpp>
 
 #ifndef EOSIO_NATIVE
 static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );

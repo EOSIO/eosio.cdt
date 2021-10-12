@@ -172,7 +172,7 @@ int main(int argc, const char **argv) {
             printOptions("-I", new_opts, std::cout, std::cerr);
          }
 
-         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts)) {
+         if (!eosio::cdt::environment::exec_subprogram("clang-9", new_opts, false, stdin_redirect)) {
             if(stdin_redirect) {
                llvm::sys::fs::remove(*stdin_redirect);
             }
