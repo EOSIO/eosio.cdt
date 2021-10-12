@@ -51,7 +51,8 @@ int main(int argc, const char **argv) {
         pp_opts.push_back("--allow-names");
      }
      pp_opts.push_back(opts.output_fn);
-     if (!eosio::cdt::environment::exec_subprogram("eosio-pp", pp_opts))
+     if (!eosio::cdt::environment::exec_subprogram("eosio-pp", pp_opts)) {
+        std::cerr << "eosio-pp failed" << std::endl;
         return -1;
      }
 

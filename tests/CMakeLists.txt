@@ -38,10 +38,6 @@ set_property(TEST version_tests PROPERTY LABELS unit_tests)
 add_test( NAME toolchain_tests COMMAND ${CMAKE_BINARY_DIR}/tools/toolchain-tester/toolchain-tester ${CMAKE_SOURCE_DIR}/tests/toolchain --cdt ${CMAKE_BINARY_DIR}/bin )
 set_property(TEST toolchain_tests PROPERTY LABELS toolchain_tests)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/unit/version_tests.sh ${CMAKE_BINARY_DIR}/tests/unit/version_tests.sh COPYONLY)
-add_test(NAME version_tests COMMAND ${CMAKE_BINARY_DIR}/tests/unit/version_tests.sh "${VERSION_FULL}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-set_property(TEST version_tests PROPERTY LABELS unit_tests)
-
 if (EOSIO_RUN_INTEGRATION_TESTS)
    find_package(eosio)
 
