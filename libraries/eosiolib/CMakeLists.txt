@@ -46,7 +46,8 @@ target_include_directories(eosio_tester PUBLIC
                                         ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                         ${abieos_includes}
                                         ${CMAKE_SOURCE_DIR}/boost/include
-                                        ${CMAKE_SOURCE_DIR}/fmt/include)
+                                        ${CMAKE_SOURCE_DIR}/fmt/include
+                                        ${CMAKE_SOURCE_DIR}/meta_refl/include)
 
 target_compile_options(eosio_tester PRIVATE -fno-default-paths)
 target_link_libraries(eosio_tester c++)
@@ -71,6 +72,7 @@ set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(eosio PUBLIC
                                  ${CMAKE_SOURCE_DIR}
+                                 ${CMAKE_SOURCE_DIR}/meta_refl/include
                                  ${CMAKE_SOURCE_DIR}/eosiolib/core
                                  ${CMAKE_SOURCE_DIR}/eosiolib/contracts
                                  ${abieos_includes}

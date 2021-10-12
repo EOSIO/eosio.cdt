@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-
+#include "reflect.hpp"
 #include_next <eosio/name.hpp>
 
 /// @cond IMPLEMENTATIONS
