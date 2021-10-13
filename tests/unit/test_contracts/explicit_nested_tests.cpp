@@ -156,5 +156,64 @@ CONTRACT explicit_nested_tests : public contract {
       return output;
    }
 
+   [[eosio::action]]   // this test is for the put simple data to table, so as to check the the data read from table is the same
+   // usage : cleos -v push action eosio putd '[eosio]' -p eosio@active
+   //             cleos -v get table eosio eosio testdata
+   void putd(name user) {
+      require_auth(user);
+      test_data_idx _tests(get_self(), get_self().value);
+
+      std::map<uint64_t, std::optional<int> > data;
+      data[12] = 34;
+      std::vector<std::optional<std::pair<uint64_t,float>>> data_vec = {{{12,1.2}}, {{34, 3.4}}};
+      std::vector<std::pair<uint64_t, opt_float >> data_vec2 = {{56, {5.6}},{78,{7.8}}};
+      vec_opt_float data_vec3 = {{1.1}, {2.2}, {3.3}};
+      std::tuple<uint64_t, std::optional<float>, std::vector<int>> tup1 = {12, {3.4}, {5,6,7}};
+      std::vector<int> tempvec = {8,9,10};
+      std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>> var1 = tempvec;
+
+      _tests.emplace(user, [&](auto& t) {
+         t.id = user.value + std::time(0);  // primary key can't be same
+         t.data = data;
+         t.data_vec = data_vec;
+         t.data_vec2 = data_vec2;
+         t.data_vec3 = data_vec3;
+         t.tup1 = tup1;
+         t.var1 = var1;
+      });
+      auto it = _tests.begin();
+      auto ite = _tests.end();
+      while(it != ite){
+         eosio::cout << "id = " << it->id << "\n";
+         eosio::cout << "data : " << "\n";
+         for(auto & p : it->data){
+            eosio::cout << p.first << ":" << p.second.value() << "\n";
+         }
+         eosio::cout << "data_vec : \n";
+         for(auto & opt : it->data_vec){
+            if(opt.has_value()) eosio::cout << opt.value().first << ":" << opt.value().second << "\n";
+            else eosio::cout << "no value in optional \n";
+         }
+         eosio::cout << "data_vec2 : \n";
+         for(auto & p : it->data_vec2){
+            eosio::cout << p.first << ":" << p.second.value() << "\n";
+         }
+         eosio::cout << "data_vec3 : \n";
+         for(auto & opt : it->data_vec3){
+            if(opt.has_value()) eosio::cout << opt.value() << "\n";
+            else eosio::cout << "no value in optional \n";
+         }
+         eosio::cout << "tup1 : \n";
+         auto [a, b, c] = it->tup1;
+         eosio:cout << a << ",   " << b.value() << ",   " ;
+         for(auto & v : c){ eosio::cout << v  << " ";}
+         eosio::cout << "\n";
+
+         eosio::cout << "var1 : \n";
+         for(auto & v : std::get<2>(it->var1)) { eosio::cout << v  << " "; };
+         eosio::cout << "\n\n";
+         ++it;
+      }
+   }
    test_data_idx test_table;
 };
