@@ -8,7 +8,6 @@ This tutorial demonstrates the usage of various C++ nested-containers in smart c
 
 * [Multi-Index Table](https://developers.eos.io/manuals/eosio.cdt/latest/how-to-guides/multi-index/index)
 * [Key-Value Map](https://developers.eos.io/manuals/eosio.cdt/latest/how-to-guides/key-value-api/kv_map/index)
-* [Key-Value Table](https://developers.eos.io/manuals/eosio.cdt/latest/how-to-guides/key-value-api/kv_table/index) 
 
 ### The Nested-Containers Covered Are
 
@@ -32,6 +31,9 @@ This tutorial covers the following netsted-containers combinations.
     * std::tuple
     * std::pair
 * One three-layers nested container for farther extentions demonstration
+
+[[info | Note]]
+| std::array, std::variant are not supporterd yet]]
 
 ### Cleos commands
 
@@ -136,8 +138,8 @@ The following table describes which nested-containers combinations of STL set, v
 
 |     | set | vector | optional | map | pair | tuple |
 | --- | --- | ---    | ---      | --- | ---  | ---   |
-| set | supported | supported   | **Not supported** | supported | supported  | supported  |
-| vector | supported | supported   | **Not supported** | supported | supported  | supported  |
+| set | supported | supported   | supported | supported | supported  | supported  |
+| vector | supported | supported   | supported | supported | supported  | supported  |
 | optional | supported | supported   | supported | supported | supported  | supported  |
 | map | supported | supported   | supported | supported | supported  | supported  |
 | pair | supported | supported   | supported | supported | supported  | supported  |
