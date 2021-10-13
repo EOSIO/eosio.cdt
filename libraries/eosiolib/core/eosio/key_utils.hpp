@@ -161,10 +161,35 @@ void to_key_range(const T& obj, datastream<S>& stream) {
    to_key_optional((std::add_pointer_t<decltype(*std::begin(obj))>) nullptr, stream);
 }
 
+//auto to_key(const T& obj, datastream<S>& stream) -> std::enable_if_t<detail::is_ranged_type(std::declval<T>()), void> {
+//   to_key_range(obj, stream);
+//}
+// above always resulted in substitution failure for vector/list/deque/set,
+// because std::declval<T>() with only one type T can NOT fully describe vector/list/deque/set which are containers of types,
+// actually vector/list/deque shall be described by Container type C and Element type E, Allocator type A
+// set needs one more Comparator type Comp.
+// For clarity and simplicity, the following to_key() methods are used for vector/list/deque/set
+
 template <typename T, typename S>
-auto to_key(const T& obj, datastream<S>& stream) -> std::enable_if_t<is_ranged_type(std::declval<T>()), void> {
-   to_key_range(obj, stream);
+void to_key(const std::vector<T>& obj, datastream<S>& stream) {
+    to_key_range(obj, stream);
 }
+
+template <typename T, typename S>
+void to_key(const std::list<T>& obj, datastream<S>& stream) {
+    to_key_range(obj, stream);
+}
+
+template <typename T, typename S>
+void to_key(const std::deque<T>& obj, datastream<S>& stream) {
+    to_key_range(obj, stream);
+}
+
+template <typename T, typename S>
+void to_key(const std::set<T>& obj, datastream<S>& stream) {
+    to_key_range(obj, stream);
+}
+
 
 template <typename T, typename U, typename S>
 void to_key(const std::map<T, U>& obj, datastream<S>& stream) {

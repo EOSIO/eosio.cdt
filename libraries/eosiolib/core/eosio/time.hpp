@@ -6,6 +6,7 @@
 #include <cstdio>
 #include "check.hpp"
 #include "serialize.hpp"
+#include "reflect.hpp"
 
 namespace eosio {
   /**
@@ -39,6 +40,8 @@ namespace eosio {
 
         int64_t _count;
         /// @endcond
+
+        CDT_REFLECT(_count);
         EOSLIB_SERIALIZE( microseconds, (_count) )
     private:
         friend class time_point;
@@ -95,6 +98,7 @@ namespace eosio {
         microseconds elapsed;
         /// @endcond
 
+        CDT_REFLECT(elapsed);
         EOSLIB_SERIALIZE( time_point, (elapsed) )
   };
 
@@ -158,7 +162,7 @@ namespace eosio {
         uint32_t utc_seconds;
 
         /// @endcond
-
+        CDT_REFLECT(utc_seconds);
         EOSLIB_SERIALIZE( time_point_sec, (utc_seconds) )
   };
 
@@ -226,6 +230,7 @@ namespace eosio {
          static constexpr int64_t block_timestamp_epoch = 946684800000ll;  // epoch is year 2000
          /// @endcond
 
+         CDT_REFLECT(slot);
          EOSLIB_SERIALIZE( block_timestamp, (slot) )
       private:
 
