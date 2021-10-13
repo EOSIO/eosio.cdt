@@ -379,6 +379,195 @@ namespace eosio { namespace cdt {
          _abi.variants.insert(var);
       }
 
+      void add_explicit_nested_linear(const clang::QualType& type, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         auto inside_type = std::get<clang::QualType>(get_template_argument(type));
+         std::string inside_type_name;
+         if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
+            inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
+         } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
+            inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
+         }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
+            inside_type_name = translate_type(inside_type);
+         } else if (is_aliasing(inside_type)) { // inside type is an alias
+            add_typedef(inside_type);
+            inside_type_name = get_base_type_name( inside_type );
+         }
+
+         if(inside_type_name != ""){
+            ret += inside_type_name;
+            abidef.type = inside_type_name + ( (tname == "optional") ? "?" : "[]" );
+            gottype = true;
+         }
+      }
+
+      void add_explicit_nested_map(const clang::QualType& type, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         clang::QualType inside_type[2];
+         std::string inside_type_name[2];
+         for(int i = 0; i < 2; ++i){
+            inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+            if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if( is_explicit_container(inside_type[i]) ) {
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+               inside_type_name[i] = translate_type(inside_type[i]);
+            } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+               add_typedef(inside_type[i]);
+               inside_type_name[i] = get_base_type_name( inside_type[i] );
+            }
+         }
+
+         if(inside_type_name[0] != "" && inside_type_name[1] != ""){
+            ret += inside_type_name[0] + "_" + inside_type_name[1];
+            abidef.type = "pair_" + inside_type_name[0] + "_" + inside_type_name[1] + "[]";
+
+            abi_struct kv;
+            kv.name = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
+            kv.fields.push_back( {"key", inside_type_name[0]} );
+            kv.fields.push_back( {"value", inside_type_name[1]} );
+            _abi.structs.insert(kv);
+
+            gottype = true;
+         }
+      }
+
+      void add_explicit_nested_pair(const clang::QualType& type, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         clang::QualType inside_type[2];
+         std::string inside_type_name[2];
+         for(int i = 0; i < 2; ++i){
+            inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+            if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if( is_explicit_container(inside_type[i]) ) {
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+               inside_type_name[i] = translate_type(inside_type[i]);
+            } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+               add_typedef(inside_type[i]);
+               inside_type_name[i] = get_base_type_name( inside_type[i] );
+            }
+         }
+
+         if(inside_type_name[0] != "" && inside_type_name[1] != ""){
+            ret += inside_type_name[0] + "_" + inside_type_name[1];
+            abidef.type = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
+
+            abi_struct pair;
+            pair.name = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
+            pair.fields.push_back( {"first", inside_type_name[0]} );
+            pair.fields.push_back( {"second", inside_type_name[1]} );
+            _abi.structs.insert(pair);
+
+            gottype = true;
+         }
+      }
+
+      void add_explicit_nested_tuple(const clang::QualType& type, int argcnt, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         std::vector<clang::QualType> inside_type(argcnt);
+         std::vector<std::string> inside_type_name(argcnt);
+         for(int i = 0; i < argcnt; ++i){
+            inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+            if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if( is_explicit_container(inside_type[i]) ) {
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+               inside_type_name[i] = translate_type(inside_type[i]);
+            } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+               add_typedef(inside_type[i]);
+               inside_type_name[i] = get_base_type_name( inside_type[i] );
+            }
+         }
+         bool allgot = true;
+         for(auto & inside_tn : inside_type_name) {
+            if(inside_tn == "") allgot = false;
+         }
+         if(allgot){
+            abi_struct tup;
+            tup.name = "tuple_";
+            abidef.type = "tuple_";
+            for (int i = 0; i < argcnt; ++i) {
+               ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               abidef.type += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               tup.name += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               tup.fields.push_back( {"field_"+std::to_string(i), inside_type_name[i]} );
+            }
+            _abi.structs.insert(tup);
+
+            gottype = true;
+         }
+      }
+
+      void add_explicit_nested_array(const clang::QualType& type, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         auto inside_type = std::get<clang::QualType>(get_template_argument(type));
+         std::string inside_type_name;
+         if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
+            inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
+         } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
+            inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
+         }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
+            inside_type_name = translate_type(inside_type);
+         } else if (is_aliasing(inside_type)) { // inside type is an alias
+            add_typedef(inside_type);
+            inside_type_name = get_base_type_name( inside_type );
+         }
+
+         if(inside_type_name != ""){
+            ret += inside_type_name + "_";
+            std::string orig = type.getAsString();
+            auto pos1 = orig.find_last_of(',');
+            auto pos2 = orig.find_last_of('>');
+            std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
+            digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
+            ret += digits;
+            abidef.type = inside_type_name + "[" + digits + "]" ;
+            gottype = true;
+         }
+      }
+
+      void add_explicit_nested_variant(const clang::QualType& type, int argcnt, int depth, abi_typedef & abidef, std::string & ret, const std::string & tname, bool & gottype){
+         ret += tname + "_";
+         std::vector<clang::QualType> inside_type(argcnt);
+         std::vector<std::string> inside_type_name(argcnt);
+         for(int i = 0; i < argcnt; ++i){
+            inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
+            if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if( is_explicit_container(inside_type[i]) ) {
+               inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
+            } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
+               inside_type_name[i] = translate_type(inside_type[i]);
+            } else if (is_aliasing(inside_type[i])) { // inside type is an alias
+               add_typedef(inside_type[i]);
+               inside_type_name[i] = get_base_type_name( inside_type[i] );
+            }
+         }
+         bool allgot = true;
+         for(auto & inside_tn : inside_type_name) {
+            if(inside_tn == "") allgot = false;
+         }
+
+         if(allgot){
+            abi_variant var;
+            var.name = "variant_";
+            abidef.type = "variant_";
+            for (int i = 0; i < argcnt; ++i) {
+               ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               abidef.type += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               var.name += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
+               var.types.push_back( inside_type_name[i]);
+            }
+            _abi.variants.insert(var);
+
+            gottype = true;
+         }
+      }
+
       // return combined typename, and mid-type will be add automatically, only be used on explicit nested type has <<>> or more
       std::string add_explicit_nested_type(const clang::QualType& type, int depth = 0){
          abi_typedef abidef;
@@ -390,188 +579,19 @@ namespace eosio { namespace cdt {
                if(auto * decl = rt->getDecl()){
                   std::string tname = decl->getName().str();
                   if(tname == "vector" || tname == "set" || tname == "deque" || tname == "list" || tname == "optional") {
-                     ret += tname + "_";
-                     auto inside_type = std::get<clang::QualType>(get_template_argument(type));
-                     std::string inside_type_name;
-                     if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
-                        inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
-                     } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
-                        inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
-                     }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
-                        inside_type_name = translate_type(inside_type);
-                     } else if (is_aliasing(inside_type)) { // inside type is an alias
-                        add_typedef(inside_type);
-                        inside_type_name = get_base_type_name( inside_type );
-                     }
-
-                     if(inside_type_name != ""){
-                        ret += inside_type_name;
-                        abidef.type = inside_type_name + ( (tname == "optional") ? "?" : "[]" );
-                        gottype = true;
-                     }
+                     add_explicit_nested_linear(type, depth,  abidef, ret, tname, gottype);
                   } else if (tname == "map" ) {
-                     ret += tname + "_";
-                     clang::QualType inside_type[2];
-                     std::string inside_type_name[2];
-                     for(int i = 0; i < 2; ++i){
-                        inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-                        if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if( is_explicit_container(inside_type[i]) ) {
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-                           inside_type_name[i] = translate_type(inside_type[i]);
-                        } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-                           add_typedef(inside_type[i]);
-                           inside_type_name[i] = get_base_type_name( inside_type[i] );
-                        }
-                     }
-
-                     if(inside_type_name[0] != "" && inside_type_name[1] != ""){
-                        ret += inside_type_name[0] + "_" + inside_type_name[1];
-                        abidef.type = "pair_" + inside_type_name[0] + "_" + inside_type_name[1] + "[]";
-
-                        abi_struct kv;
-                        kv.name = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
-                        kv.fields.push_back( {"key", inside_type_name[0]} );
-                        kv.fields.push_back( {"value", inside_type_name[1]} );
-                        _abi.structs.insert(kv);
-
-                        gottype = true;
-                     }
-
+                     add_explicit_nested_map(type, depth, abidef, ret, tname, gottype);
                   } else if (tname == "pair" ) {
-                     ret += tname + "_";
-                     clang::QualType inside_type[2];
-                     std::string inside_type_name[2];
-                     for(int i = 0; i < 2; ++i){
-                        inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-                        if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if( is_explicit_container(inside_type[i]) ) {
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-                           inside_type_name[i] = translate_type(inside_type[i]);
-                        } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-                           add_typedef(inside_type[i]);
-                           inside_type_name[i] = get_base_type_name( inside_type[i] );
-                        }
-                     }
-
-                     if(inside_type_name[0] != "" && inside_type_name[1] != ""){
-                        ret += inside_type_name[0] + "_" + inside_type_name[1];
-                        abidef.type = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
-
-                        abi_struct pair;
-                        pair.name = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
-                        pair.fields.push_back( {"first", inside_type_name[0]} );
-                        pair.fields.push_back( {"second", inside_type_name[1]} );
-                        _abi.structs.insert(pair);
-
-                        gottype = true;
-                     }
-
+                     add_explicit_nested_pair(type, depth, abidef, ret, tname, gottype);
                   } else if (tname == "tuple")  {
-                     ret += tname + "_";
                      int argcnt = tst->getNumArgs();
-                     std::vector<clang::QualType> inside_type(argcnt);
-                     std::vector<std::string> inside_type_name(argcnt);
-                     for(int i = 0; i < argcnt; ++i){
-                        inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-                        if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if( is_explicit_container(inside_type[i]) ) {
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-                           inside_type_name[i] = translate_type(inside_type[i]);
-                        } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-                           add_typedef(inside_type[i]);
-                           inside_type_name[i] = get_base_type_name( inside_type[i] );
-                        }
-                     }
-                     bool allgot = true;
-                     for(auto & inside_tn : inside_type_name) {
-                        if(inside_tn == "") allgot = false;
-                     }
-                     if(allgot){
-                        abi_struct tup;
-                        tup.name = "tuple_";
-                        abidef.type = "tuple_";
-                        for (int i = 0; i < argcnt; ++i) {
-                           ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           abidef.type += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           tup.name += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           tup.fields.push_back( {"field_"+std::to_string(i), inside_type_name[i]} );
-                        }
-                        _abi.structs.insert(tup);
-
-                        gottype = true;
-                     }
-
+                     add_explicit_nested_tuple(type, argcnt, depth, abidef, ret, tname, gottype);
                   } else if (tname == "array")  {
-                     ret += tname + "_";
-                     auto inside_type = std::get<clang::QualType>(get_template_argument(type));
-                     std::string inside_type_name;
-                     if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
-                        inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
-                     } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
-                        inside_type_name = add_explicit_nested_type(inside_type, depth + 1);
-                     }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
-                        inside_type_name = translate_type(inside_type);
-                     } else if (is_aliasing(inside_type)) { // inside type is an alias
-                        add_typedef(inside_type);
-                        inside_type_name = get_base_type_name( inside_type );
-                     }
-
-                     if(inside_type_name != ""){
-                        ret += inside_type_name + "_";
-                        std::string orig = type.getAsString();
-                        auto pos1 = orig.find_last_of(',');
-                        auto pos2 = orig.find_last_of('>');
-                        std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
-                        digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
-                        ret += digits;
-                        abidef.type = inside_type_name + "[" + digits + "]" ;
-                        gottype = true;
-                     }
-
+                     add_explicit_nested_array(type, depth, abidef, ret, tname, gottype);
                   } else if (tname == "variant") {
-                     ret += tname + "_";
                      int argcnt = tst->getNumArgs();
-                     std::vector<clang::QualType> inside_type(argcnt);
-                     std::vector<std::string> inside_type_name(argcnt);
-                     for(int i = 0; i < argcnt; ++i){
-                        inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-                        if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if( is_explicit_container(inside_type[i]) ) {
-                           inside_type_name[i] = add_explicit_nested_type(inside_type[i], depth + 1);
-                        } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-                           inside_type_name[i] = translate_type(inside_type[i]);
-                        } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-                           add_typedef(inside_type[i]);
-                           inside_type_name[i] = get_base_type_name( inside_type[i] );
-                        }
-                     }
-                     bool allgot = true;
-                     for(auto & inside_tn : inside_type_name) {
-                        if(inside_tn == "") allgot = false;
-                     }
-
-                     if(allgot){
-                        abi_variant var;
-                        var.name = "variant_";
-                        abidef.type = "variant_";
-                        for (int i = 0; i < argcnt; ++i) {
-                           ret += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           abidef.type += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           var.name += inside_type_name[i] + (i < (argcnt - 1) ? "_" : "");
-                           var.types.push_back( inside_type_name[i]);
-                        }
-                        _abi.variants.insert(var);
-
-                        gottype = true;
-                     }
+                     add_explicit_nested_variant(type, argcnt, depth, abidef, ret, tname, gottype);
                   }
                }
             }
