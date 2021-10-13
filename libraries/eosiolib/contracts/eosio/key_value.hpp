@@ -130,6 +130,12 @@ struct key_type : protected std::vector<char> {
    using std::vector<char>::size;
    using std::vector<char>::resize;
    using std::vector<char>::operator[];
+   friend bool operator == (const key_type& lhs, const key_type& rhs) {
+      return static_cast<const std::vector<char>&>(lhs) == static_cast<const std::vector<char>&>(rhs);
+   }
+   void print() const {
+     return eosio::print(this->data(), this->size());
+   }
 };
 
 struct partial_key : public key_type {
