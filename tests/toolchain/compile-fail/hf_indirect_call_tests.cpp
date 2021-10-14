@@ -22,12 +22,12 @@
  And finally, combine all four in a chain of aliases
 */
 
-extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
-extern "C" __attribute__((eosio_wasm_import)) void foo_bar(int64_t, int64_t, int64_t);
+extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(uint64_t, uint64_t, int64_t);
+extern "C" __attribute__((eosio_wasm_import)) void foo_bar(uint64_t, uint64_t, int64_t);
 
 #define ACTION_TYPE  [[eosio::action, eosio::read_only]]
 
-using func = void (*)(int64_t, int64_t, int64_t);
+using func = void (*)(uint64_t, uint64_t, int64_t);
 
 func srl_g1 = set_resource_limit;
 func srl_g2 = set_resource_limit;
