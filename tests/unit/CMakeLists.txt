@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-
+project(cdt-unit-tests)
 list( APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN} )
 include( EosioCDTMacros )
 
