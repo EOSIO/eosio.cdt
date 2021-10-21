@@ -17,8 +17,11 @@ CONTRACT explicit_nested_tests : public contract {
    }; 
    typedef std::optional<float> opt_float;
    typedef std::vector<opt_float> vec_opt_float; 
-
-
+   typedef struct _mystruct{
+      int field0;
+      float field1;
+      std::vector<std::vector<std::string>> field2;
+   }mystruct;
 
    TABLE testdata {
       uint64_t  id;
@@ -28,9 +31,10 @@ CONTRACT explicit_nested_tests : public contract {
       vec_opt_float data_vec3;
       std::tuple<uint64_t, std::optional<float>, std::vector<int>> tup1;
       std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>> var1;
+      std::vector<std::vector<_mystruct>> vvmys;
       auto primary_key() const { return id; }
 
-      EOSLIB_SERIALIZE(testdata, (id)(data)(data_vec)(data_vec2)(data_vec3)(tup1)(var1));
+      EOSLIB_SERIALIZE(testdata, (id)(data)(data_vec)(data_vec2)(data_vec3)(tup1)(var1)(vvmys));
    };
    using test_data_idx = multi_index<"testdata"_n, testdata>;
 
@@ -156,6 +160,12 @@ CONTRACT explicit_nested_tests : public contract {
       return output;
    }
 
+   [[eosio::action]]
+   std::vector<std::vector<_mystruct>>  vvmystr(){
+      std::vector<std::vector<_mystruct>> output = {{{56,5.6, {{"test"}} }, {78,7.8, {{"passed"}} }}};
+      return output;
+   }
+
    [[eosio::action]]   // this test is for the put simple data to table, so as to check the the data read from table is the same
    // usage : cleos -v push action eosio putd '[eosio]' -p eosio@active
    //             cleos -v get table eosio eosio testdata
@@ -171,7 +181,7 @@ CONTRACT explicit_nested_tests : public contract {
       std::tuple<uint64_t, std::optional<float>, std::vector<int>> tup1 = {12, {3.4}, {5,6,7}};
       std::vector<int> tempvec = {8,9,10};
       std::variant<uint64_t, std::optional<std::pair<int, float>>, std::vector<int>> var1 = tempvec;
-
+      std::vector<std::vector<_mystruct>> vvmys = {{{12,1.2, {{"test"}}}, {34,3.4,{{"passed"}} }}};
       _tests.emplace(user, [&](auto& t) {
          t.id = user.value + std::time(0);  // primary key can't be same
          t.data = data;
@@ -180,6 +190,7 @@ CONTRACT explicit_nested_tests : public contract {
          t.data_vec3 = data_vec3;
          t.tup1 = tup1;
          t.var1 = var1;
+         t.vvmys = vvmys;
       });
       auto it = _tests.begin();
       auto ite = _tests.end();
@@ -211,9 +222,18 @@ CONTRACT explicit_nested_tests : public contract {
 
          eosio::cout << "var1 : \n";
          for(auto & v : std::get<2>(it->var1)) { eosio::cout << v  << " "; };
+         eosio::cout << "\n";
+
+         eosio::cout << "vvmys: \n";
+         for(auto & vmys : it->vvmys){
+            for(auto & mys : vmys){
+               eosio::cout << mys.field0 << "," << mys.field1 << mys.field2[0][0] <<  "\n";
+            }
+         }
          eosio::cout << "\n\n";
          ++it;
       }
    }
+
    test_data_idx test_table;
 };

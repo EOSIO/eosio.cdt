@@ -500,10 +500,7 @@ struct generation_utils {
       return _translate_type(replace_in_name(ret));
    }
 
-   void translate_explicit_nested_linear_or_optional(const clang::QualType& type, int depth, std::string & ret, const std::string & tname, bool & gottype){
-      ret += depth > 0 ? tname + "_" : "";
-      auto inside_type = std::get<clang::QualType>(get_template_argument(type));
-      std::string inside_type_name;
+   inline void translating_explicit_nested_dispatcher(const clang::QualType& inside_type, int depth, std::string & inside_type_name){
       if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
          inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
       } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
@@ -512,8 +509,23 @@ struct generation_utils {
          inside_type_name = translate_type(inside_type);
       } else if (is_aliasing(inside_type)) { // inside type is a alias
          inside_type_name = get_base_type_name( inside_type );
+      } else if (is_template_specialization(inside_type, {})) {
+         inside_type_name = get_template_name(inside_type);
+      }else if (inside_type.getTypePtr()->isRecordType()) {
+         inside_type_name = inside_type.getTypePtr()->getAsCXXRecordDecl()->getNameAsString();
+      } else {
+         std::string errstring = "translating_explicit_nested_dispatcher: this inside type  ";
+         errstring += inside_type.getAsString();
+         errstring += " is unexpected, maybe not supported so far. \n";
+         CDT_INTERNAL_ERROR(errstring);
       }
+   }
 
+   void translate_explicit_nested_linear_or_optional(const clang::QualType& type, int depth, std::string & ret, const std::string & tname, bool & gottype){
+      ret += depth > 0 ? tname + "_" : "";
+      auto inside_type = std::get<clang::QualType>(get_template_argument(type));
+      std::string inside_type_name;
+      translating_explicit_nested_dispatcher(inside_type, depth, inside_type_name);
       if(inside_type_name != ""){
          ret += inside_type_name;
          ret += depth > 0 ? "_E" : ( (tname == "optional") ? "?" : "[]" );
@@ -527,15 +539,7 @@ struct generation_utils {
       std::string inside_type_name[2];
       for(int i = 0; i < 2; ++i){
          inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-         if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if( is_explicit_container(inside_type[i]) ) {
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-            inside_type_name[i] = translate_type(inside_type[i]);
-         } else if (is_aliasing(inside_type[i])) { // inside type is a alias
-            inside_type_name[i] = get_base_type_name( inside_type[i] );
-         }
+         translating_explicit_nested_dispatcher(inside_type[i], depth, inside_type_name[i]);
       }
 
       if(inside_type_name[0] != "" && inside_type_name[1] != ""){
@@ -551,15 +555,7 @@ struct generation_utils {
       std::vector<std::string> inside_type_name(argcnt);
       for(int i = 0; i < argcnt; ++i){
          inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-         if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if( is_explicit_container(inside_type[i]) ) {
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-            inside_type_name[i] = translate_type(inside_type[i]);
-         } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-            inside_type_name[i] = get_base_type_name( inside_type[i] );
-         }
+         translating_explicit_nested_dispatcher(inside_type[i], depth, inside_type_name[i]);
       }
       bool allgot = true;
       for(auto & inside_tn : inside_type_name) {
@@ -578,15 +574,7 @@ struct generation_utils {
       ret += depth > 0 ? tname + "_" : "";
       auto inside_type = std::get<clang::QualType>(get_template_argument(type, 0));
       std::string inside_type_name;
-      if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
-         inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
-      } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
-         inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
-      }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
-         inside_type_name = translate_type(inside_type);
-      } else if (is_aliasing(inside_type)) { // inside type is an alias
-         inside_type_name = get_base_type_name( inside_type );
-      }
+      translating_explicit_nested_dispatcher(inside_type, depth, inside_type_name);
 
       if(inside_type_name != ""){
          ret += inside_type_name;
@@ -611,15 +599,7 @@ struct generation_utils {
       std::vector<std::string> inside_type_name(argcnt);
       for(int i = 0; i < argcnt; ++i){
          inside_type[i] = std::get<clang::QualType>(get_template_argument(type, i));
-         if(is_explicit_nested(inside_type[i])){  // inside type is still explict nested
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if( is_explicit_container(inside_type[i]) ) {
-            inside_type_name[i] = translate_explicit_nested_type(inside_type[i], depth + 1);
-         } else if (is_builtin_type(translate_type(inside_type[i]))){   // inside type is builtin
-            inside_type_name[i] = translate_type(inside_type[i]);
-         } else if (is_aliasing(inside_type[i])) { // inside type is an alias
-            inside_type_name[i] = get_base_type_name( inside_type[i] );
-         }
+         translating_explicit_nested_dispatcher(inside_type[i], depth, inside_type_name[i]);
       }
       bool allgot = true;
       for(auto & inside_tn : inside_type_name) {
