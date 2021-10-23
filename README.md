@@ -2,9 +2,9 @@
 
 **BLockchAiN Contract toolchain**
 
-Welcome to Blanc!  Blanc is a toolchain for WebAssembly-based blockchain contracts.  Currently, Blanc supports [EOSIO](https://github.com/EOSIO) and [CosmWasm](https://github.com/CosmWasm) (experimental), but we have a plan to support other WebAssembly-based contracts like [Substrate](https://github.com/paritytech/substrate/tree/df501229/frame/contracts).  In EOSIO ecosystem, block.one already provides the official version of contract toolchain [eosio.cdt](https://github.com/EOSIO/eosio.cdt), but Blanc takes a different approach from it.  eosio.cdt uses the modified version of Clang/LLVM, so you have to wait for block.one's updates to utilize the latest version of Clang/LLVM.  Blanc was adapted from eosio.cdt, but uses the vanilla Clang/LLVM for easier maintenance and faster adoption of state-of-the-art technologies.  At this point in time (Jun, 2021), eosio.cdt uses Clang-9, but Blanc uses Clang-12.  The only thing you need to care about is that your Clang/LLVM installed in your system supports Clang plugins and WASM binary generation.  You should have Clang-12 or higher, and in MacOS, you need to install `llvm` by brew.  Clang/LLVM installed by Xcode were not built for supporting plugins.
+Welcome to Blanc!  Blanc is a toolchain for WebAssembly-based blockchain contracts.  Currently, Blanc supports [EOSIO](https://github.com/EOSIO) and [CosmWasm](https://github.com/CosmWasm) (experimental), but we have a plan to support other WebAssembly-based contracts like [Substrate](https://github.com/paritytech/substrate/tree/df501229/frame/contracts).  In EOSIO ecosystem, block.one already provides the official version of contract toolchain [eosio.cdt](https://github.com/EOSIO/eosio.cdt), but Blanc takes a different approach from it.  eosio.cdt uses the modified version of Clang/LLVM, so you have to wait for block.one's updates to utilize the latest version of Clang/LLVM.  Blanc was adapted from eosio.cdt, but uses the vanilla Clang/LLVM for easier maintenance and faster adoption of state-of-the-art technologies.  At this point in time (Oct, 2021), eosio.cdt uses Clang-9, but Blanc uses Clang-13.  The only thing you need to care about is that your Clang/LLVM installed in your system supports Clang plugins and WASM binary generation.  You should have Clang-12 or higher, and in MacOS, you need to install `llvm` by brew.  Clang/LLVM installed by Xcode were not built for supporting plugins.
 
-By using the latest Clang/LLVM, generated WASM binaries will have smaller size by about 10%. (eg. `eosio.token` 18KB &rightarrow; 16KB, `eosio.system` 276KB &rightarrow; 252KB)  All unit tests provided by eosio.cdt and [eosio.contracts](https://github.com/EOSIO/eosio.contracts) are passed and all generated ABIs are identical.
+By using the latest Clang/LLVM, generated WASM binaries will have smaller size by about 10%. (eg. `eosio.token` 17KB &rightarrow; 13.5KB, `eosio.system` 305KB &rightarrow; 241KB)  All unit tests provided by eosio.cdt and [eosio.contracts](https://github.com/EOSIO/eosio.contracts) are passed and all generated ABIs are identical.
 
 
 ## Nota Bene
@@ -17,7 +17,7 @@ The prebuilt binares are provided for Ubuntu 20.04 and MacOS Big Sur.
 
 ### Ubuntu 20.04
 
-Clang-12 is backported to Ubuntu 20.04, so launchpad PPA support is restored.
+Clang-12 is backported to Ubuntu 20.04, so launchpad PPA support is restored. (Clang-13 is not supported by official PPA yet.)
 
 ```sh
 sudo add-apt-repository ppa:conr2d/blanc
@@ -30,7 +30,7 @@ You can install Clang/LLVM compatible with Blanc by package manager [brew](https
 
 ```sh
 brew tap turnpike/blanc
-brew install blanc llvm@12 binaryen
+brew install blanc llvm binaryen
 ```
 
 ## Installed Tools
