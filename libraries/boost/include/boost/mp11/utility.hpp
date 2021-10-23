@@ -221,24 +221,6 @@ template<class Q, class... T> using mp_invoke_q = typename Q::template fn<T...>;
 
 #endif
 
-// old name for mp_invoke_q retained for compatibility, but deprecated
-#if !defined(__clang__)
-
-template<class Q, class... T> using mp_invoke BOOST_MP11_DEPRECATED("please use mp_invoke_q") = mp_invoke_q<Q, T...>;
-
-#else
-
-// Clang doesn't warn on deprecated alias templates
-
-template<class Q, class... T> struct BOOST_MP11_DEPRECATED("please use mp_invoke_q") mp_invoke_
-{
-    using type = mp_invoke_q<Q, T...>;
-};
-
-template<class Q, class... T> using mp_invoke = typename mp_invoke_<Q, T...>::type;
-
-#endif
-
 // mp_not_fn<P>
 template<template<class...> class P> struct mp_not_fn
 {
