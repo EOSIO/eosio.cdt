@@ -34,7 +34,7 @@ include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(LLVM 12 REQUIRED CONFIG)
+find_package(LLVM 13 REQUIRED CONFIG)
 find_package(Clang REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})

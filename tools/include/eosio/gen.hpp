@@ -392,7 +392,9 @@ struct generation_utils {
             return std::to_string(il->getValue().getLimitedValue());
          }
       } else {
-         return std::get<llvm::APSInt>(arg).toString(10);
+         llvm::SmallString<0> s;
+         std::get<llvm::APSInt>(arg).toString(s, 10);
+         return static_cast<std::string>(s);
       }
       CDT_INTERNAL_ERROR("Tried to get a non-existent template argument");
       __builtin_unreachable();
