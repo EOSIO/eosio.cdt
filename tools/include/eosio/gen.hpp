@@ -642,7 +642,7 @@ struct generation_utils {
          }
       }
       if(!gottype) {
-         std::string errstring = "add_explicit_nested_type failed to fetch type from ";
+         std::string errstring = "translate_explicit_nested_type failed to fetch type from ";
          errstring += type.getAsString();
          CDT_INTERNAL_ERROR(errstring);
          return "";
@@ -809,8 +809,12 @@ struct generation_utils {
 
    inline bool is_explicit_nested(const clang::QualType& t ){
       std::string tstr = t.getAsString();
-      if(tstr.find("decay_t") != std::string::npos || tstr.find("decltype") != std::string::npos || tstr.find("ignore") != std::string::npos ||
-         tstr.find("invoke") != std::string::npos || tstr.find("index") != std::string::npos || tstr.find("declval") != std::string::npos ) return false;
+      // won't deal with these kinds of nested container so far
+      std::vector<std::string> filters = {"decay_t", "decltype", "ignore", "invoke",
+                           "index", "declval", "non_unique", "_BaseT", "typename"};
+      for(auto & word : filters){
+         if(tstr.find(word) != std::string::npos) return false;
+      }
       return std::count (tstr.begin(), tstr.end(), '<') >= 2;
    }
 
