@@ -46,7 +46,7 @@ The source files which accompany this tutorial are located in the [eosio.cdt](ht
 
   * The *nestcontn2a.cpp* file codes a contract `nestcontn2a` whose multi-index table `person2` has various containers
   * The *tupletest.cpp* file codes a contract `tupletest` which shows the support for `std::tuple` for multi-index table `person2` by the new *eosio-cpp* compiler version
-  * The *nestcontn2kv.cpp* file codes a contract `nestcontn2kv` whose `eosio::kv::map` table wraps struct `person2kv` that has various containers and different types of keys
+  * The *nestcontn2kv.cpp* file codes a contract `nestcontn2kv` whose `eosio::kv::map` table wraps struct `person2kv` that has various containers in the value part of `eosio::kv::map`
   * The *tupletestkv.cpp* file codes a contract `tupletestkv` which shows the support on `std::tuple` for `eosio::kv::map` table `person2kv` by the new *eosio-cpp* compiler version
   * The *testkvkeys.cpp* file codes a contract `testkvkeys` which demonstrates the **key** of kv::map can be of the eosio-defined types and can also be various STL containers, just like the value part of `eosio::kv::map` and `multi-index` table
 
@@ -62,11 +62,11 @@ In the same *[docs/09_tutorials/10_nested_containers/files](https://github.com/E
 
 There are over 100 cleos commands related to the use of various nested-containers in total and they are listed in the comments of the *.cpp* files before each corresponding eosio action. Three *.sh* scripts are provided to facilitate the test and the verification of these cleos commands.
 
-Before you run each of the *.sh* scripts, you need to make sure your default wallet is unlocked, and replace EOS6...r2C with your own development key. In a development environment, you may need to restart nodeos.
+Before you run each of the *.sh* scripts, you need to make sure your default wallet is unlocked, and replace EOS6...5CV with your own development key. In a development environment, you may need to restart nodeos.
 
 Before you can use the shell scripts, you must run the *enable-kv.sh* script to enable the [KV_DATABASE protocol feature](https://developers.eos.io/manuals/eos/v2.1/release-notes/index/#key-value-tables-8223-9298) for the nodeos you intend to connect to. The *enable-kv.sh* script is located in the *eos/contracts/enable-kv/* subdirectory in the latest release of the eos repository.
 
-Also it is important to read the comments placed at the beginning of the *.sh* script files and follow those instructions as well. After you got through those preparation steps, execute the following two scripts in the root directory of your local repository on your bash console: 
+Also it is important to read the comments placed at the beginning of the *.sh* script files and follow those instructions as well. After you get through those preparation steps, and create the subfolders recommended in each shell script to hold related .cpp files, execute the following scripts in the root directory of your local repository on your bash console: 
 
 ```sh
 ./doNestContainer.sh
@@ -76,7 +76,7 @@ Also it is important to read the comments placed at the beginning of the *.sh* s
 
 ### Construct Suitable *.abi* Types
 
-The *.abi* type of a C++ primitive type such as `uint16_t` it is defined by EOSIO as `uint16`, however the *.abi* types of containers and especially nested-containers must be carefully considered to make sure the corresponding user data can be pushed into the EOSIO block chain correctly via cleos commands and/or web APIs.
+The *.abi* type of a C++ primitive type such as `uint16_t` is defined by EOSIO as `uint16`, however the *.abi* types of containers and especially nested-containers must be carefully considered to make sure the corresponding user data can be pushed into the EOSIO block chain correctly via cleos commands and/or web APIs.
 
 You can inspect the *.abi* types a C++ EOSIO contract defines and/or uses in its corresponding *.abi* file.
 
@@ -118,7 +118,7 @@ and then the corresponding eosio action should be written as:
 Now the same cleos command will work properly, and if you check the generated *.abi* file, you can notice the *.abi* type of `ov` parameter will be `vec_uint16?` instead of previous `uint16[]?`. Consult the *.cpp* files accompanying this tutorial for **more examples** on how to use `typedef` to successfuly create *.abi* types of nested-containers that work for cleos commands. 
 
 [[info]]
-| You can not create and use an *.abi* type of a variable which has two or more of each `[]` and `?` because it will cause a related cleos command error. If your nested-container types have more than one of each `[]` and `?` then you must use `typedef` to make sure the *.abi* type of the related container variable has at most one of each `[]` and `?`.
+| You can not create and use an *.abi* type of a variable which has more than one of `[]` and `?` because it will cause a related cleos command error. If your nested-container types have more than one of each `[]` and `?` then you must use `typedef` to make sure the *.abi* type of the related container variable has at most one of each `[]` and `?`.
 
 ### About *std::pair* And *std::map* In Cleos Commands
 
@@ -161,16 +161,16 @@ using my_map_t = eosio::kv::map<"people2kv"_n, int, person2kv>
 
 defines an `eosio::kv::map` type, which has `int` as its key, and struct `person2kv` as its value, and field `set<vec_uint16> stv` of its value part struct `person2kv` is a set of vectors; according to the first row of above table, set of vectors is *supported*, and the cleos commands of the related push actions *setstv, prntstv* are documented in the *.sh* scripts of this project.
 
+If the exact combination of nested containers for `eosio::kv::map` or `eosio::multi_index` is not in the matrix, you can search it in one of the sources files listed in the [Demo Source Files](#demo-source-files).
+
 ### Additional Rules
 
 * The **key part** of `eosio::kv::map` can be primitive types, e.g. `std::string`, `eosio::name`, which are all supported by current ESOIO implementation
-* If the *key part* of `eosio::kv::map` is a self-defined struct, then the self-defined struct has to be wrapped by **CDT_REFLECT**, as shown in below, which can be found in *nestcontn2kv.cpp*:
+* If the *key part* of `eosio::kv::map` is a self-defined struct, then the self-defined struct has to be wrapped by **CDT_REFLECT**, as shown below, which can be found in *nestcontn2kv.cpp*. Many more examples for various types used as key of `kv::map` including eosio built-in types, STL container and nested containers can also be found in the *testkvkeys.cpp* source file
 
     ```cpp
     using my_map_t4 = eosio::kv::map<"people2kv4"_n, mystructrefl, person2kv>
     ```
-
-* The current EOSIO implementation does NOT yet support `set<optional<T>>` and `vector<optional<T> >`, because they cause issues in `cleos get table` and `cleos get kv_table` commands
 * Strictly speaking, `std::pair` is just a struct of fields *first* and *second*, it is not an STL container. But `std::pair` is listed in the support table because of its complex cleos data input formats, especially when it is combined with `std::map` 
 
 ### How To Publishing A WASM File Bigger Than 512KB
