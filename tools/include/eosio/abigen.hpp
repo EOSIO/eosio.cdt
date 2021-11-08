@@ -27,7 +27,7 @@
 #include <memory>
 #include <set>
 #include <map>
-
+#include <array>
 #include <jsoncons/json.hpp>
 
 using namespace llvm;
@@ -600,6 +600,8 @@ namespace eosio { namespace cdt {
                add_pair(type);
             else if (is_template_specialization(type, {"tuple"}))
                add_tuple(type);
+            else if (is_template_specialization(type, {"array"}) )
+               add_type(std::get<clang::QualType>(get_template_argument(type, 0)));
             else if (is_template_specialization(type, {"variant"}))
                add_variant(type);
             else if (is_template_specialization(type, {})) {

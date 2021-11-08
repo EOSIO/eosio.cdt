@@ -1,0 +1,11 @@
+{
+   "tests" : [
+     {
+       "compile_flags": ["--eosio-include-dirs", "-I/tmpdir"],
+       "expected" : {
+         "exit-code": 0,
+         "stdout": "Include paths:.*/tmpdir"
+       }
+     }
+   ]
+}
