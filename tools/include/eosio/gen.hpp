@@ -541,6 +541,20 @@ struct generation_utils {
          }
          return replace_in_name(ret);
       }
+      else if ( is_template_specialization( type, {"array"} )) {
+         std::string orig = type.getAsString();
+         std:: string ret = "";
+         ret += get_template_argument_as_string( type, 0 );
+         ret = replace_in_name(ret);
+         ret += '[';
+         auto pos1 = orig.find_last_of(',');
+         auto pos2 = orig.find_last_of('>');
+         std::string digits = orig.substr(pos1 + 1, pos2 - pos1 - 1);
+         digits.erase(std::remove(digits.begin(), digits.end(), ' '), digits.end());
+         ret += digits;
+         ret += ']';
+         return ret;
+      }
       else if ( is_template_specialization( type, {} )) {
          auto pt = llvm::dyn_cast<clang::ElaboratedType>(type.getTypePtr());
          auto tst = llvm::dyn_cast<clang::TemplateSpecializationType>(pt ? pt->desugar().getTypePtr() : type.getTypePtr() );
