@@ -503,10 +503,10 @@ struct generation_utils {
    inline void translating_explicit_nested_dispatcher(const clang::QualType& inside_type, int depth, std::string & inside_type_name){
       if(is_explicit_nested(inside_type)){  // inside type is still explict nested  <<>>
          inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
-      } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
-         inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
       }else if (is_builtin_type(translate_type(inside_type))){   // inside type is builtin
          inside_type_name = translate_type(inside_type);
+      } else if(is_explicit_container(inside_type)) {  // inside type is single container,  only one <>
+         inside_type_name = translate_explicit_nested_type(inside_type, depth + 1);
       } else if (is_aliasing(inside_type)) { // inside type is a alias
          inside_type_name = get_base_type_name( inside_type );
       } else if (is_template_specialization(inside_type, {})) {
