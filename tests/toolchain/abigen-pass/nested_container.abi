@@ -4,7 +4,7 @@
     "types": [
         {
             "new_type_name": "B_map_string_string_E",
-            "type": "pair_string_string[]"
+            "type": "kvpair_string_string[]"
         },
         {
             "new_type_name": "B_vector_int32_E",
@@ -13,21 +13,7 @@
     ],
     "structs": [
         {
-            "name": "map2map",
-            "base": "",
-            "fields": [
-                {
-                    "name": "m",
-                    "type": "pair_string_string[]"
-                },
-                {
-                    "name": "m2m",
-                    "type": "pair_string_B_map_string_string_E[]"
-                }
-            ]
-        },
-        {
-            "name": "pair_string_B_map_string_string_E",
+            "name": "kvpair_string_B_map_string_string_E",
             "base": "",
             "fields": [
                 {
@@ -41,7 +27,7 @@
             ]
         },
         {
-            "name": "pair_string_string",
+            "name": "kvpair_string_string",
             "base": "",
             "fields": [
                 {
@@ -51,6 +37,20 @@
                 {
                     "name": "value",
                     "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "map2map",
+            "base": "",
+            "fields": [
+                {
+                    "name": "m",
+                    "type": "kvpair_string_string[]"
+                },
+                {
+                    "name": "m2m",
+                    "type": "kvpair_string_B_map_string_string_E[]"
                 }
             ]
         },

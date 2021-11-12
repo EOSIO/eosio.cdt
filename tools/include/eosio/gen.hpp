@@ -534,7 +534,7 @@ struct generation_utils {
    }
 
    void translate_explicit_nested_map_or_pair(const clang::QualType& type, int depth, std::string & ret, const std::string & tname, bool & gottype){
-      ret += depth > 0 ? tname + "_" : "pair_";
+      ret += depth > 0 ? tname + "_" : tname == "map" ? "kvpair_" : "pair_";
       clang::QualType inside_type[2];
       std::string inside_type_name[2];
       for(int i = 0; i < 2; ++i){
@@ -680,7 +680,7 @@ struct generation_utils {
       else if ( is_template_specialization( type, {"map"} )) {
          auto t0 = get_template_argument_as_string( type );
          auto t1 = get_template_argument_as_string( type, 1);
-         return replace_in_name("pair_" + t0 + "_" + t1 + "[]");
+         return replace_in_name("kvpair_" + t0 + "_" + t1 + "[]");
       }
       else if ( is_template_specialization( type, {"pair"} )) {
          auto t0 = get_template_argument_as_string( type );
