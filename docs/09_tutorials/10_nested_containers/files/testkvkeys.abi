@@ -1,0 +1,1530 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "vec_uint16",
+            "type": "uint16[]"
+        }
+    ],
+    "structs": [
+        {
+            "name": "extended_symbol",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sym",
+                    "type": "symbol"
+                },
+                {
+                    "name": "contract",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "get",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "get11",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol"
+                }
+            ]
+        },
+        {
+            "name": "get12",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol_code"
+                }
+            ]
+        },
+        {
+            "name": "get13",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point"
+                }
+            ]
+        },
+        {
+            "name": "get14",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "get15",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_symbol"
+                }
+            ]
+        },
+        {
+            "name": "get2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "get21",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "microseconds"
+                }
+            ]
+        },
+        {
+            "name": "get22",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_asset"
+                }
+            ]
+        },
+        {
+            "name": "get23",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "block_timestamp_type"
+                }
+            ]
+        },
+        {
+            "name": "get24",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16?"
+                }
+            ]
+        },
+        {
+            "name": "get25",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get25a",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get3",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "get31",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "pair_uint16_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get32",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get33",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get34",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "get35",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "get4",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl"
+                }
+            ]
+        },
+        {
+            "name": "get41",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl2"
+                }
+            ]
+        },
+        {
+            "name": "get5",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "get55",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "microseconds",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_count",
+                    "type": "int64"
+                }
+            ]
+        },
+        {
+            "name": "mystructrefl",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_count",
+                    "type": "uint64"
+                },
+                {
+                    "name": "_strID",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "mystructrefl2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_structfld",
+                    "type": "mystructrefl"
+                },
+                {
+                    "name": "_strID2",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "person2kv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntv11",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol"
+                }
+            ]
+        },
+        {
+            "name": "prntv12",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol_code"
+                }
+            ]
+        },
+        {
+            "name": "prntv13",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point"
+                }
+            ]
+        },
+        {
+            "name": "prntv14",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "prntv15",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_symbol"
+                }
+            ]
+        },
+        {
+            "name": "prntv2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "prntv21",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "microseconds"
+                }
+            ]
+        },
+        {
+            "name": "prntv22",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_asset"
+                }
+            ]
+        },
+        {
+            "name": "prntv23",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "block_timestamp_type"
+                }
+            ]
+        },
+        {
+            "name": "prntv24",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16?"
+                }
+            ]
+        },
+        {
+            "name": "prntv25",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv25a",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv3",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntv31",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "pair_uint16_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv32",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv33",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv34",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "prntv35",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "prntv4",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl"
+                }
+            ]
+        },
+        {
+            "name": "prntv41",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl2"
+                }
+            ]
+        },
+        {
+            "name": "prntv5",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "prntvals55",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "setv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv11",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv12",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "symbol_code"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv13",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv14",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv15",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_symbol"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "string"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv21",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "microseconds"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv22",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv23",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "block_timestamp_type"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv24",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16?"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv25",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv25a",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv3",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "name"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv31",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "pair_uint16_uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv32",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv33",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv34",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "vec_uint16?"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv35",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv4",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv41",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "mystructrefl2"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv5",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "asset"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setvals55",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "ename",
+                    "type": "name"
+                },
+                {
+                    "name": "easset",
+                    "type": "asset"
+                },
+                {
+                    "name": "myval",
+                    "type": "mystructrefl"
+                }
+            ]
+        },
+        {
+            "name": "tbl2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "ename",
+                    "type": "name"
+                },
+                {
+                    "name": "easset",
+                    "type": "asset"
+                },
+                {
+                    "name": "myval",
+                    "type": "mystructrefl"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "get",
+            "type": "get",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get11",
+            "type": "get11",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get12",
+            "type": "get12",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get13",
+            "type": "get13",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get14",
+            "type": "get14",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get15",
+            "type": "get15",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get2",
+            "type": "get2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get21",
+            "type": "get21",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get22",
+            "type": "get22",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get23",
+            "type": "get23",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get24",
+            "type": "get24",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get25",
+            "type": "get25",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get25a",
+            "type": "get25a",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get3",
+            "type": "get3",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get31",
+            "type": "get31",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get32",
+            "type": "get32",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get33",
+            "type": "get33",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get34",
+            "type": "get34",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get35",
+            "type": "get35",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get4",
+            "type": "get4",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get41",
+            "type": "get41",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get5",
+            "type": "get5",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "get55",
+            "type": "get55",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv",
+            "type": "prntv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv11",
+            "type": "prntv11",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv12",
+            "type": "prntv12",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv13",
+            "type": "prntv13",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv14",
+            "type": "prntv14",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv15",
+            "type": "prntv15",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv2",
+            "type": "prntv2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv21",
+            "type": "prntv21",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv22",
+            "type": "prntv22",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv23",
+            "type": "prntv23",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv24",
+            "type": "prntv24",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv25",
+            "type": "prntv25",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv25a",
+            "type": "prntv25a",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv3",
+            "type": "prntv3",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv31",
+            "type": "prntv31",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv32",
+            "type": "prntv32",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv33",
+            "type": "prntv33",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv34",
+            "type": "prntv34",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv35",
+            "type": "prntv35",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv4",
+            "type": "prntv4",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv41",
+            "type": "prntv41",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv5",
+            "type": "prntv5",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvals55",
+            "type": "prntvals55",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv",
+            "type": "setv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv11",
+            "type": "setv11",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv12",
+            "type": "setv12",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv13",
+            "type": "setv13",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv14",
+            "type": "setv14",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv15",
+            "type": "setv15",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv2",
+            "type": "setv2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv21",
+            "type": "setv21",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv22",
+            "type": "setv22",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv23",
+            "type": "setv23",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv24",
+            "type": "setv24",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv25",
+            "type": "setv25",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv25a",
+            "type": "setv25a",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv3",
+            "type": "setv3",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv31",
+            "type": "setv31",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv32",
+            "type": "setv32",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv33",
+            "type": "setv33",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv34",
+            "type": "setv34",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv35",
+            "type": "setv35",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv4",
+            "type": "setv4",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv41",
+            "type": "setv41",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv5",
+            "type": "setv5",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvals55",
+            "type": "setvals55",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {
+        "kvtb1": {
+            "type": "person2kv",
+            "primary_index": {
+                "name": "map.index",
+                "type": "int32"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb11": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "symbol"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb12": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "symbol_code"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb13": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "time_point"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb14": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "time_point_sec"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb15": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "extended_symbol"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb2": {
+            "type": "person2kv",
+            "primary_index": {
+                "name": "map.index",
+                "type": "string"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb21": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "microseconds"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb22": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "extended_asset"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb23": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "block_timestamp_type"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb24": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "optional<unsigned short>"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb25": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "vector<unsigned short, class std::__1::allocator<unsigned short> >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb25a": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "set<unsigned short, struct std::__1::less<unsigned short>, class std::__1::allocator<unsigned short> >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb3": {
+            "type": "person2kv",
+            "primary_index": {
+                "name": "map.index",
+                "type": "name"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb31": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "map<unsigned short, unsigned short, struct std::__1::less<unsigned short>, class std::__1::allocator<struct std::__1::pair<const unsigned short, unsigned short> > >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb32": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "deque<unsigned short, class std::__1::allocator<unsigned short> >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb33": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "vector<class std::__1::vector<unsigned short, class std::__1::allocator<unsigned short> >, class std::__1::allocator<class std::__1::vector<unsigned short, class std::__1::allocator<unsigned short> > > >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb34": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "optional<class std::__1::vector<unsigned short, class std::__1::allocator<unsigned short> > >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb35": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "list<unsigned short, class std::__1::allocator<unsigned short> >"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb4": {
+            "type": "person2kv",
+            "primary_index": {
+                "name": "map.index",
+                "type": "mystructrefl"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb41": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "mystructrefl2"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb5": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "asset"
+            },
+            "secondary_indices": {}
+        },
+        "kvtb55": {
+            "type": "tbl2",
+            "primary_index": {
+                "name": "map.index",
+                "type": "int32"
+            },
+            "secondary_indices": {}
+        }
+    },
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": [
+        {
+            "name": "get",
+            "result_type": "person2kv"
+        },
+        {
+            "name": "get11",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get12",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get13",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get14",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get15",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get2",
+            "result_type": "person2kv"
+        },
+        {
+            "name": "get21",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get22",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get23",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get24",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get25",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get25a",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get3",
+            "result_type": "person2kv"
+        },
+        {
+            "name": "get31",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get32",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get33",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get34",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get35",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get4",
+            "result_type": "person2kv"
+        },
+        {
+            "name": "get41",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get5",
+            "result_type": "tbl2"
+        },
+        {
+            "name": "get55",
+            "result_type": "tbl2"
+        }
+    ]
+}

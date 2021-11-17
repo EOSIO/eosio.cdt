@@ -1,0 +1,772 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "mp_uint16",
+            "type": "pair_uint16_uint16[]"
+        },
+        {
+            "new_type_name": "op_uint16",
+            "type": "uint16?"
+        },
+        {
+            "new_type_name": "pr_uint16",
+            "type": "pair_uint16_uint16"
+        },
+        {
+            "new_type_name": "set_uint16",
+            "type": "uint16[]"
+        },
+        {
+            "new_type_name": "tup_uint16",
+            "type": "tuple_uint16_uint16"
+        },
+        {
+            "new_type_name": "vec_uint16",
+            "type": "uint16[]"
+        }
+    ],
+    "structs": [
+        {
+            "name": "get",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_tup_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "tup_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint32_tup_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint32"
+                },
+                {
+                    "name": "second",
+                    "type": "tup_uint16"
+                }
+            ]
+        },
+        {
+            "name": "person2kv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "t",
+                    "type": "tuple_uint16_string"
+                },
+                {
+                    "name": "vt",
+                    "type": "tup_uint16[]"
+                },
+                {
+                    "name": "stt",
+                    "type": "tup_uint16[]"
+                },
+                {
+                    "name": "ot",
+                    "type": "tup_uint16?"
+                },
+                {
+                    "name": "mt",
+                    "type": "pair_uint16_tup_uint16[]"
+                },
+                {
+                    "name": "pt",
+                    "type": "pair_uint32_tup_uint16"
+                },
+                {
+                    "name": "tt",
+                    "type": "tuple_tup_uint16_tup_uint16_tup_uint16"
+                },
+                {
+                    "name": "tv",
+                    "type": "tuple_uint16_vec_uint16_vec_uint16"
+                },
+                {
+                    "name": "tst",
+                    "type": "tuple_uint16_set_uint16_set_uint16"
+                },
+                {
+                    "name": "to",
+                    "type": "tuple_op_uint16_op_uint16_op_uint16_op_uint16_op_uint16"
+                },
+                {
+                    "name": "tm",
+                    "type": "tuple_uint16_mp_uint16_mp_uint16"
+                },
+                {
+                    "name": "tp",
+                    "type": "tuple_uint16_pr_uint16_pr_uint16"
+                },
+                {
+                    "name": "tmisc",
+                    "type": "tuple_string_vec_uint16_pr_uint16"
+                }
+            ]
+        },
+        {
+            "name": "prntmt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntot",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntpt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntstt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttmisc",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prnttv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "prntvt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "setmt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "mt",
+                    "type": "pair_uint16_tup_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setot",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "ot",
+                    "type": "tup_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "setpt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "pt",
+                    "type": "pair_uint32_tup_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setstt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "stt",
+                    "type": "tup_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "sett",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "t",
+                    "type": "tuple_uint16_string"
+                }
+            ]
+        },
+        {
+            "name": "settm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tm",
+                    "type": "tuple_uint16_mp_uint16_mp_uint16"
+                }
+            ]
+        },
+        {
+            "name": "settmisc",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tmisc",
+                    "type": "tuple_string_vec_uint16_pr_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "to",
+                    "type": "tuple_op_uint16_op_uint16_op_uint16_op_uint16_op_uint16"
+                }
+            ]
+        },
+        {
+            "name": "settp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tp",
+                    "type": "tuple_uint16_pr_uint16_pr_uint16"
+                }
+            ]
+        },
+        {
+            "name": "settst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tst",
+                    "type": "tuple_uint16_set_uint16_set_uint16"
+                }
+            ]
+        },
+        {
+            "name": "settt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tt",
+                    "type": "tuple_tup_uint16_tup_uint16_tup_uint16"
+                }
+            ]
+        },
+        {
+            "name": "settv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "tv",
+                    "type": "tuple_uint16_vec_uint16_vec_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setvt",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "vt",
+                    "type": "tup_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "tuple_op_uint16_op_uint16_op_uint16_op_uint16_op_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "op_uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "op_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "op_uint16"
+                },
+                {
+                    "name": "field_3",
+                    "type": "op_uint16"
+                },
+                {
+                    "name": "field_4",
+                    "type": "op_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_string_vec_uint16_pr_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "string"
+                },
+                {
+                    "name": "field_1",
+                    "type": "vec_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "pr_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_tup_uint16_tup_uint16_tup_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "tup_uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "tup_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "tup_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_mp_uint16_mp_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "mp_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "mp_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_pr_uint16_pr_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "pr_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "pr_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_set_uint16_set_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "set_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "set_uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_string",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "tuple_uint16_vec_uint16_vec_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "field_0",
+                    "type": "uint16"
+                },
+                {
+                    "name": "field_1",
+                    "type": "vec_uint16"
+                },
+                {
+                    "name": "field_2",
+                    "type": "vec_uint16"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "get",
+            "type": "get",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmt",
+            "type": "prntmt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntot",
+            "type": "prntot",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpt",
+            "type": "prntpt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntstt",
+            "type": "prntstt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntt",
+            "type": "prntt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttm",
+            "type": "prnttm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttmisc",
+            "type": "prnttmisc",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntto",
+            "type": "prntto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttp",
+            "type": "prnttp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttst",
+            "type": "prnttst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttt",
+            "type": "prnttt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnttv",
+            "type": "prnttv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvt",
+            "type": "prntvt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmt",
+            "type": "setmt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setot",
+            "type": "setot",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpt",
+            "type": "setpt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setstt",
+            "type": "setstt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "sett",
+            "type": "sett",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settm",
+            "type": "settm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settmisc",
+            "type": "settmisc",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setto",
+            "type": "setto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settp",
+            "type": "settp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settst",
+            "type": "settst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settt",
+            "type": "settt",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "settv",
+            "type": "settv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvt",
+            "type": "setvt",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {
+        "people2kv": {
+            "type": "person2kv",
+            "primary_index": {
+                "name": "map.index",
+                "type": "int32"
+            },
+            "secondary_indices": {}
+        }
+    },
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": [
+        {
+            "name": "get",
+            "result_type": "person2kv"
+        }
+    ]
+}

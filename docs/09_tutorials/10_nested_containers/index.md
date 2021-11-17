@@ -187,7 +187,7 @@ pkill nodeos
 ps aux |grep keosd
 pkill keosd
 
-# use vim to edit ~/eosio-wallet/config.ini, modify the default size of max-body-size as below and save config.ini
+# use vim to edit ~/eosio-wallet/config.ini, modify the default size of max-body-size of keosd as below and save config.ini
   # max-body-size = 1048576
   max-body-size = 1000000000
   

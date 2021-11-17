@@ -1,12 +1,10 @@
 /* Verify the support of nested containers involving std::tuple<Ts...> in eosio multi-index table
- * This tupletest.cpp can be  regarded as a continuation of ../nestcontn2a.cpp
+ * This tupletest.cpp can be  regarded as a continuation of nestcontn2a.cpp
  * For each action, an example regarding how to use the action with the cleos command line is given.
  *
  * Important Remarks:
  *      1) The input of a std::tuple<T0,T1,T2> via cleos uses [ele0, ele1, ele2], it is the same as the input of a vector/set
  *      2) However the input formats of settm,settp are different from those of corresponding setvm, setvp in nestcontn2a.cpp
- *      3) More importantly, vector<optional<T> > and set<optional<T> >  are NOT yet supported as shown in nestcontn2a.cpp,
- *         BUT tuple of optional<T> is supported as shown here in this tupletest.cpp
  *
  * Expected printout:
  *      For each setx action, the printed result on the cleos console is given in its corresponding prntx action.

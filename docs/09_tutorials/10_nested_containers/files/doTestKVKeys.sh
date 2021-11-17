@@ -1,29 +1,22 @@
 #!/bin/bash
 #
-# This script is used to test all the cleos commands of the EOSIO actions coded in ./testkvkeys.cpp
-#
-#*********************************************************************************************************
-# Attention:
-#   This script can run successfully only after the Pull Request at https://github.com/EOSIO/eosio.cdt/pull/1211
-#   related to CDT_REFLECT(...) and key_utils.hpp is merged into eosio.cdt/ repo!
-#*********************************************************************************************************
+# This script is used to test all the cleos commands of the EOSIO actions coded in testkvkeys.cpp,
+# which is in the subdirectory tests/toolchain/build-pass/ of eosio.cdt
 #
 # Before running this script, make sure your default wallet is unlocked, and replace EOS6...5CV with your own development key
 # In a development environment, you may need to restart nodeos
 #
 # Here it is assumed that your eos with the KV_DATABASE feature is installed in ~/Work/eos/
-# and the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2kv/testkvkeys/
 # See https://github.com/EOSIO/eos/tree/develop/contracts/enable-kv to know how to enable Key value map/table feature of nodeos
+#
+# It is also assumed that the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2kv/testkvkeys/,
+# which has testkvkeys.cpp
 #
 # Remark:
 #   If you restart to run nodeos first in this script, followed by running enable-kv.sh,
 #   make sure that there is a pause after running nodeos by adding a statement like 'sleep 2',
 #   to avoid the error message curl: (7) Failed to connect to 127.0.0.1 port 8888: Connection refused
 #
-# Change History on this .sh script:
-#   v2: Verifying std::tuple<Ts...> is supported by the new eosio-cpp compiler after the fix for EPE 972 is put into eosio.CDT
-#   v3: Verifying the types of key of kv::map. The possible types of key of kv::map include STL nested containers and eosio-defined types
-
 # eacho -e 'Make sure nodeos running properly, then start enable-kv.sh ...\n'
 # cd ~/Work/eos/contracts/enable-kv/
 # ./enable-kv.sh -c ~/Work/eos/build/contracts/contracts/
