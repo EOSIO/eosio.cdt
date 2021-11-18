@@ -108,6 +108,20 @@ CONTRACT explicit_nested_tests : public contract {
    }
 
    [[eosio::action]]
+   // usage : cleos -v push action eosio vmpiistr '[[{"key":12,"value":{"first":"map pair","second":"test passed"}}]]'  -p eosio@active
+   std::map<int, std::pair<std::string, std::string>>  vmpiistr(std::map<int, std::pair<std::string, std::string>> input){
+      std::map<int, std::pair<std::string, std::string>> output = input;
+      return output;
+   }
+
+   [[eosio::action]]
+   // usage : cleos -v push action eosio vpmiistr '[{"first":34, "second":[{"key":"pair","value":"map"}, {"key":"test","value":"passed"}] }]'  -p eosio@active
+   std::pair<int, std::map<std::string, std::string>>  vpmiistr(std::pair<int, std::map<std::string, std::string>> input){
+      std::pair<int, std::map<std::string, std::string>> output = input;
+      return output;
+   }
+
+   [[eosio::action]]
    // usage : cleos -v push action eosio tup '[{"field_0":1,"field_1":2.0,"field_2":[4,5,6,7]}]'  -p eosio@active
    std::tuple<uint64_t, std::optional<float>, std::vector<int>>  tup(std::tuple<uint64_t, std::optional<float>, std::vector<int>>  input){
       std::tuple<uint64_t, std::optional<float>, std::vector<int>> output = input;
