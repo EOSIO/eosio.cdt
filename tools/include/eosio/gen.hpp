@@ -807,7 +807,7 @@ struct generation_utils {
       std::string tstr = t.getAsString();
       // won't deal with these kinds of nested container so far
       std::vector<std::string> filters = {"decay_t", "decltype", "ignore", "invoke",
-                           "index", "declval", "non_unique", "_BaseT", "typename"};
+                           "index", "declval", "non_unique", "_BaseT", "typename", "allocator"};
       for(auto & word : filters){
          if(tstr.find(word) != std::string::npos) return false;
       }
