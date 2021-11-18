@@ -4,7 +4,7 @@
     "types": [
         {
             "new_type_name": "B_map_string_string_E",
-            "type": "pair_string_string[]"
+            "type": "mpair_string_string[]"
         },
         {
             "new_type_name": "B_vector_int32_E",
@@ -18,16 +18,16 @@
             "fields": [
                 {
                     "name": "m",
-                    "type": "pair_string_string[]"
+                    "type": "mpair_string_string[]"
                 },
                 {
                     "name": "m2m",
-                    "type": "pair_string_B_map_string_string_E[]"
+                    "type": "mpair_string_B_map_string_string_E[]"
                 }
             ]
         },
         {
-            "name": "pair_string_B_map_string_string_E",
+            "name": "mpair_string_B_map_string_string_E",
             "base": "",
             "fields": [
                 {
@@ -41,7 +41,7 @@
             ]
         },
         {
-            "name": "pair_string_string",
+            "name": "mpair_string_string",
             "base": "",
             "fields": [
                 {
