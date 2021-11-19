@@ -23,28 +23,6 @@ steps:
     timeout: ${TIMEOUT:-60}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}
 
-  - label: ":centos: CentOS 8 - Build"
-    command:
-      - "./.cicd/build.sh"
-      - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
-    env:
-      IMAGE_TAG: "centos-8"
-    agents:
-      queue: "automation-eks-eos-builder-fleet"
-    timeout: ${TIMEOUT:-60}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}
-
-  - label: ":ubuntu: Ubuntu 16.04 - Build"
-    command:
-      - "./.cicd/build.sh"
-      - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
-    env:
-      IMAGE_TAG: "ubuntu-16.04"
-    agents:
-      queue: "automation-eks-eos-builder-fleet"
-    timeout: ${TIMEOUT:-60}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}
-
   - label: ":ubuntu: Ubuntu 18.04 - Build"
     command:
       - "./.cicd/build.sh"
@@ -66,45 +44,6 @@ steps:
       queue: "automation-eks-eos-builder-fleet"
     timeout: ${TIMEOUT:-60}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}
-
-  - label: ":darwin: macOS 10.14 - Build"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt"
-      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && ./.cicd/build.sh"
-      - "cd eosio.cdt && tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
-          modify-cpu: 12
-          modify-ram: 24
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - "registry-1"
-            - "registry-2"
-          pre-commands:
-            - "rm -rf mac-anka-fleet; git clone git@github.com:EOSIO/mac-anka-fleet.git && cd mac-anka-fleet && . ./ensure-tag.bash -u 12 -r 25G -a '-n'"
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    env:
-      PROJECT_TAG: ${MACOS_10_14_TAG}
-      REPO: ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO}
-      REPO_COMMIT: $BUILDKITE_COMMIT
-      TAG_COMMANDS: "git clone ${BUILDKITE_PULL_REQUEST_REPO:-$BUILDKITE_REPO} eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive && . ./.cicd/platforms/macos-10.14.sh && cd ~/eosio.cdt && cd .. && rm -rf eosio.cdt"
-      TEMPLATE: 10.14.6_6C_14G_80G
-      TEMPLATE_TAG: clean::cicd::git-ssh::nas::brew::buildkite-agent
-    timeout: ${TIMEOUT:-120}
-    agents:
-      - "queue=mac-anka-large-node-fleet"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}
 
   - label: ":darwin: macOS 10.15 - Build"
     command:
@@ -169,28 +108,6 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_WASM_METRICS}
 
-  - label: ":centos: CentOS 8 - EOSIO.CONTRACTS Build"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/eosio-contracts-build.sh"
-    env:
-      IMAGE_TAG: "centos-8"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_WASM_METRICS}
-
-  - label: ":ubuntu: Ubuntu 16.04 - EOSIO.CONTRACTS Build"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/eosio-contracts-build.sh"
-    env:
-      IMAGE_TAG: "ubuntu-16.04"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_WASM_METRICS}
-
   - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Build"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -213,33 +130,6 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_WASM_METRICS}
-
-  - label: ":darwin: macOS 10.14 - EOSIO.CONTRACTS Build"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt"
-      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
-      - "cd eosio.cdt && ./.cicd/eosio-contracts-build.sh"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - "registry-1"
-            - "registry-2"
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    agents:
-      - "queue=mac-anka-node-fleet"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_WASM_METRICS}
 
   - label: ":darwin: macOS 10.15 - EOSIO.CONTRACTS Build"
     command:
@@ -302,28 +192,6 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":centos: CentOS 8 - Unit Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/tests.sh"
-    env:
-      IMAGE_TAG: "centos-8"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_UNIT_TESTS}
-
-  - label: ":ubuntu: Ubuntu 16.04 - Unit Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/tests.sh"
-    env:
-      IMAGE_TAG: "ubuntu-16.04"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_UNIT_TESTS}
-
   - label: ":ubuntu: Ubuntu 18.04 - Unit Tests"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -345,34 +213,6 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_UNIT_TESTS}
-
-  - label: ":darwin: macOS 10.14 - Unit Tests"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt"
-      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
-      - "cd eosio.cdt && ./.cicd/tests.sh"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - "registry-1"
-            - "registry-2"
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    agents:
-      - "queue=mac-anka-node-fleet"
-    timeout: ${TIMEOUT:-20}
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_UNIT_TESTS}
 
   - label: ":darwin: macOS 10.15 - Unit Tests"
     command:
@@ -424,28 +264,6 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
-  - label: ":centos: CentOS 8 - Toolchain Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/toolchain-tests.sh"
-    env:
-      IMAGE_TAG: "centos-8"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
-
-  - label: ":ubuntu: Ubuntu 16.04 - Toolchain Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/toolchain-tests.sh"
-    env:
-      IMAGE_TAG: "ubuntu-16.04"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
-
   - label: ":ubuntu: Ubuntu 18.04 - Toolchain Tests"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -467,34 +285,6 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
-
-  - label: ":darwin: macOS 10.14 - Toolchain Tests"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt"
-      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
-      - "cd eosio.cdt && ./.cicd/toolchain-tests.sh"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - "registry-1"
-            - "registry-2"
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    agents:
-      - "queue=mac-anka-node-fleet"
-    timeout: ${TIMEOUT:-20}
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
     command:
@@ -607,62 +397,6 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
-  - label: ":centos: Centos 8 - Package Builder"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':centos: CentOS 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/package.sh"
-    env:
-      BUILDKITE_AGENT_ACCESS_TOKEN:
-      IMAGE_TAG: "centos-8"
-      OS: "centos" # OS and PKGTYPE required for lambdas
-      PKGTYPE: "rpm"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    key: "centos8pb"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-
-  - label: ":centos: Centos 8 - Test Package"
-    command: |
-      buildkite-agent artifact download '*.rpm' . --step ':centos: Centos 8 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
-      ./.cicd/test-package.docker.sh
-    env:
-      IMAGE: "centos:8"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    depends_on: "centos8pb"
-    allow_dependency_failure: false
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-
-  - label: ":ubuntu: Ubuntu 16.04 - Package Builder"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 16.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/package.sh"
-    env:
-      BUILDKITE_AGENT_ACCESS_TOKEN:
-      IMAGE_TAG: "ubuntu-16.04"
-      OS: "ubuntu-16.04" # OS and PKGTYPE required for lambdas
-      PKGTYPE: "deb"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    key: "ubuntu1604pb"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-
-  - label: ":ubuntu: Ubuntu 16.04 - Test Package"
-    command: |
-      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 16.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
-      ./.cicd/test-package.docker.sh
-    env:
-      IMAGE: "ubuntu:16.04"
-    agents:
-      queue: "automation-eks-eos-tester-fleet"
-    depends_on: "ubuntu1604pb"
-    allow_dependency_failure: false
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_16}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -718,63 +452,6 @@ steps:
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-
-  - label: ":darwin: macOS 10.14 - Package Builder"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt"
-      - "cd eosio.cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd eosio.cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.14 - Build' && tar -xzf build.tar.gz"
-      - "cd eosio.cdt && ./.cicd/package.sh"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_14_TAG}"
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - "registry-1"
-            - "registry-2"
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    agents:
-      - "queue=mac-anka-node-fleet"
-    key: "macos1014pb"
-    timeout: ${TIMEOUT:-20}
-    skip: ${SKIP_MACOS_10_14}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
-
-  - label: ":darwin: macOS 10.14 - Test Package"
-    command:
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT"
-      - "cd eosio.cdt && buildkite-agent artifact download '*' . --step ':darwin: macOS 10.14 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN"
-      - "cd eosio.cdt && ./.cicd/test-package.anka.sh"
-    plugins:
-      - EOSIO/anka#v0.6.1:
-          no-volume: true
-          inherit-environment-vars: true
-          vm-name: 10.14.6_6C_14G_80G
-          vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent"
-          always-pull: true
-          debug: true
-          wait-network: true
-          pre-execute-sleep: 5
-          pre-execute-ping-sleep: github.com
-          failover-registries:
-            - 'registry_1'
-            - 'registry_2'
-      - EOSIO/skip-checkout#v0.1.1:
-          cd: ~
-    agents:
-      - "queue=mac-anka-node-fleet"
-    depends_on: "macos1014pb"
-    allow_dependency_failure: false
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_MACOS_10_14}${SKIP_PACKAGE_BUILDER}${SKIP_MAC}
 
   - label: ":darwin: macOS 10.15 - Package Builder"
     command:
@@ -844,16 +521,13 @@ steps:
 
   - label: ":beer: Brew Updater"
     command: |
-      buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: macOS 10.14 - Package Builder'
-      mv eosio.cdt.rb eosio_cdt_mojave.rb
-      buildkite-agent artifact upload eosio_cdt_mojave.rb
       buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: macOS 10.15 - Package Builder'
       mv eosio.cdt.rb eosio_cdt_catalina.rb
       buildkite-agent artifact upload eosio_cdt_catalina.rb
     agents:
       queue: "automation-basic-builder-fleet"
     timeout: "${TIMEOUT:-5}"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
