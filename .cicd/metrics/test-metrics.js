@@ -111,8 +111,8 @@ function getOS(environment)
         return 'CentOS 7';
     if (/fedora(?!.*2[89])/.test(label) && /fedora(?!.*3\d)/.test(label))
         return 'Fedora 27';
-    if (/high.*sierra/.test(label))
-        return 'High Sierra';
+    if (/catalina/.test(label))
+        return 'Catalina';
     if (/ubuntu.*18.*04/.test(label) || /ubuntu.*18(?!.*10)/.test(label))
         return 'Ubuntu 18.04';
     if (/ubuntu.*20.*04/.test(label) || /ubuntu.*20(?!.*10)/.test(label))
