@@ -109,8 +109,6 @@ function getOS(environment)
         return 'Amazon Linux 2';
     if (/centos(?!.*[89])/.test(label))
         return 'CentOS 7';
-    if (/fedora(?!.*2[89])/.test(label) && /fedora(?!.*3\d)/.test(label))
-        return 'Fedora 27';
     if (/catalina/.test(label))
         return 'Catalina';
     if (/ubuntu.*18.*04/.test(label) || /ubuntu.*18(?!.*10)/.test(label))
