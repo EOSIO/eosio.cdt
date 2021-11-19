@@ -1,12 +1,14 @@
 #!/bin/bash
 
 #
-# This script is used to test all the cleos commands of the EOSIO actions coded in ./nestcontn2a.cpp and ./tupletest/tupletest.cpp
+# This script is used to test all the cleos commands of the EOSIO actions coded in nestcontn2a.cpp and tupletest.cpp,
+# which are in the subdirectory tests/toolchain/build-pass/ of eosio.cdt
 #
 # Before running this script, make sure your default wallet is unlocked, and replace EOS6...5CV with your own development key
 # In a development environment, you may need to restart nodeos
 #
-# Here it is assumed that the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2a/
+# Here it is assumed that the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2a/,
+# which has nestcontn2a.cpp and a subdirectory tupletest/, the subdirectory tupletest/ has tupletest.cpp
 #
 # Naming Convention of the containers:
 #   Each container/object is represented by one letter: v-vector, m-map, s-mystruct,o-optional, p-pair, t-tuple
@@ -14,9 +16,6 @@
 #   You can use above naming convention to search for corresponding cleos command of nested containers, e.g
 #       -  'setvm'  handles vector of maps
 #       -  'setost' handles optional of set
-#
-# Change History on this .sh script:
-#   v2: Verifying std::tuple<Ts...> is supported by the new eosio-cpp compiler after the fix for EPE 972 is put into eosio.CDT
 
 # eacho -e 'Make sure nodeos running properly\n'
 cleos create account eosio alice EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -293,9 +292,7 @@ echo -e "The output is in a JSON format for 3 name keys alice, bob,jane used in 
 read -p "there are 3 rows in the output, each row starts with data member v, ends with data member ovv" notcare
 cleos get table nestcontn2a nestcontn2a people2
 
-
-############  CAUTION: You can run the following only after the new eosio-cpp compiler related to fixing EPE-972 is available
-echo -e "\n\n******Continue to verify std::tuple<Ts...> is supported in the new eosio-cpp compiler ******"
+echo -e "\n\n******Continue to verify std::tuple<Ts...> is supported in the eosio multi-index table ******"
 
 cd tupletest
 echo -e 'Get to the directory that has tupletest.cpp\n'

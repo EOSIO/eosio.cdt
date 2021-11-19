@@ -1,13 +1,16 @@
 #!/bin/bash
 #
-# This script is used to test all the cleos commands of the EOSIO actions coded in ./nestcontn2kv.cpp
+# This script is used to test all the cleos commands of the EOSIO actions coded in nestcontn2kv.cpp and tupletestkv.cpp,
+# which are in the subdirectory tests/toolchain/build-pass/ of eosio.cdt
 #
 # Before running this script, make sure your default wallet is unlocked, and replace EOS6...5CV with your own development key
 # In a development environment, you may need to restart nodeos
 #
 # Here it is assumed that your eos with the KV_DATABASE feature is installed in ~/Work/eos/
-# and the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2kv/
 # See https://github.com/EOSIO/eos/tree/develop/contracts/enable-kv to know how to enable Key value map/table feature of nodeos
+#
+# It is also assumed that the current working directory is ~/WorkNestedContainer/nested-container/nestcontn2kv/,
+# which has nestcontn2kv.cpp and a subdirectory tupletestkv/, the subdirectory tupletestkv/ has tupletestkv.cpp
 #
 # Naming Convention of the containers:
 #   Each container/object is represented by one letter: v-vector, m-map, s-mystruct,o-optional, p-pair, t-tuple
@@ -15,15 +18,12 @@
 #   You can use above naming convention to search for corresponding cleos command of nested containers, e.g
 #       -  'setvm'  handles vector of maps
 #       -  'setost' handles optional of set
+#
 # Remark:
 #   If you restart to run nodeos first in this script, followed by running enable-kv.sh,
 #   make sure that there is a pause after running nodeos by adding a statement like 'sleep 2',
 #   to avoid the error message curl: (7) Failed to connect to 127.0.0.1 port 8888: Connection refused
 #
-# Change History on this .sh script:
-#   v2: Verifying std::tuple<Ts...> is supported by the new eosio-cpp compiler after the fix for EPE 972 is put into eosio.CDT
-
-
 # eacho -e 'Make sure nodeos running properly, then start enable-kv.sh ...\n'
 # cd ~/Work/eos/contracts/enable-kv/
 # ./enable-kv.sh -c ~/Work/eos/build/contracts/contracts/
@@ -344,8 +344,7 @@ echo -e "The output is in a JSON format for 2 instances of mystructrefl:"
 read -p "there are 2 rows in the output, each row starts with data member v, ends with data member ovv" notcare
 cleos get kv_table nestcontn2kv people2kv4 map.index
 
-############  CAUTION: You can run the following only after the new eosio-cpp compiler related to fixing EPE-972 is available
-echo -e "\n\n******Continue to verify std::tuple<Ts...> is supported in the new eosio-cpp compiler ******"
+echo -e "\n\n******Continue to verify std::tuple<Ts...> is supported in the eosio kv::map table ******"
 
 cd tupletestkv
 echo -e 'Get to the directory that has tupletestkv.cpp\n'
@@ -355,7 +354,6 @@ pwd
 echo -e '\n******Entered tupletestkv/ subdirectory to compile and then publish tupletestkv contract...\n'
 echo -e '\n\n eosio-cpp is compiling contract tupletestkv, please wait...\n'
 eosio-cpp tupletestkv.cpp
-    #  eosio-cpp compiler has to have the fix of EPE-972, otherwise above command will print out errors
 
 cleos --verbose create account eosio tupletestkv EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 cleos --verbose set contract tupletestkv ./ -p tupletestkv@active
