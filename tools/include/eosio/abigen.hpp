@@ -427,10 +427,10 @@ namespace eosio { namespace cdt {
 
          if(inside_type_name[0] != "" && inside_type_name[1] != ""){
             ret += inside_type_name[0] + "_" + inside_type_name[1];
-            abidef.type = "pair_" + inside_type_name[0] + "_" + inside_type_name[1] + "[]";
+            abidef.type = "mpair_" + inside_type_name[0] + "_" + inside_type_name[1] + "[]";
 
             abi_struct kv;
-            kv.name = "pair_" + inside_type_name[0] + "_" + inside_type_name[1];
+            kv.name = "mpair_" + inside_type_name[0] + "_" + inside_type_name[1];
             kv.fields.push_back( {"key", inside_type_name[0]} );
             kv.fields.push_back( {"value", inside_type_name[1]} );
             _abi.structs.insert(kv);
