@@ -521,16 +521,13 @@ steps:
 
   - label: ":beer: Brew Updater"
     command: |
-      buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: macOS 10.14 - Package Builder'
-      mv eosio.cdt.rb eosio_cdt_mojave.rb
-      buildkite-agent artifact upload eosio_cdt_mojave.rb
       buildkite-agent artifact download eosio.cdt.rb . --step ':darwin: macOS 10.15 - Package Builder'
       mv eosio.cdt.rb eosio_cdt_catalina.rb
       buildkite-agent artifact upload eosio_cdt_catalina.rb
     agents:
       queue: "automation-basic-builder-fleet"
     timeout: "${TIMEOUT:-5}"
-    skip: ${SKIP_MACOS_10_14}${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
 
   - label: ":git: Git Submodule Regression Check"
     command:
