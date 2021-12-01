@@ -370,7 +370,8 @@ struct generation_utils {
          if (auto ce = llvm::dyn_cast<clang::CastExpr>(std::get<clang::Expr*>(arg))) {
             auto il = llvm::dyn_cast<clang::IntegerLiteral>(ce->getSubExpr());
             return std::to_string(il->getValue().getLimitedValue());
-         }
+         } else if (auto ce = llvm::dyn_cast<clang::ConstantExpr>(std::get<clang::Expr*>(arg)))
+             return ce->getResultAsAPSInt().toString(10);
       } else {
          return std::get<llvm::APSInt>(arg).toString(10);
       }
