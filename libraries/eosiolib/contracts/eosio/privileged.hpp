@@ -219,6 +219,8 @@ namespace eosio {
    struct params_object{
       std::string packed;
 
+      params_object() = default;
+
       template<typename T>
       params_object(T v){
          (*this)(v);
@@ -280,23 +282,35 @@ namespace eosio {
          return *this;
       }
 
-      void set() const{
-         internal_use_do_not_use::set_parameters_packed(packed.c_str(), packed.size());
-      }
-
-      params_object get() const{
-         char buffer[512];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-
-         auto size = internal_use_do_not_use::get_parameters_packed(packed.c_str(), packed.size(), buffer, sizeof(buffer));
-         ASSERT_LESS(size, sizeof(buffer));
-         return params_object{{buffer, size}};
-      }
-
-      size_t get_size() const{
-         return internal_use_do_not_use::get_parameters_packed(packed.c_str(), packed.size(), 0, 0);
-      }
    };
+
+    /**
+     * Set the blockchain parameters (version using the set_parameters_packed host function)
+     *
+     * @ingroup privileged
+     *
+     * @param New blockchain parameters to set
+    */
+    inline void set_parameters(params_object& params) {
+       internal_use_do_not_use::set_parameters_packed(params.packed.c_str(), params.packed.size());
+    }
+
+    /**
+     * Retrieve the current blockchain parameters (version using the get_parameters_packed intrinsic)
+     *
+     * @ingroup privileged
+     *
+     * @param params_ids a params_object containing the packed list of ids of the parameters we want to get.
+     *
+     * @return a params_object containing the current values for the ids requested.
+    */
+    inline params_object get_parameters(params_object& params_ids) {
+       char buffer[512];
+       datastream<char*> ds((char*)&buffer, sizeof(buffer));
+
+       auto size = internal_use_do_not_use::get_parameters_packed(params_ids.packed.c_str(), params_ids.packed.size(), buffer, sizeof(buffer));
+       return params_object{{buffer, size}};
+    }
 
    /**
     *  Tunable wasm limits configuration parameters.
