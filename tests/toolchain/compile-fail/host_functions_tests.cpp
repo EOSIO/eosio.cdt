@@ -29,7 +29,7 @@ send_deferred : yes
 #include <eosio/time.hpp>
 
 
-extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
+extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(uint64_t, uint64_t, int64_t);
 extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(void* params, uint32_t size, uint32_t max_version);
 extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const char* params, uint32_t size);
 extern "C" __attribute__((eosio_wasm_import)) void set_blockchain_parameters_packed( char* data, uint32_t datalen );
@@ -60,7 +60,7 @@ extern "C" __attribute__((eosio_wasm_import)) int64_t kv_set(uint64_t contract, 
 extern "C" __attribute__((eosio_wasm_import)) void send_deferred(const uint128_t&, uint64_t, const char*, size_t, uint32_t);
 extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers( char*, uint32_t );
 extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
-extern "C" __attribute__((eosio_wasm_import)) void set_wasm_parameters_packed(const void*, std::size_t);
+extern "C" __attribute__((eosio_wasm_import)) void set_wasm_parameters_packed(const char*, std::size_t);
 extern "C" __attribute__((eosio_wasm_import)) void set_parameters_packed( const char* params, uint32_t params_size );
 
 extern "C" __attribute__((eosio_wasm_import)) void send_inline(char *serialized_action, size_t size);
