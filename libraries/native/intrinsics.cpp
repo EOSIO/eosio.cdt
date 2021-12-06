@@ -883,6 +883,18 @@ extern "C" {
       }
    }
 
+   void coverage_inc_fun_cnt( capi_name code, uint32_t file_num, uint32_t func_num ) {
+      intrinsics::get().call<intrinsics::coverage_inc_fun_cnt>(code, file_num, func_num);
+   }
+
+   void coverage_inc_line_cnt( capi_name code, uint32_t file_num, uint32_t line_num ) {
+      intrinsics::get().call<intrinsics::coverage_inc_line_cnt>(code, file_num, line_num);
+   }
+
+   void coverage_dump() {
+      intrinsics::get().call<intrinsics::coverage_dump>();
+   }
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
    void abort() {
