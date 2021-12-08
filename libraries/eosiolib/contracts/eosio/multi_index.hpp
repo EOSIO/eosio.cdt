@@ -335,6 +335,10 @@ namespace _multi_index_detail {
       static constexpr eosio::fixed_bytes<32> true_lowest() { return eosio::fixed_bytes<32>(); }
    };
 
+   template<typename PK>
+   inline uint64_t primary_key_cast(PK pk) { return pk; }
+   inline uint64_t primary_key_cast(eosio::name pk) { return pk.value; }
+
 }
 
 /**
@@ -818,7 +822,7 @@ class multi_index
          });
 
          const item* ptr = itm.get();
-         auto pk   = itm->primary_key();
+         auto pk   = _multi_index_detail::primary_key_cast(itm->primary_key());
          auto pitr = itm->__primary_itr;
 
          _items_vector.emplace_back( std::move(itm), pk, pitr );
@@ -1571,7 +1575,7 @@ class multi_index
             datastream<char*> ds( (char*)buffer, size );
             ds << obj;
 
-            auto pk = obj.primary_key();
+            uint64_t pk = _multi_index_detail::primary_key_cast(obj.primary_key());
 
             i.__primary_itr = internal_use_do_not_use::db_store_i64( _scope, static_cast<uint64_t>(TableName), payer.value, pk, buffer, size );
 
@@ -1590,7 +1594,7 @@ class multi_index
          });
 
          const item* ptr = itm.get();
-         auto pk   = itm->primary_key();
+         auto pk   = _multi_index_detail::primary_key_cast(itm->primary_key());
          auto pitr = itm->__primary_itr;
 
          _items_vector.emplace_back( std::move(itm), pk, pitr );
@@ -1701,12 +1705,12 @@ class multi_index
             return index_type::extract_secondary_key( obj );
          });
 
-         auto pk = obj.primary_key();
+         uint64_t pk = _multi_index_detail::primary_key_cast(obj.primary_key());
 
          auto& mutableobj = const_cast<T&>(obj); // Do not forget the auto& otherwise it would make a copy and thus not update at all.
          updater( mutableobj );
 
-         eosio::check( pk == obj.primary_key(), "updater cannot change primary key when modifying an object" );
+         eosio::check( pk == _multi_index_detail::primary_key_cast(obj.primary_key()), "updater cannot change primary key when modifying an object" );
 
          size_t size = pack_size( obj );
          //using malloc/free here potentially is not exception-safe, although WASM doesn't support exceptions
@@ -1805,7 +1809,7 @@ class multi_index
        */
       const_iterator find( uint64_t primary )const {
          auto itr2 = std::find_if(_items_vector.rbegin(), _items_vector.rend(), [&](const item_ptr& ptr) {
-            return ptr._item->primary_key() == primary;
+            return _multi_index_detail::primary_key_cast(ptr._item->primary_key()) == primary;
          });
          if( itr2 != _items_vector.rend() )
             return iterator_to(*(itr2->_item));
