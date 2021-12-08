@@ -162,10 +162,7 @@ intrinsic_macro(get_sender) \
 intrinsic_macro(set_action_return_value) \
 intrinsic_macro(coverage_inc_fun_cnt) \
 intrinsic_macro(coverage_inc_line_cnt) \
-intrinsic_macro(coverage_get_fun_cnt) \
-intrinsic_macro(coverage_get_line_cnt) \
-intrinsic_macro(coverage_dump) \
-intrinsic_macro(coverage_reset)
+intrinsic_macro(coverage_dump)
 
 
 #define CREATE_ENUM(name) \

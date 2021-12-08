@@ -22,16 +22,7 @@ __attribute__((eosio_wasm_import))
 void coverage_inc_line_cnt( capi_name code, uint32_t file_num, uint32_t line_num );
 
 __attribute__((eosio_wasm_import))
-uint32_t coverage_get_fun_cnt( capi_name code, uint32_t file_num, uint32_t func_num );
-
-__attribute__((eosio_wasm_import))
-uint32_t coverage_get_line_cnt( capi_name code, uint32_t file_num, uint32_t line_num );
-
-__attribute__((eosio_wasm_import))
 void coverage_dump();
-
-__attribute__((eosio_wasm_import))
-void coverage_reset();
 
 #ifdef __cplusplus
 }
