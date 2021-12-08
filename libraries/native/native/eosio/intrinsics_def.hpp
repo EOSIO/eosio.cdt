@@ -10,7 +10,6 @@
 #include <eosio/system.h>
 #include <eosio/transaction.h>
 #include <eosio/types.h>
-#include <eosio/coverage.h>
 
 #include <type_traits>
 
@@ -159,11 +158,7 @@ intrinsic_macro(send_deferred) \
 intrinsic_macro(cancel_deferred) \
 intrinsic_macro(get_context_free_data) \
 intrinsic_macro(get_sender) \
-intrinsic_macro(set_action_return_value) \
-intrinsic_macro(coverage_inc_fun_cnt) \
-intrinsic_macro(coverage_inc_line_cnt) \
-intrinsic_macro(coverage_dump)
-
+intrinsic_macro(set_action_return_value)
 
 #define CREATE_ENUM(name) \
    name,
