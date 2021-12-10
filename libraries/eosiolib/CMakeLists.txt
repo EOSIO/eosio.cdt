@@ -4,6 +4,7 @@ file(GLOB HEADERS "*.hpp"
 add_library(eosio
             eosiolib.cpp
             crypto.cpp
+            coverage.cpp
             tester/fpconv.c
             ${CMAKE_SOURCE_DIR}/abieos/src/crypto.cpp
             ${HEADERS})

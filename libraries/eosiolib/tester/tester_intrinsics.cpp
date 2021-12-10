@@ -157,8 +157,7 @@ namespace internal_use_do_not_use {
 
 // code coverage functions
 namespace eosio {
-   extern "C" {
-   
+extern "C" {
    __attribute__((eosio_wasm_import))
    void coverage_inc_fun_cnt(uint64_t code, uint32_t file_num, uint32_t func_num);
 
@@ -176,7 +175,5 @@ namespace eosio {
 
    __attribute__((eosio_wasm_import))
    void coverage_reset();
-   }
-}
-
-
+} // extern "C"
+} // namespace

@@ -8,6 +8,7 @@
 #include <eosio/system.h>
 #include <eosio/transaction.h>
 #include <eosio/types.h>
+#include <eosio/coverage.h>
 #include "native/eosio/intrinsics.hpp"
 #include "native/eosio/crt.hpp"
 #include <softfloat.hpp>
@@ -881,6 +882,31 @@ extern "C" {
          _prints_l("\n", 1, eosio::cdt::output_stream_kind::none);
          longjmp(*___env_ptr, 1);
       }
+   }
+
+
+   void coverage_inc_fun_cnt(uint64_t code, uint32_t file_num, uint32_t func_num) {
+      intrinsics::get().call<intrinsics::coverage_inc_fun_cnt>(code, file_num, func_num);
+   }
+
+   void coverage_inc_line_cnt(uint64_t code, uint32_t file_num, uint32_t line_num) {
+      intrinsics::get().call<intrinsics::coverage_inc_line_cnt>(code, file_num, line_num);
+   }
+
+   uint32_t coverage_get_fun_cnt(uint64_t code, uint32_t file_num, uint32_t func_num) {
+      return intrinsics::get().call<intrinsics::coverage_get_fun_cnt>(code, file_num, func_num);
+   }
+
+   uint32_t coverage_get_line_cnt(uint64_t code, uint32_t file_num, uint32_t line_num) {
+      return intrinsics::get().call<intrinsics::coverage_get_line_cnt>(code, file_num, line_num);
+   }
+
+   void coverage_dump(uint32_t n) {
+      intrinsics::get().call<intrinsics::coverage_dump>(n);
+   }
+
+   void coverage_reset() {
+      intrinsics::get().call<intrinsics::coverage_reset>();
    }
 
 #pragma clang diagnostic push
