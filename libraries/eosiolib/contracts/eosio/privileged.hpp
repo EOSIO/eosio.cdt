@@ -28,6 +28,12 @@ namespace eosio {
          uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
          __attribute__((eosio_wasm_import))
+         void set_parameters_packed( char* data, uint32_t datalen );
+
+         __attribute__((eosio_wasm_import))
+         uint32_t get_parameters_packed( char* id, uint32_t idlen , char* data, uint32_t datalen  );
+
+         __attribute__((eosio_wasm_import))
          void set_kv_parameters_packed( const char* data, uint32_t datalen );
 
          __attribute((eosio_wasm_import))
@@ -169,6 +175,27 @@ namespace eosio {
       )
    };
 
+   enum {
+      max_block_net_usage_id,
+      target_block_net_usage_pct_id,
+      max_transaction_net_usage_id,
+      base_per_transaction_net_usage_id,
+      net_usage_leeway_id,
+      context_free_discount_net_usage_num_id,
+      context_free_discount_net_usage_den_id,
+      max_block_cpu_usage_id,
+      target_block_cpu_usage_pct_id,
+      max_transaction_cpu_usage_id,
+      min_transaction_cpu_usage_id,
+      max_transaction_lifetime_id,
+      deferred_trx_expiration_window_id,
+      max_transaction_delay_id,
+      max_inline_action_size_id,
+      max_inline_action_depth_id,
+      max_authority_depth_id,
+      max_action_return_value_size_id
+   };
+
    /**
     *  Set the blockchain parameters
     *
@@ -184,6 +211,23 @@ namespace eosio {
     *  @param params - It will be replaced with the retrieved blockchain params
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
+
+   /**
+    *  Set the blockchain parameters flexibly by id data pair vector
+    *
+    *  @ingroup privileged
+    *  @param params - New blockchain parameters to set, only id and data in the params will be set.
+    */
+   void set_parameters(const std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params);
+
+   /**
+    *  Retrieve the blolckchain parameters flexibly by ids
+    *
+    *  @ingroup privileged
+    *  @param param_ids - The id vecter in which ids are being queried from chain, see upper enum
+    *  @param params - It is output data with the retrieved blockchain params, before call it should be empty
+    */
+   void get_parameters(const std::vector<uint32_t> & param_ids,  std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params);
 
    /**
     *  Tunable KV configuration that can be changed via consensus
