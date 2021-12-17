@@ -15,7 +15,6 @@
 #include <string>
 #include <optional>
 #include <variant>
-#include <unordered_map>
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -839,48 +838,6 @@ datastream<Stream>& operator << ( datastream<Stream>& ds, const std::map<K,V>& m
  */
 template<typename Stream, typename K, typename V>
 datastream<Stream>& operator >> ( datastream<Stream>& ds, std::map<K,V>& m ) {
-   m.clear();
-   unsigned_int s; ds >> s;
-
-   for (uint32_t i = 0; i < s.value; ++i) {
-      K k; V v;
-      ds >> k >> v;
-      m.emplace( std::move(k), std::move(v) );
-   }
-   return ds;
-}
-
-/**
- *  Serialize an unordered_map
- *
- *  @param ds - The stream to write
- *  @param m - The value to serialize
- *  @tparam Stream - Type of datastream buffer
- *  @tparam K - Type of the key contained in the unordered_map
- *  @tparam V - Type of the value contained in the unordered_map
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename K, typename V>
-datastream<Stream>& operator << ( datastream<Stream>& ds, const std::unordered_map<K,V>& m ) {
-   ds << unsigned_int( m.size() );
-   for( const auto& i : m ) {
-      ds << i.first << i.second;
-   }
-   return ds;
-}
-
-/**
- *  Deserialize an unordered_map
- *
- *  @param ds - The stream to read
- *  @param m - The destination for deserialized value
- *  @tparam Stream - Type of datastream buffer
- *  @tparam K - Type of the key contained in the unordered_map
- *  @tparam V - Type of the value contained in the unordered_map
- *  @return datastream<Stream>& - Reference to the datastream
- */
-template<typename Stream, typename K, typename V>
-datastream<Stream>& operator >> ( datastream<Stream>& ds, std::unordered_map<K,V>& m ) {
    m.clear();
    unsigned_int s; ds >> s;
 
