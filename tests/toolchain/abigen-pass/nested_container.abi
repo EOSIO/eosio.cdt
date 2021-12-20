@@ -69,26 +69,26 @@
             ]
         },
         {
-            "name": "tuple_int32_float64_string_B_vector_int32_E",
-            "base": "",
-            "fields": [
-                {
-                    "name": "field_0",
-                    "type": "int32"
-                },
-                {
-                    "name": "field_1",
-                    "type": "float64"
-                },
-                {
-                    "name": "field_2",
-                    "type": "string"
-                },
-                {
-                    "name": "field_3",
-                    "type": "B_vector_int32_E"
-                }
-            ]
+                    "name": "tuple_int32_float64_string_B_vector_int32_E",
+                    "base": "",
+                    "fields": [
+                        {
+                            "name": "field_0",
+                            "type": "int32"
+                        },
+                        {
+                            "name": "field_1",
+                            "type": "float64"
+                        },
+                        {
+                            "name": "field_2",
+                            "type": "string"
+                        },
+                        {
+                            "name": "field_3",
+                            "type": "B_vector_int32_E"
+                        }
+                    ]
         }
     ],
     "actions": [
