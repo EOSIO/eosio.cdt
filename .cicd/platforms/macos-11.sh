@@ -2,7 +2,7 @@
 set -eou pipefail
 VERSION=1
 
-brew update && brew upgrade
+brew update
 brew unlink md5sha1sum
 brew install coreutils gnu-sed grep tree automake cmake doxygen gettext git gmp graphviz lcov libtool python@3 wget 
 
