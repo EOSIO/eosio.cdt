@@ -13,6 +13,7 @@ elif [[ "$BUILDKITE" == 'true' ]]; then
     printf "Skipping \033]1339;url=$DOCS_URL;content=documentation\a upload for job retry number $RETRY.\n"
 fi
 export MACOS_10_15_TAG="eosio-cdt-macos-10.15-$(sha1sum .cicd/platforms/macos-10.15.sh | awk '{print $1}')"
+export MACOS_11_TAG="eosio-cdt-macos-11-$(sha1sum .cicd/platforms/macos-11.sh | awk '{print $1}')"
 # pipeline upload
 echo '+++ :pipeline_upload: Deploying Pipeline Steps'
 if [[ "$BUILDKITE" == 'true' ]]; then
