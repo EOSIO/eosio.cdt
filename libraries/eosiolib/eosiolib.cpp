@@ -74,13 +74,24 @@ namespace eosio {
    const int estimate_params_buff_size = 256;
    void set_parameters(const std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params) {
       char buff[estimate_params_buff_size];
-      uint32_t size = params.size();
-      if(size == 0) return;
+      unsigned_int size = params.size();
+      if(params.size() == 0) return;
       eosio::datastream<char *> ds( buff, sizeof(buff) );
       ds << size;
-      for( auto & p : params ){
-         ds << p.first;
-         ds << p.second;
+      for(const std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>> & p : params ){
+         unsigned_int id = p.first;
+         ds << id;
+         std::variant<uint16_t, uint32_t, uint64_t> var = p.second;
+         if(std::holds_alternative<uint16_t>(var)){
+            uint16_t data = std::get<uint16_t>(var);
+            ds << data;
+         } else if (std::holds_alternative<uint32_t>(var) ){
+            uint32_t data = std::get<uint32_t>(var);
+            ds << data;
+         } else {
+            uint64_t data = std::get<uint64_t>(var);
+            ds << data;
+         }
       }
       eosio::check( ds.tellp() <= sizeof(buff), "buffer is too small" );
       set_parameters_packed( buff, ds.tellp() );
@@ -89,26 +100,40 @@ namespace eosio {
    void get_parameters(const std::vector<uint32_t> & param_ids,  std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params) {
       char buff_ids[estimate_param_ids_buff_size];
       char buff_params[estimate_params_buff_size];
-      uint32_t id_size = param_ids.size();
+      unsigned_int id_size = param_ids.size();
       params.clear();
-      if(id_size == 0) return;
+      if(param_ids.size() == 0) return;
       eosio::datastream<char*> id_ds( buff_ids, sizeof(buff_ids) );
       id_ds << id_size;
       for(const auto & id : param_ids){
-         id_ds << id;
+         unsigned_int _id = id;
+         id_ds << _id;
       }
       eosio::check( id_ds.tellp() <= sizeof(buff_ids), "ids buffer is too small" );
       uint32_t size = get_parameters_packed( buff_ids,  id_ds.tellp(), buff_params, sizeof(buff_params));
       eosio::check( size <= sizeof(buff_params), "params buffer is too small" );
       eosio::datastream<const char*> para_ds( buff_params, size );
-      uint32_t para_size;
+      unsigned_int para_size;
       para_ds >> para_size;
       eosio::check(id_size == para_size, "pairs returned doesn't match amount of id to query");
       for(uint32_t i = 0; i < para_size; ++i){
-         uint32_t id;
+         unsigned_int _id;
          std::variant<uint16_t, uint32_t, uint64_t>  var;
-         para_ds >> id;
-         para_ds >> var;
+         para_ds >> _id;
+         uint32_t id = _id;
+         if(id == max_block_net_usage_id){
+            uint64_t data;
+            para_ds >> data;
+            var = data;
+         } else if(id == max_inline_action_depth_id || id == max_authority_depth_id){
+            uint16_t data;
+            para_ds >> data;
+            var = data;
+         } else {
+            uint32_t data;
+            para_ds >> data;
+            var = data;
+         }
          params.push_back({id, var});
       }
    }
