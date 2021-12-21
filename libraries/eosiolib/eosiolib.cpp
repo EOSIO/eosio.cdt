@@ -82,6 +82,7 @@ namespace eosio {
          ds << p.first;
          ds << p.second;
       }
+      eosio::check( ds.tellp() <= sizeof(buff), "buffer is too small" );
       set_parameters_packed( buff, ds.tellp() );
    }
 
@@ -96,8 +97,9 @@ namespace eosio {
       for(const auto & id : param_ids){
          id_ds << id;
       }
+      eosio::check( id_ds.tellp() <= sizeof(buff_ids), "ids buffer is too small" );
       uint32_t size = get_parameters_packed( buff_ids,  id_ds.tellp(), buff_params, sizeof(buff_params));
-      eosio::check( size <= sizeof(buff_params), "buffer is too small" );
+      eosio::check( size <= sizeof(buff_params), "params buffer is too small" );
       eosio::datastream<const char*> para_ds( buff_params, size );
       uint32_t para_size;
       para_ds >> para_size;
