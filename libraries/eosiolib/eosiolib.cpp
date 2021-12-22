@@ -69,11 +69,10 @@ namespace eosio {
       ds >> params;
    }
 
-   using params_type = std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>;
    //  considering of runtime efficiency, using a estimated size to save the exact size calculating time
    const int estimate_param_ids_buff_size = 128;
    const int estimate_params_buff_size = 256;
-   void set_parameters(const params_type & params) {
+   void set_parameters(const id_param_pairs_type & params) {
       char buff[estimate_params_buff_size];
       unsigned_int size = params.size();
       if(params.size() == 0) return;
@@ -98,7 +97,7 @@ namespace eosio {
       set_parameters_packed( buff, ds.tellp() );
    }
 
-   void get_parameters(const std::vector<uint32_t> & param_ids,  params_type & params) {
+   void get_parameters(const std::vector<uint32_t> & param_ids,  id_param_pairs_type & params) {
       char buff_ids[estimate_param_ids_buff_size];
       char buff_params[estimate_params_buff_size];
       unsigned_int id_size = param_ids.size();

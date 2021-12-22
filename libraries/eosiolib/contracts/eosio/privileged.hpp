@@ -196,6 +196,8 @@ namespace eosio {
       max_action_return_value_size_id
    };
 
+   using id_param_pairs_type = std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>;
+
    /**
     *  Set the blockchain parameters
     *
@@ -218,7 +220,7 @@ namespace eosio {
     *  @ingroup privileged
     *  @param params - New blockchain parameters to set, only id and data in the params will be set.
     */
-   void set_parameters(const std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params);
+   void set_parameters(const id_param_pairs_type & params);
 
    /**
     *  Retrieve the blolckchain parameters flexibly by ids
@@ -227,7 +229,7 @@ namespace eosio {
     *  @param param_ids - The id vecter in which ids are being queried from chain, see upper enum
     *  @param params - It is output data with the retrieved blockchain params, before call it should be empty
     */
-   void get_parameters(const std::vector<uint32_t> & param_ids,  std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>& params);
+   void get_parameters(const std::vector<uint32_t> & param_ids,  id_param_pairs_type & params);
 
    /**
     *  Tunable KV configuration that can be changed via consensus
