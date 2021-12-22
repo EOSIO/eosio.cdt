@@ -10,5 +10,7 @@ void test_privileged( void ) {
    set_privileged(0, 0);
    set_blockchain_parameters_packed(NULL, 0);
    get_blockchain_parameters_packed(NULL, 0);
+   set_parameters_packed(NULL, 0);
+   get_parameters_packed(NULL, 0, NULL, 0);
    preactivate_feature(NULL);
 }

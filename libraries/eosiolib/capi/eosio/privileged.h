@@ -105,6 +105,12 @@ void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 __attribute__((eosio_wasm_import))
 uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
+ __attribute__((eosio_wasm_import))
+ void set_parameters_packed( char* data, uint32_t datalen );
+
+ __attribute__((eosio_wasm_import))
+ uint32_t get_parameters_packed( char* id, uint32_t idlen , char* data, uint32_t datalen  );
+
 /**
  * Set the KV parameters
  *
