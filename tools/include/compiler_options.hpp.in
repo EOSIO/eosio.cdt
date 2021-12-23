@@ -544,6 +544,10 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
       }
    } else {
 #ifdef __APPLE__
+      // Adding the -F option fixes an issue in Big Sur where it's unable to
+      // link the Foundation framework. Adding this doesn't seem to cause
+      // problems for the older version of OSX.
+      ldopts.insert(ldopts.end(), {"-F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/"});
       ldopts.insert(ldopts.end(), {"-arch", "x86_64", "-macosx_version_min", "10.13", "-framework", "Foundation", "-framework", "System"});
 #endif
       ldopts.emplace_back("-static");
