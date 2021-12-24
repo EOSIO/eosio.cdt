@@ -40,3 +40,15 @@ build
 # CLion
 .idea
 cmake-build-*
+
+# Clangd
+.cache
+compile_commands.json
+
+# Vim
+.vim
+.vimrc
+*.swp
+
+# VSCode
+.vscode
