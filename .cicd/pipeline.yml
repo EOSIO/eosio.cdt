@@ -23,7 +23,7 @@ steps:
     timeout: ${TIMEOUT:-60}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}
 
-  - label: ":oraclelinux: Oracle_Linux 8 - Build"
+  - label: ":oracle_linux: Oracle_Linux 8 - Build"
     command:
       - "./.cicd/build.sh"
       - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
@@ -169,9 +169,9 @@ steps:
       - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_WASM_METRICS}
 
-  - label: ":oraclelinux: Oracle_Linux 8 - EOSIO.CONTRACTS Build"
+  - label: ":oracle_linux: Oracle_Linux 8 - EOSIO.CONTRACTS Build"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':oraclelinux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/eosio-contracts-build.sh"
     env:
       IMAGE_TAG: "oraclelinux-8"
@@ -214,9 +214,9 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
-  - label: ":oraclelinux: Oracle Linux 8 - Unit Tests"
+  - label: ":oracle_linux: Oracle Linux 8 - Unit Tests"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':oraclelinux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/tests.sh"
     env:
       IMAGE_TAG: "oraclelinux-8"
@@ -297,9 +297,9 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
-  - label: ":oraclelinux: Oracle_Linux 8 - Toolchain Tests"
+  - label: ":oracle_linux: Oracle_Linux 8 - Toolchain Tests"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':oraclelinux: Oracle Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/toolchain-tests.sh"
     env:
       IMAGE_TAG: "oraclelinux-8"
@@ -441,9 +441,9 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
-  - label: ":oraclelinux: Oracle_Linux 8 - Package Builder"
+  - label: ":oracle_linux: Oracle_Linux 8 - Package Builder"
     command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':oraclelinux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
       - "./.cicd/package.sh"
     env:
       BUILDKITE_AGENT_ACCESS_TOKEN:
@@ -456,9 +456,9 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
-  - label: ":oraclelinux: Oracle Linux 8 - Test Package"
+  - label: ":oracle_linux: Oracle Linux 8 - Test Package"
     command: |
-      buildkite-agent artifact download '*.rpm' . --step ':oraclelinux: Oracle_Linux 8 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      buildkite-agent artifact download '*.rpm' . --step ':oracle_linux: Oracle_Linux 8 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
       ./.cicd/test-package.docker.sh
     env:
       IMAGE: "oraclelinux:8"
