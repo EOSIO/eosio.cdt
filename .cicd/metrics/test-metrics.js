@@ -107,6 +107,8 @@ function getOS(environment)
         return 'Amazon Linux 1';
     if (/aws.*2/.test(label) || /amazon.*2/.test(label))
         return 'Amazon Linux 2';
+    if (/oracle.*8/.test(label))
+        return 'Oracle Linux 8';
     if (/centos(?!.*[89])/.test(label))
         return 'CentOS 7';
     if (/catalina/.test(label))
