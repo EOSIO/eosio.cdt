@@ -7,7 +7,7 @@ CDT_DIR_HOST=$(pwd)
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
 
-for i in seq `1 3`; do
+for i in `seq 1 3`; do
 rm -rf build_eosio_contracts
 mkdir -p build_eosio_contracts
 
