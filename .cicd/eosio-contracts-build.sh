@@ -52,39 +52,29 @@ else #Linux
 
 fi
 
-touch wasm-abi-size-metrics.json
-pushd build/tests/unit/test_contracts
-JSON=$(echo '{}' | jq -c '.')
-echo '--- :arrow_up: Generating wasm-abi-size-metrics.json file'
-for FILENAME in *.{wasm,abi}; do
-    FILESIZE=$(wc -c <"$FILENAME")
-    export value=$FILESIZE
-    export key="$FILENAME"
-    JSON="$(echo "$JSON" | jq -c '.[env.key] += (env.value | tonumber)')"
-done
+touch wasm-hash.json
 
-popd
 pushd build_eosio_contracts/contracts
 for dir in */; do
     cd $dir
-    for FILENAME in *.{wasm,abi}; do
+    for FILENAME in *.{wasm}; do
         if [[ -f $FILENAME ]]; then
-            FILESIZE=$(wc -c <"$FILENAME")
-            export value=$FILESIZE
+            FILEHASH=$(sha256sum $FILENAME | awk '{print $1;}')
+            export value=$FILEHASH
             export key="$FILENAME"
-            JSON="$(echo "$JSON" | jq -c '.[env.key] += (env.value | tonumber)')"
+            JSON="$(echo "$JSON" | jq -c '.[env.key] += (env.value)')"
         fi
     done
     cd ..
 done
 
-echo '--- :arrow_up: Uploading wasm-abi-size-metrics.json'
+echo '--- :arrow_up: Uploading wasm-hash.json'
 popd
 echo "$JSON" | jq '.' >> wasm-abi-size-metrics.json
 if [[ $BUILDKITE == true ]]; then
 
-    buildkite-agent artifact upload wasm-abi-size-metrics.json
-    echo 'Done uploading wasm-abi-size-metrics.json'
+    buildkite-agent artifact upload wasm-hash.json
+    echo 'Done uploading wasm-hash.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
     tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
