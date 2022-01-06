@@ -28,6 +28,7 @@ These will override more specific operating system declarations, and primarily e
 Configure which operating systems are built, tested, and packaged:
 ```bash
 SKIP_AMAZON_LINUX_2='true|false'     # skip all steps for Amazon Linux 2
+SKIP_ORACLE_LINUX_8='true|false'     # skip all steps for Oracle Linux 8
 SKIP_CENTOS_7='true|false'           # skip all steps for Centos 7
 SKIP_MACOS_10_15='true|false'        # skip all steps for MacOS 10.15
 SKIP_UBUNTU_18_04='true|false'       # skip all steps for Ubuntu 18.04

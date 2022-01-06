@@ -23,6 +23,17 @@ steps:
     timeout: ${TIMEOUT:-60}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}
 
+  - label: ":oracle_linux: Oracle_Linux 8 - Build"
+    command:
+      - "./.cicd/build.sh"
+      - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
+    env:
+      IMAGE_TAG: "oraclelinux-8"
+    agents:
+      queue: "automation-eks-eos-builder-fleet"
+    timeout: ${TIMEOUT:-60}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}
+
   - label: ":ubuntu: Ubuntu 18.04 - Build"
     command:
       - "./.cicd/build.sh"
@@ -158,6 +169,17 @@ steps:
       - "queue=mac-anka-node-fleet"
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_WASM_METRICS}
 
+  - label: ":oracle_linux: Oracle_Linux 8 - EOSIO.CONTRACTS Build"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/eosio-contracts-build.sh"
+    env:
+      IMAGE_TAG: "oraclelinux-8"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_WASM_METRICS}
+
   - label: ":ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Unit Test"
     command:
       - "buildkite-agent artifact download build_eosio_contracts.tar.gz . --step ':ubuntu: Ubuntu 18.04 - EOSIO.CONTRACTS Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build_eosio_contracts.tar.gz"
@@ -191,6 +213,17 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_UNIT_TESTS}
+
+  - label: ":oracle_linux: Oracle Linux 8 - Unit Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/tests.sh"
+    env:
+      IMAGE_TAG: "oraclelinux-8"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Unit Tests"
     command:
@@ -263,6 +296,17 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
+
+  - label: ":oracle_linux: Oracle_Linux 8 - Toolchain Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/toolchain-tests.sh"
+    env:
+      IMAGE_TAG: "oraclelinux-8"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
   - label: ":ubuntu: Ubuntu 18.04 - Toolchain Tests"
     command:
@@ -396,6 +440,34 @@ steps:
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":oracle_linux: Oracle_Linux 8 - Package Builder"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':oracle_linux: Oracle_Linux 8 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/package.sh"
+    env:
+      BUILDKITE_AGENT_ACCESS_TOKEN:
+      IMAGE_TAG: "oraclelinux-8"
+      OS: "oraclelinux-8" # OS and PKGTYPE required for lambdas
+      PKGTYPE: "rpm"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    key: "oracle8pb"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":oracle_linux: Oracle Linux 8 - Test Package"
+    command: |
+      buildkite-agent artifact download '*.rpm' . --step ':oracle_linux: Oracle_Linux 8 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      ./.cicd/test-package.docker.sh
+    env:
+      IMAGE: "oraclelinux:8"
+    agents:
+      queue: "automation-eks-eos-tester-fleet"
+    depends_on: "oracle8pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_ORACLE_LINUX_8}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
