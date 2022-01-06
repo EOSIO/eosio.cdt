@@ -168,7 +168,7 @@ steps:
       queue: "automation-eks-eos-tester-fleet"
     timeout: ${TIMEOUT:-10}
     depends_on: "ubuntu1804contracts"
-    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_WASM_METRICS}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_WASM_METRICS}${SKIP_EOSIO_CONTRACTS_UNIT_TESTS}
 
   - label: ":aws: Amazon_Linux 2 - Unit Tests"
     command:

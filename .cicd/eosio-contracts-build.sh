@@ -2,11 +2,14 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 CDT_DIR_HOST=$(pwd)
-mkdir -p build_eosio_contracts 
 
 
 [[ ! -z "$CONTRACTS_VERSION" ]] || export CONTRACTS_VERSION="$(cat "$PIPELINE_CONFIG" | jq -r '.dependencies["eosio.contracts"]')"
 git clone -b "$CONTRACTS_VERSION" https://github.com/EOSIO/eosio.contracts.git 
+
+for i in seq `1 3`; do
+rm -rf build_eosio_contracts
+mkdir -p build_eosio_contracts
 
 if [[ $(uname) == 'Darwin' ]]; then
     export PATH=$CDT_DIR_HOST/build/bin:$PATH
@@ -52,7 +55,7 @@ else #Linux
 
 fi
 
-touch wasm-hash.json
+touch wasm-hash.$((i)).json
 
 pushd build_eosio_contracts/contracts
 for dir in */; do
@@ -70,16 +73,17 @@ done
 
 echo '--- :arrow_up: Uploading wasm-hash.json'
 popd
-echo "$JSON" | jq '.' >> wasm-abi-size-metrics.json
+echo "$JSON" | jq '.' >> wasm-hash.$((i)).json
 if [[ $BUILDKITE == true ]]; then
 
-    buildkite-agent artifact upload wasm-hash.json
+    buildkite-agent artifact upload wasm-hash.$((i)).json
     echo 'Done uploading wasm-hash.json'
     echo '--- :arrow_up: Uploading eosio.contract build'
     echo 'Compressing eosio.contract build directory.'
-    tar -pczf 'build_eosio_contracts.tar.gz' build_eosio_contracts
+    tar -pczf 'build_eosio_contracts.$((i)).tar.gz' build_eosio_contracts
     echo 'Uploading eosio.contract build directory.'
-    buildkite-agent artifact upload 'build_eosio_contracts.tar.gz'
+    buildkite-agent artifact upload 'build_eosio_contracts.$((i)).tar.gz'
     echo 'Done uploading artifacts.'
-
 fi
+
+done
