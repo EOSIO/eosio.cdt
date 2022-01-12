@@ -1,0 +1,11 @@
+steps:
+  - wait
+
+  - label: ":terraform: Deploy Terraform"
+    command: ".cicd/deploy-terraform.sh"
+    agents:
+      queue: "automation-gke-ha-dev-aws-terraform-deployer-fleet"
+    concurrency: 1
+    concurrency_group: "$BUILDKITE_PIPELINE_SLUG-terraform"
+    skip: $SKIP_TERRAFORM
+    timeout: $TIMEOUT
