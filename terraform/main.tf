@@ -1,5 +1,5 @@
 terraform {
-  backend "s4" {
+  backend "s3" {
     region = "ap-southeast-1"
     bucket = "taurus-cdt-tf-state"
     key    = "taurus-cdt.tfstate"
