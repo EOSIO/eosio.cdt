@@ -6,6 +6,7 @@ rm -rf ./plan.out
 TF_INIT='terraform init'
 echo "$ $TF_INIT"
 eval $TF_INIT
+echo "Completed terraform init"
 TF_PLAN='terraform plan -out=plan.out'
 echo "$ $TF_PLAN"
 eval $TF_PLAN
