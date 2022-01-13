@@ -16,7 +16,7 @@ echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_REPO_GOLDEN -u $ARTIFACTORY_US
 
 DOCKER_PULL="docker pull $FULL_TAG"
 echo "$ $DOCKER_PULL"
-out=$(eval $DOCKER_PULL)
+out=$(eval $DOCKER_PULL 2>&1)
 echo "Done pull for $FULL_TAG"
 echo "out: $out"
 
