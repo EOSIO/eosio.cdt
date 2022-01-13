@@ -44,6 +44,7 @@ if [[ $out != *"up to date"* ]]; then
     DOCKER_RMI="docker rmi '$DOCKER_REPO/$FULL_TAG' || :"
     echo "$ $DOCKER_RMI"
     eval $DOCKER_RMI
+    echo "done removing $FULL_TAG"
 else
     echo "$FULL_TAG already exists."
 fi
