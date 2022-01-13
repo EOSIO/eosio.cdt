@@ -33,8 +33,11 @@ if [[ $out != *"up to date"* ]]; then
     echo "$ $DOCKER_BUILD"
     eval $DOCKER_BUILD
 
-    echo "docker push $FULL_TAG"
-    DOCKER_PUSH="docker push $FULL_TAG"
+    DOCKER_TAG="docker tag '$FULL_TAG' '$DOCKER_REPO/$FULL_TAG'"
+    echo "$ $DOCKER_TAG"
+    eval $DOCKER_TAG
+    echo "docker push $DOCKER_REPO/$FULL_TAG"
+    DOCKER_PUSH="docker push $DOCKER_REPO/$FULL_TAG"
     echo "$ $DOCKER_PUSH"
     eval $DOCKER_PUSH
     echo "done pushing $FULL_TAG"
