@@ -28,6 +28,7 @@
 #include <sstream>
 #include <memory>
 #include <set>
+#include <vector>
 #include <map>
 #include <chrono>
 #include <ctime>
@@ -149,18 +150,49 @@ namespace eosio { namespace cdt {
          codegen& cg = codegen::get();
          FileID    main_fid;
          StringRef main_name;
+         std::string main_file;
          std::stringstream ss;
          CompilerInstance* ci;
          bool apply_was_found = false;
+         SourceManager *sm = nullptr;
+
+      public:
+
+         bool in_const_func = false;
+         clang::Stmt *func_body = nullptr;
+
+         struct check_point_t {
+            enum type_t { invalid = 0, 
+                          func_enter, single_back, single_front }; // just add check_point right after or front
+            int type = invalid;
+            std::string func;
+         };
+         std::map<uint64_t, std::vector<check_point_t> >  check_points;
+         //std::vector<check_point_t>         check_points_stack;
+         bool insert_check_point(uint32_t line0, uint32_t col0, uint32_t line1, uint32_t col1, int start_type, std::string func_ = "") {
+            if (in_const_func) return false;
+            uint64_t line_col0 = ((((uint64_t)line0) << 32) | col0);
+            uint64_t line_col1 = ((((uint64_t)line1) << 32) | col1);
+            if (line_col0 >= line_col1) return false;
+            if (!line0 || !col0 || !line1 || !col1) return false;
+            
+            if (check_points[line_col0].size() == 0) {
+               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_});
+            }
+            return true;
+         }
+
 
       public:
          std::vector<CXXMethodDecl*> action_decls;
          std::vector<CXXMethodDecl*> notify_decls;
 
-         explicit eosio_codegen_visitor(CompilerInstance *CI)
+         explicit eosio_codegen_visitor(CompilerInstance *CI, std::string main_file_)
                : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
+            sm = &(CI->getSourceManager());
+            main_file = main_file_;
          }
 
          void set_main_fid(FileID fid) {
@@ -349,13 +381,123 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         virtual bool VisitDecl(clang::Decl* decl) {
-            if (auto* fd = dyn_cast<clang::FunctionDecl>(decl)) {
-               if (fd->getNameInfo().getAsString() == "apply")
-                  apply_was_found = true;
+         bool insert_check_point_by_location(const char *mark, clang::SourceLocation locstart, clang::SourceLocation locend, int type, std::string func_name = "") {
+            bool invalid = false;
+            if (locstart.isFileID() && locend.isFileID()) {
+               clang::PresumedLoc plocs = sm->getPresumedLoc(locstart);
+               clang::PresumedLoc ploce = sm->getPresumedLoc(locend);
+               if (plocs.isInvalid() || ploce.isInvalid()) return false;
+               if (plocs.getLine() > ploce.getLine()) return false;
+               //if (plocs.getLine() == ploce.getLine() && plocs.getColumn() >= ploce.getColumn()) return true;
+
+               std::string file_name = plocs.getFilename();
+               if (file_name == main_file) {
+                  if (insert_check_point(plocs.getLine(), plocs.getColumn(), ploce.getLine(), ploce.getColumn(), type, func_name)) {
+                     std::cout << "inserted checkpoint at " << locstart.printToString(*sm) << "(" << mark << ")" << std::endl;
+                  }
+               }
             }
             return true;
          }
+
+         void visit_expr(clang::Expr *expr_, const ASTContext& ctx) {
+            if (!expr_) return;
+            //std::cout << " " << expr_->getStmtClassName() << " ";
+            if (clang::ExprWithCleanups *expr = llvm::dyn_cast<clang::ExprWithCleanups>(expr_)) {
+               visit_expr(expr->getSubExpr(), ctx);
+            } else if (clang::CallExpr *expr = llvm::dyn_cast<clang::CallExpr>(expr_)) {
+               for (auto itr = expr->arg_begin(); itr != expr->arg_end(); ++itr) {
+                  visit_expr(*itr, ctx);
+               }
+            } else if (clang::LambdaExpr *expr = llvm::dyn_cast<clang::LambdaExpr>(expr_)) {
+               visit_compound_stmt(expr->getBody(), ctx);
+            } else if (clang::MaterializeTemporaryExpr *expr = llvm::dyn_cast<clang::MaterializeTemporaryExpr>(expr_)) {
+               clang::Stmt *tmp = expr->getTemporary();
+               //std::cout << " " << tmp->getStmtClassName() << " ";
+               visit_expr(llvm::dyn_cast<Expr>(tmp), ctx);
+            }
+         }
+
+         void visit_compound_stmt(clang::Stmt *stmt_, const ASTContext& ctx) {
+            if (!stmt_ || stmt_->getStmtClass() != clang::Stmt::CompoundStmtClass) return;
+
+            clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt_;
+            for (auto body_itr = cpst->body_begin(); body_itr != cpst->body_end(); ++body_itr) {
+               clang::Stmt *s = *body_itr;
+               if (!s) continue;
+
+               const char *label_name = "";
+               // remove label & case recursively
+               while (true) {
+                  if (auto *ls = llvm::dyn_cast<clang::LabelStmt>(s)) {
+                     label_name = ls->getName();
+                     s = ls->getSubStmt();
+                  }
+                  else if (auto *sc = llvm::dyn_cast<clang::SwitchCase>(s))
+                     s = sc->getSubStmt();
+                  else break;
+               }
+
+               insert_check_point_by_location((s->getStmtClassName() + std::string(" ")).c_str(), s->getLocStart(), s->getLocEnd(), check_point_t::single_front, label_name);
+
+               if (s->getStmtClass() == clang::Stmt::IfStmtClass) {
+                  clang::IfStmt *stmt = (clang::IfStmt *)s;
+                  visit_compound_stmt(stmt->getThen(), ctx);
+                  visit_compound_stmt(stmt->getElse(), ctx);
+               } else if (s->getStmtClass() == clang::Stmt::WhileStmtClass) {
+                  clang::WhileStmt *stmt = (clang::WhileStmt *)s;
+                  visit_compound_stmt(stmt->getBody(), ctx);
+               } else if (s->getStmtClass() == clang::Stmt::DoStmtClass) {
+                  clang::DoStmt *stmt = (clang::DoStmt *)s;
+                  visit_compound_stmt(stmt->getBody(), ctx);
+               } else if (s->getStmtClass() == clang::Stmt::ForStmtClass) {
+                  clang::ForStmt *stmt = (clang::ForStmt *)s;
+                  visit_compound_stmt(stmt->getBody(), ctx);
+               } else if (s->getStmtClass() == clang::Stmt::SwitchStmtClass) {
+                  clang::SwitchStmt *stmt = (clang::SwitchStmt *)s;
+                  visit_compound_stmt(stmt->getBody(), ctx);
+               } else if (clang::Expr *expr = llvm::dyn_cast<clang::Expr>(s)) {
+                  visit_expr(expr, ctx);
+               }
+            }
+         }
+
+         virtual bool VisitDecl(clang::Decl* decl) {
+            if (clang::FunctionDecl* fd = dyn_cast<clang::FunctionDecl>(decl)) {
+               if (fd->getNameInfo().getAsString() == "apply")
+                  apply_was_found = true;
+
+               func_body = fd->getBody();
+               in_const_func = fd->isConstexpr();
+               if (!in_const_func && fd->hasBody()) {
+                  clang::Stmt *stmt = fd->getBody();
+                  if (stmt->getStmtClass() == clang::Stmt::CompoundStmtClass) {
+                     clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt;
+                     insert_check_point_by_location("CompoundStmt(FuncEnter) ", stmt->getLocStart(), stmt->getLocEnd(), check_point_t::func_enter, fd->getNameInfo().getAsString());
+                     visit_compound_stmt(cpst, decl->getASTContext());
+                  }
+               }
+            }
+            return true;
+         }
+
+         // FIXME: the expression 
+         // virtual bool WalkUpFromCallExpr(clang::CallExpr *stmt) {
+         //    if (stmt->getStmtClass() == clang::Stmt::CXXOperatorCallExprClass ||
+         //        stmt->getStmtClass() == clang::Stmt::UserDefinedLiteralClass ||
+         //        stmt->getStmtClass() == clang::Stmt::CXXMemberCallExprClass
+         //        ) {
+         //       return true;
+         //    }
+         //    insert_check_point_by_location("CallExpr ", stmt->getLocStart(), stmt->getLocEnd(), check_point_t::exp_start);  
+         //    return true;
+         // }
+         
+         //virtual bool WalkUpFromReturnStmt(clang::ReturnStmt *stmt) {
+         //   insert_check_point_by_location(stmt->getLocStart(), stmt->getLocEnd(), check_point_t::stmt_start);  
+         //   return true;            
+         //}
+
       };
 
       class eosio_codegen_consumer : public ASTConsumer {
@@ -366,7 +508,7 @@ namespace eosio { namespace cdt {
 
       public:
          explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
-            : visitor(new eosio_codegen_visitor(CI)), main_file(file), ci(CI) { }
+            : visitor(new eosio_codegen_visitor(CI, file)), main_file(file), ci(CI) { }
 
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
@@ -393,11 +535,77 @@ namespace eosio { namespace cdt {
                try {
                   llvm::sys::fs::createTemporaryFile("eosio", ".cpp", fn);
 
+                  std::stringstream out_data;
                   std::ofstream out(fn.c_str());
+
+
+                  // {
+                  //    llvm::SmallString<64> abs_file_path(main_fe->getName());
+                  //    llvm::sys::fs::make_absolute(abs_file_path);
+                  //    out_data << "#include \"" << abs_file_path.c_str() << "\"\n";
+                  // }
+
                   {
                      llvm::SmallString<64> abs_file_path(main_fe->getName());
                      llvm::sys::fs::make_absolute(abs_file_path);
-                     out << "#include \"" << abs_file_path.c_str() << "\"\n";
+                     std::string short_fn = abs_file_path.c_str();
+                     if (short_fn.find_last_of("/") != std::string::npos) {
+                        short_fn = short_fn.substr(short_fn.find_last_of("/") + 1);
+                     }
+                     FILE *fin = fopen(abs_file_path.c_str(), "rb");
+                     if (!fin) {
+                        std::cout << "failed to open " << abs_file_path.c_str() << " for read\n";
+                        out_data << "#include \"" << abs_file_path.c_str() << "\"\n";
+                     } else {
+                        uint32_t line = 1, col = 1;
+                        while (true) {
+                           char c = fgetc(fin);
+                           if (feof(fin)) break;
+                           uint64_t line_col = ((uint64_t)line << 32) | col;
+                           if (c == '\r') continue;
+                           if (c == '\n') {
+                              out_data << c;
+                              ++line;
+                              col = 1; 
+                              continue;
+                           }
+                           if (visitor->check_points.find(line_col) != visitor->check_points.end()) {
+                              const std::vector<eosio_codegen_visitor::check_point_t> &list = visitor->check_points[line_col];
+                              for (size_t i = 0; i < list.size(); ++i) {
+                                 if (list[i].type == eosio_codegen_visitor::check_point_t::single_front) {
+                                    out_data << "printf(\"@" << short_fn << ":" << line << ":" << col;
+                                    if (list[i].func != "") {
+                                       out_data << "(@" << list[i].func << ")";
+                                    }
+                                    out_data << "_\");";
+                                 }
+                              }
+                              out_data << c;
+                              for (int i = list.size() - 1; i >= 0; --i) {
+                                 if (list[i].type == eosio_codegen_visitor::check_point_t::func_enter) {
+                                    std::stringstream tmp_struct_ss;
+                                    tmp_struct_ss << "_cdt_debug_func_" << line;
+                                    std::string tmp_struct_name = tmp_struct_ss.str();
+                                    out_data << "struct " << tmp_struct_name
+                                             << "{"
+                                             << tmp_struct_name
+                                             << "(){printf(\"@" << short_fn << ":" << line << ":" << col << "(@" << list[i].func << ")_\");}"
+                                             << "~" << tmp_struct_name 
+                                             << "(){printf(\"@" << short_fn << "(~" << list[i].func << ")_\");}"
+                                             << "} " 
+                                             << tmp_struct_name << "_1;";
+                                 } else if (list[i].type == eosio_codegen_visitor::check_point_t::single_back) {
+                                    out_data << "printf(\"@" << short_fn << ":" << line << ":" << col << "_\");";
+                                 }
+                              }
+                           } else {
+                              out_data << c;
+                           }
+                           ++col;
+                        }
+                        fclose(fin);
+                        out_data << "\n\n";
+                     }
                   }
 
                   // generate apply stub with abi
@@ -414,9 +622,19 @@ namespace eosio { namespace cdt {
                   ss << "}\n";
                   ss << "}";
 
-                  out << ss.rdbuf();
+                  out_data << ss.str();
+
+                  out << out_data.str();
                   cg.tmp_files.emplace(main_file, fn.str());
                   out.close();
+                  std::cout << "main_file:" << main_file << ", temp_file:" << std::string(fn.str()) << std::endl;
+
+                  std::string debug_file = std::string(main_fe->getName()) + ".debug";
+                  std::ofstream out2(debug_file.c_str());
+                  out2 << out_data.str();
+                  out2.close();
+
+                  std::cout << "debug file " << debug_file << " written\n";
                } catch (...) {
                   llvm::outs() << "Failed to create temporary file\n";
                }
@@ -428,6 +646,7 @@ namespace eosio { namespace cdt {
       class eosio_codegen_frontend_action : public ASTFrontendAction {
       public:
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
+            std::cout << "CreateASTConsumer() file=" << std::string(file) << std::endl;
             CI.getPreprocessor().addPPCallbacks(_make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
             return _make_unique<eosio_codegen_consumer>(&CI, file);
          }
