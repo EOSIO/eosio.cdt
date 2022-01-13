@@ -10,6 +10,11 @@ DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
 DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
 DOCKER_REPO_GOLDEN="https://blockone-golden-docker-release-local.jfrog.io"
 
+RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
+PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
+PROXY_URL="http://${PROXY_ADDR}:3128/"
+echo PROXY_URL: $PROXY_URL
+
 echo "login to artifactory"
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_REPO_GOLDEN -u $ARTIFACTORY_USERNAME --password-stdin
@@ -22,10 +27,12 @@ echo "out: $out"
 
 # build, if neccessary
 if [[ $out != *"up to date"* ]]; then
+    echo "Building container..."
     echo "Build and tag docker ${IMAGE_TAG}.dockerfile"
-    DOCKER_BUILD="docker build -t $FULL_TAG -f $CICD_DIR/platforms/${IMAGE_TAG}.dockerfile ."
+    DOCKER_BUILD="docker build --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy -t $FULL_TAG -f $CICD_DIR/platforms/${IMAGE_TAG}.dockerfile ."
     echo "$ $DOCKER_BUILD"
     eval $DOCKER_BUILD
+
     echo "docker push $FULL_TAG"
     DOCKER_PUSH="docker push $FULL_TAG"
     echo "$ $DOCKER_PUSH"
