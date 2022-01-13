@@ -14,7 +14,11 @@ echo "login to artifactory"
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_REPO_GOLDEN -u $ARTIFACTORY_USERNAME --password-stdin
 
-out=$(docker pull $FULL_TAG)
+DOCKER_PULL="docker pull $FULL_TAG"
+echo "$ $DOCKER_PULL"
+out=$(eval $DOCKER_PULL)
+echo "Done pull for $FULL_TAG"
+echo "out: $out"
 
 # build, if neccessary
 if [[ $out != *"up to date"* ]]; then
