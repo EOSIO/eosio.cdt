@@ -1,5 +1,5 @@
 env:
-  SKIP_MAC: true
+  SKIP_MAC: "true"
 
 steps:
   - wait
