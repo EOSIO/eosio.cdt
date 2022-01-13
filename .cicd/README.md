@@ -1,5 +1,5 @@
-# eosio.cdt
-The [eosio.cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) pipeline is the primary pipeline for the [eosio.cdt](https://github.com/EOSIO/eosio.cdt) repository.
+# taurus-cdt
+The [taurus-cdt](https://buildkite.com/b1-as/taurus-cdt) pipeline is the primary pipeline for the [taurus-cdt](https://github.com/b1-as/taurus-cdt) repository.
 
 <x>
 
@@ -11,7 +11,7 @@ The [eosio.cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) pipeline is the prima
 1. [See Also](README.md#see-also)
 
 ## Configuration
-Most EOSIO.CDT pipelines are run any time you push a commit or tag to an open pull request in [eosio.cdt](https://github.com/EOSIO/eosio.cdt), any time you merge a pull request, and nightly.
+Most taurus-cdt pipelines are run any time you push a commit or tag to an open pull request in [taurus-cdt](https://github.com/b1-as/taurus-cdt), any time you merge a pull request, and nightly.
 
 Platform configuration used pinned configuration and versions.
 
@@ -70,12 +70,12 @@ SKIP_UNIT_TESTS='true|false'         # skip all unit tests
 ```
 
 ## Pipelines
-There are several eosio pipelines that exist and are triggered by pull requests, pipelines, or schedules:
+There are several taurus-pipelines that exist and are triggered by pull requests, pipelines, or schedules:
 
 Pipeline | Details
 ---|---
-[eosio.cdt](https://buildkite.com/EOSIO/eosio-dot-cdt) | [eosio.cdt](https://github.com/EOSIO/eosio.cdt) build, tests, and packaging; runs on every pull request and base branch commit, and nightly
-[eosio.cdt - Version Check](https://buildkite.com/EOSIO/eosio-dot-cdt-version-check) | [eosio.cdt](https://github.com/EOSIO/eosio.cdt) for tagged builds (hence releases). Tests release artifacts.
+[taurus-cdt](https://buildkite.com/b1-as/taurus-cdt) | [taurus-cdt](https://github.com/b1-as/taurus-cdt) build, tests, and packaging; runs on every pull request and base branch commit, and nightly
+[taurus-cdt - Version Check](https://buildkite.com/b1-as/taurus-dot-cdt-version-check) | [taurus-cdt](https://github.com/b1-as/taurus-cdt) for tagged builds (hence releases). Tests release artifacts.
 
 ## See Also
 - Buildkite
