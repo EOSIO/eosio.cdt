@@ -37,6 +37,17 @@ steps:
     timeout: ${TIMEOUT:-60}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}
 
+  - label: ":ubuntu: Ubuntu 20.04 - Build"
+    command:
+      - "./.cicd/build.sh"
+      - "tar -pczf build.tar.gz build && buildkite-agent artifact upload build.tar.gz"
+    env:
+      IMAGE_TAG: "ubuntu-20.04"
+    agents:
+      queue: "automation-eks-eos-builder-fleet"
+    timeout: ${TIMEOUT:-60}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}
+
   - label: ":darwin: macOS 10.15 - Build"
     command:
       - "git clone $BUILDKITE_REPO taurus-cdt"
@@ -111,6 +122,17 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_UNIT_TESTS}
 
+  - label: ":ubuntu: Ubuntu 20.04 - Unit Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 20.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/tests.sh"
+    env:
+      IMAGE_TAG: "ubuntu-20.04"
+    agents:
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_UNIT_TESTS}
+
   - label: ":darwin: macOS 10.15 - Unit Tests"
     command:
       - "git clone $BUILDKITE_REPO taurus-cdt"
@@ -172,6 +194,17 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
 
+  - label: ":ubuntu: Ubuntu 20.04 - Toolchain Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 20.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/toolchain-tests.sh"
+    env:
+      IMAGE_TAG: "ubuntu-20.04"
+    agents:
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_TOOLCHAIN_TESTS}
+
   - label: ":darwin: macOS 10.15 - Toolchain Tests"
     command:
       - "git clone $BUILDKITE_REPO taurus-cdt"
@@ -209,6 +242,17 @@ steps:
       - "./.cicd/integration-tests.sh"
     env:
       IMAGE_TAG: "ubuntu-18.04"
+    agents:
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_INTEGRATION_TESTS}
+
+  - label: ":ubuntu: Ubuntu 20.04 - Integration Tests"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 20.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/integration-tests.sh"
+    env:
+      IMAGE_TAG: "ubuntu-20.04"
     agents:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
     timeout: ${TIMEOUT:-10}
@@ -273,12 +317,27 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
 
-  - label: ":ubuntu: Ubuntu 18.04 - Test Package"
+  - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
+    command:
+      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
+      - "./.cicd/package.sh"
+    env:
+      BUILDKITE_AGENT_ACCESS_TOKEN:
+      IMAGE_TAG: "ubuntu-18.04"
+      OS: "ubuntu-18.04" # OS and PKGTYPE required for lambdas
+      PKGTYPE: "deb"
+    agents:
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    key: "ubuntu1804pb"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":ubuntu: Ubuntu 20.04 - Test Package"
     command: |
-      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 18.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
+      buildkite-agent artifact download '*.deb' . --step ':ubuntu: Ubuntu 20.04 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
       ./.cicd/test-package.sh
     env:
-      IMAGE: "ubuntu:18.04"
+      IMAGE: "ubuntu:20.04"
     agents:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
     depends_on: "ubuntu1804pb"
@@ -315,7 +374,7 @@ steps:
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
 
   - wait
-  
+
   - label: ":docker::ubuntu: Docker - Build 18.04 Docker Image"
     command: "./.cicd/create-docker-from-binary.sh"
     agents:
