@@ -8,7 +8,6 @@ ORG_REPO=$(echo $FULL_TAG | cut -d: -f1)
 TAG=$(echo $FULL_TAG | cut -d: -f2)
 DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
 DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
-DOCKER_REPO_GOLDEN="https://blockone-golden-docker-release-local.jfrog.io"
 
 RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
 PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
@@ -17,7 +16,6 @@ echo PROXY_URL: $PROXY_URL
 
 echo "login to artifactory"
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
-echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_REPO_GOLDEN -u $ARTIFACTORY_USERNAME --password-stdin
 
 DOCKER_PULL="docker pull $FULL_TAG"
 echo "$ $DOCKER_PULL"
