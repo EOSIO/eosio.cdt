@@ -9,19 +9,25 @@ SANITIZED_TAG="$(sanitize "$BUILDKITE_TAG")"
 [[ -z "$SANITIZED_TAG" ]] || echo "Branch '$BUILDKITE_TAG' sanitized as '$SANITIZED_TAG'."
 # docker build
 echo '+++ :docker: Build Docker Container'
-DOCKERHUB_REGISTRY="docker.io/eosio/eosio.cdt"
-IMAGE="${DOCKERHUB_REGISTRY}:${BUILDKITE_COMMIT:-latest}"
-DOCKER_BUILD="docker build -t '$IMAGE' -f ./docker/dockerfile ."
+RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
+PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
+PROXY_URL="http://${PROXY_ADDR}:3128/"
+echo PROXY_URL: $PROXY_URL
+
+DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
+
+echo "login to artifactory"
+echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
+
+IMAGE="${DOCKER_REPO}:${BUILDKITE_COMMIT:-latest}"
+DOCKER_BUILD="docker build --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy -t $IMAGE -f -f ./docker/dockerfile ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 # docker tag
 echo '--- :label: Tag Container'
-if [[ "$BUILDKITE_PIPELINE_SLUG" =~ "-sec" ]] ; then
-    REGISTRIES=("$EOSIO_CDT_REGISTRY")
-else
-    REGISTRIES=("$EOSIO_CDT_REGISTRY" "$DOCKERHUB_REGISTRY")
-fi
-for REG in ${REGISTRIES[@]}; do
+REGISTRIES=("$DOCKER_REPO")
+for REG in "${REGISTRIES[@]}"; do
     DOCKER_TAG_BRANCH="docker tag '$IMAGE' '$REG:$SANITIZED_BRANCH'"
     echo "$ $DOCKER_TAG_BRANCH"
     eval $DOCKER_TAG_BRANCH
@@ -36,7 +42,7 @@ for REG in ${REGISTRIES[@]}; do
 done
 # docker push
 echo '--- :arrow_up: Push Container'
-for REG in ${REGISTRIES[@]}; do
+for REG in "${REGISTRIES[@]}"; do
     DOCKER_PUSH_BRANCH="docker push '$REG:$SANITIZED_BRANCH'"
     echo "$ $DOCKER_PUSH_BRANCH"
     eval $DOCKER_PUSH_BRANCH
@@ -51,7 +57,7 @@ for REG in ${REGISTRIES[@]}; do
 done
 # docker rmi
 echo '--- :put_litter_in_its_place: Cleanup'
-for REG in ${REGISTRIES[@]}; do
+for REG in "${REGISTRIES[@]}"; do
     CLEAN_IMAGE_BRANCH="docker rmi '$REG:$SANITIZED_BRANCH' || :"
     echo "$ $CLEAN_IMAGE_BRANCH"
     eval $CLEAN_IMAGE_BRANCH
