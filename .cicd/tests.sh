@@ -29,6 +29,11 @@ else # Linux
 
     . $HELPERS_DIR/docker-hash.sh
 
+    DOCKER_PULL="docker pull $FULL_TAG"
+    echo "$ $DOCKER_PULL"
+    eval $DOCKER_PULL
+    echo "Done with pull"
+
     # Load BUILDKITE Environment Variables for use in docker run
     if [[ -f $BUILDKITE_ENV_FILE ]]; then
         evars=""
