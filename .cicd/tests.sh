@@ -42,7 +42,7 @@ else # Linux
         done < "$BUILDKITE_ENV_FILE"
     fi
     set +e
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+    eval docker run $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
     EXIT_STATUS=$?
 fi
 # buildkite
