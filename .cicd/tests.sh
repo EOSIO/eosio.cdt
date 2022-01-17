@@ -29,7 +29,7 @@ else # Linux
 
     . $HELPERS_DIR/docker-hash.sh
 
-    DOCKER_PULL="docker pull $FULL_TAG"
+    DOCKER_PULL="docker pull $DOCKER_REPO/$FULL_TAG"
     echo "$ $DOCKER_PULL"
     eval $DOCKER_PULL
     echo "Done with pull"
