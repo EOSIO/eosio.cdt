@@ -48,8 +48,17 @@ else # Linux
             evars="$evars --env ${var%%=*}"
         done < "$BUILDKITE_ENV_FILE"
     fi
+    DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+    DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
 
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+    echo "login to artifactory"
+    echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
+    DOCKER_PULL="docker pull $DOCKER_REPO/$FULL_TAG"
+    echo "$ $DOCKER_PULL"
+    eval $DOCKER_PULL
+    echo "Done with pull"
+
+    eval docker run $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x

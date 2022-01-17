@@ -24,8 +24,18 @@ if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
   FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop-boxed'
 fi
 
+DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
+
+echo "login to artifactory"
+echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
+
 set +e
-eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+DOCKER_PULL="docker pull $DOCKER_REPO/$FULL_TAG"
+echo "$ $DOCKER_PULL"
+eval $DOCKER_PULL
+echo "Done with pull"
+eval docker run $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
 EXIT_STATUS=$?
 
 # buildkite
