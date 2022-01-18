@@ -3,7 +3,8 @@ set -eu
 
 echo '--- :docker: Selecting Container'
 
-DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+#DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+DOCKER_REPO="blockone-dockerhub.jfrog.io"
 DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
 
 echo "login to artifactory"

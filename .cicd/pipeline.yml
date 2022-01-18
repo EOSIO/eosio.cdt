@@ -2,6 +2,15 @@ env:
   SKIP_MAC: "true"
 
 steps:
+  - label: ":centos: Centos 7.7 - Test Package"
+    command: |
+      ./.cicd/test-package.sh
+    env:
+      IMAGE: "centos:7"
+    agents:
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
   - wait
 
   - label: ":aws: Amazon_Linux 2 - Build"
