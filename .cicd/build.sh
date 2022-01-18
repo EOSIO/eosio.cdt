@@ -2,7 +2,7 @@
 set -eo pipefail
 . ./.cicd/helpers/general.sh
 
-echo "+++ Build.sh $IMAGE_TAG"
+echo "--- Build.sh $IMAGE_TAG"
 mkdir -p $BUILD_DIR
 
 if [[ $(uname) == 'Darwin' ]]; then
