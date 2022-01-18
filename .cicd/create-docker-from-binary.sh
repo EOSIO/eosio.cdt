@@ -26,7 +26,8 @@ echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 # docker tag
 echo '--- :label: Tag Container'
-REGISTRIES=("$DOCKER_REPO")
+CDT_REGISTRY="$DOCKER_REPO/taurus/taurus-cdt"
+REGISTRIES=("$CDT_REGISTRY")
 for REG in "${REGISTRIES[@]}"; do
     DOCKER_TAG_BRANCH="docker tag '$IMAGE' '$REG:$SANITIZED_BRANCH'"
     echo "$ $DOCKER_TAG_BRANCH"
