@@ -233,9 +233,6 @@ steps:
     timeout: ${TIMEOUT:-20}
     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_TOOLCHAIN_TESTS}
 
-  - wait:
-    continue_on_failure: true
-
   - label: ":ubuntu: Ubuntu 18.04 - Integration Tests"
     command:
       - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
@@ -246,17 +243,6 @@ steps:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_INTEGRATION_TESTS}
-
-  - label: ":ubuntu: Ubuntu 20.04 - Integration Tests"
-    command:
-      - "buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 20.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN && tar -xzf build.tar.gz"
-      - "./.cicd/integration-tests.sh"
-    env:
-      IMAGE_TAG: "ubuntu-20.04"
-    agents:
-      queue: "automation-gke-ha-dev-taurus-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_INTEGRATION_TESTS}
 
   - wait:
     continue_on_failure: true

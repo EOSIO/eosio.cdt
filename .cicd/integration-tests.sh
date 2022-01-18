@@ -10,7 +10,7 @@ COMMANDS="$PRE_COMMANDS && $TEST"
 
 ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 
-# . $HELPERS_DIR/docker-hash.sh
+. $HELPERS_DIR/docker-hash.sh
 
 # Load BUILDKITE Environment Variables for use in docker run
 if [[ -f $BUILDKITE_ENV_FILE ]]; then
@@ -20,9 +20,9 @@ if [[ -f $BUILDKITE_ENV_FILE ]]; then
     done < "$BUILDKITE_ENV_FILE"
 fi
 
-if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
-  FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop-boxed'
-fi
+#if [[ "$BUILDKITE" == 'true' && "$IMAGE_TAG" == 'ubuntu-18.04' ]]; then
+#  FULL_TAG='eosio/ci-contracts-builder:base-ubuntu-18.04-develop-boxed'
+#fi
 
 DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
 DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
