@@ -21,7 +21,7 @@ echo "login to artifactory"
 echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
 
 IMAGE="${DOCKER_REPO}:${BUILDKITE_COMMIT:-latest}"
-DOCKER_BUILD="docker build --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy -t $IMAGE -f -f ./docker/dockerfile ."
+DOCKER_BUILD="docker build --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy -t $IMAGE -f ./docker/dockerfile ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 # docker tag
