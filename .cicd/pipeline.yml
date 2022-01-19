@@ -2,15 +2,6 @@ env:
   SKIP_MAC: "true"
 
 steps:
-  - label: ":ubuntu: Ubuntu 18.04 - Test Package"
-    command: |
-      ./.cicd/test-package.sh
-    env:
-      IMAGE: "ubuntu:18.04"
-    agents:
-      queue: "automation-gke-ha-dev-taurus-tester-fleet"
-    timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
   - wait
 
   - label: ":aws: Amazon_Linux 2 - Build"
