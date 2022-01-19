@@ -3,7 +3,11 @@ set -eu
 
 echo '--- :docker: Selecting Container'
 
-#DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
+RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
+PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
+PROXY_URL="http://${PROXY_ADDR}:3128/"
+echo PROXY_URL: $PROXY_URL
+
 DOCKER_REPO="blockone-dockerhub.jfrog.io"
 DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
 
@@ -15,5 +19,5 @@ echo "$ $DOCKER_PULL"
 eval $DOCKER_PULL
 echo "Done with pull"
 echo "docker run --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh"
-docker run --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh
+docker run --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh
 echo "done with docker run..."
