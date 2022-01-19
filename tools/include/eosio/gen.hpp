@@ -476,6 +476,9 @@ struct generation_utils {
          auto t =translate_type(get_template_argument( type ).getAsType());
          return t=="int8" ? "bytes" : t+"[]";
       }
+      else if ( is_template_specialization( type, {"pb_msg"} ) ) {
+         return "bytes";
+      }
       else if ( is_template_specialization( type, {"optional"} ) )
          return translate_type(get_template_argument( type ).getAsType())+"?";
       else if ( is_template_specialization( type, {"map"} )) {
