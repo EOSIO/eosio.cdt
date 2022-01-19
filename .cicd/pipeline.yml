@@ -1,6 +1,6 @@
 env:
   SKIP_MAC: "true"
-  SKIP_PACKAGE_BUILDER: "true"
+  SKIP_PACKAGE_BUILDER_TEST: "true"
 steps:
   - wait
 
@@ -286,7 +286,7 @@ steps:
     depends_on: "centos7pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_CENTOS_7}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}${SKIP_PACKAGE_BUILDER_TEST}
 
   - label: ":ubuntu: Ubuntu 18.04 - Package Builder"
     command:
@@ -314,7 +314,7 @@ steps:
     depends_on: "ubuntu1804pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_UBUNTU_18}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}${SKIP_PACKAGE_BUILDER_TEST}
 
   - label: ":ubuntu: Ubuntu 20.04 - Package Builder"
     command:
@@ -342,7 +342,7 @@ steps:
     depends_on: "ubuntu2004pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
-    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}${SKIP_PACKAGE_BUILDER_TEST}
 
   - label: ":darwin: Catalina - Package Builder"
     command:
@@ -378,6 +378,7 @@ steps:
     command: "./.cicd/create-docker-from-binary.sh"
     agents:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
+    skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
     timeout: 10
 
   - label: ":beer: Brew Updater"
