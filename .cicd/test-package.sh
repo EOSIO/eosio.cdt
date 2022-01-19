@@ -19,5 +19,5 @@ echo "$ $DOCKER_PULL"
 eval $DOCKER_PULL
 echo "Done with pull"
 echo "docker run --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh"
-docker run --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh
+docker run --network=host -e http_proxy=$PROXY_URL -e https_proxy=$PROXY_URL -e no_proxy=$no_proxy --rm -v "$(pwd):/eos" -w '/eos' -it $DOCKER_REPO/$IMAGE ./.cicd/test-package.run.sh
 echo "done with docker run..."
