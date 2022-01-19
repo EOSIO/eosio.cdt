@@ -162,6 +162,10 @@ static cl::opt<bool> allow_names_opt (
     "allow-names",
     cl::desc("Allows name section to be created"),
     cl::cat(LD_CAT));
+static cl::opt<int> smart_contract_debug_level_opt (
+    "smart-contract-debug-level",
+    cl::desc("Experimental: add tracking statement for smart contract debugging. 0 - off, 1 - on, 2 - on with variable tracking"),
+    cl::cat(LD_CAT));
 /// End of ld options
 
 #ifndef ONLY_LD
@@ -402,6 +406,7 @@ struct Options {
    bool debug;
    bool native;
    std::pair<int, int> abi_version;
+   int smart_contract_debug_level;
 };
 
 static void GetCompDefaults(std::vector<std::string>& copts) {
@@ -972,8 +977,8 @@ static Options CreateOptions(bool add_defaults=true) {
    }
 
 #ifndef ONLY_LD
-   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, inputs, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, smart_contract_debug_level_opt};
 #else
-   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}};
+   return {output_fn, {}, link, abigen, no_missing_ricardian_clause_opt, pp_only, pp_dir, abigen_output, abigen_contract, copts, ldopts, agopts, agresources, debug, fnative_opt, {abi_version_major, abi_version_minor}, smart_contract_debug_level_opt};
 #endif
 }

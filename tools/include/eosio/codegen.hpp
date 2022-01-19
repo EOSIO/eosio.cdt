@@ -146,6 +146,13 @@ namespace eosio { namespace cdt {
    };
 
    class eosio_codegen_visitor : public RecursiveASTVisitor<eosio_codegen_visitor>, public generation_utils {
+
+         enum smart_contract_debug_level_t {
+            debug_none = 0,
+            debug_statement,
+            debug_full
+         };
+
       private:
          codegen& cg = codegen::get();
          FileID    main_fid;
@@ -155,6 +162,7 @@ namespace eosio { namespace cdt {
          CompilerInstance* ci;
          bool apply_was_found = false;
          SourceManager *sm = nullptr;
+         int smart_contract_debug_level = 0;
 
       public:
 
@@ -173,13 +181,14 @@ namespace eosio { namespace cdt {
             if (in_const_func) return false;
             uint64_t line_col0 = ((((uint64_t)line0) << 32) | col0);
             uint64_t line_col1 = ((((uint64_t)line1) << 32) | col1);
-            if (line_col0 >= line_col1) return false;
+            if (line_col0 > line_col1) return false;
             if (!line0 || !col0 || !line1 || !col1) return false;
             
             if (check_points[line_col0].size() == 0) {
                check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_});
+               return true;
             }
-            return true;
+            return false;
          }
 
 
@@ -187,8 +196,8 @@ namespace eosio { namespace cdt {
          std::vector<CXXMethodDecl*> action_decls;
          std::vector<CXXMethodDecl*> notify_decls;
 
-         explicit eosio_codegen_visitor(CompilerInstance *CI, std::string main_file_)
-               : generation_utils([&](){throw cg.codegen_ex;}), ci(CI) {
+         explicit eosio_codegen_visitor(CompilerInstance *CI, std::string main_file_, int smart_contract_debug_level_)
+               : generation_utils([&](){throw cg.codegen_ex;}), ci(CI), smart_contract_debug_level(smart_contract_debug_level_) {
             cg.ast_context = &(CI->getASTContext());
             cg.codegen_ci = CI;
             sm = &(CI->getSourceManager());
@@ -394,10 +403,11 @@ namespace eosio { namespace cdt {
                if (file_name == main_file) {
                   if (insert_check_point(plocs.getLine(), plocs.getColumn(), ploce.getLine(), ploce.getColumn(), type, func_name)) {
                      std::cout << "inserted checkpoint at " << locstart.printToString(*sm) << "(" << mark << ")" << std::endl;
+                     return true;
                   }
                }
             }
-            return true;
+            return false;
          }
 
          void visit_expr(clang::Expr *expr_, const ASTContext& ctx) {
@@ -438,7 +448,13 @@ namespace eosio { namespace cdt {
                   else break;
                }
 
-               insert_check_point_by_location((s->getStmtClassName() + std::string(" ")).c_str(), s->getLocStart(), s->getLocEnd(), check_point_t::single_front, label_name);
+               // insert a check point before each statement except "do ... while" and "{ ... }",
+               // as we will insert check points into their sub statements
+               if (s->getStmtClass() != clang::Stmt::DoStmtClass &&
+                  s->getStmtClass() != clang::Stmt::CompoundStmtClass) {
+                  insert_check_point_by_location((s->getStmtClassName() + std::string(" ")).c_str(), 
+                     s->getLocStart(), s->getLocEnd(), check_point_t::single_front, label_name);
+               }
 
                if (s->getStmtClass() == clang::Stmt::IfStmtClass) {
                   clang::IfStmt *stmt = (clang::IfStmt *)s;
@@ -456,6 +472,18 @@ namespace eosio { namespace cdt {
                } else if (s->getStmtClass() == clang::Stmt::SwitchStmtClass) {
                   clang::SwitchStmt *stmt = (clang::SwitchStmt *)s;
                   visit_compound_stmt(stmt->getBody(), ctx);
+               } else if (s->getStmtClass() == clang::Stmt::CompoundStmtClass) {
+                  clang::CompoundStmt *stmt = (clang::CompoundStmt *)s;
+                  visit_compound_stmt(stmt, ctx);   
+               } else if (s->getStmtClass() == clang::Stmt::DeclStmtClass) {
+                  clang::DeclStmt *stmt = (clang::DeclStmt *)s;
+                  for (clang::DeclGroupRef::iterator itr = stmt->decl_begin(); itr != stmt->decl_end(); ++itr) {
+                     clang::ValueDecl *n_decl = llvm::dyn_cast<clang::ValueDecl>(*itr);
+                     if (n_decl) {
+                        std::string pname = n_decl->getName();
+                        std::cout << pname << ",";
+                     }
+                  }
                } else if (clang::Expr *expr = llvm::dyn_cast<clang::Expr>(s)) {
                   visit_expr(expr, ctx);
                }
@@ -464,17 +492,39 @@ namespace eosio { namespace cdt {
 
          virtual bool VisitDecl(clang::Decl* decl) {
             if (clang::FunctionDecl* fd = dyn_cast<clang::FunctionDecl>(decl)) {
-               if (fd->getNameInfo().getAsString() == "apply")
+               std::string func_name = fd->getNameInfo().getAsString();
+               if (func_name == "apply")
                   apply_was_found = true;
 
-               func_body = fd->getBody();
-               in_const_func = fd->isConstexpr();
-               if (!in_const_func && fd->hasBody()) {
-                  clang::Stmt *stmt = fd->getBody();
-                  if (stmt->getStmtClass() == clang::Stmt::CompoundStmtClass) {
-                     clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt;
-                     insert_check_point_by_location("CompoundStmt(FuncEnter) ", stmt->getLocStart(), stmt->getLocEnd(), check_point_t::func_enter, fd->getNameInfo().getAsString());
-                     visit_compound_stmt(cpst, decl->getASTContext());
+               if (smart_contract_debug_level >= debug_statement) {
+                  func_body = fd->getBody();
+                  in_const_func = fd->isConstexpr();
+                  if (!in_const_func && fd->hasBody()) {
+
+                     clang::Stmt *stmt = fd->getBody();
+                     if (stmt->getStmtClass() == clang::Stmt::CompoundStmtClass) {
+
+                        clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt;
+
+                        if (stmt->getLocStart() != stmt->getLocEnd()) { // avoid some special functions like "=default;", "=delete;"
+                           if (insert_check_point_by_location(("CompoundStmt(FuncEnter " + func_name + ") ").c_str(), 
+                              stmt->getLocStart(), stmt->getLocEnd(), check_point_t::func_enter, func_name)) {
+                              
+                              int param_total = 0;
+                              clang::ArrayRef<clang::ParmVarDecl *> params = fd->parameters();
+                              for (clang::ParmVarDecl *param : params) {
+                                 clang::QualType type = param->getType();
+                                 std::string tname = type.getAsString();
+                                 std::string pname = param->getName();
+                                 std::cout << pname << ":" << tname << ",";
+                                 ++param_total;
+                              }
+                              if (param_total) std::cout << std::endl;
+
+                              visit_compound_stmt(cpst, decl->getASTContext());
+                           }
+                        }
+                     }
                   }
                }
             }
@@ -505,11 +555,11 @@ namespace eosio { namespace cdt {
          eosio_codegen_visitor *visitor;
          std::string main_file;
          CompilerInstance* ci;
+         int smart_contract_debug_level = 0;
 
       public:
-         explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file)
-            : visitor(new eosio_codegen_visitor(CI, file)), main_file(file), ci(CI) { }
-
+         explicit eosio_codegen_consumer(CompilerInstance *CI, std::string file, int smart_contract_debug_level_)
+            : visitor(new eosio_codegen_visitor(CI, file, smart_contract_debug_level_)), main_file(file), ci(CI), smart_contract_debug_level(smart_contract_debug_level_) { }
 
          virtual void HandleTranslationUnit(ASTContext &Context) {
             codegen& cg = codegen::get();
@@ -538,14 +588,12 @@ namespace eosio { namespace cdt {
                   std::stringstream out_data;
                   std::ofstream out(fn.c_str());
 
-
-                  // {
-                  //    llvm::SmallString<64> abs_file_path(main_fe->getName());
-                  //    llvm::sys::fs::make_absolute(abs_file_path);
-                  //    out_data << "#include \"" << abs_file_path.c_str() << "\"\n";
-                  // }
-
+                  if (smart_contract_debug_level == 0) 
                   {
+                     llvm::SmallString<64> abs_file_path(main_fe->getName());
+                     llvm::sys::fs::make_absolute(abs_file_path);
+                     out_data << "#include \"" << abs_file_path.c_str() << "\"\n";
+                  } else {
                      llvm::SmallString<64> abs_file_path(main_fe->getName());
                      llvm::sys::fs::make_absolute(abs_file_path);
                      std::string short_fn = abs_file_path.c_str();
@@ -629,12 +677,13 @@ namespace eosio { namespace cdt {
                   out.close();
                   std::cout << "main_file:" << main_file << ", temp_file:" << std::string(fn.str()) << std::endl;
 
-                  std::string debug_file = std::string(main_fe->getName()) + ".debug";
-                  std::ofstream out2(debug_file.c_str());
-                  out2 << out_data.str();
-                  out2.close();
-
-                  std::cout << "debug file " << debug_file << " written\n";
+                  if (smart_contract_debug_level) {
+                     std::string debug_file = std::string(main_fe->getName()) + ".debug";
+                     std::ofstream out2(debug_file.c_str());
+                     out2 << out_data.str();
+                     out2.close();
+                     std::cout << "debug file " << debug_file << " written\n";
+                  }
                } catch (...) {
                   llvm::outs() << "Failed to create temporary file\n";
                }
@@ -644,11 +693,14 @@ namespace eosio { namespace cdt {
       };
 
       class eosio_codegen_frontend_action : public ASTFrontendAction {
+         int smart_contract_debug_level;
       public:
+         eosio_codegen_frontend_action(int smart_contract_debug_level_): smart_contract_debug_level(smart_contract_debug_level_) {}
+
          virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) {
             std::cout << "CreateASTConsumer() file=" << std::string(file) << std::endl;
             CI.getPreprocessor().addPPCallbacks(_make_unique<eosio_ppcallbacks>(CI.getSourceManager(), file.str()));
-            return _make_unique<eosio_codegen_consumer>(&CI, file);
+            return _make_unique<eosio_codegen_consumer>(&CI, file, smart_contract_debug_level);
          }
    };
 
