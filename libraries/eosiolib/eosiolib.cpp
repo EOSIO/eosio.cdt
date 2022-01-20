@@ -17,6 +17,10 @@ namespace eosio {
      __attribute__((eosio_wasm_import))
      uint32_t get_blockchain_parameters_packed(char*, uint32_t);
      __attribute__((eosio_wasm_import))
+     void set_parameters_packed(char*, uint32_t);
+     __attribute__((eosio_wasm_import))
+     uint32_t get_parameters_packed(char*, uint32_t, char*, uint32_t);
+     __attribute__((eosio_wasm_import))
      int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
      __attribute__((eosio_wasm_import))
      uint32_t get_active_producers(uint64_t*, uint32_t);
@@ -63,6 +67,75 @@ namespace eosio {
       eosio::check( size <= sizeof(buf), "buffer is too small" );
       eosio::datastream<const char*> ds( buf, size_t(size) );
       ds >> params;
+   }
+
+   //  considering of runtime efficiency, using a estimated size to save the exact size calculating time
+   const int estimate_param_ids_buff_size = 128;
+   const int estimate_params_buff_size = 256;
+   void set_parameters(const id_param_pairs_type & params) {
+      char buff[estimate_params_buff_size];
+      unsigned_int size = params.size();
+      if(params.size() == 0) return;
+      eosio::datastream<char *> ds( buff, sizeof(buff) );
+      ds << size;
+      for(const auto & p : params ){
+         unsigned_int id = p.first;
+         ds << id;
+         std::variant<uint16_t, uint32_t, uint64_t> var = p.second;
+         if(std::holds_alternative<uint16_t>(var)){
+            uint16_t data = std::get<uint16_t>(var);
+            ds << data;
+         } else if (std::holds_alternative<uint32_t>(var) ){
+            uint32_t data = std::get<uint32_t>(var);
+            ds << data;
+         } else {
+            uint64_t data = std::get<uint64_t>(var);
+            ds << data;
+         }
+      }
+      eosio::check( ds.tellp() <= sizeof(buff), "buffer is too small" );
+      set_parameters_packed( buff, ds.tellp() );
+   }
+
+   void get_parameters(const std::vector<uint32_t> & param_ids,  id_param_pairs_type & params) {
+      char buff_ids[estimate_param_ids_buff_size];
+      char buff_params[estimate_params_buff_size];
+      unsigned_int id_size = param_ids.size();
+      params.clear();
+      if(param_ids.size() == 0) return;
+      eosio::datastream<char*> id_ds( buff_ids, sizeof(buff_ids) );
+      id_ds << id_size;
+      for(const auto & id : param_ids){
+         unsigned_int _id = id;
+         id_ds << _id;
+      }
+      eosio::check( id_ds.tellp() <= sizeof(buff_ids), "ids buffer is too small" );
+      uint32_t size = get_parameters_packed( buff_ids,  id_ds.tellp(), buff_params, sizeof(buff_params));
+      eosio::check( size <= sizeof(buff_params), "params buffer is too small" );
+      eosio::datastream<const char*> para_ds( buff_params, size );
+      unsigned_int para_size;
+      para_ds >> para_size;
+      eosio::check(id_size == para_size, "pairs returned doesn't match amount of id to query");
+      for(uint32_t i = 0; i < para_size; ++i){
+         unsigned_int _id;
+         std::variant<uint16_t, uint32_t, uint64_t>  var;
+         para_ds >> _id;
+         uint32_t id = _id;
+         if(id == max_block_net_usage_id){
+            uint64_t data;
+            para_ds >> data;
+            var = data;
+         } else if(id == max_inline_action_depth_id || id == max_authority_depth_id){
+            uint16_t data;
+            para_ds >> data;
+            var = data;
+         } else {
+            uint32_t data;
+            para_ds >> data;
+            var = data;
+         }
+         params.push_back({id, var});
+      }
    }
 
    std::optional<uint64_t> set_proposed_producers( const std::vector<producer_key>& prods ) {

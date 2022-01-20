@@ -1,5 +1,5 @@
-FROM centos:8
-# install dependencies
+FROM oraclelinux:8
+# install dependencies.
 RUN yum update -y && \
     yum install -y gdisk && \
     yum install -y cmake && \
@@ -7,3 +7,5 @@ RUN yum update -y && \
     libtool make \
     libicu-devel.x86_64 bzip2.x86_64 bzip2-devel.x86_64 openssl-devel.x86_64 \
     gmp-devel.x86_64 python38 python3-devel gettext-devel.x86_64 gcc-c++.x86_64 perl
+
+RUN ln -sfn /usr/bin/python3.8 /usr/local/bin/python3

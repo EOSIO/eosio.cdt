@@ -34,6 +34,12 @@ extern "C" {
    void set_blockchain_parameters_packed( char* data, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::set_blockchain_parameters_packed>(data, datalen);
    }
+   uint32_t get_parameters_packed( char* id, uint32_t idlen, char* data, uint32_t datalen) {
+      return intrinsics::get().call<intrinsics::get_parameters_packed>(id, idlen, data, datalen);
+   }
+   void set_parameters_packed( char* data, uint32_t datalen ) {
+      return intrinsics::get().call<intrinsics::set_parameters_packed>(data, datalen);
+   }
    void set_kv_parameters_packed( const char* data, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::set_kv_parameters_packed>(data, datalen);
    }

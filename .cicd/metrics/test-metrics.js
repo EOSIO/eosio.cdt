@@ -107,18 +107,16 @@ function getOS(environment)
         return 'Amazon Linux 1';
     if (/aws.*2/.test(label) || /amazon.*2/.test(label))
         return 'Amazon Linux 2';
+    if (/oracle.*8/.test(label))
+        return 'Oracle Linux 8';
     if (/centos(?!.*[89])/.test(label))
         return 'CentOS 7';
-    if (/fedora(?!.*2[89])/.test(label) && /fedora(?!.*3\d)/.test(label))
-        return 'Fedora 27';
-    if (/high.*sierra/.test(label))
-        return 'High Sierra';
-    if (/mojave/.test(label))
-        return 'Mojave';
-    if (/ubuntu.*16.*04/.test(label) || /ubuntu.*16(?!.*10)/.test(label))
-        return 'Ubuntu 16.04';
+    if (/catalina/.test(label))
+        return 'Catalina';
     if (/ubuntu.*18.*04/.test(label) || /ubuntu.*18(?!.*10)/.test(label))
         return 'Ubuntu 18.04';
+    if (/ubuntu.*20.*04/.test(label) || /ubuntu.*20(?!.*10)/.test(label))
+        return 'Ubuntu 20.04';
     if (/docker/.test(label))
         return 'Docker';
     return 'Unknown';

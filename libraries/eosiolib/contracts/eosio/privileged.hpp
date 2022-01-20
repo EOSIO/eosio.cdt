@@ -40,10 +40,10 @@ namespace eosio {
          uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
          __attribute__((eosio_wasm_import))
-         void set_parameters_packed( const char* params, uint32_t params_size );
+         void set_parameters_packed( char* data, uint32_t datalen );
 
          __attribute__((eosio_wasm_import))
-         uint32_t get_parameters_packed( const char* ids, uint32_t ids_size, char* params, uint32_t params_size);
+         uint32_t get_parameters_packed( char* id, uint32_t idlen , char* data, uint32_t datalen  );
 
          __attribute__((eosio_wasm_import))
          void set_kv_parameters_packed( const char* data, uint32_t datalen );
@@ -196,6 +196,29 @@ namespace eosio {
       )
    };
 
+   enum {
+      max_block_net_usage_id,
+      target_block_net_usage_pct_id,
+      max_transaction_net_usage_id,
+      base_per_transaction_net_usage_id,
+      net_usage_leeway_id,
+      context_free_discount_net_usage_num_id,
+      context_free_discount_net_usage_den_id,
+      max_block_cpu_usage_id,
+      target_block_cpu_usage_pct_id,
+      max_transaction_cpu_usage_id,
+      min_transaction_cpu_usage_id,
+      max_transaction_lifetime_id,
+      deferred_trx_expiration_window_id,
+      max_transaction_delay_id,
+      max_inline_action_size_id,
+      max_inline_action_depth_id,
+      max_authority_depth_id,
+      max_action_return_value_size_id
+   };
+
+   using id_param_pairs_type = std::vector<std::pair<uint32_t, std::variant<uint16_t, uint32_t, uint64_t>>>;
+
    /**
     *  Set the blockchain parameters
     *
@@ -211,106 +234,6 @@ namespace eosio {
     *  @param params - It will be replaced with the retrieved blockchain params
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
-
-   /**
-    *  Helper structure for host functions set_parameters_packed and get_parameters_packed
-    *  @ingroup privileged
-    */
-   struct params_object{
-      std::string packed;
-
-      params_object() = default;
-
-      template<typename T>
-      params_object(T v){
-         (*this)(v);
-      }
-
-      params_object(const std::string& params) : packed(params) {}
-
-      bool operator == (const params_object& pp) const{
-         return packed == pp.packed;
-      }
-
-      params_object& operator () (unsigned_int val){
-         char buffer[4];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         ds << val;
-         ASSERT_LE(ds.tellp(), sizeof(buffer));
-
-         packed += {buffer, ds.tellp()};
-         return *this;
-      }
-
-      params_object& operator () (uint16_t val){
-         char buffer[2];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         ds << val;
-         ASSERT_EQ(ds.tellp(), sizeof(buffer));
-
-         packed += {buffer, ds.tellp()};
-         return *this;
-      }
-
-      params_object& operator () (uint32_t val){
-         char buffer[4];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         ds << val;
-         ASSERT_EQ(ds.tellp(), sizeof(buffer));
-
-         packed += {buffer, ds.tellp()};
-         return *this;
-      }
-
-      params_object& operator () (uint64_t val){
-         char buffer[8];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         ds << val;
-         ASSERT_EQ(ds.tellp(), sizeof(buffer));
-
-         packed += {buffer, ds.tellp()};
-         return *this;
-      }
-
-      params_object& operator () (std::vector<unsigned_int>&& val){
-         char buffer[512];
-         datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         ds << val;
-         ASSERT_LESS(ds.tellp(), sizeof(buffer));
-
-         packed += {buffer, ds.tellp()};
-         return *this;
-      }
-
-   };
-
-    /**
-     * Set the blockchain parameters (version using the set_parameters_packed host function)
-     *
-     * @ingroup privileged
-     *
-     * @param New blockchain parameters to set
-    */
-    inline void set_parameters(params_object& params) {
-       internal_use_do_not_use::set_parameters_packed(params.packed.c_str(), params.packed.size());
-    }
-
-    /**
-     * Retrieve the current blockchain parameters (version using the get_parameters_packed intrinsic)
-     *
-     * @ingroup privileged
-     *
-     * @param params_ids a params_object containing the packed list of ids of the parameters we want to get.
-     *
-     * @return a params_object containing the current values for the ids requested.
-    */
-    inline params_object get_parameters(params_object& params_ids) {
-       char buffer[512];
-       datastream<char*> ds((char*)&buffer, sizeof(buffer));
-
-       auto size = internal_use_do_not_use::get_parameters_packed(params_ids.packed.c_str(), params_ids.packed.size(), buffer, sizeof(buffer));
-       return params_object{{buffer, size}};
-    }
 
    /**
     *  Tunable wasm limits configuration parameters.
@@ -423,6 +346,24 @@ namespace eosio {
       ds >> params;
       return sz;
    }
+
+   /**
+    *  Set the blockchain parameters flexibly by id data pair vector
+    *
+    *  @ingroup privileged
+    *  @param params - New blockchain parameters to set, only id and data in the params will be set.
+    */
+   void set_parameters(const id_param_pairs_type & params);
+
+   /**
+    *  Retrieve the blolckchain parameters flexibly by ids
+    *
+    *  @ingroup privileged
+    *  @param param_ids - The id vecter in which ids are being queried from chain, see upper enum
+    *  @param params - It is output data with the retrieved blockchain params, before call it should be empty
+    */
+   void get_parameters(const std::vector<uint32_t> & param_ids,  id_param_pairs_type & params);
+
    /**
     *  Tunable KV configuration that can be changed via consensus
     *  @ingroup privileged

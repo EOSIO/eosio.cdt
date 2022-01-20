@@ -27,6 +27,9 @@ namespace eosio {
     *  @ingroup symbol
     */
    class symbol_code {
+   private:
+       uint64_t value = 0;
+
    public:
 
       /**
@@ -200,8 +203,9 @@ namespace eosio {
          return a.value < b.value;
       }
 
-   private:
-      uint64_t value = 0;
+      // CDT_REFLECT(value) has to be used after the data member 'value' is declared first in this class,
+      // or there would be eosio-cpp compile error
+      CDT_REFLECT(value);
    };
 
    /**
@@ -241,6 +245,9 @@ namespace eosio {
     *  @ingroup symbol
     */
    class symbol {
+   private:
+       uint64_t value = 0;
+
    public:
       /**
        * Construct a new symbol object defaulting to a value of 0
@@ -336,8 +343,7 @@ namespace eosio {
          return a.value < b.value;
       }
 
-   private:
-      uint64_t value = 0;
+      CDT_REFLECT(value);
    };
 
    /**
@@ -380,6 +386,10 @@ namespace eosio {
     */
    class extended_symbol
    {
+   private:
+       symbol sym; ///< the symbol
+       name   contract; ///< the token contract hosting the symbol
+
    public:
 
       /**
@@ -446,10 +456,10 @@ namespace eosio {
         return std::tie( a.sym, a.contract ) < std::tie( b.sym, b.contract );
       }
 
-   private:
-      symbol sym; ///< the symbol
-      name   contract; ///< the token contract hosting the symbol
+      CDT_REFLECT(sym, contract);
 
+      //CDT_REFLECT(...) is expanded into 5 methods which have to be public,
+      //EOSLIB_SERIALIZE() defines friend functions, so it does not matter whether EOSLIB_SERIALIZE() is private/protected/public
       EOSLIB_SERIALIZE( extended_symbol, (sym)(contract) )
    };
 }

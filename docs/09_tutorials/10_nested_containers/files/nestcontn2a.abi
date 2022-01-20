@@ -1,0 +1,1550 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "mp_uint16",
+            "type": "pair_uint16_uint16[]"
+        },
+        {
+            "new_type_name": "op_uint16",
+            "type": "uint16?"
+        },
+        {
+            "new_type_name": "pr_unit16",
+            "type": "pair_uint16_uint16"
+        },
+        {
+            "new_type_name": "set_uint16",
+            "type": "uint16[]"
+        },
+        {
+            "new_type_name": "vec_uint16",
+            "type": "uint16[]"
+        },
+        {
+            "new_type_name": "vec_uint32",
+            "type": "uint32[]"
+        },
+        {
+            "new_type_name": "vecvec_uint32",
+            "type": "vec_uint32[]"
+        }
+    ],
+    "structs": [
+        {
+            "name": "erase",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "mystruct",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_count",
+                    "type": "uint64"
+                },
+                {
+                    "name": "_strID",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "mystruct2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_structfld",
+                    "type": "mystruct"
+                },
+                {
+                    "name": "_strID2",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "pair_string_string",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_mp_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "mp_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_op_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "op_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_pr_unit16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "pr_unit16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_set_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "set_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint16"
+                },
+                {
+                    "name": "second",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_vec_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "vec_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint32_op_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint32"
+                },
+                {
+                    "name": "second",
+                    "type": "op_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint32_set_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint32"
+                },
+                {
+                    "name": "second",
+                    "type": "set_uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint32_uint32",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint32"
+                },
+                {
+                    "name": "second",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint32_vec_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint32"
+                },
+                {
+                    "name": "second",
+                    "type": "vec_uint16"
+                }
+            ]
+        },
+        {
+            "name": "person2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "name"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "m",
+                    "type": "pair_string_string[]"
+                },
+                {
+                    "name": "s",
+                    "type": "mystruct"
+                },
+                {
+                    "name": "s2",
+                    "type": "mystruct2"
+                },
+                {
+                    "name": "st",
+                    "type": "uint16[]"
+                },
+                {
+                    "name": "o",
+                    "type": "string?"
+                },
+                {
+                    "name": "p",
+                    "type": "pair_uint16_uint16"
+                },
+                {
+                    "name": "vs",
+                    "type": "mystruct[]"
+                },
+                {
+                    "name": "vv",
+                    "type": "vec_uint16[]"
+                },
+                {
+                    "name": "oo",
+                    "type": "op_uint16?"
+                },
+                {
+                    "name": "mm",
+                    "type": "pair_uint16_mp_uint16[]"
+                },
+                {
+                    "name": "stst",
+                    "type": "set_uint16[]"
+                },
+                {
+                    "name": "vst",
+                    "type": "set_uint16[]"
+                },
+                {
+                    "name": "stv",
+                    "type": "vec_uint16[]"
+                },
+                {
+                    "name": "vo",
+                    "type": "op_uint16[]"
+                },
+                {
+                    "name": "ov",
+                    "type": "vec_uint16?"
+                },
+                {
+                    "name": "sto",
+                    "type": "op_uint16[]"
+                },
+                {
+                    "name": "ost",
+                    "type": "set_uint16?"
+                },
+                {
+                    "name": "vm",
+                    "type": "mp_uint16[]"
+                },
+                {
+                    "name": "mv",
+                    "type": "pair_uint16_vec_uint16[]"
+                },
+                {
+                    "name": "stm",
+                    "type": "mp_uint16[]"
+                },
+                {
+                    "name": "mst",
+                    "type": "pair_uint16_set_uint16[]"
+                },
+                {
+                    "name": "om",
+                    "type": "mp_uint16?"
+                },
+                {
+                    "name": "mo",
+                    "type": "pair_uint16_op_uint16[]"
+                },
+                {
+                    "name": "vp",
+                    "type": "pair_uint32_uint32[]"
+                },
+                {
+                    "name": "pv",
+                    "type": "pair_uint32_vec_uint16"
+                },
+                {
+                    "name": "stp",
+                    "type": "pair_uint32_uint32[]"
+                },
+                {
+                    "name": "pst",
+                    "type": "pair_uint32_set_uint16"
+                },
+                {
+                    "name": "op",
+                    "type": "pr_unit16?"
+                },
+                {
+                    "name": "po",
+                    "type": "pair_uint32_op_uint16"
+                },
+                {
+                    "name": "mp",
+                    "type": "pair_uint16_pr_unit16[]"
+                },
+                {
+                    "name": "pm",
+                    "type": "pair_uint16_mp_uint16"
+                },
+                {
+                    "name": "pp",
+                    "type": "pair_uint16_pr_unit16"
+                },
+                {
+                    "name": "ovv",
+                    "type": "vecvec_uint32?"
+                }
+            ]
+        },
+        {
+            "name": "prntm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntmm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntmo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntmp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntmst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntmv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prnto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntom",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntoo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntop",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntost",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntov",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntovv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntpm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntpo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntpp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntpst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntpv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prnts",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prnts2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntstm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntsto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntstp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntstst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntstv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvs",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "prntvv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "setm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "m",
+                    "type": "pair_string_string[]"
+                }
+            ]
+        },
+        {
+            "name": "setmm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "mm",
+                    "type": "pair_uint16_mp_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setmo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "mo",
+                    "type": "pair_uint16_op_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setmp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "mp",
+                    "type": "pair_uint16_pr_unit16[]"
+                }
+            ]
+        },
+        {
+            "name": "setmst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "mst",
+                    "type": "pair_uint16_set_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setmv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "mv",
+                    "type": "pair_uint16_vec_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "seto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "o",
+                    "type": "string?"
+                }
+            ]
+        },
+        {
+            "name": "setom",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "om",
+                    "type": "mp_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "setoo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "oo",
+                    "type": "op_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "setop",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "op",
+                    "type": "pr_unit16?"
+                }
+            ]
+        },
+        {
+            "name": "setost",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "ost",
+                    "type": "set_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "setov",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "ov",
+                    "type": "vec_uint16?"
+                }
+            ]
+        },
+        {
+            "name": "setovv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "ovv",
+                    "type": "vecvec_uint32?"
+                }
+            ]
+        },
+        {
+            "name": "setp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "p",
+                    "type": "pair_uint16_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setpm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "pm",
+                    "type": "pair_uint16_mp_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setpo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "po",
+                    "type": "pair_uint32_op_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setpp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "pp",
+                    "type": "pair_uint16_pr_unit16"
+                }
+            ]
+        },
+        {
+            "name": "setpst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "pst",
+                    "type": "pair_uint32_set_uint16"
+                }
+            ]
+        },
+        {
+            "name": "setpv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "pv",
+                    "type": "pair_uint32_vec_uint16"
+                }
+            ]
+        },
+        {
+            "name": "sets",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "s",
+                    "type": "mystruct"
+                }
+            ]
+        },
+        {
+            "name": "sets2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "s2",
+                    "type": "mystruct2"
+                }
+            ]
+        },
+        {
+            "name": "setst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "st",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setstm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "stm",
+                    "type": "mp_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setsto",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "sto",
+                    "type": "op_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setstp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "stp",
+                    "type": "pair_uint32_uint32[]"
+                }
+            ]
+        },
+        {
+            "name": "setstst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "stst",
+                    "type": "set_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setstv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "stv",
+                    "type": "vec_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "v",
+                    "type": "uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setvm",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vm",
+                    "type": "mp_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setvo",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vo",
+                    "type": "op_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setvp",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vp",
+                    "type": "pair_uint32_uint32[]"
+                }
+            ]
+        },
+        {
+            "name": "setvs",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vs",
+                    "type": "mystruct[]"
+                }
+            ]
+        },
+        {
+            "name": "setvst",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vst",
+                    "type": "set_uint16[]"
+                }
+            ]
+        },
+        {
+            "name": "setvv",
+            "base": "",
+            "fields": [
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "vv",
+                    "type": "vec_uint16[]"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "erase",
+            "type": "erase",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntm",
+            "type": "prntm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmm",
+            "type": "prntmm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmo",
+            "type": "prntmo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmp",
+            "type": "prntmp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmst",
+            "type": "prntmst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntmv",
+            "type": "prntmv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnto",
+            "type": "prnto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntom",
+            "type": "prntom",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntoo",
+            "type": "prntoo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntop",
+            "type": "prntop",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntost",
+            "type": "prntost",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntov",
+            "type": "prntov",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntovv",
+            "type": "prntovv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntp",
+            "type": "prntp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpm",
+            "type": "prntpm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpo",
+            "type": "prntpo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpp",
+            "type": "prntpp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpst",
+            "type": "prntpst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntpv",
+            "type": "prntpv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnts",
+            "type": "prnts",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prnts2",
+            "type": "prnts2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntst",
+            "type": "prntst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntstm",
+            "type": "prntstm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntsto",
+            "type": "prntsto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntstp",
+            "type": "prntstp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntstst",
+            "type": "prntstst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntstv",
+            "type": "prntstv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntv",
+            "type": "prntv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvm",
+            "type": "prntvm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvo",
+            "type": "prntvo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvp",
+            "type": "prntvp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvs",
+            "type": "prntvs",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvst",
+            "type": "prntvst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "prntvv",
+            "type": "prntvv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setm",
+            "type": "setm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmm",
+            "type": "setmm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmo",
+            "type": "setmo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmp",
+            "type": "setmp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmst",
+            "type": "setmst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmv",
+            "type": "setmv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "seto",
+            "type": "seto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setom",
+            "type": "setom",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setoo",
+            "type": "setoo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setop",
+            "type": "setop",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setost",
+            "type": "setost",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setov",
+            "type": "setov",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setovv",
+            "type": "setovv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setp",
+            "type": "setp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpm",
+            "type": "setpm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpo",
+            "type": "setpo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpp",
+            "type": "setpp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpst",
+            "type": "setpst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setpv",
+            "type": "setpv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "sets",
+            "type": "sets",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "sets2",
+            "type": "sets2",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setst",
+            "type": "setst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setstm",
+            "type": "setstm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setsto",
+            "type": "setsto",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setstp",
+            "type": "setstp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setstst",
+            "type": "setstst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setstv",
+            "type": "setstv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setv",
+            "type": "setv",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvm",
+            "type": "setvm",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvo",
+            "type": "setvo",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvp",
+            "type": "setvp",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvs",
+            "type": "setvs",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvst",
+            "type": "setvst",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setvv",
+            "type": "setvv",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "people2",
+            "type": "person2",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}
