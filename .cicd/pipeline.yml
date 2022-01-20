@@ -375,7 +375,7 @@ steps:
 
   - label: ":darwin: macOS 10.15 - Test Package"
     command:
-      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT"
+      - "git clone $OUR_PR_REPO eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT"
       - "cd eosio.cdt && buildkite-agent artifact download '*' . --step ':darwin: macOS 10.15 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN"
       - "cd eosio.cdt && ./.cicd/test-package.anka.sh"
     plugins:
