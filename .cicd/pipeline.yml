@@ -2,6 +2,7 @@ env:
   SKIP_MAC: "false"
   SKIP_PACKAGE_BUILDER_TEST: "false"
   OUR_PR_REPO: "git@github.com:b1-as/taurus-cdt.git"
+  SKIP_LINUX: "true"
 steps:
   - wait
 
@@ -345,15 +346,42 @@ steps:
     timeout: ${TIMEOUT:-10}
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}${SKIP_PACKAGE_BUILDER_TEST}
 
-  - label: ":darwin: Catalina - Package Builder"
+  - label: ":darwin: macOS 10.15 - Package Builder"
     command:
       - "git clone $OUR_PR_REPO taurus-cdt"
-      - "cd taurus-cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
-      - "cd taurus-cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
-      - "cd taurus-cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
-      - "cd taurus-cdt && ./.cicd/package.sh"
+       - "cd taurus-cdt && if [[ $BUILDKITE_BRANCH =~ ^pull/[0-9]+/head: ]]; then git fetch -v --prune origin refs/pull/$(echo $BUILDKITE_BRANCH | cut -d/ -f2)/head; fi"
+       - "cd taurus-cdt && git checkout -f $BUILDKITE_COMMIT && git submodule update --init --recursive"
+       - "cd taurus-cdt && buildkite-agent artifact download build.tar.gz . --step ':darwin: macOS 10.15 - Build' && tar -xzf build.tar.gz"
+       - "cd taurus-cdt && ./.cicd/package.sh"
+     plugins:
+       - EOSIO/anka#v0.6.1:
+           no-volume: true
+           inherit-environment-vars: true
+           vm-name: 10.15.5_6C_14G_80G
+           vm-registry-tag: "clean::cicd::git-ssh::nas::brew::buildkite-agent::${MACOS_10_15_TAG}"
+           always-pull: true
+           debug: true
+           wait-network: true
+           pre-execute-sleep: 5
+           pre-execute-ping-sleep: github.com
+           failover-registries:
+             - "registry-1"
+             - "registry-2"
+       - EOSIO/skip-checkout#v0.1.1:
+           cd: ~
+     agents:
+       - "queue=mac-anka-node-fleet"
+     key: "macos1015pb"
+     timeout: ${TIMEOUT:-20}
+     skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
+
+  - label: ":darwin: macOS 10.15 - Test Package"
+    command:
+      - "git clone $BUILDKITE_REPO eosio.cdt && cd eosio.cdt && git checkout -f $BUILDKITE_COMMIT"
+      - "cd eosio.cdt && buildkite-agent artifact download '*' . --step ':darwin: macOS 10.15 - Package Builder' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN"
+      - "cd eosio.cdt && ./.cicd/test-package.anka.sh"
     plugins:
-      - EOSIO/anka#v0.6.0:
+      - EOSIO/anka#v0.6.1:
           no-volume: true
           inherit-environment-vars: true
           vm-name: 10.15.5_6C_14G_80G
@@ -364,14 +392,16 @@ steps:
           pre-execute-sleep: 5
           pre-execute-ping-sleep: github.com
           failover-registries:
-            - 'registry-1'
-            - 'registry-2'
+            - 'registry_1'
+            - 'registry_2'
       - EOSIO/skip-checkout#v0.1.1:
           cd: ~
     agents:
       - "queue=mac-anka-node-fleet"
-    timeout: ${TIMEOUT:-20}
-    skip: ${SKIP_MACOS_10_15}${SKIP_MAC}${SKIP_PACKAGE_BUILDER}
+    depends_on: "macos1015pb"
+    allow_dependency_failure: false
+    timeout: ${TIMEOUT:-10}
+    skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}${SKIP_MAC}${SKIP_PACKAGE_BUILDER_TEST}
 
   - wait
 
