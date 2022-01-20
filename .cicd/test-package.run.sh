@@ -16,4 +16,4 @@ else
     exit 3
 fi
 
-taurus-cpp --version
+eosio-cpp --version
