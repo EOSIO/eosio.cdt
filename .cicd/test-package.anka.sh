@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-
 . "${0%/*}/libfunctions.sh"
 
 echo '--- :anka: Pretest Setup'
