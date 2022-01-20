@@ -1,5 +1,5 @@
 env:
-  SKIP_MAC: "true"
+  SKIP_MAC: "false"
   SKIP_PACKAGE_BUILDER_TEST: "false"
 steps:
   - wait
