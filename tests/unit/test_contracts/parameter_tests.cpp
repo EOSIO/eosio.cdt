@@ -5,18 +5,6 @@
 
 using namespace eosio;
 
-namespace eosio {
-   extern "C" {
-     __attribute__((eosio_wasm_import))
-     void set_blockchain_parameters_packed(char*, uint32_t);
-     __attribute__((eosio_wasm_import))
-     uint32_t get_blockchain_parameters_packed(char*, uint32_t);
-     __attribute__((eosio_wasm_import))
-     void set_parameters_packed(const char*, uint32_t);
-     __attribute__((eosio_wasm_import))
-     uint32_t get_parameters_packed(const char*, uint32_t, char*, uint32_t);
-   }
-}
 // test set_parameters and get_parameters which flexibly set or get chain parameters by ids
 class [[eosio::contract]] parameter_tests : eosio::contract {
  public:
