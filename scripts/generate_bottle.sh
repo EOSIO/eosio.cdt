@@ -54,7 +54,7 @@ echo "class EosioCdt < Formula
   
    bottle do
       root_url \"https://github.com/eosio/eosio.cdt/releases/download/v${VERSION}\"
-      sha256 \"${hash}\" => :${MAC_VERSION}
+      sha256 ${MAC_VERSION}: \"${hash}\"
    end
    def install
       raise \"Error, only supporting binary packages at this time\"

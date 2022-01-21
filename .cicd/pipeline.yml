@@ -399,8 +399,7 @@ steps:
     depends_on: "macos1015pb"
     allow_dependency_failure: false
     timeout: ${TIMEOUT:-10}
-#    skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}${SKIP_MAC}${SKIP_PACKAGE_BUILDER_TEST}
-    skip: true
+    skip: ${SKIP_MACOS_10_15}${SKIP_PACKAGE_BUILDER}${SKIP_MAC}${SKIP_PACKAGE_BUILDER_TEST}
 
   - wait
 
