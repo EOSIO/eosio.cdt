@@ -122,6 +122,39 @@ __attribute__((eosio_wasm_import))
 void set_kv_parameters_packed( const char* data, uint32_t datalen );
 
 /**
+ * Get the KV parameters
+ *
+ * @param data - pointer to KV parameters packed as bytes
+ * @param datalen - size of the packed KV parameters
+ * @param max_version - has no effect, but should be 0.
+ * @return Returns the size required in the buffer (if the buffer is too small, nothing is written).
+ */
+__attribute__((eosio_wasm_import))
+uint32_t get_kv_parameters_packed( void* data, uint32_t datalen, uint32_t max_version );
+
+/**
+ * Get the WASM limits
+ *
+ * @param data - pointer to wasm limits packed as bytes
+ * @param datalen - size of the packed wasm limits
+ * @param max_version - has no effect, but should be 0.
+ * @return Returns the size required in the buffer (if the buffer is too small, nothing is written).
+ */
+__attribute__((eosio_wasm_import))
+uint32_t get_wasm_parameters_packed( char* data, uint32_t datalen, uint32_t max_version );
+
+/**
+ * Set the configuration for wasm limits.
+ *
+ * @param data - pointer to wasm limits parameters packed as bytes
+ * @param datalen - size of the packed wasm limits parameters
+ * @ingroup privileged
+ *
+*/
+__attribute__((eosio_wasm_import))
+void set_wasm_parameters_packed( const char* data, uint32_t datalen );
+
+/**
  * Pre-activate protocol feature
  *
  * @param feature_digest - digest of the protocol feature to pre-activate

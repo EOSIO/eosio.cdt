@@ -5,12 +5,6 @@
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/serialize.hpp"
 
-#define STR_I(x) #x
-#define STR(x) STR_I(x)
-#define ASSERT_EQ(e1,e2) check((e1) == (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" != "#e2)
-#define ASSERT_LESS(e1,e2) check((e1) < (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" < "#e2)
-#define ASSERT_LE(e1,e2) check((e1) <= (e2), STR(__FILE__)STR(:)STR(__LINE__)": " #e1" <= "#e2)
-
 namespace eosio {
 
    namespace internal_use_do_not_use {
