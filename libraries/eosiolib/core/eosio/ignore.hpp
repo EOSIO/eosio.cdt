@@ -17,7 +17,18 @@ namespace eosio {
     * @note This restriction will be relaxed in a later release. Currently non-ignore types can not succeed an ignore type in a method definition, i.e. void foo(float, ignore<int>) is allowed and void foo(float, ignore<int>, int) is not allowed.
     */
    template <typename T>
-   struct [[eosio::ignore]] ignore {};
+   struct [[eosio::ignore]] ignore {
+      using type = T;
+   };
+
+   /**
+    * is_ignore_v<T> is true iff T is ignore<T2>
+    */
+   template<typename T>
+   inline constexpr bool is_ignore_v = false;
+
+   template<typename T>
+   inline constexpr bool is_ignore_v<ignore<T>> = true;
 
     /**
     * Wrapper class to allow sending inline actions with the correct payload

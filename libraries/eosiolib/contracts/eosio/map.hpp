@@ -1,10 +1,9 @@
 #pragma once
-#include "context.hpp"
-#include "datastream.hpp"
-#include "name.hpp"
-#include "varint.hpp"
-
-#include "key_utils.hpp"
+#include <eosio/context.hpp>
+#include <eosio/datastream.hpp>
+#include <eosio/name.hpp>
+#include <eosio/varint.hpp>
+#include <eosio/key_utils.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -436,7 +435,7 @@ namespace eosio::kv {
             return prfx;
          }
 
-         static key_type full_key(const key_t& k) { return prefix() + convert_to_key(k); }
+         static key_type full_key(const key_t& k) { return prefix() + key_type {convert_to_key(k)}; }
 
          using elem_t = detail::elem<self_t>;
          using iterator_t = detail::iterator<false, self_t>;
@@ -531,7 +530,7 @@ namespace eosio::kv {
 
          inline bool empty() const {
             iterator_t it = {owner};
-            it.lower_bound(key_type{""});
+            it.lower_bound(key_type{});
             return it == end();
          }
 

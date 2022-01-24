@@ -1,6 +1,6 @@
 #pragma once
 
-#include "check.hpp"
+#include <eosio/check.hpp>
 
 namespace eosio {
     /**
@@ -120,12 +120,6 @@ namespace eosio {
             _has_value = false;
             return std::move(_get());
          }
-         constexpr const T&& value_or()const&& {
-            if (!_has_value)
-               return std::move(T());
-            _has_value = false;
-            return std::move(_get());
-         }
          constexpr T value_or()& {
             if (!_has_value)
                return T();
@@ -149,9 +143,6 @@ namespace eosio {
          }
          constexpr const T& operator*()const& {
             return _get();
-         }
-         constexpr const T&& operator*()const&& {
-            return std::move(_get());
          }
          constexpr T&& operator*()&& {
             return std::move(_get());
@@ -179,7 +170,7 @@ namespace eosio {
          /// @endcond
 
        private:
-         mutable bool _has_value = false;
+         bool _has_value = false;
          typename std::aligned_storage<sizeof(T), alignof(T)>::type _data;
 
          constexpr T& _get() {

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(blanc)
+include(FetchContent)
 
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
@@ -34,6 +35,19 @@ include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
 
+if (NOT IS_DIRECTORY "${llvm_SOURCE_DIR}")
+  FetchContent_Declare(
+    llvm
+    GIT_REPOSITORY https://github.com/llvm/llvm-project
+    GIT_TAG        llvmorg-13.0.1-rc3
+  )
+
+  FetchContent_GetProperties(llvm)
+  if(NOT llvm_POPULATED)
+    FetchContent_Populate(llvm)
+  endif()
+endif()
+
 find_package(LLVM 13 REQUIRED CONFIG)
 find_package(Clang REQUIRED)
 
@@ -51,6 +65,7 @@ if(UNIX AND NOT APPLE)
     add_compile_options(-Wno-deprecated-enum-enum-conversion)
   endif()
 endif()
+
 
 add_subdirectory(plugins)
 add_subdirectory(tools)
