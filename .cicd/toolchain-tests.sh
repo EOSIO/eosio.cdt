@@ -4,9 +4,6 @@ set -eo pipefail
 
 mkdir -p $BUILD_DIR
 
-DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
-DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
-
 if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
@@ -15,9 +12,6 @@ if [[ $(uname) == 'Darwin' ]]; then
     bash -c "$TEST"
     
 else # Linux
-    echo "login to artifactory"
-    echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
-
     ARGS=${ARGS:-"--rm --init -v $(pwd):$MOUNTED_DIR"}
 
     PRE_COMMANDS="cd $MOUNTED_DIR/build"

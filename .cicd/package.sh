@@ -48,21 +48,12 @@ else # Linux
             evars="$evars --env ${var%%=*}"
         done < "$BUILDKITE_ENV_FILE"
     fi
-    DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
-    DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
-    RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
-    PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
-    PROXY_URL="http://${PROXY_ADDR}:3128/"
-    echo PROXY_URL: $PROXY_URL
-
-    echo "login to artifactory"
-    echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
     DOCKER_PULL="docker pull $DOCKER_REPO/$FULL_TAG"
     echo "$ $DOCKER_PULL"
     eval $DOCKER_PULL
     echo "Done with pull"
 
-    eval docker run --network=host -e http_proxy=$PROXY_URL -e https_proxy=$PROXY_URL -e no_proxy=$no_proxy $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
+    eval docker run $DOCKER_RUN_ARGS $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x

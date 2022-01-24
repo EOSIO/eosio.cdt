@@ -9,19 +9,9 @@ SANITIZED_TAG="$(sanitize "$BUILDKITE_TAG")"
 [[ -z "$SANITIZED_TAG" ]] || echo "Branch '$BUILDKITE_TAG' sanitized as '$SANITIZED_TAG'."
 # docker build
 echo '+++ :docker: Build Docker Container'
-RESOLVE_DNS=`cat /etc/resolv.conf | grep search | xargs -n1 | grep "int.b1fs.net"`
-PROXY_ADDR=$(dig +short proxy.service.${RESOLVE_DNS} | head -n1)
-PROXY_URL="http://${PROXY_ADDR}:3128/"
-echo PROXY_URL: $PROXY_URL
-
-DOCKER_REPO="blockone-b1fs-b1x-docker-dev-local.jfrog.io"
-DOCKER_LOGIN_REPO="https://${DOCKER_REPO}"
-
-echo "login to artifactory"
-echo $ARTIFACTORY_PASSWORD | docker login $DOCKER_LOGIN_REPO -u $ARTIFACTORY_USERNAME --password-stdin
 
 IMAGE="${DOCKER_REPO}:${BUILDKITE_COMMIT:-latest}"
-DOCKER_BUILD="docker build --network=host --build-arg http_proxy=$PROXY_URL --build-arg https_proxy=$PROXY_URL --build-arg no_proxy=$no_proxy -t $IMAGE -f ./docker/dockerfile ."
+DOCKER_BUILD="docker build PROXY_DOCKER_BUILD_ARGS -t $IMAGE -f ./docker/dockerfile ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 # docker tag
