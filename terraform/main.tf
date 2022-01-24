@@ -22,8 +22,8 @@ provider "aws" {
   default_tags {
     tags = {
       billing-use = var.billing-use,
-      pipeline = "taurus-node",
-      repo = "taurus-node",
+      pipeline = "taurus-cdt-tf",
+      repo = "taurus-cdt-tf",
       terraform = "true"
     }
   }
