@@ -36,6 +36,7 @@
 
 # Build
 build
+rel-build
 
 # CLion
 .idea

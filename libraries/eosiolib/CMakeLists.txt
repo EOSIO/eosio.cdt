@@ -80,6 +80,7 @@ add_custom_command(
                                  -I${abieos_SOURCE_DIR}/external/rapidjson/include
                                  -I${CMAKE_CURRENT_SOURCE_DIR}/tester
                                  -I${fmt_SOURCE_DIR}/include
+                                 --no-missing-ricardian-clause
                                  ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    DEPENDS ${CMAKE_SOURCE_DIR}/eosiolib/tester/crt0.cpp
    COMMENT "Building C++ object crt0.o"

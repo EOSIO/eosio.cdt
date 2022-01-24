@@ -183,10 +183,7 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
       for (const auto& arg : resource_args) {
          resource_dirs.emplace_back(arg->getValue());
       }
-
-   } else {
-      new_opts.emplace_back("-DBLANC_NATIVE");
-   }
+   } 
 
 #ifdef CPP_COMP
    if (!link && !Args.hasArgNoClaim(OPT_std_EQ)) {
@@ -205,9 +202,13 @@ exit:
       if (!arg->getOption().hasFlag(CC1Option) || !link)
          new_opts.emplace_back(arg->getAsString(Args));
    }
-   if (!early_exit && !link) {
-      new_opts.emplace_back("-I"+eosio::cdt::whereami::where()+"/../include");
-      new_opts.emplace_back("-isystem "+eosio::cdt::whereami::where()+"/../include/c++/v1");
+   if (is_wasm_target) {
+      if (!early_exit && !link && is_wasm_target) {
+         new_opts.emplace_back("-I" + eosio::cdt::whereami::where() + "/../include");
+         new_opts.emplace_back("-isystem " + eosio::cdt::whereami::where() + "/../include/c++/v1");
+      }
+   }else {
+      new_opts.emplace_back("-stdlib=libc++");
    }
    return new_opts;
 }

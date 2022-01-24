@@ -81,4 +81,4 @@ install(EXPORT eosio
         FILE EosioTargets.cmake)
 
 export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_tester softfloat 
-       FILE ${CMAKE_CURRENT_BINARY_DIR}/../../lib/cmake/blanc/EosioTargets.cmake)
+       FILE ${CMAKE_CURRENT_BINARY_DIR}/../lib/cmake/blanc/EosioTargets.cmake)
