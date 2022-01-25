@@ -11,7 +11,7 @@ SANITIZED_TAG="$(sanitize "$BUILDKITE_TAG")"
 echo '+++ :docker: Build Docker Container'
 
 IMAGE="${DOCKER_REPO}:${BUILDKITE_COMMIT:-latest}"
-DOCKER_BUILD="docker build PROXY_DOCKER_BUILD_ARGS -t $IMAGE -f ./docker/dockerfile ."
+DOCKER_BUILD="docker build $PROXY_DOCKER_BUILD_ARGS -t $IMAGE -f ./docker/dockerfile ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 # docker tag
