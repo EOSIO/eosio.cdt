@@ -53,7 +53,9 @@ else # Linux
     eval $DOCKER_PULL
     echo "Done with pull"
 
-    eval docker run $DOCKER_RUN_ARGS $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\"
+    DOCKER_RUN="docker run $PROXY_DOCKER_RUN_ARGS $ARGS $evars $DOCKER_REPO/$FULL_TAG bash -c \"$COMMANDS\""
+    echo "$ $DOCKER_RUN"
+    eval $DOCKER_RUN
 
     cd build/packages
     [[ -d x86_64 ]] && cd 'x86_64' # backwards-compatibility with release/1.6.x
