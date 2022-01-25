@@ -40,7 +40,8 @@ else # Linux
     fi
 
     echo "running docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\""
-    eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
+    #TODO - Uncomment.  Just doing this to speed up testing.
+    #eval docker run $ARGS $evars $FULL_TAG bash -c \"$COMMANDS\"
     echo "completed docker run..."
 
 fi
