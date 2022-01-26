@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -eo pipefail
+
 . ./.cicd/helpers/general.sh
 . $HELPERS_DIR/docker-hash.sh
 # look for Docker image

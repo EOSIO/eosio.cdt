@@ -1,0 +1,3 @@
+* @b1-as/cdt-devs
+/.cicd/ @b1-as/automation
+/terraform/ @b1-as/automation
