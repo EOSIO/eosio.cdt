@@ -171,21 +171,30 @@ namespace eosio { namespace cdt {
 
          struct check_point_t {
             enum type_t { invalid = 0, 
-                          func_enter, single_back, single_front }; // just add check_point right after or front
+                          func_enter, // insert print right after function enter
+                          single_back, // insert print at the back of location
+                          single_front, // insert print at the front of location
+                          }; 
             int type = invalid;
-            std::string func;
+            std::string func; // function name for function enter  & exit track
+            std::string variable; // track variable instead of line & column
          };
+
          std::map<uint64_t, std::vector<check_point_t> >  check_points;
          //std::vector<check_point_t>         check_points_stack;
-         bool insert_check_point(uint32_t line0, uint32_t col0, uint32_t line1, uint32_t col1, int start_type, std::string func_ = "") {
+         bool insert_check_point(uint32_t line0, uint32_t col0, uint32_t line1, uint32_t col1, int start_type, std::string func_ = "", std::string variable_ = "") {
             if (in_const_func) return false;
             uint64_t line_col0 = ((((uint64_t)line0) << 32) | col0);
             uint64_t line_col1 = ((((uint64_t)line1) << 32) | col1);
             if (line_col0 > line_col1) return false;
             if (!line0 || !col0 || !line1 || !col1) return false;
             
+            if (variable_.length()) {
+               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = "", .variable = variable_});
+               return true;
+            }
             if (check_points[line_col0].size() == 0) {
-               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_});
+               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_, .variable = ""});
                return true;
             }
             return false;
@@ -390,7 +399,7 @@ namespace eosio { namespace cdt {
             return true;
          }
 
-         bool insert_check_point_by_location(const char *mark, clang::SourceLocation locstart, clang::SourceLocation locend, int type, std::string func_name = "") {
+         bool insert_check_point_by_location(const char *mark, clang::SourceLocation locstart, clang::SourceLocation locend, int type, std::string func_name = "", std::string var_name = "") {
             bool invalid = false;
             if (locstart.isFileID() && locend.isFileID()) {
                clang::PresumedLoc plocs = sm->getPresumedLoc(locstart);
@@ -401,8 +410,8 @@ namespace eosio { namespace cdt {
 
                std::string file_name = plocs.getFilename();
                if (file_name == main_file) {
-                  if (insert_check_point(plocs.getLine(), plocs.getColumn(), ploce.getLine(), ploce.getColumn(), type, func_name)) {
-                     std::cout << "inserted checkpoint at " << locstart.printToString(*sm) << "(" << mark << ")" << std::endl;
+                  if (insert_check_point(plocs.getLine(), plocs.getColumn(), ploce.getLine(), ploce.getColumn(), type, func_name, var_name)) {
+                     std::cout << "inserted checkpoint at " << locstart.printToString(*sm) << "(" << (strlen(mark) ? mark : var_name.c_str()) << ")" << std::endl;
                      return true;
                   }
                }
@@ -496,35 +505,62 @@ namespace eosio { namespace cdt {
                if (func_name == "apply")
                   apply_was_found = true;
 
-               if (smart_contract_debug_level >= debug_statement) {
-                  func_body = fd->getBody();
-                  in_const_func = fd->isConstexpr();
-                  if (!in_const_func && fd->hasBody()) {
+               if (smart_contract_debug_level >= debug_statement && 
+                  !(fd->isConstexpr()) && fd->hasBody() && fd->getBody()->getStmtClass() == clang::Stmt::CompoundStmtClass) {
+                  clang::Stmt *stmt = fd->getBody();
+                  clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt;
 
-                     clang::Stmt *stmt = fd->getBody();
-                     if (stmt->getStmtClass() == clang::Stmt::CompoundStmtClass) {
+                  if (stmt->getLocStart() != stmt->getLocEnd() // avoid some special functions like "=default;", "=delete;"
+                     && insert_check_point_by_location(("CompoundStmt(FuncEnter " + func_name + ") ").c_str(), 
+                        stmt->getLocStart(), stmt->getLocEnd(), check_point_t::func_enter, func_name)) {
+                        
+                     // ParmVarDecl : VarDecl
+                     // VarDecl : DeclaratorDecl, Redeclarable<VarDecl>
+                     // DeclaratorDecl (has inner source location) : ValueDecl
+                     // ValueDecl : NamedDecl
+                     // NameDecl (has getName()) : Decl
 
-                        clang::CompoundStmt *cpst = (clang::CompoundStmt *)stmt;
+                     clang::PresumedLoc body_loc = sm->getPresumedLoc(stmt->getLocStart());
+                     clang::FunctionDecl* correct_fd = nullptr;
 
-                        if (stmt->getLocStart() != stmt->getLocEnd()) { // avoid some special functions like "=default;", "=delete;"
-                           if (insert_check_point_by_location(("CompoundStmt(FuncEnter " + func_name + ") ").c_str(), 
-                              stmt->getLocStart(), stmt->getLocEnd(), check_point_t::func_enter, func_name)) {
-                              
-                              int param_total = 0;
-                              clang::ArrayRef<clang::ParmVarDecl *> params = fd->parameters();
-                              for (clang::ParmVarDecl *param : params) {
-                                 clang::QualType type = param->getType();
-                                 std::string tname = type.getAsString();
-                                 std::string pname = param->getName();
-                                 std::cout << pname << ":" << tname << ",";
-                                 ++param_total;
-                              }
-                              if (param_total) std::cout << std::endl;
+                     uint64_t param_body_diff = UINT64_MAX;
 
-                              visit_compound_stmt(cpst, decl->getASTContext());
+                     // walk through all function declarations and find the one with the body
+                     for (auto fd_itr = fd->redecls_begin(); fd_itr != fd->redecls_end(); ++fd_itr) {
+                        if (fd_itr->param_size() == 0) continue;
+                        
+                        clang::ParmVarDecl *param = fd_itr->getParamDecl(0);
+                        clang::SourceLocation srcloc = param->getInnerLocStart();
+                        clang::PresumedLoc ploc = sm->getPresumedLoc(srcloc);
+
+                        if (body_loc.getFilename() == ploc.getFilename()) {
+                           uint64_t body_loc_raw = (((uint64_t)(body_loc.getLine())) << 32) + body_loc.getColumn();
+                           uint64_t param_loc_raw = (((uint64_t)(ploc.getLine())) << 32) + ploc.getColumn();
+                           if (body_loc_raw > param_loc_raw && body_loc_raw - param_loc_raw < param_body_diff) {
+                              param_body_diff = body_loc_raw - param_loc_raw;
+                              correct_fd = *fd_itr;
                            }
                         }
                      }
+
+                     if (correct_fd) {
+                        int param_total = 0;
+                        clang::ArrayRef<clang::ParmVarDecl *> params = correct_fd->parameters();
+                        // walk through parameters
+                        for (clang::ParmVarDecl *param : params) {
+                           clang::QualType type = param->getType();
+                           std::string tname = type.getAsString();
+                           std::string pname = param->getName();
+                           std::cout << pname << ":" << tname << ",";
+                           insert_check_point_by_location("", stmt->getLocStart(), stmt->getLocEnd(), check_point_t::single_back, "", pname);
+                           ++param_total;
+                        }
+                        if (param_total) {
+                           std::cout << std::endl;
+                        }
+                     }
+
+                     visit_compound_stmt(cpst, decl->getASTContext());
                   }
                }
             }
@@ -602,9 +638,35 @@ namespace eosio { namespace cdt {
                      }
                      FILE *fin = fopen(abs_file_path.c_str(), "rb");
                      if (!fin) {
-                        std::cout << "failed to open " << abs_file_path.c_str() << " for read\n";
+                        std::cout << "failed to open " << abs_file_path.c_str() << ". smart contract debugging will be disabled.\n";
                         out_data << "#include \"" << abs_file_path.c_str() << "\"\n";
                      } else {
+                        out_data << "#include <stdio.h>\n"; // need printf
+                        if (smart_contract_debug_level == 2) {
+                           out_data << "#include <eosio/print.hpp>\n"
+                                    << "#include <eosio/asset.hpp>\n"
+                                    << "#include <eosio/name.hpp>\n"
+                                    << "inline void _cdt_debug_print_var1(const char *v, const void *p, ...) {\n"
+                                    << "  printf(\"%s=@0x%p,\", v, p);\n"
+                                    << "}\n"
+                                    << "template <typename T>\n"
+                                    << "inline void _cdt_debug_print_var1(const char *varname, const void *p, const T *t, decltype(eosio::print(*(const T *)nullptr)) * _=nullptr) {\n"
+                                    << "  eosio::print(varname, \"=\", *t, \",\"); \n"
+                                    << "}\n"
+                                    << "template <typename T> inline void _cdt_debug_print_var(const char *varname, const T &t) {\n"
+                                    << "  _cdt_debug_print_var1(varname, (const void *)&t, &t);\n"
+                                    << "}\n"
+                                    << "template <> inline void _cdt_debug_print_var(const char *varname, const eosio::name &t) {\n"
+                                    << "  eosio::print(varname, \"=\", t.to_string(), \",\"); \n"
+                                    << "}\n"
+                                    << "template <> inline void _cdt_debug_print_var(const char *varname, const eosio::asset &t) {\n"
+                                    << "  eosio::print(varname, \"=\", t.to_string(), \",\"); \n"
+                                    << "}\n"
+                                    << "template <> inline void _cdt_debug_print_var(const char *varname, const eosio::symbol &t) {\n"
+                                    << "  eosio::print(varname, \"=\", t.to_string(), \",\"); \n"
+                                    << "}\n";
+                        }
+
                         uint32_t line = 1, col = 1;
                         while (true) {
                            char c = fgetc(fin);
@@ -617,19 +679,30 @@ namespace eosio { namespace cdt {
                               col = 1; 
                               continue;
                            }
+
+                           auto insert_code = [&](const eosio_codegen_visitor::check_point_t &cp) {
+                              if (cp.variable.length()) {
+                                 if (smart_contract_debug_level == 2) {
+                                    out_data << "_cdt_debug_print_var(\"" + cp.variable + "\"," + cp.variable + ");";
+                                 }
+                              } else {
+                                 out_data << "printf(\"@" << short_fn << ":" << line << ":" << col;
+                                 if (cp.func != "") {
+                                    out_data << "(@" << cp.func << ")";
+                                 }
+                                 out_data << "@\");";
+                              }
+                           };
+
                            if (visitor->check_points.find(line_col) != visitor->check_points.end()) {
                               const std::vector<eosio_codegen_visitor::check_point_t> &list = visitor->check_points[line_col];
                               for (size_t i = 0; i < list.size(); ++i) {
                                  if (list[i].type == eosio_codegen_visitor::check_point_t::single_front) {
-                                    out_data << "printf(\"@" << short_fn << ":" << line << ":" << col;
-                                    if (list[i].func != "") {
-                                       out_data << "(@" << list[i].func << ")";
-                                    }
-                                    out_data << "_\");";
+                                    insert_code(list[i]);
                                  }
                               }
                               out_data << c;
-                              for (int i = list.size() - 1; i >= 0; --i) {
+                              for (int i = 0; i < list.size(); ++i) {
                                  if (list[i].type == eosio_codegen_visitor::check_point_t::func_enter) {
                                     std::stringstream tmp_struct_ss;
                                     tmp_struct_ss << "_cdt_debug_func_" << line;
@@ -637,13 +710,13 @@ namespace eosio { namespace cdt {
                                     out_data << "struct " << tmp_struct_name
                                              << "{"
                                              << tmp_struct_name
-                                             << "(){printf(\"@" << short_fn << ":" << line << ":" << col << "(@" << list[i].func << ")_\");}"
+                                             << "(){printf(\"@" << short_fn << ":" << line << ":" << col << "(@" << list[i].func << ")@\");}"
                                              << "~" << tmp_struct_name 
-                                             << "(){printf(\"@" << short_fn << "(~" << list[i].func << ")_\");}"
+                                             << "(){printf(\"@" << short_fn << "(~" << list[i].func << ")@\");}"
                                              << "} " 
                                              << tmp_struct_name << "_1;";
                                  } else if (list[i].type == eosio_codegen_visitor::check_point_t::single_back) {
-                                    out_data << "printf(\"@" << short_fn << ":" << line << ":" << col << "_\");";
+                                    insert_code(list[i]);
                                  }
                               }
                            } else {
