@@ -95,9 +95,11 @@ resource "buildkite_pipeline" "taurus_cdt" {
     steps:
       - label: ":pipeline: Pipeline Upload"
         command: |
-          ./.cicd/pipeline-upload.sh > pipeline.yml
-          buildkite-agent artifact upload pipeline.yml
-          buildkite-agent pipeline upload pipeline.yml
+          if [[ -f ./.cicd/pipeline-upload.sh ]]; then
+            ./.cicd/pipeline-upload.sh;
+          else
+            buildkite-agent pipeline upload ./.cicd/pipeline.yml;
+          fi
         agents:
           queue: "automation-gke-ha-dev-taurus-basic-builder-fleet"
         timeout: 15
