@@ -1,6 +1,5 @@
 resource "aws_s3_bucket" "taurus_cdt_tf_state_bucket" {
   bucket = "taurus-cdt-tf-state"
-  acl = "private"
   versioning {
     enabled = true
   }
