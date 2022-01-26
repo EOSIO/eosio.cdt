@@ -91,21 +91,11 @@ resource "buildkite_pipeline" "taurus_cdt" {
 
   steps = <<-YAML
     env:
-      ANKA_REMOTE: "git@github.com:b1-as/taurus-cdt.git"
-      BUILDKITE_BASIC_AGENT_QUEUE: "automation-gke-ha-dev-taurus-basic-builder-fleet"
-      BUILDKITE_BUILD_AGENT_QUEUE: "automation-gke-ha-dev-taurus-builder-fleet"
-      BUILDKITE_TEST_AGENT_QUEUE: "automation-gke-ha-dev-taurus-tester-fleet"
-      PINNED: "true"
-      SKIP_DOCKER: "true"
-      SKIP_JUNGLE: "true"
-      SKIP_LONG_RUNNING_TESTS: "true"
-      SKIP_MULTIVERSION_TEST: "true"
-      SKIP_PUBLIC_DOCKER: "true"
-      SKIP_SYNC_TESTS: "true"
+      TIMEOUT: "10"
     steps:
       - label: ":pipeline: Pipeline Upload"
         command: |
-          ./.cicd/generate-pipeline.sh > pipeline.yml
+          ./.cicd/pipeline-upload.sh > pipeline.yml
           buildkite-agent artifact upload pipeline.yml
           buildkite-agent pipeline upload pipeline.yml
         agents:
