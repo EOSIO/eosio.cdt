@@ -83,10 +83,10 @@ resource "buildkite_pipeline" "taurus_cdt" {
     pull_request_branch_filter_enabled = false
     publish_blocked_as_pending = true
     publish_commit_status = true
-    publish_commit_status_per_step = true
-    separate_pull_request_statuses = true
+    publish_commit_status_per_step = false
+    separate_pull_request_statuses = false
     skip_pull_request_builds_for_existing_commits = true
-    trigger_mode = "none"
+    trigger_mode = "code"
   }
 
   steps = <<-YAML
