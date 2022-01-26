@@ -90,6 +90,7 @@ resource "buildkite_pipeline" "taurus_cdt" {
   }
 
   steps = <<-YAML
+    env:
       TIMEOUT: "70"
     steps:
       - label: ":pipeline: Pipeline Upload"
