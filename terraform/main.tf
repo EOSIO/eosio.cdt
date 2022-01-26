@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     region = "ap-southeast-1"
-    bucket = "taurus-cdt-tf-state"
+    bucket = "taurus-cdt-tf-state2"
     key    = "taurus-cdt.tfstate"
   }
 }
@@ -23,7 +23,7 @@ provider "aws" {
     tags = {
       billing-use = var.billing-use,
       pipeline = "taurus-cdt-tf",
-      repo = "taurus-cdt-tf",
+      repo = "taurus-cdt",
       terraform = "true"
     }
   }
