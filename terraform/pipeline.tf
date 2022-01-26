@@ -65,10 +65,10 @@ output "taurus_cdt_tf_pipeline_webhook_url" {
 resource "buildkite_pipeline" "taurus_cdt" {
   name           = "taurus-cdt"
   repository     = "https://github.com/b1-as/taurus-cdt.git"
-  default_branch = "zach-ci"
+  default_branch = "develop-boxed"
   description    = "CI/CD for the Bullish EOSIO fork using a pinned compiler"
 
-  branch_configuration = "zach-ci" # "develop develop-boxed main master release/*  v*.*.* zach-ci"
+  branch_configuration = "develop-boxed BLU-27816" # "develop develop-boxed main master release/*  v*.*.* zach-ci"
   cancel_intermediate_builds = false
   skip_intermediate_builds = false
 
