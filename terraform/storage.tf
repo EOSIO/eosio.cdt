@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "taurus_cdt_tf_state_bucket" {
-  bucket = "taurus-cdt-tf-state2"
+  bucket = "taurus-cdt-tf-state"
   acl = "private"
   versioning {
     enabled = true
@@ -17,6 +17,6 @@ resource "aws_s3_bucket" "taurus_cdt_tf_state_bucket" {
   }
   tags = {
     Description = "Terraform state files for the Bullish EOSIO implementation - taurus-cdt",
-    Name = "taurus-cdt-tf-state2",
+    Name = "taurus-cdt-tf-state",
   }
 }

@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     region = "ap-southeast-1"
-    bucket = "taurus-cdt-tf-state2"
+    bucket = "taurus-cdt-tf-state"
     key    = "taurus-cdt.tfstate"
   }
 }
