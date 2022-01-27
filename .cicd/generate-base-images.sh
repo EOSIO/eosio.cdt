@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eo pipefail
 
 . ./.cicd/helpers/general.sh
 . $HELPERS_DIR/docker-hash.sh
@@ -9,9 +10,13 @@ TAG=$(echo $FULL_TAG | cut -d: -f2)
 
 DOCKER_PULL="docker pull $DOCKER_REPO/$FULL_TAG"
 echo "$ $DOCKER_PULL"
+#We want to catch the error on the DOCKER_PULL
+set +eo pipefail
 out=$(eval $DOCKER_PULL 2>&1)
 echo "Done pull for $FULL_TAG"
 echo "out: $out"
+#Set it back
+set -eo pipefail
 
 # build, if neccessary
 if [[ $out != *"up to date"* ]]; then

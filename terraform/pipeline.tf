@@ -2,10 +2,10 @@
 resource "buildkite_pipeline" "taurus_cdt_tf" {
   name           = "taurus-cdt-tf"
   repository     = "https://github.com/b1-as/taurus-cdt.git"
-  default_branch = "BLU-27816"
+  default_branch = "develop-boxed"
   description    = "CI/CD for the cloud infrastructure and CI code in the taurus-cdt repo, the Bullish EOSIO.cdt fork"
 
-  branch_configuration = "BLU-27816"
+  branch_configuration = "develop-boxed"
   cancel_intermediate_builds = false
   skip_intermediate_builds = false
 

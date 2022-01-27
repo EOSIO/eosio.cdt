@@ -14,7 +14,7 @@ if [[ ! -f plan.out ]]; then
     echo 'Plan file not found. See plan output for details.' 1>&2
     exit 1
 fi
-if [[ "$(echo "$BUILDKITE_BRANCH" | grep -cP '^develop-boxed|BLU-27816$')" == '1' ]] ; then
+if [[ "$BUILDKITE_BRANCH" == "$BUILDKITE_PIPELINE_DEFAULT_BRANCH" ]] ; then
     TF_APPLY='terraform apply plan.out'
     echo "$ $TF_APPLY"
     eval $TF_APPLY
