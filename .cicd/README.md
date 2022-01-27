@@ -1,5 +1,5 @@
 # taurus-cdt
-The [taurus-cdt](https://buildkite.com/b1-as/taurus-cdt) pipeline is the primary pipeline for the [taurus-cdt](https://github.com/b1-as/taurus-cdt) repository.
+The [taurus-cdt](https://buildkite.com/b1x/taurus-cdt) pipeline is the primary pipeline for the [taurus-cdt](https://github.com/b1-as/taurus-cdt) repository.
 
 <x>
 
@@ -30,10 +30,7 @@ Configure which operating systems are built, tested, and packaged:
 RUN_ALL_TESTS='true'                 # run all tests in the current build (including LRTs, overridden by SKIP* variables)
 SKIP_AMAZON_LINUX_2='true|false'     # skip all steps for Amazon Linux 2
 SKIP_CENTOS_7='true|false'           # skip all steps for Centos 7
-SKIP_CENTOS_8='true|false'           # skip all steps for Centos 8
-SKIP_MACOS_10_14='true|false'        # skip all steps for MacOS 10.14
 SKIP_MACOS_10_15='true|false'        # skip all steps for MacOS 10.15
-SKIP_UBUNTU_16_04='true|false'       # skip all steps for Ubuntu 16.04
 SKIP_UBUNTU_18_04='true|false'       # skip all steps for Ubuntu 18.04
 SKIP_UBUNTU_20_04='true|false'       # skip all steps for Ubuntu 20.04
 ```
@@ -65,8 +62,9 @@ SKIP_LINUX='true'
 
 Skip all tests:
 ```bash
-SKIP_TOOLCHAIN_TEST='true|false'     # skip all toolchain test steps
-SKIP_UNIT_TESTS='true|false'         # skip all unit tests
+SKIP_TOOLCHAIN_TEST='true|false'       # skip all toolchain test steps
+SKIP_UNIT_TESTS='true|false'           # skip all unit tests
+SKIP_PACKAGE_BUILDER_TEST='true|false' # skip all tests for package builder
 ```
 
 ## Pipelines
@@ -75,7 +73,7 @@ There are several taurus-pipelines that exist and are triggered by pull requests
 Pipeline | Details
 ---|---
 [taurus-cdt](https://buildkite.com/b1-as/taurus-cdt) | [taurus-cdt](https://github.com/b1-as/taurus-cdt) build, tests, and packaging; runs on every pull request and base branch commit, and nightly
-[taurus-cdt - Version Check](https://buildkite.com/b1-as/taurus-dot-cdt-version-check) | [taurus-cdt](https://github.com/b1-as/taurus-cdt) for tagged builds (hence releases). Tests release artifacts.
+[taurus-cdt-tf](https://buildkite.com/b1-as/taurus-cdt-tf) | [taurus-cdt](https://github.com/b1-as/taurus-cdt) The terraform to create the buildkite pipelines.
 
 ## See Also
 - Buildkite
