@@ -35,14 +35,12 @@ set(MISC_SOURCES
    ${musl_SOURCE_DIR}/src/misc/ffsl.c
    ${musl_SOURCE_DIR}/src/misc/ffsll.c
 )
+set(PRNG_SOURCES ${musl_SOURCE_DIR}/src/prng/rand.c)
 file(GLOB SEARCH_SOURCES "${musl_SOURCE_DIR}/src/search/*.c")
 file(GLOB STDIO_SOURCES "${musl_SOURCE_DIR}/src/stdio/*.c")
 list(REMOVE_ITEM STDIO_SOURCES
-   ${musl_SOURCE_DIR}/src/stdio/__fdopen.c
-   ${musl_SOURCE_DIR}/src/stdio/__fmodeflags.c
    ${musl_SOURCE_DIR}/src/stdio/__fopen_rb_ca.c
    ${musl_SOURCE_DIR}/src/stdio/flockfile.c
-   ${musl_SOURCE_DIR}/src/stdio/fopen.c
    ${musl_SOURCE_DIR}/src/stdio/freopen.c
    ${musl_SOURCE_DIR}/src/stdio/ftrylockfile.c
    ${musl_SOURCE_DIR}/src/stdio/funlockfile.c
@@ -66,10 +64,12 @@ list(REMOVE_ITEM STRING_SOURCES
    ${musl_SOURCE_DIR}/src/string/memcpy.c
    ${musl_SOURCE_DIR}/src/string/memmove.c
    ${musl_SOURCE_DIR}/src/string/memset.c
+   ${musl_SOURCE_DIR}/src/string/memcmp.c
 )
 set(TIME_SOURCES
     ${musl_SOURCE_DIR}/src/time/asctime.c
     ${musl_SOURCE_DIR}/src/time/asctime_r.c
+    ${musl_SOURCE_DIR}/src/time/clock.c
     ${musl_SOURCE_DIR}/src/time/difftime.c
     ${musl_SOURCE_DIR}/src/time/gmtime.c
     ${musl_SOURCE_DIR}/src/time/gmtime_r.c
@@ -105,6 +105,7 @@ list(APPEND C_SOURCES
    ${MATH_SOURCES}
    ${MBYTE_SOURCES}
    ${MISC_SOURCES}
+   ${PRNG_SOURCES}
    ${SEARCH_SOURCES}
    ${STDLIB_SOURCES}
    ${STRING_SOURCES}
@@ -115,9 +116,9 @@ list(APPEND C_SOURCES
 )
 
 list(APPEND C_PRIVATE_INCLUDES
+   ${musl_SOURCE_DIR}/arch/eos
    ${musl_SOURCE_DIR}/src/include
    ${musl_SOURCE_DIR}/src/internal
-   ${musl_SOURCE_DIR}/arch/eos
    
 )
 

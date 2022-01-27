@@ -48,8 +48,8 @@ fetch_content(
 
 fetch_content(
   musl
-  GIT_REPOSITORY https://github.com/turnpike/musl
-  GIT_TAG        d589930872cd634421291f6e3712bf3639cc18b3
+  GIT_REPOSITORY https://github.com/huangminghuang/musl
+  GIT_TAG        8285208add7c1c9d0bd860a10454939cdfd191f3
 )
 
 fetch_content(
@@ -66,19 +66,19 @@ fetch_content(
 
 add_subdirectory(libc)
 add_subdirectory(libc++)
-add_subdirectory(eosiolib)
 add_subdirectory(softfloat)
 add_subdirectory(rt)
+add_subdirectory(eosiolib)
 
 install(DIRECTORY ${boost_SOURCE_DIR}/boost DESTINATION include/boost)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include DESTINATION include)
 
-install(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_tester softfloat
+install(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat
         EXPORT eosio)
 
 install(EXPORT eosio 
         DESTINATION lib/cmake/blanc
         FILE EosioTargets.cmake)
 
-export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_tester softfloat 
+export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat 
        FILE ${CMAKE_CURRENT_BINARY_DIR}/../lib/cmake/blanc/EosioTargets.cmake)

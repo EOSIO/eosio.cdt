@@ -337,7 +337,7 @@ int main(int argc, const char** argv) {
 
          local_args.emplace_back(input);
 
-         if (auto ret = blanc::exec_subprogram(backend, local_args, true)) {
+         if (auto ret = blanc::exec_subprogram(backend, local_args, true) || is_preprocess) {
             return ret;
          }
 
@@ -350,10 +350,15 @@ int main(int argc, const char** argv) {
    }
 #endif
 
-   if (is_wasm_target && link && inputs.size()) {
-      args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
-      if (output.size()) {
-         args.emplace_back("-o "+output);
+   if (is_wasm_target) {
+      if (link && inputs.size()) {
+         args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
+         if (output.size()) {
+            args.emplace_back("-o "+output);
+         }
+      }
+      else {
+         args.emplace_back("-w");
       }
    }
    for (const auto& input : new_inputs) {

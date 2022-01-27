@@ -50,13 +50,15 @@ add_library(eosio_tester
             tester/tester.cpp
             tester/tester_intrinsics.cpp
             ${abieos_SOURCE_DIR}/src/crypto.cpp)
-target_compile_definitions(eosio_tester PUBLIC __eosio_cdt__)
+target_compile_definitions(eosio_tester PUBLIC CATCH_CONFIG_NO_POSIX_SIGNALS)
 target_compile_options(eosio_tester PRIVATE --no-missing-ricardian-clause)
 target_include_directories(eosio_tester PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tester>
                                                $<BUILD_INTERFACE:${fmt_SOURCE_DIR}/include>
+                                               $<BUILD_INTERFACE:${catch2_SOURCE_DIR}/single_include>
                                                $<INSTALL_INTERFACE:include/eosiolib/tester> 
 )
-target_link_libraries(eosio_tester PUBLIC eosio)
+target_link_libraries(eosio_tester PUBLIC eosio
+                                   INTERFACE eosio_dsm eosio_rt eosio_cmem softfloat)
 
 add_library(eosio_embed
             tester/fpconv.c
@@ -67,7 +69,10 @@ add_library(eosio_embed
             embed/eosio/prints.cpp
             embed/eosio/printui.cpp)
 target_compile_options(eosio_embed PRIVATE --no-missing-ricardian-clause)
-target_link_libraries(eosio_embed PUBLIC eosio)
+target_include_directories(eosio_embed PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/embed>
+                                              $<INSTALL_INTERFACE:include/embed>)
+target_link_libraries(eosio_embed PUBLIC eosio
+                                  INTERFACE eosio_dsm eosio_rt eosio_cmem softfloat)
 
 add_custom_command(
    OUTPUT ${BASE_BINARY_DIR}/lib/crt0.o

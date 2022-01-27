@@ -1,6 +1,6 @@
 
-set(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp charconv.cpp condition_variable.cpp functional.cpp
-                  future.cpp ios.cpp iostream.cpp locale.cpp memory.cpp mutex.cpp new.cpp optional.cpp
+set(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp charconv.cpp chrono.cpp condition_variable.cpp functional.cpp
+                  future.cpp ios.cpp ios.instantiations.cpp iostream.cpp locale.cpp memory.cpp mutex.cpp new.cpp optional.cpp
                   regex.cpp stdexcept.cpp string.cpp strstream.cpp system_error.cpp exception.cpp
                   typeinfo.cpp utility.cpp valarray.cpp variant.cpp vector.cpp hash.cpp)
 
@@ -19,7 +19,6 @@ target_compile_definitions(c++ PRIVATE _LIBCPP_BUILDING_LIBRARY _LIBCXXABI_BUILD
 set(_LIBCPP_HAS_NO_THREADS ON)
 set(_LIBCPP_HAS_MUSL_LIBC ON)
 set(_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS ON)
-set(_LIBCPP_HAS_NO_GLOBAL_FILESYSTEM_NAMESPACE ON)
 set(_LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS ON)
 set(_LIBCPP_ABI_DEFINES "#define _LIBCPP_NO_EXCEPTIONS")
 

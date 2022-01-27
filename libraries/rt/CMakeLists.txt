@@ -20,11 +20,11 @@ set(builtins_sources
    umodti3.c
 )
 
-add_library(rt STATIC ${builtins_sources})
-target_include_directories(rt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${softfloat_SOURCE_DIR}/source/include )
-target_compile_options(rt PRIVATE -Wall --no-missing-ricardian-clause)
+add_library(eosio_rt STATIC ${builtins_sources})
+target_include_directories(eosio_rt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${softfloat_SOURCE_DIR}/source/include )
+target_compile_options(eosio_rt PRIVATE -Wall --no-missing-ricardian-clause)
 
-install(TARGETS rt)
+install(TARGETS eosio_rt)
 
 if(BUILD_TESTS)
   add_subdirectory(test)

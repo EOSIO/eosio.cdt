@@ -8,9 +8,3 @@ def no_abigen : Flag<["--"], "no-abigen">, Flags<[CC1Option]>,
     HelpText<"Disable ABI file generation">;
 def no_missing_ricardian_clause : Flag<["-","--"], "no-missing-ricardian-clause">, Flags<[CC1Option]>,
     HelpText<"Disable warnings for missing Ricardian clauses">;
-def export_fn : JoinedOrSeparate<["--"], "export-fn=">, Flags<[CC1Option]>,
-    HelpText<"Export this function, shortcut for combining --export with --only-export">;
-def fcustom_opt : Flag<["-"], "fcustom_opt">, Flags<[CC1Option]>,
-    HelpText<"Produce a wasm which isn't a contract">;
-def ftester : Flag<["-"], "ftester">, Flags<[CC1Option]>,
-    HelpText<"Produce binaries for eosio-tester">;
