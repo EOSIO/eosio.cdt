@@ -50,6 +50,9 @@ intrinsic_macro(set_blockchain_parameters_packed) \
 intrinsic_macro(get_parameters_packed) \
 intrinsic_macro(set_parameters_packed) \
 intrinsic_macro(set_kv_parameters_packed) \
+intrinsic_macro(get_kv_parameters_packed)  \
+intrinsic_macro(get_wasm_parameters_packed) \
+intrinsic_macro(set_wasm_parameters_packed) \
 intrinsic_macro(is_privileged) \
 intrinsic_macro(set_privileged) \
 intrinsic_macro(is_feature_activated) \

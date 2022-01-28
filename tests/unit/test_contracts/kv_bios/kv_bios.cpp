@@ -2,7 +2,7 @@
 #include <eosio/name.hpp>
 #include <eosio/privileged.hpp>
 
-extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
+extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(uint64_t, uint64_t, int64_t);
 extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(void* params, uint32_t size, uint32_t max_version);
 extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const char* params, uint32_t size);
 

@@ -43,6 +43,15 @@ extern "C" {
    void set_kv_parameters_packed( const char* data, uint32_t datalen ) {
       return intrinsics::get().call<intrinsics::set_kv_parameters_packed>(data, datalen);
    }
+   uint32_t get_kv_parameters_packed( void* data, uint32_t datalen, uint32_t max_version ) {
+      return intrinsics::get().call<intrinsics::get_kv_parameters_packed>(data, datalen, max_version);
+   }
+   void set_wasm_parameters_packed( const char* data, uint32_t datalen ) {
+      return intrinsics::get().call<intrinsics::set_wasm_parameters_packed>(data, datalen);
+   }
+   uint32_t get_wasm_parameters_packed( char* data, uint32_t datalen, uint32_t max_version ) {
+      return intrinsics::get().call<intrinsics::get_wasm_parameters_packed>(data, datalen, max_version);
+   }
    bool is_privileged( capi_name account ) {
       return intrinsics::get().call<intrinsics::is_privileged>(account);
    }
