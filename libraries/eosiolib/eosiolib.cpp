@@ -17,9 +17,9 @@ namespace eosio {
      __attribute__((eosio_wasm_import))
      uint32_t get_blockchain_parameters_packed(char*, uint32_t);
      __attribute__((eosio_wasm_import))
-     void set_parameters_packed(char*, uint32_t);
+     void set_parameters_packed(const char*, uint32_t);
      __attribute__((eosio_wasm_import))
-     uint32_t get_parameters_packed(char*, uint32_t, char*, uint32_t);
+     uint32_t get_parameters_packed(const char*, uint32_t, char*, uint32_t);
      __attribute__((eosio_wasm_import))
      int64_t set_proposed_producers( char *producer_data, uint32_t producer_data_size );
      __attribute__((eosio_wasm_import))
