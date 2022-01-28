@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(blanc)
+project(eosio.cdt)
 include(FetchContent)
 
 find_program(SCCACHE_FOUND sccache)

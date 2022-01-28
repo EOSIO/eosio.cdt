@@ -41,6 +41,7 @@ std::string output;
 std::vector<std::string> resource_dirs;
 std::set<std::string> include_dirs;
 bool link = true;
+bool keep_generated = false;
 
 std::string contract_name;
 std::string abi_version;
@@ -49,6 +50,11 @@ bool suppress_ricardian_warnings;
 
 std::vector<std::string> override_compile_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
+
+   if (Args.hasArgNoClaim(OPT_keep_generated)) {
+      keep_generated = true;
+      Args.eraseArg(OPT_keep_generated);
+   }
 
    if (Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
       link = false;
@@ -244,9 +250,11 @@ int main(int argc, const char** argv) {
 #ifdef CPP_COMP
 
    std::vector<std::string> tmp_inputs;
-   blanc::scope_exit on_exit([&tmp_inputs](){
-      for (const auto& tmp_file : tmp_inputs) {
-         llvm::sys::fs::remove(tmp_file);
+   blanc::scope_exit on_exit([&tmp_inputs, keep_generated = keep_generated](){
+      if (!OPT_keep_generated) {
+         for (const auto& tmp_file : tmp_inputs) {
+            llvm::sys::fs::remove(tmp_file);
+         }
       }
    });
 
