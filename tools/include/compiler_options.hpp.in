@@ -452,7 +452,7 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
    if (!fnative_opt) {
       ldopts.emplace_back("--gc-sections");
       ldopts.emplace_back("--strip-all");
-      ldopts.emplace_back("--merge-data-segments");
+      ldopts.emplace_back("--no-merge-data-segments");
       if (fquery_opt || fquery_server_opt || fquery_client_opt) {
          ldopts.emplace_back("--export-table");
          ldopts.emplace_back("-other-model");
@@ -487,7 +487,8 @@ static void GetLdDefaults(std::vector<std::string>& ldopts) {
             ldopts.emplace_back("-e main");
          else {
             ldopts.emplace_back("-e apply");
-            ldopts.emplace_back("--no-entry");
+            ldopts.emplace_back("-export=__heap_base");
+            ldopts.emplace_back("-export=__data_end");
          }
          //ldopts.emplace_back("--only-export \"apply:function\"");
       }
@@ -775,7 +776,7 @@ static Options CreateOptions(bool add_defaults=true) {
       }
       ldopts.emplace_back("-stack-size=" + std::to_string(stack_size_opt));
       if (fno_lto_opt) {
-         ldopts.emplace_back("-fno-lto-opt");
+         ldopts.emplace_back("-fno-lto");
       }
       else if (!lto_opt_opt.empty()) {
          ldopts.emplace_back("-lto-opt="+lto_opt_opt);
