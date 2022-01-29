@@ -348,8 +348,8 @@ std::optional<eosio::transaction_trace> eosio::test_chain::exec_deferred() {
 void build_history_result(eosio::test_chain::get_history_result& history_result, eosio::ship_protocol::get_blocks_result_v0& blocks_result) {
    history_result.result = blocks_result;
    if (blocks_result.block) {
-      history_result.block.emplace();
-      (void)from_bin(*history_result.block, *blocks_result.block);
+      history_result.block_header.emplace();
+      (void)from_bin(*history_result.block_header, *blocks_result.block);
    }
    if (blocks_result.traces) {
       (void)from_bin(history_result.traces, *blocks_result.traces);
@@ -362,14 +362,23 @@ void build_history_result(eosio::test_chain::get_history_result& history_result,
 void build_history_result(eosio::test_chain::get_history_result& history_result, eosio::ship_protocol::get_blocks_result_v1& blocks_result) {
    history_result.result = blocks_result;
    if (blocks_result.block) {
-      history_result.block = std::move(*blocks_result.block);
+      history_result.block_header = std::visit([](const auto& v){
+         return static_cast<const eosio::ship_protocol::block_header&>(v);
+      }, *blocks_result.block);
    }
-   if (!blocks_result.traces.empty()) {
-      blocks_result.traces.unpack(history_result.traces);
+   eosio::unpack(blocks_result.traces, history_result.traces);
+   eosio::unpack(blocks_result.deltas, history_result.deltas);
+}
+
+void build_history_result(eosio::test_chain::get_history_result& history_result, eosio::ship_protocol::get_blocks_result_v2& blocks_result) {
+   history_result.result = blocks_result;
+   
+   if (!blocks_result.block_header.empty()) {
+      auto& v = history_result.block_header.emplace();
+      eosio::unpack(blocks_result.block_header, v); 
    }
-   if (blocks_result.deltas.empty()) {
-      blocks_result.deltas.unpack(history_result.deltas);
-   }
+   eosio::unpack(blocks_result.traces, history_result.traces);
+   eosio::unpack(blocks_result.deltas, history_result.deltas);
 }
 
 template <typename T>

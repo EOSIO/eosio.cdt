@@ -46,8 +46,7 @@ enum ID {
 #define OPTION(PREFIX, NAME, ID, KIND, GROUP, ALIAS, ALIASARGS, FLAGS, PARAM,  \
                HELPTEXT, METAVAR, VALUES)                                      \
    OPT_##ID,
-#include <clang/Driver/Options.inc>
-#include <eosio/Options.inc>
+#include "cc_options.inc"
    // TODO: warn_action_read_only
    LastOption
 #undef OPTION

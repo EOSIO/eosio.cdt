@@ -303,7 +303,7 @@ class test_chain {
       std::vector<char> memory;
 
       ship_protocol::get_blocks_result_base              result;
-      std::optional<ship_protocol::signed_block_variant> block;
+      std::optional<ship_protocol::block_header>         block_header;
       std::vector<ship_protocol::transaction_trace>      traces;
       std::vector<ship_protocol::table_delta>            deltas;
    };

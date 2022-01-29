@@ -11,7 +11,8 @@ This process created the file `CMakeCache.txt' and the directory `CMakeFiles'.
 Please delete them.")
 endif()
 
-project(eosio_cdt)
+project(eosio.cdt)
+include(FetchContent)
 
 find_program(SCCACHE_FOUND sccache)
 if (SCCACHE_FOUND)
@@ -37,21 +38,34 @@ else()
 endif()
 
 # compatible eosio.cdt version
-set(EOSIO_CDT_VERSION "1.8.1")
 
-set(BLANC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/opt/${CMAKE_PROJECT_NAME}/${VERSION_FULL})
+set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.cdt)
 
-### Configure the EosioWasmToolchain.cmakes
-set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
+
+
 
 find_package(LLVM 13 REQUIRED CONFIG)
 find_package(Clang REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
 include(AddLLVM)
+
+if (NOT IS_DIRECTORY "${llvm_SOURCE_DIR}")
+
+  FetchContent_Declare(
+    llvm
+    URL            https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.0.tar.gz
+    URL_HASH       SHA256=a1131358f1f9f819df73fa6bff505f2c49d176e9eef0a3aedd1fdbce3b4630e8        
+  )
+
+  FetchContent_GetProperties(llvm)
+  if(NOT llvm_POPULATED)
+    FetchContent_Populate(llvm)
+  endif()
+endif()
 
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
@@ -72,10 +86,10 @@ add_subdirectory(modules)
 include(LibrariesExternalProject)
 
 configure_file(${CMAKE_SOURCE_DIR}/imports/eosio.imports.in ${CMAKE_BINARY_DIR}/eosio.imports COPYONLY)
-install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${BLANC_INSTALL_PREFIX})
+install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CDT_INSTALL_PREFIX})
 
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
-install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${BLANC_INSTALL_PREFIX}/scripts)
+install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CDT_INSTALL_PREFIX}/scripts)
 
 # section for package construction
 set(VENDOR "block.one")
@@ -87,17 +101,17 @@ configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_package.sh.in ${CMAKE_BINARY
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_deb.sh ${CMAKE_BINARY_DIR}/packages/generate_deb.sh COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_bottle.sh ${CMAKE_BINARY_DIR}/packages/generate_bottle.sh COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_rpm.sh ${CMAKE_BINARY_DIR}/packages/generate_rpm.sh COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh ${CMAKE_BINARY_DIR}/packages/generate_tarball.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh.in ${CMAKE_BINARY_DIR}/packages/generate_tarball.sh @ONLY)
 
 # add licenses
-configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_DIR}/licenses/boost.license COPYONLY)
+# configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_DIR}/licenses/boost.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/meta_refl/LICENSE ${CMAKE_BINARY_DIR}/licenses/meta_refl.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/picojson/LICENSE ${CMAKE_BINARY_DIR}/licenses/picojson.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/tsl/LICENSE ${CMAKE_BINARY_DIR}/licenses/tsl-ordered-map.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/uint128_t/LICENSE ${CMAKE_BINARY_DIR}/licenses/uint128_t.license COPYONLY)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${BLANC_INSTALL_PREFIX})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${CDT_INSTALL_PREFIX})
 
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
@@ -109,5 +123,5 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${BLANC_INSTALL_PREFIX}/include)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${BLANC_INSTALL_PREFIX}/lib)
+# install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${CDT_INSTALL_PREFIX}/include)
+# install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${CDT_INSTALL_PREFIX}/lib)

@@ -8,7 +8,14 @@ set(EOSIO_CDT_VERSION "@EOSIO_CDT_VERSION@")
 list(APPEND CMAKE_MODULE_PATH ${BLANC_ROOT_DIR}/lib/cmake/@CMAKE_PROJECT_NAME@)
 
 include(EosioCDTMacros)
-  
+include(EosioTargets)  
+set(crt0_o ${CMAKE_CURRENT_LIST_DIR}/../../crt0.o) 
+set_source_files_properties(
+  ${crt0_o}
+  PROPERTIES
+  EXTERNAL_OBJECT true
+  GENERATED true
+)    
 
 function(EXTRACT_MAJOR_MINOR_FROM_VERSION version success major minor)
    string(REGEX REPLACE "^([0-9]+)\\..+$" "\\1" _major "${version}")

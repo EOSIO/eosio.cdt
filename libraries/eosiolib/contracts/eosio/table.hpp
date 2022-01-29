@@ -8,7 +8,7 @@
 #include <cctype>
 #include <functional>
 
-#warning "eosio::kv::table is designated as `alpha` and should not be used in production code"
+// #warning "eosio::kv::table is designated as `alpha` and should not be used in production code"
 
 /**
  * @defgroup keyvaluetable Key Value Table
