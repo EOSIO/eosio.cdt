@@ -377,8 +377,7 @@ public:
          visitor->process_read_only_actions();
 
          try {
-            std::string fn = std::to_string(std::hash<std::string>{}(output))+".cpp";
-            std::ofstream ofs(get_temporary_path(fn));
+            std::ofstream ofs(output + ".cpp");
             if (!ofs) throw;
             auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
             ofs << std::string(RewriteBuf.begin(), RewriteBuf.end());

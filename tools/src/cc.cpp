@@ -349,7 +349,7 @@ int main(int argc, const char** argv) {
             return ret;
          }
 
-         auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(_output))+".cpp");
+         auto tmp_file = _output + ".cpp";
          if (llvm::sys::fs::exists(tmp_file)) {
             new_inputs.emplace_back(tmp_file);
             tmp_inputs.emplace_back(tmp_file);
