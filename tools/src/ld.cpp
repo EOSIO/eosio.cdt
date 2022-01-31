@@ -213,10 +213,6 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
 }
 
 int main(int argc, const char** argv) {
-   const char* backend = std::getenv("BLANC_LINKER_BACKEND");
-   if (!backend) {
-      backend = TOOL_BACKEND;
-   }
 
    std::set<wasm_action> wasm_actions;
    std::set<wasm_notify> wasm_notifies;
@@ -311,23 +307,25 @@ int main(int argc, const char** argv) {
          return -1;
       }
 
+      const char* backend = std::getenv("BLANC_LINKER_BACKEND");
+      if (!backend) {
+         backend = TOOL_BACKEND;
+      }
+
       if (auto ret = blanc::exec_subprogram(backend, args, true)) {
          return ret;
       }
+
+      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
+         if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, true)) {
+            return ret;
+         }
+      }
    } else {
-#ifdef __APPLE__
-      if (auto ret = blanc::exec_subprogram("ld", args)) {
-#else
-      if (auto ret = blanc::exec_subprogram(std::vector<std::string>{LLD_BACKEND, "ld.lld"}, args)) {
-#endif
+      if (auto ret = blanc::exec_subprogram(eosio::cdt::whereami::where() + "/ld", args)) {
          return ret;
       }
    }
 
-   if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
-      if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, true)) {
-         return ret;
-      }
-   }
    return 0;
 }
