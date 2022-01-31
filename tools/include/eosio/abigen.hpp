@@ -10,14 +10,12 @@
 #include <eosio/ppcallbacks.hpp>
 
 #include <fstream>
+#include <jsoncons/json.hpp>
 
 using namespace clang;
 using namespace eosio::cdt;
-
-#define PICOJSON_OBJECT_ORDERED
-#include <picojson/picojson.h>
-
-using ojson = picojson::value;
+using jsoncons::json;
+using jsoncons::ojson;
 
 extern std::string output;
 
@@ -851,7 +849,7 @@ namespace eosio { namespace cdt {
                   auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".desc");
                   std::ofstream ofs (tmp_file);
                   if (!ofs) throw;
-                  ofs << abigen::get().to_json_debug().serialize();
+                  ofs << pretty_print(abigen::get().to_json_debug());
                   ofs.close();
                }
             }

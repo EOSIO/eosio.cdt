@@ -33,7 +33,7 @@ add_clang_plugin(eosio_codegen codegen.cpp)
 target_include_directories(eosio_codegen
   PRIVATE 
     ${CMAKE_SOURCE_DIR}/tools/include
-    ${CMAKE_SOURCE_DIR}/libraries/internal/include)
+    ${jsoncons_SOURCE_DIR}/include)
 
 if(NOT TARGET EosioPlugins)
   add_custom_target(EosioPlugins)

@@ -70,6 +70,25 @@ endif()
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
+FetchContent_Declare(
+  wabt
+  GIT_REPOSITORY https://github.com/WebAssembly/wabt
+  GIT_TAG        830d32a41449278cacb0bf17530618d47c43340b       
+)
+
+FetchContent_MakeAvailable(wabt)
+
+FetchContent_Declare(
+  jsoncons
+  GIT_REPOSITORY https://github.com/danielaparker/jsoncons
+  GIT_TAG        4438d5c9d2f3a9a72455adcdb3a73c7778e9b48d       
+)
+
+FetchContent_GetProperties(jsoncons)
+if(NOT jsoncons_POPULATED)
+  FetchContent_Populate(jsoncons)
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
 include(BlancExecutableNames)
 
@@ -106,11 +125,9 @@ configure_file(${CMAKE_SOURCE_DIR}/scripts/generate_tarball.sh.in ${CMAKE_BINARY
 # add licenses
 # configure_file(${CMAKE_SOURCE_DIR}/libraries/boost/boost.license ${CMAKE_BINARY_DIR}/licenses/boost.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/libraries/meta_refl/LICENSE ${CMAKE_BINARY_DIR}/licenses/meta_refl.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
+configure_file(${wabt_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/picojson/LICENSE ${CMAKE_BINARY_DIR}/licenses/picojson.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/tsl/LICENSE ${CMAKE_BINARY_DIR}/licenses/tsl-ordered-map.license COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/libraries/internal/include/uint128_t/LICENSE ${CMAKE_BINARY_DIR}/licenses/uint128_t.license COPYONLY)
+configure_file(${jsoncons_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${CDT_INSTALL_PREFIX})
 
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")

@@ -8,10 +8,9 @@
 #include <string>
 #include <vector>
 
-#define PICOJSON_OBJECT_ORDERED
-#include <picojson/picojson.h>
+#include <jsoncons/json.hpp>
 
-using ojson = picojson::value;
+using jsoncons::ojson;
 
 class ABIMerger {
    public:
@@ -21,12 +20,12 @@ class ABIMerger {
       }
       std::string get_abi_string()const {
          std::stringstream ss;
-         ss << abi.serialize();
+         ss << pretty_print(abi);
          return ss.str();
       }
       ojson merge(ojson other) {
          ojson ret;
-         ret["____comment"] = abi["____comment"];
+         ret["____comment"] = abi["____comment"].evaluate();
          ret["version"]  = merge_version(other);
          ret["types"]    = merge_types(other);
          ret["structs"]  = merge_structs(other);
@@ -139,14 +138,14 @@ class ABIMerger {
 
       void add_object_to_object(ojson& ret, ojson a, ojson b, std::string type, std::string id) {
          for (auto obj_a : a[type].object_range()) {
-            ret.insert_or_assign(obj_a.first, obj_a.second);
+            ret.insert_or_assign(obj_a.key(), obj_a.value());
          }
          for (auto obj_b : b[type].object_range()) {
             bool should_skip = false;
             for (auto obj_a : a[type].object_range()) {
-               if (obj_a.first == obj_b.first) {
-                  if (obj_a.second != obj_b.second) {
-                     throw std::runtime_error(std::string("Error, ABI structs malformed : ")+std::string(obj_a.first.data(), obj_a.first.size())+" already defined");
+               if (obj_a.key() == obj_b.key()) {
+                  if (obj_a.value() != obj_b.value()) {
+                     throw std::runtime_error(std::string("Error, ABI structs malformed : ")+std::string(obj_a.key().data(), obj_a.key().size())+" already defined");
                   }
                   else {
                      should_skip = true;
@@ -154,7 +153,7 @@ class ABIMerger {
                }
             }
             if (!should_skip) {
-               ret.insert_or_assign(obj_b.first, obj_b.second);
+               ret.insert_or_assign(obj_b.key(), obj_b.value());
             }
          }
       }

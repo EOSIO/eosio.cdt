@@ -16,7 +16,7 @@ macro(add_tool name source backend fallback)
       ${CMAKE_CURRENT_SOURCE_DIR}/src
       ${CMAKE_CURRENT_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/../libraries/internal/include
+      ${jsoncons_SOURCE_DIR}/include
   )
   target_link_libraries(${name} PUBLIC clangTooling clangDriver)
 
@@ -80,14 +80,6 @@ add_dependencies(${BLANC_LINKER} ld_options)
 
 add_tool(${BLANC_C_COMPILER} src/dummy.cpp ${BLANC_C_COMPILER_BACKEND_FALLBACK} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
 add_tool(${BLANC_CXX_COMPILER} src/dummy.cpp ${BLANC_CXX_COMPILER_BACKEND_FALLBACK} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
-
-FetchContent_Declare(
-    wabt
-    GIT_REPOSITORY https://github.com/WebAssembly/wabt
-    GIT_TAG        830d32a41449278cacb0bf17530618d47c43340b       
-)
-
-FetchContent_MakeAvailable(wabt)
 
 add_executable(${BLANC_POSTPASS} src/postpass.cc)
 target_link_libraries(${BLANC_POSTPASS} wabt)

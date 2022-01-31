@@ -287,7 +287,7 @@ int main(int argc, const char** argv) {
 
             std::ofstream ofs(output_ref.str().str());
             if (!ofs) throw;
-            ofs << abi.serialize(true);
+            ofs << pretty_print(abi);
             ofs.close();
          }
          if (_profile == profile::eosio && !dispatcher_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
