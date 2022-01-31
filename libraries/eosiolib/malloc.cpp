@@ -3,7 +3,7 @@
 #include <eosio/check.hpp>
 #include <eosio/print.hpp>
 
-#ifdef EOSIO_NATIVE
+#ifndef __wasm32__
    extern "C" {
       size_t _current_memory();
       size_t _grow_memory(size_t);
@@ -46,7 +46,7 @@ namespace eosio {
          }
 
          sbrk_bytes += num_bytes;
-#ifdef EOSIO_NATIVE
+#ifndef __wasm32__
       return reinterpret_cast<void*>((char*)__get_heap_base()+prev_num_bytes);
 #else
       return reinterpret_cast<void*>(prev_num_bytes);

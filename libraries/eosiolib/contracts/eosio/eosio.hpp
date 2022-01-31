@@ -12,7 +12,7 @@
 #include <eosio/map.hpp>
 #include <eosio/table.hpp>
 
-#ifndef EOSIO_NATIVE
+#ifdef __wasm32__
 static_assert( sizeof(long) == sizeof(int), "unexpected size difference" );
 #endif
 

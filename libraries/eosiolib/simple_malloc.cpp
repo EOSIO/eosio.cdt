@@ -1,7 +1,7 @@
 #include <memory>
 #include <eosio/check.hpp>
 
-#ifdef EOSIO_NATIVE
+#ifndef __wasm32__
    extern "C" {
       size_t _current_memory();
       size_t _grow_memory(size_t);
