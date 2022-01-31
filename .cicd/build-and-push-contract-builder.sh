@@ -14,6 +14,12 @@ echo "Using EOS commit ${EOS_COMMITISH}"
 echo "Using CDT commit ${CDT_COMMITISH}"
 IMAGE_TAG="${EOS_COMMITISH}-${CDT_COMMITISH}"
 
+git clone https://github.com/b1-as/taurus-node.git eos
+pushd eos
+git checkout ${EOS_COMMITISH}
+git submodule update --init --recursive
+popd
+
 set +e
 docker manifest inspect ${IMAGE}:${IMAGE_TAG} > /dev/null
 if [[ $? -eq 0 ]]; then

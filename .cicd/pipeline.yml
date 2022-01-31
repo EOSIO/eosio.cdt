@@ -11,7 +11,6 @@ steps:
       CONTRACT_BUILDER_VERSION: "taurus-develop-boxed"
       EOS_COMMITISH: "94f582bb7d067080839084aab8e2aa3f7ecb54b8"
       CDT_COMMITISH: "$BUILDKITE_COMMIT"
-    timeout: 10
 
   - label: ":aws: Amazon_Linux 2 - Build"
     command:
@@ -417,7 +416,7 @@ steps:
     agents:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
-    timeout: 10
+    timeout: "${TIMEOUT:-10}"
 
   - label: ":beer: Brew Updater"
     command: |
