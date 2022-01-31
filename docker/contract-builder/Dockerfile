@@ -60,16 +60,15 @@ RUN curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/bo
  && rm -rf boost_1_72_0.tar.bz2 boost_1_72_0
 
 ### CDT
-RUN git clone https://github.com/b1-as/taurus-cdt.git eosio.cdt \
- && cd eosio.cdt \
- && git checkout ${CDT_BRANCH} \
- && git submodule update --init --recursive
+#RUN git clone https://github.com/b1-as/taurus-cdt.git eosio.cdt \
+COPY . eosio.cdt \
 RUN mkdir -p eosio.cdt/build \
  && cd eosio.cdt/build \
  && cmake -GNinja -DCMAKE_BUILD_TYPE=Release .. \
  && ninja
 
 ### eos
+#RUN git clone https://github.com/b1-as/taurus-node.git eos \
 RUN git clone https://github.com/b1-as/taurus-node.git eos \
  && cd eos \
  && git checkout ${EOS_BRANCH} \
