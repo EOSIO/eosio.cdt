@@ -25,7 +25,7 @@ fi
 set -e
 
 echo "Building ${IMAGE}:${IMAGE_TAG}"
-docker build $PROXY_DOCKER_BUILD_ARGS -t "${IMAGE}:${IMAGE_TAG}" -f "./docker/contract-builder/Dockerfile" "./docker/contract-builder" \
+docker build $PROXY_DOCKER_BUILD_ARGS -t "${IMAGE}:${IMAGE_TAG}" -f "./docker/contract-builder/Dockerfile" . \
   --build-arg CDT_BRANCH="${CDT_COMMITISH}" --build-arg EOS_BRANCH="${EOS_COMMITISH}"
 
 if [[ "${BRANCH}" == 'master' ]]; then
