@@ -1,7 +1,0 @@
-;;; RUN: %(wat2wasm)s
-;;; ARGS: foo.txt bar.txt
-;;; ERROR: 1
-(;; STDERR ;;;
-wat2wasm: unexpected argument 'bar.txt'
-Try '--help' for more information.
-;;; STDERR ;;)

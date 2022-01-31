@@ -80,8 +80,20 @@ add_dependencies(${BLANC_LINKER} ld_options)
 add_tool(${BLANC_C_COMPILER} src/dummy.cpp ${BLANC_C_COMPILER_BACKEND_FALLBACK} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
 add_tool(${BLANC_CXX_COMPILER} src/dummy.cpp ${BLANC_CXX_COMPILER_BACKEND_FALLBACK} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
 
-# blanc-pp (for post-processing)
-add_subdirectory(external)
+FetchContent_Declare(
+    wabt
+    GIT_REPOSITORY https://github.com/WebAssembly/wabt
+    GIT_TAG        830d32a41449278cacb0bf17530618d47c43340b       
+)
+
+FetchContent_MakeAvailable(wabt)
+
+add_executable(${BLANC_POSTPASS} src/postpass.cc)
+target_link_libraries(${BLANC_POSTPASS} wabt)
+target_include_directories(${BLANC_POSTPASS} PRIVATE ${wabt_SOURCE_DIR} ${wabt_BINARY_DIR})
+add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
+add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/)
+install(TARGETS ${BLANC_POSTPASS} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
