@@ -6,7 +6,7 @@ steps:
   - label: ":docker::ubuntu: Docker - Build 18.04 Docker Image"
     command: "./.cicd/build-and-push-contract-builder.sh $BUILDKITE_BRANCH"
     agents:
-      queue: "automation-gke-ha-dev-taurus-tester-fleet"
+      queue: "automation-gke-ha-dev-taurus-builder-fleet"
     env:
       CONTRACT_BUILDER_VERSION: "taurus-develop-boxed"
       EOS_COMMITISH: "94f582bb7d067080839084aab8e2aa3f7ecb54b8"

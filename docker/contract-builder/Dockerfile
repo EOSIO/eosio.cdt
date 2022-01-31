@@ -61,7 +61,8 @@ RUN curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/bo
 
 ### CDT
 #RUN git clone https://github.com/b1-as/taurus-cdt.git eosio.cdt \
-COPY . eosio.cdt \
+COPY . eosio.cdt
+
 RUN mkdir -p eosio.cdt/build \
  && cd eosio.cdt/build \
  && cmake -GNinja -DCMAKE_BUILD_TYPE=Release .. \
