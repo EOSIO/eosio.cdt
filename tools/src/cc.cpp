@@ -205,7 +205,8 @@ exit:
    Args.eraseArg(OPT_R_Joined);
 
    for (const auto arg : Args) {
-      if (!arg->getOption().hasFlag(CC1Option) || !link)
+      const auto& opt = arg->getOption();
+      if (opt.getID() == OPT_v || !opt.hasFlag(CC1Option) || !link)
          new_opts.emplace_back(arg->getAsString(Args));
    }
    if (is_wasm_target) {
