@@ -88,6 +88,22 @@ add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_
 add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/)
 install(TARGETS ${BLANC_POSTPASS} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
 
+function(copy_to_bin target)
+  add_custom_command(OUTPUT
+          ${CMAKE_BINARY_DIR}/bin/${target}
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}>
+          ${CMAKE_BINARY_DIR}/bin
+      DEPENDS ${target}
+  )
+  # Create target which consume the command via DEPENDS.
+  add_custom_target(copy_${target} ALL
+      DEPENDS ${CMAKE_BINARY_DIR}/bin/${target}
+  )
+endfunction()
+
+copy_to_bin(wasm2wat)
+copy_to_bin(wasm-objdump)
+
 if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
