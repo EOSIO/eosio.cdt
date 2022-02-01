@@ -1,5 +1,4 @@
-FROM ubuntu:18.04
-
+FROM b1x-taurus-docker-local.jfrog.io/taurus/taurus-node/pinned/base:eos-ubuntu-18.04-pinned-db41af5779c750edbeee053c80e46d0dcbb4e196/
 ARG CDT_BRANCH
 ARG EOS_BRANCH
 
@@ -60,9 +59,7 @@ RUN curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/bo
  && rm -rf boost_1_72_0.tar.bz2 boost_1_72_0
 
 ### CDT
-#RUN git clone https://github.com/b1-as/taurus-cdt.git eosio.cdt \
 COPY . eosio.cdt
-COPY eos/ eos/
 
 RUN mkdir -p eosio.cdt/build \
  && rm -rf eosio.cdt/eos \
@@ -71,11 +68,6 @@ RUN mkdir -p eosio.cdt/build \
  && ninja
 
 ### eos
-RUN mkdir -p eos/build \
- && cd eos/build \
- && CC=clang-8 CXX=clang++-8 cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_AR=/usr/bin/llvm-ar-8 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-8 -DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld -DPORTABLE=1 .. \
- && CC=clang-8 CXX=clang++-8 ninja
-
 ENV PATH="/root/eos/build/bin/:/root/eosio.cdt/build/bin/:${PATH}"
 
 ### More deps
