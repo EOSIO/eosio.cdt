@@ -1,4 +1,4 @@
-FROM b1x-taurus-docker-local.jfrog.io/taurus/taurus-node/pinned/base:eos-ubuntu-18.04-pinned-db41af5779c750edbeee053c80e46d0dcbb4e196/
+FROM blockone-b1x-taurus-docker-local.jfrog.io/taurus/taurus-node/pinned/base:eos-ubuntu-18.04-pinned-db41af5779c750edbeee053c80e46d0dcbb4e196/
 ARG CDT_BRANCH
 ARG EOS_BRANCH
 
