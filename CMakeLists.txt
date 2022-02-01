@@ -45,10 +45,10 @@ include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
 
-
-
 find_package(LLVM 13 REQUIRED CONFIG)
 find_package(Clang REQUIRED)
+
+set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
 list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
 include(AddLLVM)
@@ -130,7 +130,6 @@ configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_
 configure_file(${jsoncons_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${CDT_INSTALL_PREFIX})
 
-set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
 if(BUILD_TESTS)
   include(TestsExternalProject)
