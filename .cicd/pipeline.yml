@@ -1,8 +1,6 @@
 env:
   OUR_PR_REPO: "git@github.com:b1-as/taurus-cdt.git"
 steps:
-  - wait
-  -
   - label: ":aws: Amazon_Linux 2 - Build"
     command:
       - "./.cicd/build.sh"
