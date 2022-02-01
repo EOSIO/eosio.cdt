@@ -2,16 +2,7 @@ env:
   OUR_PR_REPO: "git@github.com:b1-as/taurus-cdt.git"
 steps:
   - wait
-
-  - label: ":docker::ubuntu: Docker - Build 18.04 Docker Image"
-    command: "./.cicd/build-and-push-contract-builder.sh $BUILDKITE_BRANCH"
-    agents:
-      queue: "automation-gke-ha-dev-taurus-builder-fleet"
-    env:
-      CONTRACT_BUILDER_VERSION: "taurus-develop-boxed"
-      EOS_COMMITISH: "94f582bb7d067080839084aab8e2aa3f7ecb54b8"
-      CDT_COMMITISH: "$BUILDKITE_COMMIT"
-
+  -
   - label: ":aws: Amazon_Linux 2 - Build"
     command:
       - "./.cicd/build.sh"
@@ -417,6 +408,16 @@ steps:
       queue: "automation-gke-ha-dev-taurus-tester-fleet"
     skip: ${SKIP_UBUNTU_20}${SKIP_LINUX}${SKIP_PACKAGE_BUILDER}
     timeout: "${TIMEOUT:-10}"
+
+  - label: ":docker::ubuntu: Docker - Build 18.04 Contract builder Docker Image"
+    command: "./.cicd/build-and-push-contract-builder.sh
+    agents:
+      queue: "automation-gke-ha-dev-taurus-builder-fleet"
+    env:
+      CONTRACT_BUILDER_VERSION: "taurus-develop-boxed"
+      EOS_CONTAINER_TAG: "eos-ubuntu-18.04-pinned-db41af5779c750edbeee053c80e46d0dcbb4e196"
+      EOS_COMMITISH: "db41af5779c750edbeee053c80e46d0dcbb4e196"
+      CDT_COMMITISH: "$BUILDKITE_COMMIT"
 
   - label: ":beer: Brew Updater"
     command: |

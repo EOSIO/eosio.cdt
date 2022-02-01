@@ -2,6 +2,7 @@
 
 set -eu
 
+buildkite-agent artifact download '*.deb' --step ':ubuntu: Ubuntu 18.04 - Package Builder' .
 FORCE_REBUILD="${FORCE_CONTRACT_BUILDER_BUILD:-false}"
 VERSION_NAME="$CONTRACT_BUILDER_VERSION"
 IMAGE_NAME="taurus/taurus-contract-builder/${VERSION_NAME}-contract-builder"
@@ -9,10 +10,11 @@ IMAGE="blockone-b1x-taurus-docker-local.jfrog.io/${IMAGE_NAME}"
 # Massage branch to be short enough and have no '/' characters
 BRANCH=$(echo "$BUILDKITE_BRANCH" | sed 's|/|-|g' | sed 's|_|-|g' | cut -c 1-63 | sed 's/-$//g' | tr '[:upper:]' '[:lower:]')
 
-#TODO Figure out these arguments
+echo "Using EOS container tag ${EOS_CONTAINER_TAG}"
 echo "Using EOS commit ${EOS_COMMITISH}"
 echo "Using CDT commit ${CDT_COMMITISH}"
 IMAGE_TAG="${EOS_COMMITISH}-${CDT_COMMITISH}"
+echo "IMAGE_TAG ${IMAGE_TAG}"
 
 set +e
 docker manifest inspect ${IMAGE}:${IMAGE_TAG} > /dev/null
@@ -25,7 +27,7 @@ fi
 set -e
 
 echo "Building ${IMAGE}:${IMAGE_TAG}"
-DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile . --build-arg CDT_BRANCH=\"${CDT_COMMITISH}\" --build-arg EOS_BRANCH=\"${EOS_COMMITISH}\""
+DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile . --build-arg EOS_CONTAINER_TAG=\"${EOS_CONTAINER_TAG}\""
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 
