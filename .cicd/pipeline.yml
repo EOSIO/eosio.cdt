@@ -410,7 +410,7 @@ steps:
   - label: ":docker::ubuntu: Docker - Build 18.04 Contract builder Docker Image"
     command: "./.cicd/build-and-push-contract-builder.sh"
     agents:
-      queue: "automation-gke-ha-dev-taurus-builder-fleet"
+      queue: "automation-gke-ha-dev-taurus-tester-fleet"
     env:
       CONTRACT_BUILDER_VERSION: "taurus-develop-boxed"
       EOS_CONTAINER_TAG: "eos-ubuntu-18.04-pinned-db41af5779c750edbeee053c80e46d0dcbb4e196"
