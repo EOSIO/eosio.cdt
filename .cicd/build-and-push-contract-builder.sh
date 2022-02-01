@@ -2,7 +2,7 @@
 
 set -eu
 
-buildkite-agent artifact download '*.deb' --step ':ubuntu: Ubuntu 18.04 - Package Builder' .
+buildkite-agent artifact download build.tar.gz . --step ':ubuntu: Ubuntu 18.04 - Build' --agent-access-token $$BUILDKITE_AGENT_ACCESS_TOKEN
 FORCE_REBUILD="${FORCE_CONTRACT_BUILDER_BUILD:-false}"
 VERSION_NAME="$CONTRACT_BUILDER_VERSION"
 IMAGE_NAME="taurus/taurus-contract-builder/${VERSION_NAME}-contract-builder"
