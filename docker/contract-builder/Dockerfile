@@ -7,7 +7,3 @@ RUN apt-get update && \
     apt-get install -y /*.deb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-### More deps
-RUN apt-get install -y colordiff nodejs \
- && npm i -g yarn
