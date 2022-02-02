@@ -31,7 +31,7 @@ fi
 set -e
 
 echo "Building ${IMAGE}:${IMAGE_TAG}"
-DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile2 .
+DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile2 ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 
