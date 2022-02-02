@@ -17,7 +17,7 @@ echo "IMAGE_TAG ${IMAGE_TAG}"
 
 git clone https://github.com/b1-as/taurus-node.git eos
 pushd eos
-git checkout $EOS_COMMITISH
+git checkout develop-boxed
 git submodule update --init --recursive
 
 set +e
