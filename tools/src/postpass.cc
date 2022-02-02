@@ -130,14 +130,11 @@ void StripExports(Module& mod) {
    if (s_profile == "eosio") {
       std::vector<Export*> exports;
       for (auto exp : mod.exports) {
-         if (exp->name == "apply" && exp->kind == ExternalKind::Func) {
+         if (exp->kind == ExternalKind::Func) {
             exports.push_back(exp);
          }
          if (exp->name == "memory" && exp->kind == ExternalKind::Memory) {
             exports.push_back(exp);
-         }
-         if (exports.size() >= 2) {
-            break;
          }
       }
       mod.exports = exports;
