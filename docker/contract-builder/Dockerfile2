@@ -1,5 +1,13 @@
 FROM ubuntu:18.04
 
+#CDT
+COPY build.tar.gz /
+
+RUN mkdir eosio.cdt && \
+    mv build.tar.gz eosio.cdt && \
+    cd eosio.cdt && \
+    tar -xzf build.tar.gz
+
 RUN apt-get update \
  && apt-get install -yq \
      binutils-gold \
@@ -57,14 +65,6 @@ RUN curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/bo
  && ./b2 --with-iostreams --with-date_time --with-filesystem --with-system --with-program_options --with-chrono --with-test -j$(nproc) install \
  && cd /root \
  && rm -rf boost_1_72_0.tar.bz2 boost_1_72_0
-
-#CDT
-COPY build.tar.gz /
-
-RUN mkdir eosio.cdt && \
-    mv build.tar.gz eosio.cdt && \
-    cd eosio.cdt && \
-    tar -xzf build.tar.gz
 
 ### eos
 COPY eos eos/
