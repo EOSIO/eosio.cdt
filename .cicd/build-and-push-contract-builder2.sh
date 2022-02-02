@@ -19,6 +19,7 @@ git clone https://github.com/b1-as/taurus-node.git eos
 pushd eos
 git checkout develop-boxed
 git submodule update --init --recursive
+popd
 
 set +e
 docker manifest inspect ${IMAGE}:${IMAGE_TAG} > /dev/null
