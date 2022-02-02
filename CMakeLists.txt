@@ -37,6 +37,10 @@ else()
   set(VERSION_FULL "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 endif()
 
+#
+
+set(LIBS_BUILD_TYPE "Release" CACHE STRING "The build type for libraries")
+
 # compatible eosio.cdt version
 
 set(CDT_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/eosio.cdt)

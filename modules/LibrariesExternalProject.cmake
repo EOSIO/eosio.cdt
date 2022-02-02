@@ -8,6 +8,7 @@ ExternalProject_Add(
              -DEOSIO_CDT_BIN=${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/ 
              -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR}
              -Dllvm_SOURCE_DIR=${llvm_SOURCE_DIR}
+             -DCMAKE_BUILD_TYPE=${LIBS_BUILD_TYPE}
   UPDATE_COMMAND ""
   PATCH_COMMAND  ""
   TEST_COMMAND   ""
