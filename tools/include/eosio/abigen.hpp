@@ -846,8 +846,7 @@ namespace eosio { namespace cdt {
                visitor->TraverseDecl(Context.getTranslationUnitDecl());
 
                if (!abigen::get().is_empty()) {
-                  auto tmp_file = get_temporary_path(std::to_string(std::hash<std::string>{}(output))+".desc");
-                  std::ofstream ofs (tmp_file);
+                  std::ofstream ofs (output + ".desc");
                   if (!ofs) throw;
                   ofs << pretty_print(abigen::get().to_json_debug());
                   ofs.close();

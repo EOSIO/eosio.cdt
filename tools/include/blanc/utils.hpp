@@ -39,34 +39,24 @@ namespace blanc {
       llvm::outs() << "\n";
    }
 
-   int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool cwd = false) {
+   int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool show_commands) {
       int ret = 0;
       std::string find_path = eosio::cdt::whereami::where();
       std::stringstream args;
       for (const auto& s : options) {
          args << s << " ";
       }
-      bool has_v = std::find(options.begin(), options.end(), "-v") != options.end();
+      
       auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path});
-      if (!cwd || !path) path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"});
+      if (!path) path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"});
 
       if (path) {
          auto cmd = *path+" "+args.str();
-         if (has_v) llvm::outs() << cmd << "\n";
+         if (show_commands) llvm::outs() << "\n" << cmd << "\n";
          return std::system(cmd.c_str());
       } else {
          return ENOENT;
       }
-   }
-
-   int exec_subprogram(const std::vector<std::string>& progs, std::vector<std::string> options, bool cwd = false) {
-      int ret = 0;
-      for (const auto& prog : progs) {
-         if ((ret = exec_subprogram(prog, options, cwd)) != ENOENT) {
-            break;
-         }
-      }
-      return ret;
    }
 
    std::optional<std::string> get_option_value(const std::vector<std::string>& options, std::string name, std::string prefix = "-{1,2}", std::string suffix = "(=.+)?$") {

@@ -2,7 +2,9 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#ifdef __clang__
 #pragma GCC diagnostic ignored "-Wcovered-switch-default"
+#endif
 #include "abi.hpp"
 
 #include <string>

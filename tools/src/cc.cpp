@@ -42,6 +42,7 @@ std::vector<std::string> resource_dirs;
 std::set<std::string> include_dirs;
 bool link = true;
 bool keep_generated = false;
+bool has_v = false;
 
 std::string contract_name;
 std::string abi_version;
@@ -50,6 +51,8 @@ bool suppress_ricardian_warnings;
 
 std::vector<std::string> override_compile_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
+
+   has_v = Args.hasArgNoClaim(OPT_v);
 
    if (Args.hasArgNoClaim(OPT_keep_generated)) {
       keep_generated = true;
@@ -74,7 +77,7 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          }
       }
 
-      if (Args.hasArgNoClaim(OPT_v)) {
+      if (has_v) {
          new_opts.emplace_back("-Wno-unused-command-line-argument");
          if (Args.size() == 1 || (Args.size() == 2 && Args.hasArgNoClaim(OPT_target))) {
             early_exit = true;
@@ -245,14 +248,14 @@ int main(int argc, const char** argv) {
    auto args = override_compile_options(Args);
 
    if (early_exit) {
-      return blanc::exec_subprogram(backend, args, true);
+      return blanc::exec_subprogram(backend, args, has_v);
    }
 
 #ifdef CPP_COMP
 
    std::vector<std::string> tmp_inputs;
    blanc::scope_exit on_exit([&tmp_inputs, keep_generated = keep_generated](){
-      if (!OPT_keep_generated) {
+      if (!keep_generated) {
          for (const auto& tmp_file : tmp_inputs) {
             llvm::sys::fs::remove(tmp_file);
          }
@@ -346,7 +349,7 @@ int main(int argc, const char** argv) {
 
          local_args.emplace_back(input);
 
-         if (auto ret = blanc::exec_subprogram(backend, local_args, true) || is_preprocess) {
+         if (auto ret = blanc::exec_subprogram(backend, local_args, has_v) || is_preprocess) {
             return ret;
          }
 
@@ -362,6 +365,12 @@ int main(int argc, const char** argv) {
    if (is_wasm_target) {
       if (link && inputs.size()) {
          args.insert(args.begin(), "-fuse-ld="+eosio::cdt::whereami::where()+"/"+LINKER_NAME);
+         if (has_v){
+            args.emplace_back("-Wl,--show-commands");
+         }
+         if (keep_generated){
+            args.emplace_back("-Wl,--keep-generated");
+         }
          if (output.size()) {
             args.emplace_back("-o "+output);
          }
@@ -376,7 +385,7 @@ int main(int argc, const char** argv) {
    for (const auto& inc : include_dirs) {
       args.push_back("-I"+inc);
    }
-   if (auto ret = blanc::exec_subprogram(backend, args, true)) {
+   if (auto ret = blanc::exec_subprogram(backend, args, has_v)) {
       return ret;
    }
    return 0;

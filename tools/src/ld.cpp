@@ -53,10 +53,8 @@ int abi_version_major = 1;
 int abi_version_minor = 1;
 bool no_abigen;
 
-std::string generate_eosio_dispatch(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
-   std::string output;
+void generate_eosio_dispatch(const std::string& output, const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
    try {
-      output = get_temporary_path(std::to_string(getpid())+".cpp");
 
       std::ofstream ofs(output);
       if (!ofs) throw;
@@ -114,7 +112,6 @@ std::string generate_eosio_dispatch(const std::set<wasm_action>& wasm_actions, c
    } catch (...) {
       llvm::outs() << "Failed to generate eosio dispatcher\n";
    }
-   return output;
 }
 
 std::string generate_cosmwasm_dispatch(const std::set<wasm_action>& wasm_actions, const std::set<wasm_notify>& wasm_notifies) {
@@ -178,7 +175,7 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
 
       if (_profile == profile::eosio) {
          auto opt_z= Args.getLastArgNoClaim(OPT_z);
-         if (!opt_z || !opt_z->getSpelling().contains("stack-size")) {
+         if (!opt_z || strncmp("stack-size", opt_z->getValue(), sizeof("stack-size")-1) != 0 ) {
             new_opts.emplace_back("-zstack-size=8192");
          }
          new_opts.emplace_back("-lcstdio");
@@ -216,7 +213,6 @@ int main(int argc, const char** argv) {
 
    std::set<wasm_action> wasm_actions;
    std::set<wasm_notify> wasm_notifies;
-   std::string main_file;
    std::vector<std::string> desc_files;
    bool dispatcher_was_found = false;
 
@@ -226,12 +222,20 @@ int main(int argc, const char** argv) {
 
    BlancLdOptTable opts;
    auto Args = opts.ParseArgs(Argv, missingIndex, missingCount);
+
+   bool keep_generated = Args.hasArgNoClaim(OPT_keep_generated);
+   if (keep_generated) Args.eraseArg(OPT_keep_generated);
+   bool show_commands = Args.hasArgNoClaim(OPT_show_commands);
+   if (show_commands) Args.eraseArg(OPT_show_commands);
+
    auto args = override_link_options(Args);
 
    std::vector<std::string> tmp_inputs;
-   blanc::scope_exit on_exit([&tmp_inputs]() {
-      for (const auto& tmp_file : tmp_inputs) {
-         llvm::sys::fs::remove(tmp_file);
+   blanc::scope_exit on_exit([&tmp_inputs, keep_generated]() {
+      if (!keep_generated) {
+         for (const auto& tmp_file : tmp_inputs) {
+            llvm::sys::fs::remove(tmp_file);
+         }
       }
    });
 
@@ -241,7 +245,7 @@ int main(int argc, const char** argv) {
          for (const auto& input : inputs) {
             auto desc_name = input.substr(0, input.rfind("-"))+".desc";
             if (!llvm::sys::fs::exists(desc_name)) {
-               desc_name = get_temporary_path(std::to_string(std::hash<std::string>{}(to_absolute_path(input).str().str()))+".desc");
+               desc_name = to_absolute_path(input).str().str() +".desc";
             }
             if (llvm::sys::fs::exists(desc_name)) {
                std::ifstream ifs(desc_name);
@@ -291,11 +295,12 @@ int main(int argc, const char** argv) {
             ofs.close();
          }
          if (_profile == profile::eosio && !dispatcher_was_found && (!wasm_actions.empty() || !wasm_notifies.empty())) {
-            main_file = generate_eosio_dispatch(wasm_actions, wasm_notifies);
+            std::string main_file = output + ".dispatch.cpp";
+            generate_eosio_dispatch(main_file, wasm_actions, wasm_notifies);
             tmp_inputs.emplace_back(main_file);
             if (!main_file.empty()) {
                std::vector<std::string> new_opts { "-c", "-o", main_file+".o" , main_file , "--no-missing-ricardian-clause"};
-                  if (auto ret = blanc::exec_subprogram(COMPILER_NAME, new_opts, true)) {
+                  if (auto ret = blanc::exec_subprogram(COMPILER_NAME, new_opts, show_commands)) {
                   return ret;
                }
                args.push_back(main_file+".o");
@@ -312,17 +317,17 @@ int main(int argc, const char** argv) {
          backend = TOOL_BACKEND;
       }
 
-      if (auto ret = blanc::exec_subprogram(backend, args, true)) {
+      if (auto ret = blanc::exec_subprogram(backend, args, show_commands)) {
          return ret;
       }
 
       if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
-         if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, true)) {
+         if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, show_commands)) {
             return ret;
          }
       }
    } else {
-      if (auto ret = blanc::exec_subprogram(eosio::cdt::whereami::where() + "/ld", args)) {
+      if (auto ret = blanc::exec_subprogram(eosio::cdt::whereami::where() + "/ld", args, show_commands)) {
          return ret;
       }
    }
