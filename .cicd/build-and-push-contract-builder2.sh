@@ -14,6 +14,7 @@ echo "Using EOS commit ${EOS_COMMITISH}"
 echo "Using CDT commit ${CDT_COMMITISH}"
 IMAGE_TAG="${EOS_COMMITISH}-${CDT_COMMITISH}"
 echo "IMAGE_TAG ${IMAGE_TAG}"
+echo "ls for build.tar.gz: $(ls *.gz)"
 
 git clone https://github.com/b1-as/taurus-node.git eos
 pushd eos
