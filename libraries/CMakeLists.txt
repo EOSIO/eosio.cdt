@@ -9,8 +9,6 @@ if (CCACHE_FOUND)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 endif()
 
-set(CMAKE_BUILD_TYPE Release)
-
 list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN})
 include(EosioCDTMacros)
 
@@ -49,7 +47,7 @@ fetch_content(
 fetch_content(
   musl
   GIT_REPOSITORY https://github.com/EOSIO/musl
-  GIT_TAG        76c55cba37ede5827d4cf9d41226f78ad6e3aa46
+  GIT_TAG        e3ce8f969f2139b0d171c15a1026fad91010c430
 )
 
 fetch_content(
