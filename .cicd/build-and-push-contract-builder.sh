@@ -16,6 +16,12 @@ echo "Using CDT commit ${CDT_COMMITISH}"
 IMAGE_TAG="${EOS_COMMITISH}-${CDT_COMMITISH}"
 echo "IMAGE_TAG ${IMAGE_TAG}"
 
+git clone https://github.com/b1-as/taurus-node.git eos
+pushd eos
+git checkout develop-boxed
+git submodule update --init --recursive
+popd
+
 set +e
 docker manifest inspect ${IMAGE}:${IMAGE_TAG} > /dev/null
 if [[ $? -eq 0 ]]; then
@@ -27,7 +33,7 @@ fi
 set -e
 
 echo "Building ${IMAGE}:${IMAGE_TAG}"
-DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile . --build-arg EOS_CONTAINER_TAG=\"${EOS_CONTAINER_TAG}\""
+DOCKER_BUILD=" docker build $PROXY_DOCKER_BUILD_ARGS -t \"${IMAGE}:${IMAGE_TAG}\" -f ./docker/contract-builder/Dockerfile ."
 echo "$ $DOCKER_BUILD"
 eval $DOCKER_BUILD
 
