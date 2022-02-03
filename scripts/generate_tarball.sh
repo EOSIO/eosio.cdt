@@ -32,6 +32,7 @@ cp -R ${BUILD_DIR}/include/* ${CDT_PREFIX}/include
 
 # install wasm libs
 cp ${BUILD_DIR}/lib/*.a ${CDT_PREFIX}/lib
+cp ${BUILD_DIR}/lib/crt0.o ${CDT_PREFIX}/lib
 
 # make symlinks
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null
