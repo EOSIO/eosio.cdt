@@ -3,7 +3,7 @@
     // dependencies to pull for cdt integration tests, by branch, tag, or commit hash
     "dependencies": {
       "eosio": "develop",
-      "eosio.contracts": "develop"
+      "eosio.contracts": "qy-EPE-1892-compile-option-fix"
     }
   }
 }

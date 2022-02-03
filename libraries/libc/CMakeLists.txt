@@ -19,10 +19,6 @@ set(INTERNAL_SOURCES musl/src/internal/floatscan.c musl/src/internal/intscan.c m
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything -allow-sse")
 set(CMAKE_BUILD_TYPE "Release")
 
-if(__APPLE)
-  add_definitions(-D__APPLE__)
-endif()
-
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/musl/include/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/src/internal/*.h"
                   "${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos/*.h")
@@ -89,6 +85,10 @@ if (ENABLE_NATIVE_COMPILER)
                               ${CMAKE_CURRENT_SOURCE_DIR}/musl/arch/eos
                               ${CMAKE_SOURCE_DIR})
 
+
+   if(__APPLE)
+      target_compile_options(native_c PRIVATE -D__APPLE__)
+   endif()
 
    add_custom_command( TARGET native_c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c> ${BASE_BINARY_DIR}/lib )
 endif()
