@@ -1,6 +1,6 @@
 #! /bin/bash
 set -euo pipefail
-
+echo 'Generating tarball.'
 NAME=$1
 CDT_PREFIX=${PREFIX}/${SUBPREFIX}
 mkdir -p ${PREFIX}/bin/
@@ -60,6 +60,7 @@ create_symlink eosio-ranlib eosio-ranlib
 create_symlink eosio-readelf eosio-readelf
 create_symlink eosio-strip eosio-strip
 
-echo "Generating Tarball $NAME.tar.gz..."
+echo "Packing $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/*
 rm -r ${PREFIX}
+echo "Created \"$NAME.tar.gz\"."
