@@ -1,5 +1,5 @@
 #! /bin/bash
-set -euo pipefail
+set -eo pipefail
 echo 'Generating tarball.'
 NAME=$1
 CDT_PREFIX=${PREFIX}/${SUBPREFIX}
