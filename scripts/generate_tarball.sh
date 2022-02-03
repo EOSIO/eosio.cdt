@@ -12,8 +12,6 @@ mkdir -p ${CDT_PREFIX}/cmake
 mkdir -p ${CDT_PREFIX}/scripts
 mkdir -p ${CDT_PREFIX}/licenses
 
-#echo "${PREFIX} ** ${SUBPREFIX} ** ${CDT_PREFIX}"
-
 # install binaries
 cp -R ${BUILD_DIR}/bin/* ${CDT_PREFIX}/bin
 cp -R ${BUILD_DIR}/licenses/* ${CDT_PREFIX}/licenses
