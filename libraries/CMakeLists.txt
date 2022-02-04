@@ -47,7 +47,7 @@ fetch_content(
 fetch_content(
   musl
   GIT_REPOSITORY https://github.com/EOSIO/musl
-  GIT_TAG        e3ce8f969f2139b0d171c15a1026fad91010c430
+  GIT_TAG        5bbae2ff4850d71c8e7446fd0825318bbf2fdef6
 )
 
 fetch_content(

@@ -84,7 +84,9 @@ set(TIME_SOURCES
     ${musl_SOURCE_DIR}/src/time/wcsftime.c
     ${musl_SOURCE_DIR}/src/time/__year_to_secs.c
 )
-set(THREAD_SOURCES ${musl_SOURCE_DIR}/src/thread/__lock.c) #only for __lock __unlock
+set(THREAD_SOURCES 
+   ${musl_SOURCE_DIR}/src/thread/eos/__pthread_self.c
+   ${musl_SOURCE_DIR}/src/thread/__lock.c) #only for __lock __unlock
 
 set(INTERNAL_SOURCES ${musl_SOURCE_DIR}/src/internal/floatscan.c 
                      ${musl_SOURCE_DIR}/src/internal/intscan.c 
@@ -119,7 +121,6 @@ list(APPEND C_PRIVATE_INCLUDES
    ${musl_SOURCE_DIR}/arch/eos
    ${musl_SOURCE_DIR}/src/include
    ${musl_SOURCE_DIR}/src/internal
-   
 )
 
 add_library(cstdio STATIC ${STDIO_SOURCES})
@@ -138,4 +139,8 @@ add_custom_command(TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET
 add_custom_command(TARGET cstdio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio> ${BASE_BINARY_DIR}/lib)
 add_custom_command(TARGET cstdio-no-float POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio-no-float> ${BASE_BINARY_DIR}/lib)
 
-file(COPY ${musl_SOURCE_DIR}/include/ DESTINATION ${BASE_BINARY_DIR}/include/)
+# file(COPY ${musl_SOURCE_DIR}/include/ DESTINATION ${BASE_BINARY_DIR}/include/)
+file(GLOB_RECURSE libc_headers RELATIVE ${musl_SOURCE_DIR}/include ${musl_SOURCE_DIR}/include "*.h")
+foreach (f ${libc_headers})
+   configure_file(${musl_SOURCE_DIR}/include/${f} ${BASE_BINARY_DIR}/include/${f})
+endforeach()
