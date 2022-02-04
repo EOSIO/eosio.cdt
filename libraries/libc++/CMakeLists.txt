@@ -14,7 +14,7 @@ add_library(c++ "cxa_virtual_fallback.cpp"
            ${LIBCXXABI_SRC_DIR}/cxa_demangle.cpp
            ${LIBCXX_SRC_DIR}$<JOIN:${SRC_FILENAMES}, ${LIBCXX_SRC_DIR}>)
 target_compile_options(c++ PUBLIC -Wno-everything -frtti --no-missing-ricardian-clause)
-target_compile_definitions(c++ PRIVATE _LIBCPP_BUILDING_LIBRARY _LIBCXXABI_BUILDING_LIBRARY)
+target_compile_definitions(c++ PRIVATE _LIBCPP_USE_CLOCK_GETTIME _LIBCPP_BUILDING_LIBRARY _LIBCXXABI_BUILDING_LIBRARY)
 target_include_directories(c++ PRIVATE ${LIBCXX_SRC_DIR})
 
 set(_LIBCPP_HAS_NO_THREADS ON)
