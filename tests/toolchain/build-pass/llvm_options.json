@@ -1,0 +1,10 @@
+{
+  "tests" : [
+    {
+      "compile_flags": ["--mllvm=-debug-pass=Arguments"],
+      "expected" : {
+        "exit-code": 0
+      }
+    }
+  ]
+}

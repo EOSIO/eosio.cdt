@@ -365,6 +365,11 @@ static cl::opt<std::string> contract_name(
     cl::desc("Contract name"),
     cl::cat(EosioCompilerToolCategory));
 
+static cl::opt<std::string> mllvm(
+    "mllvm",
+    cl::desc("Attach LLVM options"),
+    cl::cat(EosioCompilerToolCategory));
+
 /// end c/c++ options
 
 /// begin c++ options
@@ -619,6 +624,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fno-cfl-aa");
 #endif
    }
+
    for ( auto input_filename : input_filename_opt ) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
@@ -950,6 +956,11 @@ static Options CreateOptions(bool add_defaults=true) {
       llvm::SmallString<256> fn = llvm::sys::path::filename(output_fn);
       llvm::sys::path::replace_extension(fn, "");
       abigen_contract = fn.str();
+   }
+
+   if (!mllvm.empty()) {
+      copts.emplace_back("-mllvm");
+      copts.emplace_back(mllvm);
    }
 
    for ( auto resource : resources ) {
