@@ -62,6 +62,12 @@ fetch_content(
   URL_HASH       SHA256=94ced8b72956591c4775ae2207a9763d3600b30d9d7446562c552f0a14a63be7
 )
 
+fetch_content(
+  libcxx
+  GIT_REPOSITORY https://github.com/eosio/libcxx
+  GIT_TAG        f2f81dfdf124592cebb93290fd61ea53590f5239
+)
+
 add_subdirectory(libc)
 add_subdirectory(libc++)
 add_subdirectory(softfloat)

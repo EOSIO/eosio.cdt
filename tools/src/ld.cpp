@@ -178,7 +178,7 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
          if (!opt_z || strncmp("stack-size", opt_z->getValue(), sizeof("stack-size")-1) != 0 ) {
             new_opts.emplace_back("-zstack-size=8192");
          }
-         new_opts.emplace_back("-lcstdio");
+         // new_opts.emplace_back("-lcstdio");
          new_opts.emplace_back("--allow-undefined-file="+eosio::cdt::whereami::where()+"/../eosio.imports");
       } 
 
@@ -321,11 +321,11 @@ int main(int argc, const char** argv) {
          return ret;
       }
 
-      if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
-         if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, show_commands)) {
-            return ret;
-         }
-      }
+      // if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/"+POSTPASS_NAME)) {
+      //    if (auto ret = blanc::exec_subprogram(POSTPASS_NAME, {"--profile="+std::to_string(_profile), output}, show_commands)) {
+      //       return ret;
+      //    }
+      // }
    } else {
       if (auto ret = blanc::exec_subprogram(eosio::cdt::whereami::where() + "/ld", args, show_commands)) {
          return ret;
