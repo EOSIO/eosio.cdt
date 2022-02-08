@@ -17,22 +17,51 @@
 #       -  'setvm'  handles vector of maps
 #       -  'setost' handles optional of set
 
-# eacho -e 'Make sure nodeos running properly\n'
-cleos create account eosio alice EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio bob EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio jane EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-read -p 'test accounts alice,bob,jane created' notcare
-    # notcare means we do not care an user input, notcare is used in this script for you to pause and examine the intermediate result
 
-# echo -e 'Get to the directory that has this doNestContainer.sh script\n'
-# cd ~/WorkNestedContainer/nested-container/nestcontn2a/
+#========================================
+# configuration section: Modify the following to suit your own environment
+# Here myContractPath is the local path that has nestcontn2a.cpp and this doNestContainer.sh
+#   and also $myContractPath/tupletest/ has tupletest.cpp
+myPubKey=EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+myContractPath=/path1/to/nestcontn2a/
+nodeosPath=/path2/to/nodeos
+eosio_cppPath=/path3/to/eosio-cpp
+#It is ok to use default cleos path
+#========================================
+
+# ===Modify the following options to run nodeos if necesssary
+$nodeosPath -e -p eosio \
+--plugin eosio::producer_plugin \
+--plugin eosio::producer_api_plugin \
+--plugin eosio::chain_api_plugin \
+--plugin eosio::http_plugin \
+--plugin eosio::state_history_plugin \
+--disable-replay-opts \
+--access-control-allow-origin='*' \
+--contracts-console \
+--http-validate-host=false \
+--verbose-http-errors >> nodeos.log 2>&1 &
+
+read -p 'nodeos restarted!' notcare
+  # notcare means we do not care an user input, notcare is used in this script for you to pause and examine the intermediate result
+echo -e '===Make sure nodeos is running properly, check nodeos.log if necessary\n'
+sleep 1
+
+cleos create account eosio alice $myPubKey
+cleos create account eosio bob $myPubKey
+cleos create account eosio jane $myPubKey
+read -p 'test accounts alice,bob,jane created' notcare
+
+
+echo -e 'Get to the directory that has this doNestContainer.sh script\n'
+cd $myContractPath
 
 echo -e '\n\n eosio-cpp is compiling contract nestcontn2a, please wait...\n'
-eosio-cpp nestcontn2a.cpp  #compile nestcontn2a.cpp to get updated .wasm and .abi
+$eosio_cppPath nestcontn2a.cpp  #compile nestcontn2a.cpp to get updated .wasm and .abi
 sleep 2
 
 # always use --verbose mode to launch cleos to display multi-line output and reveal some internals
-cleos --verbose create account eosio nestcontn2a EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+cleos --verbose create account eosio nestcontn2a $myPubKey -p eosio@active
 cleos --verbose set contract nestcontn2a ./ -p nestcontn2a@active
 read -p 'nestcontn2a.cpp is compiled and the contract nestcontn2a is set and loaded into block chain' notcare
 
@@ -52,9 +81,50 @@ cleos --verbose push action nestcontn2a prntst '["alice"]' -p alice@active
 cleos --verbose push action nestcontn2a prntst '["bob"]' -p bob@active
 read -p "verified action setst for set<uint16_t>" notcare
 
+echo -e "\n\n=========================pass simple struct using cleos"
+cleos --verbose push action nestcontn2a sets '["alice", {"_count":18, "_strID":"dumstr"}]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prnts '["alice"]' -p alice@active
+echo  -e "\t*******************************************************************************************"
+echo  -e "\tThe C++ struct mystruct with no base class  has following shortcut JSON input formats:"
+echo  -e "\tpair is a struct with fields names first-second"
+echo  -e "\tmap can be regarded as an array of structs with fields names key-value"
+echo  -e "\tso the shortcut input formats are applicable to struct, map, pair related types!"
+echo  -e "\tso the shortcut input formats are also applicable to the key of kv::map"
+echo  -e "\t\twhen the key of kv::map is type involving struct, map, pair"
+echo  -e "\t*******************************************************************************************\n"
+
+echo  -e  "Here in this .sh script, I list normal JSON input of mystruct followed by its shortcut JSON input."
+echo  -e  "In nestcontn2a.cpp, the action data for both input formats are the same,"
+echo  -e  "however in order to avoid being considered by nodeos as a Duplicate transaction error,"
+read  -p  "the action data for the shortcut JSON input format is slightly different from that of normal input format..." notcare
+  ## Another way to avoid Duplicate transaction error of nodoes is to put all shortcut JSON input formats after regular inputs setpp()
+
+cleos --verbose push action nestcontn2a sets '["alice", [19, "dumstr2"] ]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prnts '["alice"]' -p alice@active
+read -p "verified action sets for simple mystruct "  notcare
+
+echo -e "\n\n=========================pass pair<T1,T2> using cleos"
+cleos --verbose push action nestcontn2a setp '["alice", {"first":183, "second":269}]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntp '["alice"]' -p alice@active
+echo  -e "\tpair<T1,T2> has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setp '["alice", [184, 279]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntp '["alice"]' -p alice@active
+read -p "verified action setp for pair<uint16_t, uint16_t> "  notcare
+
 echo -e "\n\n=========================pass map<K,V> using cleos"
 cleos --verbose push action nestcontn2a setm '["alice", [{"key":"str1","value":"str1val"}, {"key":"str3","value":"str3val"}]]' -p alice@active
 cleos --verbose push action nestcontn2a setm '{"user":"jane", "m":[{"key":"str4", "value":"str4val"}, {"key":"str6", "value":"str6val"}]}' -p jane@active
+sleep 1
+cleos --verbose push action nestcontn2a prntm '["alice"]' -p alice@active
+cleos --verbose push action nestcontn2a prntm '["jane"]' -p jane@active
+echo  -e "\tmap<K,V> has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setm '["alice", [ ["str1x", "str1valx"], ["str3", "str3val"] ]]' -p alice@active
+cleos --verbose push action nestcontn2a setm '["jane",  [ ["str4x", "str4valx"], ["str6", "str6val"] ]]' -p jane@active
+echo -e "\tThe JSON input format of an empty map is [] as below:\n"
 cleos --verbose push action nestcontn2a setm '["bob", []]' -p bob@active
 sleep 1
 cleos --verbose push action nestcontn2a prntm '["alice"]' -p alice@active
@@ -62,20 +132,22 @@ cleos --verbose push action nestcontn2a prntm '["jane"]' -p jane@active
 cleos --verbose push action nestcontn2a prntm '["bob"]' -p bob@active
 read -p "verified action setm for map<string,string>:alice and jane both verified"  notcare
 
-echo -e "\n\n=========================pass simple struct using cleos"
-cleos --verbose push action nestcontn2a sets '["alice", {"_count":18, "_strID":"dumstr"}]' -p alice@active
-sleep 1
-cleos --verbose push action nestcontn2a  prnts '["alice"]' -p alice@active
-read -p "verified action sets for simple mystruct "  notcare
-
 echo -e "\n\n=========================pass struct of structs using cleos"
 cleos --verbose push action nestcontn2a sets2 '["alice", {"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prnts2 '["alice"]' -p alice@active
+echo  -e "\tstruct of structs has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a sets2 '["alice", [ [19, "dumstrx"], "dumstr2"] ]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prnts2 '["alice"]' -p alice@active
 read -p "verified action sets2 for complex mystruct2 "  notcare
 
 echo -e "\n\n=========================pass vector<mystruct> using cleos"
 cleos --verbose push action nestcontn2a setvs '["alice", [{"_count":18, "_strID":"dumstr"},{"_count":19, "_strID":"dumstr2"}]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntvs '["alice"]' -p alice@active
+echo  -e "\tvector<mystruct> has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setvs '["alice", [ [28, "dumstrx"],[29, "dumstr2"] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntvs '["alice"]' -p alice@active
 read -p "verified action setvs for vector<mystruct> "  notcare
@@ -88,13 +160,6 @@ sleep 1
 cleos --verbose push action nestcontn2a  prnto '["bob"]' -p bob@active
 cleos --verbose push action nestcontn2a  prnto '["alice"]' -p alice@active
 read -p "verified action seto for null case and non-null case of optional<string> "  notcare
-
-
-echo -e "\n\n=========================pass pair<T1,T2> using cleos"
-cleos --verbose push action nestcontn2a setp '["alice", {"first":183, "second":269}]' -p alice@active
-sleep 1
-cleos --verbose push action nestcontn2a  prntp '["alice"]' -p alice@active
-read -p "verified action setp for pair<uint16_t, uint16_t> "  notcare
 
 echo -e "\n**************************Starting to testing 2-layer nested containers...";
 
@@ -120,13 +185,21 @@ cleos --verbose push action nestcontn2a  prntsto '["alice"]' -p alice@active
 read -p "verified type defined setvo for set<op_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined set<map<K,V> > using cleos"
-cleos --verbose push action nestcontn2a setstm '["alice", [ [{"first":30,"second":300},{"first":31,"second":301}], [{"first":60,"second":600},{"first":61,"second":601}] ]]' -p alice@active
+cleos --verbose push action nestcontn2a setstm '["alice", [ [{"key":30,"value":300},{"key":31,"value":301}], [{"key":60,"value":600},{"key":61,"value":601}] ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntstm '["alice"]' -p alice@active
+echo  -e "\tset<map<K,V> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setstm '["alice", [ [ [36,306],[31,301] ], [ [68,608],[61,601] ] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntstm '["alice"]' -p alice@active
 read -p "verified type defined setstm for set<mp_uint16>"  notcare
 
 echo -e "\n\n=========================pass set<pair<T1,T2> > using cleos"
 cleos --verbose push action nestcontn2a setstp '["alice", [{"first":68, "second":128}, {"first":69, "second":129}]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntstp '["alice"]' -p alice@active
+echo  -e "\tset<pair<T1,T2> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setstp '["alice", [ [681,1281],[69,129] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntstp '["alice"]' -p alice@active
 read -p "verified setstp for set<pair<uint32_t, uint32_t> >"  notcare
@@ -154,13 +227,21 @@ cleos --verbose push action nestcontn2a  prntvo '["alice"]' -p alice@active
 read -p "verified type defined setvo for vector<op_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined vector<map<K,V> > using cleos"
-cleos --verbose push action nestcontn2a setvm '["alice", [ [{"first":10,"second":100},{"first":11,"second":101}], [{"first":80,"second":800},{"first":81,"second":9009}] ]]' -p alice@active
+cleos --verbose push action nestcontn2a setvm '["alice", [ [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntvm '["alice"]' -p alice@active
+echo  -e "\tvector<map<K,V> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setvm '["alice", [ [ [19,1009],[11,101] ], [ [809,800],[81,9009] ] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntvm '["alice"]' -p alice@active
 read -p "verified type defined setvm for vector<mp_uint16>"  notcare
 
-echo -e "\n\n=========================pass vector<pair<T1,T2> >using cleos"
+echo -e "\n\n=========================pass vector<pair<T1,T2> > using cleos"
 cleos --verbose push action nestcontn2a setvp '["alice", [{"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntvp '["alice"]' -p alice@active
+echo  -e "\tvector<pair<T1,T2> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setvp '["alice", [ [118,28],[119,29] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntvp '["alice"]' -p alice@active
 read -p "verified action setvp for vector<pair<uint32_t, uint32_t> >"  notcare
@@ -184,6 +265,12 @@ cleos --verbose push action nestcontn2a setov '["alice", [1001,2001, 3001]]' -p 
 sleep 1
 cleos --verbose push action nestcontn2a  prntov '["bob"]' -p bob@active
 cleos --verbose push action nestcontn2a  prntov '["alice"]' -p alice@active
+echo -e "\t*******Use explicitly nested type const optional<vector<uint16_t> > in setov2, it still works!"
+echo -e "\tbecause the new eosio-cpp compiler can ***automatically*** generate a typedef"
+read -p "\tB_vector_uint16_E for  vector<uint16_t> in optional<vector<uint16_t> >" notcare
+cleos --verbose push action nestcontn2a setov2 '["alice", [1006,2006, 3006]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntov '["alice"]' -p alice@active
 read -p "verified type defined setov for optional<vec_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined optional<optional<T> > using cleos"
@@ -195,7 +282,11 @@ cleos --verbose push action nestcontn2a  prntoo '["alice"]' -p alice@active
 read -p "verified type defined setoo for optional<op_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined optional<map<K,V> > using cleos"
-cleos --verbose push action nestcontn2a  setom '["alice",[{"first":10,"second":1000},{"first":11,"second":1001}] ]' -p alice@active
+cleos --verbose push action nestcontn2a  setom '["alice",[{"key":10,"value":1000},{"key":11,"value":1001}] ]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntom '["alice"]' -p alice@active
+echo  -e "\toptional<map<K,V> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a  setom '["alice",[ [16,1006], [11,1001] ] ]' -p alice@active
 cleos --verbose push action nestcontn2a  setom '["bob", null ]' -p bob@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntom '["alice"]' -p alice@active
@@ -205,6 +296,10 @@ read -p "verified type defined setom for optional<mp_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined optional<pair<T1,T2> > using cleos"
 cleos --verbose push action nestcontn2a setop '["alice", {"first":60, "second":61}]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntop '["alice"]' -p alice@active
+echo  -e "\toptional<pair<T1,T2> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setop '["alice", [68,69] ]' -p alice@active
 cleos --verbose push action nestcontn2a setop '["bob", null]' -p bob@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntop '["alice"]' -p alice@active
@@ -217,10 +312,18 @@ echo -e "\n\n=========================pass type-defined map<K,set<T> > using cle
 cleos --verbose push action nestcontn2a setmst '["alice", [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntmst '["alice"]' -p alice@active
+echo  -e "\tmap<K,set<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setmst '["alice", [ [26,[10,11,12,16]],  [27, [200,300]] ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntmst '["alice"]' -p alice@active
 read -p "verified type defined setmst for map<uint16_t, set_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined map<K,vector<T> > using cleos"
 cleos --verbose push action nestcontn2a setmv '["alice", [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntmv '["alice"]' -p alice@active
+echo  -e "\tmap<K,vector<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setmv '["alice", [  [28,[10,11,12,16]],  [29, [200,300]] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntmv '["alice"]' -p alice@active
 read -p "verified type defined setmv for map<uint16_t, vec_uint16>"  notcare
@@ -229,16 +332,28 @@ echo -e "\n\n=========================pass type-defined map<K,optional<T> > usin
 cleos --verbose push action nestcontn2a setmo '["alice", [{"key":10,"value":1000},{"key":11,"value":null}]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntmo '["alice"]' -p alice@active
+echo  -e "\tmap<K,optional<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setmo '["alice", [ [18,1000],[19,null] ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntmo '["alice"]' -p alice@active
 read -p "verified type defined setmo for map<uint16_t, op_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined map<K1,map<K2,V> > using cleos"
-cleos push action nestcontn2a setmm '["alice", [{"key":10,"value":[{"first":200,"second":2000}, {"first":201,"second":2001}] }, {"key":11,"value":[{"first":300,"second":3000}, {"first":301,"second":3001}] } ]]' -p alice@active
+cleos push action nestcontn2a setmm '["alice", [{"key":10,"value":[{"key":200,"value":2000}, {"key":201,"value":2001}] }, {"key":11,"value":[{"key":300,"value":3000}, {"key":301,"value":3001}] } ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntmm '["alice"]' -p alice@active
+echo  -e "\tmap<K1,map<K2,V> > has following shortcut JSON input format:\n"
+cleos push action nestcontn2a setmm '["alice", [  [18, [ [200,2000], [20,2001] ] ], [19, [ [300,3000], [301,3001] ] ]  ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntmm '["alice"]' -p alice@active
 read -p "verified type defined setmm for map<uint16_t, mp_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined map<K,pair<T> > using cleos"
 cleos --verbose push action nestcontn2a setmp '["alice", [{"key":36,"value":{"first":300, "second":301}}, {"key":37,"value":{"first":600, "second":601}} ]]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntmp '["alice"]' -p alice@active
+echo  -e "\tmap<K,pair<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setmp '["alice", [ [66, [300,301] ], [67, [600,601]] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntmp '["alice"]' -p alice@active
 read -p "verified type-defined setmp for map<uint16_t, pr_unit16> "  notcare
@@ -248,12 +363,18 @@ echo -e "\n****** 5. Testing pair - set,vector,optional,map,pair"
 
 echo -e "\n\n=========================pass pair<T1,set<T> > using cleos"
 cleos --verbose push action nestcontn2a setpst '["alice", {"first":20, "second":[200,201,202]}]' -p alice@active
+echo  -e "\tpair<T1,set<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setpst '["alice", [26, [200,201,206] ] ]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntpst '["alice"]' -p alice@active
 read -p "verified type-defined setpst for pair<uint32_t, set_uint16>"  notcare
 
 echo -e "\n\n=========================pass pair<T1,vector<T> > using cleos"
 cleos --verbose push action nestcontn2a setpv '["alice", {"first":10, "second":[100,101,102]}]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntpv '["alice"]' -p alice@active
+echo  -e "\tpair<T1,vector<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setpv '["alice", [18, [100,101,108] ] ]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntpv '["alice"]' -p alice@active
 read -p "verified type-defined setpv for pair<uint32_t, vec_uint16>"  notcare
@@ -264,16 +385,30 @@ cleos --verbose push action nestcontn2a setpo '["bob", {"first":70, "second":nul
 sleep 1
 cleos --verbose push action nestcontn2a  prntpo '["alice"]' -p alice@active
 cleos --verbose push action nestcontn2a  prntpo '["bob"]' -p bob@active
+echo  -e "\tpair<T1,optional<T> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setpo '["alice", [80,81] ]' -p alice@active
+cleos --verbose push action nestcontn2a setpo '["bob", [80, null] ]' -p bob@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntpo '["alice"]' -p alice@active
+cleos --verbose push action nestcontn2a  prntpo '["bob"]' -p bob@active
 read -p "verified type-defined setpo for pair<uint32_t, op_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined pair<T1,map<K,V> > using cleos"
-cleos --verbose push action nestcontn2a setpm '["alice", {"key":6, "value":[{"first":20,"second":300}, {"first":21,"second":301}] }]' -p alice@active
+cleos --verbose push action nestcontn2a setpm '["alice", {"first":6, "second":[{"key":20,"value":300}, {"key":21,"value":301}] }]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntpm '["alice"]' -p alice@active
+echo  -e "\tpair<T1,map<K,V> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setpm '["alice", [7, [[20,300], [28,308]] ] ]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntpm '["alice"]' -p alice@active
 read -p "verified type-defined setpm for pair<uint16_t, mp_uint16> "  notcare
 
 echo -e "\n\n=========================pass pair<T1,pair<T2,T3> > using cleos"
-cleos --verbose push action nestcontn2a setpp '["alice", {"key":30, "value":{"first":301, "second":302} }]' -p alice@active
+cleos --verbose push action nestcontn2a setpp '["alice", {"first":30, "second":{"first":301, "second":302} }]' -p alice@active
+sleep 1
+cleos --verbose push action nestcontn2a  prntpp '["alice"]' -p alice@active
+echo  -e "\tpair<T1,pair<T2,T3> > has following shortcut JSON input format:\n"
+cleos --verbose push action nestcontn2a setpp '["alice", [36, [307, 308] ]]' -p alice@active
 sleep 1
 cleos --verbose push action nestcontn2a  prntpp '["alice"]' -p alice@active
 read -p "verified type-defined setpp for pair<uint16_t, pr_unit16>"  notcare
@@ -301,10 +436,10 @@ echo -e 'Get to the directory that has tupletest.cpp\n'
 pwd
 echo -e '\n******Entered tupletest/ subdirectory to compile and then publish tupletest contract...\n'
 echo -e '\n\n eosio-cpp is compiling contract tupletest, please wait...\n'
-eosio-cpp tupletest.cpp
+$eosio_cppPath tupletest.cpp
     #  eosio-cpp compiler has to have the fix of EPE-972, otherwise above command will print out errors
 
-cleos --verbose create account eosio tupletest EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+cleos --verbose create account eosio tupletest $myPubKey -p eosio@active
 cleos --verbose set contract tupletest ./ -p tupletest@active
 read -p 'tupletest.cpp is compiled and the contract tupletest is set and loaded into block chain' notcare
 
@@ -344,10 +479,18 @@ echo -e "\n\n=========================pass type-defined map of tuple<Ts...>  usi
 cleos --verbose push action tupletest setmt '["alice", [{"key":1,"value":[10,11]},  {"key":2,"value":[200,300]} ]]' -p alice@active
 sleep 1
 cleos --verbose push action tupletest  prntmt '["alice"]' -p alice@active
+echo  -e "\tmap of tuple<Ts...> has following shortcut JSON input format:\n"
+cleos --verbose push action tupletest setmt '["alice", [[16,[10,11]],  [26,[200,300]] ]]' -p alice@active
+sleep 1
+cleos --verbose push action tupletest  prntmt '["alice"]' -p alice@active
 read -p "verified type defined setmt for map<uint16_t, tup_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined pair of tuple<Ts...>  using cleos"
 cleos --verbose push action tupletest setpt '["alice", {"first":10, "second":[100,101]}]' -p alice@active
+sleep 1
+cleos --verbose push action tupletest  prntpt '["alice"]' -p alice@active
+echo  -e "\tpair of tuple<Ts...> has following shortcut JSON input format:\n"
+cleos --verbose push action tupletest setpt '["alice", [16, [108,109]]]' -p alice@active
 sleep 1
 cleos --verbose push action tupletest  prntpt '["alice"]' -p alice@active
 read -p "verified type defined setpt for pair<uint32_t, tup_uint16>"  notcare
@@ -373,7 +516,6 @@ cleos --verbose push action tupletest  prnttst '["alice"]' -p alice@active
 read -p "verified type defined settst for tuple<uint16_t, set_uint16, set_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined tuple of optional<T>  using cleos"
-echo -e "\n*****Attention: tuple of optional<T> is supported, though vector<optional<T> >, set<optional<T> > are NOT yet supported in nestcontn2a.cpp!\n"
 cleos --verbose push action tupletest  setto '["alice", [100, null, 200, null, 300]]' -p alice@active
 cleos --verbose push action tupletest  setto '["bob", [null, null, 10, null, 20]]' -p bob@active
 sleep 1
@@ -382,21 +524,31 @@ cleos --verbose push action tupletest  prntto '["bob"]' -p bob@active
 read -p "verified type defined settst for tuple<uint16_t, set_uint16, set_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined tuple of map<K,V>  using cleos"
-echo -e "\n*****Note: The input format of settm is different from that of setvm in nestcontn2a.cpp!\n"
 cleos --verbose push action tupletest settm '["alice", [126, [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
+sleep 1
+cleos --verbose push action tupletest  prnttm '["alice"]' -p alice@active
+echo  -e "\ttuple of map<K,V> has following shortcut JSON input format:\n"
+cleos --verbose push action tupletest settm '["alice", [226, [[10, 106],[11, 1018]], [[80,800],[81, 9009]] ]]' -p alice@active
 sleep 1
 cleos --verbose push action tupletest  prnttm '["alice"]' -p alice@active
 read -p "verified type defined settm for tuple<uint16_t, mp_uint16, mp_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined tuple of pair<T1,T2>  using cleos"
-echo -e "\n******Note: The input format of settp is different from that of setvp in nestcontn2a.cpp!\n"
-cleos --verbose push action tupletest settp '["alice", [127, {"key":18, "value":28}, {"key":19, "value":29}]]' -p alice@active
+cleos --verbose push action tupletest settp '["alice", [127, {"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+sleep 1
+cleos --verbose push action tupletest  prnttp '["alice"]' -p alice@active
+echo  -e "\ttuple of  pair<T1,T2> has following shortcut JSON input format:\n"
+cleos --verbose push action tupletest settp '["alice", [218, [16, 26], [19, 29] ]]' -p alice@active
 sleep 1
 cleos --verbose push action tupletest  prnttp '["alice"]' -p alice@active
 read -p "verified type defined settp for tuple<uint16_t, pr_uint16, pr_uint16>"  notcare
 
 echo -e "\n\n=========================pass type-defined tuple of mixed types tuple<string, vec_uint16, pr_uint16>  using cleos"
-cleos --verbose push action tupletest settmisc '["alice", ["strHere", [10,11,12,16], {"key":86,"value":96}] ]' -p alice@active
+cleos --verbose push action tupletest settmisc '["alice", ["strHere", [10,11,12,16], {"first":86,"second":96}] ]' -p alice@active
+sleep 1
+cleos --verbose push action tupletest  prnttmisc '["alice"]' -p alice@active
+echo  -e "\ttuple<string, vec_uint16, pr_uint16>  has following shortcut JSON input format as pr_uint16 is of type pair<T1,T2>:\n"
+cleos --verbose push action tupletest settmisc '["alice", ["strHerex", [10,11,12,182], [86,961]] ]' -p alice@active
 sleep 1
 cleos --verbose push action tupletest  prnttmisc '["alice"]' -p alice@active
 read -p "verified type defined settmisc for tuple<string, vec_uint16, pr_uint16>"  notcare

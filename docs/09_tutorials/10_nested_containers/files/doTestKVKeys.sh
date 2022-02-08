@@ -17,27 +17,57 @@
 #   make sure that there is a pause after running nodeos by adding a statement like 'sleep 2',
 #   to avoid the error message curl: (7) Failed to connect to 127.0.0.1 port 8888: Connection refused
 #
-# eacho -e 'Make sure nodeos running properly, then start enable-kv.sh ...\n'
+
+#========================================
+# configuration section: Modify the following to suit your own environment
+# Here myContractPath is the local path that has testkvkeys.cpp and this doTestKVKeys.sh
+myPubKey=EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+myContractPath=/path1/to/testkvkeys/
+nodeosPath=/path2/to/nodeos
+eosio_cppPath=/path3/to/eosio-cpp
+#It is ok to use default cleos path
+#========================================
+
+# ===Modify the following options to run nodeos if necesssary
+$nodeosPath -e -p eosio \
+--plugin eosio::producer_plugin \
+--plugin eosio::producer_api_plugin \
+--plugin eosio::chain_api_plugin \
+--plugin eosio::http_plugin \
+--plugin eosio::state_history_plugin \
+--disable-replay-opts \
+--access-control-allow-origin='*' \
+--contracts-console \
+--http-validate-host=false \
+--verbose-http-errors >> nodeos.log 2>&1 &
+
+read -p 'nodeos restarted!' notcare
+  # notcare means we do not care an user input, notcare is used in this script for you to pause and examine the intermediate result
+echo -e '===Make sure nodeos is running properly, check nodeos.log if necessary\n'
+sleep 1
+
+# === Modify the following to run enable-kv.sh
+# eacho -e 'After nodeos runs properly, then start enable-kv.sh ...\n'
 # cd ~/Work/eos/contracts/enable-kv/
 # ./enable-kv.sh -c ~/Work/eos/build/contracts/contracts/
 # echo -e 'enable-kv.sh is executed, now the nodeos has the new protocol feature: KV_DATABASE ******\n\n'
 
-cleos create account eosio alice EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio bob EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio jane EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio alice $myPubKey
+cleos create account eosio bob $myPubKey
+cleos create account eosio jane $myPubKey
 read -p 'test accounts alice,bob,jane created' notcare
-    # notcare means we do not care an user input, notcare is used in this script for you to pause and examine the intermediate result
 
-#echo -e 'Get to the directory that has this doTestKVKeys.sh script\n'
-#cd ~/WorkNestedContainer/nested-container/nestcontn2kv/testkvkeys/
+
+echo -e 'Get to the directory that has this doTestKVKeys.sh script\n'
+cd $myContractPath
 
 
 echo -e '\n\n eosio-cpp is compiling contract testkvkeys, please wait...\n'
-eosio-cpp testkvkeys.cpp  #compile testkvkeys.cpp to get updated .wasm and .abi
+$eosio_cppPath testkvkeys.cpp  #compile testkvkeys.cpp to get updated .wasm and .abi
 sleep 2
 
 # always use --verbose mode to launch cleos to display multi-line output and reveal some internals
-cleos --verbose create account eosio testkvkeys EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+cleos --verbose create account eosio testkvkeys $myPubKey -p eosio@active
 cleos --verbose set contract testkvkeys ./ -p testkvkeys@active
 read -p 'testkvkeys.cpp is compiled and the contract testkvkeys is set and loaded into block chain' notcare
 
@@ -94,13 +124,20 @@ cleos --verbose push action testkvkeys setv4 '[{"_count":11, "_strID":"dumstr1"}
 sleep 1
 cleos --verbose push action testkvkeys prntv4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
 cleos --verbose push action testkvkeys prntv4 '[{"_count":11, "_strID":"dumstr1"}]' -p bob@active
+echo  -e "\tC++ struct mystructrefl with no base class when serving as the key of kv::map, has following shortcut JSON input format:\n"
+echo  -e "\tThe key mystructrefl has a value a little different from previous setv4, to avoid nodeos Duplicate transaction error***"
+cleos --verbose push action testkvkeys setv4 '[[19, "dumstrx"],[104,204,304,604]]' -p alice@active
+cleos --verbose push action testkvkeys setv4 '[[12, "dumstr1x"], []]' -p bob@active
+sleep 1
+cleos --verbose push action testkvkeys prntv4 '[[19, "dumstrx"]]' -p alice@active
+cleos --verbose push action testkvkeys prntv4 '[[12, "dumstr1x"]]' -p bob@active
 read -p 'verified kv::map<"kvtb4"_n, mystructrefl, person2kv> when its key type is mystructrefl'  notcare
 
 
 echo -e "\n\nUse get kv_table to verify kvtb4 where the key type is self-defined mystruct with a CDT_REFLECT  wrapper******"
-echo -e "The output is in a JSON format for 2 instances of mystructrefl:"
+echo -e "The output is in a JSON format for 4 instances of mystructrefl:"
 cleos get kv_table testkvkeys kvtb4 map.index
-read -p "There are 2 rows in the output, each row starts with data member v" notcare
+read -p "There are 4 rows in the output, each row starts with data member v" notcare
 
 echo -e "\n\n=========================Testing when kv::map key type is eosio::asset"
 cleos --verbose push action testkvkeys setv5 '["1236 DOLLAR",[105,205,305,605]]' -p alice@active
@@ -283,7 +320,7 @@ cleos --verbose push action testkvkeys setv32 '[[20,21,22],[]]' -p bob@active
 sleep 1
 cleos --verbose push action testkvkeys prntv32 '[[10,11]]' -p alice@active
 cleos --verbose push action testkvkeys prntv32 '[[20,21,22]]' -p bob@active
-read -p 'verified eosio::kv::map<"kvtb32"_n,  std::deque<uint16_t>, tbl2>  when its key type is std::vector<uint16_t>'  notcare
+read -p 'verified eosio::kv::map<"kvtb32"_n,  std::deque<uint16_t>, tbl2>  when its key type is std::deque<uint16_t>'  notcare
 
 echo -e "\n\nUse get kv_table to verify kvtb32 where the key type is std::deque<T>  ******"
 cleos get kv_table testkvkeys kvtb32 map.index
@@ -296,11 +333,17 @@ cleos --verbose push action testkvkeys setv31 '[[{"key":21,"value":201}, {"key":
 sleep 1
 cleos --verbose push action testkvkeys prntv31 '[[{"key":11,"value":101}, {"key":12,"value":102}]]' -p alice@active
 cleos --verbose push action testkvkeys prntv31 '[[{"key":21,"value":201}, {"key":22,"value":202}]]' -p bob@active
-read -p 'verified  eosio::kv::map<"kvtb31"_n, std::map<uint16_t, uint16_t>, tbl2> when its key type is std::vector<uint16_t>'  notcare
+echo  -e "\tstd::map<K,V> when serving as the key of kv::map, has following shortcut JSON input format:\n"
+cleos --verbose push action testkvkeys setv31 '[[[16,106], [17,107]],[119,219,319,619]]' -p alice@active
+cleos --verbose push action testkvkeys setv31 '[[[26,206], [23,203]],[]]' -p bob@active
+sleep 1
+cleos --verbose push action testkvkeys prntv31 '[[ [16,106], [17,107] ]]' -p alice@active
+cleos --verbose push action testkvkeys prntv31 '[[[26,206], [23,203]]]' -p bob@active
+read -p 'verified  eosio::kv::map<"kvtb31"_n, std::map<uint16_t, uint16_t>, tbl2> when its key type is std::map<uint16_t, uint16_t>'  notcare
 
 echo -e "\n\nUse get kv_table to verify kvtb31 where the key type is std::map<K,V>  ******"
 cleos get kv_table testkvkeys kvtb31 map.index
-read -p "There are 2 rows in the output, each row starts with data member v" notcare
+read -p "There are 4 rows in the output, each row starts with data member v" notcare
 
 
 echo -e "\n********* Test the cases where the key of kv::map is a TWO-layer nested container****************** "
@@ -338,12 +381,18 @@ cleos --verbose push action testkvkeys setv41 '[{"_structfld":{"_count":19, "_st
 sleep 1
 cleos --verbose push action testkvkeys prntv41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
 cleos --verbose push action testkvkeys prntv41 '[{"_structfld":{"_count":19, "_strID":"dumstrONE"}, "_strID2":"dumstrTWO2"}]' -p bob@active
+echo  -e "\tC++ complex struct mystructrefl2 with no base class when serving as the key of kv::map, has following shortcut JSON input format:\n"
+cleos --verbose push action testkvkeys setv41 '[[ [28, "dumstrx"], "dumstr2x"],[118,218,318,618]]' -p alice@active
+cleos --verbose push action testkvkeys setv41 '[[ [29, "dumstrONEx"], "dumstrTWO2x"], []]' -p bob@active
+sleep 1
+cleos --verbose push action testkvkeys prntv41 '[[ [28, "dumstrx"], "dumstr2x"]]' -p alice@active
+cleos --verbose push action testkvkeys prntv41 '[[ [29, "dumstrONEx"], "dumstrTWO2x"]]' -p bob@active
 read -p 'verified  eosio::kv::map<"kvtb41"_n, mystructrefl2, tbl2> when its key type is mystructrefl2'  notcare
 
 
 echo -e "\n\nUse get kv_table to verify kvtb41 where the key type is mystructrefl2  ******"
 cleos get kv_table testkvkeys kvtb41 map.index
-read -p "There are 2 rows in the output, each row starts with data member v" notcare
+read -p "There are 4 rows in the output, each row starts with data member v" notcare
 
 echo -e "\n********* Test the case where CDT_REFLECT(...) is used in the VALUE part (not the key  part)of kv::map****************** "
 cleos --verbose push action testkvkeys setvals55 '[11,"name1", "1236 DOLLAR", {"_count":26, "_strID":"dumstr1"}]' -p alice@active

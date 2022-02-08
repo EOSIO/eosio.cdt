@@ -21,6 +21,10 @@
  *
  *      6) Here I show how a complex struct of struct  mystructrefl2  uses  CDT_REFLECT(...)
  *      7) Also I have verified structs wrapping CDT_REFLECT(...) can also be the VALUE part of kv::map
+ *      8) When the key of kv::map is a type involving struct,map,pair, the key can have a shortcut JSON input format,
+ *              in short, in kv::map, if its key part or value part is a type involving struct,map,pair,
+ *              then shortcut JSON input formats can be used.
+ *              See nestcontn2kv.cpp for more examples
  *
  * Attention:
  *   1) Please follow https://github.com/EOSIO/eos/tree/develop/contracts/enable-kv to enable key-value support of nodeos first
@@ -375,7 +379,12 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
 
 
         // === Use self-defined mystructrefl as the key of kv::map
-        //Example: cleos --verbose push action testkvkeys get4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+        /*Example:
+         *
+         *      cleos --verbose push action testkvkeys get4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+         *  or shortcut:
+         *      cleos --verbose push action testkvkeys get4 '[[18, "dumstr"]]' -p alice@active
+         */
         [[eosio::action]]
         person2kv get4(mystructrefl id)
         {
@@ -383,8 +392,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
         }
 
         /*Examples:
-        * cleos --verbose push action testkvkeys setv4 '[{"_count":18, "_strID":"dumstr"},[104,204,304,604]]' -p alice@active
-        * cleos --verbose push action testkvkeys setv4 '[{"_count":11, "_strID":"dumstr1"}, []]' -p bob@active
+        *   cleos --verbose push action testkvkeys setv4 '[{"_count":18, "_strID":"dumstr"},[104,204,304,604]]' -p alice@active
+        *   cleos --verbose push action testkvkeys setv4 '[{"_count":11, "_strID":"dumstr1"}, []]' -p bob@active
+        * or shortcut:
+        *   cleos --verbose push action testkvkeys setv4 '[[18, "dumstr"],[104,204,304,604]]' -p alice@active
+        *   cleos --verbose push action testkvkeys setv4 '[[11, "dumstr1"], []]' -p bob@active
         */
         [[eosio::action]]
         void setv4(mystructrefl id, const vector<uint16_t>& v)
@@ -396,9 +408,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
 
         /*Examples:
         *  cleos --verbose push action testkvkeys prntv4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+        *   or its shortcut: cleos --verbose push action testkvkeys prntv4 '[[18, "dumstr"]]' -p alice@active
         *      output: >> size of stored v:4 vals:104,204,304,604,
         *
         *  cleos --verbose push action testkvkeys prntv4 '[{"_count":11, "_strID":"dumstr1"}]' -p bob@active
+        *   or its shortcut: cleos --verbose push action testkvkeys prntv4 '[[11, "dumstr1"]]' -p bob@active
         *      output: >> size of stored v:0 vals:
         */
         [[eosio::action]]
@@ -914,7 +928,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
         }
 
         // === Use std::map<K,V> as the key of kv::map
-        //Example: cleos --verbose push action testkvkeys get31 '[[{"key":11,"value":101}, {"key":12,"value":102}]]' -p alice@active
+        /*Example:
+         *      cleos --verbose push action testkvkeys get31 '[[{"key":11,"value":101}, {"key":12,"value":102}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action testkvkeys get31 '[[[11,101], [12, 102]]]' -p alice@active
+         */
         [[eosio::action]]
         tbl2 get31(std::map<uint16_t, uint16_t> id)
         {
@@ -924,7 +942,9 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
         /* Examples:
         *    cleos --verbose push action testkvkeys setv31 '[[{"key":11,"value":101}, {"key":12,"value":102}],[119,219,319,619]]' -p alice@active
         *    cleos --verbose push action testkvkeys setv31 '[[{"key":21,"value":201}, {"key":22,"value":202}],[]]' -p bob@active
-        *
+        * or shortcut:
+        *    cleos --verbose push action testkvkeys setv31 '[[[11,101], [17,107]],[119,219,319,619]]' -p alice@active
+        *    cleos --verbose push action testkvkeys setv31 '[[[21,201], [23,203]],[]]' -p bob@active
         * Notes:
         *   1) std::map<K,V> can be the key of kv::map, because the following is coded
         *      in eosio.cdt/libraries/eosiolib/core/eosio/key_utils.hpp:
@@ -941,9 +961,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
 
          /*Examples:
         *  cleos --verbose push action testkvkeys prntv31 '[[{"key":11,"value":101}, {"key":12,"value":102}]]' -p alice@active
+        *   or its shortcut: cleos --verbose push action testkvkeys prntv31 '[[ [11,101], [12,102] ]]' -p alice@active
         *      output: >> size of stored v:4 vals:119,219,319,619,
         *
         *  cleos --verbose push action testkvkeys prntv31 '[[{"key":21,"value":201}, {"key":22,"value":202}]]' -p bob@active
+        *    or its shortcut: cleos --verbose push action testkvkeys prntv31 '[[[21,201], [22,202]]]' -p bob@active
         *      output: >> size of stored v:0 vals:
         */
         [[eosio::action]]
@@ -1068,7 +1090,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
 
 
         // === Use mystructrefl2, which is a struct of struct as the key of kv::map
-        //Example: cleos --verbose push action testkvkeys get41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
+        /*Example:
+         *      cleos --verbose push action testkvkeys get41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action testkvkeys get41 '[[[18, "dumstr"], "dumstr2"]]' -p alice@active
+         */
         [[eosio::action]]
         tbl2 get41(mystructrefl2 id)
         {
@@ -1076,8 +1102,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
         }
 
         /*Examples:
-        * cleos --verbose push action testkvkeys setv41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"},[118,218,318,618]]' -p alice@active
-        * cleos --verbose push action testkvkeys setv41 '[{"_structfld":{"_count":19, "_strID":"dumstrONE"}, "_strID2":"dumstrTWO2"}, []]' -p bob@active
+        *    cleos --verbose push action testkvkeys setv41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"},[118,218,318,618]]' -p alice@active
+        *    cleos --verbose push action testkvkeys setv41 '[{"_structfld":{"_count":19, "_strID":"dumstrONE"}, "_strID2":"dumstrTWO2"}, []]' -p bob@active
+        * or shortcut:
+        *    cleos --verbose push action testkvkeys setv41 '[[ [18, "dumstr"], "dumstr2x"],[118,218,318,618]]' -p alice@active
+        *    cleos --verbose push action testkvkeys setv41 '[[ [19, "dumstrONE"], "dumstrTWO2x"], []]' -p bob@active
         */
         [[eosio::action]]
         void setv41(mystructrefl2 id, const vector<uint16_t>& v)
@@ -1089,9 +1118,11 @@ class [[eosio::contract("testkvkeys")]] testkvkeys : public eosio::contract {
 
         /*Examples:
         *  cleos --verbose push action testkvkeys prntv41 '[{"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
+        *   or its shortcut:  cleos --verbose push action testkvkeys prntv41 '[[ [18, "dumstr"], "dumstr2"]]' -p alice@active
         *      output: >> size of stored v:4 vals:118,218,318,618,
         *
         *  cleos --verbose push action testkvkeys prntv41 '[{"_structfld":{"_count":19, "_strID":"dumstrONE"}, "_strID2":"dumstrTWO2"}]' -p bob@active
+        *    or its shortcut: cleos --verbose push action testkvkeys prntv41 '[[ [19, "dumstrONE"], "dumstrTWO2"]]' -p bob@active
         *      output: >> size of stored v:0 vals:
         */
         [[eosio::action]]
