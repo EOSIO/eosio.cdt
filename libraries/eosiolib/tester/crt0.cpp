@@ -10,7 +10,7 @@ extern "C" __attribute__((eosio_wasm_entry)) int start(void (*f)()) {
    std::vector<char*> argv;
    argv.push_back(buf);
    for(std::string& s : args) {
-      argv.push_back(const_cast<char*>(s.data()));
+      argv.push_back(const_cast<char*>(s.c_str()));
    }
    return main(argv.size(), argv.data());
 }
