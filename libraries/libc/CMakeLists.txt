@@ -140,7 +140,7 @@ add_custom_command(TARGET cstdio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<T
 add_custom_command(TARGET cstdio-no-float POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio-no-float> ${BASE_BINARY_DIR}/lib)
 
 # file(COPY ${musl_SOURCE_DIR}/include/ DESTINATION ${BASE_BINARY_DIR}/include/)
-file(GLOB_RECURSE libc_headers RELATIVE ${musl_SOURCE_DIR}/include ${musl_SOURCE_DIR}/include "*.h")
+file(GLOB_RECURSE libc_headers RELATIVE ${musl_SOURCE_DIR}/include "${musl_SOURCE_DIR}/include/*.h")
 foreach (f ${libc_headers})
    configure_file(${musl_SOURCE_DIR}/include/${f} ${BASE_BINARY_DIR}/include/${f})
 endforeach()
