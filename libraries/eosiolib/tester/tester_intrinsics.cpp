@@ -154,3 +154,26 @@ namespace internal_use_do_not_use {
    } // extern "C"
 } // namespace internal_use_do_not_use
 } // namespace eosio
+
+// code coverage functions
+namespace eosio {
+extern "C" {
+   __attribute__((eosio_wasm_import))
+   void coverage_inc_fun_cnt(uint64_t code, uint32_t file_num, uint32_t func_num);
+
+   __attribute__((eosio_wasm_import))
+   void coverage_inc_line_cnt(uint64_t code, uint32_t file_num, uint32_t line_num);
+
+   __attribute__((eosio_wasm_import))
+   uint32_t coverage_get_fun_cnt(uint64_t code, uint32_t file_num, uint32_t func_num);
+
+   __attribute__((eosio_wasm_import))
+   uint32_t coverage_get_line_cnt(uint64_t code, uint32_t file_num, uint32_t line_num);
+
+   __attribute__((eosio_wasm_import))
+   void coverage_dump(uint32_t n);
+
+   __attribute__((eosio_wasm_import))
+   void coverage_reset();
+} // extern "C"
+} // namespace
