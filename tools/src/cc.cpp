@@ -148,8 +148,10 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          Args.eraseArg(OPT_contract);
       } else if (output.size()) {
          llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(output);
-         llvm::sys::path::replace_extension(fn, "");
          contract_name = fn.str().str();
+         auto pos = contract_name.find('.');
+         if (pos != std::string::npos) 
+            contract_name.resize(pos);
       }
 
       if (auto arg = Args.getLastArgNoClaim(OPT_abi_version)) {
