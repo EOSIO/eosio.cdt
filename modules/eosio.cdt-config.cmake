@@ -9,13 +9,7 @@ if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "Off")
 endif()
 include(EosioCDTMacros)
 include(EosioTargets)  
-set(crt0_o ${CMAKE_CURRENT_LIST_DIR}/../../crt0.o) 
-set_source_files_properties(
-  ${crt0_o}
-  PROPERTIES
-  EXTERNAL_OBJECT true
-  GENERATED true
-)    
+
 
 function(EXTRACT_MAJOR_MINOR_FROM_VERSION version success major minor)
    string(REGEX REPLACE "^([0-9]+)\\..+$" "\\1" _major "${version}")

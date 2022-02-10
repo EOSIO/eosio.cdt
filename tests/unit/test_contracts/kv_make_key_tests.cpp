@@ -95,8 +95,8 @@ public:
       .tstring = "e",
       .tui64 = 3,
       .ti32 = -2,
-      .tfloat = 187234,
       .tui128 = (static_cast<uint128_t>(1) << 127) - 1,
+      .tfloat = 187234,
       .tdouble = 1872340000,
       .tstruct = { 3, "b" },
       .ttuple = { 100, 33.43, "abc"}

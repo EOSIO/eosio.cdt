@@ -16,32 +16,22 @@ target_include_directories(eosio PUBLIC $<BUILD_INTERFACE:${boost_SOURCE_DIR}>
                                         $<INSTALL_INTERFACE:include/eosiolib/core> 
                                         $<INSTALL_INTERFACE:include/eosiolib/contracts> 
                                         $<INSTALL_INTERFACE:include/abieos>
+                                 INTERFACE
+                                        $<$<COMPILE_LANGUAGE:C>:$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/capi>>
+                                        $<$<COMPILE_LANGUAGE:C>:$<INSTALL_INTERFACE:include/eosiolib/capi>>
 )
 
 add_library(eosio_malloc
             malloc.cpp)
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
-target_compile_definitions(eosio_malloc PUBLIC __eosio_cdt__)
 target_compile_options(eosio_malloc PRIVATE --no-missing-ricardian-clause)
-target_include_directories(eosio_malloc PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
-                                               $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/include>
-                                               $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/external/rapidjson/include>
-                                               $<INSTALL_INTERFACE:include/eosiolib/core> 
-                                               $<INSTALL_INTERFACE:include/abieos>
-)
+target_link_libraries(eosio_malloc PUBLIC eosio)
             
 add_library(eosio_dsm
             simple_malloc.cpp)
-target_compile_definitions(eosio_dsm PUBLIC __eosio_cdt__)
 target_compile_options(eosio_dsm PRIVATE --no-missing-ricardian-clause)
-target_include_directories(eosio_dsm PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
-                                            $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/include>
-                                            $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/external/rapidjson/include>
-                                            $<INSTALL_INTERFACE:include/eosiolib/core> 
-                                            $<INSTALL_INTERFACE:include/abieos> 
-)
-                      
-
+target_link_libraries(eosio_dsm PUBLIC eosio)
+                     
 add_library(eosio_cmem
             memory.cpp)
 target_compile_options(eosio_cmem PRIVATE --no-missing-ricardian-clause)
@@ -59,6 +49,7 @@ target_include_directories(eosio_tester PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT
 )
 target_link_libraries(eosio_tester PUBLIC eosio
                                    INTERFACE eosio_dsm eosio_rt eosio_cmem softfloat)
+target_link_options(eosio_tester INTERFACE -Wl,--entry,initialize -Wl,--export,start -Wl,--export-table)
 
 add_library(eosio_embed
             tester/fpconv.c
@@ -92,6 +83,10 @@ add_custom_command(
    COMMAND_EXPAND_LISTS
 )
 add_custom_target(crt0 DEPENDS ${BASE_BINARY_DIR}/lib/crt0.o)
+
+target_sources(eosio_tester INTERFACE $<BUILD_INTERFACE:${BASE_BINARY_DIR}/lib/crt0.o>
+                                      $<INSTALL_INTERFACE:lib/crt0.o>)
+
 add_dependencies(eosio_tester crt0)
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 

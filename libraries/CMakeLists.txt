@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(eosio_libraries)
-include(FetchContent)
 
 find_program(CCACHE_FOUND ccache)
 if (CCACHE_FOUND)
@@ -11,20 +10,10 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN})
 include(EosioCDTMacros)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../modules/fetch_content.cmake)
 
 set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -O3 -Wall ")
 set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -O3 -Wall ")
-
-macro(fetch_content name)
-  FetchContent_Declare(
-    ${name}
-    ${ARGN}
-  )
-  FetchContent_GetProperties(${name})
-  if(NOT ${name}_POPULATED)
-    FetchContent_Populate(${name})
-  endif()
-endmacro()
 
 fetch_content(
   abieos
@@ -78,5 +67,5 @@ install(EXPORT eosio
         DESTINATION lib/cmake/blanc
         FILE EosioTargets.cmake)
 
-export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat 
+export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat
        FILE ${EOSIO_CDT_BIN}/EosioTargets.cmake)

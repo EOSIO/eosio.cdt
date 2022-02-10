@@ -54,47 +54,39 @@ find_package(Clang REQUIRED)
 
 set(BUILD_TESTS FALSE CACHE BOOL "Build unit tests")
 
-list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
+list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR} ${CMAKE_SOURCE_DIR}/modules)
+
 include(AddLLVM)
+include(fetch_content)
+include(BlancExecutableNames)
 
-if (NOT IS_DIRECTORY "${llvm_SOURCE_DIR}")
-
-  FetchContent_Declare(
-    llvm
-    URL            https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.0.tar.gz
-    URL_HASH       SHA256=a1131358f1f9f819df73fa6bff505f2c49d176e9eef0a3aedd1fdbce3b4630e8        
-  )
-
-  FetchContent_GetProperties(llvm)
-  if(NOT llvm_POPULATED)
-    FetchContent_Populate(llvm)
-  endif()
-endif()
+fetch_content(
+  llvm
+  URL            https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.0.tar.gz
+  URL_HASH       SHA256=a1131358f1f9f819df73fa6bff505f2c49d176e9eef0a3aedd1fdbce3b4630e8          
+)
 
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-FetchContent_Declare(
+add_content(
   wabt
   GIT_REPOSITORY https://github.com/WebAssembly/wabt
   GIT_TAG        830d32a41449278cacb0bf17530618d47c43340b       
 )
 
-FetchContent_MakeAvailable(wabt)
-
-FetchContent_Declare(
+fetch_content(
   jsoncons
   GIT_REPOSITORY https://github.com/danielaparker/jsoncons
   GIT_TAG        4438d5c9d2f3a9a72455adcdb3a73c7778e9b48d       
 )
 
-FetchContent_GetProperties(jsoncons)
-if(NOT jsoncons_POPULATED)
-  FetchContent_Populate(jsoncons)
-endif()
+fetch_content(
+  ut
+  GIT_REPOSITORY https://github.com/boost-ext/ut
+  GIT_TAG        v1.1.8       
+)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/modules)
-include(BlancExecutableNames)
 
 if(UNIX AND NOT APPLE)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -133,7 +125,6 @@ configure_file(${wabt_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/wabt.lice
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/${CMAKE_PROJECT_NAME}.license COPYONLY)
 configure_file(${jsoncons_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/licenses DESTINATION ${CDT_INSTALL_PREFIX})
-
 
 if(BUILD_TESTS)
   include(TestsExternalProject)

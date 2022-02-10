@@ -58,13 +58,13 @@ public:
       my_table t{"kvtest"_n};
 
       my_struct_v s1{
-         .full_name = "Dan Larimer",
-         .age = 25
+         .age = 25,
+         .full_name = "Dan Larimer"
       };
 
       my_struct_v s2{
-         .full_name = "Brendan Blumer",
-         .age = 24
+         .age = 24,
+         .full_name = "Brendan Blumer"
       };
 
       t.put(s1);
@@ -95,13 +95,13 @@ public:
       my_table_v t{"kvtest"_n};
 
       my_struct_v s1{
-         .full_name = "Dan Larimer",
-         .age = 25
+         .age = 25,
+         .full_name = "Dan Larimer"
       };
 
       my_struct_v s2{
-         .full_name = "Brendan Blumer",
-         .age = 24
+         .age = 24,
+         .full_name = "Brendan Blumer"
       };
 
       my_struct_v2 s3{
