@@ -5,7 +5,7 @@ add_library(eosio
             crypto.cpp
             tester/fpconv.c
             ${abieos_SOURCE_DIR}/src/crypto.cpp)
-target_compile_definitions(eosio PUBLIC __eosio_cdt__)
+target_compile_definitions(eosio PUBLIC __eosio_cdt__ BOOST_DISABLE_ASSERTS BOOST_EXCEPTION_DISABLE)
 target_compile_options(eosio PRIVATE --no-missing-ricardian-clause)
 target_include_directories(eosio PUBLIC $<BUILD_INTERFACE:${boost_SOURCE_DIR}>
                                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../meta_refl/include>
@@ -90,11 +90,13 @@ target_sources(eosio_tester INTERFACE $<BUILD_INTERFACE:${BASE_BINARY_DIR}/lib/c
 add_dependencies(eosio_tester crt0)
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
-       DESTINATION include/eosiolib 
+       DESTINATION include
        FILES_MATCHING FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-install(DIRECTORY ${abieos_SOURCE_DIR}/include 
-        DESTINATION include/abieos 
+
+install(DIRECTORY ${abieos_SOURCE_DIR}/include/eosio 
+        DESTINATION include/abieos
         FILES_MATCHING FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
 install(FILES ${abieos_SOURCE_DIR}/src/abieos.h 
               ${abieos_SOURCE_DIR}/src/abieos.hpp
               ${abieos_SOURCE_DIR}/src/abieos_numeric.hpp
@@ -103,7 +105,7 @@ install(FILES ${abieos_SOURCE_DIR}/src/abieos.h
 install(FILES ${BASE_BINARY_DIR}/lib/crt0.o 
         DESTINATION lib)
 
-install(DIRECTORY ${abieos_SOURCE_DIR}/external/rapidjson/include DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-install(DIRECTORY ${fmt_SOURCE_DIR}/include DESTINATION include FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY ${Catch2_SOURCE_DIR}/single_include/catch2 DESTINATION ${BASE_BINARY_DIR}/include PATTERN "*.hpp")
+install(DIRECTORY ${abieos_SOURCE_DIR}/external/rapidjson/include/rapidjson DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+install(DIRECTORY ${fmt_SOURCE_DIR}/include/fmt DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${catch2_SOURCE_DIR}/single_include/catch2 DESTINATION include PATTERN "*.hpp")
 

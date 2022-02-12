@@ -57,14 +57,15 @@ add_subdirectory(softfloat)
 add_subdirectory(rt)
 add_subdirectory(eosiolib)
 
-install(DIRECTORY ${boost_SOURCE_DIR}/boost DESTINATION include/boost)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include DESTINATION include)
+install(DIRECTORY ${boost_SOURCE_DIR}/boost DESTINATION include)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include/bluegrass DESTINATION include)
+install(DIRECTORY ${BASE_BINARY_DIR}/include/ DESTINATION include)
 
 install(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat
         EXPORT eosio)
 
 install(EXPORT eosio 
-        DESTINATION lib/cmake/blanc
+        DESTINATION lib/cmake/eosio.cdt
         FILE EosioTargets.cmake)
 
 export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt softfloat

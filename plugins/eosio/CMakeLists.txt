@@ -7,7 +7,7 @@ function(add_clang_plugin name src)
 
   add_custom_command(TARGET ${name} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/lib)
   add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/lib/)
-  install(TARGETS ${name} DESTINATION ${BLANC_INSTALL_PREFIX}/lib)
+  install(TARGETS ${name} DESTINATION lib)
 
   # On Darwin (unlike on Linux), undefined symbols in shared objects are not
   # allowed at the end of the link-edit. The plugins defined here:

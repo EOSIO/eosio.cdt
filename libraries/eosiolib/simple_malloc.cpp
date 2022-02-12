@@ -3,7 +3,7 @@
 #include <memory>
 #include <eosio/check.hpp>
 
-#ifndef __wasm32__
+#ifndef __wasm__
 extern "C" {
    size_t _current_memory();
    size_t _grow_memory(size_t);

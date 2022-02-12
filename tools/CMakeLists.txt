@@ -1,15 +1,14 @@
-macro(add_tool name source backend fallback)
+macro(add_tool name source backend)
  
   add_executable(${name} ${source})
   set_property(TARGET ${name} PROPERTY CXX_STANDARD 20)
   target_compile_definitions(${name} PRIVATE
     TOOL_BACKEND=\"${backend}\" 
-    TOOL_BACKEND_FALLBACK=\"${fallback}\"
-    COMPILER_NAME=\"${BLANC_CXX_COMPILER}\"
-    LINKER_NAME=\"${BLANC_LINKER}\"
+    COMPILER_NAME=\"eosio-cpp\"
+    LINKER_NAME=\"eosio-ld\"
     SHARED_LIB_SUFFIX=\"${CMAKE_SHARED_LIBRARY_SUFFIX}\"
     LLD_BACKEND=\"ld.lld-${LLVM_VERSION_MAJOR}\"
-    POSTPASS_NAME=\"${BLANC_POSTPASS}\"
+    POSTPASS_NAME=\"eosio-pp\"
   ) 
   target_include_directories(${name}
     PUBLIC
@@ -22,7 +21,7 @@ macro(add_tool name source backend fallback)
 
   add_custom_command(TARGET ${name} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
   add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/bin/)
-  install(TARGETS ${name} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
+  install(TARGETS ${name} DESTINATION ${CDT_INSTALL_PREFIX}/bin)
 endmacro()
 
 find_program(TABLEGEN_EXE NAMES llvm-tblgen PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH)
@@ -44,12 +43,17 @@ else()
 endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/clang       ${CMAKE_BINARY_DIR}/bin/clang-${LLVM_VERSION_MAJOR} SYMBOLIC)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/clang++     ${CMAKE_BINARY_DIR}/bin/clang++-${LLVM_VERSION_MAJOR} SYMBOLIC)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/lld         ${CMAKE_BINARY_DIR}/bin/lld-${LLVM_VERSION_MAJOR} SYMBOLIC)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/wasm-ld     ${CMAKE_BINARY_DIR}/bin/wasm-ld-${LLVM_VERSION_MAJOR} SYMBOLIC)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/llvm-ar     ${CMAKE_BINARY_DIR}/bin/${BLANC_AR} SYMBOLIC)
-file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/llvm-ranlib ${CMAKE_BINARY_DIR}/bin/${BLANC_RANLIB} SYMBOLIC)
+
+function(link_stock_llvm_tool source destination)
+  file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/${source} ${CMAKE_BINARY_DIR}/bin/${destination} SYMBOLIC)
+  install(CODE "file(CREATE_LINK ${LLVM_TOOLS_BINARY_DIR}/${source} ${CDT_INSTALL_PREFIX}/bin/${destination} SYMBOLIC)")
+endfunction()
+
+link_stock_llvm_tool(clang clang-${LLVM_VERSION_MAJOR})
+link_stock_llvm_tool(lld lld-${LLVM_VERSION_MAJOR})
+link_stock_llvm_tool(wasm-ld wasm-ld-${LLVM_VERSION_MAJOR})
+link_stock_llvm_tool(llvm-ar  llvm-ar)
+link_stock_llvm_tool(llvm-ranlib  llvm-ranlib)
 
 function(tblgen tool ofn)
   add_custom_command(
@@ -66,27 +70,27 @@ endfunction()
 tblgen(clang cc_options)
 tblgen(lld ld_options)
 
-add_tool(blanc-cc src/cc.cpp ${BLANC_C_COMPILER_BACKEND} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
-set_target_properties(blanc-cc PROPERTIES OUTPUT_NAME ${BLANC_C_COMPILER_BACKEND_FALLBACK})
-add_dependencies(blanc-cc cc_options)
+add_tool(c-driver src/cc.cpp clang-${LLVM_VERSION_MAJOR})
+set_target_properties(c-driver PROPERTIES OUTPUT_NAME clang)
+add_dependencies(c-driver cc_options)
 
-add_tool(blanc-cpp src/cc.cpp ${BLANC_CXX_COMPILER_BACKEND} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
-set_target_properties(blanc-cpp PROPERTIES OUTPUT_NAME ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
-target_compile_definitions(blanc-cpp PRIVATE CPP_COMP=1)
-add_dependencies(blanc-cpp cc_options)
+add_tool(cpp-driver src/cc.cpp clang++-${LLVM_VERSION_MAJOR})
+set_target_properties(cpp-driver PROPERTIES OUTPUT_NAME clang++)
+target_compile_definitions(cpp-driver PRIVATE CPP_COMP=1)
+add_dependencies(cpp-driver cc_options)
 
-add_tool(${BLANC_LINKER} src/ld.cpp ${BLANC_LINKER_BACKEND} ${BLANC_LINKER_BACKEND_FALLBACK})
-add_dependencies(${BLANC_LINKER} ld_options)
+add_tool(eosio-ld src/ld.cpp wasm-ld-${LLVM_VERSION_MAJOR})
+add_dependencies(eosio-ld ld_options)
 
-add_tool(${BLANC_C_COMPILER} src/dummy.cpp ${BLANC_C_COMPILER_BACKEND_FALLBACK} ${BLANC_C_COMPILER_BACKEND_FALLBACK})
-add_tool(${BLANC_CXX_COMPILER} src/dummy.cpp ${BLANC_CXX_COMPILER_BACKEND_FALLBACK} ${BLANC_CXX_COMPILER_BACKEND_FALLBACK})
+add_tool(eosio-cc src/dummy.cpp clang)
+add_tool(eosio-cpp src/dummy.cpp clang++)
 
-add_executable(${BLANC_POSTPASS} src/postpass.cc)
-target_link_libraries(${BLANC_POSTPASS} wabt)
-target_include_directories(${BLANC_POSTPASS} PRIVATE ${wabt_SOURCE_DIR} ${wabt_BINARY_DIR})
-add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
-add_custom_command(TARGET ${BLANC_POSTPASS} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BLANC_POSTPASS}> ${CMAKE_BINARY_DIR}/bin/)
-install(TARGETS ${BLANC_POSTPASS} DESTINATION ${BLANC_INSTALL_PREFIX}/bin)
+add_executable(eosio-pp src/postpass.cc)
+target_link_libraries(eosio-pp wabt)
+target_include_directories(eosio-pp PRIVATE ${wabt_SOURCE_DIR} ${wabt_BINARY_DIR})
+add_custom_command(TARGET eosio-pp POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
+add_custom_command(TARGET eosio-pp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio-pp> ${CMAKE_BINARY_DIR}/bin/)
+install(TARGETS eosio-pp DESTINATION ${CDT_INSTALL_PREFIX}/bin)
 
 function(copy_to_bin target)
   add_custom_command(OUTPUT
@@ -99,10 +103,12 @@ function(copy_to_bin target)
   add_custom_target(copy_${target} ALL
       DEPENDS ${CMAKE_BINARY_DIR}/bin/${target}
   )
+  install(TARGETS ${target} DESTINATION ${CDT_INSTALL_PREFIX}/bin)
 endfunction()
 
 copy_to_bin(wasm2wat)
 copy_to_bin(wasm-objdump)
+
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
@@ -110,6 +116,6 @@ endif()
 
 if(NOT TARGET EosioTools)
   add_custom_target(EosioTools)
-  add_dependencies(EosioTools blanc-cc blanc-cpp ${BLANC_LINKER} ${BLANC_POSTPASS})
+  add_dependencies(EosioTools eosio-cc eosio-cpp eosio-ld eosio-pp)
 endif()
 

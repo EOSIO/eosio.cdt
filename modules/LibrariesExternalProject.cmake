@@ -9,6 +9,7 @@ ExternalProject_Add(
              -DBASE_BINARY_DIR=${CMAKE_BINARY_DIR}
              -Dllvm_SOURCE_DIR=${llvm_SOURCE_DIR}
              -DCMAKE_BUILD_TYPE=${LIBS_BUILD_TYPE}
+             -DCMAKE_INSTALL_PREFIX=${CDT_INSTALL_PREFIX}
   UPDATE_COMMAND ""
   PATCH_COMMAND  ""
   TEST_COMMAND   ""
@@ -16,4 +17,8 @@ ExternalProject_Add(
   BUILD_ALWAYS 1
   DEPENDS EosioTools EosioPlugins
 )
+
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} --install .
+                              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/libraries)")
+
 

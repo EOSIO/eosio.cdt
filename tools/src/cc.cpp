@@ -119,8 +119,11 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
          if (!Args.hasArgNoClaim(OPT_fno_exceptions)) {
             new_opts.emplace_back("-fno-exceptions");
          }
-         new_opts.emplace_back("-DBOOST_DISABLE_ASSERTS");
-         new_opts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
+         if (!Args.hasArgNoClaim(OPT_fno_cxx_static_destructors)) {
+            // wasm-ld won't genenate code to invoke the static destructors ( i.e. __cxx_global_array_dtor ) by default.
+            // Use `-fno-c++-static-destructors` can remove the `__cxx_global_array_dtor` and the functions it invokes from the result wasm.
+            new_opts.emplace_back("-fno-c++-static-destructors");
+         }
 
          if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/libeosio_attrs"  SHARED_LIB_SUFFIX)) {
             new_opts.emplace_back("-fplugin="+eosio::cdt::whereami::where()+"/../lib/libeosio_attrs" SHARED_LIB_SUFFIX);
@@ -233,9 +236,9 @@ bool is_object_type(const std::string& fn) {
 int main(int argc, const char** argv) {
 
 #ifdef CPP_COMP
-   const char* backend = std::getenv("BLANC_CXX_COMPILER_BACKEND");
+   const char* backend = std::getenv("EOSIO_CXX_COMPILER_BACKEND");
 #else
-   const char* backend = std::getenv("BLANC_C_COMPILER_BACKEND");
+   const char* backend = std::getenv("EOSIO_C_COMPILER_BACKEND");
 #endif
    if (!backend) {
       backend = TOOL_BACKEND;

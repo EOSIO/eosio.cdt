@@ -69,11 +69,12 @@ fetch_content(
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-add_content(
+fetch_content(
   wabt
   GIT_REPOSITORY https://github.com/WebAssembly/wabt
   GIT_TAG        830d32a41449278cacb0bf17530618d47c43340b       
 )
+add_subdirectory(${wabt_SOURCE_DIR} ${wabt_BINARY_DIR} EXCLUDE_FROM_ALL)
 
 fetch_content(
   jsoncons
@@ -86,7 +87,6 @@ fetch_content(
   GIT_REPOSITORY https://github.com/boost-ext/ut
   GIT_TAG        v1.1.8       
 )
-
 
 if(UNIX AND NOT APPLE)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -134,5 +134,3 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-# install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${CDT_INSTALL_PREFIX}/include)
-# install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${CDT_INSTALL_PREFIX}/lib)

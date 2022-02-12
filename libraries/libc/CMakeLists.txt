@@ -144,3 +144,4 @@ file(GLOB_RECURSE libc_headers RELATIVE ${musl_SOURCE_DIR}/include "${musl_SOURC
 foreach (f ${libc_headers})
    configure_file(${musl_SOURCE_DIR}/include/${f} ${BASE_BINARY_DIR}/include/${f})
 endforeach()
+

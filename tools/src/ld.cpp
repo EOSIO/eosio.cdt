@@ -312,7 +312,7 @@ int main(int argc, const char** argv) {
          return -1;
       }
 
-      const char* backend = std::getenv("BLANC_LINKER_BACKEND");
+      const char* backend = std::getenv("EOSIO_LINKER_BACKEND");
       if (!backend) {
          backend = TOOL_BACKEND;
       }
