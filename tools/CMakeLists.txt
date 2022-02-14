@@ -19,8 +19,8 @@ macro(add_tool name source backend)
   )
   target_link_libraries(${name} PUBLIC clangTooling clangDriver)
 
-  add_custom_command(TARGET ${name} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
-  add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/bin/)
+  set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
   install(TARGETS ${name} DESTINATION ${CDT_INSTALL_PREFIX}/bin)
 endmacro()
 
@@ -88,8 +88,9 @@ add_tool(eosio-cpp src/dummy.cpp clang++)
 add_executable(eosio-pp src/postpass.cc)
 target_link_libraries(eosio-pp wabt)
 target_include_directories(eosio-pp PRIVATE ${wabt_SOURCE_DIR} ${wabt_BINARY_DIR})
-add_custom_command(TARGET eosio-pp POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin)
-add_custom_command(TARGET eosio-pp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:eosio-pp> ${CMAKE_BINARY_DIR}/bin/)
+set_target_properties(eosio-pp PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 install(TARGETS eosio-pp DESTINATION ${CDT_INSTALL_PREFIX}/bin)
 
 function(copy_to_bin target)

@@ -18,7 +18,7 @@ set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -O3 -Wall ")
 fetch_content(
   abieos
   GIT_REPOSITORY https://github.com/EOSIO/abieos
-  GIT_TAG        ad5612565b7eec17641c23a0651d9709efcd6b98
+  GIT_TAG        2a7ed699c6e8c75b8a2f75fcf7da5b76332cc8be
 )
 
 fetch_content(

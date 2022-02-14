@@ -5,8 +5,8 @@ function(add_clang_plugin name src)
     target_compile_options(${name} PRIVATE -fno-rtti)
   endif()
 
-  add_custom_command(TARGET ${name} POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/lib)
-  add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${name}> ${CMAKE_BINARY_DIR}/lib/)
+  set_target_properties(${name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
   install(TARGETS ${name} DESTINATION lib)
 
   # On Darwin (unlike on Linux), undefined symbols in shared objects are not

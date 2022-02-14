@@ -36,7 +36,7 @@ file(COPY ${llvm_SOURCE_DIR}/libcxxabi/include/ DESTINATION ${BASE_BINARY_DIR}/i
 
 target_link_libraries(c++ c cstdio)
 
-add_custom_command( TARGET c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c++> ${BASE_BINARY_DIR}/lib )
+set_target_properties(c++ PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BASE_BINARY_DIR}/lib")
 
 set(UNSUPPORTED_HEADERS
    ${BASE_BINARY_DIR}/include/libcxx/fstream

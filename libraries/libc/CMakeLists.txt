@@ -135,9 +135,9 @@ target_include_directories(c
    PRIVATE ${C_PRIVATE_INCLUDES}
 )
 
-add_custom_command(TARGET c POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:c> ${BASE_BINARY_DIR}/lib)
-add_custom_command(TARGET cstdio POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio> ${BASE_BINARY_DIR}/lib)
-add_custom_command(TARGET cstdio-no-float POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cstdio-no-float> ${BASE_BINARY_DIR}/lib)
+set_target_properties(c PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BASE_BINARY_DIR}/lib")
+set_target_properties(cstdio PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BASE_BINARY_DIR}/lib")
+set_target_properties(cstdio-no-float PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${BASE_BINARY_DIR}/lib")
 
 # file(COPY ${musl_SOURCE_DIR}/include/ DESTINATION ${BASE_BINARY_DIR}/include/)
 file(GLOB_RECURSE libc_headers RELATIVE ${musl_SOURCE_DIR}/include "${musl_SOURCE_DIR}/include/*.h")
