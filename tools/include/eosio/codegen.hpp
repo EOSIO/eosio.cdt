@@ -176,8 +176,9 @@ namespace eosio { namespace cdt {
                           single_front, // insert print at the front of location
                           }; 
             int type = invalid;
-            std::string func; // function name for function enter  & exit track
+            std::string func; // function name for function enter  & exit track, or lable name
             std::string variable; // track variable instead of line & column
+            uint32_t line1 = 0, col1 = 0; // ending position, used if the check point is to capture expression change.
          };
 
          std::map<uint64_t, std::vector<check_point_t> >  check_points;
@@ -190,11 +191,11 @@ namespace eosio { namespace cdt {
             if (!line0 || !col0 || !line1 || !col1) return false;
             
             if (variable_.length()) {
-               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = "", .variable = variable_});
+               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = "", .variable = variable_, .line1 = line1, .col1 = col1});
                return true;
             }
             if (check_points[line_col0].size() == 0) {
-               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_, .variable = ""});
+               check_points[line_col0].push_back(check_point_t{.type = start_type, .func = func_, .variable = "", .line1 = line1, .col1 = col1});
                return true;
             }
             return false;
@@ -399,6 +400,13 @@ namespace eosio { namespace cdt {
             return true;
          }
 
+         std::string printLocation(clang::SourceLocation loc) {
+            clang::PresumedLoc plocs = sm->getPresumedLoc(loc);
+            std::stringstream ss;
+            ss << plocs.getLine() << ":" << plocs.getColumn();
+            return ss.str();
+         }
+
          bool insert_check_point_by_location(const char *mark, clang::SourceLocation locstart, clang::SourceLocation locend, int type, std::string func_name = "", std::string var_name = "") {
             bool invalid = false;
             if (locstart.isFileID() && locend.isFileID()) {
@@ -434,6 +442,15 @@ namespace eosio { namespace cdt {
                clang::Stmt *tmp = expr->getTemporary();
                //std::cout << " " << tmp->getStmtClassName() << " ";
                visit_expr(llvm::dyn_cast<Expr>(tmp), ctx);
+            } else if (clang::BinaryOperator *expr = llvm::dyn_cast<clang::BinaryOperator>(expr_)) {
+               clang::Expr* left = expr->getLHS();
+               std::cout << "  Binary Op: left:" 
+                         << printLocation(left->getLocStart()) 
+                         << "-" << printLocation(left->getLocEnd()) 
+                         << "(" << left->getStmtClassName() << ")\n";
+               if (clang::MemberExpr *memberexpr = clang::dyn_cast<clang::MemberExpr>(left)) {
+
+               }
             }
          }
 
