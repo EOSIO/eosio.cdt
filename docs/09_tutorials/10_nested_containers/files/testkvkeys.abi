@@ -168,7 +168,7 @@
             "fields": [
                 {
                     "name": "id",
-                    "type": "pair_uint16_uint16[]"
+                    "type": "mpair_uint16_uint16[]"
                 }
             ]
         },
@@ -263,6 +263,20 @@
             ]
         },
         {
+            "name": "mpair_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
             "name": "mystructrefl",
             "base": "",
             "fields": [
@@ -287,20 +301,6 @@
                 {
                     "name": "_strID2",
                     "type": "string"
-                }
-            ]
-        },
-        {
-            "name": "pair_uint16_uint16",
-            "base": "",
-            "fields": [
-                {
-                    "name": "key",
-                    "type": "uint16"
-                },
-                {
-                    "name": "value",
-                    "type": "uint16"
                 }
             ]
         },
@@ -460,7 +460,7 @@
             "fields": [
                 {
                     "name": "id",
-                    "type": "pair_uint16_uint16[]"
+                    "type": "mpair_uint16_uint16[]"
                 }
             ]
         },
@@ -746,7 +746,7 @@
             "fields": [
                 {
                     "name": "id",
-                    "type": "pair_uint16_uint16[]"
+                    "type": "mpair_uint16_uint16[]"
                 },
                 {
                     "name": "v",

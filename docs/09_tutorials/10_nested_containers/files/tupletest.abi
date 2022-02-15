@@ -4,7 +4,7 @@
     "types": [
         {
             "new_type_name": "mp_uint16",
-            "type": "pair_uint16_uint16[]"
+            "type": "mpair_uint16_uint16[]"
         },
         {
             "new_type_name": "op_uint16",
@@ -29,7 +29,7 @@
     ],
     "structs": [
         {
-            "name": "pair_uint16_tup_uint16",
+            "name": "mpair_uint16_tup_uint16",
             "base": "",
             "fields": [
                 {
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "name": "pair_uint16_uint16",
+            "name": "mpair_uint16_uint16",
             "base": "",
             "fields": [
                 {
@@ -52,6 +52,20 @@
                 },
                 {
                     "name": "value",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "pair_uint16_uint16",
+            "base": "",
+            "fields": [
+                {
+                    "name": "first",
+                    "type": "uint16"
+                },
+                {
+                    "name": "second",
                     "type": "uint16"
                 }
             ]
@@ -96,7 +110,7 @@
                 },
                 {
                     "name": "mt",
-                    "type": "pair_uint16_tup_uint16[]"
+                    "type": "mpair_uint16_tup_uint16[]"
                 },
                 {
                     "name": "pt",
@@ -272,7 +286,7 @@
                 },
                 {
                     "name": "mt",
-                    "type": "pair_uint16_tup_uint16[]"
+                    "type": "mpair_uint16_tup_uint16[]"
                 }
             ]
         },

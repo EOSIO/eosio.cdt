@@ -4,7 +4,7 @@
  *
  * Important Remarks:
  *      1) The input of a std::tuple<T0,T1,T2> via cleos uses [ele0, ele1, ele2], it is the same as the input of a vector/set
- *      2) However the input formats of settm,settp are different from those of corresponding setvm, setvp in nestcontn2kv.cpp
+ *      2) Types involving map/pair here have shortcut JSON input formats
  *
  * Expected printout:
  *      For each setx action, the printed result on the cleos console is given in its corresponding prntx action.
@@ -200,7 +200,9 @@ class [[eosio::contract("tupletestkv")]] tupletestkv : public eosio::contract {
         }
 
         /*Example:
-         * cleos --verbose push action tupletestkv setmt '[1, [{"key":1,"value":[10,11]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         *      cleos --verbose push action tupletestkv setmt '[1, [{"key":1,"value":[10,11]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletestkv setmt '[1, [[1,[10,11]],  [2,[200,300]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmt(int id, const map<uint16_t, tup_uint16>& mt)
@@ -231,7 +233,9 @@ class [[eosio::contract("tupletestkv")]] tupletestkv : public eosio::contract {
 
 
         /*Example:
-         * cleos --verbose push action tupletestkv setpt '[1, {"first":10, "second":[100,101]}]' -p alice@active
+         *     cleos --verbose push action tupletestkv setpt '[1, {"first":10, "second":[100,101]}]' -p alice@active
+         * or shortcut:
+         *     cleos --verbose push action tupletestkv setpt '[1, [10, [100,101]]]' -p alice@active
          */
         [[eosio::action]]
         void setpt(int id, const pair<uint32_t, tup_uint16>& pt)
@@ -391,8 +395,12 @@ class [[eosio::contract("tupletestkv")]] tupletestkv : public eosio::contract {
         }
 
 
-        //Example: cleos --verbose push action tupletestkv settm '[1, [126, [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
-        //         ******Note: The input format of settm is different from that of setvm in nestcontn2a.cpp!
+        /*Example:
+         *
+         *      cleos --verbose push action tupletestkv settm '[1, [126, [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletestkv settm '[1, [126, [[10,100],[11,101]], [[80,800],[81,9009]] ]]' -p alice@active
+         */
         [[eosio::action]]
         void settm(int id, const tuple<uint16_t, mp_uint16, mp_uint16>& tm)
         {
@@ -423,8 +431,12 @@ class [[eosio::contract("tupletestkv")]] tupletestkv : public eosio::contract {
             eosio::print("ele2: "); printMap(std::get<2>(psn.tm));
         }
 
-        //Example:  cleos --verbose push action tupletestkv settp '[1, [127, {"key":18, "value":28}, {"key":19, "value":29}]]' -p alice@active
-        //         ******Note: The input format of settp is different from that of setvp in nestcontn2a.cpp!
+        /*Example:
+         *
+         *      cleos --verbose push action tupletestkv settp '[1, [127, {"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletestkv settp '[1, [127, [18, 28], [19, 29]]]' -p alice@active
+         */
         [[eosio::action]]
         void settp(int id, const tuple<uint16_t, pr_uint16, pr_uint16>& tp)
         {
@@ -454,8 +466,13 @@ class [[eosio::contract("tupletestkv")]] tupletestkv : public eosio::contract {
             eosio::print("ele2: "); printPair(std::get<2>(psn.tp));
         }
 
-        //Example: cleos --verbose push action tupletestkv settmisc '[1, ["strHere", [10,11,12,16], {"key":86,"value":96}] ]' -p alice@active
-        [[eosio::action]]
+        /* Example:
+         *
+         *      cleos --verbose push action tupletestkv settmisc '[1, ["strHere", [10,11,12,16], {"first":86,"second":96}] ]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletestkv settmisc '[1, ["strHere", [10,11,12,16], [86, 96]] ]' -p alice@active
+         */
+         [[eosio::action]]
         void settmisc(int id, const tuple<string, vec_uint16, pr_uint16>  & tmisc)
         {
             SETCONTAINERVAL(tmisc);

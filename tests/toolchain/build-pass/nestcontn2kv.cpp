@@ -11,6 +11,21 @@
  *      null represents an uninitialized std::optional<T> where T can be any composite type
  *      BUT [] or null can NOT be used to represent an empty struct or empty std::pair
  *
+ *
+ * After the abi_type of std::map is changed to mpair_T1_T2[], the follow rules are enforced:
+ *      + The JSON input format of pair has to use "first", "second",
+ *      + The JSON input format of map  has to use "key", "value",
+ * Above rules or conforming JSON input formats are applicable to two or more layers of STL containers involving map, pair.
+ * Please see the JSON input formats of setmp, setmm, setpm, setpp to know how the above rules are applied.
+ * Any non-conforming JSON input formats  of the types related to map, pair shall be considered as a bug.
+ *
+ * Attention: a C++ struct with no base class can have a 'shortcut' JSON input format:
+ *      The JSON input format of a struct can be array-like []. For example, for struct mystructX,
+ *      which has two fields int m1, int m2, its JSON input format can be
+ *              {"m1":100, "m2", 200 } , and it can also be [100,200]
+ *      pair is a struct with fields names first-second, map can be regarded as an array of structs with fields names key-value.
+ *      so the shortcut input formats are applicable to map, pair related types!
+ *
  * Attention:
  *   1) Please follow https://github.com/EOSIO/eos/tree/develop/contracts/enable-kv to enable key-value support of nodeos first
  *   2) To get to the point right away, here authentication/permission checking is skipped for each action in this contract,
@@ -230,15 +245,40 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         }
 
-        /*Examples:
-         * To use shortcut notation:
+        /*Example: a C++ struct with no base class can have two different JSON input formats
+         * JSON input format which specifies the names of fields explicitly:
+         *      cleos --verbose push action nestcontn2kv sets '[1, {"_count":18, "_strID":"dumstr"}]' -p alice@active
+         * Shortcut JSON input format which is like an array without specifying the names of the fields of the struc
+         *      cleos --verbose push action nestcontn2kv sets '[1, [18,"dumstr"]]' -p alice@active
+         */
+        [[eosio::action]]
+        void sets(int id, const mystruct& s)
+        {
+            SETCONTAINERVAL(s);
+            eosio::print("mystruct stored successfully");
+        }
+
+        /*Example:
+        * cleos --verbose push action nestcontn2kv  prnts '[1]' -p alice@active
+        *      output: >> stored mystruct val:18,dumstr
+        */
+        [[eosio::action]]
+        void prnts(int id)
+        {
+            const auto& psn = get(id);
+            eosio::print("stored mystruct val:", psn.s._count,",", psn.s._strID);
+        }
+
+        /*Examples: std::map<K,V> has shortcut JSON input format
+         * JSON input format:
          *   cleos --verbose push action nestcontn2kv setm '[1, [{"key":"str1","value":"str1val"}, {"key":"str3","value":"str3val"}]]' -p alice@active
+         * Its shortcut input format:
+         *   cleos --verbose push action nestcontn2kv setm '[1, [["str1","str1val"], ["str3","str3val"]]]' -p alice@active
          *
-         * To use full JSON notation:
-         *   cleos --verbose push action nestcontn2kv setm '{"id":2, "m":[{"key":"str4", "value":"str4val"}, {"key":"str6", "value":"str6val"}]}' -p jane@active
-         *
+         * Do the following if you want to use the more complicated full JSON notation:
+         *    cleos --verbose push action nestcontn2kv setm '{"id":2, "m":[{"key":"str4", "value":"str4val"}, {"key":"str6", "value":"str6val"}]}' -p jane@active
          * To pass an empty map:
-         *   cleos --verbose push action nestcontn2kv setm '[3, []]' -p bob@active
+         *   cleos --verbose push action nestcontn2a setm '["bob", []]' -p bob@active
          */
         [[eosio::action]]
         void setm(int id, const map<string,string>  & m)
@@ -267,26 +307,12 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         }
 
-        //Example: cleos --verbose push action nestcontn2kv sets '[1, {"_count":18, "_strID":"dumstr"}]' -p alice@active
-        [[eosio::action]]
-        void sets(int id, const mystruct& s)
-        {
-            SETCONTAINERVAL(s);
-            eosio::print("mystruct stored successfully");
-        }
-
-        /*Example:
-         * cleos --verbose push action nestcontn2kv  prnts '[1]' -p alice@active
-         *      output: >> stored mystruct val:18,dumstr
+        /*Example: mystruct2 has shortcut JSON input format
+         *
+         *      cleos --verbose push action nestcontn2kv sets2 '[1, {"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
+         * Its shortcut input format:
+         *      cleos --verbose push action nestcontn2kv sets2 '[1, [[18, "dumstr"], "dumstr2"]]' -p alice@active
          */
-        [[eosio::action]]
-        void prnts(int id)
-        {
-            const auto& psn = get(id);
-            eosio::print("stored mystruct val:", psn.s._count,",", psn.s._strID);
-        }
-
-        //Example: cleos --verbose push action nestcontn2kv sets2 '[1, {"_structfld":{"_count":18, "_strID":"dumstr"}, "_strID2":"dumstr2"}]' -p alice@active
         [[eosio::action]]
         void sets2(int id, const mystruct2& s2)
         {
@@ -307,6 +333,14 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         /*Example:
          *  cleos --verbose push action nestcontn2kv setvs '[1, [{"_count":18, "_strID":"dumstr"},{"_count":19, "_strID":"dumstr2"}]]' -p alice@active
+         */
+
+        /*Example: vector<mystruct> has shortcut JSON input format
+         *
+         *      cleos --verbose push action nestcontn2kv setvs '[1, [{"_count":18, "_strID":"dumstr"},{"_count":19, "_strID":"dumstr2"}]]' -p alice@active
+         * Its shortcut input format:
+         *      cleos --verbose push action nestcontn2a setvs '["alice", [ [18, "dumstr"],[19, "dumstr2"] ]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setvs '[1, [ [18, "dumstr"],[19, "dumstr2"] ]]' -p alice@active
          */
         [[eosio::action]]
         void setvs(int id, const vector<mystruct>& vs)
@@ -365,6 +399,11 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         //Example: cleos --verbose push action nestcontn2kv setp '[1, {"first":183, "second":269}]' -p alice@active
+        /*Example: pair<T1,T2> has shortcut JSON input format
+         *      cleos --verbose push action nestcontn2kv setp '[1, {"first":183, "second":269}]' -p alice@active
+         *  Its shortcut input format:
+         *      cleos --verbose push action nestcontn2kv setp '[1, [183, 269]]' -p alice@active
+         */
         [[eosio::action]]
         void setp(int id, const pair<uint16_t, uint16_t>& p)
         {
@@ -472,7 +511,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Example:
-         * cleos --verbose push action nestcontn2kv setstm '[1, [ [{"first":30,"second":300},{"first":31,"second":301}], [{"first":60,"second":600},{"first":61,"second":601}] ]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setstm '[1, [ [{"key":30,"value":300},{"key":31,"value":301}], [{"key":60,"value":600},{"key":61,"value":601}] ]]' -p alice@active
+         *  or shortcut:
+         *      cleos --verbose push action nestcontn2kv setstm '[1, [ [[30,300],[31,301]], [[60,600],[61,601]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setstm(int id, const set<mp_uint16>& stm)
@@ -506,7 +547,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setstp '[1, [{"first":68, "second":128}, {"first":69, "second":129}]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setstp '[1, [{"first":68, "second":128}, {"first":69, "second":129}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setstp '[1, [[68, 128], [69, 129]]]' -p alice@active
          */
         [[eosio::action]]
         void setstp(int id, const set<pair<uint32_t, uint32_t> >& stp)
@@ -622,7 +665,10 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setvm '[1, [ [{"first":10,"second":100},{"first":11,"second":101}], [{"first":80,"second":800},{"first":81,"second":9009}] ]]' -p alice@active
+         *
+         *      cleos --verbose push action nestcontn2kv setvm '[1, [ [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setvm '[1, [ [[10, 100],[11,101]], [[80,800],[81, 9009]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setvm(int id, const vector<mp_uint16>& vm)
@@ -657,7 +703,10 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setvp '[1, [{"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+         *
+         *      cleos --verbose push action nestcontn2kv setvp '[1, [{"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setvp '[1, [ [18, 28], [19, 29] ]]' -p alice@active
          */
         [[eosio::action]]
         void setvp(int id, const vector<pair<uint32_t, uint32_t> >& vp)
@@ -786,7 +835,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Examples:
-         *  cleos --verbose push action nestcontn2kv  setom '[1,[{"first":10,"second":1000},{"first":11,"second":1001}] ]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv  setom '[1,[{"key":10,"value":1000},{"key":11,"value":1001}] ]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv  setom '[1,[[10,1000],["key":11,"value":1001]] ]' -p alice@active
          *
          *  cleos --verbose push action nestcontn2kv  setom '[2, null ]' -p bob@active
          */
@@ -822,7 +873,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Examples:
-         *  cleos --verbose push action nestcontn2kv setop '[1, {"first":60, "second":61}]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setop '[1, {"first":60, "second":61}]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setop '[1, [60, 61] ]' -p alice@active
          *
          *  cleos --verbose push action nestcontn2kv setop '[2, null]' -p bob@active
          */
@@ -853,7 +906,10 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         //=== 4. Try map - set,vector,optional,map,pair
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setmst '[1, [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         *
+         *      cleos --verbose push action nestcontn2kv setmst '[1, [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setmst '[1, [[1, [10,11,12,16]],  [2, [200,300]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmst(int id, const map<uint16_t, set_uint16> & mst)
@@ -887,7 +943,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         * cleos --verbose push action nestcontn2kv setmv '[1, [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setmv '[1, [{"key":1,"value":[10,11,12,16]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setmv '[1, [[1, [10,11,12,16]],  [2, [200,300]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmv(int id, const map<uint16_t, vec_uint16>& mv)
@@ -920,7 +978,10 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setmo '[1, [{"key":10,"value":1000},{"key":11,"value":null}]]' -p alice@active
+         *
+         *      cleos --verbose push action nestcontn2kv setmo '[1, [{"key":10,"value":1000},{"key":11,"value":null}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setmo '[1, [[10, 1000], [11, null] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmo(int id, const map<uint16_t, op_uint16>& mo)
@@ -950,9 +1011,10 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Example:
-         *  cleos push action nestcontn2kv setmm '[1, [{"key":10,"value":[{"first":200,"second":2000}, {"first":201,"second":2001}] }, {"key":11,"value":[{"first":300,"second":3000}, {"first":301,"second":3001}] } ]]' -p alice@active
-         *       Attention: please note the cleos input of mm or map<K1, map<K2, V> > is a combination of strings key/value and first/second !
-         *       i.e the "value" part of mm is an array of <first,second> pairs!
+         *
+         *      cleos push action nestcontn2kv setmm '[1, [{"key":10,"value":[{"key":200,"value":2000}, {"key":201,"value":2001}] }, {"key":11,"value":[{"key":300,"value":3000}, {"key":301,"value":3001}] } ]]' -p alice@active
+         * or shortcut:
+         *      cleos push action nestcontn2kv setmm '[1, [[10,[[200, 2000], [201, 2001] ] ], [11,[[300, 3000], [301,3001]] ] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmm(int id, const map<uint16_t, mp_uint16>& mm)
@@ -987,7 +1049,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setmp '[1, [{"key":36,"value":{"first":300, "second":301}}, {"key":37,"value":{"first":600, "second":601}} ]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setmp '[1, [{"key":36,"value":{"first":300, "second":301}}, {"key":37,"value":{"first":600, "second":601}} ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setmp '[1, [[36,[300, 301]], [37, [600, 601]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmp(int id, const map<uint16_t, pr_unit16> & mp)
@@ -1015,7 +1079,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         //=== 5. Try pair - set,vector,optional,map,pair
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setpst '[1, {"first":20, "second":[200,201,202]}]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setpst '[1, {"first":20, "second":[200,201,202]}]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setpst '[1, [20, [200,201,202]]]' -p alice@active
          */
         [[eosio::action]]
         void setpst(int id, const pair<uint32_t, set_uint16>& pst)
@@ -1039,7 +1105,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setpv '[1, {"first":10, "second":[100,101,102]}]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setpv '[1, {"first":10, "second":[100,101,102]}]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setpv '[1, [10, [100,101,102]]]' -p alice@active
          */
         [[eosio::action]]
         void setpv(int id, const pair<uint32_t, vec_uint16>& pv)
@@ -1063,9 +1131,11 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Examples:
-         *  cleos --verbose push action nestcontn2kv setpo '[1, {"first":70, "second":71}]' -p alice@active
-         *
-         *  cleos --verbose push action nestcontn2kv setpo '[2, {"first":70, "second":null}]' -p bob@active
+         *      cleos --verbose push action nestcontn2kv setpo '[1, {"first":70, "second":71}]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setpo '[2, {"first":70, "second":null}]' -p bob@active
+         * or their shortcuts:
+         *      cleos --verbose push action nestcontn2kv setpo '[1, [70, 71]]' -p alice@active
+         *      cleos --verbose push action nestcontn2kv setpo '[2, [70, null]]' -p bob@active
          */
         [[eosio::action]]
         void setpo(int id, const pair<uint32_t, op_uint16> & po)
@@ -1095,8 +1165,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setpm '[1, {"key":6, "value":[{"first":20,"second":300}, {"first":21,"second":301}] }]' -p alice@active
-         *      Remark: the data input for pm uses a combination of key/vale and first/second
+         *      cleos --verbose push action nestcontn2kv setpm '[1, {"first":6, "second":[{"key":20,"value":300}, {"key":21,"value":301}] }]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setpm '[1, [6, [[20,300], [21, 301]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setpm(int id, const pair<uint16_t, mp_uint16> & pm)
@@ -1121,8 +1192,9 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
 
         /*Example:
-         *  cleos --verbose push action nestcontn2kv setpp '[1, {"key":30, "value":{"first":301, "second":302} }]' -p alice@active
-         *      Remark: input data for pp or pair-pair is a combination of key/value and first/second
+         *      cleos --verbose push action nestcontn2kv setpp '[1, {"first":30, "second":{"first":301, "second":302} }]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv setpp '[1, [30, [301, 302] ]]' -p alice@active
          */
         [[eosio::action]]
         void setpp(int id, const pair<uint16_t, pr_unit16> & pp)
@@ -1290,7 +1362,12 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
 
-        //Example: cleos --verbose push action nestcontn2kv get4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+        /*Example:
+         *
+         *      cleos --verbose push action nestcontn2kv get4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action nestcontn2kv get4 '[[18, "dumstr"]]' -p alice@active
+         */
         [[eosio::action]]
         person2kv get4(mystructrefl id)
         {
@@ -1301,8 +1378,12 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
         }
 
         /*Examples:
-        * cleos --verbose push action nestcontn2kv setv4 '[{"_count":18, "_strID":"dumstr"},[104,204,304,604]]' -p alice@active
-        * cleos --verbose push action nestcontn2kv setv4 '[{"_count":11, "_strID":"dumstr1"}, []]' -p bob@active
+        *
+        *       cleos --verbose push action nestcontn2kv setv4 '[{"_count":18, "_strID":"dumstr"},[104,204,304,604]]' -p alice@active
+        *       cleos --verbose push action nestcontn2kv setv4 '[{"_count":11, "_strID":"dumstr1"}, []]' -p bob@active
+        * or shortcut: (Note: If key of kv::map is a type involving struct, map,pair, shortcut JSON input format can be used for the key)
+        *       cleos --verbose push action nestcontn2kv setv4 '[[18, "dumstr"],[104,204,304,604]]' -p alice@active
+        *       cleos --verbose push action nestcontn2kv setv4 '[[11, "dumstr1"], []]' -p bob@active
         */
         [[eosio::action]]
         void setv4(mystructrefl id, const vector<uint16_t>& v)
@@ -1313,9 +1394,11 @@ class [[eosio::contract("nestcontn2kv")]] nestcontn2kv : public eosio::contract 
 
         /*Examples:
         *  cleos --verbose push action nestcontn2kv prntv4 '[{"_count":18, "_strID":"dumstr"}]' -p alice@active
+        *  or shortcut:     cleos --verbose push action nestcontn2kv prntv4 '[[18, "dumstr"]]' -p alice@active
         *      output: >> size of stored v:4 vals:104,204,304,604,
         *
         *  cleos --verbose push action nestcontn2kv prntv4 '[{"_count":11, "_strID":"dumstr1"}]' -p bob@active
+         * or shortcut: cleos --verbose push action nestcontn2kv prntv4 '[[11, "dumstr1"]]' -p bob@active
         *      output: >> size of stored v:0 vals:
         */
         [[eosio::action]]

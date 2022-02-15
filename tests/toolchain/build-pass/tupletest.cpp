@@ -216,7 +216,9 @@ class [[eosio::contract("tupletest")]] tupletest : public eosio::contract {
 
 
         /*Example:
-         * cleos --verbose push action tupletest setmt '["alice", [{"key":1,"value":[10,11]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         *      cleos --verbose push action tupletest setmt '["alice", [{"key":1,"value":[10,11]},  {"key":2,"value":[200,300]} ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletest setmt '["alice", [[1,[10,11]],  [2,[200,300]] ]]' -p alice@active
          */
         [[eosio::action]]
         void setmt(name user, const map<uint16_t, tup_uint16> & mt)
@@ -245,7 +247,9 @@ class [[eosio::contract("tupletest")]] tupletest : public eosio::contract {
         }
 
         /*Example:
-         *  cleos --verbose push action tupletest setpt '["alice", {"first":10, "second":[100,101]}]' -p alice@active
+         *      cleos --verbose push action tupletest setpt '["alice", {"first":10, "second":[100,101]}]' -p alice@active
+         *  or shortcut:
+         *      cleos --verbose push action tupletest setpt '["alice", [10, [100,101]]]' -p alice@active
          */
         [[eosio::action]]
         void setpt(name user, const pair<uint32_t, tup_uint16>& pt)
@@ -409,8 +413,11 @@ class [[eosio::contract("tupletest")]] tupletest : public eosio::contract {
         }
 
 
-        //Example: cleos --verbose push action tupletest settm '["alice", [126, [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
-        //         ******Note: The input format of settm is different from that of setvm in nestcontn2a.cpp!
+        /*Example:
+         *      cleos --verbose push action tupletest settm '["alice", [126, [{"key":10,"value":100},{"key":11,"value":101}], [{"key":80,"value":800},{"key":81,"value":9009}] ]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletest settm '["alice", [126, [[10, 100],[11, 101]], [[80,800],[81, 9009]] ]]' -p alice@active
+         */
         [[eosio::action]]
         void settm(name user, const tuple<uint16_t, mp_uint16, mp_uint16>& tm)
         {
@@ -443,9 +450,12 @@ class [[eosio::contract("tupletest")]] tupletest : public eosio::contract {
             eosio::print("ele2: "); printMap(std::get<2>(iter->tm));
         }
 
-        //Example:  cleos --verbose push action tupletest settp '["alice", [127, {"key":18, "value":28}, {"key":19, "value":29}]]' -p alice@active
-        //         ******Note: The input format of settp is different from that of setvp in nestcontn2a.cpp!
-        [[eosio::action]]
+        /*Example:
+         *      cleos --verbose push action tupletest settp '["alice", [127, {"first":18, "second":28}, {"first":19, "second":29}]]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletest settp '["alice", [127, [18, 28], [19, 29] ]]' -p alice@active
+         */
+         [[eosio::action]]
         void settp(name user, const tuple<uint16_t, pr_uint16, pr_uint16>& tp)
         {
             SETCONTAINERVAL(tp);
@@ -476,7 +486,11 @@ class [[eosio::contract("tupletest")]] tupletest : public eosio::contract {
             eosio::print("ele2: "); printPair(std::get<2>(iter->tp));
         }
 
-        //Example: cleos --verbose push action tupletest settmisc '["alice", ["strHere", [10,11,12,16], {"key":86,"value":96}] ]' -p alice@active
+        /*Example:
+         *      cleos --verbose push action tupletest settmisc '["alice", ["strHere", [10,11,12,16], {"first":86,"second":96}] ]' -p alice@active
+         * or shortcut:
+         *      cleos --verbose push action tupletest settmisc '["alice", ["strHere", [10,11,12,16], [86,96]] ]' -p alice@active
+         */
         [[eosio::action]]
         void settmisc(name user, const tuple<string, vec_uint16, pr_uint16>  & tmisc)
         {
