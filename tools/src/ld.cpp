@@ -60,6 +60,7 @@ void generate_eosio_dispatch(const std::string& output, const std::set<wasm_acti
       if (!ofs) throw;
       ofs << "#include <cstdint>\n";
       ofs << "extern \"C\" {\n";
+      ofs << "  __attribute__((eosio_wasm_import)) void eosio_assert_code(uint32_t, uint64_t);";
       ofs << "  void eosio_set_contract_name(uint64_t n);\n";
       for (auto& wa : wasm_actions) {
          ofs << "  void " << wa.handler << "(uint64_t r, uint64_t c);\n";
@@ -77,8 +78,12 @@ void generate_eosio_dispatch(const std::string& output, const std::set<wasm_acti
             ofs << "      case " << string_to_name(wa.name.c_str()) << "ull:\n";
             ofs << "        " << wa.handler << "(r, c);\n";
             ofs << "        break;\n";
+            
          }
-         ofs << "      }\n";
+         // assert that no action was found when the receiver is not "eosio"
+         ofs << "      default:\n"
+             << "        if ( r != " << string_to_name("eosio") << "ull) eosio_assert_code(false, 1);\n"
+             << "      }\n";
       }
       ofs << "    } else {\n";
       if (wasm_notifies.size()) {

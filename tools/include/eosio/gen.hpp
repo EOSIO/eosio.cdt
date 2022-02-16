@@ -538,9 +538,9 @@ struct generation_utils {
             return t+"[]";
          }
       }
-      else if (is_tuple(type)) {
-         return translate_type(get_nested_type(type));
-      }
+      // else if (is_tuple(type)) {
+      //    return translate_type(get_nested_type(type));
+      // }
       else if ( is_template_specialization( type, {"optional"} ) )
          return get_template_argument_as_string( type )+"?";
       else if ( is_template_specialization( type, {"map"} )) {
