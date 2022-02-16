@@ -304,10 +304,10 @@ set ( softfloat_sources
   ${softfloat_SOURCE_DIR}/source/f128M_lt_quiet.c
 )
 
-add_library ( softfloat STATIC ${softfloat_sources} )
-target_compile_options(softfloat PRIVATE -Wall -Werror-implicit-function-declaration -Wno-conversion -Wno-unused-label)
-target_compile_definitions(softfloat PRIVATE SOFTFLOAT_FAST_INT64 SOFTFLOAT_ROUND_EVEN INLINE_LEVEL=5 SOFTFLOAT_FAST_DIV32TO16 SOFTFLOAT_FAST_DIV64TO32)
-target_include_directories( softfloat PRIVATE ${softfloat_SOURCE_DIR}/source/include 
-                                       ${softfloat_SOURCE_DIR}/source/8086-SSE
-                                       ${softfloat_SOURCE_DIR}/build/Linux-x86_64-GCC)
+add_library ( eosio_softfloat STATIC ${softfloat_sources} )
+target_compile_options(eosio_softfloat PRIVATE -Wall -Werror-implicit-function-declaration -Wno-conversion -Wno-unused-label)
+target_compile_definitions(eosio_softfloat PRIVATE SOFTFLOAT_FAST_INT64 SOFTFLOAT_ROUND_EVEN INLINE_LEVEL=5 SOFTFLOAT_FAST_DIV32TO16 SOFTFLOAT_FAST_DIV64TO32)
+target_include_directories(eosio_softfloat PRIVATE ${softfloat_SOURCE_DIR}/source/include 
+                                                   ${softfloat_SOURCE_DIR}/source/8086-SSE
+                                                   ${softfloat_SOURCE_DIR}/build/Linux-x86_64-GCC)
 
