@@ -5,7 +5,7 @@ add_library(eosio
             crypto.cpp
             tester/fpconv.c
             ${abieos_SOURCE_DIR}/src/crypto.cpp)
-target_compile_definitions(eosio PUBLIC __eosio_cdt__ BOOST_DISABLE_ASSERTS BOOST_EXCEPTION_DISABLE)
+target_compile_definitions(eosio PUBLIC BOOST_DISABLE_ASSERTS)
 target_compile_options(eosio PRIVATE --no-missing-ricardian-clause)
 target_include_directories(eosio PUBLIC $<BUILD_INTERFACE:${boost_SOURCE_DIR}>
                                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../meta_refl/include>
@@ -13,12 +13,7 @@ target_include_directories(eosio PUBLIC $<BUILD_INTERFACE:${boost_SOURCE_DIR}>
                                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/contracts>
                                         $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/include>
                                         $<BUILD_INTERFACE:${abieos_SOURCE_DIR}/external/rapidjson/include>
-                                        $<INSTALL_INTERFACE:include/eosiolib/core> 
-                                        $<INSTALL_INTERFACE:include/eosiolib/contracts> 
-                                        $<INSTALL_INTERFACE:include/abieos>
-                                 INTERFACE
-                                        $<$<COMPILE_LANGUAGE:C>:$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/capi>>
-                                        $<$<COMPILE_LANGUAGE:C>:$<INSTALL_INTERFACE:include/eosiolib/capi>>
+                                        $<INSTALL_INTERFACE:include> 
 )
 
 add_library(eosio_malloc
@@ -45,7 +40,7 @@ target_compile_options(eosio_tester PRIVATE --no-missing-ricardian-clause)
 target_include_directories(eosio_tester PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tester>
                                                $<BUILD_INTERFACE:${fmt_SOURCE_DIR}/include>
                                                $<BUILD_INTERFACE:${catch2_SOURCE_DIR}/single_include>
-                                               $<INSTALL_INTERFACE:include/eosiolib/tester> 
+                                               $<INSTALL_INTERFACE:include> 
 )
 target_link_libraries(eosio_tester PUBLIC eosio
                                    INTERFACE eosio_dsm eosio_rt eosio_cmem softfloat)
@@ -89,23 +84,24 @@ target_sources(eosio_tester INTERFACE $<BUILD_INTERFACE:${BASE_BINARY_DIR}/lib/c
 
 add_dependencies(eosio_tester crt0)
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
-       DESTINATION include
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/capi/eosio
+                  ${CMAKE_CURRENT_SOURCE_DIR}/contracts/eosio
+                  ${CMAKE_CURRENT_SOURCE_DIR}/core/eosio
+                  ${CMAKE_CURRENT_SOURCE_DIR}/embed/eosio
+                  ${CMAKE_CURRENT_SOURCE_DIR}/tester/eosio
+                  ${abieos_SOURCE_DIR}/include/eosio
+       TYPE INCLUDE
        FILES_MATCHING FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-
-install(DIRECTORY ${abieos_SOURCE_DIR}/include/eosio 
-        DESTINATION include/abieos
-        FILES_MATCHING FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 install(FILES ${abieos_SOURCE_DIR}/src/abieos.h 
               ${abieos_SOURCE_DIR}/src/abieos.hpp
               ${abieos_SOURCE_DIR}/src/abieos_numeric.hpp
               ${abieos_SOURCE_DIR}/src/abieos_ripemd160.hpp
-              DESTINATION include/abieos)
+              TYPE INCLUDE)
 install(FILES ${BASE_BINARY_DIR}/lib/crt0.o 
-        DESTINATION lib)
+        TYPE LIB)
 
-install(DIRECTORY ${abieos_SOURCE_DIR}/external/rapidjson/include/rapidjson DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-install(DIRECTORY ${fmt_SOURCE_DIR}/include/fmt DESTINATION include FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY ${catch2_SOURCE_DIR}/single_include/catch2 DESTINATION include PATTERN "*.hpp")
+install(DIRECTORY ${abieos_SOURCE_DIR}/external/rapidjson/include/rapidjson TYPE INCLUDE FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+install(DIRECTORY ${fmt_SOURCE_DIR}/include/fmt TYPE INCLUDE FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${catch2_SOURCE_DIR}/single_include/catch2 TYPE INCLUDE PATTERN "*.hpp")
 

@@ -33,14 +33,16 @@ export DESC
 export URL
 export EMAIL
 
-mkdir -p tmp
+NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE:-1}-${OS}"
 
+mkdir -p tmp
+cd $BUILD_DIR
 if [[ ${VARIANT} == "brew" ]]; then
    . ./generate_bottle.sh
 elif [[ ${VARIANT} == "deb" ]]; then
-   . ./generate_deb.sh ${OS}
+   cpack --config $BUILD_DIR/CPackConfig.cmake -G DEB -D CPACK_PACKAGE_FILE_NAME="${NAME}_amd64"
 elif [[ ${VARIANT} == "rpm" ]]; then
-   . ./generate_rpm.sh
+   cpack --config $BUILD_DIR/CPackConfig.cmake -G RPM -D CPACK_PACKAGE_FILE_NAME="${NAME}.x86_64"
 else
    echo "Error, unknown package type. Use either ['brew', 'deb', 'rpm']."
    exit -1

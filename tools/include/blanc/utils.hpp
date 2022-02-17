@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <regex>
@@ -11,6 +12,7 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
 #include <llvm/Support/Program.h>
+
 namespace blanc {
 
    template<typename T>
@@ -39,78 +41,62 @@ namespace blanc {
       llvm::outs() << "\n";
    }
 
+   std::string llvm_path() {
+      const char *llvm_root = std::getenv("LLVM_ROOT");
+      if (llvm_root)
+         return llvm_root;
+
+      std::string conf_file =
+            eosio::cdt::whereami::where() + "/../etc/eosio.cdt.conf";
+      if (llvm::sys::fs::exists(conf_file)) {
+         std::ifstream t(conf_file);
+         std::string s((std::istreambuf_iterator<char>(t)),
+                        std::istreambuf_iterator<char>());
+         const std::regex base_regex("\\s*LLVM_ROOT\\s*=\\s*(.+)\\s*$");
+         std::smatch base_match;
+         if (std::regex_match(s, base_match, base_regex))
+            return base_match[1];
+      }
+
+      return "";
+   }
+
+   llvm::ArrayRef<llvm::StringRef> get_llvm_bin_paths() {
+      static std::string p = llvm_path();
+      static std::string llvm_bin_path = p + "/bin";
+      static llvm::StringRef r[] = { llvm_bin_path };
+      return p.size() ? llvm::ArrayRef<llvm::StringRef>{r} : llvm::ArrayRef<llvm::StringRef>{};
+   }
+
    int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool show_commands) {
-      int ret = 0;
-      std::string find_path = eosio::cdt::whereami::where();
-      std::stringstream args;
-      for (const auto& s : options) {
-         args << s << " ";
-      }
       
-      auto path = llvm::sys::findProgramByName(prog.c_str(), {find_path});
-      if (!path) path = llvm::sys::findProgramByName(prog.c_str(), {"/usr/bin"});
+      auto run_prog = [&options, show_commands](const std::string& abs_path) {
+         std::stringstream cmd;
+         cmd << abs_path ;
+         for (const auto& s : options) {
+            cmd << " " << s;
+         }
+         auto cmd_str = cmd.str();
+         if (show_commands) llvm::outs() << "\n" << cmd_str << "\n";
+         return std::system(cmd_str.c_str());
+      };
 
-      if (path) {
-         auto cmd = *path+" "+args.str();
-         if (show_commands) llvm::outs() << "\n" << cmd << "\n";
-         return std::system(cmd.c_str());
-      } else {
-         return ENOENT;
+      if (prog.size() && prog[0] == '/') return run_prog(prog);
+
+      static auto search_paths = get_llvm_bin_paths();
+      auto path = llvm::sys::findProgramByName(prog.c_str(), search_paths );
+      if (search_paths.size() && !path) {
+         // use the system PATH environment to find the program instead
+         path = llvm::sys::findProgramByName(prog.c_str(), {} );
       }
+
+      if (path) return run_prog(*path);
+
+      std::cerr << prog << " not found, please set the environment variables LLVM_ROOT or PATH to locate the program\n";
+      return ENOENT;
+      
    }
 
-   std::optional<std::string> get_option_value(const std::vector<std::string>& options, std::string name, std::string prefix = "-{1,2}", std::string suffix = "(=.+)?$") {
-      std::regex re{prefix+name+suffix};
-      bool ret_next = false;
-      for (const auto& opt : options) {
-         if (ret_next) {
-            return opt;
-         }
-         if (regex_match(opt, re)) {
-            auto pos = opt.find('=');
-            if (pos != std::string::npos) {
-               return opt.substr(pos+1);
-            }
-            ret_next = true;
-         }
-      }
-      return std::nullopt;
-   }
-
-   bool has_option(const std::vector<std::string>& options, std::string name, std::string prefix = "-{1,2}", std::string suffix = "(=.+)?$") {
-      std::regex re{prefix+name+suffix};
-      for (const auto& opt : options) {
-         if (regex_match(opt, re)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   std::optional<std::string> extract_option(std::vector<std::string>& options, bool has_value, std::string name, std::string prefix = "-{1,2}", std::string suffix = "(=.+)?$") {
-      std::regex re{prefix+name+suffix};
-      std::string ret;
-      std::vector<std::string> new_opts;
-      for (auto it = options.begin(); it != options.end(); ++it) {
-         if (regex_match(*it, re)) {
-            new_opts.insert(new_opts.begin(), options.begin(), it);
-            if (has_value) {
-               auto pos = it->find('=');
-               if (pos != std::string::npos) {
-                  ret = it->substr(pos+1);
-               } else if ((++it) != options.end()) {
-                  ret = *it;
-               }
-            }
-            if (it != options.end()) {
-               new_opts.insert(new_opts.end(), it+1, options.end());
-            }
-            options = new_opts;
-            return ret;
-         }
-      }
-      return std::nullopt;
-   }
 
    template<typename T>
    llvm::SmallString<PATH_MAX> to_absolute_path(T&& path) {

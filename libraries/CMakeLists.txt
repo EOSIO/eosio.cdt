@@ -57,9 +57,9 @@ add_subdirectory(softfloat)
 add_subdirectory(rt)
 add_subdirectory(eosiolib)
 
-install(DIRECTORY ${boost_SOURCE_DIR}/boost DESTINATION include)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include/bluegrass DESTINATION include)
-install(DIRECTORY ${BASE_BINARY_DIR}/include/ DESTINATION include)
+install(DIRECTORY ${boost_SOURCE_DIR}/boost TYPE INCLUDE)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta_refl/include/bluegrass TYPE INCLUDE)
+install(DIRECTORY ${BASE_BINARY_DIR}/include/ TYPE INCLUDE)
 
 install(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt eosio_softfloat
         EXPORT eosio)
@@ -70,3 +70,11 @@ install(EXPORT eosio
 
 export(TARGETS eosio eosio_malloc eosio_dsm eosio_cmem eosio_embed eosio_tester eosio_rt eosio_softfloat
        FILE ${EOSIO_CDT_BIN}/EosioTargets.cmake)
+
+configure_file(${boost_SOURCE_DIR}/LICENSE_1_0.txt ${BASE_BINARY_DIR}/licenses/boost.license COPYONLY)
+configure_file(${abieos_SOURCE_DIR}/LICENSE ${BASE_BINARY_DIR}/licenses/abieos.license COPYONLY)
+configure_file(${catch2_SOURCE_DIR}/LICENSE.txt ${BASE_BINARY_DIR}/licenses/Catch2.license COPYONLY)
+configure_file(${fmt_SOURCE_DIR}/LICENSE.rst ${BASE_BINARY_DIR}/licenses/fmt.license COPYONLY)
+configure_file(${musl_SOURCE_DIR}/COPYRIGHT ${BASE_BINARY_DIR}/licenses/musl.license COPYONLY)
+configure_file(${softfloat_SOURCE_DIR}/COPYING.txt ${BASE_BINARY_DIR}/licenses/softfloat.license COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/eosiolib/tester/fpconv.license ${BASE_BINARY_DIR}/licenses/fpconv.license COPYONLY)

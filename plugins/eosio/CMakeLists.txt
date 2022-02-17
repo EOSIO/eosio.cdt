@@ -7,7 +7,7 @@ function(add_clang_plugin name src)
 
   set_target_properties(${name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-  install(TARGETS ${name} DESTINATION lib)
+  install(TARGETS ${name})
 
   # On Darwin (unlike on Linux), undefined symbols in shared objects are not
   # allowed at the end of the link-edit. The plugins defined here:

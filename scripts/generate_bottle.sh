@@ -14,7 +14,8 @@ else
    MAC_VERSION="catalina"
 fi
 
-NAME="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle.tar.gz"
+NAME_NO_EXT="${PROJECT}-${VERSION}.${MAC_VERSION}.bottle"
+NAME="${NAME_NO_EXT}.tar.gz"
 
 #mkdir -p ${PROJECT}/${VERSION}/opt/eosio_cdt/lib/cmake
 
@@ -28,27 +29,27 @@ export SPREFIX
 export SUBPREFIX
 export SSUBPREFIX
 
-bash generate_tarball.sh ${NAME}
+cpack --config $BUILD_DIR/CPackConfig.cmake -G TGZ -D CPACK_INCLUDE_TOPLEVEL_DIRECTORY=OFF -D PACK_PACKAGE_FILE_NAME=${NAME_NO_EXT}
 
 hash=`openssl dgst -sha256 ${NAME} | awk 'NF>1{print $NF}'`
 
-echo "class Blanc < Formula
+echo "class EosioCdt < Formula
 
    homepage \"${URL}\"
    revision 0
-   url \"https://github.com/turnpike/blanc/archive/${VERSION}.tar.gz\"
+   url \"https://github.com/eosio/eosio.cdt/archive/${VERSION}.tar.gz\"
    version \"${VERSION}\"
    
    option :universal
 
    depends_on \"cmake\" => :build
-   depends_on \"llvm\" => :build
+   depends_on \"llvm\" => \"13.0.0\"
    depends_on :xcode => :build
    depends_on :macos => :catalina
    depends_on :arch =>  :intel
   
    bottle do
-      root_url \"https://github.com/turnpike/blanc/releases/download/${VERSION}\"
+      root_url \"https://github.com/eosio/eosio.cdt/releases/download/${VERSION}\"
       sha256 ${MAC_VERSION}: \"${hash}\"
    end
    def install

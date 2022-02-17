@@ -9,6 +9,6 @@ install(
     ${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/EosioCDTMacros.cmake
     ${CMAKE_BINARY_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}/EosioWasmToolchain.cmake
   DESTINATION
-    ${CDT_INSTALL_PREFIX}/lib/cmake/${CMAKE_PROJECT_NAME}
+    ${CDT_INSTALL_DIR}/lib/cmake/${CMAKE_PROJECT_NAME}
 )
 
