@@ -328,7 +328,8 @@ int main(int argc, const char** argv) {
 
       auto postpass_path = eosio::cdt::whereami::where()+"/"+POSTPASS_NAME;
       if (llvm::sys::fs::exists(postpass_path)) {
-         if (auto ret = blanc::exec_subprogram(postpass_path, {"--profile="+std::to_string(_profile), output}, show_commands)) {
+         std::array<std::string,2> options =  {"--profile="+std::to_string(_profile), output};
+         if (auto ret = blanc::exec_subprogram(postpass_path, options, show_commands)) {
             return ret;
          }
       }

@@ -68,7 +68,8 @@ namespace blanc {
       return p.size() ? llvm::ArrayRef<llvm::StringRef>{r} : llvm::ArrayRef<llvm::StringRef>{};
    }
 
-   int exec_subprogram(const std::string& prog, std::vector<std::string> options, bool show_commands) {
+   template <typename Container>
+   int exec_subprogram(const std::string& prog, const Container& options, bool show_commands) {
       
       auto run_prog = [&options, show_commands](const std::string& abs_path) {
          std::stringstream cmd;
