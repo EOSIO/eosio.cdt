@@ -358,7 +358,7 @@ int main(int argc, const char** argv) {
             return ret;
          }
 
-         auto tmp_file = _output + ".cpp";
+         auto tmp_file = _output + ".actions.cpp";
          if (llvm::sys::fs::exists(tmp_file)) {
             new_inputs.emplace_back(tmp_file);
             tmp_inputs.emplace_back(tmp_file);

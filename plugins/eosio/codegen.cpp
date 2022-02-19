@@ -27,8 +27,10 @@ private:
    Rewriter  rewriter;
    CompilerInstance* ci;
    bool      warn_action_read_only = false;
+   std::ofstream ss;
 
 public:
+
    using call_map_t = std::map<FunctionDecl*, std::vector<CallExpr*>>;
    using indirect_func_map_t = std::map<NamedDecl*, FunctionDecl*>;
 
@@ -37,7 +39,7 @@ public:
    indirect_func_map_t         indi_func_map;
 
    explicit eosio_codegen_visitor(CompilerInstance* CI): ci(CI) {
-      rewriter.setSourceMgr(CI->getASTContext().getSourceManager(), CI->getASTContext().getLangOpts());
+      // rewriter.setSourceMgr(CI->getASTContext().getSourceManager(), CI->getASTContext().getLangOpts());
       get_error_emitter().set_compiler_instance(CI);
    }
 
@@ -45,23 +47,24 @@ public:
       main_fid = fid;
    }
 
-   void set_main_name(StringRef mn) {
-      main_name = mn;
+   void set_output_file_name(std::string name) {
+      ss.open(name);
    }
 
-   Rewriter& get_rewriter() {
-      return rewriter;
+   void set_main_name(StringRef mn) {
+     main_name = mn;
+     ss << "#include \"" << std::string_view(mn.data(), mn.size()) << "\"\n";
+     ss << "#include <eosio/datastream.hpp>\n";
+     ss << "#include <eosio/name.hpp>\n";
    }
 
    template <typename F, typename D>
    void create_dispatch(const std::string& attr, const std::string& func_name, F&& get_str, D decl) {
       constexpr static uint32_t max_stack_size = 512;
-      std::stringstream ss;
+      // std::stringstream ss;
       std::string nm = decl->getNameAsString()+"_"+decl->getParent()->getNameAsString();
       if (is_eosio_contract(decl, contract_name)) {
-         ss << "\n\n#include <eosio/datastream.hpp>\n";
-         ss << "#include <eosio/name.hpp>\n";
-         ss << "extern \"C\" {\n";
+         ss << "\n\nextern \"C\" {\n";
          ss << "  [[clang::import_name(\"action_data_size\")]]\n";
          ss << "  uint32_t action_data_size();\n";
          ss << "  [[clang::import_name(\"read_action_data\")]]\n";
@@ -114,7 +117,6 @@ public:
          ss << "  }\n";
          ss << "}\n";
 
-         rewriter.InsertTextAfter(ci->getSourceManager().getLocForEndOfFile(main_fid), ss.str());
       }
    }
 
@@ -372,19 +374,10 @@ public:
       if (main_fe) {
          auto fid = src_mgr.getOrCreateFileID(*f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
          visitor->set_main_fid(fid);
+         visitor->set_output_file_name(output + ".actions.cpp");
          visitor->set_main_name(main_fe->getName());
          visitor->TraverseDecl(Context.getTranslationUnitDecl());
          visitor->process_read_only_actions();
-
-         try {
-            std::ofstream ofs(output + ".cpp");
-            if (!ofs) throw;
-            auto& RewriteBuf = visitor->get_rewriter().getEditBuffer(fid);
-            ofs << std::string(RewriteBuf.begin(), RewriteBuf.end());
-            ofs.close();
-         } catch (...) {
-            llvm::outs() << "Failed to create temporary file\n";
-         }
       }
    }
 };
