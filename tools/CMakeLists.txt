@@ -93,6 +93,9 @@ install(TARGETS eosio-pp)
 copy_to_bin(wasm2wat)
 copy_to_bin(wasm-objdump)
 
+foreach(target clang clang++ wasm-ld lld llvm-ar llvm-ranlib )
+  file(CREATE_LINK  ${LLVM_TOOLS_BINARY_DIR}/${target} ${CMAKE_BINARY_DIR}/bin/${target} SYMBOLIC)
+endforeach()
 
 if(BUILD_TESTS)
   add_subdirectory(tests)

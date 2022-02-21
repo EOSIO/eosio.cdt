@@ -107,8 +107,6 @@ install(FILES ${CMAKE_BINARY_DIR}/eosio.imports DESTINATION ${CDT_INSTALL_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/scripts/ricardeos/ricardeos.py ${CMAKE_BINARY_DIR}/scripts/ricardeos.py COPYONLY)
 install(FILES ${CMAKE_BINARY_DIR}/scripts/ricardeos.py DESTINATION ${CDT_INSTALL_DIR}/scripts)
 
-configure_file(${CMAKE_SOURCE_DIR}/etc/eosio.cdt.conf.in  ${CMAKE_BINARY_DIR}/etc/eosio.cdt.conf)
-
 # section for package construction
 set(VENDOR "block.one")
 set(PROJECT_NAME "eosio.cdt")

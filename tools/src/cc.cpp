@@ -164,19 +164,19 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
    auto defs = Args.filtered(OPT_D);
    for (const auto& arg : defs) {
       std::string def(arg->getValue());
-      if (def.starts_with("EOSIO_CONTRACT=")) {
+      if (eosio::cdt::starts_with(def, "EOSIO_CONTRACT=")) {
          contract_name = def.substr(def.find("=")+1);
-      } else if (def.starts_with("EOSIO_ABI_VERSION=")) {
+      } else if (eosio::cdt::starts_with(def, "EOSIO_ABI_VERSION=")) {
          abi_version = def.substr(def.find("=")+1);
          if (link) {
             new_opts.emplace_back("-Wl,--abi-version="+abi_version);
          }
-      } else if (def.starts_with("EOSIO_NO_ABIGEN")) {
+      } else if (eosio::cdt::starts_with(def, "EOSIO_NO_ABIGEN")) {
          no_abigen = true;
          if (link) {
             new_opts.emplace_back("-Wl,--no-abigen");
          }
-      } else if (def.starts_with("EOSIO_NO_RICARDIAN")) {
+      } else if (eosio::cdt::starts_with(def, "EOSIO_NO_RICARDIAN")) {
          suppress_ricardian_warnings = true;
       }
    }
@@ -228,7 +228,7 @@ int main(int argc, const char** argv) {
    auto Args = opts.ParseArgs(Argv, missingIndex, missingCount, 0, CLOption);
 
    auto target = Args.getLastArgNoClaim(OPT_target);
-   if (target &&!std::string(target->getValue()).starts_with("wasm32")) {
+   if (target && !eosio::cdt::starts_with(std::string(target->getValue()), "wasm32")) {
       return eosio::cdt::exec_subprogram(backend, Argv, false);
    }
 

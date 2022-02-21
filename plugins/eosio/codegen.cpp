@@ -403,9 +403,9 @@ public:
          return true;
 
       for (const auto& arg : tokenize(args[0])) {
-         if (arg.starts_with("output=")) {
+         if (eosio::cdt::starts_with(arg, "output=")) {
             output = arg.substr(arg.find("=")+1);
-         } else if (arg.starts_with("contract=")) {
+         } else if (eosio::cdt::starts_with(arg, "contract=")) {
             contract_name = arg.substr(arg.find("=")+1);
          } else {
             return false;

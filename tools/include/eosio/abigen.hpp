@@ -868,9 +868,9 @@ namespace eosio { namespace cdt {
 
             std::vector<std::string> resource_dirs;
             for (const auto& arg : tokenize(args[0])) {
-               if (arg.starts_with("contract=")) {
+               if (eosio::cdt::starts_with(arg, "contract=")) {
                   abigen::get().set_contract_name(arg.substr(arg.find("=")+1));
-               } else if (arg.starts_with("abi_version=")) {
+               } else if (eosio::cdt::starts_with(arg, "abi_version=")) {
                   auto str = arg.substr(arg.find("=")+1);
                   float tmp;
                   int abi_version_major = std::stoi(str);
@@ -880,7 +880,7 @@ namespace eosio { namespace cdt {
                   abigen::get().no_abigen = true;
                } else if (arg == "suppress_ricardian_warnings") {
                   abigen::get().set_suppress_ricardian_warning(true);
-               } else if (arg.starts_with("R=")) {
+               } else if (eosio::cdt::starts_with(arg, "R=")) {
                   resource_dirs.emplace_back(arg.substr(arg.find("=")+1));
                } else {
                   return false;

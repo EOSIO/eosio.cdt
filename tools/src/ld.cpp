@@ -131,7 +131,7 @@ std::vector<std::string> override_link_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
 
    if (auto target = Args.getLastArgNoClaim(OPT_m)) {
-      if (std::string(target->getValue()).starts_with("wasm32")) {
+      if (eosio::cdt::starts_with(std::string(target->getValue()), "wasm32")) {
          is_wasm_target = true;
       }
    } else {
@@ -304,7 +304,7 @@ int main(int argc, const char** argv) {
             tmp_inputs.emplace_back(main_file);
             if (!main_file.empty()) {
                std::vector<std::string> new_opts { "-c", "-o", main_file+".o" , main_file , "--no-missing-ricardian-clause"};
-                  if (auto ret = eosio::cdt::exec_subprogram(eosio::cdt::whereami::where()+"/"+COMPILER_NAME, new_opts, show_commands)) {
+                  if (auto ret = eosio::cdt::exec_subprogram(COMPILER_NAME, new_opts, show_commands)) {
                   return ret;
                }
                args.push_back(main_file+".o");
@@ -324,16 +324,14 @@ int main(int argc, const char** argv) {
       if (auto ret = eosio::cdt::exec_subprogram(backend, args, show_commands)) {
          return ret;
       }
-
-      auto postpass_path = eosio::cdt::whereami::where()+"/"+POSTPASS_NAME;
-      if (llvm::sys::fs::exists(postpass_path)) {
-         std::array<std::string,2> options =  {"--profile="+std::to_string(_profile), output};
-         if (auto ret = eosio::cdt::exec_subprogram(postpass_path, options, show_commands)) {
-            return ret;
-         }
+  
+      std::array<std::string,2> options =  {"--profile="+std::to_string(_profile), output};
+      if (auto ret = eosio::cdt::exec_subprogram(POSTPASS_NAME, options, show_commands)) {
+         return ret;
       }
+      
    } else {
-      if (auto ret = eosio::cdt::exec_subprogram( "ld", args, show_commands)) {
+      if (auto ret = eosio::cdt::exec_subprogram( "lld", args, show_commands)) {
          return ret;
       }
    }
