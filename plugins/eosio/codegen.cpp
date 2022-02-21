@@ -27,7 +27,7 @@ private:
    Rewriter  rewriter;
    CompilerInstance* ci;
    bool      warn_action_read_only = false;
-   std::ofstream ss;
+   std::stringstream ss;
 
 public:
 
@@ -47,15 +47,20 @@ public:
       main_fid = fid;
    }
 
-   void set_output_file_name(std::string name) {
-      ss.open(name);
+   void save(std::string name) {
+      std::string buf = ss.str();
+      std::ofstream of(name);
+      of << "#include \"" << std::string_view(main_name.data(), main_name.size()) << "\"\n";
+
+      if (buf.size()) {
+         of << "#include <eosio/datastream.hpp>\n";
+         of << "#include <eosio/name.hpp>\n";
+         of << buf;
+      }   
    }
 
    void set_main_name(StringRef mn) {
      main_name = mn;
-     ss << "#include \"" << std::string_view(mn.data(), mn.size()) << "\"\n";
-     ss << "#include <eosio/datastream.hpp>\n";
-     ss << "#include <eosio/name.hpp>\n";
    }
 
    template <typename F, typename D>
@@ -374,10 +379,11 @@ public:
       if (main_fe) {
          auto fid = src_mgr.getOrCreateFileID(*f_mgr.getFile(main_file), SrcMgr::CharacteristicKind::C_User);
          visitor->set_main_fid(fid);
-         visitor->set_output_file_name(output + ".actions.cpp");
+         
          visitor->set_main_name(main_fe->getName());
          visitor->TraverseDecl(Context.getTranslationUnitDecl());
          visitor->process_read_only_actions();
+         visitor->save(output + ".actions.cpp");
       }
    }
 };
