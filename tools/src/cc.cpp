@@ -1,7 +1,8 @@
 #include <blanc/custom_attrs.hpp>
 #include <blanc/profile.hpp>
 #include <blanc/tokenize.hpp>
-#include <blanc/utils.hpp>
+#include <eosio/utils.hpp>
+
 #include <eosio/whereami/whereami.hpp>
 #include <llvm/Option/ArgList.h>
 #include <llvm/Option/OptTable.h>
@@ -39,19 +40,20 @@ std::string output;
 std::vector<std::string> resource_dirs;
 std::set<std::string> include_dirs;
 bool link = true;
-bool keep_generated = false;
+bool save_eosio_temps = false;
 
 std::string contract_name;
 std::string abi_version;
+std::string save_temps;
 bool no_abigen;
 bool suppress_ricardian_warnings;
 
 std::vector<std::string> override_compile_options(InputArgList& Args) {
    std::vector<std::string> new_opts;
 
-   if (Args.hasArgNoClaim(OPT_keep_generated)) {
-      keep_generated = true;
-      Args.eraseArg(OPT_keep_generated);
+   if (Args.hasArgNoClaim(OPT_save_eosio_temps)) {
+      save_eosio_temps = true;
+      Args.eraseArg(OPT_save_eosio_temps);
    }
 
    if (Args.hasArgNoClaim(OPT_c, OPT_fsyntax_only, OPT_E)) {
@@ -60,6 +62,11 @@ std::vector<std::string> override_compile_options(InputArgList& Args) {
 
    if (!Args.hasArgNoClaim(OPT_nostdlib)) {
       new_opts.emplace_back("-nostdlib");
+   }
+
+   if (auto arg = Args.getLastArgNoClaim(OPT_save_temps_EQ)) {
+      save_temps = arg->getValue();
+      Args.eraseArg(OPT_save_temps_EQ);
    }
 
    if (!link) {
@@ -222,7 +229,7 @@ int main(int argc, const char** argv) {
 
    auto target = Args.getLastArgNoClaim(OPT_target);
    if (target &&!std::string(target->getValue()).starts_with("wasm32")) {
-      return blanc::exec_subprogram(backend, Argv, false);
+      return eosio::cdt::exec_subprogram(backend, Argv, false);
    }
 
    bool has_v = Args.hasArgNoClaim(OPT_v);
@@ -235,8 +242,8 @@ int main(int argc, const char** argv) {
 #ifdef CPP_COMP
 
    std::vector<std::string> tmp_inputs;
-   blanc::scope_exit on_exit([&tmp_inputs, keep_generated = keep_generated](){
-      if (!keep_generated) {
+   eosio::cdt::scope_exit on_exit([&tmp_inputs, save_eosio_temps = save_eosio_temps](){
+      if (!save_eosio_temps) {
          for (const auto& tmp_file : tmp_inputs) {
             llvm::sys::fs::remove(tmp_file);
          }
@@ -256,22 +263,18 @@ int main(int argc, const char** argv) {
       std::vector<std::string> local_args = args;
       std::string _output;
 
-      auto input_absolute = to_absolute_path(input);
+      auto input_absolute = eosio::cdt::to_absolute_path(input);
       bool is_preprocess = Args.hasArgNoClaim(OPT_E);
 
-      if (Args.hasArgNoClaim(OPT_c)) {
-         if (output.size()) {
-            _output = output;
-         } else if (!is_preprocess){
-            llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
-            llvm::sys::path::replace_extension(fn, ".o");
-            _output = fn.str().str();
-         }
+      if (Args.hasArgNoClaim(OPT_c) && output.size()) {
+         _output = output;
       } else if (!is_preprocess) {
-         auto ifs = input_absolute.str().str();
-         _output = get_temporary_path(std::to_string(std::hash<std::string>{}(ifs))+".o");
+         llvm::SmallString<PATH_MAX> fn = llvm::sys::path::filename(input);
+         llvm::sys::path::replace_extension(fn, ".o");
+         _output = fn.str().str();
       }
-      _output = to_absolute_path(_output).str().str();
+
+      _output = eosio::cdt::to_absolute_path(_output).str().str();
 
       auto input_absolute_path = input_absolute;
       llvm::sys::path::remove_filename(input_absolute_path);
@@ -329,7 +332,7 @@ int main(int argc, const char** argv) {
 
       local_args.emplace_back(input);
 
-      if (auto ret = blanc::exec_subprogram(backend, local_args, has_v) || is_preprocess) {
+      if (auto ret = eosio::cdt::exec_subprogram(backend, local_args, has_v) || is_preprocess) {
          return ret;
       }
 
@@ -346,8 +349,8 @@ int main(int argc, const char** argv) {
       if (has_v){
          args.emplace_back("-Wl,--show-commands");
       }
-      if (keep_generated){
-         args.emplace_back("-Wl,--keep-generated");
+      if (save_eosio_temps){
+         args.emplace_back("-Wl,--save-eosio-temps");
       }
       if (output.size()) {
          args.emplace_back("-o "+output);
@@ -363,7 +366,14 @@ int main(int argc, const char** argv) {
    for (const auto& inc : include_dirs) {
       args.push_back("-I"+inc);
    }
-   if (auto ret = blanc::exec_subprogram(backend, args, has_v)) {
+
+   ////  Warning: up until clang 13.0.1, --save-temps is broken for wasm32 target, disable it for now.
+   ////
+   // if (save_temps.size()) {
+   //    args.push_back("--save-temps=" + save_temps);
+   // }
+
+   if (auto ret = eosio::cdt::exec_subprogram(backend, args, has_v)) {
       return ret;
    }
    return 0;

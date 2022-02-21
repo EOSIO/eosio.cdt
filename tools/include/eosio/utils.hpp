@@ -15,6 +15,9 @@ extern "C" char **environ;
 #include "whereami/whereami.hpp"
 #include <vector>
 #include <sstream>
+#include <fstream>
+#include <iostream>
+#include <regex>
 
 namespace eosio { namespace cdt {
 
@@ -134,4 +137,77 @@ struct environment {
    }
    
 };
+
+
+   std::string llvm_path() {
+      const char *llvm_root = std::getenv("LLVM_ROOT");
+      if (llvm_root)
+         return llvm_root;
+
+      std::string conf_file =
+            eosio::cdt::whereami::where() + "/../etc/eosio.cdt.conf";
+      if (llvm::sys::fs::exists(conf_file)) {
+         std::ifstream t(conf_file);
+         std::string s((std::istreambuf_iterator<char>(t)),
+                        std::istreambuf_iterator<char>());
+         const std::regex base_regex("\\s*LLVM_ROOT\\s*=\\s*(.+)\\s*$");
+         std::smatch base_match;
+         if (std::regex_match(s, base_match, base_regex))
+            return base_match[1];
+      }
+
+      return "";
+   }
+
+   llvm::ArrayRef<llvm::StringRef> get_llvm_bin_paths() {
+      static std::string p = llvm_path();
+      static std::string llvm_bin_path = p + "/bin";
+      static llvm::StringRef r[] = { llvm_bin_path };
+      return p.size() ? llvm::ArrayRef<llvm::StringRef>{r} : llvm::ArrayRef<llvm::StringRef>{};
+   }
+
+   template <typename Container>
+   int exec_subprogram(const std::string& prog, const Container& options, bool show_commands) {
+      
+      auto run_prog = [&options, show_commands](const std::string& abs_path) {
+         std::stringstream cmd;
+         cmd << abs_path ;
+         for (const auto& s : options) {
+            cmd << " " << s;
+         }
+         auto cmd_str = cmd.str();
+         if (show_commands) llvm::outs() << "\n" << cmd_str << "\n";
+         return std::system(cmd_str.c_str());
+      };
+
+      if (prog.size() && prog[0] == '/') return run_prog(prog);
+
+      static auto search_paths = get_llvm_bin_paths();
+      auto path = llvm::sys::findProgramByName(prog.c_str(), search_paths );
+      if (search_paths.size() && !path) {
+         // use the system PATH environment to find the program instead
+         path = llvm::sys::findProgramByName(prog.c_str(), {} );
+      }
+
+      if (path) return run_prog(*path);
+
+      std::cerr << prog << " not found, please set the environment variables LLVM_ROOT or PATH to locate the program\n";
+      return ENOENT;
+      
+   }
+
+   struct scope_exit {
+      std::function<void()> fun;
+      template <typename Fn>
+      scope_exit(Fn&& fn) : fun(fn) {}
+      ~scope_exit() { fun(); }
+   };
+
+   template<typename T>
+   llvm::SmallString<PATH_MAX> to_absolute_path(T&& path) {
+      llvm::SmallString<PATH_MAX> absolute_path = llvm::StringRef(path);
+      llvm::sys::fs::make_absolute(absolute_path);
+      return absolute_path;
+   }
+
 }} // ns eosio::cdt

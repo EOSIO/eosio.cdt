@@ -9,7 +9,6 @@
 
 #include <fstream>
 #include <blanc/tokenize.hpp>
-#include <blanc/utils.hpp>
 #include <eosio/gen.hpp>
 #include <eosio/abigen.hpp>
 

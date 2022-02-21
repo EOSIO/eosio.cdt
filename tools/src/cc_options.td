@@ -8,5 +8,5 @@ def no_abigen : Flag<["--"], "no-abigen">, Flags<[CC1Option]>,
     HelpText<"Disable ABI file generation">;
 def no_missing_ricardian_clause : Flag<["-","--"], "no-missing-ricardian-clause">, Flags<[CC1Option]>,
     HelpText<"Disable warnings for missing Ricardian clauses">;
-def keep_generated : Flag<["-","--"], "keep-generated">,
-    HelpText<"Keep generated files">;
+def save_eosio_temps : Flag<["-","--"], "save-eosio-temps">,
+    HelpText<"Save EOSIO specific intermidiate files">;

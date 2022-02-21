@@ -4,7 +4,6 @@
 #include <llvm/Support/FileSystem.h>
 
 #include <blanc/profile.hpp>
-#include <blanc/utils.hpp>
 #include <eosio/abigen.hpp>
 #include <eosio/abimerge.hpp>
 #include <eosio/utils.hpp>
@@ -228,16 +227,16 @@ int main(int argc, const char** argv) {
    BlancLdOptTable opts;
    auto Args = opts.ParseArgs(Argv, missingIndex, missingCount);
 
-   bool keep_generated = Args.hasArgNoClaim(OPT_keep_generated);
-   if (keep_generated) Args.eraseArg(OPT_keep_generated);
+   bool save_eosio_temps = Args.hasArgNoClaim(OPT_save_eosio_temps);
+   if (save_eosio_temps) Args.eraseArg(OPT_save_eosio_temps);
    bool show_commands = Args.hasArgNoClaim(OPT_show_commands);
    if (show_commands) Args.eraseArg(OPT_show_commands);
 
    auto args = override_link_options(Args);
 
    std::vector<std::string> tmp_inputs;
-   blanc::scope_exit on_exit([&tmp_inputs, keep_generated]() {
-      if (!keep_generated) {
+   eosio::cdt::scope_exit on_exit([&tmp_inputs, save_eosio_temps]() {
+      if (!save_eosio_temps) {
          for (const auto& tmp_file : tmp_inputs) {
             llvm::sys::fs::remove(tmp_file);
          }
@@ -250,7 +249,7 @@ int main(int argc, const char** argv) {
          for (const auto& input : inputs) {
             auto desc_name = input.substr(0, input.rfind("-"))+".desc";
             if (!llvm::sys::fs::exists(desc_name)) {
-               desc_name = to_absolute_path(input).str().str() +".desc";
+               desc_name = eosio::cdt::to_absolute_path(input).str().str() +".desc";
             }
             if (llvm::sys::fs::exists(desc_name)) {
                std::ifstream ifs(desc_name);
@@ -305,7 +304,7 @@ int main(int argc, const char** argv) {
             tmp_inputs.emplace_back(main_file);
             if (!main_file.empty()) {
                std::vector<std::string> new_opts { "-c", "-o", main_file+".o" , main_file , "--no-missing-ricardian-clause"};
-                  if (auto ret = blanc::exec_subprogram(COMPILER_NAME, new_opts, show_commands)) {
+                  if (auto ret = eosio::cdt::exec_subprogram(eosio::cdt::whereami::where()+"/"+COMPILER_NAME, new_opts, show_commands)) {
                   return ret;
                }
                args.push_back(main_file+".o");
@@ -322,19 +321,19 @@ int main(int argc, const char** argv) {
          backend = TOOL_BACKEND;
       }
 
-      if (auto ret = blanc::exec_subprogram(backend, args, show_commands)) {
+      if (auto ret = eosio::cdt::exec_subprogram(backend, args, show_commands)) {
          return ret;
       }
 
       auto postpass_path = eosio::cdt::whereami::where()+"/"+POSTPASS_NAME;
       if (llvm::sys::fs::exists(postpass_path)) {
          std::array<std::string,2> options =  {"--profile="+std::to_string(_profile), output};
-         if (auto ret = blanc::exec_subprogram(postpass_path, options, show_commands)) {
+         if (auto ret = eosio::cdt::exec_subprogram(postpass_path, options, show_commands)) {
             return ret;
          }
       }
    } else {
-      if (auto ret = blanc::exec_subprogram(eosio::cdt::whereami::where() + "/ld", args, show_commands)) {
+      if (auto ret = eosio::cdt::exec_subprogram( "ld", args, show_commands)) {
          return ret;
       }
    }
