@@ -49,7 +49,8 @@ public:
    void save(std::string name) {
       std::string buf = ss.str();
       std::ofstream of(name);
-      of << "#include \"" << std::string_view(main_name.data(), main_name.size()) << "\"\n";
+      auto absolute_main_name=eosio::cdt::to_absolute_path(main_name);
+      of << "#include \"" << std::string_view(absolute_main_name.data(), absolute_main_name.size()) << "\"\n";
 
       if (buf.size()) {
          of << "#include <eosio/datastream.hpp>\n";

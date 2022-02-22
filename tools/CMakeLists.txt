@@ -95,6 +95,7 @@ copy_to_bin(wasm-objdump)
 
 foreach(target clang clang++ wasm-ld lld llvm-ar llvm-ranlib )
   file(CREATE_LINK  ${LLVM_TOOLS_BINARY_DIR}/${target} ${CMAKE_BINARY_DIR}/bin/${target} SYMBOLIC)
+  install(FILES ${CMAKE_BINARY_DIR}/bin/${target} TYPE BIN)
 endforeach()
 
 if(BUILD_TESTS)
