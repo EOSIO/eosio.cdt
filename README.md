@@ -49,8 +49,25 @@ sudo yum remove eosio.cdt
 ```
 
 ## Guided Installation or Building from Scratch
+
+### Install llvm 13
+#### Mac
 ```sh
-git clone --recursive https://github.com/eosio/eosio.cdt
+brew install llvm@13
+```
+#### Ubuntu 
+```
+source /etc/lsb-release
+curl -L https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add - 
+echo "deb http://apt.llvm.org/$DISTRIB_CODENAME/ llvm-toolchain-$DISTRIB_CODENAME-13 main" | sudo tee /etc/apt/sources.list.d/llvm.list >/dev/null 
+sudo apt-get update -y
+sudo apt-get install -y clang-13 libclang-13-dev lld-13
+```
+
+### Build 
+
+```sh
+git clone https://github.com/eosio/eosio.cdt
 cd eosio.cdt
 mkdir build
 cd build
@@ -78,14 +95,9 @@ sudo rm /usr/local/bin/eosio-*
 * eosio-cpp
 * eosio-cc
 * eosio-ld
-* eosio-init
-* eosio-abidiff
-* eosio-wasm2wast
-* eosio-wast2wasm
-* eosio-ranlib
-* eosio-ar
-* eosio-objdump
-* eosio-readelf
+* eosio-pp
+* wasm-objdump  
+* wasm2wat
 
 ## Contributing
 
