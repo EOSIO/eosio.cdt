@@ -8,7 +8,7 @@ if [[ $(uname) == 'Darwin' ]]; then
 
     # You can't use chained commands in execute
     cd $BUILD_DIR
-    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm@13
     make -j$JOBS
 
 else # Linux
@@ -19,7 +19,7 @@ else # Linux
 
     # PRE_COMMANDS: Executed pre-cmake
     PRE_COMMANDS="cd $MOUNTED_DIR/build"
-    BUILD_COMMANDS="cmake .. -DEOSIO_RUN_INTEGRATION_TESTS=ON -DEOSIO_ROOT=/usr/local && make -j$JOBS"
+    BUILD_COMMANDS="cmake .. -DEOSIO_RUN_INTEGRATION_TESTS=OFF -DEOSIO_ROOT=/usr/local && make -j$JOBS"
 
     [[ $IMAGE_TAG == 'centos-7.7' ]] && PRE_COMMANDS="$PRE_COMMANDS && source /opt/rh/devtoolset-7/enable"
     # Docker Commands

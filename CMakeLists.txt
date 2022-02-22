@@ -62,13 +62,14 @@ list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR} ${CMAKE_SOURCE_DIR}/modules)
 
 include(AddLLVM)
 include(fetch_content)
-include(BlancExecutableNames)
 
-fetch_content(
-  llvm
-  URL            https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}.tar.gz
-  URL_HASH       SHA256=09c50d558bd975c41157364421820228df66632802a4a6a7c9c17f86a7340802          
-)
+if (NOT llvm_SOURCE_DIR)
+  fetch_content(
+    llvm
+    URL            https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-13.0.1.tar.gz
+    URL_HASH       SHA256=09c50d558bd975c41157364421820228df66632802a4a6a7c9c17f86a7340802          
+  )
+endif()
 
 fetch_content(
   wabt
