@@ -69,12 +69,8 @@ namespace eosio { namespace cdt {
          auto action_name = decl->getEosioActionAttr()->getName();
 
          if (!checked_actions.insert(get_action_name(decl)).second)
-            CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
-
-         if (!suppress_ricardian_warnings)
-            if (rcs[get_action_name(decl)].empty())
-               // TODO:
-               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+            if (!suppress_ricardian_warnings)
+               CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
@@ -96,12 +92,8 @@ namespace eosio { namespace cdt {
          auto action_name = decl->getEosioActionAttr()->getName();
 
          if (!checked_actions.insert(get_action_name(decl)).second)
-            CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
-
-         if (!suppress_ricardian_warnings)
-            if (rcs[get_action_name(decl)].empty())
-               // TODO
-               std::cout << "Warning, action <"+get_action_name(decl)+"> does not have a ricardian contract\n";
+            if (!suppress_ricardian_warnings)
+               CDT_CHECK_WARN(!rcs[get_action_name(decl)].empty(), "abigen_warning", decl->getLocation(), "Action <"+get_action_name(decl)+"> does not have a ricardian contract");
 
          ret.ricardian_contract = rcs[get_action_name(decl)];
 
