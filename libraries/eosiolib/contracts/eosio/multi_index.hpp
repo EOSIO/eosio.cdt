@@ -1737,7 +1737,20 @@ class multi_index
                            = secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_find_primary( _code.value, _scope, index_type::name(), pk,  temp_secondary_key );
                }
 
-               secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_update( indexitr, payer.value, secondary );
+               if (indexitr >= 0)
+               {
+                  secondary_index_db_functions<
+                      typename index_type::secondary_key_type>::db_idx_update(indexitr, payer.value,
+                                                                              secondary);
+               }
+               else
+               {
+                  mutableitem.__iters[index_type::number()] = secondary_index_db_functions<
+                      typename index_type::secondary_key_type>::db_idx_store(_scope,
+                                                                             index_type::name(),
+                                                                             payer.value, pk,
+                                                                             secondary);
+               }
             }
          });
       }
@@ -1950,5 +1963,64 @@ class multi_index
          _items_vector.erase(--(itr2.base()));
       }
 
+      /**
+       * Updates the table for a newly added secondary index.  When a secondary index is added to a table that already exists in the contract, it will not be usable, because it will not have entries for rows that existed prior to the addition.  This function will make such a secondary index usable.
+       * @ingroup multiindex
+       *
+       * @param payer - account name of the payer for the storage usage of the updated row.
+       * @param next_primary_key - The current update point.  It should be the result of a previous call or zero to begin a new update.
+       * @param max_steps - The maximum number or rows to update.
+       *
+       * @pre All rows with a primary key below next_primary_key have been updated.
+       * @post next_primary_key is updated to be a key greater than the primary key of any row updated by the call, if such a key exists.
+       * @post max_steps is decremented by the number of steps executed.
+       * @post All rows with a primary key below the new value of next_primary_key have been updated.
+       *
+       * @return true if the call finished updating the index, false otherwise.
+       *
+       * Notes:
+       * - max_steps allows the update to be split across multiple actions, to avoid overrunning CPU limits when updating a large table.
+       * - Other indexes can be used normally while the update is in progress.  Only the newly added index is restricted.
+       *
+       * Example:
+       *
+       * @code
+       *    // Modify the address table by adding a new secondary index
+       *    typedef eosio::multi_index< "address"_n, address,
+       *       indexed_by< "bystate"_n, const_mem_fun<address, uint64_t, &address::by_state> >
+       *    > address_index;
+       *    // Store information about the migration in a singleton
+       *    singleton<"migratedata"_n, std::optional<uint64_t>> migrate_data;
+       *    void migrate(name payer, uint32_t max_steps) {
+       *       require_auth(payer);
+       *       auto state = migrate_data.get_or_default(0));
+       *       check(state.has_value(), "Migration is already complete");
+       *       if(addresses.update_index<"bystate"_n>(payer, *state, max_steps))
+       *          state = std::nullopt;
+       *       migrate_data.set(state, payer);
+       *    }
+       * @endcode
+       */
+      template <eosio::name::raw IndexName>
+      bool update_index(eosio::name payer, uint64_t& next_primary_key, uint32_t& max_steps) {
+         using namespace _multi_index_detail;
+         if (max_steps == 0) return false;
+
+         using index_type = decltype(get_index<IndexName>());
+         for (auto iter = lower_bound(next_primary_key), end = this->end();
+              max_steps > 0 && iter != end; --max_steps, ++iter) {
+            typename index_type::secondary_key_type dummy;
+            auto existing = secondary_index_db_functions<
+                typename index_type::secondary_key_type>::db_idx_find_primary(
+                    _code.value, _scope, index_type::name(), iter->primary_key(), dummy);
+            if (existing < 0) {
+               auto secondary = index_type::extract_secondary_key(*iter);
+               secondary_index_db_functions<typename index_type::secondary_key_type>::db_idx_store(
+                   _scope, index_type::name(), payer.value, iter->primary_key(), secondary);
+            }
+            next_primary_key = iter->primary_key() + 1;
+         }
+         return max_steps > 0 || next_primary_key == 0;
+      }
 };
 }  /// eosio
