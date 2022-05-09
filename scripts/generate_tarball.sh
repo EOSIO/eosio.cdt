@@ -19,8 +19,8 @@ cp -R ${BUILD_DIR}/bin/* ${CDT_PREFIX}/bin || exit 1
 cp -R ${BUILD_DIR}/licenses/* ${CDT_PREFIX}/licenses || exit 1
 
 # install cmake modules
-sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/EosioCDTMacrosPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake || exit 1
-sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/EosioWasmToolchainPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake || exit 1
+sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/CDTMacrosPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/CDTMacros.cmake || exit 1
+sed "s/_PREFIX_/\/${SPREFIX}/g" ${BUILD_DIR}/modules/CDTWasmToolchainPackage.cmake &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/CDTWasmToolchain.cmake || exit 1
 sed "s/_PREFIX_/\/${SPREFIX}\/${SSUBPREFIX}/g" ${BUILD_DIR}/modules/${PROJECT}-config.cmake.package &> ${CDT_PREFIX}/lib/cmake/${PROJECT}/${PROJECT}-config.cmake || exit 1
 
 # install scripts
@@ -49,8 +49,8 @@ fi
 # make symlinks
 pushd ${PREFIX}/lib/cmake/${PROJECT} &> /dev/null
 ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/${PROJECT}-config.cmake ${PROJECT}-config.cmake || exit 1
-ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioWasmToolchain.cmake EosioWasmToolchain.cmake || exit 1
-ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/EosioCDTMacros.cmake EosioCDTMacros.cmake || exit 1
+ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/CDTToolchain.cmake CDTWasmToolchain.cmake || exit 1
+ln -sf ../../../${SUBPREFIX}/lib/cmake/${PROJECT}/CDTMacros.cmake CDTMacros.cmake || exit 1
 popd &> /dev/null
 
 create_symlink() {

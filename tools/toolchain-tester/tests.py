@@ -38,15 +38,15 @@ class Test(ABC):
         self.success: bool = False
 
     @abstractmethod
-    def _run(self, eosio_cpp: str, args: List[str]):
+    def _run(self, cdt_cpp: str, args: List[str]):
         pass
 
     def run(self):
         cf = self.test_json.get("compile_flags")
         args = cf if cf else []
 
-        eosio_cpp = os.path.join(self.test_suite.cdt_path, "eosio-cpp")
-        self._run(eosio_cpp, args)
+        cdt_cpp = os.path.join(self.test_suite.cdt_path, "cdt-cpp")
+        self._run(cdt_cpp, args)
 
     def handle_test_result(self, res: subprocess.CompletedProcess, expected_pass=True):
         stdout = res.stdout.decode("utf-8").strip()
@@ -148,8 +148,8 @@ class Test(ABC):
 
 
 class BuildPassTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -158,8 +158,8 @@ class BuildPassTest(Test):
 
 
 class CompilePassTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, "-c", self.cpp_file]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, "-c", self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -168,8 +168,8 @@ class CompilePassTest(Test):
 
 
 class AbigenPassTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file, "-abigen_output=''"]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, self.cpp_file, "-abigen_output=''"]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res)
@@ -178,8 +178,8 @@ class AbigenPassTest(Test):
 
 
 class BuildFailTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res, expected_pass=False)
@@ -188,8 +188,8 @@ class BuildFailTest(Test):
 
 
 class CompileFailTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, "-c", self.cpp_file]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, "-c", self.cpp_file]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res, expected_pass=False)
@@ -197,8 +197,8 @@ class CompileFailTest(Test):
         return res
 
 class AbigenFailTest(Test):
-    def _run(self, eosio_cpp, args):
-        command = [eosio_cpp, self.cpp_file, "-abigen_output=''"]
+    def _run(self, cdt_cpp, args):
+        command = [cdt_cpp, self.cpp_file, "-abigen_output=''"]
         command.extend(args)
         res = subprocess.run(command, capture_output=True)
         self.handle_test_result(res, expected_pass=False)

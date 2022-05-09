@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-list( APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_BIN} )
-include( EosioCDTMacros )
+list( APPEND CMAKE_MODULE_PATH ${CDT_BIN} )
+include( CDTMacros )
 
 macro(add_cdt_unit_test TEST_NAME)
    add_native_executable(${TEST_NAME} ${TEST_NAME}.cpp)

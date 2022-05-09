@@ -5,7 +5,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CDT_ROOT}/lib/cmake/cdt)
 if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "Off")
     set(EOSIO_WASM_OLD_BEHAVIOR "On")
-    include(EosioWasmToolchain)
+    include(CDTWasmToolchain)
 endif()
 
 include(CDTMacros)

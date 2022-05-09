@@ -56,14 +56,14 @@ static cl::opt<bool> use_old_malloc_opt(
     cl::desc("Set the malloc implementation to the old freeing malloc"),
     cl::Hidden,
     cl::cat(LD_CAT));
-static cl::opt<std::string> eosio_imports_opt(
-    "eosio-imports",
-    cl::desc("Set the file for eosio.imports"),
+static cl::opt<std::string> imports_opt(
+    "imports",
+    cl::desc("Set the file for cdt.imports"),
     cl::Hidden,
     cl::cat(LD_CAT));
 static cl::opt<std::string> pp_path_opt(
     "eosio-pp-dir",
-    cl::desc("Set the directory for eosio.pp"),
+    cl::desc("Set the directory for eosio-pp"),
     cl::Hidden,
     cl::cat(LD_CAT));
 static cl::opt<bool> use_rt_opt(
@@ -853,15 +853,15 @@ static Options CreateOptions(bool add_defaults=true) {
 
    if (!fnative_opt) {
 #ifndef ONLY_LD
-      if (!eosio_imports_opt.empty()) {
-         ldopts.emplace_back("-eosio-imports="+eosio_imports_opt);
+      if (!imports_opt.empty()) {
+         ldopts.emplace_back("-imports="+imports_opt);
       }
 #else
-      if (!eosio_imports_opt.empty()) {
-         ldopts.emplace_back("--allow-undefined-file="+eosio_imports_opt);
+      if (!imports_opt.empty()) {
+         ldopts.emplace_back("--allow-undefined-file="+imports_opt);
       }
       else {
-         ldopts.emplace_back("--allow-undefined-file="+eosio::cdt::whereami::where()+"/../eosio.imports");
+         ldopts.emplace_back("--allow-undefined-file="+eosio::cdt::whereami::where()+"/../cdt.imports");
       }
 #endif
    }
