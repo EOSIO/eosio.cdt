@@ -16,9 +16,9 @@ using namespace llvm;
 int main(int argc, const char **argv) {
 
   cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-ld version " << "${VERSION_FULL}" << "\n";
+        os << "cdt-ld version " << "${VERSION_FULL}" << "\n";
   });
-  cl::ParseCommandLineOptions(argc, argv, "eosio-ld (WebAssembly linker)");
+  cl::ParseCommandLineOptions(argc, argv, "cdt-ld (WebAssembly linker)");
   Options opts = CreateOptions();
 
   std::string line;
