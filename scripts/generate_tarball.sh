@@ -27,7 +27,7 @@ sed "s/_PREFIX_/\/${SPREFIX}\/${SSUBPREFIX}/g" ${BUILD_DIR}/modules/${PROJECT}-c
 cp -R ${BUILD_DIR}/scripts/* ${CDT_PREFIX}/scripts  || exit 1
 
 # install misc.
-cp ${BUILD_DIR}/eosio.imports ${CDT_PREFIX} || exit 1
+cp ${BUILD_DIR}/cdt.imports ${CDT_PREFIX} || exit 1
 
 # install wasm includes
 cp -R ${BUILD_DIR}/include/* ${CDT_PREFIX}/include || exit 1
@@ -57,21 +57,21 @@ create_symlink() {
    ln -sf ../${SUBPREFIX}/bin/$1 ${PREFIX}/bin/$2 || exit 1
 }
 
-create_symlink eosio-cc eosio-cc
-create_symlink eosio-cpp eosio-cpp
-create_symlink eosio-ld eosio-ld
+create_symlink cdt-cc cdt-cc
+create_symlink cdt-cpp cdt-cpp
+create_symlink cdt-ld cdt-ld
 create_symlink eosio-pp eosio-pp
-create_symlink eosio-init eosio-init
+create_symlink cdt-init cdt-init
 create_symlink eosio-wasm2wast eosio-wasm2wast
 create_symlink eosio-wast2wasm eosio-wast2wasm
-create_symlink eosio-ar eosio-ar
-create_symlink eosio-abidiff eosio-abidiff
-create_symlink eosio-nm eosio-nm
-create_symlink eosio-objcopy eosio-objcopy
-create_symlink eosio-objdump eosio-objdump
-create_symlink eosio-ranlib eosio-ranlib
-create_symlink eosio-readelf eosio-readelf
-create_symlink eosio-strip eosio-strip
+create_symlink cdt-ar cdt-ar
+create_symlink cdt-abidiff cdt-abidiff
+create_symlink cdt-nm cdt-nm
+create_symlink cdt-objcopy cdt-objcopy
+create_symlink cdt-objdump cdt-objdump
+create_symlink cdt-ranlib cdt-ranlib
+create_symlink cdt-readelf cdt-readelf
+create_symlink cdt-strip cdt-strip
 
 echo "Generating Tarball $NAME.tar.gz..."
 tar -cvzf $NAME.tar.gz ./${PREFIX}/* || exit 1
