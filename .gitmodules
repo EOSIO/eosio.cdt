@@ -6,10 +6,9 @@
 	path = libraries/libc++/libcxx
 	url = https://github.com/eosio/libcxx
 	branch = eosiosdk
-[submodule "eosio_llvm"]
-	path = eosio_llvm
-	url = https://github.com/eosio/llvm
-	branch = eosio
 [submodule "libraries/native/softfloat"]
 	path = libraries/native/softfloat
 	url = https://github.com/EOSIO/berkeley-softfloat-3.git
+[submodule "cdt-llvm"]
+	path = cdt-llvm
+	url = https://github.com/eosnetworkfoundation/cdt-llvm
