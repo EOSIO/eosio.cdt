@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eo pipefail
-# The purpose of this test is to ensure that the output of the "eosio-cpp --version" command matches the version string defined by our CMake files
+# The purpose of this test is to ensure that the output of the "cdt-cpp --version" command matches the version string defined by our CMake files
 echo '##### Eosio-cpp Version Label Test #####'
 # orient ourselves
 [[ -z "$BUILD_ROOT" ]] && export BUILD_ROOT="$(pwd)"
@@ -12,15 +12,15 @@ if [[ -z "$EXPECTED" ]]; then
     else
         export VERSION="$1"
     fi
-    export EXPECTED="eosio-cpp version $VERSION"
+    export EXPECTED="cdt-cpp version $VERSION"
 fi
 if [[ -z "$EXPECTED" ]]; then
     echo "Missing version input."
     exit 1
 fi
 echo "Expecting \"$EXPECTED\"..."
-# get eosio-cpp version
-ACTUAL=$($BUILD_ROOT/bin/eosio-cpp --version)
+# get cdt-cpp version
+ACTUAL=$($BUILD_ROOT/bin/cdt-cpp --version)
 EXIT_CODE=$?
 # verify 0 exit code explicitly
 if [[ $EXIT_CODE -ne 0 ]]; then

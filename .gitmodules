@@ -1,15 +1,12 @@
-[submodule "libraries/libc/musl"]
-	path = libraries/libc/musl
-	url = https://github.com/eosio/musl
-	branch = eosio
-[submodule "libraries/libc++/libcxx"]
-	path = libraries/libc++/libcxx
-	url = https://github.com/eosio/libcxx
-	branch = eosiosdk
-[submodule "eosio_llvm"]
-	path = eosio_llvm
-	url = https://github.com/eosio/llvm
-	branch = eosio
+[submodule "cdt-llvm"]
+	path = cdt-llvm
+	url = https://github.com/eosnetworkfoundation/cdt-llvm
+[submodule "libraries/libc/cdt-musl"]
+	path = libraries/libc/cdt-musl
+	url = https://github.com/eosnetworkfoundation/cdt-musl
+[submodule "libraries/libc++/cdt-libcxx"]
+	path = libraries/libc++/cdt-libcxx
+	url = https://github.com/eosnetworkfoundation/cdt-libcxx
 [submodule "libraries/native/softfloat"]
 	path = libraries/native/softfloat
-	url = https://github.com/EOSIO/berkeley-softfloat-3.git
+	url = https://github.com/eosnetworkfoundation/mandel-berkeley-softfloat-3

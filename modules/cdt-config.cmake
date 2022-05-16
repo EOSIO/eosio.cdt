@@ -1,14 +1,14 @@
-if(EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT)
-   set(EOSIO_CDT_ROOT "@CDT_ROOT_DIR@")
+if(CDT_ROOT STREQUAL "" OR NOT CDT_ROOT)
+   set(CDT_ROOT "@CDT_ROOT_DIR@")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt)
+list(APPEND CMAKE_MODULE_PATH ${CDT_ROOT}/lib/cmake/cdt)
 if (NOT EOSIO_WASM_OLD_BEHAVIOR STREQUAL "Off")
     set(EOSIO_WASM_OLD_BEHAVIOR "On")
-    include(EosioWasmToolchain)
+    include(CDTWasmToolchain)
 endif()
 
-include(EosioCDTMacros)
+include(CDTMacros)
   
 
 function(EXTRACT_MAJOR_MINOR_FROM_VERSION version success major minor)
@@ -101,3 +101,7 @@ function(EOSIO_CHECK_VERSION output version hard_min soft_max hard_max) # option
 
    set(${output} "MATCH" PARENT_SCOPE)
 endfunction(EOSIO_CHECK_VERSION)
+
+function(CDT_CHECK_VERSION output version hard_min soft_max hard_max)
+   EOSIO_CHECK_VERSION(${output} ${version} ${hard_min} ${soft_max} ${hard_max} ${ARGV})
+endfunction()

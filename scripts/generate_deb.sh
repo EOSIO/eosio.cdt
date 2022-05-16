@@ -1,6 +1,7 @@
 #! /bin/bash
 
 OS=$1
+ARCH=$2
 
 PREFIX="usr"
 SPREFIX=${PREFIX}
@@ -13,14 +14,14 @@ if [[ -z $RELEASE ]]; then
   RELEASE="1"
 fi
 
-NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_amd64"
+NAME="${PROJECT}_${VERSION_NO_SUFFIX}-${RELEASE}_${ARCH}"
 
 mkdir -p ${PROJECT}/DEBIAN
 echo "Package: ${PROJECT} 
 Version: ${VERSION_NO_SUFFIX}-${RELEASE}
 Section: devel
 Priority: optional
-Architecture: amd64
+Architecture: ${ARCH}
 Homepage: ${URL} 
 Maintainer: ${EMAIL} 
 Description: ${DESC}" &> ${PROJECT}/DEBIAN/control

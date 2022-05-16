@@ -5,7 +5,7 @@ SET(SRC_FILENAMES algorithm.cpp any.cpp bind.cpp charconv.cpp chrono.cpp conditi
 
 SET(SRC_FILES "")
 FOREACH(FN ${SRC_FILENAMES})
-   LIST(APPEND SRC_FILES "libcxx/src/${FN}")
+   LIST(APPEND SRC_FILES "cdt-libcxx/src/${FN}")
 ENDFOREACH(FN)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-everything")
@@ -17,11 +17,11 @@ add_library(c++
 
 target_include_directories(c++
                            PUBLIC
-                           ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/include
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                           ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                           ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
+                           ${CMAKE_CURRENT_SOURCE_DIR}/cdt-libcxx/include
+                           ${CMAKE_SOURCE_DIR}/libc/cdt-musl/include
+                           ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/internal
+                           ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/crypt
+                           ${CMAKE_SOURCE_DIR}/libc/cdt-musl/arch/eos)
 
 target_link_libraries(c++ c)
 target_compile_definitions(c++ PUBLIC -D_LIBCPP_BUILDING_LIBRARY)
@@ -33,11 +33,11 @@ if (ENABLE_NATIVE_COMPILER)
 
    target_include_directories(native_c++
                               PUBLIC
-                              ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include
-                              ${CMAKE_SOURCE_DIR}/libc/musl/include
-                              ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                              ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                              ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos)
+                              ${CMAKE_CURRENT_SOURCE_DIR}/cdt-libcxx/include
+                              ${CMAKE_SOURCE_DIR}/libc/cdt-musl/include
+                              ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/internal
+                              ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/crypt
+                              ${CMAKE_SOURCE_DIR}/libc/cdt-musl/arch/eos)
 
    target_link_libraries(native_c++ native_c)
    target_compile_definitions(native_c++ PUBLIC -D_LIBCPP_BUILDING_LIBRARY)
@@ -45,4 +45,4 @@ if (ENABLE_NATIVE_COMPILER)
    add_custom_command( TARGET native_c++ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:native_c++> ${BASE_BINARY_DIR}/lib )
 endif()
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/include/ DESTINATION ${BASE_BINARY_DIR}/include/libcxx)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/cdt-libcxx/include/ DESTINATION ${BASE_BINARY_DIR}/include/libcxx)

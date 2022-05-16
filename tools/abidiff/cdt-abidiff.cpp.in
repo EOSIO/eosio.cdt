@@ -37,7 +37,7 @@ using jsoncons::ojson;
 
 struct abidiff_exception : public std::exception {
    virtual const char* what() const throw() {
-      return "eosio.abidiff fatal error";
+      return "cdt.abidiff fatal error";
    }
 } abidiff_ex;
 
@@ -296,9 +296,9 @@ class abidiff {
 int main(int argc, const char **argv) {
 
    cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "eosio-abidiff version " << "${VERSION_FULL}" << "\n";
+        os << "cdt-abidiff version " << "${VERSION_FULL}" << "\n";
   });
-   cl::OptionCategory cat("eosio-abidiff", "generates an abi from C++ project input");
+   cl::OptionCategory cat("cdt-abidiff", "generates an abi from C++ project input");
 
    cl::opt<std::string> input_filename1(
       cl::Positional, 
@@ -311,7 +311,7 @@ int main(int argc, const char **argv) {
       cl::Required,
       cl::cat(cat));
 
-   cl::ParseCommandLineOptions(argc, argv, std::string("eosio-abidiff"));
+   cl::ParseCommandLineOptions(argc, argv, std::string("cdt-abidiff"));
    try {
       abidiff diff(input_filename1, input_filename2);
       diff.diff();

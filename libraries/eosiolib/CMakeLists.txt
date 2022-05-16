@@ -22,11 +22,11 @@ add_library(eosio_cmem
 set_target_properties(eosio_malloc PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(eosio PUBLIC
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/include
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/src/internal
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/src/crypt
-                                 ${CMAKE_SOURCE_DIR}/libc/musl/arch/eos
-                                 ${CMAKE_SOURCE_DIR}/libcxx/include
+                                 ${CMAKE_SOURCE_DIR}/libc/cdt-musl/include
+                                 ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/internal
+                                 ${CMAKE_SOURCE_DIR}/libc/cdt-musl/src/crypt
+                                 ${CMAKE_SOURCE_DIR}/libc/cdt-musl/arch/eos
+                                 ${CMAKE_SOURCE_DIR}/libc++/cdt-libcxx/include
                                  ${CMAKE_SOURCE_DIR}
                                  ${CMAKE_SOURCE_DIR}/boost/include)
 

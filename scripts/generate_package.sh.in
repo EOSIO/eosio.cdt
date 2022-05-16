@@ -2,11 +2,12 @@
 
 VARIANT=$1
 if [[ ${VARIANT} == "deb" ]]; then
-    if [ -z "$2" ]; then
-        echo "Error, OS argument missing for deb package type"
+    if [ -z "$3" ]; then
+        echo "Error, OS name and architecture missing for deb package type"
         exit -1
     else
         OS=$2
+	ARCH=$3
     fi
 fi
 
@@ -38,7 +39,7 @@ mkdir -p tmp
 if [[ ${VARIANT} == "brew" ]]; then
    . ./generate_bottle.sh
 elif [[ ${VARIANT} == "deb" ]]; then
-   . ./generate_deb.sh ${OS}
+   . ./generate_deb.sh ${OS} ${ARCH}
 elif [[ ${VARIANT} == "rpm" ]]; then
    . ./generate_rpm.sh
 else
