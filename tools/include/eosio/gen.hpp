@@ -653,38 +653,6 @@ struct generation_utils {
       __builtin_unreachable();
    }
 
-   inline bool is_kv_map(const clang::CXXRecordDecl* decl) {
-      return decl->getQualifiedNameAsString().find("eosio::kv::map<") != std::string::npos;
-   }
-
-   // TODO replace this body after this release to reflect the new table type
-   inline bool is_kv_table(const clang::CXXRecordDecl* decl) {
-      for (const auto& base : decl->bases()) {
-         auto type = base.getType();
-         if (type.getAsString().find("eosio::kv::table<") != std::string::npos) {
-            return true;
-         }
-      }
-
-      return false;
-   }
-
-   inline bool is_kv_internal(const clang::CXXRecordDecl* decl) {
-      const std::set<std::string> internal_types {
-         "table",
-         "table_base",
-         "index",
-         "index_base"
-      };
-
-      const auto fqn = decl->getQualifiedNameAsString();
-
-      const auto in_kv_namespace = fqn.find("eosio::kv") != std::string::npos;
-      const bool is_internal = internal_types.count(decl->getNameAsString());
-
-      return in_kv_namespace && is_internal;
-   }
-
    inline bool is_write_host_func( const clang::FunctionDecl *func_decl ) {
       static const std::set<std::string> write_host_funcs =
       {
@@ -695,7 +663,6 @@ struct generation_utils {
          "set_proposed_producers_ex",
          "set_blockchain_parameters_packed",
          "set_parameters_packed",
-         "set_kv_parameters_packed",
          "set_privileged",
          "db_store_i64",
          "db_update_i64",
@@ -715,8 +682,6 @@ struct generation_utils {
          "db_idx_long_double_store",
          "db_idx_long_double_update",
          "db_idx_long_double_remove",
-         "kv_erase",
-         "kv_set",
          "send_deferred",
          "send_inline",
          "send_context_free_inline"
