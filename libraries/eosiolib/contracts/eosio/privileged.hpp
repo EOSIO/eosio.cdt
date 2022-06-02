@@ -27,9 +27,6 @@ namespace eosio {
          __attribute__((eosio_wasm_import))
          uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
-         __attribute__((eosio_wasm_import))
-         void set_kv_parameters_packed( const char* data, uint32_t datalen );
-
          __attribute((eosio_wasm_import))
          int64_t set_proposed_producers( char*, uint32_t );
 
@@ -184,54 +181,6 @@ namespace eosio {
     *  @param params - It will be replaced with the retrieved blockchain params
     */
    void get_blockchain_parameters(eosio::blockchain_parameters& params);
-
-   /**
-    *  Tunable KV configuration that can be changed via consensus
-    *  @ingroup privileged
-    */
-   struct kv_parameters {
-      /**
-      * The maximum key size
-      * @brief The maximum key size
-      */
-      uint32_t max_key_size;
-
-      /**
-      * The maximum value size
-      * @brief The maximum value size
-      */
-      uint32_t max_value_size;
-
-      /**
-       * The maximum number of iterators
-      * @brief The maximum number of iterators
-       */
-      uint32_t max_iterators;
-
-      EOSLIB_SERIALIZE( kv_parameters,
-                        (max_key_size)
-                        (max_value_size)(max_iterators)
-      )
-   };
-
-   /**
-    *  Set the kv parameters
-    *
-    *  @ingroup privileged
-    *  @param params - New kv parameters to set
-    */
-   inline void set_kv_parameters(const eosio::kv_parameters& params) {
-      // set_kv_parameters_packed expects version, max_key_size,
-      // max_value_size, and max_iterators,
-      // while kv_parameters only contains max_key_size, max_value_size,
-      // and max_iterators. That's why we place uint32_t in front
-      // of kv_parameters in buf
-      char buf[sizeof(uint32_t) + sizeof(eosio::kv_parameters)];
-      eosio::datastream<char *> ds( buf, sizeof(buf) );
-      ds << uint32_t(0);  // fill in version
-      ds << params;
-      internal_use_do_not_use::set_kv_parameters_packed( buf, ds.tellp() );
-   }
 
     /**
     *  Get the resource limits of an account

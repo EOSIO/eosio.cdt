@@ -163,25 +163,7 @@ namespace eosio { namespace cdt {
          _abi.structs.insert(pair);
       }
 
-      void add_map(const clang::QualType& type) {
-         for (int i = 0; i < 2; ++i) {
-            add_type(std::get<clang::QualType>(get_template_argument(type, i)));
-         }
-         abi_struct kv;
-         std::string name = get_type(type);
-         kv.name = name.substr(0, name.length() - 2);
-         kv.fields.push_back( {"key", get_template_argument_as_string(type)} );
-         kv.fields.push_back( {"value", get_template_argument_as_string(type, 1)} );
-         add_type(std::get<clang::QualType>(get_template_argument(type)));
-         add_type(std::get<clang::QualType>(get_template_argument(type, 1)));
-         _abi.structs.insert(kv);
-      }
-
       void add_struct( const clang::CXXRecordDecl* decl, const std::string& rname="" ) {
-         if (is_kv_internal(decl) || is_kv_table(decl)) {
-            return;
-         }
-
          abi_struct ret;
          if ( decl->getNumBases() == 1 ) {
             ret.base = get_type(decl->bases_begin()->getType());
@@ -225,14 +207,6 @@ namespace eosio { namespace cdt {
       }
 
       void add_table( const clang::CXXRecordDecl* decl ) {
-         // short circuit if we happen across `eosio::kv::map` declaration
-         if (is_kv_map(decl))
-            return;
-         if (is_kv_table(decl)) {
-            add_kv_table(decl);
-            return;
-         }
-
          tables.insert(decl);
          abi_table t;
          t.type = decl->getNameAsString();
@@ -255,106 +229,6 @@ namespace eosio { namespace cdt {
          t.type = decl->getNameAsString();
          t.name = name_to_string(name);
          _abi.tables.insert(t);
-      }
-
-      void add_kv_map(const clang::ClassTemplateSpecializationDecl* decl) {
-          abi_kv_table akt;
-          const auto& first_arg  = decl->getTemplateArgs()[0];
-          const auto& second_arg = decl->getTemplateArgs()[1];
-          const auto& third_arg  = decl->getTemplateArgs()[2];
-          const auto& fourth_arg = decl->getTemplateArgs()[3];
-
-          if (first_arg.getKind() != clang::TemplateArgument::ArgKind::Integral)
-             CDT_ERROR("abigen_error", decl->getLocation(), "first template argument to KV map is not an integral const");
-          if (second_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
-             CDT_ERROR("abigen_error", decl->getLocation(), "second template argument to KV map is not a type");
-          if (third_arg.getKind() != clang::TemplateArgument::ArgKind::Type)
-             CDT_ERROR("abigen_error", decl->getLocation(), "third template argument to KV map is not a type");
-
-          akt.name = name_to_string(first_arg.getAsIntegral().getExtValue());
-          akt.type = translate_type(third_arg.getAsType()); // pick the "value" type
-          add_type(third_arg.getAsType());
-          akt.indices.push_back({name_to_string(fourth_arg.getAsIntegral().getExtValue()),
-                                  translate_type(second_arg.getAsType())}); // set the "key" as the index type
-          _abi.kv_tables.insert(akt);
-      }
-
-      // TODO remove this after the next release and extend the above for handling the new table type
-      void add_kv_table(const clang::CXXRecordDecl* const decl) {
-         clang::CXXRecordDecl* table_type;
-         std::string templ_name;
-
-         for (const auto& base : decl->bases()) {
-            if (const auto templ_base = dyn_cast<clang::ClassTemplateSpecializationDecl>(base.getType()->getAsCXXRecordDecl())) {
-               const auto& templ_type = templ_base->getTemplateArgs()[0];
-               table_type = templ_type.getAsType().getTypePtr()->getAsCXXRecordDecl();
-               add_struct(table_type);
-
-               const auto templ_val = templ_base->getTemplateArgs()[1].getAsIntegral().getExtValue();
-               templ_name = name_to_string(templ_val);
-            }
-         }
-
-         abi_kv_table t;
-         t.type = table_type->getNameAsString();
-         t.name = templ_name;
-
-         const auto get_string_name_from_kv_index = [&](clang::Expr* expr) {
-            std::string index_name;
-            if (const auto expr_wc = dyn_cast<clang::ExprWithCleanups>(expr)) {
-               if (const auto cc_expr = dyn_cast<clang::CXXConstructExpr>(expr_wc->getSubExpr())) {
-                  const auto arg = cc_expr->getArg(0);
-                  if (const auto cfc_expr = dyn_cast<clang::CXXFunctionalCastExpr>(arg)) {
-                     if (const auto il_expr = dyn_cast<clang::InitListExpr>(cfc_expr->getSubExpr())) {
-                        const auto init = il_expr->getInit(0);
-                        if (const auto udl = dyn_cast<clang::UserDefinedLiteral>(init)) {
-                           const auto child = udl->getRawSubExprs()[0];
-                           if (const auto ice = dyn_cast<clang::ImplicitCastExpr>(child)) {
-                              if (const auto dre = dyn_cast<clang::DeclRefExpr>(ice->getSubExpr())) {
-                                 if (const auto fd = dyn_cast<clang::FunctionDecl>(dre->getDecl())) {
-                                    const auto& templ_pack = fd->getTemplateSpecializationArgs()->get(1);
-                                    for (const auto& ta : templ_pack.pack_elements()) {
-                                       const auto val = (char)ta.getAsIntegral().getExtValue();
-                                       index_name.push_back(val);
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-            return index_name;
-         };
-
-         for (const auto field : decl->fields()) {
-            std::string index_name = get_string_name_from_kv_index(field->getInClassInitializer());
-            std::string idx_type;
-            const auto qt = field->getType();
-            const auto index_qtype = std::get<clang::QualType>(get_template_argument(qt));
-            const auto index_type = clang::TemplateArgument(index_qtype);
-            if (const auto elab_type = dyn_cast<clang::ElaboratedType>(index_type.getAsType().getTypePtr())) {
-               // This is the macro case
-               const auto decayed_type = elab_type->getNamedType();
-               if (const auto d = dyn_cast<clang::TemplateSpecializationType>(decayed_type)) {
-                  const auto& decl_type = d->getArg(0);
-                  if (const auto dcl_type = dyn_cast<clang::DecltypeType>(decl_type.getAsType())) {
-                     idx_type = get_type_string_from_kv_index_macro_decltype(dcl_type);
-                  } else {
-                     idx_type = get_type(index_type.getAsType());
-                  }
-               } else {
-                  idx_type = get_type(index_type.getAsType());
-               }
-            } else {
-               // This is the non-macro case
-               idx_type = get_type(index_type.getAsType());
-            }
-            t.indices.push_back({index_name, idx_type});
-         }
-
-         _abi.kv_tables.insert(t);
       }
 
       void add_clauses( const std::vector<std::pair<std::string, std::string>>& clauses ) {
@@ -470,27 +344,6 @@ namespace eosio { namespace cdt {
          return o;
       }
 
-      std::pair<std::string, ojson> kv_table_to_json( const abi_kv_table& t ) {
-         ojson o;
-         o["type"] = t.type;
-         auto indices = ojson::object();
-         for (int i = 0; i < t.indices.size(); ++i) {
-            auto idx = t.indices[i];
-            if (i == 0) {
-               ojson oj;
-               oj["name"] = idx.name;
-               oj["type"] = idx.type;
-               o["primary_index"] = oj;
-            } else {
-               ojson o;
-               o["type"] = idx.type;
-               indices.insert_or_assign(idx.name, o);
-            }
-         }
-         o["secondary_indices"] = indices;
-         return {t.name, o};
-      }
-
       ojson action_result_to_json( const abi_action_result& result ) {
          ojson o;
          o["name"] = result.name;
@@ -585,10 +438,6 @@ namespace eosio { namespace cdt {
                if (as.name == _translate_type(t.type))
                   return true;
             }
-            for ( const auto t : _abi.kv_tables ) {
-               if (as.name == _translate_type(t.type))
-                  return true;
-            }
             for( auto td : _abi.typedefs ) {
                if (as.name == _translate_type(remove_suffix(td.type)))
                   return true;
@@ -650,11 +499,6 @@ namespace eosio { namespace cdt {
          for ( auto t : set_of_tables ) {
             o["tables"].push_back(table_to_json( t ));
          }
-         o["kv_tables"]  = ojson::object();
-         for ( const auto& t : _abi.kv_tables ) {
-            auto kv_table = kv_table_to_json(t);
-            o["kv_tables"].insert_or_assign(kv_table.first, kv_table.second);
-         }
          o["ricardian_clauses"]  = ojson::array();
          for ( auto rc : _abi.ricardian_clauses ) {
             o["ricardian_clauses"].push_back(clause_to_json( rc ));
@@ -679,39 +523,6 @@ namespace eosio { namespace cdt {
          std::set<abi_table>                   ctables;
          std::map<std::string, std::string>    rcs;
          std::set<const clang::Type*>          evaluated;
-
-         std::string get_type_string_from_kv_index_macro_decltype(const clang::DecltypeType* decl) {
-            if (const auto ref_type = dyn_cast<clang::LValueReferenceType>(decl->desugar())) {
-               const auto pt = ref_type->getPointeeType();
-               if (const auto record_type = dyn_cast<clang::RecordType>(pt)) {
-                  const auto gdt = record_type->getDecl();
-                  if (const auto ctsd = dyn_cast<clang::ClassTemplateSpecializationDecl>(gdt)) {
-                     const auto& template_args = ctsd->getTemplateArgs();
-                     // Handle tuples, which have the template arguments treated as a pack
-                     if (template_args.size() == 1 && template_args[0].pack_size() > 1) {
-                        std::string ret = ctsd->getName().str();
-                        for (const auto& pack_elem : template_args[0].getPackAsArray()) {
-                           ret += "_";
-                           ret += get_type(pack_elem.getAsType());
-                        }
-                        return ret;
-                     } else {
-                        // Handle non-tuple templates
-                        return get_type(record_type->desugar());
-                     }
-                  } else {
-                     // Handle non-template records
-                     return get_type(record_type->desugar());
-                  }
-               } else {
-                  // Handle non-records
-                  return get_type(pt);
-               }
-            }
-            CDT_INTERNAL_ERROR("Error generating type from kv index definition");
-            return "";
-         }
-
    };
 
    class eosio_abigen_visitor : public RecursiveASTVisitor<eosio_abigen_visitor>, public generation_utils {
@@ -767,9 +578,6 @@ namespace eosio { namespace cdt {
                if (d->getName() == "multi_index") {
                   ag.add_table(d->getTemplateArgs()[0].getAsIntegral().getExtValue(),
                         (clang::CXXRecordDecl*)((clang::RecordType*)d->getTemplateArgs()[1].getAsType().getTypePtr())->getDecl());
-               } else if (d->getName() == "map") {
-                  if (d->getSpecializedTemplate()->getTemplatedDecl()->isEosioTable())
-                     ag.add_kv_map(d);
                }
             }
             return true;

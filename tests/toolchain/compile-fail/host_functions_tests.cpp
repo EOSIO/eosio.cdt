@@ -6,10 +6,7 @@ set_proposed_producers : yes
 set_proposed_producers_ex : yes
 set_blockchain_parameters_packed : yes
 set_parameters_packed : yes
-set_kv_parameters_packed : yes
 set_privileged  : yes
-kv_erase : yes
-kv_set  : yes
 send_deferred : yes
 */
 
@@ -30,8 +27,6 @@ send_deferred : yes
 
 
 extern "C" __attribute__((eosio_wasm_import)) void set_resource_limit(int64_t, int64_t, int64_t);
-extern "C" __attribute__((eosio_wasm_import)) uint32_t get_kv_parameters_packed(void* params, uint32_t size, uint32_t max_version);
-extern "C" __attribute__((eosio_wasm_import)) void set_kv_parameters_packed(const char* params, uint32_t size);
 extern "C" __attribute__((eosio_wasm_import)) void set_blockchain_parameters_packed( char* data, uint32_t datalen );
 extern "C" __attribute__((eosio_wasm_import)) uint32_t get_blockchain_parameters_packed( char* data, uint32_t datalen );
 
@@ -55,8 +50,6 @@ extern "C" __attribute__((eosio_wasm_import)) int32_t db_idx_long_double_store(u
 extern "C" __attribute__((eosio_wasm_import)) void db_idx_long_double_update(int32_t iterator, capi_name payer, const long double* secondary);
 extern "C" __attribute__((eosio_wasm_import)) void db_idx_long_double_remove(int32_t iterator);
 
-extern "C" __attribute__((eosio_wasm_import)) int64_t kv_erase(uint64_t contract, const char* key, uint32_t key_size);
-extern "C" __attribute__((eosio_wasm_import)) int64_t kv_set(uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size, uint64_t payer);
 extern "C" __attribute__((eosio_wasm_import)) void send_deferred(const uint128_t&, uint64_t, const char*, size_t, uint32_t);
 extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers( char*, uint32_t );
 extern "C" __attribute__((eosio_wasm_import)) int64_t set_proposed_producers_ex( uint64_t producer_data_format, char *producer_data, uint32_t producer_data_size );
@@ -102,18 +95,6 @@ public:
       size_t size = get_blockchain_parameters_packed( buf, sizeof(buf) );
       eosio::cout << "Block chain parameter size : " << size << "\n";
       set_blockchain_parameters_packed(buf, size); 
-      return true;
-   }
-   ACTION_TYPE
-   bool setkvpara(){
-      uint32_t limits[4];
-      limits[0] = 0;
-      limits[1] = 1024;
-      limits[2] = 4096;
-      limits[3] = 1024;
-      char limits_buf[sizeof(limits)];
-      memcpy(limits_buf, limits, sizeof(limits));
-      set_kv_parameters_packed(limits_buf, sizeof(limits));
       return true;
    }
    ACTION_TYPE
@@ -233,16 +214,6 @@ db_idx_long_double_remove
    ACTION_TYPE
    bool dbidxldbr(){
       db_idx_long_double_remove(0);
-      return true;
-   }
-   ACTION_TYPE
-   bool kverase(){
-      kv_erase(0, NULL, 0);
-      return true;
-   }
-   ACTION_TYPE
-   bool kvset(){
-      kv_set(0, NULL, 0, NULL, 0, 0);
       return true;
    }
    ACTION_TYPE
