@@ -20,6 +20,10 @@ static llvm::cl::OptionCategory EosioLdToolCategory("ld options");
 #endif
 
 /// begin ld options
+static cl::opt<bool> stack_canary_opt(
+   "stack-canary",
+   cl::desc("Stack canary for non stack first layouts"),
+   cl::cat(LD_CAT));
 static cl::opt<std::string> abi_version_opt(
     "abi-version",
     cl::desc("Which ABI version to generate"),
@@ -786,6 +790,9 @@ static Options CreateOptions(bool add_defaults=true) {
 #endif
    if (!fnative_opt) {
 #ifdef ONLY_LD
+      if (stack_canary_opt) {
+         ldopts.emplace_back("--stack-canary");
+      }
       if (!fno_stack_first_opt) {
          ldopts.emplace_back("-stack-first");
       }
