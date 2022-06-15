@@ -48,7 +48,31 @@ sudo yum install ./eosio.cdt-1.8.1-1.el7.x86_64.rpm
 sudo yum remove eosio.cdt
 ```
 
-## Guided Installation or Building from Scratch
+## Building
+
+### Ubuntu 20.04 dependencies
+```sh
+apt-get update && apt-get install   \
+        build-essential             \
+        clang                       \
+        cmake                       \
+        git                         \
+        libxml2-dev                 \
+        opam ocaml-interp           \
+        python3                     \
+        python3-pip                 \
+        time
+```
+```sh
+python3 -m pip install pygments
+```
+
+If issues persist with ccache
+```sh
+export CCACHE_DISABLE=1
+```
+
+### Guided Installation or Building from Scratch
 ```sh
 git clone --recursive https://github.com/eosio/eosio.cdt
 cd eosio.cdt
